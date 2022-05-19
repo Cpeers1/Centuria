@@ -1,8 +1,10 @@
 main todo:
+- implement the shop
 - fix settings not being saved
 - fix missing handshake packets (mm)
 - fix displaced spawns
 - fix missing spawns
+- sanctuaries
 - launcher
 
 multiplayer update:
