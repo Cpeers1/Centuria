@@ -60,6 +60,14 @@ public class APIProcessor extends HttpUploadProcessor {
 				if (uf.exists()) {
 					id = Files.readAllLines(uf.toPath()).get(0);
 				} else {
+					// Check if registration is enabled, if not, prevent login
+					if (!EmuFeral.allowRegistration) {
+						// Not sure what to send but sending this causes an error in the next request
+						// triggering the client into saying invalid password.
+						this.setResponseCode(200);
+						return;
+					}
+
 					// Save account details
 					Files.writeString(uf.toPath(), id + "\n" + login.get("username").getAsString());
 					Files.writeString(new File("accounts/" + id).toPath(),

@@ -1,3 +1,11 @@
+Multiplayer update: Alpha 3:
+- chat
+- disconnect connected clients of the same account
+- initial join sync
+- ingame sync
+- avatar update sync
+- leave sync
+
 main todo:
 - fix avatar slots sometimes breaking
 - implement the shop
@@ -8,14 +16,8 @@ main todo:
 - fix displaced spawns
 - fix missing spawns
 - sanctuaries
-- launcher
 
-multiplayer update:
-- disconnect connected clients of the same account
-- initial join sync
-- ingame sync
-- avatar update sync
-- leave sync
+follower update:
 - player cards & followers
 
 free starfragments update:
