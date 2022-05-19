@@ -6,6 +6,9 @@ plugins {
 version = "1.0.0.A2"
 group = "org.asf.emuferal"
 
+sourceCompatibility = '1.17'
+targetCompatibility = '1.17'
+
 def authorname = "AerialWorks Software Foundation"
 
 apply plugin: 'eclipse'
