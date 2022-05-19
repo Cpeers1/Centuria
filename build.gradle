@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = "1.0.0.A2"
+version = "1.0.0.A3"
 group = "org.asf.emuferal"
 
 sourceCompatibility = '1.17'
@@ -24,6 +24,7 @@ repositories {
 jar {
 	manifest {
 		attributes([
+			"Main-Class": "org.asf.emuferal.launcher.LauncherMain",
 			"Specification-Title": "EmuFeral",
 			"Specification-Vendor": "${authorname}",
 			"Specification-Version": "1.0.0.A6", // ConnectiveHTTP specification
@@ -80,6 +81,8 @@ dependencies {
 	implementation group: 'javax.activation', name: 'activation', version: '1.1.1'
 	
 	implementation group: 'org.asf.aos.util.service', name: 'aosutil-service-SLIB-UTIL', version: '0.0.0.12'
+	implementation group: 'org.apache.commons', name: 'commons-compress', version: '1.21'	
+	implementation group: 'org.tukaani', name: 'xz', version: '1.9'
 }
 
 project.configurations.implementation.canBeResolved = true

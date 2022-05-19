@@ -905,4 +905,8 @@ public class GameServer {
 		}
 	}
 
+	public ServerSocket getServerSocket() {
+		return gameServer;
+	}
+
 }

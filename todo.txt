@@ -1,5 +1,8 @@
 main todo:
+- fix avatar slots sometimes breaking
 - implement the shop
+- wings
+- skyways
 - fix settings not being saved
 - fix missing handshake packets (mm)
 - fix displaced spawns

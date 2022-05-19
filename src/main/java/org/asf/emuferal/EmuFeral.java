@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -15,11 +16,15 @@ import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.ConnectiveServerFactory;
 
 public class EmuFeral {
+	public static final String SERVER_UPDATE_VERSION = "1.0.0.A3";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/emuferal";
+	private static ConnectiveHTTPServer apiServer;
+	private static ConnectiveHTTPServer directorServer;
+	private static ConnectiveHTTPServer paymentServer;
+	private static GameServer gameServer;
 
 	public static void main(String[] args) throws InvocationTargetException, IOException {
 		// Update configuration
-		String currentUpdate = "1.0.0.A2";
 		String updateChannel = "alpha";
 		if (new File("updater.conf").exists()) {
 			// Parse properties
@@ -60,7 +65,7 @@ public class EmuFeral {
 			String update = new String(updateLog.readAllBytes(), "UTF-8").trim();
 			updateLog.close();
 
-			if (!currentUpdate.equals(update)) {
+			if (!SERVER_UPDATE_VERSION.equals(update)) {
 				// Download the update list
 				System.out.println("Update available, new version: " + update);
 				System.out.println("Preparing to update EmuFeral...");
@@ -88,8 +93,18 @@ public class EmuFeral {
 		}
 
 		// Start the servers
+		startServer();
+
+		// Wait for exit
+		paymentServer.waitExit();
+		directorServer.waitExit();
+		apiServer.waitExit();
+		gameServer.getServerSocket().close();
+	}
+
+	public static void startServer() throws InvocationTargetException, UnknownHostException, IOException {
+		// Start the servers
 		System.out.println("Starting Emulated Feral API server...");
-		ConnectiveHTTPServer apiServer;
 		try {
 			apiServer = new ConnectiveServerFactory().setPort(6).setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
 					.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
@@ -111,15 +126,10 @@ public class EmuFeral {
 				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
 		paymentServer.registerProcessor(new PaymentsProcessor());
 		System.out.println("Starting Emulated Feral Game server...");
-		ServerSocket gameServer = new ServerSocket(6968, 0, InetAddress.getByName("0.0.0.0"));
-		new GameServer().run(gameServer);
+		ServerSocket sock = new ServerSocket(6968, 0, InetAddress.getByName("0.0.0.0"));
+		gameServer = new GameServer();
+		gameServer.run(sock);
 		System.out.println("Successfully started emulated servers.");
-
-		// Wait for exit
-		paymentServer.waitExit();
-		directorServer.waitExit();
-		apiServer.waitExit();
-		gameServer.close();
 	}
 
 }
