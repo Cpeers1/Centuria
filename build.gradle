@@ -114,3 +114,42 @@ task installation () {
 
 installation.dependsOn project.tasks.build
 build.finalizedBy installation
+
+import java.nio.file.*
+task updateData () {
+	doLast {
+		copy {
+			from "emuferal"
+			from "emuferal.bat"
+			into "build/update"
+		}
+		String data = ""
+		for (ResolvedArtifact arti : project.configurations.implementation.resolvedConfiguration.getResolvedArtifacts()) {
+			if (arti.getClassifier() != null)
+				continue;
+			copy {
+				from arti.file
+				rename arti.file.getName(), arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "") + "." + arti.getExtension()
+				into "build/update/libs"
+				data += "libs/" + arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "") + "." + arti.getExtension() + "\n"
+			}
+		}
+		for (def task : project.tasks) {
+			if (task instanceof AbstractArchiveTask) {
+				if (!task.getArchiveClassifier().get().isEmpty())
+					continue;
+					
+				copy {
+					from task.getArchiveFile().get()
+					rename task.getArchiveFile().get().getAsFile().getName(), task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()
+					into "build/update"
+					data += task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get() + "\n"
+				}
+			}
+		}
+		Files.writeString(file("build/update/update.list").toPath(), data)
+	}
+}
+
+updateData.dependsOn project.tasks.build
+build.finalizedBy updateData

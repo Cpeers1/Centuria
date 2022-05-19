@@ -1,6 +1,4 @@
 main todo:
-- use the avatarhelper.json to generate the avatar file (10 slots per player, 1 primary slot)
-- updater
 - fix settings not being saved
 - fix missing handshake packets (mm)
 - fix displaced spawns
