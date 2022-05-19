@@ -1,0 +1,5 @@
+*.reg -crlf
+*.bat -crlf
+*.sh -crlf
+*.bash -crlf
+gradlew -crlf

@@ -1,0 +1,34 @@
+main todo:
+- use the avatarhelper.json to generate the avatar file (10 slots per player, 1 primary slot)
+- updater
+- fix settings not being saved
+- fix missing handshake packets (mm)
+- fix displaced spawns
+- fix missing spawns
+- launcher
+
+multiplayer update:
+- disconnect connected clients of the same account
+- initial join sync
+- ingame sync
+- avatar update sync
+- leave sync
+- player cards & followers
+
+free starfragments update:
+- 10k star fragments on join
+- avatar purchases
+
+interaction update:
+- general interactions
+- item collection
+- city fera NPCs
+- questgivers
+- purchases
+- sketchbook
+
+chat update:
+- usable chat
+
+extra:
+- use wyld's packet data to save their look and send the files to them 

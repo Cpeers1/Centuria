@@ -1,0 +1,72 @@
+[
+  {
+    "defId": 9625,
+    "components": {
+      "PrimaryLook": {},
+      "SanctuaryLook": {
+        "info": {
+          "islandDefId": 2695,
+          "islandInvId": "ccb53eb8-9f86-4f3f-aa0e-b720c6d3b228",
+          "placementInfo": {},
+          "houseInvId": "14e847ae-55b2-4429-92cd-48072770d226",
+          "classInvId": "37391a04-d271-463a-b4a6-b9d9ea4c725b",
+          "houseDefId": 2694
+        }
+      },
+      "Timestamp": {
+        "ts": 1648311005471
+      },
+      "Name": {
+        "name": ""
+      }
+    },
+    "id": "4f97c86d-2462-4b34-8737-c7df7e39252f",
+    "type": 201
+  },
+  {
+    "defId": 9625,
+    "components": {
+      "SanctuaryLook": {
+        "info": {
+          "islandDefId": 2695,
+          "islandInvId": "bf0d4b79-e579-45e3-bbc4-7274668ff1d1",
+          "placementInfo": {},
+          "houseInvId": "5b9eee0d-29ed-4aad-a778-ff9e9f374e61",
+          "classInvId": "37391a04-d271-463a-b4a6-b9d9ea4c725b",
+          "houseDefId": 2694
+        }
+      },
+      "Timestamp": {
+        "ts": 1648311005472
+      },
+      "Name": {
+        "name": ""
+      }
+    },
+    "id": "272d5999-61a5-481d-977f-9c7124920a72",
+    "type": 201
+  },
+  {
+    "defId": 9625,
+    "components": {
+      "SanctuaryLook": {
+        "info": {
+          "islandDefId": 2695,
+          "islandInvId": "e3722feb-ea17-478d-b111-6e06b63c898f",
+          "placementInfo": {},
+          "houseInvId": "ec56adb9-26f7-455e-9c77-0ece211ebc14",
+          "classInvId": "37391a04-d271-463a-b4a6-b9d9ea4c725b",
+          "houseDefId": 2694
+        }
+      },
+      "Timestamp": {
+        "ts": 1648311005471
+      },
+      "Name": {
+        "name": ""
+      }
+    },
+    "id": "868e4afa-7579-4aea-be5d-936b38c6ccaf",
+    "type": 201
+  }
+]
