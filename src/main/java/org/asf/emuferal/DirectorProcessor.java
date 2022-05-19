@@ -26,7 +26,7 @@ public class DirectorProcessor extends HttpUploadProcessor {
 			case "/v1/bestGameServer": {
 				// Send response
 				JsonObject response = new JsonObject();
-				response.addProperty("smartfoxServer", "localhost");
+				response.addProperty("smartfoxServer", EmuFeral.discoveryAddress);
 				setBody(response.toString());
 				break;
 			}

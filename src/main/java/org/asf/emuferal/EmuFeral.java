@@ -19,6 +19,7 @@ public class EmuFeral {
 	public static final String SERVER_UPDATE_VERSION = "1.0.0.A2";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/emuferal";
 	public static boolean allowRegistration = true;
+	public static String discoveryAddress = "localhost";
 	private static ConnectiveHTTPServer apiServer;
 	private static ConnectiveHTTPServer directorServer;
 	private static ConnectiveHTTPServer paymentServer;
@@ -115,7 +116,7 @@ public class EmuFeral {
 		File serverConf = new File("server.conf");
 		if (!serverConf.exists()) {
 			Files.writeString(serverConf.toPath(), "api-port=6\n" + "director-port=6969\n" + "payments-port=6971\n"
-					+ "game-port=6968\n" + "allow-registration=true\n");
+					+ "game-port=6968\n" + "allow-registration=true\ndiscovery-server-address=localhost\n");
 		}
 
 		// Parse properties
@@ -131,6 +132,7 @@ public class EmuFeral {
 		}
 
 		// Start the servers
+		discoveryAddress = properties.getOrDefault("discovery-server-address", discoveryAddress);
 		System.out.println("Starting Emulated Feral API server...");
 		try {
 			apiServer = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("api-port")))
