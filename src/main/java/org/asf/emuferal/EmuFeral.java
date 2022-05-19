@@ -151,8 +151,7 @@ public class EmuFeral {
 				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
 		directorServer.registerProcessor(new DirectorProcessor());
 		System.out.println("Starting Emulated Feral Fake Payment server...");
-		ConnectiveHTTPServer paymentServer = new ConnectiveServerFactory()
-				.setPort(Integer.parseInt(properties.get("payments-port")))
+		paymentServer = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("payments-port")))
 				.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
 				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
 		paymentServer.registerProcessor(new PaymentsProcessor());
