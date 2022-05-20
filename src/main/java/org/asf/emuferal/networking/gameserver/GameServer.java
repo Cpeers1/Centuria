@@ -1,6 +1,5 @@
 package org.asf.emuferal.networking.gameserver;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -17,8 +16,23 @@ import org.asf.emuferal.packets.smartfox.ISmartfoxPacket;
 import org.asf.emuferal.packets.xml.handshake.auth.ClientToServerAuthPacket;
 import org.asf.emuferal.packets.xml.handshake.version.ClientToServerHandshake;
 import org.asf.emuferal.packets.xml.handshake.version.ServerToClientOK;
-import org.asf.emuferal.packets.xt.gameserver.InventoryItemDownloadPacket;
+import org.asf.emuferal.packets.xt.KeepAlive;
 import org.asf.emuferal.packets.xt.gameserver.PrefixedPacket;
+import org.asf.emuferal.packets.xt.gameserver.avatareditor.AvatarEditorSelectLook;
+import org.asf.emuferal.packets.xt.gameserver.avatareditor.UserAvatarSave;
+import org.asf.emuferal.packets.xt.gameserver.avatareditor.UserTutorialCompleted;
+import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionCancel;
+import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionFinish;
+import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionStart;
+import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.emuferal.packets.xt.gameserver.objects.AvatarAction;
+import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectRespawn;
+import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectSetRespawn;
+import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectUpdate;
+import org.asf.emuferal.packets.xt.gameserver.shops.ShopList;
+import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
+import org.asf.emuferal.packets.xt.gameserver.world.RoomJoinTutorial;
+import org.asf.emuferal.packets.xt.gameserver.world.WorldReadyPacket;
 import org.asf.emuferal.players.Player;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -35,7 +49,7 @@ public class GameServer extends BaseSmartfoxServer {
 	private XmlMapper mapper = new XmlMapper();
 	private ArrayList<Player> players = new ArrayList<Player>();
 
-	private Player[] getPlayers() {
+	public Player[] getPlayers() {
 		while (true) {
 			try {
 				return players.toArray(t -> new Player[t]);
@@ -53,8 +67,23 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new ClientToServerAuthPacket(mapper));
 
 		// Game
+		registerPacket(new KeepAlive());
 		registerPacket(new PrefixedPacket());
 		registerPacket(new InventoryItemDownloadPacket());
+		registerPacket(new JoinRoom());
+		registerPacket(new RoomJoinTutorial());
+		registerPacket(new ShopList());
+		registerPacket(new WorldReadyPacket());
+		registerPacket(new WorldObjectUpdate());
+		registerPacket(new WorldObjectRespawn());
+		registerPacket(new WorldObjectSetRespawn());
+		registerPacket(new AvatarAction());
+		registerPacket(new InteractionStart());
+		registerPacket(new InteractionCancel());
+		registerPacket(new InteractionFinish());
+		registerPacket(new UserTutorialCompleted());
+		registerPacket(new AvatarEditorSelectLook());
+		registerPacket(new UserAvatarSave());
 	}
 
 	@Override

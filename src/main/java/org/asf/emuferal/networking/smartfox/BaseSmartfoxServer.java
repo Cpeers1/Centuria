@@ -101,17 +101,7 @@ public abstract class BaseSmartfoxServer {
 				// Client loop
 				while (client.getSocket() != null) {
 					String data = readPacketString(client);
-					if (!handlePacket(data, client)) {
-						System.err.println("Unhandled packet: client " + client.getSocket() + " sent: " + data);
-
-						// Allow debug mode to re-register packets
-						if (System.getProperty("debugMode") != null && System.getProperty("debugMode").equals("true")) {
-							packets.clear();
-							setupComplete = false;
-							registerPackets();
-							setupComplete = true;
-						}
-					}
+					handle(data, client);
 				}
 
 				// Disconnected
@@ -128,6 +118,20 @@ public abstract class BaseSmartfoxServer {
 		}, "Smartfox Client Thread: " + clientSocket);
 		th.setDaemon(true);
 		th.start();
+	}
+
+	private void handle(String data, SmartfoxClient client) throws IOException {
+		if (!handlePacket(data, client)) {
+			// Allow debug mode to re-register packets
+			if (System.getProperty("debugMode") != null) {
+				packets.clear();
+				setupComplete = false;
+				registerPackets();
+				setupComplete = true;
+			}
+
+			System.err.println("Unhandled packet: client " + client.getSocket() + " sent: " + data);
+		}
 	}
 
 	/**

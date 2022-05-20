@@ -1,4 +1,4 @@
-package org.asf.emuferal.packets.xt.gameserver;
+package org.asf.emuferal.packets.xt.gameserver.inventory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +47,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		PlayerInventory inv = plr.account.getPlayerInventory();
 
 		// Save if the item is not found
-		if (!inv.containsItem(slot)) {
+		if (!inv.containsItem(slot.equals("200") ? "avatars" : slot)) {
 			if (slot.equals("200")) {
 				// Avatar slots are not stored yet so lets build the json
 				JsonArray avatars = buildDefaultLooksFile(plr);

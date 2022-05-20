@@ -266,7 +266,7 @@ public class OldGameServer {
 
 					String id = rd.read();
 					response.add("rj");
-					response.add(Integer.toString(plr.userID));
+					response.add("-1");
 					response.add("true");
 					response.add(id);
 					response.add("0");

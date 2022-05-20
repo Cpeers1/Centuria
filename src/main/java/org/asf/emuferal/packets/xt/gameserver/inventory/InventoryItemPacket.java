@@ -1,4 +1,4 @@
-package org.asf.emuferal.packets.xt.gameserver;
+package org.asf.emuferal.packets.xt.gameserver.inventory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,6 +40,7 @@ public class InventoryItemPacket implements IXtPacket<InventoryItemPacket> {
 
 		writer.writeInt(-1); // Data prefix
 		writer.writeString(Base64.getEncoder().encodeToString(op.toByteArray()));
+		writer.writeString(""); // Empty suffix
 	}
 
 	@Override

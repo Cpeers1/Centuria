@@ -13,7 +13,8 @@ public class Player {
 
 	public int pendingLookDefID = 8254;
 	public String pendingLookID = null;
-	public String respawn = null;
 	public String room = null;
+
+	public String respawn = null;
 
 }

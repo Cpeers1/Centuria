@@ -141,6 +141,10 @@ public class FileBasedAccountManager extends AccountManager {
 
 			// Save account details
 			File uf = new File("accounts/" + username);
+			if (uf.exists()) {
+				// Account exists, return null
+				return null;
+			}
 			Files.writeString(uf.toPath(), id + "\n" + username);
 			Files.writeString(new File("accounts/" + id).toPath(),
 					id + "\n" + username + "\ntrue\n" + username + "\n" + new File("accounts").listFiles().length);
