@@ -73,4 +73,13 @@ public class SmartfoxClient {
 		return (T) server.<T>readPacket(this, packetType);
 	}
 
+	/**
+	 * Retrieves the server object
+	 * 
+	 * @return BaseSmartfoxServer instance
+	 */
+	public BaseSmartfoxServer getServer() {
+		return server;
+	}
+
 }

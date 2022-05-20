@@ -42,18 +42,20 @@ public abstract class AccountManager {
 	public abstract boolean hasPassword(String userID);
 
 	/**
-	 * Completes the registration process
+	 * Checks if there is a request saved to change the password (should override
+	 * authenticate and save the password entered during login)
 	 * 
-	 * @param userID      Account ID
-	 * @param displayName New player display name
-	 * @param password    Player password
-	 * @return True if successful, false otherwise
+	 * @param userID Account ID
+	 * @return True if there is a password update request, false otherwise
 	 */
-	public boolean finishRegistration(String userID, String displayName, char[] password) {
-		if (!getAccount(userID).updateDisplayName(displayName))
-			return false;
-		return updatePassword(userID, password);
-	}
+	public abstract boolean isPasswordUpdateRequested(String userID);
+
+	/**
+	 * Schedules a password update for next login
+	 * 
+	 * @param userID Account ID
+	 */
+	public abstract void makePasswordUpdateRequested(String userID);
 
 	/**
 	 * Updates the user password

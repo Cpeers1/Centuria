@@ -1,23 +1,13 @@
 package org.asf.emuferal.networking.http;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.util.Base64;
 import java.util.UUID;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-
 import org.asf.emuferal.EmuFeral;
+import org.asf.emuferal.accounts.AccountManager;
+import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.processors.HttpUploadProcessor;
 
@@ -27,11 +17,12 @@ import com.google.gson.JsonParser;
 public class APIProcessor extends HttpUploadProcessor {
 
 	public static String KeyID = UUID.randomUUID().toString();
-	private static SecureRandom rnd = new SecureRandom();
 
 	@Override
 	public void process(String contentType, Socket client, String method) {
 		String path = this.getRequestPath();
+		AccountManager manager = AccountManager.getInstance();
+
 		try {
 			// Parse body (if present)
 			byte[] body = new byte[0];
@@ -59,14 +50,12 @@ public class APIProcessor extends HttpUploadProcessor {
 				// Parse body
 				JsonObject login = JsonParser.parseString(new String(body, "UTF-8")).getAsJsonObject();
 
-				// Generate new JWT
-				String id = UUID.randomUUID().toString();
-				if (!new File("accounts").exists())
-					new File("accounts").mkdirs();
-				File uf = new File("accounts/" + login.get("username").getAsString());
-				if (uf.exists()) {
-					id = Files.readAllLines(uf.toPath()).get(0);
-				} else {
+				// Locate account
+				String id = manager.authenticate(login.get("username").getAsString(),
+						login.get("password").getAsString().toCharArray());
+
+				// Check existence
+				if (id == null) {
 					// Check if registration is enabled, if not, prevent login
 					if (!EmuFeral.allowRegistration) {
 						// Not sure what to send but sending this causes an error in the next request
@@ -75,66 +64,22 @@ public class APIProcessor extends HttpUploadProcessor {
 						return;
 					}
 
-					// Save account details
-					Files.writeString(uf.toPath(), id + "\n" + login.get("username").getAsString());
-					Files.writeString(new File("accounts/" + id).toPath(),
-							id + "\n" + login.get("username").getAsString() + "\ntrue\n"
-									+ login.get("username").getAsString() + "\n"
-									+ new File("accounts").listFiles().length);
-				}
-
-				// Check password
-				File credentialFile = new File("accounts/" + id + ".cred");
-				if (credentialFile.exists()) {
-					// Load credentials
-					FileInputStream strm = new FileInputStream(credentialFile);
-					int length = ByteBuffer.wrap(strm.readNBytes(4)).getInt();
-					byte[] salt = new byte[length];
-					for (int i = 0; i < length; i++) {
-						salt[i] = (byte) strm.read();
-					}
-					length = ByteBuffer.wrap(strm.readNBytes(4)).getInt();
-					byte[] hash = new byte[length];
-					for (int i = 0; i < length; i++) {
-						hash[i] = (byte) strm.read();
-					}
-					strm.close();
-
-					// Get current hash
-					byte[] cHash = getHash(salt, login.get("password").getAsString().toCharArray());
-
-					// Compare hashes
-					if (hash.length != cHash.length) {
-						// Not sure what to send but sending this causes an error in the next request
-						// triggering the client into saying invalid password.
+					// Create account
+					id = manager.register(login.get("username").getAsString());
+					if (id == null) {
+						// Invalid details
 						this.setResponseCode(200);
 						return;
 					}
-					for (int i = 0; i < hash.length; i++) {
-						if (hash[i] != cHash[i]) {
-							// Not sure what to send but sending this causes an error in the next request
-							// triggering the client into saying invalid password.
-							this.setResponseCode(200);
-							return;
-						}
-					}
-				} else if (new File("accounts/" + id + ".credsave").exists()) {
-					// Generate salt and hash
-					byte[] salt = salt();
-					byte[] hash = getHash(salt, login.get("password").getAsString().toCharArray());
-
-					// Save
-					FileOutputStream strm = new FileOutputStream(credentialFile);
-					strm.write(ByteBuffer.allocate(4).putInt(salt.length).array());
-					strm.write(salt);
-					strm.write(ByteBuffer.allocate(4).putInt(hash.length).array());
-					strm.write(hash);
-					strm.close();
-
-					// Delete request
-					new File("accounts/" + id + ".credsave").delete();
 				}
 
+				// Check password save request
+				if (manager.isPasswordUpdateRequested(id)) {
+					// Update password
+					manager.updatePassword(id, login.get("password").getAsString().toCharArray());
+				}
+				
+				// Build JWT
 				JsonObject headers = new JsonObject();
 				headers.addProperty("alg", "RS256");
 				headers.addProperty("kid", KeyID);
@@ -155,7 +100,7 @@ public class APIProcessor extends HttpUploadProcessor {
 				response.addProperty("refresh_token", id);
 				response.addProperty("auth_token", headerD + "." + payloadD + "." + Base64.getUrlEncoder()
 						.encodeToString(EmuFeral.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
-				response.addProperty("rename_required", !credentialFile.exists()); // request user name if new or
+				response.addProperty("rename_required", !manager.hasPassword(id)); // request user name if new or
 																					// migrating
 				response.addProperty("rename_required_key", "");
 				response.addProperty("email_update_required", false);
@@ -185,31 +130,18 @@ public class APIProcessor extends HttpUploadProcessor {
 						.getAsJsonObject();
 
 				// Find account
-				String id = UUID.randomUUID().toString();
-				String name = "spark";
-				String account = name;
-				String uid = "0";
-				File uf = new File("accounts/" + jP.get("uuid").getAsString());
-				boolean newUser = true;
-				if (uf.exists()) {
-					id = Files.readAllLines(uf.toPath()).get(0);
-					account = Files.readAllLines(uf.toPath()).get(1);
-					newUser = Files.readAllLines(uf.toPath()).get(2).equals("true");
-					name = Files.readAllLines(uf.toPath()).get(3);
-					uid = Files.readAllLines(uf.toPath()).get(4);
-				} else {
+				EmuFeralAccount acc = manager.getAccount(jP.get("uuid").getAsString());
+				if (acc == null) {
 					this.setResponseCode(403);
 					this.setResponseMessage("Access denied");
 					return;
 				}
 
 				// Save new name
-				name = newName;
-				Files.writeString(new File("accounts/" + id).toPath(),
-						id + "\n" + account + "\n" + newUser + "\n" + name + "\n" + uid);
-
-				// Tell authorization to save password
-				new File("accounts/" + id + ".credsave").createNewFile();
+				if (acc.updateDisplayName(newName)) {
+					// Tell authorization to save password
+					manager.makePasswordUpdateRequested(acc.getAccountID());
+				}
 
 				break;
 			}
@@ -231,46 +163,30 @@ public class APIProcessor extends HttpUploadProcessor {
 						.getAsJsonObject();
 
 				// Find account
-				String id = UUID.randomUUID().toString();
-				String name = "spark";
-				String account = name;
-				File uf = new File("accounts/" + payload.get("uuid").getAsString());
-				boolean newUser = true;
-				if (uf.exists()) {
-					id = Files.readAllLines(uf.toPath()).get(0);
-					account = Files.readAllLines(uf.toPath()).get(1);
-					newUser = Files.readAllLines(uf.toPath()).get(2).equals("true");
-					name = Files.readAllLines(uf.toPath()).get(3);
-				} else {
-					Files.writeString(uf.toPath(), id + "\n" + name);
-					Files.writeString(new File("accounts/" + id).toPath(),
-							id + "\n" + account + "\ntrue\n" + name + "\n" + new File("accounts").listFiles().length);
+				EmuFeralAccount acc = manager.getAccount(payload.get("uuid").getAsString());
+				if (acc == null) {
+					this.setResponseCode(403);
+					this.setResponseMessage("Access denied");
+					return;
 				}
 
 				// Send a response
-				JsonObject privacy = new JsonObject();
-				privacy.addProperty("voice_chat", "following");
-				File privacyFile = new File("accounts/" + id + ".privacy");
-				if (privacyFile.exists()) {
-					privacy = JsonParser.parseString(Files.readString(privacyFile.toPath())).getAsJsonObject();
-				} else {
-					Files.writeString(privacyFile.toPath(), privacy.toString());
-				}
+				JsonObject privacy = acc.getPrivacySettings();
 				JsonObject response = new JsonObject();
 				response.addProperty("country_code", "US");
-				response.addProperty("display_name", name);
-				response.addProperty("enhanced_customization", newUser);
+				response.addProperty("display_name", acc.getDisplayName());
+				response.addProperty("enhanced_customization", true);
 				response.addProperty("language", "en");
 				response.add("privacy", privacy);
-				response.addProperty("username", account);
-				response.addProperty("uuid", id);
+				response.addProperty("username", acc.getLoginName());
+				response.addProperty("uuid", acc.getAccountID());
 				setBody(response.toString());
 				break;
 			}
 			case "/u/settings": {
 				// Parse JWT payload
 				String token = this.getHeader("Authorization").substring("Bearer ".length());
-				
+
 				// Verify signature
 				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
 				String sig = token.split("\\.")[2];
@@ -279,24 +195,17 @@ public class APIProcessor extends HttpUploadProcessor {
 					this.setResponseMessage("Access denied");
 					return;
 				}
-				
+
 				JsonObject payload = JsonParser
 						.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
 						.getAsJsonObject();
 
 				// Find account
-				String id = UUID.randomUUID().toString();
-				String name = "spark";
-				String account = name;
-				File uf = new File("accounts/" + payload.get("uuid").getAsString());
-				if (uf.exists()) {
-					id = Files.readAllLines(uf.toPath()).get(0);
-					account = Files.readAllLines(uf.toPath()).get(1);
-					name = Files.readAllLines(uf.toPath()).get(3);
-				} else {
-					Files.writeString(uf.toPath(), id + "\n" + name);
-					Files.writeString(new File("accounts/" + id).toPath(),
-							id + "\n" + account + "\ntrue\n" + name + "\n" + new File("accounts").listFiles().length);
+				EmuFeralAccount acc = manager.getAccount(payload.get("uuid").getAsString());
+				if (acc == null) {
+					this.setResponseCode(403);
+					this.setResponseMessage("Access denied");
+					return;
 				}
 
 				// Parse body
@@ -341,22 +250,6 @@ public class APIProcessor extends HttpUploadProcessor {
 			}
 		} catch (Exception e) {
 			e = e;
-		}
-	}
-
-	private static byte[] salt() {
-		byte[] salt = new byte[32];
-		rnd.nextBytes(salt);
-		return salt;
-	}
-
-	public static byte[] getHash(byte[] salt, char[] password) {
-		KeySpec spec = new PBEKeySpec(password, salt, 65536, 128);
-		try {
-			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
-			return factory.generateSecret(spec).getEncoded();
-		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-			return null;
 		}
 	}
 

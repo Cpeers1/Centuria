@@ -1,5 +1,9 @@
 package org.asf.emuferal.packets.smartfox;
 
+import java.io.IOException;
+
+import org.asf.emuferal.networking.smartfox.SmartfoxClient;
+
 public interface ISmartfoxPacket {
 
 	/**
@@ -21,20 +25,20 @@ public interface ISmartfoxPacket {
 	 * 
 	 * @param content Packet content
 	 */
-	public boolean parse(String content);
+	public boolean parse(String content) throws IOException;
 
 	/**
 	 * Builds the Smartfox packet
 	 * 
 	 * @return Packet content
 	 */
-	public String build();
+	public String build() throws IOException;
 
 	/**
 	 * Called to handle the packet
 	 * 
 	 * @return True if successful, false otherwise
 	 */
-	public boolean handle();
+	public boolean handle(SmartfoxClient client) throws IOException;
 
 }

@@ -1,15 +1,12 @@
 package org.asf.emuferal.players;
 
+import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 
 public class Player {
-
-	public int userID;
-	public boolean isNew;
-	public String userUUID;
-	public String loginName;
-	public String displayName;
+	
 	public SmartfoxClient client;
+	public EmuFeralAccount account;
 
 	public String activeLook;
 	public String activeSanctuaryLook;

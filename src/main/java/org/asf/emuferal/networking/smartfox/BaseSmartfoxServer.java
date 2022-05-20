@@ -1,9 +1,12 @@
 package org.asf.emuferal.networking.smartfox;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.zip.GZIPInputStream;
 
 import org.asf.emuferal.packets.smartfox.ISmartfoxPacket;
 
@@ -98,8 +101,16 @@ public abstract class BaseSmartfoxServer {
 				// Client loop
 				while (client.getSocket() != null) {
 					String data = readPacketString(client);
-					if (!runPacket(data)) {
-						System.err.println("Unhandled packet: client " + client + " sent: " + data);
+					if (!handlePacket(data, client)) {
+						System.err.println("Unhandled packet: client " + client.getSocket() + " sent: " + data);
+
+						// Allow debug mode to re-register packets
+						if (System.getProperty("debugMode") != null && System.getProperty("debugMode").equals("true")) {
+							packets.clear();
+							setupComplete = false;
+							registerPackets();
+							setupComplete = true;
+						}
 					}
 				}
 
@@ -191,7 +202,7 @@ public abstract class BaseSmartfoxServer {
 		return parsePacketPayload(data, packetType);
 	}
 
-	private <T extends ISmartfoxPacket> T parsePacketPayload(String packet, Class<T> packetType) {
+	private <T extends ISmartfoxPacket> T parsePacketPayload(String packet, Class<T> packetType) throws IOException {
 		// Find a packet
 		for (ISmartfoxPacket pkt : packets) {
 			if (pkt.canParse(packet) && packetType.isAssignableFrom(pkt.getClass())) {
@@ -209,7 +220,14 @@ public abstract class BaseSmartfoxServer {
 		return null;
 	}
 
-	private boolean runPacket(String packet) throws IOException {
+	/**
+	 * Handles a packet
+	 * 
+	 * @param packet Packet content to handle
+	 * @param client Smartfox client
+	 * @return True if handled successfully, false otherwise
+	 */
+	public boolean handlePacket(String packet, SmartfoxClient client) throws IOException {
 		// Find a packet
 		for (ISmartfoxPacket pkt : packets) {
 			if (pkt.canParse(packet)) {
@@ -219,7 +237,7 @@ public abstract class BaseSmartfoxServer {
 					continue; // Apparently this packet doesnt support the payload, odd
 
 				// Handle it
-				if (res.handle())
+				if (res.handle(client))
 					return true; // It was handled, lets return true and end the loop
 			}
 		}
@@ -235,6 +253,20 @@ public abstract class BaseSmartfoxServer {
 			if (b == -1) {
 				throw new IOException("Stream closed");
 			} else if (b == 0) {
+				// Solve for the XT issue
+				if (payload.startsWith("%xt|n%"))
+					payload = "%xt%" + payload.substring("%xt|n%".length());
+
+				// Compression
+				if (payload.startsWith("$")) {
+					// Decompress packet
+					byte[] compressedData = Base64.getDecoder().decode(payload.substring(1));
+					GZIPInputStream dc = new GZIPInputStream(new ByteArrayInputStream(compressedData));
+					byte[] newData = dc.readAllBytes();
+					dc.close();
+					payload = new String(newData, "UTF-8");
+				}
+
 				return payload;
 			} else
 				payload += (char) b;

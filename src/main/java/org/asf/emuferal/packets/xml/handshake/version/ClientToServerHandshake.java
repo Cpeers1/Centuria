@@ -1,5 +1,6 @@
 package org.asf.emuferal.packets.xml.handshake.version;
 
+import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.smartfox.ISmartfoxPacket;
 import org.asf.emuferal.packets.xml.VersionHandshakePackets;
 
@@ -53,7 +54,7 @@ public class ClientToServerHandshake implements ISmartfoxPacket {
 	}
 
 	@Override
-	public boolean handle() {
+	public boolean handle(SmartfoxClient client) {
 		return false;
 	}
 }

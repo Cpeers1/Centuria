@@ -145,19 +145,6 @@ public class OldGameServer {
 					return;
 				}
 
-				// Looks
-				File lookFiles = new File("accounts/" + payload.get("uuid").getAsString() + ".looks");
-				lookFiles.mkdirs();
-
-				// Active look
-				File activeLookFileC = new File("accounts/" + payload.get("uuid").getAsString() + ".looks/active.look");
-				String activeLook = UUID.randomUUID().toString();
-				if (activeLookFileC.exists()) {
-					activeLook = Files.readAllLines(activeLookFileC.toPath()).get(0);
-				} else {
-					Files.writeString(activeLookFileC.toPath(), activeLook);
-				}
-
 				// Sanctuary looks
 				File sLookFiles = new File("accounts/" + payload.get("uuid").getAsString() + ".sanctuary.looks");
 				sLookFiles.mkdirs();

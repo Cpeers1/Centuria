@@ -66,4 +66,15 @@ public class XtReader {
 		return Base64.getDecoder().decode(data);
 	}
 
+	public String readRemaining() {
+		String rest = "";
+		while (hasNext()) {
+			if (rest.isEmpty())
+				rest = read();
+			else
+				rest += "%" + read();
+		}
+		return rest;
+	}
+
 }

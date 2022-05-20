@@ -1,6 +1,7 @@
 package org.asf.emuferal.packets.xml.handshake.version;
 
 import org.asf.emuferal.packets.smartfox.ISmartfoxPacket;
+import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xml.VersionHandshakePackets;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -41,7 +42,7 @@ public class ServerToClientOK implements ISmartfoxPacket {
 	}
 
 	@Override
-	public boolean handle() {
+	public boolean handle(SmartfoxClient client) {
 		return false;
 	}
 
