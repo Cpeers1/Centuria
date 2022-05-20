@@ -1,4 +1,4 @@
-package org.asf.emuferal;
+package org.asf.emuferal.networking.http;
 
 import java.net.Socket;
 

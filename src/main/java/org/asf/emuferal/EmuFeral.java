@@ -10,22 +10,48 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.HashMap;
 
+import org.asf.emuferal.networking.gameserver.GameServer;
+import org.asf.emuferal.networking.http.APIProcessor;
+import org.asf.emuferal.networking.http.DirectorProcessor;
+import org.asf.emuferal.networking.http.PaymentsProcessor;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.ConnectiveServerFactory;
 
 public class EmuFeral {
+	// Update
 	public static final String SERVER_UPDATE_VERSION = "1.0.0.A3";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/emuferal";
+
+	// Configuration
 	public static boolean allowRegistration = true;
 	public static String discoveryAddress = "localhost";
+
+	// Servers
 	private static ConnectiveHTTPServer apiServer;
 	private static ConnectiveHTTPServer directorServer;
 	private static ConnectiveHTTPServer paymentServer;
 	private static GameServer gameServer;
 
-	public static void main(String[] args) throws InvocationTargetException, IOException {
+	// Keys
+	private static PrivateKey privateKey;
+	private static PublicKey publicKey;
+
+	public static void main(String[] args) throws InvocationTargetException, IOException, NoSuchAlgorithmException {
 		// Update configuration
 		String updateChannel = "alpha";
 		boolean disableUpdater = false;
@@ -112,7 +138,8 @@ public class EmuFeral {
 		gameServer.getServerSocket().close();
 	}
 
-	public static void startServer() throws InvocationTargetException, UnknownHostException, IOException {
+	public static void startServer()
+			throws InvocationTargetException, UnknownHostException, IOException, NoSuchAlgorithmException {
 		// Server configuration
 		File serverConf = new File("server.conf");
 		if (!serverConf.exists()) {
@@ -130,6 +157,28 @@ public class EmuFeral {
 				key = key.substring(0, key.indexOf("="));
 			}
 			properties.put(key, value);
+		}
+
+		// Load or generate keys for JWT signatures
+		File publicKey = new File("publickey.pem");
+		File privateKey = new File("privatekey.pem");
+		if (!publicKey.exists() || !privateKey.exists()) {
+			// Generate new keys
+			KeyPair pair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+
+			// Save keys
+			Files.writeString(publicKey.toPath(), pemEncode(pair.getPublic().getEncoded(), "PUBLIC"));
+			Files.writeString(privateKey.toPath(), pemEncode(pair.getPrivate().getEncoded(), "PRIVATE"));
+		}
+		// Load keys
+		KeyFactory fac = KeyFactory.getInstance("RSA");
+		try {
+			EmuFeral.privateKey = fac
+					.generatePrivate(new PKCS8EncodedKeySpec(pemDecode(Files.readString(privateKey.toPath()))));
+			EmuFeral.publicKey = fac
+					.generatePublic(new X509EncodedKeySpec(pemDecode(Files.readString(publicKey.toPath()))));
+		} catch (InvalidKeySpecException | IOException e1) {
+			throw new RuntimeException(e1);
 		}
 
 		// Start the servers
@@ -162,9 +211,93 @@ public class EmuFeral {
 		ServerSocket sock = new ServerSocket(Integer.parseInt(properties.get("game-port")), 0,
 				InetAddress.getByName("0.0.0.0"));
 		allowRegistration = properties.get("allow-registration").equals("true");
-		gameServer = new GameServer();
-		gameServer.run(sock);
+		gameServer = new GameServer(sock);
+		gameServer.start();
 		System.out.println("Successfully started emulated servers.");
 	}
 
+	// PEM parser
+	private static byte[] pemDecode(String pem) {
+		String base64 = pem.replace("\r", "");
+
+		// Strip header
+		while (base64.startsWith("-"))
+			base64 = base64.substring(1);
+		while (!base64.startsWith("-"))
+			base64 = base64.substring(1);
+		while (base64.startsWith("-"))
+			base64 = base64.substring(1);
+
+		// Clean data
+		base64 = base64.replace("\n", "");
+
+		// Strip footer
+		while (base64.endsWith("-"))
+			base64 = base64.substring(0, base64.length() - 1);
+		while (!base64.endsWith("-"))
+			base64 = base64.substring(0, base64.length() - 1);
+		while (base64.endsWith("-"))
+			base64 = base64.substring(0, base64.length() - 1);
+
+		// Decode and return
+		return Base64.getDecoder().decode(base64);
+	}
+
+	// PEM emitter
+	private static String pemEncode(byte[] key, String type) {
+		// Generate header
+		String PEM = "-----BEGIN " + type + " KEY-----";
+
+		// Generate payload
+		String base64 = new String(Base64.getEncoder().encode(key));
+
+		// Generate PEM
+		while (true) {
+			PEM += "\n";
+			boolean done = false;
+			for (int i = 0; i < 64; i++) {
+				if (base64.isEmpty()) {
+					done = true;
+					break;
+				}
+				PEM += base64.substring(0, 1);
+				base64 = base64.substring(1);
+			}
+			if (base64.isEmpty())
+				break;
+			if (done)
+				break;
+		}
+
+		// Append footer
+		PEM += "\n";
+		PEM += "-----END " + type + " KEY-----";
+
+		// Return PEM data
+		return PEM;
+	}
+
+	// Signature generator
+	public static byte[] sign(byte[] data) {
+		try {
+			Signature sig = Signature.getInstance("Sha256WithRSA");
+			sig.initSign(privateKey);
+			sig.update(data);
+			return sig.sign();
+		} catch (SignatureException | NoSuchAlgorithmException | InvalidKeyException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	// Signature verification
+	public static boolean verify(byte[] data, byte[] signature) {
+		try {
+			Signature sig = Signature.getInstance("Sha256WithRSA");
+			sig.initVerify(publicKey);
+			sig.update(data);
+			return sig.verify(signature);
+		} catch (SignatureException | NoSuchAlgorithmException | InvalidKeyException e) {
+			return false;
+		}
+	}
 }

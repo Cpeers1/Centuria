@@ -1,4 +1,4 @@
-package org.asf.emuferal.packets;
+package org.asf.emuferal.packets.xml;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;

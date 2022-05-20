@@ -1,6 +1,6 @@
 package org.asf.emuferal.players;
 
-import java.net.Socket;
+import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 
 public class Player {
 
@@ -9,7 +9,7 @@ public class Player {
 	public String userUUID;
 	public String loginName;
 	public String displayName;
-	public Socket client;
+	public SmartfoxClient client;
 
 	public String activeLook;
 	public String activeSanctuaryLook;

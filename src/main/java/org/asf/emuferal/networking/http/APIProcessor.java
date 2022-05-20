@@ -1,4 +1,4 @@
-package org.asf.emuferal;
+package org.asf.emuferal.networking.http;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -17,6 +17,7 @@ import java.util.UUID;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import org.asf.emuferal.EmuFeral;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.processors.HttpUploadProcessor;
 
@@ -32,6 +33,7 @@ public class APIProcessor extends HttpUploadProcessor {
 	public void process(String contentType, Socket client, String method) {
 		String path = this.getRequestPath();
 		try {
+			// Parse body (if present)
 			byte[] body = new byte[0];
 			if (method.toUpperCase().equals("POST")) {
 				ByteArrayOutputStream strm = new ByteArrayOutputStream();
@@ -43,9 +45,14 @@ public class APIProcessor extends HttpUploadProcessor {
 			switch (path) {
 			case "/ca/request-token": {
 				// Hardcoded response as i have no clue how to do this
-				this.setBody(
-						"{\"challenge\":\"kOLl8r71tG1343qobkIvdJSGuXxUZBQUtHTq7Npe91l51TrpaGLZf4nPIjSCNxniUdpdHvOfcCzV2TQRn5MXab08vwGizt0NiDmzAdWrzQMYDjgTYz7Xqbzqds2LaYTa\",\"iv\":\"03KJ2tNeasisn7vI42W49IJpObpQirvu\"}"
-								.getBytes());
+				String challenge = "kOLl8r71tG1343qobkIvdJSGuXxUZBQUtHTq7Npe91l51TrpaGLZf4nPIjSCNxniUdpdHvOfcCzV2TQRn5MXab08vwGizt0NiDmzAdWrzQMYDjgTYz7Xqbzqds2LaYTa";
+				String iv = "03KJ2tNeasisn7vI42W49IJpObpQirvu";
+
+				// Build json
+				JsonObject res = new JsonObject();
+				res.addProperty("challenge", challenge);
+				res.addProperty("iv", iv);
+				this.setBody(res.toString().getBytes("UTF-8"));
 				break;
 			}
 			case "/a/authenticate": {
@@ -146,8 +153,8 @@ public class APIProcessor extends HttpUploadProcessor {
 				JsonObject response = new JsonObject();
 				response.addProperty("uuid", id);
 				response.addProperty("refresh_token", id);
-				response.addProperty("auth_token", headerD + "." + payloadD + "."
-						+ Base64.getUrlEncoder().encodeToString("NO_SIGNATURE".getBytes()));
+				response.addProperty("auth_token", headerD + "." + payloadD + "." + Base64.getUrlEncoder()
+						.encodeToString(EmuFeral.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
 				response.addProperty("rename_required", !credentialFile.exists()); // request user name if new or
 																					// migrating
 				response.addProperty("rename_required_key", "");
@@ -163,6 +170,16 @@ public class APIProcessor extends HttpUploadProcessor {
 
 				// Parse JWT payload
 				String token = this.getHeader("Authorization").substring("Bearer ".length());
+
+				// Verify signature
+				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
+				String sig = token.split("\\.")[2];
+				if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
+					this.setResponseCode(403);
+					this.setResponseMessage("Access denied");
+					return;
+				}
+
 				JsonObject jP = JsonParser
 						.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
 						.getAsJsonObject();
@@ -199,6 +216,16 @@ public class APIProcessor extends HttpUploadProcessor {
 			case "/u/user": {
 				// Parse JWT payload
 				String token = this.getHeader("Authorization").substring("Bearer ".length());
+
+				// Verify signature
+				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
+				String sig = token.split("\\.")[2];
+				if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
+					this.setResponseCode(403);
+					this.setResponseMessage("Access denied");
+					return;
+				}
+
 				JsonObject payload = JsonParser
 						.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
 						.getAsJsonObject();
@@ -243,6 +270,16 @@ public class APIProcessor extends HttpUploadProcessor {
 			case "/u/settings": {
 				// Parse JWT payload
 				String token = this.getHeader("Authorization").substring("Bearer ".length());
+				
+				// Verify signature
+				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
+				String sig = token.split("\\.")[2];
+				if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
+					this.setResponseCode(403);
+					this.setResponseMessage("Access denied");
+					return;
+				}
+				
 				JsonObject payload = JsonParser
 						.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
 						.getAsJsonObject();
@@ -264,6 +301,7 @@ public class APIProcessor extends HttpUploadProcessor {
 
 				// Parse body
 				JsonObject settings = JsonParser.parseString(new String(body, "UTF-8")).getAsJsonObject();
+				// TODO
 
 				token = token;
 
@@ -291,8 +329,8 @@ public class APIProcessor extends HttpUploadProcessor {
 
 					// Send response
 					JsonObject response = new JsonObject();
-					response.addProperty("autorization_key", headerD + "." + payloadD + "."
-							+ Base64.getUrlEncoder().encodeToString("NO_SIGNATURE".getBytes()));
+					response.addProperty("autorization_key", headerD + "." + payloadD + "." + Base64.getUrlEncoder()
+							.encodeToString(EmuFeral.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
 					setBody(response.toString());
 				} else {
 					setResponseCode(400);

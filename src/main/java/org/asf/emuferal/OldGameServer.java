@@ -19,8 +19,8 @@ import java.util.zip.GZIPOutputStream;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
-import org.asf.emuferal.packets.LoginPackets;
-import org.asf.emuferal.packets.VersionHandshakePackets;
+import org.asf.emuferal.packets.xml.LoginPackets;
+import org.asf.emuferal.packets.xml.VersionHandshakePackets;
 import org.asf.emuferal.players.Player;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -29,7 +29,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class GameServer {
+public class OldGameServer {
 
 	private ServerSocket gameServer;
 	private Random rnd = new Random();
@@ -66,7 +66,7 @@ public class GameServer {
 
 			// Player object
 			Player plr = new Player();
-			plr.client = client;
+			//plr.client = client;
 
 			try {
 				// Version handshake

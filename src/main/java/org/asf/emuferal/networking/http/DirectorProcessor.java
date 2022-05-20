@@ -1,9 +1,8 @@
-package org.asf.emuferal;
+package org.asf.emuferal.networking.http;
 
-import java.io.ByteArrayOutputStream;
 import java.net.Socket;
 
-import org.asf.rats.ConnectiveHTTPServer;
+import org.asf.emuferal.EmuFeral;
 import org.asf.rats.processors.HttpUploadProcessor;
 
 import com.google.gson.JsonObject;
@@ -14,28 +13,16 @@ public class DirectorProcessor extends HttpUploadProcessor {
 		String path = this.getRequestPath();
 
 		try {
-			byte[] body = new byte[0];
-			if (method.toUpperCase().equals("POST")) {
-				ByteArrayOutputStream strm = new ByteArrayOutputStream();
-				ConnectiveHTTPServer.transferRequestBody(getHeaders(), getRequestBodyStream(), strm);
-				body = strm.toByteArray();
-				strm.close();
-			}
-
 			switch (path) {
 			case "/v1/bestGameServer": {
 				// Send response
 				JsonObject response = new JsonObject();
-				response.addProperty("smartfoxServer", EmuFeral.discoveryAddress);
+				response.addProperty("smartfoxServer", EmuFeral.discoveryAddress); // load discovery address
 				setBody(response.toString());
 				break;
 			}
-			default:
-				path = path;
-				break;
 			}
 		} catch (Exception e) {
-			e = e;
 		}
 	}
 
