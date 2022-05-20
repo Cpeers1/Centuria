@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;
@@ -71,6 +72,15 @@ public class AvatarEditorSelectLook implements IXtPacket<AvatarEditorSelectLook>
 		plr.pendingLookDefID = 8254;
 		if (lookObj != null) {
 			plr.pendingLookDefID = lookObj.get("defId").getAsInt();
+		}
+
+		// Sync
+		GameServer srv = (GameServer) client.getServer();
+		for (Player player : srv.getPlayers()) {
+			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+				plr.destroyAt(player);
+				plr.syncTo(player);
+			}
 		}
 
 		return true;

@@ -196,7 +196,7 @@ public abstract class BaseSmartfoxServer {
 	 * @throws IOException If reading fails
 	 * @return ISmartfoxPacket instance or null
 	 */
-	public synchronized <T extends ISmartfoxPacket> T readPacket(SmartfoxClient smartfoxClient, Class<T> packetType)
+	public <T extends ISmartfoxPacket> T readPacket(SmartfoxClient smartfoxClient, Class<T> packetType)
 			throws IOException {
 		// Read data
 		String data = readPacketString(smartfoxClient);
@@ -249,7 +249,7 @@ public abstract class BaseSmartfoxServer {
 	}
 
 	// Reads a packet
-	private synchronized String readPacketString(SmartfoxClient smartfoxClient) throws IOException {
+	private String readPacketString(SmartfoxClient smartfoxClient) throws IOException {
 		String payload = new String();
 		while (true) {
 			int b = smartfoxClient.getSocket().getInputStream().read();

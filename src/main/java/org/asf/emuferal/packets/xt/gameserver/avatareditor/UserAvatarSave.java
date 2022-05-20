@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemPacket;
@@ -56,11 +57,13 @@ public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 		// Save avatar to inventory
 		JsonArray items = plr.account.getPlayerInventory().getItem("avatars").getAsJsonArray();
 		JsonObject lookObj = null;
+		boolean isPrimary = false;
 		for (JsonElement itm : items) {
 			if (itm.isJsonObject()) {
 				JsonObject obj = itm.getAsJsonObject();
 				if (obj.get("id").getAsString().equals(plr.activeLook)) {
 					lookObj = obj;
+					isPrimary = lookObj.has("PrimaryLook");
 					break;
 				}
 			}
@@ -75,7 +78,8 @@ public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 			al.addProperty("gender", 0);
 			al.add("info", lookData);
 			JsonObject components = new JsonObject();
-			components.add("PrimaryLook", new JsonObject());
+			if (isPrimary)
+				components.add("PrimaryLook", new JsonObject());
 			components.add("Timestamp", ts);
 			components.add("AvatarLook", al);
 			components.add("Name", nm);
@@ -92,8 +96,14 @@ public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 		pkt.item = items;
 		client.sendPacket(pkt);
 
-		// TODO: sync to other clients
-		client = client;
+		// Sync
+		GameServer srv = (GameServer) client.getServer();
+		for (Player player : srv.getPlayers()) {
+			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+				plr.destroyAt(player);
+				plr.syncTo(player);
+			}
+		}
 
 		return true;
 	}

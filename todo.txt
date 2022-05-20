@@ -1,13 +1,7 @@
 Multiplayer update: Alpha 3:
-- secure login JWTs
-- overhaul packet system
 - overhaul account storage
 - chat
-- disconnect connected clients of the same account
-- initial join sync
 - ingame sync
-- avatar update sync
-- leave sync
 
 main todo:
 - fix avatar slots sometimes breaking

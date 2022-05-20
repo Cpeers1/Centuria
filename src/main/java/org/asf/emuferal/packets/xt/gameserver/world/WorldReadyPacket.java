@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;
@@ -37,6 +38,15 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Load player
 		Player plr = (Player) client.container;
+		
+		// Sync
+		GameServer srv = (GameServer) client.getServer();
+		for (Player player : srv.getPlayers()) {
+			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+				plr.destroyAt(player);
+			}
+		}
+
 		plr.room = teleportUUID;
 
 		// Send to tutorial if new
@@ -61,6 +71,25 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Find spawn
 		handleSpawn(plr.room, plr, client);
+
+		// Set location
+		plr.lastLocation = plr.respawn;
+
+		// Send all other players to the current player
+		GameServer server = (GameServer) client.getServer();
+		for (Player player : server.getPlayers()) {
+			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+				player.syncTo(plr);
+			}
+		}
+
+		// Sync spawn
+		for (Player player : server.getPlayers()) {
+			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+				plr.syncTo(player);
+			}
+		}
+
 		return true;
 	}
 

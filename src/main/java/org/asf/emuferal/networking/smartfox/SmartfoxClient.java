@@ -46,7 +46,7 @@ public class SmartfoxClient {
 	 * @param packet Packet to send
 	 * @throws IOException If transmission fails
 	 */
-	public synchronized void sendPacket(ISmartfoxPacket packet) throws IOException {
+	public void sendPacket(ISmartfoxPacket packet) throws IOException {
 		server.sendPacket(this, packet);
 	}
 
@@ -56,7 +56,7 @@ public class SmartfoxClient {
 	 * @param packet Raw packet to send
 	 * @throws IOException If transmission fails
 	 */
-	public synchronized void sendPacket(String packet) throws IOException {
+	public void sendPacket(String packet) throws IOException {
 		server.sendPacket(this, packet);
 	}
 

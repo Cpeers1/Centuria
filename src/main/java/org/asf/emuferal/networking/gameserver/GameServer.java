@@ -148,6 +148,13 @@ public class GameServer extends BaseSmartfoxServer {
 			return;
 		}
 
+		// Disconnect an already connected instance
+		for (Player player : getPlayers()) {
+			if (player.account.getAccountID().equals(acc.getAccountID())) {
+				player.client.disconnect();
+			}
+		}
+
 		// Build Player object
 		Player plr = new Player();
 		plr.client = client;
@@ -200,6 +207,13 @@ public class GameServer extends BaseSmartfoxServer {
 				players.remove(plr);
 				System.out.println("Player disconnected: " + plr.account.getLoginName() + " (was "
 						+ plr.account.getDisplayName() + ")");
+			}
+
+			// Remove player character from all clients
+			for (Player player : getPlayers()) {
+				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+					plr.destroyAt(player);
+				}
 			}
 		}
 	}

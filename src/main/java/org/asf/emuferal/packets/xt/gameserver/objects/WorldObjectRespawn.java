@@ -48,7 +48,7 @@ public class WorldObjectRespawn implements IXtPacket<WorldObjectRespawn> {
 		// Broadcast respawn
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {
-			if (player.room.equals(plr.room)) {
+			if (plr.room != null && player.room != null && player.room.equals(plr.room)) {
 				player.client.sendPacket(this);
 			}
 		}
