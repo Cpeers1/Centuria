@@ -159,8 +159,7 @@ public abstract class BaseSmartfoxServer {
 	 */
 	public synchronized void sendPacket(SmartfoxClient smartfoxClient, ISmartfoxPacket packet) throws IOException {
 		// Instantiate the packet and build
-		ISmartfoxPacket inst = packet.instantiate();
-		String content = inst.build();
+		String content = packet.build();
 
 		// Send packet
 		byte[] payload = content.getBytes("UTF-8");
