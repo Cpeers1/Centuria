@@ -315,7 +315,22 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			break;
 		}
 		default: {
+			System.err.println("Player teleport: " + plr.account.getDisplayName() + " to unrecognized spawn!");
 			room = room;
+
+			WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
+			res.x = 0;
+			res.y = 80;
+			res.z = 0;
+			res.rw = 0;
+			res.rx = 0;
+			res.ry = 0;
+			res.rz = 0;
+			client.sendPacket(res);
+
+			plr.respawn = res.x + "%" + res.y + "%" + res.z + "%" + res.rw + "%" + res.rx + "%" + res.ry + "%" + res.rz;
+			System.out.println("Player teleport: " + plr.account.getDisplayName()
+					+ ", teleport destination: Sunken Thicket: Latchkey's Lab (Exit Door)");
 		}
 		}
 	}
