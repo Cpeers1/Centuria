@@ -16,7 +16,7 @@ import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.ConnectiveServerFactory;
 
 public class EmuFeral {
-	public static final String SERVER_UPDATE_VERSION = "1.0.0.A2";
+	public static final String SERVER_UPDATE_VERSION = "1.0.0.A3";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/emuferal";
 	public static boolean allowRegistration = true;
 	public static String discoveryAddress = "localhost";
@@ -55,7 +55,7 @@ public class EmuFeral {
 		System.out.println("                              EmuFeral                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                          Version 1.0.0.A2                          "); // not doing this
+		System.out.println("                          Version 1.0.0.A3                          "); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain
@@ -63,7 +63,8 @@ public class EmuFeral {
 		System.out.println("--------------------------------------------------------------------");
 		System.out.println("");
 
-		if (!disableUpdater) {
+		if (!disableUpdater
+				&& (System.getProperty("debugMode") == null || System.getProperty("debugMode").equals("false"))) {
 			// Check for updates
 			System.out.println("Checking for updates...");
 			try {

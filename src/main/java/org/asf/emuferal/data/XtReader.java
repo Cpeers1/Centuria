@@ -1,5 +1,7 @@
 package org.asf.emuferal.data;
 
+import java.util.Base64;
+
 public class XtReader {
 	private String[] objects;
 	private int position = 0;
@@ -20,6 +22,48 @@ public class XtReader {
 		if (!hasNext())
 			return null;
 		return objects[position++];
+	}
+
+	public int readInt() {
+		String data = read();
+		if (data == null)
+			return 0;
+		return Integer.parseInt(data);
+	}
+
+	public long readLong() {
+		String data = read();
+		if (data == null)
+			return 0;
+		return Long.parseLong(data);
+	}
+
+	public double readDouble() {
+		String data = read();
+		if (data == null)
+			return 0;
+		return Double.parseDouble(data);
+	}
+
+	public float readFloat() {
+		String data = read();
+		if (data == null)
+			return 0;
+		return Float.parseFloat(data);
+	}
+
+	public boolean readBoolean() {
+		String data = read();
+		if (data == null)
+			return false;
+		return Boolean.parseBoolean(data);
+	}
+
+	public byte[] readBytes() {
+		String data = read();
+		if (data == null)
+			return null;
+		return Base64.getDecoder().decode(data);
 	}
 
 }
