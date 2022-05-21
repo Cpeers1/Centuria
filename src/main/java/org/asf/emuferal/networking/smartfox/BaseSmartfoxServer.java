@@ -104,6 +104,11 @@ public abstract class BaseSmartfoxServer {
 					try {
 						handle(data, client);
 					} catch (Exception e) {
+						if (!(e instanceof IOException)) {
+							System.err.println("Connection died! Error: " + e.getClass().getName()
+									+ (e.getMessage() != null ? ": " + e.getMessage() : ""));
+							e.printStackTrace();
+						}
 						try {
 							client.getSocket().close();
 						} catch (IOException e2) {
@@ -117,6 +122,11 @@ public abstract class BaseSmartfoxServer {
 				// Disconnected
 				clientDisconnect(client);
 			} catch (Exception e) {
+				if (!(e instanceof IOException)) {
+					System.err.println("Connection died! Error: " + e.getClass().getName()
+							+ (e.getMessage() != null ? ": " + e.getMessage() : ""));
+					e.printStackTrace();
+				}
 				try {
 					client.getSocket().close();
 				} catch (IOException e2) {
