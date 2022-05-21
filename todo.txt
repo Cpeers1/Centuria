@@ -1,7 +1,6 @@
 main todo:
 - fix displaced spawns
 - fix missing spawns
-- converter for packet data to extract the player inventory
 - overhaul account storage
 - fix settings not being saved
 - implement the shop

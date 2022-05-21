@@ -24,7 +24,7 @@ public class Player {
 
 	public String respawn = null;
 	public String lastLocation = null;
-	
+
 	public double lastPosX = 0;
 	public double lastPosY = 0;
 	public double lastPosZ = 0;
@@ -33,6 +33,7 @@ public class Player {
 	public double lastRotX = 0;
 	public double lastRotY = 0;
 	public double lastRotZ = 0;
+	public int lastAction = 0;
 
 	public void destroyAt(Player player) {
 		// Delete character
@@ -80,6 +81,31 @@ public class Player {
 			wr.writeString("");
 			try {
 				player.client.sendPacket(wr.encode());
+			} catch (IOException e) {
+			}
+
+			// Sync
+			XtWriter pk = new XtWriter();
+			pk.writeString("ou");
+			pk.writeInt(-1); // Data prefix
+			pk.writeString(account.getAccountID());
+			pk.writeInt(4);
+			pk.writeLong(System.currentTimeMillis() / 1000);
+			pk.writeDouble(lastPosX);
+			pk.writeDouble(lastPosY);
+			pk.writeDouble(lastPosZ);
+			pk.writeString("0");
+			pk.writeDouble(lastRotX);
+			pk.writeDouble(lastRotY);
+			pk.writeDouble(lastRotZ);
+			pk.writeString("0");
+			pk.writeString("0");
+			pk.writeString("0");
+			pk.writeDouble(lastRotW);
+			pk.writeInt(lastAction);
+			pk.writeString(""); // Data suffix
+			try {
+				player.client.sendPacket(pk.encode());
 			} catch (IOException e) {
 			}
 		}

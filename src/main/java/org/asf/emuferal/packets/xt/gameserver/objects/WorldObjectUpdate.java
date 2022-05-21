@@ -69,6 +69,7 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 			plr.lastPosX = x;
 			plr.lastPosY = y;
 			plr.lastPosZ = z;
+			plr.lastAction = 0;
 
 			pk.writeDouble(x);
 			pk.writeDouble(y);
@@ -105,6 +106,7 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 			plr.lastPosX = x;
 			plr.lastPosY = y;
 			plr.lastPosZ = z;
+			plr.lastAction = dd;
 
 			pk.writeDouble(x);
 			pk.writeDouble(y);
