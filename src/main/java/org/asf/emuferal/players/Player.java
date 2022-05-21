@@ -42,6 +42,7 @@ public class Player {
 		wr.writeInt(-1);
 		wr.writeString(account.getAccountID());
 		wr.writeString("");
+		lastAction = 0;
 		try {
 			player.client.sendPacket(wr.encode());
 		} catch (IOException e) {
