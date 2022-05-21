@@ -53,10 +53,10 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 			double x = rd.readDouble();
 			double y = rd.readDouble();
 			double z = rd.readDouble();
-			double dx = rd.readDouble();
-			double dy = rd.readDouble();
-			double dz = rd.readDouble();
-			double dw = rd.readDouble();
+			String d1 = rd.read();
+			String d2 = rd.read();
+			String d3 = rd.read();
+			String d4 = rd.read();
 			double rx = rd.readDouble();
 			double ry = rd.readDouble();
 			double rz = rd.readDouble();
@@ -73,14 +73,14 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 			pk.writeDouble(x);
 			pk.writeDouble(y);
 			pk.writeDouble(z);
+			pk.writeString(d1);
 			pk.writeDouble(rx);
 			pk.writeDouble(ry);
 			pk.writeDouble(rz);
+			pk.writeString(d2);
+			pk.writeString(d3);
+			pk.writeString(d4);
 			pk.writeDouble(rw);
-			pk.writeDouble(dx);
-			pk.writeDouble(dy);
-			pk.writeDouble(dz);
-			pk.writeDouble(dw);
 			pk.writeInt(0);
 			break;
 		}
@@ -88,10 +88,10 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 			double x = rd.readDouble();
 			double y = rd.readDouble();
 			double z = rd.readDouble();
-			double dx = rd.readDouble();
-			double dy = rd.readDouble();
-			double dz = rd.readDouble();
-			double dw = rd.readDouble();
+			String d1 = rd.read();
+			String d2 = rd.read();
+			String d3 = rd.read();
+			String d4 = rd.read();
 			double rx = rd.readDouble();
 			double ry = rd.readDouble();
 			double rz = rd.readDouble();
@@ -109,14 +109,14 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 			pk.writeDouble(x);
 			pk.writeDouble(y);
 			pk.writeDouble(z);
+			pk.writeString(d1);
 			pk.writeDouble(rx);
 			pk.writeDouble(ry);
 			pk.writeDouble(rz);
+			pk.writeString(d2);
+			pk.writeString(d3);
+			pk.writeString(d4);
 			pk.writeDouble(rw);
-			pk.writeDouble(dx);
-			pk.writeDouble(dy);
-			pk.writeDouble(dz);
-			pk.writeDouble(dw);
 			pk.writeInt(dd);
 			break;
 		}

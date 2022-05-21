@@ -52,18 +52,18 @@ public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 		JsonObject lookData = JsonParser.parseString(this.lookData).getAsJsonObject();
 
 		// Save look file to look database
-		plr.activeLook = plr.pendingLookID;
+		plr.activeLook = lookID;
 
 		// Save avatar to inventory
 		JsonArray items = plr.account.getPlayerInventory().getItem("avatars").getAsJsonArray();
 		JsonObject lookObj = null;
-		boolean isPrimary = false;
+		JsonElement primary = null;
 		for (JsonElement itm : items) {
 			if (itm.isJsonObject()) {
 				JsonObject obj = itm.getAsJsonObject();
-				if (obj.get("id").getAsString().equals(plr.activeLook)) {
+				if (obj.get("id").getAsString().equals(lookID)) {
 					lookObj = obj;
-					isPrimary = lookObj.has("PrimaryLook");
+					primary = lookObj.get("PrimaryLook");
 					break;
 				}
 			}
@@ -78,8 +78,8 @@ public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 			al.addProperty("gender", 0);
 			al.add("info", lookData);
 			JsonObject components = new JsonObject();
-			if (isPrimary)
-				components.add("PrimaryLook", new JsonObject());
+			if (primary != null)
+				components.add("PrimaryLook", primary);
 			components.add("Timestamp", ts);
 			components.add("AvatarLook", al);
 			components.add("Name", nm);

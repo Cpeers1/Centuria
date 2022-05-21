@@ -27,6 +27,10 @@ public class SnifferPacketDataDecoder {
 				os.write(Integer.valueOf(hex, 16));
 			}
 			os.close();
+			if (Files.readString(Path.of(folderOut + "/" + (i - 1) + " (" + info.replace("->", " to ") + ").bin"))
+					.contains("%aa%") && info.equals("S->C")) {
+				os = os;
+			}
 			System.out.println("Decoded " + i + " packet(s)");
 		}
 	}

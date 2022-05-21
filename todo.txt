@@ -1,8 +1,6 @@
 Multiplayer update: Alpha 3:
 - overhaul account storage
 - chat
-- emotes
-- ingame sync
 - converter for packet data to extract the player inventory
 
 main todo:

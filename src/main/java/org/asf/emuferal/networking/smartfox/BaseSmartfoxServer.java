@@ -100,7 +100,7 @@ public abstract class BaseSmartfoxServer {
 
 				// Client loop
 				while (client.getSocket() != null) {
-					String data = readPacketString(client);
+					String data = readRawPacket(client);
 					try {
 						handle(data, client);
 					} catch (Exception e) {
@@ -209,7 +209,7 @@ public abstract class BaseSmartfoxServer {
 	public <T extends ISmartfoxPacket> T readPacket(SmartfoxClient smartfoxClient, Class<T> packetType)
 			throws IOException {
 		// Read data
-		String data = readPacketString(smartfoxClient);
+		String data = readRawPacket(smartfoxClient);
 
 		// Parse packet
 		return parsePacketPayload(data, packetType);
@@ -258,8 +258,14 @@ public abstract class BaseSmartfoxServer {
 		return false;
 	}
 
-	// Reads a packet
-	private String readPacketString(SmartfoxClient smartfoxClient) throws IOException {
+	/**
+	 * Reads a single raw packet
+	 * 
+	 * @param smartfoxClient Client to read from
+	 * @return Packet string
+	 * @throws IOException If reading fails
+	 */
+	public String readRawPacket(SmartfoxClient smartfoxClient) throws IOException {
 		String payload = new String();
 		while (true) {
 			int b = smartfoxClient.getSocket().getInputStream().read();

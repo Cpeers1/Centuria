@@ -25,6 +25,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.HashMap;
 
+import org.asf.emuferal.networking.chatserver.ChatServer;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.http.APIProcessor;
 import org.asf.emuferal.networking.http.DirectorProcessor;
@@ -46,6 +47,7 @@ public class EmuFeral {
 	private static ConnectiveHTTPServer directorServer;
 	private static ConnectiveHTTPServer paymentServer;
 	private static GameServer gameServer;
+	private static ChatServer chatServer;
 
 	// Keys
 	private static PrivateKey privateKey;
@@ -135,6 +137,7 @@ public class EmuFeral {
 		paymentServer.waitExit();
 		directorServer.waitExit();
 		apiServer.waitExit();
+		chatServer.getServerSocket().close();
 		gameServer.getServerSocket().close();
 	}
 
@@ -143,8 +146,9 @@ public class EmuFeral {
 		// Server configuration
 		File serverConf = new File("server.conf");
 		if (!serverConf.exists()) {
-			Files.writeString(serverConf.toPath(), "api-port=6\n" + "director-port=6969\n" + "payments-port=6971\n"
-					+ "game-port=6968\n" + "allow-registration=true\ndiscovery-server-address=localhost\n");
+			Files.writeString(serverConf.toPath(),
+					"api-port=6\n" + "director-port=6969\n" + "payments-port=6971\n" + "game-port=6968\n"
+							+ "chat-port=6972\n" + "allow-registration=true\ndiscovery-server-address=localhost\n");
 		}
 
 		// Parse properties
@@ -213,6 +217,11 @@ public class EmuFeral {
 		allowRegistration = properties.get("allow-registration").equals("true");
 		gameServer = new GameServer(sock);
 		gameServer.start();
+		System.out.println("Starting Emulated Feral Chat server...");
+		sock = new ServerSocket(Integer.parseInt(properties.getOrDefault("chat-port", "6972")), 0,
+				InetAddress.getByName("0.0.0.0"));
+		chatServer = new ChatServer(sock);
+		chatServer.start();
 		System.out.println("Successfully started emulated servers.");
 	}
 

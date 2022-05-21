@@ -61,7 +61,6 @@ public class SmartfoxClient {
 	}
 
 	/**
-	 * 
 	 * Reads a single packet
 	 * 
 	 * @param <T>        Packet return type
@@ -69,7 +68,7 @@ public class SmartfoxClient {
 	 * @throws IOException If reading fails
 	 * @return ISmartfoxPacket instance or null
 	 */
-	public synchronized <T extends ISmartfoxPacket> T readPacket(Class<T> packetType) throws IOException {
+	public <T extends ISmartfoxPacket> T readPacket(Class<T> packetType) throws IOException {
 		return (T) server.<T>readPacket(this, packetType);
 	}
 
@@ -80,6 +79,16 @@ public class SmartfoxClient {
 	 */
 	public BaseSmartfoxServer getServer() {
 		return server;
+	}
+
+	/**
+	 * Reads a single raw packet
+	 * 
+	 * @throws IOException If reading fails
+	 * @return Packet string
+	 */
+	public String readRawPacket() throws IOException {
+		return server.readRawPacket(this);
 	}
 
 }
