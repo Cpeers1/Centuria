@@ -90,10 +90,10 @@ public abstract class BaseSmartfoxServer {
 
 	// Client system
 	private void runClient(Socket clientSocket) {
-		SmartfoxClient client = new SmartfoxClient(clientSocket, this);
-
 		// Start the client thread
 		Thread th = new Thread(() -> {
+			SmartfoxClient client = new SmartfoxClient(clientSocket, this);
+
 			try {
 				// Run start code
 				startClient(client);
