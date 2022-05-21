@@ -101,7 +101,17 @@ public abstract class BaseSmartfoxServer {
 				// Client loop
 				while (client.getSocket() != null) {
 					String data = readPacketString(client);
-					handle(data, client);
+					try {
+						handle(data, client);
+					} catch (Exception e) {
+						try {
+							client.getSocket().close();
+						} catch (IOException e2) {
+						}
+						if (client.getSocket() != null) {
+							clientDisconnect(client);
+						}
+					}
 				}
 
 				// Disconnected

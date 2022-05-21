@@ -44,12 +44,24 @@ public class WorldObjectRespawn implements IXtPacket<WorldObjectRespawn> {
 		Player plr = (Player) client.container;
 		data = plr.respawn;
 		playerUUID = plr.account.getAccountID();
+		plr.client.sendPacket(this);
+
+		XtWriter pk = new XtWriter();
+		pk.writeString("ou");
+		pk.writeInt(-1); // Data prefix
+		pk.writeString(playerUUID);
+		pk.add("0");
+		pk.add(Long.toString(System.currentTimeMillis() / 1000));
+		pk.writeString(data);
+		pk.writeString("0%0%0%0");
+		pk.writeString("0");
+		pk.writeString(""); // Data suffix
 
 		// Broadcast respawn
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {
-			if (plr.room != null && player.room != null && player.room.equals(plr.room)) {
-				player.client.sendPacket(this);
+			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+				player.client.sendPacket(pk.encode());
 			}
 		}
 

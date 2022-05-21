@@ -24,6 +24,15 @@ public class Player {
 
 	public String respawn = null;
 	public String lastLocation = null;
+	
+	public double lastPosX = 0;
+	public double lastPosY = 0;
+	public double lastPosZ = 0;
+
+	public double lastRotW = 0;
+	public double lastRotX = 0;
+	public double lastRotY = 0;
+	public double lastRotZ = 0;
 
 	public void destroyAt(Player player) {
 		// Delete character
@@ -63,11 +72,12 @@ public class Player {
 			wr.writeInt(account.getAccountNumericID());
 			wr.writeLong(System.currentTimeMillis() / 1000);
 			wr.writeString((lastLocation == null ? respawn : lastLocation));
-			wr.writeString("0%0%0%0.0%1");
+			wr.writeString("0%0%0%0.0%0");
 			wr.writeString(lookObj.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject().get("info")
 					.toString());
 			wr.writeString(account.getDisplayName());
 			wr.writeInt(0);
+			wr.writeString("");
 			try {
 				player.client.sendPacket(wr.encode());
 			} catch (IOException e) {

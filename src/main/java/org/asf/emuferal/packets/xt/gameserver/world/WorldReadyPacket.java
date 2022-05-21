@@ -38,7 +38,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Load player
 		Player plr = (Player) client.container;
-		
+
 		// Sync
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {
@@ -358,8 +358,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			client.sendPacket(res);
 
 			plr.respawn = res.x + "%" + res.y + "%" + res.z + "%" + res.rw + "%" + res.rx + "%" + res.ry + "%" + res.rz;
-			System.out.println("Player teleport: " + plr.account.getDisplayName()
-					+ ", teleport destination: Sunken Thicket: Latchkey's Lab (Exit Door)");
 		}
 		}
 	}

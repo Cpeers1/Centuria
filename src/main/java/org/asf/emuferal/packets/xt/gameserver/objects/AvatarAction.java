@@ -41,6 +41,7 @@ public class AvatarAction implements IXtPacket<AvatarAction> {
 		pk.writeString("aa");
 		pk.writeInt(-1); // Data prefix
 		pk.writeString(plr.account.getAccountID());
+		pk.writeLong(System.currentTimeMillis() / 1000);
 		pk.writeString(action);
 		pk.writeString(""); // Data suffix
 

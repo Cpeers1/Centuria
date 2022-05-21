@@ -11,22 +11,8 @@ import org.asf.emuferal.players.Player;
 
 public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 
-	private String target;
-	private String start;
-
-	public double x;
-	public double y;
-	public double z;
-
-	public double d1;
-	public double d2;
-	public double d3;
-	public double d4;
-
-	public double rw;
-	public double rx;
-	public double ry;
-	public double rz;
+	private int mode;
+	private String data;
 
 	@Override
 	public WorldObjectUpdate instantiate() {
@@ -40,55 +26,119 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
-		start = reader.read();
-		x = reader.readDouble();
-		y = reader.readDouble();
-		z = reader.readDouble();
-		d1 = reader.readDouble();
-		d2 = reader.readDouble();
-		d3 = reader.readDouble();
-		d4 = reader.readDouble();
-		rw = reader.readDouble();
-		rx = reader.readDouble();
-		ry = reader.readDouble();
-		rz = reader.readDouble();
+		mode = reader.readInt();
+		data = reader.readRemaining();
 	}
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data suffix
-
-		writer.writeString(target);
-		writer.add(start);
-		writer.add(Long.toString(System.currentTimeMillis() / 1000));
-		writer.writeDouble(x);
-		writer.writeDouble(y);
-		writer.writeDouble(z);
-		writer.writeDouble(rw);
-		writer.writeDouble(rx);
-		writer.writeDouble(ry);
-		writer.writeDouble(rz);
-		writer.writeDouble(d1);
-		writer.writeDouble(d2);
-		writer.writeDouble(d3);
-		writer.writeDouble(d4);
-		writer.writeString("0");
-
-		writer.writeString(""); // Data suffix
 	}
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Object update
 		Player plr = (Player) client.container;
-		target = plr.account.getAccountID();
+
+		// Build broadcast packet
+		XtReader rd = new XtReader(data);
+		XtWriter pk = new XtWriter();
+		pk.writeString("ou");
+		pk.writeInt(-1); // Data prefix
+		pk.writeString(plr.account.getAccountID());
+		pk.writeInt(mode);
+		pk.writeLong(System.currentTimeMillis() / 1000);
+		switch (mode) {
+		case 0:
+		case 2: {
+			double x = rd.readDouble();
+			double y = rd.readDouble();
+			double z = rd.readDouble();
+			double dx = rd.readDouble();
+			double dy = rd.readDouble();
+			double dz = rd.readDouble();
+			double dw = rd.readDouble();
+			double rx = rd.readDouble();
+			double ry = rd.readDouble();
+			double rz = rd.readDouble();
+			double rw = rd.readDouble();
+
+			plr.lastRotW = rw;
+			plr.lastRotX = rx;
+			plr.lastRotY = ry;
+			plr.lastRotZ = rz;
+			plr.lastPosX = x;
+			plr.lastPosY = y;
+			plr.lastPosZ = z;
+
+			pk.writeDouble(x);
+			pk.writeDouble(y);
+			pk.writeDouble(z);
+			pk.writeDouble(rx);
+			pk.writeDouble(ry);
+			pk.writeDouble(rz);
+			pk.writeDouble(rw);
+			pk.writeDouble(dx);
+			pk.writeDouble(dy);
+			pk.writeDouble(dz);
+			pk.writeDouble(dw);
+			pk.writeInt(0);
+			break;
+		}
+		case 4: {
+			double x = rd.readDouble();
+			double y = rd.readDouble();
+			double z = rd.readDouble();
+			double dx = rd.readDouble();
+			double dy = rd.readDouble();
+			double dz = rd.readDouble();
+			double dw = rd.readDouble();
+			double rx = rd.readDouble();
+			double ry = rd.readDouble();
+			double rz = rd.readDouble();
+			double rw = rd.readDouble();
+			int dd = rd.readInt();
+
+			plr.lastRotW = rw;
+			plr.lastRotX = rx;
+			plr.lastRotY = ry;
+			plr.lastRotZ = rz;
+			plr.lastPosX = x;
+			plr.lastPosY = y;
+			plr.lastPosZ = z;
+
+			pk.writeDouble(x);
+			pk.writeDouble(y);
+			pk.writeDouble(z);
+			pk.writeDouble(rx);
+			pk.writeDouble(ry);
+			pk.writeDouble(rz);
+			pk.writeDouble(rw);
+			pk.writeDouble(dx);
+			pk.writeDouble(dy);
+			pk.writeDouble(dz);
+			pk.writeDouble(dw);
+			pk.writeInt(dd);
+			break;
+		}
+		case 5: {
+			return true; // FIXME: switch to the spawn finder when all spawns are implemented
+		}
+		default:
+			mode = mode;
+		}
+		pk.writeString(""); // Data suffix
+
+		// Save location
+		plr.lastLocation = plr.lastPosX + "%" + plr.lastPosY + "%" + plr.lastPosZ + "%" + plr.lastRotX + "%"
+				+ plr.lastRotY + "%" + plr.lastRotZ + "%" + plr.lastRotW;
 
 		// Broadcast sync
+		String msg = pk.encode();
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
 				try {
-					player.client.sendPacket(this);
+					player.client.sendPacket(msg);
 				} catch (IOException e) {
 				}
 			}

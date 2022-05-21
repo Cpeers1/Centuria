@@ -11,7 +11,10 @@ public class XtReader {
 	}
 
 	private String[] parseXT(String packet) {
-		return packet.substring(4).split("%");
+		if (packet.startsWith("%xt%"))
+			return packet.substring(4).split("%");
+		else
+			return packet.split("%");
 	}
 
 	public boolean hasNext() {
