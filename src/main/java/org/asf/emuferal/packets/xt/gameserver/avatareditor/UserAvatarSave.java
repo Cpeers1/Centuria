@@ -63,13 +63,11 @@ public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 				JsonObject obj = itm.getAsJsonObject();
 				if (obj.get("id").getAsString().equals(lookID)) {
 					lookObj = obj;
-					primary = lookObj.get("PrimaryLook");
 					break;
 				}
 			}
 		}
 		if (lookObj != null) {
-			lookObj.remove("components");
 			JsonObject ts = new JsonObject();
 			ts.addProperty("ts", System.currentTimeMillis());
 			JsonObject nm = new JsonObject();
@@ -77,13 +75,13 @@ public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 			JsonObject al = new JsonObject();
 			al.addProperty("gender", 0);
 			al.add("info", lookData);
-			JsonObject components = new JsonObject();
-			if (primary != null)
-				components.add("PrimaryLook", primary);
+			JsonObject components = lookObj.get("components").getAsJsonObject();
+			components.remove("Timestamp");
+			components.remove("AvatarLook");
+			components.remove("Name");
 			components.add("Timestamp", ts);
 			components.add("AvatarLook", al);
 			components.add("Name", nm);
-			lookObj.add("components", components);
 		}
 		plr.account.getPlayerInventory().setItem("avatars", items);
 
