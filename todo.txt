@@ -1,18 +1,13 @@
-Multiplayer update: Alpha 3:
-- overhaul account storage
-- chat
-- converter for packet data to extract the player inventory
-
 main todo:
-- fix avatar slots sometimes breaking
-- implement the shop
-- wings
-- skyways
-- fix settings not being saved
-- fix missing handshake packets (mm)
 - fix displaced spawns
 - fix missing spawns
+- converter for packet data to extract the player inventory
+- overhaul account storage
+- fix settings not being saved
+- implement the shop
+- wings
 - sanctuaries
+- chat
 
 follower update:
 - player cards & followers

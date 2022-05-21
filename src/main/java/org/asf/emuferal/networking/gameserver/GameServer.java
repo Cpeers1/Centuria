@@ -26,6 +26,7 @@ import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionFinish;
 import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionStart;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.emuferal.packets.xt.gameserver.objects.AvatarAction;
+import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectGlide;
 import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectRespawn;
 import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectSetRespawn;
 import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectUpdate;
@@ -77,6 +78,7 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new WorldObjectUpdate());
 		registerPacket(new WorldObjectRespawn());
 		registerPacket(new WorldObjectSetRespawn());
+		registerPacket(new WorldObjectGlide());
 		registerPacket(new AvatarAction());
 		registerPacket(new InteractionStart());
 		registerPacket(new InteractionCancel());
