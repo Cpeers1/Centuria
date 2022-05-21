@@ -78,12 +78,14 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		return true;
 	}
 
-	private JsonArray buildDefaultLooksFile(Player plr) throws IOException {
+	public static JsonArray buildDefaultLooksFile(Player plr) throws IOException {
 		JsonArray items = new JsonArray();
 
 		// Load the helper from resources
+		if (plr != null)
 		System.out.println("Generating avatar file for " + plr.account.getDisplayName());
-		InputStream strm = getClass().getClassLoader().getResourceAsStream("defaultitems/avatarhelper.json");
+		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+				.getResourceAsStream("defaultitems/avatarhelper.json");
 		JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 				.get("Avatars").getAsJsonObject();
 
@@ -91,6 +93,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		ArrayList<String> ids = new ArrayList<String>();
 		for (String avatarSpecies : helper.keySet()) {
 			JsonObject speciesData = helper.get(avatarSpecies).getAsJsonObject();
+			if (plr != null)
 			System.out.println("Generating avatar species object " + avatarSpecies + " for "
 					+ plr.account.getDisplayName() + "...");
 
