@@ -202,6 +202,8 @@ public abstract class BaseSmartfoxServer {
 	public synchronized void sendPacket(SmartfoxClient smartfoxClient, String packet) throws IOException {
 		// Send packet
 		byte[] payload = packet.getBytes("UTF-8");
+		if (smartfoxClient.getSocket() == null)
+			return;
 		smartfoxClient.getSocket().getOutputStream().write(payload);
 		smartfoxClient.getSocket().getOutputStream().write(0);
 		smartfoxClient.getSocket().getOutputStream().flush();
