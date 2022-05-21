@@ -49,7 +49,7 @@ public class InteractionStart implements IXtPacket<InteractionStart> {
 		// Broadcast interaction
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {
-			if (player.room.equals(plr.room)) {
+			if (player.room != null && plr.room != null && player.room.equals(plr.room)) {
 				player.client.sendPacket(this);
 			}
 		}

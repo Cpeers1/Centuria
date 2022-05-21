@@ -47,7 +47,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			}
 		}
 
-		plr.room = teleportUUID;
+		// Disable sync
+		plr.room = null;
 
 		// Send to tutorial if new
 		if (plr.account.isPlayerNew()) {
