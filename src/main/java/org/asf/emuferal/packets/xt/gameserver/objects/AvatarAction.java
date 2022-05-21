@@ -90,15 +90,6 @@ public class AvatarAction implements IXtPacket<AvatarAction> {
 			pk.writeInt(210);
 			break;
 		}
-		default: {
-			int i = new Random().nextInt(0, 400);
-			while (ints.contains(i))
-				i = new Random().nextInt(0, 400);
-			ints.add(i);
-			pk.writeInt(i);
-			System.out.println(action + "=" + i);
-			break;
-		}
 		}
 		pk.writeString(""); // Data suffix
 
