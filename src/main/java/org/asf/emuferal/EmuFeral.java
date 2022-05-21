@@ -137,7 +137,7 @@ public class EmuFeral {
 		paymentServer.waitExit();
 		directorServer.waitExit();
 		apiServer.waitExit();
-		chatServer.getServerSocket().close();
+//		chatServer.getServerSocket().close();
 		gameServer.getServerSocket().close();
 	}
 
@@ -217,11 +217,11 @@ public class EmuFeral {
 		allowRegistration = properties.get("allow-registration").equals("true");
 		gameServer = new GameServer(sock);
 		gameServer.start();
-		System.out.println("Starting Emulated Feral Chat server...");
-		sock = new ServerSocket(Integer.parseInt(properties.getOrDefault("chat-port", "6972")), 0,
-				InetAddress.getByName("0.0.0.0"));
-		chatServer = new ChatServer(sock);
-		chatServer.start();
+//		System.out.println("Starting Emulated Feral Chat server...");
+//		sock = new ServerSocket(Integer.parseInt(properties.getOrDefault("chat-port", "6972")), 0,
+//				InetAddress.getByName("0.0.0.0"));
+//		chatServer = new ChatServer(sock);
+//		chatServer.start();
 		System.out.println("Successfully started emulated servers.");
 	}
 
