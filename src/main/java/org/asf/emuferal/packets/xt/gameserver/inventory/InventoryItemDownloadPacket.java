@@ -126,7 +126,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			}
 
 			// Fix it
-			if (lookCount > 15)
+			if (lookCount > 12)
 				item.remove(ava);
 			changed = true;
 		}
