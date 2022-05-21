@@ -57,7 +57,6 @@ public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 		// Save avatar to inventory
 		JsonArray items = plr.account.getPlayerInventory().getItem("avatars").getAsJsonArray();
 		JsonObject lookObj = null;
-		JsonElement primary = null;
 		for (JsonElement itm : items) {
 			if (itm.isJsonObject()) {
 				JsonObject obj = itm.getAsJsonObject();

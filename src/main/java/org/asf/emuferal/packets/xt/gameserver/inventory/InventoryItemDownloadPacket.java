@@ -70,6 +70,11 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		// Load the item
 		JsonElement item = inv.getItem(slot.equals("200") ? "avatars" : slot);
 
+		// Repair broken avatars
+		if (slot.equals("200")) {
+			fixBrokenAvatars(item.getAsJsonArray(), inv);
+		}
+
 		// Send the item to the client
 		InventoryItemPacket pkt = new InventoryItemPacket();
 		pkt.item = item;
@@ -78,12 +83,66 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		return true;
 	}
 
+	private void fixBrokenAvatars(JsonArray item, PlayerInventory inv) {
+		boolean changed = false;
+
+		// Fix unlisted
+		for (JsonElement ele : item) {
+			JsonObject ava = ele.getAsJsonObject();
+			int defID = ava.get("defId").getAsInt();
+			boolean hasPrimary = false;
+
+			for (JsonElement ele2 : item) {
+				JsonObject ava2 = ele2.getAsJsonObject();
+				int defID2 = ava2.get("defId").getAsInt();
+				if (defID == defID2 && ava2.get("components").getAsJsonObject().has("PrimaryLook")) {
+					hasPrimary = true;
+					break;
+				}
+			}
+
+			// Fix it
+			if (!hasPrimary)
+				ava.get("components").getAsJsonObject().add("PrimaryLook", new JsonObject());
+			changed = true;
+		}
+
+		// Fix look slots
+		for (JsonElement ele : item.deepCopy()) {
+			JsonObject ava = ele.getAsJsonObject();
+			if (ava.get("components").getAsJsonObject().has("PrimaryLook"))
+				continue;
+
+			int defID = ava.get("defId").getAsInt();
+			int lookCount = 0;
+
+			for (JsonElement ele2 : item) {
+				JsonObject ava2 = ele2.getAsJsonObject();
+				int defID2 = ava2.get("defId").getAsInt();
+				if (defID == defID2 && !ava2.get("components").getAsJsonObject().has("PrimaryLook")) {
+					lookCount++;
+					break;
+				}
+			}
+
+			// Fix it
+			if (lookCount > 15)
+				item.remove(ava);
+			changed = true;
+		}
+
+		// Save
+		if (changed) {
+			inv.setItem("avatars", item);
+		}
+	}
+
 	public static JsonArray buildDefaultLooksFile(Player plr) throws IOException {
 		JsonArray items = new JsonArray();
 
 		// Load the helper from resources
 		if (plr != null)
-		System.out.println("Generating avatar file for " + plr.account.getDisplayName());
+			System.out.println("Generating avatar file for " + plr.account.getDisplayName());
 		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
 				.getResourceAsStream("defaultitems/avatarhelper.json");
 		JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
@@ -94,8 +153,8 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		for (String avatarSpecies : helper.keySet()) {
 			JsonObject speciesData = helper.get(avatarSpecies).getAsJsonObject();
 			if (plr != null)
-			System.out.println("Generating avatar species object " + avatarSpecies + " for "
-					+ plr.account.getDisplayName() + "...");
+				System.out.println("Generating avatar species object " + avatarSpecies + " for "
+						+ plr.account.getDisplayName() + "...");
 
 			// Build 11 look files and set the first to primary
 			boolean primary = true;
