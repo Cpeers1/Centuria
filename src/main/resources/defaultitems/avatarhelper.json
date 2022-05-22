@@ -3,47 +3,3080 @@
 		"Kitsune": {
 			"defId": 8254,
 			"info": {
+				"actorClassDefID": "1929",
+				"bodyParts": [
+					{
+						"bodyPartDefID": "2086",
+						"attached": true,
+						"_decalEntries": []
+					},
+					{
+						"bodyPartDefID": "2083",
+						"attached": true,
+						"_decalEntries": []
+					},
+					{
+						"bodyPartDefID": "2089",
+						"attached": true,
+						"_decalEntries": [
+							{
+								"defID": "4184",
+								"isDefault": true,
+								"disabled": false,
+								"position": {
+									"x": ".879974",
+									"y": ".209771"
+								},
+								"mirroredPosition": {
+									"x": ".110955",
+									"y": ".424341"
+								},
+								"color1HSV": {
+									"_h": ".777778",
+									"_s": ".4",
+									"_v": ".65",
+									"_hsv": "7778,4000,6500"
+								},
+								"rotation": "200.6375",
+								"rotationCompensation": "-107.1958",
+								"mirrorRotationCompensation": "-252.8566",
+								"scale": ".077212",
+								"flipX": true,
+								"flipY": false,
+								"mirror": true
+							},
+							{
+								"defID": "4184",
+								"isDefault": true,
+								"disabled": false,
+								"position": {
+									"x": ".828178",
+									"y": ".18697"
+								},
+								"mirroredPosition": {
+									"x": ".16283",
+									"y": ".401385"
+								},
+								"color1HSV": {
+									"_h": ".806011",
+									"_s": ".797386",
+									"_v": ".6",
+									"_hsv": "8060,7974,6000"
+								},
+								"rotation": "175.9599",
+								"rotationCompensation": "-95.51698",
+								"mirrorRotationCompensation": "-264.639",
+								"scale": ".123228",
+								"flipX": true,
+								"flipY": false,
+								"mirror": true
+							},
+							{
+								"defID": "4186",
+								"isDefault": true,
+								"disabled": false,
+								"position": {
+									"x": ".785125",
+									"y": ".250773"
+								},
+								"mirroredPosition": {
+									"x": ".205879",
+									"y": ".465148"
+								},
+								"color1HSV": {
+									"_h": ".806011",
+									"_s": ".797386",
+									"_v": ".6",
+									"_hsv": "8060,7974,6000"
+								},
+								"rotation": "15.56228",
+								"rotationCompensation": "-93.17296",
+								"mirrorRotationCompensation": "-266.9413",
+								"scale": ".108928",
+								"flipX": true,
+								"flipY": false,
+								"mirror": true
+							},
+							{
+								"defID": "4156",
+								"isDefault": true,
+								"disabled": false,
+								"position": {
+									"x": ".745191",
+									"y": ".232091"
+								},
+								"mirroredPosition": {
+									"x": ".245809",
+									"y": ".446535"
+								},
+								"color1HSV": {
+									"_h": ".777778",
+									"_s": ".4",
+									"_v": ".6",
+									"_hsv": "7778,4000,6000"
+								},
+								"rotation": "318.8852",
+								"rotationCompensation": "-76.86023",
+								"mirrorRotationCompensation": "76.58092",
+								"scale": ".088952",
+								"flipX": false,
+								"flipY": false,
+								"mirror": true
+							},
+							{
+								"defID": "4184",
+								"isDefault": true,
+								"disabled": false,
+								"position": {
+									"x": ".799291",
+									"y": ".161676"
+								},
+								"mirroredPosition": {
+									"x": ".191684",
+									"y": ".376162"
+								},
+								"color1HSV": {
+									"_h": ".806011",
+									"_s": ".797386",
+									"_v": ".6",
+									"_hsv": "8060,7974,6000"
+								},
+								"rotation": "170.8355",
+								"rotationCompensation": "-97.90443",
+								"mirrorRotationCompensation": "-262.1135",
+								"scale": ".077499",
+								"flipX": true,
+								"flipY": false,
+								"mirror": true
+							},
+							{
+								"defID": "4185",
+								"isDefault": true,
+								"disabled": false,
+								"position": {
+									"x": ".73505",
+									"y": ".181732"
+								},
+								"mirroredPosition": {
+									"x": ".255933",
+									"y": ".396183"
+								},
+								"color1HSV": {
+									"_h": ".806011",
+									"_s": ".797386",
+									"_v": ".6",
+									"_hsv": "8060,7974,6000"
+								},
+								"rotation": "187.2657",
+								"rotationCompensation": "-92.50593",
+								"mirrorRotationCompensation": "-267.4491",
+								"scale": ".100386",
+								"flipX": true,
+								"flipY": false,
+								"mirror": true
+							},
+							{
+								"defID": "4181",
+								"isDefault": true,
+								"disabled": false,
+								"position": {
+									"x": ".755521",
+									"y": ".138621"
+								},
+								"mirroredPosition": {
+									"x": ".235464",
+									"y": ".352987"
+								},
+								"color1HSV": {
+									"_h": ".806011",
+									"_s": ".797386",
+									"_v": ".6",
+									"_hsv": "8060,7974,6000"
+								},
+								"rotation": "108.1003",
+								"rotationCompensation": "-95.81978",
+								"mirrorRotationCompensation": "-264.3232",
+								"scale": ".108951",
+								"flipX": false,
+								"flipY": false,
+								"mirror": true
+							},
+							{
+								"defID": "4184",
+								"isDefault": true,
+								"disabled": false,
+								"position": {
+									"x": ".901615",
+									"y": ".62283"
+								},
+								"mirroredPosition": {
+									"x": ".07828",
+									"y": ".801144"
+								},
+								"color1HSV": {
+									"_h": ".777778",
+									"_s": ".4",
+									"_v": ".65",
+									"_hsv": "7778,4000,6500"
+								},
+								"rotation": "184.187",
+								"rotationCompensation": "-92.75646",
+								"mirrorRotationCompensation": "-267.3284",
+								"scale": ".077212",
+								"flipX": true,
+								"flipY": false,
+								"mirror": true
+							},
+							{
+								"defID": "4185",
+								"isDefault": true,
+								"disabled": false,
+								"position": {
+									"x": ".822633",
+									"y": ".618296"
+								},
+								"mirroredPosition": {
+									"x": ".157221",
+									"y": ".796644"
+								},
+								"color1HSV": {
+									"_h": ".806011",
+									"_s": ".797386",
+									"_v": ".6",
+									"_hsv": "8060,7974,6000"
+								},
+								"rotation": "201.6636",
+								"rotationCompensation": "-98.32723",
+								"mirrorRotationCompensation": "-261.8442",
+								"scale": ".0861",
+								"flipX": true,
+								"flipY": false,
+								"mirror": true
+							},
+							{
+								"defID": "4184",
+								"isDefault": true,
+								"disabled": false,
+								"position": {
+									"x": ".884461",
+									"y": ".597936"
+								},
+								"mirroredPosition": {
+									"x": ".09549",
+									"y": ".776229"
+								},
+								"color1HSV": {
+									"_h": ".806011",
+									"_s": ".797386",
+									"_v": ".6",
+									"_hsv": "8060,7974,6000"
+								},
+								"rotation": "173.9017",
+								"rotationCompensation": "-94.35976",
+								"mirrorRotationCompensation": "-265.3558",
+								"scale": ".083234",
+								"flipX": true,
+								"flipY": false,
+								"mirror": true
+							},
+							{
+								"defID": "4184",
+								"isDefault": true,
+								"disabled": false,
+								"position": {
+									"x": ".829438",
+									"y": ".660645"
+								},
+								"mirroredPosition": {
+									"x": ".15054",
+									"y": ".839342"
+								},
+								"color1HSV": {
+									"_h": ".777778",
+									"_s": ".4",
+									"_v": ".65",
+									"_hsv": "7778,4000,6500"
+								},
+								"rotation": "212.9763",
+								"rotationCompensation": "-105.0224",
+								"mirrorRotationCompensation": "-256.6433",
+								"scale": ".051506",
+								"flipX": true,
+								"flipY": false,
+								"mirror": true
+							},
+							{
+								"defID": "4184",
+								"isDefault": true,
+								"disabled": false,
+								"position": {
+									"x": ".847176",
+									"y": ".5714"
+								},
+								"mirroredPosition": {
+									"x": ".132793",
+									"y": ".749808"
+								},
+								"color1HSV": {
+									"_h": ".777778",
+									"_s": ".4",
+									"_v": ".65",
+									"_hsv": "7778,4000,6500"
+								},
+								"rotation": "112.2172",
+								"rotationCompensation": "-93.4595",
+								"mirrorRotationCompensation": "-268.3001",
+								"scale": ".080061",
+								"flipX": false,
+								"flipY": false,
+								"mirror": true
+							},
+							{
+								"defID": "4184",
+								"isDefault": true,
+								"disabled": false,
+								"position": {
+									"x": ".779476",
+									"y": ".596852"
+								},
+								"mirroredPosition": {
+									"x": ".200484",
+									"y": ".774721"
+								},
+								"color1HSV": {
+									"_h": ".777174",
+									"_s": ".601307",
+									"_v": ".6",
+									"_hsv": "7772,6013,6000"
+								},
+								"rotation": "185.2097",
+								"rotationCompensation": "-115.6544",
+								"mirrorRotationCompensation": "-244.5587",
+								"scale": ".05469",
+								"flipX": true,
+								"flipY": false,
+								"mirror": true
+							}
+						]
+					},
+					{
+						"bodyPartDefID": "2087",
+						"attached": true,
+						"_decalEntries": []
+					},
+					{
+						"bodyPartDefID": "2097",
+						"attached": true,
+						"_decalEntries": []
+					},
+					{
+						"bodyPartDefID": "2093",
+						"attached": true,
+						"_decalEntries": []
+					},
+					{
+						"bodyPartDefID": "3792",
+						"attached": true,
+						"_decalEntries": []
+					},
+					{
+						"bodyPartDefID": "2085",
+						"attached": false,
+						"_decalEntries": []
+					},
+					{
+						"bodyPartDefID": "2094",
+						"attached": false,
+						"_decalEntries": []
+					},
+					{
+						"bodyPartDefID": "2090",
+						"attached": false,
+						"_decalEntries": []
+					},
+					{
+						"bodyPartDefID": "2088",
+						"attached": false,
+						"_decalEntries": []
+					},
+					{
+						"bodyPartDefID": "3793",
+						"attached": false,
+						"_decalEntries": []
+					},
+					{
+						"bodyPartDefID": "7553",
+						"attached": true,
+						"_decalEntries": []
+					}
+				],
+				"_bodyColor1HSV": {
+					"_h": ".677778",
+					"_s": ".11",
+					"_v": "1.0",
+					"_hsv": "6778,1100,10000"
+				},
+				"_bodyColor2HSV": {
+					"_h": ".828502",
+					"_s": "1.0",
+					"_v": ".541177",
+					"_hsv": "8285,10000,5412"
+				},
+				"_bodyColor3HSV": {
+					"_h": ".689394",
+					"_s": ".431373",
+					"_v": "1.0",
+					"_hsv": "6894,4314,10000"
+				},
+				"_bodyColor4HSV": {
+					"_h": ".488722",
+					"_s": ".642512",
+					"_v": ".811765",
+					"_hsv": "4887,6425,8118"
+				},
+				"eyeShapeDefID": "2262",
+				"eyePupilDefID": "2274",
+				"_eyeShapeColorHSV": {
+					"_h": ".85014",
+					"_s": ".85",
+					"_v": ".54902",
+					"_hsv": "8501,8500,5490"
+				},
+				"_eyePupilColorHSV": {
+					"_h": ".38366",
+					"_s": "1.0",
+					"_v": "1.0",
+					"_hsv": "3837,10000,10000"
+				},
+				"_sparkColor1HSV": {
+					"_h": ".860279",
+					"_s": ".654902",
+					"_v": "1.0",
+					"_hsv": "8603,6549,10000"
+				},
+				"_hornColor1HSV": {
+					"_h": ".855556",
+					"_s": "1.0",
+					"_v": ".94",
+					"_hsv": "8556,10000,9400"
+				},
+				"_hornColor2HSV": {
+					"_h": ".747222",
+					"_s": ".09",
+					"_v": "1.0",
+					"_hsv": "7472,900,10000"
+				},
+				"_hornColor3HSV": {
+					"_h": ".488889",
+					"_s": ".64",
+					"_v": ".81",
+					"_hsv": "4889,6400,8100"
+				},
+				"_hornColor4HSV": {
+					"_h": ".537919",
+					"_s": "1.0",
+					"_v": ".741177",
+					"_hsv": "5379,10000,7412"
+				},
+				"_wingColor1HSV": {
+					"_h": ".835391",
+					"_s": ".515924",
+					"_v": ".615686",
+					"_hsv": "8354,5159,6157"
+				},
+				"_wingColor2HSV": {
+					"_h": ".849462",
+					"_s": ".331551",
+					"_v": ".733333",
+					"_hsv": "8495,3316,7333"
+				},
+				"_wingColor3HSV": {
+					"_h": ".837449",
+					"_s": ".34322",
+					"_v": ".92549",
+					"_hsv": "8374,3432,9255"
+				},
+				"_wingColor4HSV": {
+					"_h": ".856061",
+					"_s": ".172549",
+					"_v": "1.0",
+					"_hsv": "8561,1725,10000"
+				},
+				"eyeShapeScale": 0.5,
+				"eyePupilScale": 0.5,
+				"clothingItems": [],
+				"defaultDecalsEnabled": true,
+				"scaleGroups": [
+					{
+						"scaleGroupDefID": "698",
+						"scale": 0.5
+					},
+					{
+						"scaleGroupDefID": "699",
+						"scale": 0.5
+					},
+					{
+						"scaleGroupDefID": "700",
+						"scale": 0.5
+					},
+					{
+						"scaleGroupDefID": "701",
+						"scale": 0.5
+					},
+					{
+						"scaleGroupDefID": "702",
+						"scale": 0.5
+					},
+					{
+						"scaleGroupDefID": "704",
+						"scale": 0.5
+					},
+					{
+						"scaleGroupDefID": "709",
+						"scale": 0.49649477005004885
+					},
+					{
+						"scaleGroupDefID": "710",
+						"scale": 0.5000001788139343
+					},
+					{
+						"scaleGroupDefID": "711",
+						"scale": 0.5
+					},
+					{
+						"scaleGroupDefID": "3130",
+						"scale": 0.5
+					}
+				]
 			}
 		},
 		"Senri": {
 			"defId": 8256,
 			"info": {
-			}
+		        "actorClassDefID": "2757",
+		        "bodyParts": [
+		            {
+		                "bodyPartDefID": "2767",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "2760",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "2761",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "2769",
+		                "attached": true,
+		                "_decalEntries": [
+		                    {
+		                        "defID": "4186",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".841425",
+		                            "y": ".340222"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".167205",
+		                            "y": ".139156"
+		                        },
+		                        "color1HSV": {
+		                            "_h": "0",
+		                            "_s": "1.0",
+		                            "_v": ".341177",
+		                            "_hsv": "0,10000,3412"
+		                        },
+		                        "rotation": "320.5918",
+		                        "rotationCompensation": "-92.52448",
+		                        "mirrorRotationCompensation": "-267.167",
+		                        "scale": ".074045",
+		                        "flipX": true,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4186",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".791461",
+		                            "y": ".327806"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".217184",
+		                            "y": ".1266"
+		                        },
+		                        "color1HSV": {
+		                            "_h": "0",
+		                            "_s": "1.0",
+		                            "_v": ".341177",
+		                            "_hsv": "0,10000,3412"
+		                        },
+		                        "rotation": "311.1007",
+		                        "rotationCompensation": "-103.3784",
+		                        "mirrorRotationCompensation": "-256.4706",
+		                        "scale": ".094533",
+		                        "flipX": true,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4186",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".74384",
+		                            "y": ".34356"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".26478",
+		                            "y": ".142502"
+		                        },
+		                        "color1HSV": {
+		                            "_h": "0",
+		                            "_s": "1.0",
+		                            "_v": ".341177",
+		                            "_hsv": "0,10000,3412"
+		                        },
+		                        "rotation": "301.6111",
+		                        "rotationCompensation": "-109.3999",
+		                        "mirrorRotationCompensation": "-250.1878",
+		                        "scale": ".074332",
+		                        "flipX": true,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4186",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".805882",
+		                            "y": ".774279"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".16041",
+		                            "y": ".569279"
+		                        },
+		                        "color1HSV": {
+		                            "_h": "0",
+		                            "_s": "1.0",
+		                            "_v": ".341177",
+		                            "_hsv": "0,10000,3412"
+		                        },
+		                        "rotation": "318.4825",
+		                        "rotationCompensation": "-89.07115",
+		                        "mirrorRotationCompensation": "88.59888",
+		                        "scale": ".071106",
+		                        "flipX": true,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4186",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".764921",
+		                            "y": ".76834"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".201378",
+		                            "y": ".56308"
+		                        },
+		                        "color1HSV": {
+		                            "_h": "0",
+		                            "_s": "1.0",
+		                            "_v": ".341177",
+		                            "_hsv": "0,10000,3412"
+		                        },
+		                        "rotation": "315.317",
+		                        "rotationCompensation": "-94.2237",
+		                        "mirrorRotationCompensation": "-265.887",
+		                        "scale": ".079899",
+		                        "flipX": true,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4186",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".727731",
+		                            "y": ".765534"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".238564",
+		                            "y": ".560173"
+		                        },
+		                        "color1HSV": {
+		                            "_h": "0",
+		                            "_s": "1.0",
+		                            "_v": ".341177",
+		                            "_hsv": "0,10000,3412"
+		                        },
+		                        "rotation": "314.2711",
+		                        "rotationCompensation": "-102.7982",
+		                        "mirrorRotationCompensation": "-256.7049",
+		                        "scale": ".059407",
+		                        "flipX": true,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4186",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".838533",
+		                            "y": ".77887"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".127795",
+		                            "y": ".573904"
+		                        },
+		                        "color1HSV": {
+		                            "_h": "0",
+		                            "_s": "1.0",
+		                            "_v": ".341177",
+		                            "_hsv": "0,10000,3412"
+		                        },
+		                        "rotation": "312.1571",
+		                        "rotationCompensation": "-90.10303",
+		                        "mirrorRotationCompensation": "89.67656",
+		                        "scale": ".03593",
+		                        "flipX": true,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4186",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".695059",
+		                            "y": ".757767"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".2712",
+		                            "y": ".552333"
+		                        },
+		                        "color1HSV": {
+		                            "_h": "0",
+		                            "_s": "1.0",
+		                            "_v": ".341177",
+		                            "_hsv": "0,10000,3412"
+		                        },
+		                        "rotation": "318.4885",
+		                        "rotationCompensation": "-107.4608",
+		                        "mirrorRotationCompensation": "-254.8704",
+		                        "scale": ".033021",
+		                        "flipX": true,
+		                        "flipY": false,
+		                        "mirror": true
+		                    }
+		                ]
+		            },
+		            {
+		                "bodyPartDefID": "2770",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "2768",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "3072",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "3074",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "3076",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "3068",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "3070",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "7550",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "21585",
+		                "attached": true,
+		                "_decalEntries": []
+		            }
+		        ],
+		        "_bodyColor1HSV": {
+		            "_h": ".110145",
+		            "_s": "1.0",
+		            "_v": ".901961",
+		            "_hsv": "1101,10000,9020"
+		        },
+		        "_bodyColor2HSV": {
+		            "_h": ".11838",
+		            "_s": ".419608",
+		            "_v": "1.0",
+		            "_hsv": "1184,4196,10000"
+		        },
+		        "_bodyColor3HSV": {
+		            "_h": ".083333",
+		            "_s": "1.0",
+		            "_v": ".698039",
+		            "_hsv": "833,10000,6980"
+		        },
+		        "_bodyColor4HSV": {
+		            "_h": "0",
+		            "_s": ".644737",
+		            "_v": ".298039",
+		            "_hsv": "0,6447,2980"
+		        },
+		        "eyeShapeDefID": "2262",
+		        "eyePupilDefID": "2271",
+		        "_eyeShapeColorHSV": {
+		            "_h": "1.0",
+		            "_s": ".92",
+		            "_v": ".33",
+		            "_hsv": "10000,9200,3300"
+		        },
+		        "_eyePupilColorHSV": {
+		            "_h": ".119444",
+		            "_s": "1.0",
+		            "_v": "1.0",
+		            "_hsv": "1194,10000,10000"
+		        },
+		        "_sparkColor1HSV": {
+		            "_h": "1.0",
+		            "_s": "1.0",
+		            "_v": "1.0",
+		            "_hsv": "10000,10000,10000"
+		        },
+		        "_hornColor1HSV": {
+		            "_h": ".138365",
+		            "_s": ".297753",
+		            "_v": ".698039",
+		            "_hsv": "1384,2978,6980"
+		        },
+		        "_hornColor2HSV": {
+		            "_h": ".135417",
+		            "_s": ".153846",
+		            "_v": ".815686",
+		            "_hsv": "1354,1538,8157"
+		        },
+		        "_hornColor3HSV": {
+		            "_h": ".135417",
+		            "_s": ".195918",
+		            "_v": ".960784",
+		            "_hsv": "1354,1959,9608"
+		        },
+		        "_hornColor4HSV": {
+		            "_h": ".19697",
+		            "_s": ".114583",
+		            "_v": ".376471",
+		            "_hsv": "1970,1146,3765"
+		        },
+		        "_wingColor1HSV": {
+		            "_h": ".59375",
+		            "_s": ".219178",
+		            "_v": ".858824",
+		            "_hsv": "5937,2192,8588"
+		        },
+		        "_wingColor2HSV": {
+		            "_h": ".390351",
+		            "_s": ".167401",
+		            "_v": ".890196",
+		            "_hsv": "3904,1674,8902"
+		        },
+		        "_wingColor3HSV": {
+		            "_h": ".119718",
+		            "_s": ".278431",
+		            "_v": "1.0",
+		            "_hsv": "1197,2784,10000"
+		        },
+		        "_wingColor4HSV": {
+		            "_h": ".628655",
+		            "_s": ".37013",
+		            "_v": ".603922",
+		            "_hsv": "6287,3701,6039"
+		        },
+		        "eyeShapeScale": 0.5,
+		        "eyePupilScale": 1.0,
+		        "clothingItems": [],
+		        "defaultDecalsEnabled": true,
+		        "scaleGroups": [
+		            {
+		                "scaleGroupDefID": "710",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "711",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "709",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "699",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "698",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "704",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "700",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "701",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "702",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "3130",
+		                "scale": 0.5
+		            }
+		        ]
+		    }
 		},
 		"Phoenix": {
 			"defId": 25964,
 			"info": {
-			}
+		        "actorClassDefID": "25954",
+		        "bodyParts": [
+		            {
+		                "bodyPartDefID": "25955",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "25956",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "25957",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "25959",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "25958",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "25961",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "25960",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "25976",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "25963",
+		                "attached": true,
+		                "_decalEntries": []
+		            }
+		        ],
+		        "_bodyColor1HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "302,6652,8784"
+		        },
+		        "_bodyColor2HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "9439,8231,5098"
+		        },
+		        "_bodyColor3HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "9253,8529,1333"
+		        },
+		        "_bodyColor4HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "710,6102,9961"
+		        },
+		        "eyeShapeDefID": "2259",
+		        "eyePupilDefID": "2272",
+		        "_eyeShapeColorHSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "7543,9200,0"
+		        },
+		        "_eyePupilColorHSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "1297,1500,10000"
+		        },
+		        "_sparkColor1HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "9277,8300,8800"
+		        },
+		        "_hornColor1HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "968,3605,6745"
+		        },
+		        "_hornColor2HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "0,0,1765"
+		        },
+		        "_hornColor3HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "0,0,1765"
+		        },
+		        "_hornColor4HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "0,0,1765"
+		        },
+		        "_wingColor1HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "302,6652,8784"
+		        },
+		        "_wingColor2HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "9439,8231,5098"
+		        },
+		        "_wingColor3HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "0,0,1765"
+		        },
+		        "_wingColor4HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "0,0,1765"
+		        },
+		        "eyeShapeScale": 1.0,
+		        "eyePupilScale": 1.0,
+		        "clothingItems": [],
+		        "defaultDecalsEnabled": true,
+		        "scaleGroups": [
+		            {
+		                "scaleGroupDefID": "710",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "711",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "709",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "699",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "698",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "704",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "700",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "701",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "702",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "3130",
+		                "scale": 0.5
+		            }
+		        ]
+		    }
 		},
 		"Werewolf": {
 			"defId": 19022,
 			"info": {
-			}
+		        "actorClassDefID": "19018",
+		        "bodyParts": [
+		            {
+		                "bodyPartDefID": "19062",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "19063",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "19064",
+		                "attached": true,
+		                "_decalEntries": [
+		                    {
+		                        "defID": "4156",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".530475",
+		                            "y": ".518622"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".377198",
+		                            "y": ".518705"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".888889",
+		                            "_s": ".586957",
+		                            "_v": ".180392",
+		                            "_hsv": "8889,5870,1804"
+		                        },
+		                        "rotation": "101.1915",
+		                        "rotationCompensation": "37.67703",
+		                        "mirrorRotationCompensation": "-37.84673",
+		                        "scale": ".025271",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4156",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".506346",
+		                            "y": ".532279"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".401323",
+		                            "y": ".532325"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".888889",
+		                            "_s": ".586957",
+		                            "_v": ".180392",
+		                            "_hsv": "8889,5870,1804"
+		                        },
+		                        "rotation": "109.3942",
+		                        "rotationCompensation": "57.87769",
+		                        "mirrorRotationCompensation": "-57.90911",
+		                        "scale": ".021459",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4184",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".687206",
+		                            "y": ".237166"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".316028",
+		                            "y": ".238383"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".888889",
+		                            "_s": ".586957",
+		                            "_v": ".180392",
+		                            "_hsv": "8889,5870,1804"
+		                        },
+		                        "rotation": "258.4448",
+		                        "rotationCompensation": "50.51764",
+		                        "mirrorRotationCompensation": "-49.96983",
+		                        "scale": ".063246",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4184",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".681607",
+		                            "y": ".277308"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".321143",
+		                            "y": ".278678"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".888889",
+		                            "_s": ".586957",
+		                            "_v": ".180392",
+		                            "_hsv": "8889,5870,1804"
+		                        },
+		                        "rotation": "247.5084",
+		                        "rotationCompensation": "51.14027",
+		                        "mirrorRotationCompensation": "-50.16916",
+		                        "scale": ".044246",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    }
+		                ]
+		            },
+		            {
+		                "bodyPartDefID": "19081",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "19065",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "19083",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "19082",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "19085",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "19080",
+		                "attached": false,
+		                "_decalEntries": []
+		            }
+		        ],
+		        "_bodyColor1HSV": {
+		            "_h": ".888889",
+		            "_s": ".586957",
+		            "_v": ".180392",
+		            "_hsv": "8889,5870,1804"
+		        },
+		        "_bodyColor2HSV": {
+		            "_h": ".96875",
+		            "_s": ".659794",
+		            "_v": ".380392",
+		            "_hsv": "9688,6598,3804"
+		        },
+		        "_bodyColor3HSV": {
+		            "_h": ".96875",
+		            "_s": ".659794",
+		            "_v": ".380392",
+		            "_hsv": "9688,6598,3804"
+		        },
+		        "_bodyColor4HSV": {
+		            "_h": ".0477",
+		            "_s": "1.0",
+		            "_v": ".77",
+		            "_hsv": "477,10000,7700"
+		        },
+		        "eyeShapeDefID": "2259",
+		        "eyePupilDefID": "2272",
+		        "_eyeShapeColorHSV": {
+		            "_h": ".754332",
+		            "_s": ".92",
+		            "_v": ".2",
+		            "_hsv": "7543,9200,2000"
+		        },
+		        "_eyePupilColorHSV": {
+		            "_h": ".502825",
+		            "_s": ".45",
+		            "_v": "1.0",
+		            "_hsv": "5028,4500,10000"
+		        },
+		        "_sparkColor1HSV": {
+		            "_h": ".407082",
+		            "_s": ".58",
+		            "_v": "1.0",
+		            "_hsv": "4071,5800,10000"
+		        },
+		        "_hornColor1HSV": {
+		            "_h": ".8959",
+		            "_s": ".31",
+		            "_v": ".73",
+		            "_hsv": "8959,3100,7300"
+		        },
+		        "_hornColor2HSV": {
+		            "_h": ".82221",
+		            "_s": ".17",
+		            "_v": ".95",
+		            "_hsv": "8222,1700,9500"
+		        },
+		        "_hornColor3HSV": {
+		            "_h": ".982456",
+		            "_s": ".367742",
+		            "_v": ".607843",
+		            "_hsv": "9825,3677,6078"
+		        },
+		        "_hornColor4HSV": {
+		            "_h": ".958955",
+		            "_s": ".650486",
+		            "_v": ".807843",
+		            "_hsv": "9590,6505,8078"
+		        },
+		        "_wingColor1HSV": {
+		            "_h": ".958333",
+		            "_s": ".121212",
+		            "_v": ".129412",
+		            "_hsv": "9583,1212,1294"
+		        },
+		        "_wingColor2HSV": {
+		            "_h": ".95679",
+		            "_s": ".5625",
+		            "_v": ".376471",
+		            "_hsv": "9568,5625,3765"
+		        },
+		        "_wingColor3HSV": {
+		            "_h": ".949472",
+		            "_s": ".995496",
+		            "_v": ".870588",
+		            "_hsv": "9495,9955,8706"
+		        },
+		        "_wingColor4HSV": {
+		            "_h": ".507937",
+		            "_s": ".25",
+		            "_v": ".329412",
+		            "_hsv": "5079,2500,3294"
+		        },
+		        "eyeShapeScale": 0.5,
+		        "eyePupilScale": 1.0,
+		        "clothingItems": [],
+		        "defaultDecalsEnabled": true,
+		        "scaleGroups": [
+		            {
+		                "scaleGroupDefID": "710",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "711",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "709",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "699",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "698",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "704",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "700",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "701",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "702",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "3130",
+		                "scale": 0.5
+		            }
+		        ]
+		    }
 		},
 		"Shinigami": {
 			"defId": 24000,
 			"info": {
-			}
+		        "actorClassDefID": "23970",
+		        "bodyParts": [
+		            {
+		                "bodyPartDefID": "23973",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "23975",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "23976",
+		                "attached": true,
+		                "_decalEntries": [
+		                    {
+		                        "defID": "4156",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".530475",
+		                            "y": ".518622"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".377198",
+		                            "y": ".518705"
+		                        },
+		                        "color1HSV": {
+		                            "_h": "1.0",
+		                            "_s": "1.0",
+		                            "_v": "1.0",
+		                            "_hsv": "8889,5870,1804"
+		                        },
+		                        "rotation": "101.1915",
+		                        "rotationCompensation": "37.67703",
+		                        "mirrorRotationCompensation": "-37.84673",
+		                        "scale": ".025271",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4156",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".506346",
+		                            "y": ".532279"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".401323",
+		                            "y": ".532325"
+		                        },
+		                        "color1HSV": {
+		                            "_h": "1.0",
+		                            "_s": "1.0",
+		                            "_v": "1.0",
+		                            "_hsv": "8889,5870,1804"
+		                        },
+		                        "rotation": "109.3942",
+		                        "rotationCompensation": "57.87769",
+		                        "mirrorRotationCompensation": "-57.90911",
+		                        "scale": ".021459",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4184",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".687206",
+		                            "y": ".237166"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".316028",
+		                            "y": ".238383"
+		                        },
+		                        "color1HSV": {
+		                            "_h": "1.0",
+		                            "_s": "1.0",
+		                            "_v": "1.0",
+		                            "_hsv": "8889,5870,1804"
+		                        },
+		                        "rotation": "258.4448",
+		                        "rotationCompensation": "50.51764",
+		                        "mirrorRotationCompensation": "-49.96983",
+		                        "scale": ".063246",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4184",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".681607",
+		                            "y": ".277308"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".321143",
+		                            "y": ".278678"
+		                        },
+		                        "color1HSV": {
+		                            "_h": "1.0",
+		                            "_s": "1.0",
+		                            "_v": "1.0",
+		                            "_hsv": "8889,5870,1804"
+		                        },
+		                        "rotation": "247.5084",
+		                        "rotationCompensation": "51.14027",
+		                        "mirrorRotationCompensation": "-50.16916",
+		                        "scale": ".044246",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    }
+		                ]
+		            },
+		            {
+		                "bodyPartDefID": "23978",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "23977",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "23980",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "23979",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "23998",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "23999",
+		                "attached": false,
+		                "_decalEntries": []
+		            }
+		        ],
+		        "_bodyColor1HSV": {
+		            "_h": ".5",
+		            "_s": ".5",
+		            "_v": ".5",
+		            "_hsv": "4991,7490,10000"
+		        },
+		        "_bodyColor2HSV": {
+		            "_h": "0",
+		            "_s": ".35",
+		            "_v": "1.0",
+		            "_hsv": "0,3500,10000"
+		        },
+		        "_bodyColor3HSV": {
+		            "_h": ".5",
+		            "_s": ".5",
+		            "_v": ".5",
+		            "_hsv": "7647,2297,2902"
+		        },
+		        "_bodyColor4HSV": {
+		            "_h": ".5",
+		            "_s": ".5",
+		            "_v": ".5",
+		            "_hsv": "4991,7490,10000"
+		        },
+		        "eyeShapeDefID": "2259",
+		        "eyePupilDefID": "2272",
+		        "_eyeShapeColorHSV": {
+		            "_h": ".5",
+		            "_s": ".5",
+		            "_v": ".5",
+		            "_hsv": "7543,9200,2000"
+		        },
+		        "_eyePupilColorHSV": {
+		            "_h": ".5",
+		            "_s": ".5",
+		            "_v": ".5",
+		            "_hsv": "4775,2100,10000"
+		        },
+		        "_sparkColor1HSV": {
+		            "_h": ".5",
+		            "_s": ".5",
+		            "_v": ".5",
+		            "_hsv": "9277,8300,8800"
+		        },
+		        "_hornColor1HSV": {
+		            "_h": ".5",
+		            "_s": ".5",
+		            "_v": ".5",
+		            "_hsv": "7647,2297,2902"
+		        },
+		        "_hornColor2HSV": {
+		            "_h": ".659091",
+		            "_s": ".156028",
+		            "_v": ".552941",
+		            "_hsv": "6591,1560,5529"
+		        },
+		        "_hornColor3HSV": {
+		            "_h": ".95977",
+		            "_s": ".650224",
+		            "_v": ".87451",
+		            "_hsv": "9598,6502,8745"
+		        },
+		        "_hornColor4HSV": {
+		            "_h": ".98718",
+		            "_s": ".273684",
+		            "_v": ".745098",
+		            "_hsv": "9872,2737,7451"
+		        },
+		        "_wingColor1HSV": {
+		            "_h": ".764706",
+		            "_s": ".22973",
+		            "_v": ".290196",
+		            "_hsv": "7647,2297,2902"
+		        },
+		        "_wingColor2HSV": {
+		            "_h": ".958861",
+		            "_s": ".619608",
+		            "_v": "1.0",
+		            "_hsv": "9589,6196,10000"
+		        },
+		        "_wingColor3HSV": {
+		            "_h": ".703252",
+		            "_s": ".264516",
+		            "_v": ".607843",
+		            "_hsv": "7033,2645,6078"
+		        },
+		        "_wingColor4HSV": {
+		            "_h": ".993056",
+		            "_s": ".115385",
+		            "_v": ".815686",
+		            "_hsv": "9931,1154,8157"
+		        },
+		        "eyeShapeScale": 0.5,
+		        "eyePupilScale": 1.0,
+		        "clothingItems": [],
+		        "defaultDecalsEnabled": true,
+		        "scaleGroups": [
+		            {
+		                "scaleGroupDefID": "710",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "711",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "709",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "699",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "698",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "704",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "700",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "701",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "702",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "3130",
+		                "scale": 0.5
+		            }
+		        ]
+		    }
 		},
 		"Dragon": {
 			"defId": 8262,
-			"info": {
-			}
+			"info":{
+		        "actorClassDefID": "5035",
+		        "bodyParts": [
+		            {
+		                "bodyPartDefID": "5029",
+		                "attached": true,
+		                "_decalEntries": [
+		                    {
+		                        "defID": "8760",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".233032",
+		                            "y": ".57214"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".231086",
+		                            "y": ".57207"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".402778",
+		                            "_s": ".93",
+		                            "_v": "1.0",
+		                            "_hsv": "4028,9300,10000"
+		                        },
+		                        "rotation": "309.386",
+		                        "rotationCompensation": "-130.0103",
+		                        "mirrorRotationCompensation": "-127.6641",
+		                        "scale": ".094536",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": false
+		                    },
+		                    {
+		                        "defID": "8779",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".187817",
+		                            "y": ".65804"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".278834",
+		                            "y": ".659043"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".502688",
+		                            "_s": ".729412",
+		                            "_v": "1.0",
+		                            "_hsv": "5027,7294,10000"
+		                        },
+		                        "rotation": "239.7782",
+		                        "rotationCompensation": "-186.6628",
+		                        "mirrorRotationCompensation": "-172.2606",
+		                        "scale": ".129698",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    }
+		                ]
+		            },
+		            {
+		                "bodyPartDefID": "9659",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "5030",
+		                "attached": true,
+		                "_decalEntries": [
+		                    {
+		                        "defID": "8779",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".166995",
+		                            "y": ".35808"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".306749",
+		                            "y": ".358296"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".430556",
+		                            "_s": "1.0",
+		                            "_v": "1.0",
+		                            "_hsv": "4306,10000,10000"
+		                        },
+		                        "rotation": "223.5713",
+		                        "rotationCompensation": "-0.594521",
+		                        "mirrorRotationCompensation": "4.975456",
+		                        "scale": ".112129",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "8760",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".137174",
+		                            "y": ".285509"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".342295",
+		                            "y": ".283658"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".458333",
+		                            "_s": "1.0",
+		                            "_v": "1.0",
+		                            "_hsv": "4583,10000,10000"
+		                        },
+		                        "rotation": "37.96352",
+		                        "rotationCompensation": "-29.46355",
+		                        "mirrorRotationCompensation": "10.04626",
+		                        "scale": ".08282",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4156",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".685092",
+		                            "y": ".607249"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".678759",
+		                            "y": ".607485"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".441667",
+		                            "_s": ".67",
+		                            "_v": ".84",
+		                            "_hsv": "4417,6700,8400"
+		                        },
+		                        "rotation": "357.5075",
+		                        "rotationCompensation": "3.804764",
+		                        "mirrorRotationCompensation": "-4.426971",
+		                        "scale": ".161915",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": false
+		                    },
+		                    {
+		                        "defID": "8760",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".668247",
+		                            "y": ".80645"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".696682",
+		                            "y": ".806431"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".236111",
+		                            "_s": ".57",
+		                            "_v": ".91",
+		                            "_hsv": "2361,5700,9100"
+		                        },
+		                        "rotation": "264.7038",
+		                        "rotationCompensation": "76.92607",
+		                        "mirrorRotationCompensation": "6.276466",
+		                        "scale": ".117987",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": false
+		                    }
+		                ]
+		            },
+		            {
+		                "bodyPartDefID": "9657",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "5032",
+		                "attached": true,
+		                "_decalEntries": [
+		                    {
+		                        "defID": "8779",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".458405",
+		                            "y": ".365353"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".142573",
+		                            "y": ".13496"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".433333",
+		                            "_s": ".91",
+		                            "_v": "1.0",
+		                            "_hsv": "4333,9100,10000"
+		                        },
+		                        "rotation": "59.05681",
+		                        "rotationCompensation": "-120.551",
+		                        "mirrorRotationCompensation": "-240.2764",
+		                        "scale": ".126762",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "8779",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".70239",
+		                            "y": ".793748"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".134408",
+		                            "y": ".627987"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".502688",
+		                            "_s": ".729412",
+		                            "_v": "1.0",
+		                            "_hsv": "5027,7294,10000"
+		                        },
+		                        "rotation": "209.8588",
+		                        "rotationCompensation": "-82.49146",
+		                        "mirrorRotationCompensation": "81.229",
+		                        "scale": ".12384",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4156",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".398239",
+		                            "y": ".343152"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".202025",
+		                            "y": ".112974"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".491667",
+		                            "_s": ".75",
+		                            "_v": "1.0",
+		                            "_hsv": "4917,7500,10000"
+		                        },
+		                        "rotation": "11.59805",
+		                        "rotationCompensation": "-143.0865",
+		                        "mirrorRotationCompensation": "-218.4584",
+		                        "scale": ".079887",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4156",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".328436",
+		                            "y": ".399977"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".27253",
+		                            "y": ".169851"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".508333",
+		                            "_s": "1.0",
+		                            "_v": "1.0",
+		                            "_hsv": "5083,10000,10000"
+		                        },
+		                        "rotation": "0",
+		                        "rotationCompensation": "-95.37807",
+		                        "mirrorRotationCompensation": "-267.4843",
+		                        "scale": ".062314",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4156",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".683871",
+		                            "y": ".747439"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".149715",
+		                            "y": ".583547"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".425",
+		                            "_s": ".83",
+		                            "_v": "1.0",
+		                            "_hsv": "4250,8300,10000"
+		                        },
+		                        "rotation": "169.7877",
+		                        "rotationCompensation": "-88.35669",
+		                        "mirrorRotationCompensation": "-262.904",
+		                        "scale": ".071106",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4156",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".618947",
+		                            "y": ".780927"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".211223",
+		                            "y": ".607167"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".408333",
+		                            "_s": ".89",
+		                            "_v": "1.0",
+		                            "_hsv": "4083,8900,10000"
+		                        },
+		                        "rotation": "0",
+		                        "rotationCompensation": "-126.0111",
+		                        "mirrorRotationCompensation": "-248.3171",
+		                        "scale": ".062316",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    }
+		                ]
+		            },
+		            {
+		                "bodyPartDefID": "5033",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "12111",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "21802",
+		                "attached": true,
+		                "_decalEntries": []
+		            }
+		        ],
+		        "_bodyColor1HSV": {
+		            "_h": ".442991",
+		            "_s": ".54",
+		            "_v": ".69",
+		            "_hsv": "4430,5400,6900"
+		        },
+		        "_bodyColor2HSV": {
+		            "_h": ".215054",
+		            "_s": ".146919",
+		            "_v": ".827451",
+		            "_hsv": "2151,1469,8275"
+		        },
+		        "_bodyColor3HSV": {
+		            "_h": ".253333",
+		            "_s": ".411523",
+		            "_v": ".952941",
+		            "_hsv": "2533,4115,9529"
+		        },
+		        "_bodyColor4HSV": {
+		            "_h": ".211712",
+		            "_s": ".150407",
+		            "_v": ".964706",
+		            "_hsv": "2117,1504,9647"
+		        },
+		        "eyeShapeDefID": "2262",
+		        "eyePupilDefID": "2271",
+		        "_eyeShapeColorHSV": {
+		            "_h": ".475573",
+		            "_s": ".561321",
+		            "_v": ".377359",
+		            "_hsv": "4756,5613,3774"
+		        },
+		        "_eyePupilColorHSV": {
+		            "_h": ".078584",
+		            "_s": ".881279",
+		            "_v": ".858824",
+		            "_hsv": "786,8813,8588"
+		        },
+		        "_sparkColor1HSV": {
+		            "_h": ".986416",
+		            "_s": ".872642",
+		            "_v": ".745283",
+		            "_hsv": "9864,8726,7453"
+		        },
+		        "_hornColor1HSV": {
+		            "_h": ".196078",
+		            "_s": ".070539",
+		            "_v": ".945098",
+		            "_hsv": "1961,705,9451"
+		        },
+		        "_hornColor2HSV": {
+		            "_h": ".529167",
+		            "_s": ".869565",
+		            "_v": ".360784",
+		            "_hsv": "5292,8696,3608"
+		        },
+		        "_hornColor3HSV": {
+		            "_h": ".196078",
+		            "_s": ".070539",
+		            "_v": ".945098",
+		            "_hsv": "1961,705,9451"
+		        },
+		        "_hornColor4HSV": {
+		            "_h": ".196078",
+		            "_s": ".070539",
+		            "_v": ".945098",
+		            "_hsv": "1961,705,9451"
+		        },
+		        "_wingColor1HSV": {
+		            "_h": ".211712",
+		            "_s": ".150407",
+		            "_v": ".964706",
+		            "_hsv": "2117,1504,9647"
+		        },
+		        "_wingColor2HSV": {
+		            "_h": ".435583",
+		            "_s": ".724444",
+		            "_v": ".882353",
+		            "_hsv": "4356,7244,8824"
+		        },
+		        "_wingColor3HSV": {
+		            "_h": ".215054",
+		            "_s": ".146919",
+		            "_v": ".827451",
+		            "_hsv": "2151,1469,8275"
+		        },
+		        "_wingColor4HSV": {
+		            "_h": ".215054",
+		            "_s": ".146919",
+		            "_v": ".827451",
+		            "_hsv": "2151,1469,8275"
+		        },
+		        "eyeShapeScale": 0.5,
+		        "eyePupilScale": 1.0,
+		        "clothingItems": [],
+		        "defaultDecalsEnabled": true,
+		        "scaleGroups": [
+		            {
+		                "scaleGroupDefID": "710",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "711",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "709",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "699",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "703",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "698",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "3130",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "704",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "700",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "701",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "702",
+		                "scale": 0.5
+		            }
+		        ]
+		    }
 		},
 		"Fae": {
 			"defId": 27764,
 			"info": {
-			}			
+		        "actorClassDefID": "27746",
+		        "bodyParts": [
+		            {
+		                "bodyPartDefID": "27749",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "27756",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "27757",
+		                "attached": true,
+		                "_decalEntries": [
+		                    {
+		                        "defID": "4184",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".366148",
+		                            "y": ".162067"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".239781",
+		                            "y": ".161351"
+		                        },
+		                        "color1HSV": {
+		                            "_h": "",
+		                            "_s": "",
+		                            "_v": "",
+		                            "_hsv": "4505,6601,6000"
+		                        },
+		                        "rotation": "265.97620",
+		                        "rotationCompensation": "-3.067413",
+		                        "mirrorRotationCompensation": "4.024895",
+		                        "scale": "0.111250",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    }
+		                ]
+		            },
+		            {
+		                "bodyPartDefID": "27759",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "27758",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "27761",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "27760",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "27763",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "27776",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "28357",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "28527",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "28592",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "28593",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "27762",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "28526",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "29875",
+		                "attached": false,
+		                "_decalEntries": []
+		            }
+		        ],
+		        "_bodyColor1HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "4036,5565,4510"
+		        },
+		        "_bodyColor2HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "2698,3424,7216"
+		        },
+		        "_bodyColor3HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "2880,4791,8431"
+		        },
+		        "_bodyColor4HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "1762,5900,8600"
+		        },
+		        "eyeShapeDefID": "2261",
+		        "eyePupilDefID": "2265",
+		        "_eyeShapeColorHSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "4036,6100,3700"
+		        },
+		        "_eyePupilColorHSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "9621,4681,9216"
+		        },
+		        "_sparkColor1HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "4341,5255,10000"
+		        },
+		        "_hornColor1HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "3611,755,6235"
+		        },
+		        "_hornColor2HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "9310,6200,5200"
+		        },
+		        "_hornColor3HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "9825,3677,6078"
+		        },
+		        "_hornColor4HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "9590,6505,8078"
+		        },
+		        "_wingColor1HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "2647,4600,6000"
+		        },
+		        "_wingColor2HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "1223,1800,8500"
+		        },
+		        "_wingColor3HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "688,3400,8500"
+		        },
+		        "_wingColor4HSV": {
+		            "_h": "",
+		            "_s": "",
+		            "_v": "",
+		            "_hsv": "5079,2500,3294"
+		        },
+		        "eyeShapeScale": 1.0,
+		        "eyePupilScale": 1.0,
+		        "clothingItems": [],
+		        "defaultDecalsEnabled": true,
+		        "scaleGroups": [
+		            {
+		                "scaleGroupDefID": "710",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "711",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "709",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "699",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "698",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "704",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "700",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "701",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "702",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "3130",
+		                "scale": 0.5
+		            }
+		        ]
+		    }	
 		},
 		"Kirin": {
 			"defId": 22662,
 			"info": {
-			}
+		        "actorClassDefID": "22661",
+		        "bodyParts": [
+		            {
+		                "bodyPartDefID": "22663",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "22664",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "22666",
+		                "attached": true,
+		                "_decalEntries": [
+		                    {
+		                        "defID": "8760",
+		                        "isDefault": false,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".524411",
+		                            "y": ".774564"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".32386",
+		                            "y": ".774531"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".47342",
+		                            "_s": "1.0",
+		                            "_v": ".909804",
+		                            "_hsv": "4734,10000,9098"
+		                        },
+		                        "rotation": "232.961",
+		                        "rotationCompensation": "73.70106",
+		                        "mirrorRotationCompensation": "-73.76856",
+		                        "scale": ".045343",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4156",
+		                        "isDefault": false,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".502311",
+		                            "y": ".810998"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".345928",
+		                            "y": ".810986"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".47342",
+		                            "_s": "1.0",
+		                            "_v": ".909804",
+		                            "_hsv": "4734,10000,9098"
+		                        },
+		                        "rotation": "110.7253",
+		                        "rotationCompensation": "58.73195",
+		                        "mirrorRotationCompensation": "-58.95712",
+		                        "scale": ".05348",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4180",
+		                        "isDefault": false,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".472703",
+		                            "y": ".698499"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".375555",
+		                            "y": ".698501"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".47342",
+		                            "_s": "1.0",
+		                            "_v": ".909804",
+		                            "_hsv": "4734,10000,9098"
+		                        },
+		                        "rotation": "0",
+		                        "rotationCompensation": "66.83802",
+		                        "mirrorRotationCompensation": "-66.78938",
+		                        "scale": ".136654",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    }
+		                ]
+		            },
+		            {
+		                "bodyPartDefID": "22667",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "22665",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "22668",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "22670",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "22672",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "22673",
+		                "attached": false,
+		                "_decalEntries": []
+		            }
+		        ],
+		        "_bodyColor1HSV": {
+		            "_h": ".5",
+		            "_s": ".5",
+		            "_v": ".5",
+		            "_hsv": "7576,1800,4300"
+		        },
+		        "_bodyColor2HSV": {
+		            "_h": ".47342",
+		            "_s": "1.0",
+		            "_v": ".909804",
+		            "_hsv": "4734,10000,9098"
+		        },
+		        "_bodyColor3HSV": {
+		            "_h": ".5",
+		            "_s": ".5",
+		            "_v": ".5",
+		            "_hsv": "4110,10000,10000"
+		        },
+		        "_bodyColor4HSV": {
+		            "_h": ".5",
+		            "_s": ".5",
+		            "_v": ".5",
+		            "_hsv": "5216,5800,6800"
+		        },
+		        "eyeShapeDefID": "2262",
+		        "eyePupilDefID": "2272",
+		        "_eyeShapeColorHSV": {
+		            "_h": ".758333",
+		            "_s": ".181818",
+		            "_v": ".284",
+		            "_hsv": "7583,1818,2840"
+		        },
+		        "_eyePupilColorHSV": {
+		            "_h": ".5",
+		            "_s": ".5",
+		            "_v": ".5",
+		            "_hsv": "5028,4500,10000"
+		        },
+		        "_sparkColor1HSV": {
+		            "_h": ".5",
+		            "_s": ".5",
+		            "_v": ".5",
+		            "_hsv": "4071,5800,10000"
+		        },
+		        "_hornColor1HSV": {
+		            "_h": ".420774",
+		            "_s": "1.0",
+		            "_v": "1.0",
+		            "_hsv": "4208,10000,10000"
+		        },
+		        "_hornColor2HSV": {
+		            "_h": ".366667",
+		            "_s": ".357143",
+		            "_v": ".713726",
+		            "_hsv": "3667,3571,7137"
+		        },
+		        "_hornColor3HSV": {
+		            "_h": ".558201",
+		            "_s": ".368421",
+		            "_v": ".670588",
+		            "_hsv": "5582,3684,6706"
+		        },
+		        "_hornColor4HSV": {
+		            "_h": ".524876",
+		            "_s": ".644231",
+		            "_v": ".407843",
+		            "_hsv": "5249,6442,4078"
+		        },
+		        "_wingColor1HSV": {
+		            "_h": ".280488",
+		            "_s": ".183857",
+		            "_v": ".87451",
+		            "_hsv": "2805,1839,8745"
+		        },
+		        "_wingColor2HSV": {
+		            "_h": ".49061",
+		            "_s": ".503546",
+		            "_v": ".552941",
+		            "_hsv": "4906,5035,5529"
+		        },
+		        "_wingColor3HSV": {
+		            "_h": ".410714",
+		            "_s": ".294737",
+		            "_v": ".745098",
+		            "_hsv": "4107,2947,7451"
+		        },
+		        "_wingColor4HSV": {
+		            "_h": ".520563",
+		            "_s": ".703196",
+		            "_v": ".858824",
+		            "_hsv": "5206,7032,8588"
+		        },
+		        "eyeShapeScale": 0.5,
+		        "eyePupilScale": 1.0,
+		        "clothingItems": [],
+		        "defaultDecalsEnabled": true,
+		        "scaleGroups": [
+		            {
+		                "scaleGroupDefID": "710",
+		                "scale": 1.0
+		            },
+		            {
+		                "scaleGroupDefID": "711",
+		                "scale": 0.6922675371170044
+		            },
+		            {
+		                "scaleGroupDefID": "709",
+		                "scale": 1.0
+		            },
+		            {
+		                "scaleGroupDefID": "699",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "698",
+		                "scale": 0.5944358706474304
+		            },
+		            {
+		                "scaleGroupDefID": "704",
+		                "scale": 1.0
+		            },
+		            {
+		                "scaleGroupDefID": "700",
+		                "scale": 1.0
+		            },
+		            {
+		                "scaleGroupDefID": "701",
+		                "scale": 0.22342590987682343
+		            },
+		            {
+		                "scaleGroupDefID": "702",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "3130",
+		                "scale": 0.5
+		            }
+		        ]
+		    }
 		},
 		"Jackalope": {
 			"defId": 15091,
 			"info": {
-			}
+		        "actorClassDefID": "14572",
+		        "bodyParts": [
+		            {
+		                "bodyPartDefID": "14611",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "14612",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "14613",
+		                "attached": true,
+		                "_decalEntries": [
+		                    {
+		                        "defID": "4179",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".21251",
+		                            "y": ".153352"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".375015",
+		                            "y": ".153788"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".047712",
+		                            "_s": "1.0",
+		                            "_v": "1.0",
+		                            "_hsv": "477,10000,10000"
+		                        },
+		                        "rotation": "342.2328",
+		                        "rotationCompensation": "-18.43012",
+		                        "mirrorRotationCompensation": "18.95292",
+		                        "scale": ".122448",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "4179",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".21251",
+		                            "y": ".153352"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".375015",
+		                            "y": ".153788"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".047712",
+		                            "_s": "1.0",
+		                            "_v": "1.0",
+		                            "_hsv": "477,10000,10000"
+		                        },
+		                        "rotation": "342.2328",
+		                        "rotationCompensation": "-18.43012",
+		                        "mirrorRotationCompensation": "18.95292",
+		                        "scale": ".122448",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    },
+		                    {
+		                        "defID": "8764",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".153945",
+		                            "y": ".150883"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".433589",
+		                            "y": ".151664"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".047712",
+		                            "_s": "1.0",
+		                            "_v": "1.0",
+		                            "_hsv": "477,10000,10000"
+		                        },
+		                        "rotation": "244.9632",
+		                        "rotationCompensation": "-27.99995",
+		                        "mirrorRotationCompensation": "28.23877",
+		                        "scale": ".112444",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    }
+		                ]
+		            },
+		            {
+		                "bodyPartDefID": "14624",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "14625",
+		                "attached": true,
+		                "_decalEntries": [
+		                    {
+		                        "defID": "8776",
+		                        "isDefault": true,
+		                        "disabled": false,
+		                        "position": {
+		                            "x": ".141625",
+		                            "y": ".361282"
+		                        },
+		                        "mirroredPosition": {
+		                            "x": ".855799",
+		                            "y": ".16909"
+		                        },
+		                        "color1HSV": {
+		                            "_h": ".025",
+		                            "_s": ".64",
+		                            "_v": "1.0",
+		                            "_hsv": "250,6400,10000"
+		                        },
+		                        "rotation": "117.0805",
+		                        "rotationCompensation": "288.1622",
+		                        "mirrorRotationCompensation": "72.07391",
+		                        "scale": ".2",
+		                        "flipX": false,
+		                        "flipY": false,
+		                        "mirror": true
+		                    }
+		                ]
+		            },
+		            {
+		                "bodyPartDefID": "14626",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "14627",
+		                "attached": true,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "18787",
+		                "attached": false,
+		                "_decalEntries": []
+		            },
+		            {
+		                "bodyPartDefID": "21209",
+		                "attached": true,
+		                "_decalEntries": []
+		            }
+		        ],
+		        "_bodyColor1HSV": {
+		            "_h": ".05663",
+		            "_s": ".32",
+		            "_v": "1.0",
+		            "_hsv": "566,3200,10000"
+		        },
+		        "_bodyColor2HSV": {
+		            "_h": ".0522",
+		            "_s": ".54",
+		            "_v": "1.0",
+		            "_hsv": "522,5400,10000"
+		        },
+		        "_bodyColor3HSV": {
+		            "_h": ".047652",
+		            "_s": "1.0",
+		            "_v": "1.0",
+		            "_hsv": "477,10000,10000"
+		        },
+		        "_bodyColor4HSV": {
+		            "_h": ".047712",
+		            "_s": "1.0",
+		            "_v": "1.0",
+		            "_hsv": "477,10000,10000"
+		        },
+		        "eyeShapeDefID": "2261",
+		        "eyePupilDefID": "2272",
+		        "_eyeShapeColorHSV": {
+		            "_h": ".754332",
+		            "_s": ".92",
+		            "_v": ".2",
+		            "_hsv": "7543,9200,2000"
+		        },
+		        "_eyePupilColorHSV": {
+		            "_h": ".502825",
+		            "_s": ".45",
+		            "_v": "1.0",
+		            "_hsv": "5028,4500,10000"
+		        },
+		        "_sparkColor1HSV": {
+		            "_h": ".819542",
+		            "_s": "1.0",
+		            "_v": ".84",
+		            "_hsv": "8195,10000,8400"
+		        },
+		        "_hornColor1HSV": {
+		            "_h": ".754187",
+		            "_s": ".643",
+		            "_v": ".385",
+		            "_hsv": "7542,6430,3850"
+		        },
+		        "_hornColor2HSV": {
+		            "_h": ".753968",
+		            "_s": ".642857",
+		            "_v": ".671",
+		            "_hsv": "7540,6429,6710"
+		        },
+		        "_hornColor3HSV": {
+		            "_h": ".056911",
+		            "_s": ".321569",
+		            "_v": "1.0",
+		            "_hsv": "569,3216,10000"
+		        },
+		        "_hornColor4HSV": {
+		            "_h": ".99269",
+		            "_s": ".447059",
+		            "_v": "1.0",
+		            "_hsv": "9927,4471,10000"
+		        },
+		        "_wingColor1HSV": {
+		            "_h": ".114583",
+		            "_s": ".188235",
+		            "_v": "1.0",
+		            "_hsv": "1146,1882,10000"
+		        },
+		        "_wingColor2HSV": {
+		            "_h": ".070743",
+		            "_s": ".591489",
+		            "_v": ".921569",
+		            "_hsv": "707,5915,9216"
+		        },
+		        "_wingColor3HSV": {
+		            "_h": ".031963",
+		            "_s": ".969027",
+		            "_v": ".886275",
+		            "_hsv": "320,9690,8863"
+		        },
+		        "_wingColor4HSV": {
+		            "_h": ".102381",
+		            "_s": ".315315",
+		            "_v": ".870588",
+		            "_hsv": "1024,3153,8706"
+		        },
+		        "eyeShapeScale": 0.5,
+		        "eyePupilScale": 1.0,
+		        "clothingItems": [],
+		        "defaultDecalsEnabled": true,
+		        "scaleGroups": [
+		            {
+		                "scaleGroupDefID": "710",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "711",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "709",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "699",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "698",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "704",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "700",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "701",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "702",
+		                "scale": 0.5
+		            },
+		            {
+		                "scaleGroupDefID": "3130",
+		                "scale": 0.5
+		            }
+		        ]
+		    }
 		}
 	}
 }
