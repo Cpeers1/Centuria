@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.net.Socket;
 
 import org.asf.emuferal.packets.smartfox.ISmartfoxPacket;
+import org.asf.emuferal.util.TaskThread;
 
 public class SmartfoxClient {
 
 	private Socket client;
 	private BaseSmartfoxServer server;
+	private TaskThread taskThread;
 
 	/**
 	 * Field for storing, eg. a player instance object
@@ -18,6 +20,13 @@ public class SmartfoxClient {
 	public SmartfoxClient(Socket client, BaseSmartfoxServer server) {
 		this.client = client;
 		this.server = server;
+		
+		taskThread = new TaskThread(client.toString());
+		taskThread.start();
+	}
+
+	void stop() {
+		taskThread.stopCleanly();
 	}
 
 	/**
@@ -38,6 +47,7 @@ public class SmartfoxClient {
 		} catch (IOException e) {
 		}
 		server.clientDisconnect(this);
+		stop();
 		client = null;
 	}
 
@@ -48,7 +58,19 @@ public class SmartfoxClient {
 	 * @throws IOException If transmission fails
 	 */
 	public void sendPacket(ISmartfoxPacket packet) throws IOException {
-		server.sendPacket(this, packet);
+		taskThread.schedule(() -> {
+			try {
+				// Instantiate the packet and build
+				String content = packet.build();
+
+				// Send packet
+				byte[] payload = content.getBytes("UTF-8");
+				getSocket().getOutputStream().write(payload);
+				getSocket().getOutputStream().write(0);
+				getSocket().getOutputStream().flush();
+			} catch (IOException e) {
+			}
+		});
 	}
 
 	/**
@@ -58,7 +80,18 @@ public class SmartfoxClient {
 	 * @throws IOException If transmission fails
 	 */
 	public void sendPacket(String packet) throws IOException {
-		server.sendPacket(this, packet);
+		taskThread.schedule(() -> {
+			try {
+				// Send packet
+				byte[] payload = packet.getBytes("UTF-8");
+				if (getSocket() == null)
+					return;
+				getSocket().getOutputStream().write(payload);
+				getSocket().getOutputStream().write(0);
+				getSocket().getOutputStream().flush();
+			} catch (IOException e) {
+			}
+		});
 	}
 
 	/**

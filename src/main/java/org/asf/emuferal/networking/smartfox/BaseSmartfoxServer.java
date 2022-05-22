@@ -90,12 +90,12 @@ public abstract class BaseSmartfoxServer {
 
 	// Client system
 	private void runClient(Socket clientSocket) {
-		SmartfoxClient client = new SmartfoxClient(clientSocket, this);
-
 		// Start the client thread
 		Thread th = new Thread(() -> {
+			SmartfoxClient client = new SmartfoxClient(clientSocket, this);
 
 			try {
+
 				// Run start code
 				startClient(client);
 
@@ -116,6 +116,7 @@ public abstract class BaseSmartfoxServer {
 						}
 						if (client.getSocket() != null) {
 							clientDisconnect(client);
+							client.stop();
 						}
 						return;
 					}
@@ -124,6 +125,7 @@ public abstract class BaseSmartfoxServer {
 				if (client.getSocket() != null) {
 					// Disconnected
 					clientDisconnect(client);
+					client.stop();
 				}
 			} catch (Exception e) {
 				if (!(e instanceof IOException)) {
@@ -137,6 +139,7 @@ public abstract class BaseSmartfoxServer {
 				}
 				if (client.getSocket() != null) {
 					clientDisconnect(client);
+					client.stop();
 				}
 				return;
 			}
@@ -187,14 +190,7 @@ public abstract class BaseSmartfoxServer {
 	 * @throws IOException If transmission fails
 	 */
 	public synchronized void sendPacket(SmartfoxClient smartfoxClient, ISmartfoxPacket packet) throws IOException {
-		// Instantiate the packet and build
-		String content = packet.build();
-
-		// Send packet
-		byte[] payload = content.getBytes("UTF-8");
-		smartfoxClient.getSocket().getOutputStream().write(payload);
-		smartfoxClient.getSocket().getOutputStream().write(0);
-		smartfoxClient.getSocket().getOutputStream().flush();
+		smartfoxClient.sendPacket(packet);
 	}
 
 	/**
@@ -205,13 +201,7 @@ public abstract class BaseSmartfoxServer {
 	 * @throws IOException If transmission fails
 	 */
 	public synchronized void sendPacket(SmartfoxClient smartfoxClient, String packet) throws IOException {
-		// Send packet
-		byte[] payload = packet.getBytes("UTF-8");
-		if (smartfoxClient.getSocket() == null)
-			return;
-		smartfoxClient.getSocket().getOutputStream().write(payload);
-		smartfoxClient.getSocket().getOutputStream().write(0);
-		smartfoxClient.getSocket().getOutputStream().flush();
+		smartfoxClient.sendPacket(packet);
 	}
 
 	/**

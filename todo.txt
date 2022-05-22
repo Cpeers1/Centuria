@@ -1,5 +1,7 @@
 main todo:
 - async transmission
+- replace all inventory files with own ones
+- replace all avatar files with own ones
 - lock displaynames when in use
 - chat
 - moderation tools through chat (kick, warn, ban, tempban, mute)
