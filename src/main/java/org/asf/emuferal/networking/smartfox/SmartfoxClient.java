@@ -37,6 +37,7 @@ public class SmartfoxClient {
 			client.close();
 		} catch (IOException e) {
 		}
+		server.clientDisconnect(this);
 		client = null;
 	}
 

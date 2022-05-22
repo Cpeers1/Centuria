@@ -71,7 +71,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		}
 
 		// Find spawn
-		handleSpawn(plr.room, plr, client);
+		handleSpawn(teleportUUID, plr, client);
 
 		// Set location
 		plr.lastLocation = plr.respawn;

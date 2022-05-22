@@ -90,9 +90,10 @@ public abstract class BaseSmartfoxServer {
 
 	// Client system
 	private void runClient(Socket clientSocket) {
+		SmartfoxClient client = new SmartfoxClient(clientSocket, this);
+
 		// Start the client thread
 		Thread th = new Thread(() -> {
-			SmartfoxClient client = new SmartfoxClient(clientSocket, this);
 
 			try {
 				// Run start code
@@ -111,16 +112,19 @@ public abstract class BaseSmartfoxServer {
 						}
 						try {
 							client.getSocket().close();
-						} catch (IOException e2) {
+						} catch (Exception e2) {
 						}
 						if (client.getSocket() != null) {
 							clientDisconnect(client);
 						}
+						return;
 					}
 				}
 
-				// Disconnected
-				clientDisconnect(client);
+				if (client.getSocket() != null) {
+					// Disconnected
+					clientDisconnect(client);
+				}
 			} catch (Exception e) {
 				if (!(e instanceof IOException)) {
 					System.err.println("Connection died! Error: " + e.getClass().getName()
@@ -129,11 +133,12 @@ public abstract class BaseSmartfoxServer {
 				}
 				try {
 					client.getSocket().close();
-				} catch (IOException e2) {
+				} catch (Exception e2) {
 				}
 				if (client.getSocket() != null) {
 					clientDisconnect(client);
 				}
+				return;
 			}
 		}, "Smartfox Client Thread: " + clientSocket);
 		th.setDaemon(true);

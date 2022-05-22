@@ -1,13 +1,19 @@
 main todo:
-- fix all avatar jsons (fix decals, add all mods and wings)
+- async transmission
+- lock displaynames when in use
+- chat
+- moderation tools through chat (kick, warn, ban, tempban, mute)
 - fix displaced spawns
 - fix missing spawns
+- option to use only kitsune and senri as join avatars
+- unlock body mods, wings and clothes on login (with option to disable)
+- fix all avatar jsons (fix decals)
 - overhaul account storage
 - fix settings not being saved
 - implement the shop
 - wings
 - sanctuaries
-- chat
+- feedback
 
 follower update:
 - player cards & followers

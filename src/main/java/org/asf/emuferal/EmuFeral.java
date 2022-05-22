@@ -35,7 +35,7 @@ import org.asf.rats.ConnectiveServerFactory;
 
 public class EmuFeral {
 	// Update
-	public static final String SERVER_UPDATE_VERSION = "1.0.0.A6";
+	public static final String SERVER_UPDATE_VERSION = "1.0.0.A7";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/emuferal";
 
 	// Configuration
@@ -83,7 +83,7 @@ public class EmuFeral {
 		System.out.println("                              EmuFeral                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                          Version 1.0.0.A6                          "); // not doing this
+		System.out.println("                          Version 1.0.0.A7                          "); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain
@@ -137,7 +137,7 @@ public class EmuFeral {
 		paymentServer.waitExit();
 		directorServer.waitExit();
 		apiServer.waitExit();
-//		chatServer.getServerSocket().close();
+		chatServer.getServerSocket().close();
 		gameServer.getServerSocket().close();
 	}
 
@@ -217,11 +217,11 @@ public class EmuFeral {
 		allowRegistration = properties.get("allow-registration").equals("true");
 		gameServer = new GameServer(sock);
 		gameServer.start();
-//		System.out.println("Starting Emulated Feral Chat server...");
-//		sock = new ServerSocket(Integer.parseInt(properties.getOrDefault("chat-port", "6972")), 0,
-//				InetAddress.getByName("0.0.0.0"));
-//		chatServer = new ChatServer(sock);
-//		chatServer.start();
+		System.out.println("Starting Emulated Feral Chat server...");
+		sock = new ServerSocket(Integer.parseInt(properties.getOrDefault("chat-port", "6972")), 0,
+				InetAddress.getByName("0.0.0.0"));
+		chatServer = new ChatServer(sock);
+		chatServer.start();
 		System.out.println("Successfully started emulated servers.");
 	}
 
