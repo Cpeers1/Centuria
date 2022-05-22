@@ -19,7 +19,7 @@ public class TaskThread extends Thread {
 	@Override
 	public void run() {
 		while (!stop) {
-			while (tasks.size() == 0) {
+			while (tasks.isEmpty()) {
 				try {
 					Thread.sleep(1);
 				} catch (InterruptedException e) {
