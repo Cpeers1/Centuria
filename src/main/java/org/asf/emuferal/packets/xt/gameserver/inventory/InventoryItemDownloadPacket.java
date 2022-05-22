@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
@@ -46,25 +47,9 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		Player plr = (Player) client.container;
 		PlayerInventory inv = plr.account.getPlayerInventory();
 
-		// Save if the item is not found
-		if (!inv.containsItem(slot.equals("200") ? "avatars" : slot)) {
-			if (slot.equals("200")) {
-				// Avatar slots are not stored yet so lets build the json
-				JsonArray avatars = buildDefaultLooksFile(plr);
-
-				// Save
-				inv.setItem("avatars", avatars);
-			} else {
-				// Copy item from resources
-				InputStream strm = getClass().getClassLoader()
-						.getResourceAsStream("defaultitems/inventory-" + slot + ".json");
-				if (strm != null) {
-					inv.setItem(slot, JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")));
-					strm.close();
-				} else {
-					throw new IOException("File not found");
-				}
-			}
+		// Check if inventory is built
+		if (!inv.containsItem("1")) {
+			buildInventory(plr, inv);
 		}
 
 		// Load the item
@@ -81,6 +66,33 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		client.sendPacket(pkt);
 
 		return true;
+	}
+
+	private void buildInventory(Player plr, PlayerInventory inv) {
+		// Build avatars
+		if (EmuFeral.giveAllAvatars) {
+			// Unlock all avatars
+			inv.getAccessor().unlockAvatarSpecies("Kitsune");
+			inv.getAccessor().unlockAvatarSpecies("Senri");
+			inv.getAccessor().unlockAvatarSpecies("Phoenix");
+			inv.getAccessor().unlockAvatarSpecies("Dragon");
+			inv.getAccessor().unlockAvatarSpecies("Kirin");
+			inv.getAccessor().unlockAvatarSpecies("Fae");
+			inv.getAccessor().unlockAvatarSpecies("Shinigami");
+			inv.getAccessor().unlockAvatarSpecies("Werewolf");
+			inv.getAccessor().unlockAvatarSpecies("Jackalope");
+		} else {
+			// Unlock Kitsune and Senri
+			inv.getAccessor().unlockAvatarSpecies("Kitsune");
+			inv.getAccessor().unlockAvatarSpecies("Senri");
+		}
+
+		
+		
+		// Save changes
+		for (String change : inv.getAccessor().getItemsToSave())
+			inv.setItem(change, inv.getItem(change));
+		inv.getAccessor().completedSave();
 	}
 
 	private void fixBrokenAvatars(JsonArray item, PlayerInventory inv) {
@@ -147,6 +159,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				.getResourceAsStream("defaultitems/avatarhelper.json");
 		JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 				.get("Avatars").getAsJsonObject();
+		strm.close();
 
 		// Construct the avatar list
 		ArrayList<String> ids = new ArrayList<String>();

@@ -40,6 +40,10 @@ public class EmuFeral {
 
 	// Configuration
 	public static boolean allowRegistration = true;
+	public static boolean giveAllAvatars = true;
+	public static boolean giveAllMods = true; // TODO
+	public static boolean giveAllClothes = true; // TODO
+	public static boolean giveAllWings = true; // TODO
 	public static String discoveryAddress = "localhost";
 
 	// Servers
@@ -148,7 +152,9 @@ public class EmuFeral {
 		if (!serverConf.exists()) {
 			Files.writeString(serverConf.toPath(),
 					"api-port=6\n" + "director-port=6969\n" + "payments-port=6971\n" + "game-port=6968\n"
-							+ "chat-port=6972\n" + "allow-registration=true\ndiscovery-server-address=localhost\n");
+							+ "chat-port=6972\n" + "allow-registration=true\n" + "give-all-avatars=true\n"
+							+ "give-all-mods=true\n" + "give-all-clothes=true\n" + "give-all-wings=true\n"
+							+ "discovery-server-address=localhost\n");
 		}
 
 		// Parse properties
@@ -214,7 +220,11 @@ public class EmuFeral {
 		System.out.println("Starting Emulated Feral Game server...");
 		ServerSocket sock = new ServerSocket(Integer.parseInt(properties.get("game-port")), 0,
 				InetAddress.getByName("0.0.0.0"));
-		allowRegistration = properties.get("allow-registration").equals("true");
+		allowRegistration = properties.getOrDefault("allow-registration", "true").equals("true");
+		giveAllAvatars = properties.getOrDefault("give-all-avatars", "true").equals("true");
+		giveAllMods = properties.getOrDefault("give-all-mods", "true").equals("true");
+		giveAllClothes = properties.getOrDefault("give-all-clothes", "true").equals("true");
+		giveAllWings = properties.getOrDefault("give-all-wings", "true").equals("true");
 		gameServer = new GameServer(sock);
 		gameServer.start();
 		System.out.println("Starting Emulated Feral Chat server...");

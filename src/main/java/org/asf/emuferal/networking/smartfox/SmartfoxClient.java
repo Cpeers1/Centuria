@@ -20,7 +20,7 @@ public class SmartfoxClient {
 	public SmartfoxClient(Socket client, BaseSmartfoxServer server) {
 		this.client = client;
 		this.server = server;
-		
+
 		taskThread = new TaskThread(client.toString());
 		taskThread.start();
 	}
@@ -43,7 +43,8 @@ public class SmartfoxClient {
 	 */
 	public void disconnect() {
 		try {
-			client.close();
+			if (client != null)
+				client.close();
 		} catch (IOException e) {
 		}
 		server.clientDisconnect(this);
@@ -68,7 +69,7 @@ public class SmartfoxClient {
 				getSocket().getOutputStream().write(payload);
 				getSocket().getOutputStream().write(0);
 				getSocket().getOutputStream().flush();
-			} catch (IOException e) {
+			} catch (Exception e) {
 			}
 		});
 	}
@@ -89,7 +90,7 @@ public class SmartfoxClient {
 				getSocket().getOutputStream().write(payload);
 				getSocket().getOutputStream().write(0);
 				getSocket().getOutputStream().flush();
-			} catch (IOException e) {
+			} catch (Exception e) {
 			}
 		});
 	}
