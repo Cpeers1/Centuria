@@ -1,8 +1,6 @@
 package org.asf.emuferal.packets.xt.gameserver.objects;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
@@ -33,8 +31,6 @@ public class AvatarAction implements IXtPacket<AvatarAction> {
 	@Override
 	public void build(XtWriter writer) throws IOException {
 	}
-
-	private ArrayList<Integer> ints = new ArrayList<Integer>();
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
@@ -88,6 +84,22 @@ public class AvatarAction implements IXtPacket<AvatarAction> {
 		}
 		case "9190": { // Play
 			pk.writeInt(210);
+			break;
+		}
+		case "9147": { // Scared
+			pk.writeInt(190);
+			break;
+		}
+		case "9139": { // Eat
+			pk.writeInt(170);
+			break;
+		}
+		case "9131": { // Yes
+			pk.writeInt(110);
+			break;
+		}
+		case "9135": { // No
+			pk.writeInt(120);
 			break;
 		}
 		}

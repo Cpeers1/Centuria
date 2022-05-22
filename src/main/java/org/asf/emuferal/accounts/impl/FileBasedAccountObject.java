@@ -74,7 +74,7 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 	@Override
 	public boolean updateDisplayName(String name) {
 		// Check validity
-		if (!name.matches("^[0-9A-Za-z\\-_.]+") || name.length() > 16 || name.length() < 2)
+		if (!name.matches("^[0-9A-Za-z\\-_.]+") || name.length() > 20 || name.length() < 2)
 			return false;
 
 		try {

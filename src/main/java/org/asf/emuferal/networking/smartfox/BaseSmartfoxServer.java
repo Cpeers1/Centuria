@@ -189,7 +189,7 @@ public abstract class BaseSmartfoxServer {
 	 * @param packet         Packet to send
 	 * @throws IOException If transmission fails
 	 */
-	public synchronized void sendPacket(SmartfoxClient smartfoxClient, ISmartfoxPacket packet) throws IOException {
+	public void sendPacket(SmartfoxClient smartfoxClient, ISmartfoxPacket packet) throws IOException {
 		smartfoxClient.sendPacket(packet);
 	}
 
@@ -200,7 +200,7 @@ public abstract class BaseSmartfoxServer {
 	 * @param packet         Packet to send
 	 * @throws IOException If transmission fails
 	 */
-	public synchronized void sendPacket(SmartfoxClient smartfoxClient, String packet) throws IOException {
+	public void sendPacket(SmartfoxClient smartfoxClient, String packet) throws IOException {
 		smartfoxClient.sendPacket(packet);
 	}
 

@@ -1,7 +1,4 @@
 main todo:
-- async transmission
-- replace all inventory files with own ones
-- replace all avatar files with own ones
 - lock displaynames when in use
 - chat
 - moderation tools through chat (kick, warn, ban, tempban, mute)
@@ -12,17 +9,12 @@ main todo:
 - fix all avatar jsons (fix decals)
 - overhaul account storage
 - fix settings not being saved
-- implement the shop
 - wings
 - sanctuaries
 - feedback
 
 follower update:
 - player cards & followers
-
-free starfragments update:
-- 10k star fragments on join
-- avatar purchases
 
 interaction update:
 - general interactions
@@ -31,6 +23,12 @@ interaction update:
 - questgivers
 - purchases
 - sketchbook
+
+shop update:
+- implement the shop
+- currency
+- 10k star fragments on join (can be disabled)
+- avatar purchases
 
 chat update:
 - usable chat

@@ -52,6 +52,96 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			buildInventory(plr, inv);
 		}
 
+		if (slot.equals("400") && EmuFeral.giveAllWings) {
+			// Override wings lock
+			if (!inv.containsItem("400"))
+				inv.setItem("400", new JsonArray());
+			JsonArray itm = inv.getItem("400").getAsJsonArray();
+
+			// Build entry
+			JsonObject obj = new JsonObject();
+			obj.addProperty("defId", 22442);
+			JsonObject components = new JsonObject();
+			JsonObject ts = new JsonObject();
+			ts.addProperty("ts", System.currentTimeMillis());
+			components.add("Timestamp", ts);
+			obj.add("components", components);
+			obj.addProperty("id", new UUID(0, 0).toString());
+			obj.addProperty("type", 400);
+			itm.add(obj);
+
+			// Send the item to the client
+			InventoryItemPacket pkt = new InventoryItemPacket();
+			pkt.item = itm;
+			client.sendPacket(pkt);
+
+			return true;
+		}
+
+		if (EmuFeral.giveAllMods) {
+			// All body mods
+			String[] mods = new String[] { "9808", "9807", "9806", "9805", "9804", "9803", "9802", "9801", "9800",
+					"9799", "9754", "9741", "9740", "9739", "9719", "9660", "9659", "9658", "9657", "9656", "7553",
+					"7550", "7407", "7406", "7405", "7404", "7403", "7124", "7120", "5639", "5638", "5637", "5636",
+					"5635", "5634", "5633", "5632", "5631", "5630", "5629", "5628", "5627", "5626", "5625", "5621",
+					"5034", "5033", "5032", "5031", "5030", "5029", "3794", "3793", "3792", "3078", "3077", "3076",
+					"3075", "3074", "3073", "3072", "3071", "3070", "3069", "3068", "3067", "30437", "30436", "30435",
+					"30434", "30433", "30432", "30431", "30430", "30429", "30428", "29875", "29874", "29873", "29872",
+					"29871", "29855", "28593", "28592", "28530", "28529", "28527", "28526", "28361", "28360", "28359",
+					"28358", "28357", "28351", "27776", "27763", "27762", "27761", "27760", "27759", "27758", "27757",
+					"27756", "27749", "2772", "2771", "2770", "2769", "2768", "2767", "2761", "2760", "26488", "26487",
+					"26486", "26485", "26484", "26483", "26482", "26481", "26480", "26479", "26478", "26477", "26476",
+					"26475", "26474", "26473", "26472", "26471", "25976", "25963", "25962", "25961", "25960", "25959",
+					"25958", "25957", "25956", "25955", "25792", "25791", "25790", "25789", "25788", "25787", "25714",
+					"25713", "25712", "25711", "25710", "25709", "25675", "25674", "25673", "25672", "25671", "25670",
+					"25524", "25523", "25522", "25521", "25520", "25519", "24467", "24408", "24407", "24406", "24405",
+					"24404", "23999", "23998", "23981", "23980", "23979", "23978", "23977", "23976", "23975", "23974",
+					"23973", "23099", "23098", "23091", "23090", "23089", "23088", "23087", "23086", "23062", "23061",
+					"23060", "23059", "23058", "23055", "23054", "23053", "23052", "23051", "22673", "22672", "22671",
+					"22670", "22668", "22667", "22666", "22665", "22664", "22663", "22618", "22617", "22616", "22615",
+					"22614", "22613", "22612", "22611", "21802", "21585", "2126", "2125", "2124", "2123", "2122",
+					"21215", "21214", "21213", "2121", "21209", "2120", "2119", "2118", "2117", "2097", "2096", "2095",
+					"2094", "2093", "2092", "2091", "2090", "2089", "2088", "2087", "2086", "2085", "2084", "2083",
+					"20455", "20454", "20453", "20452", "20451", "20326", "20325", "20324", "20323", "20322", "19479",
+					"19478", "19477", "19476", "19474", "19085", "19084", "19083", "19082", "19081", "19080", "19065",
+					"19064", "19063", "19062", "18889", "18888", "18887", "18886", "18885", "18884", "18787", "17707",
+					"17706", "17705", "17703", "17702", "17701", "16707", "15908", "15219", "15217", "15216", "15215",
+					"15214", "14627", "14626", "14625", "14624", "14613", "14612", "14611", "13616", "13613", "12788",
+					"12787", "12786", "12785", "12784", "12504", "12455", "12454", "12453", "12117", "12111", "10480",
+					"10479", "10478", "10477", "10476" };
+
+			for (String mod : mods) {
+				inv.getAccessor().unlockAvatarPart(Integer.valueOf(mod));
+			}
+
+			// Save changes
+			for (String change : inv.getAccessor().getItemsToSave())
+				inv.setItem(change, inv.getItem(change));
+			inv.getAccessor().completedSave();
+		}
+
+		// Emotes
+		if (slot.equals("9")) {
+			JsonArray item = new JsonArray();
+
+			// Add all emotes
+			addEmote(item, "9122");
+			addEmote(item, "9151");
+			addEmote(item, "9108");
+			addEmote(item, "9121");
+			addEmote(item, "9143");
+			addEmote(item, "9190");
+			addEmote(item, "8930");
+			addEmote(item, "9116");
+
+			// Send the item to the client
+			InventoryItemPacket pkt = new InventoryItemPacket();
+			pkt.item = item;
+			client.sendPacket(pkt);
+
+			return true;
+		}
+
 		// Load the item
 		JsonElement item = inv.getItem(slot.equals("200") ? "avatars" : slot);
 
@@ -61,11 +151,27 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		}
 
 		// Send the item to the client
+		if (item == null)
+			item = new JsonArray();
 		InventoryItemPacket pkt = new InventoryItemPacket();
 		pkt.item = item;
 		client.sendPacket(pkt);
 
 		return true;
+	}
+
+	private void addEmote(JsonArray item, String emote) {
+		// Create emote json
+		JsonObject obj = new JsonObject();
+		obj.addProperty("defId", emote);
+		JsonObject components = new JsonObject();
+		JsonObject ts = new JsonObject();
+		ts.addProperty("ts", System.currentTimeMillis());
+		components.add("Timestamp", ts);
+		obj.add("components", components);
+		obj.addProperty("id", UUID.nameUUIDFromBytes(emote.getBytes()).toString());
+		obj.addProperty("type", 9);
+		item.add(obj);
 	}
 
 	private void buildInventory(Player plr, PlayerInventory inv) {
@@ -87,8 +193,17 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			inv.getAccessor().unlockAvatarSpecies("Senri");
 		}
 
-		
-		
+		// Check if wings, mods and clothing is disabled
+		if (!EmuFeral.giveAllMods && !EmuFeral.giveAllWings) {
+			// Save item 2 as empty item
+			inv.setItem("2", new JsonArray());
+		}
+		if (!EmuFeral.giveAllClothes) {
+			// Save item 2 as empty item
+			inv.setItem("110", new JsonArray());
+		}
+		// TODO: clothes
+
 		// Save changes
 		for (String change : inv.getAccessor().getItemsToSave())
 			inv.setItem(change, inv.getItem(change));

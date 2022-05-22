@@ -29,7 +29,6 @@ public abstract class PlayerInventory {
 	public static class Accessor {
 		private PlayerInventory inventory;
 		private ArrayList<String> itemsToSave = new ArrayList<String>();
-		// TODO: slot unlocking
 
 		private Accessor(PlayerInventory inventory) {
 			this.inventory = inventory;
@@ -49,6 +48,96 @@ public abstract class PlayerInventory {
 		 */
 		public String[] getItemsToSave() {
 			return itemsToSave.toArray(t -> new String[t]);
+		}
+
+		/**
+		 * Gives the player another look slot
+		 */
+		public void addExtraLookSlot() {
+			if (!inventory.containsItem("avatars")) {
+				inventory.setItem("avatars", new JsonArray());
+			}
+
+			// Add a new look slot for each creature
+			JsonArray avatars = inventory.getItem("avatars").getAsJsonArray();
+			for (JsonElement elem : avatars) {
+				JsonObject avatar = elem.getAsJsonObject();
+
+				try {
+					// Make sure to only do this for a primary look
+					if (avatar.get("components").getAsJsonObject().has("PrimaryLook")) {
+						// Create the slot
+
+						// Generate look ID
+						String lID = UUID.randomUUID().toString();
+						while (true) {
+							boolean found = false;
+							for (JsonElement ele : avatars) {
+								JsonObject ava = ele.getAsJsonObject();
+								String lookID = ava.get("id").getAsString();
+								if (lookID.equals(lID)) {
+									found = true;
+									break;
+								}
+							}
+							if (!found)
+								break;
+
+							lID = UUID.randomUUID().toString();
+						}
+
+						String type = avatar.get("defId").getAsString();
+						// Translate defID to a type
+						InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+								.getResourceAsStream("defaultitems/avatarhelper.json");
+						JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8"))
+								.getAsJsonObject().get("Avatars").getAsJsonObject();
+						strm.close();
+
+						JsonObject speciesData = helper.get(type).getAsJsonObject();
+						for (String species : helper.keySet()) {
+							JsonObject ava = helper.get(species).getAsJsonObject();
+							if (ava.get("defId").getAsString().equals(type)) {
+								type = species;
+								break;
+							}
+						}
+
+						// Timestamp
+						JsonObject ts = new JsonObject();
+						ts.addProperty("ts", System.currentTimeMillis());
+
+						// Name
+						JsonObject nm = new JsonObject();
+						nm.addProperty("name", "");
+
+						// Avatar info
+						JsonObject al = new JsonObject();
+						al.addProperty("gender", 0);
+						al.add("info", speciesData.get("info").getAsJsonObject());
+
+						// Build components
+						JsonObject components = new JsonObject();
+						components.add("Timestamp", ts);
+						components.add("AvatarLook", al);
+						components.add("Name", nm);
+
+						// Build data container
+						JsonObject lookObj = new JsonObject();
+						lookObj.addProperty("defId", speciesData.get("defId").getAsInt());
+						lookObj.add("components", components);
+						lookObj.addProperty("id", lID);
+						lookObj.addProperty("type", 200);
+
+						// Add the look slot
+						avatars.add(lookObj);
+					}
+				} catch (IOException e) {
+				}
+			}
+
+			// Mark what files to save
+			itemsToSave.add("avatars");
 		}
 
 		/**
@@ -239,6 +328,104 @@ public abstract class PlayerInventory {
 
 			// Avatar could not be found
 			return false;
+		}
+
+		/**
+		 * Checks if a avatar part is unlocked
+		 * 
+		 * @param defID Item ID
+		 */
+		public boolean isAvatarPartUnlocked(int defID) {
+			// Load the inventory object
+			if (!inventory.containsItem("2"))
+				inventory.setItem("2", new JsonArray());
+			JsonArray items = inventory.getItem("2").getAsJsonArray();
+
+			// Find part
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				int itID = itm.get("defId").getAsInt();
+				if (itID == defID) {
+					return true;
+				}
+			}
+
+			// Part was not found
+			return false;
+		}
+
+		/**
+		 * Unlocks a body mod, wings or clothing item
+		 * 
+		 * @param defID Item ID
+		 */
+		public void unlockAvatarPart(int defID) {
+			if (isAvatarPartUnlocked(defID))
+				return;
+
+			// Load the inventory object
+			if (!inventory.containsItem("2"))
+				inventory.setItem("2", new JsonArray());
+			JsonArray items = inventory.getItem("2").getAsJsonArray();
+
+			// Generate item ID
+			String itmID = UUID.randomUUID().toString();
+			while (true) {
+				boolean found = false;
+				for (JsonElement ele : items) {
+					JsonObject itm = ele.getAsJsonObject();
+					String itID = itm.get("id").getAsString();
+					if (itID.equals(itmID)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					break;
+				itmID = UUID.randomUUID().toString();
+			}
+
+			// Add the item
+			JsonObject itm = new JsonObject();
+			JsonObject ts = new JsonObject();
+			ts.addProperty("ts", System.currentTimeMillis());
+			// Build components
+			JsonObject components = new JsonObject();
+			components.add("Timestamp", ts);
+			itm.addProperty("defId", defID);
+			itm.add("components", components);
+			itm.addProperty("id", itmID);
+			itm.addProperty("type", 2);
+			items.add(itm);
+
+			// Mark what files to save
+			itemsToSave.add("2");
+		}
+
+		/**
+		 * Removes a body mod, wings or clothing item
+		 * 
+		 * @param defID Item ID
+		 */
+		public void lockAvatarPart(int defID) {
+			// Load the inventory object
+			if (!inventory.containsItem("2"))
+				inventory.setItem("2", new JsonArray());
+			JsonArray items = inventory.getItem("2").getAsJsonArray();
+
+			// Remove if present
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				int itID = itm.get("defId").getAsInt();
+				if (itID == defID) {
+					// Remove item
+					items.remove(itm);
+
+					// Mark what files to save
+					itemsToSave.add("2");
+					break;
+				}
+			}
 		}
 	}
 
