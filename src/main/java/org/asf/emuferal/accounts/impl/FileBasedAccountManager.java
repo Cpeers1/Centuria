@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -186,6 +187,47 @@ public class FileBasedAccountManager extends AccountManager {
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			return null;
 		}
+	}
+
+	@Override
+	public String getUserByDisplayName(String displayName) {
+		if (new File("displaynames/" + displayName).exists()) {
+			try {
+				return Files.readAllLines(Path.of("displaynames/" + displayName)).get(0);
+			} catch (IOException e) {
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public boolean isDisplayNameInUse(String displayName) {
+		return new File("displaynames/" + displayName).exists();
+	}
+
+	@Override
+	public boolean releaseDisplayName(String displayName) {
+		if (new File("displaynames/" + displayName).exists()) {
+			new File("displaynames/" + displayName).delete();
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean lockDisplayName(String displayName, String userID) {
+		if (!new File("displaynames/" + displayName).exists()) {
+			if (!new File("displaynames").exists())
+				new File("displaynames").mkdirs();
+
+			try {
+				Files.writeString(Path.of("displaynames/" + displayName), userID);
+				return true;
+			} catch (IOException e) {
+			}
+		}
+
+		return false;
 	}
 
 }

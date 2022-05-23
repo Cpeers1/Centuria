@@ -26,6 +26,39 @@ public abstract class AccountManager {
 	public abstract String authenticate(String username, char[] password);
 
 	/**
+	 * Retrieves user IDs by display name
+	 * 
+	 * @param displayName Player display name
+	 * @return Player ID or null
+	 */
+	public abstract String getUserByDisplayName(String displayName);
+
+	/**
+	 * Checks if a display name is in use
+	 * 
+	 * @param displayName Player display name
+	 * @return True if in use, false otherwise
+	 */
+	public abstract boolean isDisplayNameInUse(String displayName);
+
+	/**
+	 * Releases a display name lock
+	 * 
+	 * @param displayName Player display name
+	 * @return True if successful, false otherwise
+	 */
+	public abstract boolean releaseDisplayName(String displayName);
+
+	/**
+	 * Locks a display name
+	 * 
+	 * @param displayName Player display name
+	 * @param userID      Owner player ID
+	 * @return True if successful, false otherwise
+	 */
+	public abstract boolean lockDisplayName(String displayName, String userID);
+
+	/**
 	 * Registers accounts
 	 * 
 	 * @param username Account login name

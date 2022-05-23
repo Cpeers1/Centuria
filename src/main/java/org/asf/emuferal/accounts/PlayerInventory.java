@@ -331,6 +331,125 @@ public abstract class PlayerInventory {
 		}
 
 		/**
+		 * Adds a dye to the player's inventory
+		 * 
+		 * @param defID Dye defID
+		 * @return Object UUID
+		 */
+		public String addDye(int defID) {
+			// Find dye
+			JsonObject dye = getDyeData(defID);
+
+			// Add one to the quantity field
+			int q = dye.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().get("quantity")
+					.getAsInt();
+			dye.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().remove("quantity");
+			dye.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().addProperty("quantity", q + 1);
+
+			// Mark what files to save
+			itemsToSave.add("111");
+
+			// Return ID
+			return dye.get("id").getAsString();
+		}
+
+		/**
+		 * Removes a dye to the player's inventory
+		 * 
+		 * @param defID Dye defID
+		 */
+		public void removeDye(int defID) {
+			// Find dye
+			JsonObject dye = getDyeData(defID);
+
+			// Remove one to the quantity field
+			int q = dye.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().get("quantity")
+					.getAsInt();
+			dye.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().remove("quantity");
+			dye.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().addProperty("quantity", q - 1);
+
+			if (q - 1 <= 0) {
+				// Remove object
+				inventory.getItem("111").getAsJsonArray().remove(dye);
+			}
+
+			// Mark what files to save
+			itemsToSave.add("111");
+		}
+
+		/**
+		 * Checks if the player has a specific dye
+		 * 
+		 * @param defID Dye defID
+		 * @return True if the player has the dye, false otherwise
+		 */
+		public boolean hasDye(int defID) {
+			// Load the inventory object
+			if (!inventory.containsItem("111"))
+				inventory.setItem("111", new JsonArray());
+			JsonArray items = inventory.getItem("111").getAsJsonArray();
+
+			// Find object
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				int itID = itm.get("defId").getAsInt();
+				if (itID == defID) {
+					return true;
+				}
+			}
+
+			// Item was not found
+			return false;
+		}
+
+		// Retrieves information objects for dyes and makes it if not present
+		private JsonObject getDyeData(int defID) {
+			// Load the inventory object
+			if (!inventory.containsItem("111"))
+				inventory.setItem("111", new JsonArray());
+			JsonArray items = inventory.getItem("111").getAsJsonArray();
+
+			// Find object
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				int itID = itm.get("defId").getAsInt();
+				if (itID == defID) {
+					return ele.getAsJsonObject();
+				}
+			}
+
+			// Add the item
+			JsonObject itm = new JsonObject();
+			// Timestamp
+			JsonObject ts = new JsonObject();
+			ts.addProperty("ts", System.currentTimeMillis());
+			// Trade thingy
+			JsonObject tr = new JsonObject();
+			tr.addProperty("isInTradeList", false);
+			// Quantity
+			JsonObject qt = new JsonObject();
+			qt.addProperty("quantity", 0);
+			// Build components
+			JsonObject components = new JsonObject();
+			components.add("Tradable", tr);
+			components.add("Quantity", qt);
+			components.add("Timestamp", ts);
+			itm.addProperty("defId", defID);
+			itm.add("components", components);
+			itm.addProperty("id", UUID.nameUUIDFromBytes(Integer.toString(defID).getBytes()).toString());
+			itm.addProperty("type", 111);
+			items.add(itm);
+
+			// Add it
+			items.add(itm);
+
+			// Mark what files to save
+			itemsToSave.add("111");
+
+			return itm;
+		}
+
+		/**
 		 * Checks if a avatar part is unlocked
 		 * 
 		 * @param defID Item ID
@@ -355,7 +474,7 @@ public abstract class PlayerInventory {
 		}
 
 		/**
-		 * Unlocks a body mod, wings or clothing item
+		 * Unlocks a body mod or wings
 		 * 
 		 * @param defID Item ID
 		 */
@@ -403,7 +522,7 @@ public abstract class PlayerInventory {
 		}
 
 		/**
-		 * Removes a body mod, wings or clothing item
+		 * Removes a body mod or wings
 		 * 
 		 * @param defID Item ID
 		 */

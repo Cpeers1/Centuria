@@ -78,7 +78,18 @@ public class APIProcessor extends HttpUploadProcessor {
 					// Update password
 					manager.updatePassword(id, login.get("password").getAsString().toCharArray());
 				}
-				
+
+				// Find account
+				EmuFeralAccount acc = manager.getAccount(id);
+				if (acc == null) {
+					this.setResponseCode(403);
+					this.setResponseMessage("Access denied");
+					return;
+				}
+
+				// Lock display name
+				manager.lockDisplayName(acc.getDisplayName(), acc.getAccountID());
+
 				// Build JWT
 				JsonObject headers = new JsonObject();
 				headers.addProperty("alg", "RS256");
@@ -120,8 +131,6 @@ public class APIProcessor extends HttpUploadProcessor {
 				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
 				String sig = token.split("\\.")[2];
 				if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-					this.setResponseCode(403);
-					this.setResponseMessage("Access denied");
 					return;
 				}
 
@@ -137,8 +146,17 @@ public class APIProcessor extends HttpUploadProcessor {
 					return;
 				}
 
+				// Check if the name is in use
+				if (manager.isDisplayNameInUse(newName)) {
+					return; // Name is in use
+				}
+
 				// Save new name
+				String oldName = acc.getDisplayName();
 				if (acc.updateDisplayName(newName)) {
+					// Unlock old name
+					manager.releaseDisplayName(oldName);
+
 					// Tell authorization to save password
 					manager.makePasswordUpdateRequested(acc.getAccountID());
 				}
