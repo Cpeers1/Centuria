@@ -43,17 +43,14 @@ public class PlayerOnlineStatus implements IXtPacket<PlayerOnlineStatus> {
 			}
 		}
 
-		try {
-			// Send response
-			XtWriter writer = new XtWriter();
-			writer.writeString("rfo");
-			writer.writeInt(-1); // data prefix
-			writer.writeString(playerID);
-			writer.writeString(online ? "1" : "0");
-			writer.writeString(""); // data suffix
-			client.sendPacket(writer.encode());
-		} catch (IOException e) {
-		}
+		// Send response
+		XtWriter writer = new XtWriter();
+		writer.writeString("rfo");
+		writer.writeInt(-1); // data prefix
+		writer.writeString(playerID);
+		writer.writeString(online ? "1" : "0");
+		writer.writeString(""); // data suffix
+		client.sendPacket(writer.encode());
 
 		return true;
 	}

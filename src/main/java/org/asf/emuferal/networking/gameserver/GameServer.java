@@ -116,23 +116,6 @@ public class GameServer extends BaseSmartfoxServer {
 		// Authenticate the player
 		ClientToServerAuthPacket auth = client.readPacket(ClientToServerAuthPacket.class);
 
-		// If the client is out of date, send error
-		if (badClient) {
-			JsonObject response = new JsonObject();
-			JsonObject b = new JsonObject();
-			b.addProperty("r", auth.rField);
-			JsonObject o = new JsonObject();
-			o.addProperty("statusId", -24);
-			o.addProperty("_cmd", "login");
-			o.addProperty("status", -24);
-			b.add("o", o);
-			response.add("b", b);
-			response.addProperty("t", "xt");
-			sendPacket(client, response.toString());
-			client.disconnect();
-			return;
-		}
-
 		// Load token
 		String token = auth.pword;
 
@@ -154,6 +137,63 @@ public class GameServer extends BaseSmartfoxServer {
 		if (acc == null) {
 			client.disconnect();
 			return;
+		}
+
+		// If the client is out of date, send error
+		if (badClient) {
+			JsonObject response = new JsonObject();
+			JsonObject b = new JsonObject();
+			b.addProperty("r", auth.rField);
+			JsonObject o = new JsonObject();
+			o.addProperty("statusId", -24);
+			o.addProperty("_cmd", "login");
+			JsonObject params = new JsonObject();
+			params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
+			params.addProperty("pendingFlags", 0);
+			params.addProperty("activeLookId", acc.getActiveLook());
+			params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
+			params.addProperty("sessionId", acc.getAccountID());
+			params.addProperty("userId", acc.getAccountNumericID());
+			params.addProperty("avatarInvId", 0);
+			o.add("params", params);
+			o.addProperty("status", -24);
+			b.add("o", o);
+			response.add("b", b);
+			response.addProperty("t", "xt");
+			sendPacket(client, response.toString());
+			return;
+		}
+
+		// Check ban
+		if (acc.getPlayerInventory().containsItem("penalty") && acc.getPlayerInventory().getItem("penalty")
+				.getAsJsonObject().get("type").getAsString().equals("ban")) {
+			JsonObject banInfo = acc.getPlayerInventory().getItem("penalty").getAsJsonObject();
+			if (banInfo.get("unbanTimestamp").getAsLong() == -1
+					|| banInfo.get("unbanTimestanp").getAsLong() > System.currentTimeMillis()) {
+				// Disconnect with error
+				JsonObject response = new JsonObject();
+				JsonObject b = new JsonObject();
+				b.addProperty("r", auth.rField);
+				JsonObject o = new JsonObject();
+				o.addProperty("statusId", -15);
+				o.addProperty("_cmd", "login");
+				JsonObject params = new JsonObject();
+				params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
+				params.addProperty("pendingFlags", 0);
+				params.addProperty("activeLookId", acc.getActiveLook());
+				params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
+				params.addProperty("sessionId", acc.getAccountID());
+				params.addProperty("userId", acc.getAccountNumericID());
+				params.addProperty("avatarInvId", 0);
+				o.add("params", params);
+				o.addProperty("status", -15);
+				b.add("o", o);
+				response.add("b", b);
+				response.addProperty("t", "xt");
+				sendPacket(client, response.toString());
+				return;
+			} else
+				acc.getPlayerInventory().deleteItem("penalty");
 		}
 
 		// Disconnect an already connected instance

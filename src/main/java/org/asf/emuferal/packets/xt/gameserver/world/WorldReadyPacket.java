@@ -123,9 +123,16 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				res.rx = helper.get("spawnRotX").getAsDouble();
 				res.ry = helper.get("spawnRotY").getAsDouble();
 				res.rz = helper.get("spawnRotZ").getAsDouble();
+				plr.lastPosX = res.x;
+				plr.lastPosY = res.y;
+				plr.lastPosZ = res.z;
+				plr.lastRotW = res.rw;
+				plr.lastRotX = res.rx;
+				plr.lastRotY = res.ry;
+				plr.lastRotZ = res.rz;
 				client.sendPacket(res);
-				plr.respawn = res.x + "%" + res.y + "%" + res.z + "%" + res.rw + "%" + res.rx + "%" + res.ry + "%"
-						+ res.rz;
+				plr.respawn = res.x + "%" + res.y + "%" + res.z + "%" + res.rx + "%" + res.ry + "%" + res.rz + "%"
+						+ res.rw;
 				return;
 			}
 		} catch (IOException e) {
@@ -141,8 +148,15 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		res.rx = 0;
 		res.ry = 0;
 		res.rz = 0;
+		plr.lastPosX = res.x;
+		plr.lastPosY = res.y;
+		plr.lastPosZ = res.z;
+		plr.lastRotW = res.rw;
+		plr.lastRotX = res.rx;
+		plr.lastRotY = res.ry;
+		plr.lastRotZ = res.rz;
 		client.sendPacket(res);
-		plr.respawn = res.x + "%" + res.y + "%" + res.z + "%" + res.rw + "%" + res.rx + "%" + res.ry + "%" + res.rz;
+		plr.respawn = res.x + "%" + res.y + "%" + res.z + "%" + res.rx + "%" + res.ry + "%" + res.rz + "%" + res.rw;
 	}
 
 }

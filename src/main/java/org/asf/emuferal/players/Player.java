@@ -1,7 +1,5 @@
 package org.asf.emuferal.players;
 
-import java.io.IOException;
-
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
@@ -43,10 +41,7 @@ public class Player {
 		wr.writeString(account.getAccountID());
 		wr.writeString("");
 		lastAction = 0;
-		try {
-			player.client.sendPacket(wr.encode());
-		} catch (IOException e) {
-		}
+		player.client.sendPacket(wr.encode());
 	}
 
 	public void syncTo(Player player) {
@@ -80,10 +75,7 @@ public class Player {
 			wr.writeString(account.getDisplayName());
 			wr.writeInt(0);
 			wr.writeString("");
-			try {
-				player.client.sendPacket(wr.encode());
-			} catch (IOException e) {
-			}
+			player.client.sendPacket(wr.encode());
 
 			// Sync
 			XtWriter pk = new XtWriter();
@@ -105,10 +97,7 @@ public class Player {
 			pk.writeDouble(lastRotW);
 			pk.writeInt(lastAction);
 			pk.writeString(""); // Data suffix
-			try {
-				player.client.sendPacket(pk.encode());
-			} catch (IOException e) {
-			}
+			player.client.sendPacket(pk.encode());
 		}
 	}
 

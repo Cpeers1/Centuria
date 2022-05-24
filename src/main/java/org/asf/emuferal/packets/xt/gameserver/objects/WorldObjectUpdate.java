@@ -139,10 +139,7 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				try {
-					player.client.sendPacket(msg);
-				} catch (IOException e) {
-				}
+				player.client.sendPacket(msg);
 			}
 		}
 

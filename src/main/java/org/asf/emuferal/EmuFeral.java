@@ -61,10 +61,10 @@ public class EmuFeral {
 
 	// Servers
 	private static ConnectiveHTTPServer apiServer;
-	private static ConnectiveHTTPServer directorServer;
+	public static ConnectiveHTTPServer directorServer;
 	private static ConnectiveHTTPServer paymentServer;
-	private static GameServer gameServer;
-	private static ChatServer chatServer;
+	public static GameServer gameServer;
+	public static ChatServer chatServer;
 
 	// Keys
 	private static PrivateKey privateKey;
@@ -251,8 +251,7 @@ public class EmuFeral {
 
 		// Start director server
 		System.out.println("Starting Emulated Feral Director server...");
-		ConnectiveHTTPServer directorServer = new ConnectiveServerFactory()
-				.setPort(Integer.parseInt(properties.get("director-port")))
+		directorServer = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("director-port")))
 				.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
 				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
 		directorServer.registerProcessor(new DirectorProcessor());

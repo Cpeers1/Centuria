@@ -4,14 +4,47 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+
+import org.asf.emuferal.networking.chatserver.packets.AbstractChatPacket;
+import org.asf.emuferal.networking.chatserver.packets.ConvoHistoryDummy;
+import org.asf.emuferal.networking.chatserver.packets.GetConversation;
+import org.asf.emuferal.networking.chatserver.packets.JoinRoomPacket;
+import org.asf.emuferal.networking.chatserver.packets.PingPacket;
+import org.asf.emuferal.networking.chatserver.packets.SendMessage;
+import org.asf.emuferal.networking.chatserver.packets.UserConversations;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 public class ChatServer {
 
 	private ServerSocket server;
 	private ArrayList<ChatClient> clients = new ArrayList<ChatClient>();
+	ArrayList<AbstractChatPacket> registry = new ArrayList<AbstractChatPacket>();
 
 	public ChatServer(ServerSocket socket) {
 		server = socket;
+		registerPackets();
+	}
+
+	void registerPackets() {
+		// Packet registry
+		registerPacket(new PingPacket());
+		registerPacket(new JoinRoomPacket());
+		registerPacket(new UserConversations());
+		registerPacket(new GetConversation());
+		registerPacket(new ConvoHistoryDummy());
+		registerPacket(new SendMessage());
+	}
+
+	public ChatClient[] getClients() {
+		while (true) {
+			try {
+				return clients.toArray(t -> new ChatClient[t]);
+			} catch (ConcurrentModificationException e) {
+			}
+		}
 	}
 
 	/**
@@ -34,6 +67,11 @@ public class ChatServer {
 		serverProcessor.start();
 	}
 
+	// Adds packets to the registry
+	private void registerPacket(AbstractChatPacket packet) {
+		registry.add(packet);
+	}
+
 	// Client system
 	private void runClient(Socket clientSocket) throws IOException {
 		ChatClient client = new ChatClient(clientSocket, this);
@@ -49,13 +87,19 @@ public class ChatServer {
 					clients.add(client);
 
 				// Client loop
-				while (client != null) {
-					client.handle(client.readRawPacket());
+				while (client.getSocket() != null) {
+					try {
+						client.handle(client.readRawPacket());
+					} catch (Exception e) {
+						if (e instanceof IOException)
+							throw e;
+					}
 				}
 
 				// Remove client
 				if (clients.contains(client))
 					clients.remove(client);
+				client.stop();
 			} catch (Exception e) {
 				// Close connection
 				try {
@@ -67,6 +111,7 @@ public class ChatServer {
 				// Remove client
 				if (clients.contains(client))
 					clients.remove(client);
+				client.stop();
 			}
 		}, "Chat Client Thread: " + client);
 		th.setDaemon(true);
@@ -91,6 +136,29 @@ public class ChatServer {
 	 */
 	public ServerSocket getServerSocket() {
 		return server;
+	}
+
+	/**
+	 * Generates a room info object
+	 * 
+	 * @param room      Room ID
+	 * @param isPrivate True if the room is private, false otherwise
+	 * @return JsonObject instance
+	 */
+	public JsonObject roomObject(String room, Boolean isPrivate) {
+		// Build object
+		JsonObject roomData = new JsonObject();
+		roomData.addProperty("conversation_id", room);
+		roomData.addProperty("title", room);
+		// Build participants object
+		JsonArray members = new JsonArray();
+		for (ChatClient cl : getClients()) {
+			if (cl.isInRoom(room))
+				members.add(cl.getPlayer().getAccountID());
+		}
+		roomData.add("participants", members);
+		roomData.addProperty("conversation_type", isPrivate ? "private" : "room");
+		return roomData;
 	}
 
 }

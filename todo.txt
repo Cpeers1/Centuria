@@ -1,6 +1,5 @@
 main todo:
 - chat
-- moderation tools through chat (kick, warn, ban, tempban, mute)
 - warping
 - find player
 - offline player avatars in player card
@@ -9,6 +8,7 @@ main todo:
 - make sure that warping uses privacy settings
 - sanctuaries
 - feedback
+- private chat
 
 follower update:
 - player cards & followers

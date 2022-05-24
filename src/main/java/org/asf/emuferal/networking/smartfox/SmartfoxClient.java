@@ -67,9 +67,8 @@ public class SmartfoxClient {
 	 * Sends a packet to the client
 	 * 
 	 * @param packet Packet to send
-	 * @throws IOException If transmission fails
 	 */
-	public void sendPacket(ISmartfoxPacket packet) throws IOException {
+	public void sendPacket(ISmartfoxPacket packet) {
 		taskThread.schedule(() -> {
 			try {
 				// Instantiate the packet and build
@@ -89,9 +88,8 @@ public class SmartfoxClient {
 	 * Sends a packet to the client
 	 * 
 	 * @param packet Raw packet to send
-	 * @throws IOException If transmission fails
 	 */
-	public void sendPacket(String packet) throws IOException {
+	public void sendPacket(String packet) {
 		taskThread.schedule(() -> {
 			try {
 				// Send packet
