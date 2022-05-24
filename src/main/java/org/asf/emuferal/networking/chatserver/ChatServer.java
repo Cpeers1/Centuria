@@ -1,15 +1,14 @@
 package org.asf.emuferal.networking.chatserver;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Base64;
-import java.util.zip.GZIPInputStream;
+import java.util.ArrayList;
 
 public class ChatServer {
 
 	private ServerSocket server;
+	private ArrayList<ChatClient> clients = new ArrayList<ChatClient>();
 
 	public ChatServer(ServerSocket socket) {
 		server = socket;
@@ -36,58 +35,42 @@ public class ChatServer {
 	}
 
 	// Client system
-	private void runClient(Socket client) throws IOException {
+	private void runClient(Socket clientSocket) throws IOException {
+		ChatClient client = new ChatClient(clientSocket, this);
+
 		// Start the client thread
 		Thread th = new Thread(() -> {
 			try {
 				// Run start code
-				startClient(client);
+				client.runClient();
+
+				// Add client
+				if (client.isConnected())
+					clients.add(client);
 
 				// Client loop
 				while (client != null) {
-					String packet = readRawPacket(client);
-					packet = packet;
+					client.handle(client.readRawPacket());
 				}
+
+				// Remove client
+				if (clients.contains(client))
+					clients.remove(client);
 			} catch (Exception e) {
+				// Close connection
 				try {
-					client.close();
+					if (client.getSocket() != null)
+						client.getSocket().close();
 				} catch (IOException e2) {
 				}
+
+				// Remove client
+				if (clients.contains(client))
+					clients.remove(client);
 			}
 		}, "Chat Client Thread: " + client);
 		th.setDaemon(true);
 		th.start();
-	}
-
-	private String readRawPacket(Socket client) throws IOException {
-		String payload = new String();
-		while (true) {
-			int b = client.getInputStream().read();
-			if (b == -1) {
-				throw new IOException("Stream closed");
-			} else if (b == 0) {
-				// Solve for the XT issue
-				if (payload.startsWith("%xt|n%"))
-					payload = "%xt%" + payload.substring("%xt|n%".length());
-
-				// Compression
-				if (payload.startsWith("$")) {
-					// Decompress packet
-					byte[] compressedData = Base64.getDecoder().decode(payload.substring(1));
-					GZIPInputStream dc = new GZIPInputStream(new ByteArrayInputStream(compressedData));
-					byte[] newData = dc.readAllBytes();
-					dc.close();
-					payload = new String(newData, "UTF-8");
-				}
-
-				return payload;
-			} else
-				payload += (char) b;
-		}
-	}
-
-	private void startClient(Socket client) throws IOException {
-
 	}
 
 	/**

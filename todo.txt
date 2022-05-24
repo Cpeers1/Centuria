@@ -1,8 +1,9 @@
 main todo:
 - chat
 - moderation tools through chat (kick, warn, ban, tempban, mute)
-- fix displaced spawns
-- fix missing spawns
+- warping
+- find player
+- offline player avatars in player card
 - overhaul account storage
 - fix settings not being saved
 - make sure that warping uses privacy settings

@@ -1,6 +1,8 @@
 package org.asf.emuferal.networking.smartfox;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 import org.asf.emuferal.packets.smartfox.ISmartfoxPacket;
@@ -10,6 +12,9 @@ public class SmartfoxClient {
 
 	private Socket client;
 	private BaseSmartfoxServer server;
+	InputStream input;
+	OutputStream output;
+
 	private TaskThread taskThread;
 
 	/**
@@ -23,6 +28,12 @@ public class SmartfoxClient {
 
 		taskThread = new TaskThread(client.toString());
 		taskThread.start();
+
+		try {
+			input = client.getInputStream();
+			output = client.getOutputStream();
+		} catch (IOException e) {
+		}
 	}
 
 	void stop() {
@@ -66,9 +77,9 @@ public class SmartfoxClient {
 
 				// Send packet
 				byte[] payload = content.getBytes("UTF-8");
-				getSocket().getOutputStream().write(payload);
-				getSocket().getOutputStream().write(0);
-				getSocket().getOutputStream().flush();
+				output.write(payload);
+				output.write(0);
+				output.flush();
 			} catch (Exception e) {
 			}
 		});
@@ -87,9 +98,9 @@ public class SmartfoxClient {
 				byte[] payload = packet.getBytes("UTF-8");
 				if (getSocket() == null)
 					return;
-				getSocket().getOutputStream().write(payload);
-				getSocket().getOutputStream().write(0);
-				getSocket().getOutputStream().flush();
+				output.write(payload);
+				output.write(0);
+				output.flush();
 			} catch (Exception e) {
 			}
 		});

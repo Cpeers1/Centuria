@@ -275,7 +275,7 @@ public abstract class BaseSmartfoxServer {
 	public String readRawPacket(SmartfoxClient smartfoxClient) throws IOException {
 		String payload = new String();
 		while (true) {
-			int b = smartfoxClient.getSocket().getInputStream().read();
+			int b = smartfoxClient.input.read();
 			if (b == -1) {
 				throw new IOException("Stream closed");
 			} else if (b == 0) {

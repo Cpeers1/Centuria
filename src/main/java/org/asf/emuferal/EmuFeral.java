@@ -1,6 +1,8 @@
 package org.asf.emuferal;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -12,19 +14,28 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.KeyManagementException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.HashMap;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+
+import org.asf.connective.https.ConnectiveHTTPSServer;
 import org.asf.emuferal.networking.chatserver.ChatServer;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.http.APIProcessor;
@@ -41,9 +52,11 @@ public class EmuFeral {
 	// Configuration
 	public static boolean allowRegistration = true;
 	public static boolean giveAllAvatars = true;
-	public static boolean giveAllMods = true; // TODO
-	public static boolean giveAllClothes = true; // TODO
-	public static boolean giveAllWings = true; // TODO
+	public static boolean giveAllMods = true;
+	public static boolean giveAllClothes = true;
+	public static boolean giveAllWings = true;
+	public static boolean encryptChat = false;
+	public static boolean encryptGame = false;
 	public static String discoveryAddress = "localhost";
 
 	// Servers
@@ -154,7 +167,8 @@ public class EmuFeral {
 					"api-port=6\n" + "director-port=6969\n" + "payments-port=6971\n" + "game-port=6968\n"
 							+ "chat-port=6972\n" + "allow-registration=true\n" + "give-all-avatars=true\n"
 							+ "give-all-mods=true\n" + "give-all-clothes=true\n" + "give-all-wings=true\n"
-							+ "discovery-server-address=localhost\n");
+							+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
+							+ "encrypt-payments=true\n" + "encrypt-game=false");
 		}
 
 		// Parse properties
@@ -191,48 +205,125 @@ public class EmuFeral {
 			throw new RuntimeException(e1);
 		}
 
-		// Start the servers
+		// Load properties into memory
+		allowRegistration = properties.getOrDefault("allow-registration", "true").equals("true");
+		giveAllAvatars = properties.getOrDefault("give-all-avatars", "true").equals("true");
+		giveAllMods = properties.getOrDefault("give-all-mods", "true").equals("true");
+		giveAllClothes = properties.getOrDefault("give-all-clothes", "true").equals("true");
+		giveAllWings = properties.getOrDefault("give-all-wings", "true").equals("true");
+		encryptChat = properties.getOrDefault("encrypt-chat", "false").equals("true")
+				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
+		encryptGame = properties.getOrDefault("encrypt-game", "false").equals("true")
+				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
 		discoveryAddress = properties.getOrDefault("discovery-server-address", discoveryAddress);
+
+		// Start the servers
 		System.out.println("Starting Emulated Feral API server...");
+
+		// Start API server
+		ConnectiveServerFactory factory;
 		try {
-			apiServer = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("api-port")))
+			factory = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("api-port")))
 					.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
-					.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
+					.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT);
+
+			if (properties.getOrDefault("encrypt-api", "false").equals("true") && new File("keystore.jks").exists()
+					&& new File("keystore.jks.password").exists()) {
+				factory = factory.setImplementation(ConnectiveHTTPSServer.class);
+			}
+
+			apiServer = factory.build();
 		} catch (Exception e) {
 			System.err.println("Unable to start on port " + Integer.parseInt(properties.get("api-port"))
 					+ "! Switching to debug mode!");
 			System.err.println("If you are not attempting to debug the server, please run as root.");
-			apiServer = new ConnectiveServerFactory().setPort(6970).setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
-					.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
+
+			factory = new ConnectiveServerFactory().setPort(6970).setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
+					.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT);
+			if (properties.getOrDefault("encrypt-api", "false").equals("true") && new File("keystore.jks").exists()
+					&& new File("keystore.jks.password").exists()) {
+				factory = factory.setImplementation(ConnectiveHTTPSServer.class);
+			}
+
+			apiServer = factory.build();
 		}
 		apiServer.registerProcessor(new APIProcessor());
+
+		// Start director server
 		System.out.println("Starting Emulated Feral Director server...");
 		ConnectiveHTTPServer directorServer = new ConnectiveServerFactory()
 				.setPort(Integer.parseInt(properties.get("director-port")))
 				.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
 				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
 		directorServer.registerProcessor(new DirectorProcessor());
+
+		// Start payments server
 		System.out.println("Starting Emulated Feral Fake Payment server...");
-		paymentServer = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("payments-port")))
+		factory = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("payments-port")))
 				.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
-				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
+				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT);
+		if (properties.getOrDefault("encrypt-payments", "false").equals("true") && new File("keystore.jks").exists()
+				&& new File("keystore.jks.password").exists()) {
+			factory = factory.setImplementation(ConnectiveHTTPSServer.class);
+		}
+		paymentServer = factory.build();
 		paymentServer.registerProcessor(new PaymentsProcessor());
+
+		// Start game server
+		ServerSocket sock;
 		System.out.println("Starting Emulated Feral Game server...");
-		ServerSocket sock = new ServerSocket(Integer.parseInt(properties.get("game-port")), 0,
-				InetAddress.getByName("0.0.0.0"));
-		allowRegistration = properties.getOrDefault("allow-registration", "true").equals("true");
-		giveAllAvatars = properties.getOrDefault("give-all-avatars", "true").equals("true");
-		giveAllMods = properties.getOrDefault("give-all-mods", "true").equals("true");
-		giveAllClothes = properties.getOrDefault("give-all-clothes", "true").equals("true");
-		giveAllWings = properties.getOrDefault("give-all-wings", "true").equals("true");
+		if (encryptGame)
+			try {
+				sock = getContext(new File("keystore.jks"),
+						Files.readString(Path.of("keystore.jks.password")).toCharArray()).getServerSocketFactory()
+						.createServerSocket(Integer.parseInt(properties.get("game-port")), 0,
+								InetAddress.getByName("0.0.0.0"));
+			} catch (UnrecoverableKeyException | KeyManagementException | NumberFormatException | KeyStoreException
+					| NoSuchAlgorithmException | CertificateException | IOException e) {
+				sock = new ServerSocket(Integer.parseInt(properties.get("game-port")), 0,
+						InetAddress.getByName("0.0.0.0"));
+			}
+		else
+			sock = new ServerSocket(Integer.parseInt(properties.get("game-port")), 0, InetAddress.getByName("0.0.0.0"));
 		gameServer = new GameServer(sock);
 		gameServer.start();
+
+		// Start chat server
 		System.out.println("Starting Emulated Feral Chat server...");
-		sock = new ServerSocket(Integer.parseInt(properties.getOrDefault("chat-port", "6972")), 0,
-				InetAddress.getByName("0.0.0.0"));
+		if (encryptChat)
+			try {
+				sock = getContext(new File("keystore.jks"),
+						Files.readString(Path.of("keystore.jks.password")).toCharArray()).getServerSocketFactory()
+						.createServerSocket(Integer.parseInt(properties.getOrDefault("chat-port", "6972")), 0,
+								InetAddress.getByName("0.0.0.0"));
+			} catch (UnrecoverableKeyException | KeyManagementException | NumberFormatException | KeyStoreException
+					| NoSuchAlgorithmException | CertificateException | IOException e) {
+				sock = new ServerSocket(Integer.parseInt(properties.getOrDefault("chat-port", "6972")), 0,
+						InetAddress.getByName("0.0.0.0"));
+			}
+		else
+			sock = new ServerSocket(Integer.parseInt(properties.getOrDefault("chat-port", "6972")), 0,
+					InetAddress.getByName("0.0.0.0"));
 		chatServer = new ChatServer(sock);
 		chatServer.start();
+
+		// Log completion
 		System.out.println("Successfully started emulated servers.");
+	}
+
+	private static SSLContext getContext(File keystore, char[] password)
+			throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyManagementException,
+			CertificateException, FileNotFoundException, IOException {
+		KeyStore mainStore = KeyStore.getInstance("JKS");
+		mainStore.load(new FileInputStream(keystore), password);
+
+		KeyManagerFactory managerFactory = KeyManagerFactory.getInstance("SunX509");
+		managerFactory.init(mainStore, password);
+
+		SSLContext cont = SSLContext.getInstance("TLS");
+		cont.init(managerFactory.getKeyManagers(), null, null);
+
+		return cont;
 	}
 
 	// PEM parser

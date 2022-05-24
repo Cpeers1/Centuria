@@ -53,7 +53,9 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 		join.mode = 0;
 		join.roomID = roomID;
 		join.playerID = plr.account.getAccountNumericID();
-		join.roomIdentifier = "room_" + plr.account.getAccountID();
+
+		// Chat room
+		join.roomIdentifier = "room_" + roomID;
 		client.sendPacket(join);
 
 		return true;
