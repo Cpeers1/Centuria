@@ -25,7 +25,10 @@ import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionCancel;
 import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionFinish;
 import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionStart;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemUseDye;
 import org.asf.emuferal.packets.xt.gameserver.objects.AvatarAction;
+import org.asf.emuferal.packets.xt.gameserver.objects.AvatarLookGet;
+import org.asf.emuferal.packets.xt.gameserver.objects.PlayerOnlineStatus;
 import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectGlide;
 import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectRespawn;
 import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectSetRespawn;
@@ -71,6 +74,7 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new KeepAlive());
 		registerPacket(new PrefixedPacket());
 		registerPacket(new InventoryItemDownloadPacket());
+		registerPacket(new InventoryItemUseDye());
 		registerPacket(new JoinRoom());
 		registerPacket(new RoomJoinTutorial());
 		registerPacket(new ShopList());
@@ -79,6 +83,8 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new WorldObjectRespawn());
 		registerPacket(new WorldObjectSetRespawn());
 		registerPacket(new WorldObjectGlide());
+		registerPacket(new AvatarLookGet());
+		registerPacket(new PlayerOnlineStatus());
 		registerPacket(new AvatarAction());
 		registerPacket(new InteractionStart());
 		registerPacket(new InteractionCancel());
@@ -193,11 +199,6 @@ public class GameServer extends BaseSmartfoxServer {
 		System.out.println(
 				"Player connected: " + plr.account.getLoginName() + " (as " + plr.account.getDisplayName() + ")");
 		sendPacket(client, "%xt%ulc%-1%");
-		String playerMsg = "%xt%rfl%-1%true%";
-		for (Player player : getPlayers()) {
-			playerMsg += player.account.getAccountID() + "%-1%";
-		}
-		sendPacket(client, playerMsg); // TODO: verify that this is the player list packet!
 		players.add(plr);
 	}
 

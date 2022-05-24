@@ -8,14 +8,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class ClothingConverter {
+public class DyeConverter {
 
 	public static void main(String[] args) throws IOException {
-		// This tool generates a clothinghelper.json file
+		// This tool generates a dyehelper.json file
 		// Expected program arguments: <csv-file>
 
 		JsonObject res = new JsonObject();
-		JsonObject clothing = new JsonObject();
+		JsonObject dyes = new JsonObject();
 		String lastID = "";
 		String lastData = null;
 		boolean skip = false;
@@ -32,25 +32,12 @@ public class ClothingConverter {
 					lastData = "{\n" + lastData;
 					lastData = lastData.replace("`", "\"");
 					JsonObject obj = JsonParser.parseString(lastData).getAsJsonObject();
-					if (obj.get("templateClass").getAsString().equals("ActorClothingTemplate")) {
+					if (obj.get("templateClass").getAsString().equals("DyeTemplate")) {
 						for (JsonElement ele : obj.get("components").getAsJsonArray()) {
 							JsonObject data = ele.getAsJsonObject();
-							if (data.get("componentClass").getAsString().equals("ColorableDefComponent")) {
+							if (data.get("componentClass").getAsString().equals("ColorDefComponent")) {
 								data = data.get("componentJSON").getAsJsonObject();
-								int channels = data.get("channelCount").getAsInt();
-								if (channels > 0) {
-									JsonObject itm = new JsonObject();
-									itm.addProperty("availableChannels", channels);
-									for (int i = 1; i <= channels; i++) {
-										if (data.has("color" + i + "HSVDefault")) {
-											JsonObject hsv = new JsonObject();
-											hsv.addProperty("_hsv", data.get("color" + i + "HSVDefault")
-													.getAsJsonObject().get("_hsv").getAsString());
-											itm.add("color" + i + "HSV", hsv);
-										}
-									}
-									clothing.add(lastID, itm);
-								}
+								dyes.addProperty(lastID, data.get("color").getAsJsonObject().get("_hsv").getAsString());
 							}
 						}
 					}
@@ -62,7 +49,7 @@ public class ClothingConverter {
 				lastData += line + "\n";
 			}
 		}
-		res.add("Clothing", clothing);
+		res.add("Dyes", dyes);
 
 		System.out.println(new Gson().newBuilder().setPrettyPrinting().create().toJson(res));
 	}

@@ -13,10 +13,10 @@ public class WorldObjectInfoAvatarLocal implements IXtPacket<WorldObjectInfoAvat
 	public double y;
 	public double z;
 	
-	public double rw;
 	public double rx;
 	public double ry;
 	public double rz;
+	public double rw;
 
 	@Override
 	public WorldObjectInfoAvatarLocal instantiate() {
@@ -42,10 +42,10 @@ public class WorldObjectInfoAvatarLocal implements IXtPacket<WorldObjectInfoAvat
 		writer.writeDouble(z);
 
 		// Rotation
-		writer.writeDouble(rw);
 		writer.writeDouble(rx);
 		writer.writeDouble(ry);
 		writer.writeDouble(rz);
+		writer.writeDouble(rw);
 
 		writer.writeString(""); // Data suffix
 	}

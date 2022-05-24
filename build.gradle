@@ -83,6 +83,7 @@ dependencies {
 	implementation group: 'org.asf.aos.util.service', name: 'aosutil-service-SLIB-UTIL', version: '0.0.0.12'
 	implementation group: 'org.apache.commons', name: 'commons-compress', version: '1.21'	
 	implementation group: 'org.tukaani', name: 'xz', version: '1.9'
+	implementation group: 'org.joml', name: 'joml', version: '1.10.4'
 }
 
 project.configurations.implementation.canBeResolved = true

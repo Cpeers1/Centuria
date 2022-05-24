@@ -21,6 +21,8 @@ public class TaskThread extends Thread {
 		while (!stop) {
 			while (tasks.isEmpty()) {
 				try {
+					if (stop)
+						break;
 					Thread.sleep(1);
 				} catch (InterruptedException e) {
 				}

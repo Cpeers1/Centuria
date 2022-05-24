@@ -2,17 +2,10 @@ package org.asf.emuferal.networking.chatserver;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
-
-import org.asf.emuferal.networking.smartfox.BaseSmartfoxServer;
-import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 
 public class ChatServer {
 

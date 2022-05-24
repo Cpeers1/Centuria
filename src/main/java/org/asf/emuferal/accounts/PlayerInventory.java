@@ -331,6 +331,159 @@ public abstract class PlayerInventory {
 		}
 
 		/**
+		 * Checks if the player has a specific clothing item
+		 * 
+		 * @param defID Clothing defID
+		 * @return True if the player has the clothing item, false otherwise
+		 */
+		public boolean hasClothing(int defID) {
+			// Load the inventory object
+			if (!inventory.containsItem("100"))
+				inventory.setItem("100", new JsonArray());
+			JsonArray items = inventory.getItem("100").getAsJsonArray();
+
+			// Find object
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				int itID = itm.get("defId").getAsInt();
+				if (itID == defID) {
+					return true;
+				}
+			}
+
+			// Item was not found
+			return false;
+		}
+
+		/**
+		 * Removes a clothing item
+		 * 
+		 * @param defID Clothing item ID
+		 */
+		public void removeClothing(String id) {
+			// Load the inventory object
+			if (!inventory.containsItem("100"))
+				inventory.setItem("100", new JsonArray());
+			JsonArray items = inventory.getItem("100").getAsJsonArray();
+
+			// Find object
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				String itID = itm.get("id").getAsString();
+				if (itID.equals(id)) {
+					// Remove item
+					items.remove(ele);
+
+					// Mark what files to save
+					if (!itemsToSave.contains("100"))
+						itemsToSave.add("100");
+
+					// End loop
+					break;
+				}
+			}
+		}
+
+		/**
+		 * Retrieves a clothing inventory object
+		 * 
+		 * @param defID Clothing item ID
+		 * @return JsonObject or null
+		 */
+		public JsonObject getClothingData(String id) {
+			// Load the inventory object
+			if (!inventory.containsItem("100"))
+				inventory.setItem("100", new JsonArray());
+			JsonArray items = inventory.getItem("100").getAsJsonArray();
+
+			// Find object
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				String itID = itm.get("id").getAsString();
+				if (itID.equals(id)) {
+					// Return clothing object
+					return itm;
+				}
+			}
+
+			return null;
+		}
+
+		/**
+		 * Adds a clothing item of a specific defID
+		 * 
+		 * @param defID         Clothing item defID
+		 * @param isInTradeList True to add this item to trade list, false otherwise
+		 * @return Item UUID
+		 */
+		public String addClothing(int defID, boolean isInTradeList) {
+			// Load the inventory object
+			if (!inventory.containsItem("100"))
+				inventory.setItem("100", new JsonArray());
+			JsonArray items = inventory.getItem("100").getAsJsonArray();
+
+			// Generate item ID
+			String cID = UUID.randomUUID().toString();
+			while (true) {
+				boolean found = false;
+				for (JsonElement ele : items) {
+					JsonObject itm = ele.getAsJsonObject();
+					String itmID = itm.get("id").getAsString();
+					if (itmID.equals(cID)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					break;
+
+				cID = UUID.randomUUID().toString();
+			}
+
+			// Generate object
+			try {
+				// Load helper
+				InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+						.getResourceAsStream("defaultitems/clothinghelper.json");
+				JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+						.get("Clothing").getAsJsonObject();
+				strm.close();
+
+				// Check existence
+				if (helper.has(Integer.toString(defID))) {
+					// Create the item
+					JsonObject itm = new JsonObject();
+					// Timestamp
+					JsonObject ts = new JsonObject();
+					ts.addProperty("ts", System.currentTimeMillis());
+					// Trade thingy
+					JsonObject tr = new JsonObject();
+					tr.addProperty("isInTradeList", isInTradeList);
+					// Build components
+					JsonObject components = new JsonObject();
+					components.add("Tradable", tr);
+					components.add("Colorable", helper.get(Integer.toString(defID)));
+					components.add("Timestamp", ts);
+					itm.addProperty("defId", defID);
+					itm.add("components", components);
+					itm.addProperty("id", cID);
+					itm.addProperty("type", 100);
+
+					// Add it
+					items.add(itm);
+
+					// Mark what files to save
+					if (!itemsToSave.contains("100"))
+						itemsToSave.add("100");
+				}
+			} catch (IOException e) {
+			}
+
+			// Return ID
+			return cID;
+		}
+
+		/**
 		 * Adds a dye to the player's inventory
 		 * 
 		 * @param defID Dye defID
@@ -347,7 +500,8 @@ public abstract class PlayerInventory {
 			dye.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().addProperty("quantity", q + 1);
 
 			// Mark what files to save
-			itemsToSave.add("111");
+			if (!itemsToSave.contains("111"))
+				itemsToSave.add("111");
 
 			// Return ID
 			return dye.get("id").getAsString();
@@ -374,7 +528,94 @@ public abstract class PlayerInventory {
 			}
 
 			// Mark what files to save
-			itemsToSave.add("111");
+			if (!itemsToSave.contains("111"))
+				itemsToSave.add("111");
+		}
+
+		/**
+		 * Retrieves a dye inventory object
+		 * 
+		 * @param defID Dye item ID
+		 * @return JsonObject or null
+		 */
+		public JsonObject getDyeData(String id) {
+			// Load the inventory object
+			if (!inventory.containsItem("111"))
+				inventory.setItem("111", new JsonArray());
+			JsonArray items = inventory.getItem("111").getAsJsonArray();
+
+			// Find object
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				String itID = itm.get("id").getAsString();
+				if (itID.equals(id)) {
+					// Return dye
+					return itm;
+				}
+			}
+
+			return null;
+		}
+
+		/**
+		 * Retrieves the HSV value of a dye
+		 * 
+		 * @param defID Dye defID
+		 * @return HSV value or null
+		 */
+		public String getDyeHSV(int defID) {
+			try {
+				// Load helper
+				InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+						.getResourceAsStream("defaultitems/dyehelper.json");
+				JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+						.get("Dyes").getAsJsonObject();
+				strm.close();
+
+				if (helper.has(Integer.toString(defID)))
+					return helper.get(Integer.toString(defID)).getAsString();
+			} catch (IOException e) {
+			}
+
+			return null;
+		}
+
+		/**
+		 * Removes a dye to the player's inventory
+		 * 
+		 * @param defID Dye item ID
+		 */
+		public void removeDye(String id) {
+			// Load the inventory object
+			if (!inventory.containsItem("111"))
+				inventory.setItem("111", new JsonArray());
+			JsonArray items = inventory.getItem("111").getAsJsonArray();
+
+			// Find object
+			for (JsonElement ele : items) {
+				JsonObject dye = ele.getAsJsonObject();
+				String itID = dye.get("id").getAsString();
+				if (itID.equals(id)) {
+					// Remove one to the quantity field
+					int q = dye.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().get("quantity")
+							.getAsInt();
+					dye.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().remove("quantity");
+					dye.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().addProperty("quantity",
+							q - 1);
+
+					if (q - 1 <= 0) {
+						// Remove object
+						inventory.getItem("111").getAsJsonArray().remove(dye);
+					}
+
+					// Mark what files to save
+					if (!itemsToSave.contains("111"))
+						itemsToSave.add("111");
+
+					// End loop
+					break;
+				}
+			}
 		}
 
 		/**
@@ -438,13 +679,13 @@ public abstract class PlayerInventory {
 			itm.add("components", components);
 			itm.addProperty("id", UUID.nameUUIDFromBytes(Integer.toString(defID).getBytes()).toString());
 			itm.addProperty("type", 111);
-			items.add(itm);
 
 			// Add it
 			items.add(itm);
 
 			// Mark what files to save
-			itemsToSave.add("111");
+			if (!itemsToSave.contains("111"))
+				itemsToSave.add("111");
 
 			return itm;
 		}
@@ -518,7 +759,8 @@ public abstract class PlayerInventory {
 			items.add(itm);
 
 			// Mark what files to save
-			itemsToSave.add("2");
+			if (!itemsToSave.contains("2"))
+				itemsToSave.add("2");
 		}
 
 		/**
@@ -541,7 +783,8 @@ public abstract class PlayerInventory {
 					items.remove(itm);
 
 					// Mark what files to save
-					itemsToSave.add("2");
+					if (!itemsToSave.contains("2"))
+						itemsToSave.add("2");
 					break;
 				}
 			}

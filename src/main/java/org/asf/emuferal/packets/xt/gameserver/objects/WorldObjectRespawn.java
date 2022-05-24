@@ -57,6 +57,10 @@ public class WorldObjectRespawn implements IXtPacket<WorldObjectRespawn> {
 		pk.writeString("0");
 		pk.writeString(""); // Data suffix
 
+		// Log if in debug
+		if (System.getProperty("debugMode") != null)
+			System.out.println("Respawn set: " + plr.account.getDisplayName() + ": " + plr.respawn.replace("%", ", "));
+
 		// Broadcast respawn
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {

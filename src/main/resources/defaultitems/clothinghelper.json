@@ -756,9 +756,6 @@
         "_hsv": "1196,5412,10000"
       }
     },
-    "9025": {
-      "availableChannels": 0
-    },
     "8939": {
       "availableChannels": 2,
       "color1HSV": {
@@ -1440,21 +1437,6 @@
         "_hsv": "1196,10000,10000"
       }
     },
-    "6077": {
-      "availableChannels": 0
-    },
-    "6076": {
-      "availableChannels": 0
-    },
-    "6075": {
-      "availableChannels": 0
-    },
-    "6074": {
-      "availableChannels": 0
-    },
-    "6073": {
-      "availableChannels": 0
-    },
     "6035": {
       "availableChannels": 3,
       "color1HSV": {
@@ -1557,18 +1539,6 @@
         "_hsv": "7024,4242,5176"
       }
     },
-    "6007": {
-      "availableChannels": 3,
-      "color1HSV": {
-        "_hsv": "7264,5678,4627"
-      },
-      "color2HSV": {
-        "_hsv": "6190,606,9059"
-      },
-      "color3HSV": {
-        "_hsv": "4377,9961,10000"
-      }
-    },
     "6004": {
       "availableChannels": 2,
       "color1HSV": {
@@ -1578,54 +1548,6 @@
         "_hsv": "424,8627,10000"
       }
     },
-    "6003": {
-      "availableChannels": 0
-    },
-    "5951": {
-      "availableChannels": 4,
-      "color1HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color2HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color3HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color4HSV": {
-        "_hsv": "0,0,0"
-      }
-    },
-    "5950": {
-      "availableChannels": 4,
-      "color1HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color2HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color3HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color4HSV": {
-        "_hsv": "0,0,0"
-      }
-    },
-    "5949": {
-      "availableChannels": 4,
-      "color1HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color2HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color3HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color4HSV": {
-        "_hsv": "0,0,0"
-      }
-    },
     "5934": {
       "availableChannels": 2,
       "color1HSV": {
@@ -1633,36 +1555,6 @@
       },
       "color2HSV": {
         "_hsv": "2524,6713,9230"
-      }
-    },
-    "5931": {
-      "availableChannels": 4,
-      "color1HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color2HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color3HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color4HSV": {
-        "_hsv": "0,0,0"
-      }
-    },
-    "5930": {
-      "availableChannels": 4,
-      "color1HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color2HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color3HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color4HSV": {
-        "_hsv": "0,0,0"
       }
     },
     "5920": {
@@ -1743,9 +1635,6 @@
         "_hsv": "1889,8670,7270"
       }
     },
-    "5487": {
-      "availableChannels": 0
-    },
     "5299": {
       "availableChannels": 3,
       "color1HSV": {
@@ -1802,24 +1691,6 @@
       "color3HSV": {
         "_hsv": "797,10000,10000"
       }
-    },
-    "5020": {
-      "availableChannels": 0
-    },
-    "5019": {
-      "availableChannels": 0
-    },
-    "5018": {
-      "availableChannels": 0
-    },
-    "5017": {
-      "availableChannels": 0
-    },
-    "5016": {
-      "availableChannels": 0
-    },
-    "5009": {
-      "availableChannels": 0
     },
     "4834": {
       "availableChannels": 3,
@@ -2082,42 +1953,6 @@
         "_hsv": "7979,1462,8774"
       }
     },
-    "443": {
-      "availableChannels": 0
-    },
-    "441": {
-      "availableChannels": 0
-    },
-    "439": {
-      "availableChannels": 0
-    },
-    "437": {
-      "availableChannels": 0
-    },
-    "436": {
-      "availableChannels": 0
-    },
-    "4085": {
-      "availableChannels": 0
-    },
-    "3957": {
-      "availableChannels": 0
-    },
-    "3956": {
-      "availableChannels": 0
-    },
-    "3955": {
-      "availableChannels": 0
-    },
-    "3954": {
-      "availableChannels": 0
-    },
-    "3953": {
-      "availableChannels": 0
-    },
-    "3952": {
-      "availableChannels": 0
-    },
     "3864": {
       "availableChannels": 4,
       "color1HSV": {
@@ -2171,9 +2006,6 @@
       "color3HSV": {
         "_hsv": "9129,8600,5590"
       }
-    },
-    "3799": {
-      "availableChannels": 0
     },
     "3774": {
       "availableChannels": 3,
@@ -2736,21 +2568,6 @@
         "_hsv": "9798,5490,10000"
       }
     },
-    "3155": {
-      "availableChannels": 0
-    },
-    "3154": {
-      "availableChannels": 0
-    },
-    "3153": {
-      "availableChannels": 0
-    },
-    "3152": {
-      "availableChannels": 0
-    },
-    "3148": {
-      "availableChannels": 0
-    },
     "31476": {
       "availableChannels": 3,
       "color1HSV": {
@@ -2762,12 +2579,6 @@
       "color3HSV": {
         "_hsv": "9178,9930,5608"
       }
-    },
-    "3141": {
-      "availableChannels": 0
-    },
-    "3140": {
-      "availableChannels": 0
     },
     "31375": {
       "availableChannels": 3,
@@ -2891,12 +2702,6 @@
       "color4HSV": {
         "_hsv": "7941,6385,8353"
       }
-    },
-    "3134": {
-      "availableChannels": 0
-    },
-    "3133": {
-      "availableChannels": 0
     },
     "31286": {
       "availableChannels": 3,
@@ -3435,12 +3240,6 @@
         "_hsv": "5722,8893,9569"
       }
     },
-    "3066": {
-      "availableChannels": 0
-    },
-    "3065": {
-      "availableChannels": 0
-    },
     "30649": {
       "availableChannels": 3,
       "color1HSV": {
@@ -3473,9 +3272,6 @@
       "color3HSV": {
         "_hsv": "5722,8893,9569"
       }
-    },
-    "3064": {
-      "availableChannels": 0
     },
     "30639": {
       "availableChannels": 2,
@@ -3534,9 +3330,6 @@
         "_hsv": "4931,3529,8000"
       }
     },
-    "3062": {
-      "availableChannels": 0
-    },
     "30619": {
       "availableChannels": 2,
       "color1HSV": {
@@ -3561,9 +3354,6 @@
         "_hsv": "4705,6243,7098"
       }
     },
-    "3061": {
-      "availableChannels": 0
-    },
     "30602": {
       "availableChannels": 3,
       "color1HSV": {
@@ -3575,9 +3365,6 @@
       "color3HSV": {
         "_hsv": "5625,329,9529"
       }
-    },
-    "3060": {
-      "availableChannels": 0
     },
     "30599": {
       "availableChannels": 2,
@@ -3599,9 +3386,6 @@
       "color3HSV": {
         "_hsv": "5354,4049,6392"
       }
-    },
-    "3059": {
-      "availableChannels": 0
     },
     "30582": {
       "availableChannels": 2,
@@ -4190,9 +3974,6 @@
       "color3HSV": {
         "_hsv": "5206,4254,8941"
       }
-    },
-    "2987": {
-      "availableChannels": 0
     },
     "29851": {
       "availableChannels": 3,
@@ -6450,9 +6231,6 @@
         "_hsv": "635,824,10000"
       }
     },
-    "27484": {
-      "availableChannels": 0
-    },
     "27481": {
       "availableChannels": 4,
       "color1HSV": {
@@ -6581,15 +6359,6 @@
       "color3HSV": {
         "_hsv": "710,2864,8353"
       }
-    },
-    "27433": {
-      "availableChannels": 0
-    },
-    "27432": {
-      "availableChannels": 0
-    },
-    "27431": {
-      "availableChannels": 0
     },
     "27351": {
       "availableChannels": 3,
@@ -8424,45 +8193,6 @@
         "_hsv": "5525,2213,9569"
       }
     },
-    "25286": {
-      "availableChannels": 0
-    },
-    "25285": {
-      "availableChannels": 4,
-      "color1HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color2HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color3HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color4HSV": {
-        "_hsv": "0,0,0"
-      }
-    },
-    "25284": {
-      "availableChannels": 1,
-      "color1HSV": {
-        "_hsv": "0,0,0"
-      }
-    },
-    "25246": {
-      "availableChannels": 0
-    },
-    "25245": {
-      "availableChannels": 0
-    },
-    "2484": {
-      "availableChannels": 0
-    },
-    "2483": {
-      "availableChannels": 0
-    },
-    "2482": {
-      "availableChannels": 0
-    },
     "24815": {
       "availableChannels": 4,
       "color1HSV": {
@@ -8493,9 +8223,6 @@
         "_hsv": "0,0,10000"
       }
     },
-    "2481": {
-      "availableChannels": 0
-    },
     "24807": {
       "availableChannels": 4,
       "color1HSV": {
@@ -8525,9 +8252,6 @@
       "color4HSV": {
         "_hsv": "3725,5843,10000"
       }
-    },
-    "2480": {
-      "availableChannels": 0
     },
     "24797": {
       "availableChannels": 3,
@@ -8949,9 +8673,6 @@
         "_hsv": "122,3981,4039"
       }
     },
-    "2429": {
-      "availableChannels": 0
-    },
     "24289": {
       "availableChannels": 3,
       "color1HSV": {
@@ -9158,9 +8879,6 @@
       "color4HSV": {
         "_hsv": "8500,472,8314"
       }
-    },
-    "2341": {
-      "availableChannels": 0
     },
     "23065": {
       "availableChannels": 1,
@@ -11316,15 +11034,6 @@
         "_hsv": "777,6902,10000"
       }
     },
-    "21578": {
-      "availableChannels": 0
-    },
-    "21576": {
-      "availableChannels": 0
-    },
-    "21574": {
-      "availableChannels": 0
-    },
     "21573": {
       "availableChannels": 3,
       "color1HSV": {
@@ -11363,15 +11072,6 @@
       "color2HSV": {
         "_hsv": "2477,6544,8510"
       }
-    },
-    "21557": {
-      "availableChannels": 0
-    },
-    "21498": {
-      "availableChannels": 0
-    },
-    "21456": {
-      "availableChannels": 0
     },
     "21340": {
       "availableChannels": 3,
@@ -11651,21 +11351,6 @@
       "color2HSV": {
         "_hsv": "7376,6549,8863"
       }
-    },
-    "20664": {
-      "availableChannels": 0
-    },
-    "20663": {
-      "availableChannels": 0
-    },
-    "20662": {
-      "availableChannels": 0
-    },
-    "20661": {
-      "availableChannels": 0
-    },
-    "20660": {
-      "availableChannels": 0
     },
     "20634": {
       "availableChannels": 4,
@@ -12747,30 +12432,6 @@
         "_hsv": "9809,9732,8784"
       }
     },
-    "19229": {
-      "availableChannels": 0
-    },
-    "1918": {
-      "availableChannels": 0
-    },
-    "1917": {
-      "availableChannels": 0
-    },
-    "1915": {
-      "availableChannels": 0
-    },
-    "1914": {
-      "availableChannels": 0
-    },
-    "1913": {
-      "availableChannels": 0
-    },
-    "1912": {
-      "availableChannels": 0
-    },
-    "1911": {
-      "availableChannels": 0
-    },
     "19105": {
       "availableChannels": 2,
       "color1HSV": {
@@ -12779,9 +12440,6 @@
       "color2HSV": {
         "_hsv": "9330,4378,9137"
       }
-    },
-    "1910": {
-      "availableChannels": 0
     },
     "19093": {
       "availableChannels": 3,
@@ -12795,15 +12453,6 @@
         "_hsv": "4915,10000,10000"
       }
     },
-    "1909": {
-      "availableChannels": 0
-    },
-    "1908": {
-      "availableChannels": 0
-    },
-    "1907": {
-      "availableChannels": 0
-    },
     "19068": {
       "availableChannels": 2,
       "color1HSV": {
@@ -12813,18 +12462,6 @@
         "_hsv": "9330,4378,9137"
       }
     },
-    "1906": {
-      "availableChannels": 0
-    },
-    "1905": {
-      "availableChannels": 0
-    },
-    "1904": {
-      "availableChannels": 0
-    },
-    "1903": {
-      "availableChannels": 0
-    },
     "19021": {
       "availableChannels": 2,
       "color1HSV": {
@@ -12833,24 +12470,6 @@
       "color2HSV": {
         "_hsv": "9330,4378,9137"
       }
-    },
-    "1902": {
-      "availableChannels": 0
-    },
-    "1901": {
-      "availableChannels": 0
-    },
-    "1900": {
-      "availableChannels": 0
-    },
-    "1899": {
-      "availableChannels": 0
-    },
-    "1898": {
-      "availableChannels": 0
-    },
-    "1897": {
-      "availableChannels": 0
     },
     "18956": {
       "availableChannels": 3,
@@ -12891,9 +12510,6 @@
         "_hsv": "1075,2967,8196"
       }
     },
-    "1895": {
-      "availableChannels": 0
-    },
     "18947": {
       "availableChannels": 4,
       "color1HSV": {
@@ -12924,27 +12540,6 @@
         "_hsv": "9764,4381,8863"
       }
     },
-    "1894": {
-      "availableChannels": 0
-    },
-    "1893": {
-      "availableChannels": 0
-    },
-    "1892": {
-      "availableChannels": 4,
-      "color1HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color2HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color3HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color4HSV": {
-        "_hsv": "0,0,0"
-      }
-    },
     "18910": {
       "availableChannels": 2,
       "color1HSV": {
@@ -12953,9 +12548,6 @@
       "color2HSV": {
         "_hsv": "1944,284,8275"
       }
-    },
-    "1891": {
-      "availableChannels": 0
     },
     "18907": {
       "availableChannels": 4,
@@ -13002,21 +12594,6 @@
         "_hsv": "792,1739,9020"
       }
     },
-    "1890": {
-      "availableChannels": 4,
-      "color1HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color2HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color3HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color4HSV": {
-        "_hsv": "0,0,0"
-      }
-    },
     "18898": {
       "availableChannels": 2,
       "color1HSV": {
@@ -13056,21 +12633,6 @@
         "_hsv": "9658,7671,5725"
       }
     },
-    "1889": {
-      "availableChannels": 4,
-      "color1HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color2HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color3HSV": {
-        "_hsv": "0,0,0"
-      },
-      "color4HSV": {
-        "_hsv": "0,0,0"
-      }
-    },
     "18883": {
       "availableChannels": 4,
       "color1HSV": {
@@ -13100,9 +12662,6 @@
       "color4HSV": {
         "_hsv": "4349,4481,10000"
       }
-    },
-    "1888": {
-      "availableChannels": 0
     },
     "18877": {
       "availableChannels": 4,
@@ -13143,9 +12702,6 @@
         "_hsv": "520,6779,8157"
       }
     },
-    "1887": {
-      "availableChannels": 0
-    },
     "18868": {
       "availableChannels": 3,
       "color1HSV": {
@@ -13182,15 +12738,6 @@
         "_hsv": "9180,10000,10000"
       }
     },
-    "1886": {
-      "availableChannels": 0
-    },
-    "18858": {
-      "availableChannels": 1,
-      "color1HSV": {
-        "_hsv": "5747,10000,4200"
-      }
-    },
     "18857": {
       "availableChannels": 4,
       "color1HSV": {
@@ -13224,9 +12771,6 @@
         "_hsv": "4211,3585,4157"
       }
     },
-    "1885": {
-      "availableChannels": 0
-    },
     "18846": {
       "availableChannels": 2,
       "color1HSV": {
@@ -13247,9 +12791,6 @@
       "color3HSV": {
         "_hsv": "5980,3350,7961"
       }
-    },
-    "1884": {
-      "availableChannels": 0
     },
     "18838": {
       "availableChannels": 4,
@@ -15063,36 +14604,6 @@
         "_hsv": "6952,1452,9451"
       }
     },
-    "13606": {
-      "availableChannels": 0
-    },
-    "13603": {
-      "availableChannels": 0
-    },
-    "13600": {
-      "availableChannels": 0
-    },
-    "13597": {
-      "availableChannels": 0
-    },
-    "13594": {
-      "availableChannels": 0
-    },
-    "13591": {
-      "availableChannels": 0
-    },
-    "13588": {
-      "availableChannels": 0
-    },
-    "13585": {
-      "availableChannels": 0
-    },
-    "13584": {
-      "availableChannels": 0
-    },
-    "13580": {
-      "availableChannels": 0
-    },
     "13555": {
       "availableChannels": 4,
       "color1HSV": {
@@ -15116,9 +14627,6 @@
       "color2HSV": {
         "_hsv": "7917,943,8314"
       }
-    },
-    "13547": {
-      "availableChannels": 0
     },
     "13426": {
       "availableChannels": 2,
@@ -15718,15 +15226,6 @@
       "availableChannels": 1,
       "color1HSV": {
         "_hsv": "5370,1084,6510"
-      }
-    },
-    "13054": {
-      "availableChannels": 0
-    },
-    "13051": {
-      "availableChannels": 1,
-      "color1HSV": {
-        "_hsv": "8333,10000,10000"
       }
     },
     "13048": {
@@ -16587,9 +16086,6 @@
         "_hsv": "643,5971,5451"
       }
     },
-    "12481": {
-      "availableChannels": 0
-    },
     "12474": {
       "availableChannels": 1,
       "color1HSV": {
@@ -16902,21 +16398,6 @@
         "_hsv": "0,0,8235"
       }
     },
-    "11936": {
-      "availableChannels": 4,
-      "color1HSV": {
-        "_hsv": "199,5826,4510"
-      },
-      "color2HSV": {
-        "_hsv": "4833,526,7451"
-      },
-      "color3HSV": {
-        "_hsv": "1065,1659,8510"
-      },
-      "color4HSV": {
-        "_hsv": "0,896,2170"
-      }
-    },
     "11852": {
       "availableChannels": 2,
       "color1HSV": {
@@ -16976,9 +16457,6 @@
       "color4HSV": {
         "_hsv": "4825,1000,7451"
       }
-    },
-    "11837": {
-      "availableChannels": 0
     },
     "11107": {
       "availableChannels": 2,

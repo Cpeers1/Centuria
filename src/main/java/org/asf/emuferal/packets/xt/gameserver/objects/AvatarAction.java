@@ -113,7 +113,6 @@ public class AvatarAction implements IXtPacket<AvatarAction> {
 			}
 		}
 
-		// TODO
 		return true;
 	}
 

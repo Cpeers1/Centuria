@@ -1,12 +1,11 @@
 main todo:
-- clothing on login
-- lock displaynames when in use
 - chat
 - moderation tools through chat (kick, warn, ban, tempban, mute)
 - fix displaced spawns
 - fix missing spawns
 - overhaul account storage
 - fix settings not being saved
+- make sure that warping uses privacy settings
 - sanctuaries
 - feedback
 

@@ -87,8 +87,16 @@ public class APIProcessor extends HttpUploadProcessor {
 					return;
 				}
 
-				// Lock display name
-				manager.lockDisplayName(acc.getDisplayName(), acc.getAccountID());
+				boolean changeName = false;
+				// Check if the name is in use and not owned by the current user
+				if (manager.isDisplayNameInUse(acc.getDisplayName())
+						&& !manager.getUserByDisplayName(acc.getDisplayName()).equals(acc.getAccountID())) {
+					// Name is in use, request change
+					changeName = true;
+				} else {
+					// Lock display name
+					manager.lockDisplayName(acc.getDisplayName(), acc.getAccountID());
+				}
 
 				// Build JWT
 				JsonObject headers = new JsonObject();
@@ -111,8 +119,8 @@ public class APIProcessor extends HttpUploadProcessor {
 				response.addProperty("refresh_token", id);
 				response.addProperty("auth_token", headerD + "." + payloadD + "." + Base64.getUrlEncoder()
 						.encodeToString(EmuFeral.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
-				response.addProperty("rename_required", !manager.hasPassword(id)); // request user name if new or
-																					// migrating
+				response.addProperty("rename_required", !manager.hasPassword(id) || changeName); // request user name if
+																									// new or migrating
 				response.addProperty("rename_required_key", "");
 				response.addProperty("email_update_required", false);
 				response.addProperty("email_update_required_key", "");
