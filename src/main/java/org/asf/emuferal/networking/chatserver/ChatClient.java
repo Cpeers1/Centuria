@@ -62,6 +62,8 @@ public class ChatClient {
 
 	void stop() {
 		taskThread.stopCleanly();
+		rooms.clear();
+		privateChat.clear();
 	}
 
 	// Client init

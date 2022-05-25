@@ -52,33 +52,33 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			buildInventory(plr, inv);
 		}
 
+		if (slot.equals("400") && EmuFeral.giveAllWings) {
+			// Override wings lock
+			if (!inv.containsItem("400"))
+				inv.setItem("400", new JsonArray());
+			JsonArray itm = inv.getItem("400").getAsJsonArray();
+
+			// Build entry
+			JsonObject obj = new JsonObject();
+			obj.addProperty("defId", 22442);
+			JsonObject components = new JsonObject();
+			JsonObject ts = new JsonObject();
+			ts.addProperty("ts", System.currentTimeMillis());
+			components.add("Timestamp", ts);
+			obj.add("components", components);
+			obj.addProperty("id", new UUID(0, 0).toString());
+			obj.addProperty("type", 400);
+			itm.add(obj);
+
+			// Send the item to the client
+			InventoryItemPacket pkt = new InventoryItemPacket();
+			pkt.item = itm;
+			client.sendPacket(pkt);
+
+			return true;
+		}
+
 		if (slot.equals("1")) {
-			if (slot.equals("400") && EmuFeral.giveAllWings) {
-				// Override wings lock
-				if (!inv.containsItem("400"))
-					inv.setItem("400", new JsonArray());
-				JsonArray itm = inv.getItem("400").getAsJsonArray();
-
-				// Build entry
-				JsonObject obj = new JsonObject();
-				obj.addProperty("defId", 22442);
-				JsonObject components = new JsonObject();
-				JsonObject ts = new JsonObject();
-				ts.addProperty("ts", System.currentTimeMillis());
-				components.add("Timestamp", ts);
-				obj.add("components", components);
-				obj.addProperty("id", new UUID(0, 0).toString());
-				obj.addProperty("type", 400);
-				itm.add(obj);
-
-				// Send the item to the client
-				InventoryItemPacket pkt = new InventoryItemPacket();
-				pkt.item = itm;
-				client.sendPacket(pkt);
-
-				return true;
-			}
-
 			if (EmuFeral.giveAllMods) {
 				// All body mods
 				String[] mods = new String[] { "9808", "9807", "9806", "9805", "9804", "9803", "9802", "9801", "9800",

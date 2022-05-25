@@ -39,8 +39,8 @@ public class UserConversations extends AbstractChatPacket {
 		for (ChatClient cl : client.getServer().getClients()) {
 			String[] rooms = cl.getRooms();
 			for (String room : rooms) {
-				if (!conversations.containsKey(room))
-					conversations.put(room, cl.isRoomPrivate(room));
+				if (!conversations.containsKey(room) && cl.isRoomPrivate(room) && cl.isInRoom(room))
+					conversations.put(room, true);
 			}
 		}
 

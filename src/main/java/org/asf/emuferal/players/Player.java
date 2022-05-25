@@ -65,7 +65,7 @@ public class Player {
 			wr.writeInt(-1);
 			wr.writeString(account.getAccountID());
 			wr.writeInt(852);
-			wr.writeString(activeLook);
+			wr.writeString(account.getAccountID());
 			wr.writeInt(account.getAccountNumericID());
 			wr.writeLong(System.currentTimeMillis() / 1000);
 			wr.writeString((lastLocation == null ? respawn : lastLocation));

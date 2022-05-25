@@ -31,7 +31,7 @@ public class PingPacket extends AbstractChatPacket {
 		res.addProperty("eventId", "ping");
 		res.addProperty("success", true);
 		client.sendPacket(res);
-		
+
 		return true;
 	}
 

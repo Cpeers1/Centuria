@@ -91,7 +91,7 @@ public class ChatServer {
 					try {
 						client.handle(client.readRawPacket());
 					} catch (Exception e) {
-						if (e instanceof IOException)
+						if (e instanceof IOException || e instanceof IllegalArgumentException)
 							throw e;
 					}
 				}
@@ -149,7 +149,7 @@ public class ChatServer {
 		// Build object
 		JsonObject roomData = new JsonObject();
 		roomData.addProperty("conversation_id", room);
-		roomData.addProperty("title", room);
+		roomData.addProperty("title", "Room");
 		// Build participants object
 		JsonArray members = new JsonArray();
 		for (ChatClient cl : getClients()) {
@@ -157,7 +157,7 @@ public class ChatServer {
 				members.add(cl.getPlayer().getAccountID());
 		}
 		roomData.add("participants", members);
-		roomData.addProperty("conversation_type", isPrivate ? "private" : "room");
+		roomData.addProperty("conversationType", isPrivate ? "private" : "room");
 		return roomData;
 	}
 

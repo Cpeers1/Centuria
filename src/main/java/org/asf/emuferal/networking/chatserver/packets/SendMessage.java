@@ -1,7 +1,10 @@
 package org.asf.emuferal.networking.chatserver.packets;
 
-import java.time.OffsetDateTime;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
@@ -59,20 +62,20 @@ public class SendMessage extends AbstractChatPacket {
 		if (client.isInRoom(room)) {
 			// Send response
 			JsonObject res = new JsonObject();
-			res.addProperty("eventId", "chat.postMessage");
 			res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
 			res.addProperty("conversationId", room);
 			res.addProperty("message", message);
 			res.addProperty("source", client.getPlayer().getAccountID());
-			res.addProperty("sentAt", OffsetDateTime.now().toString());
+			SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
+			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+			res.addProperty("sentAt", fmt.format(new Date()));
+			res.addProperty("eventId", "chat.postMessage");
 			res.addProperty("success", true);
-			client.sendPacket(res);
 
 			// Send to all in room
 			for (ChatClient cl : client.getServer().getClients()) {
-				if (cl.isInRoom(room) && cl != client) {
-					cl.sendPacket(res); // TODO
-				}
+				if (cl.isInRoom(room))
+					cl.sendPacket(res);
 			}
 		}
 
@@ -124,7 +127,6 @@ public class SendMessage extends AbstractChatPacket {
 					cmd = cmdId;
 
 					// Run command
-					// TODO: makeadmin, makemoderator
 					switch (cmdId) {
 					case "mute": {
 						// Mute
@@ -521,7 +523,7 @@ public class SendMessage extends AbstractChatPacket {
 		res.addProperty("conversationId", room);
 		res.addProperty("message", "Issued chat command: " + cmd + ":\n[system] " + message);
 		res.addProperty("source", client.getPlayer().getAccountID());
-		res.addProperty("sentAt", OffsetDateTime.now().toString());
+		res.addProperty("sentAt", LocalDateTime.now().toString());
 		res.addProperty("success", true);
 		client.sendPacket(res);
 	}

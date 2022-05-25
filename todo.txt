@@ -26,9 +26,3 @@ shop update:
 - currency
 - 10k star fragments on join (can be disabled)
 - avatar purchases
-
-chat update:
-- usable chat
-
-extra:
-- use wyld's packet data to save their look and send the files to them 

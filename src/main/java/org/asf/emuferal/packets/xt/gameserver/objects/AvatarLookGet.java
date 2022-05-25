@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 
 public class AvatarLookGet implements IXtPacket<AvatarLookGet> {
 
-	private String lookID;
+	private String accountID;
 
 	@Override
 	public AvatarLookGet instantiate() {
@@ -34,7 +34,7 @@ public class AvatarLookGet implements IXtPacket<AvatarLookGet> {
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
-		lookID = reader.readRemaining();
+		accountID = reader.readRemaining();
 	}
 
 	@Override
@@ -44,15 +44,7 @@ public class AvatarLookGet implements IXtPacket<AvatarLookGet> {
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Find avatar
-		EmuFeralAccount account = null;
-		for (Player online : ((GameServer) client.getServer()).getPlayers()) {
-			if (online.account.getActiveLook().equals(lookID)) {
-				account = online.account;
-				break;
-			}
-		}
-		account = account;
-		// TODO: offline accounts
+		EmuFeralAccount account = AccountManager.getInstance().getAccount(accountID);
 		if (account == null)
 			return true; // Account not found
 
