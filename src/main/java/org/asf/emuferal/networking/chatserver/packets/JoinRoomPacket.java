@@ -54,7 +54,11 @@ public class JoinRoomPacket extends AbstractChatPacket {
 		res.addProperty("participant", participant);
 		res.addProperty("eventId", "conversations.addParticipant");
 		res.addProperty("success", true);
-		cCl.sendPacket(res);
+
+		// Broadcast join
+		for (ChatClient cl : cCl.getServer().getClients())
+			if (cl == client || cl.isInRoom(room))
+				cl.sendPacket(res);
 
 		// Join room
 		client.joinRoom(room, false); // TODO: private chat support
