@@ -123,7 +123,61 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 			break;
 		}
 		case 5: {
-			return true; // FIXME: switch to the spawn finder when all spawns are implemented
+			String id = rd.read();
+
+			boolean success = false;
+			double x = 0;
+			double y = 0;
+			double z = 0;
+			double rx = 0;
+			double ry = 0;
+			double rz = 0;
+			double rw = 0;
+			int dd = 0;
+
+			// First attempt to find a player with the ID
+			for (Player player : ((GameServer) client.getServer()).getPlayers()) {
+				if (player.account.getAccountID().equals(id)) {
+					// Load coordinates
+					success = true;
+					x = player.lastPosX;
+					y = player.lastPosY;
+					z = player.lastPosZ;
+					rw = player.lastRotW;
+					rx = player.lastRotX;
+					ry = player.lastRotY;
+					rz = player.lastRotZ;
+					break;
+				}
+			}
+
+			// Cancel if not found
+			if (!success)
+				break;
+
+			plr.lastRotW = rw;
+			plr.lastRotX = rx;
+			plr.lastRotY = ry;
+			plr.lastRotZ = rz;
+			plr.lastPosX = x;
+			plr.lastPosY = y;
+			plr.lastPosZ = z;
+			plr.lastAction = dd;
+
+			pk.writeDouble(x);
+			pk.writeDouble(y);
+			pk.writeDouble(z);
+			pk.writeDouble(0);
+			pk.writeDouble(rx);
+			pk.writeDouble(ry);
+			pk.writeDouble(rz);
+			pk.writeDouble(0);
+			pk.writeDouble(0);
+			pk.writeDouble(0);
+			pk.writeDouble(rw);
+			pk.writeInt(dd);
+
+			break; // FIXME: switch to the spawn finder when all spawns are implemented
 		}
 		default:
 			mode = mode;

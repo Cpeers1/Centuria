@@ -91,7 +91,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		return true;
 	}
 
-	private void handleSpawn(String room, Player plr, SmartfoxClient client) throws IOException {
+	public static void handleSpawn(String id, Player plr, SmartfoxClient client) throws IOException {
 		// Find teleport
 		// Load spawn helper
 		try {
@@ -102,9 +102,9 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			strm.close();
 
 			// Check existence
-			if (helper.has(room)) {
+			if (helper.has(id)) {
 				// Send response
-				helper = helper.get(room).getAsJsonObject();
+				helper = helper.get(id).getAsJsonObject();
 				System.out.println("Player teleport: " + plr.account.getDisplayName() + ": " + helper.get("worldID").getAsString());
 				WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
 				res.x = helper.get("spawnX").getAsDouble();

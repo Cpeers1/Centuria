@@ -18,9 +18,10 @@ public class Player {
 
 	public int pendingLookDefID = 8254;
 	public String pendingLookID = null;
-	
-	public boolean roomReady = false;
+
+	public int roomID = 0;
 	public String room = null;
+	public boolean roomReady = false;
 
 	public String respawn = null;
 	public String lastLocation = null;
