@@ -39,7 +39,8 @@ public class TaskThread extends Thread {
 
 			for (Runnable task : tasks) {
 				try {
-					task.run();
+					if (task != null)
+						task.run();
 				} catch (Exception e) {
 					System.err.println("Exception in TaskThread " + getName() + ": " + e.getClass().getTypeName()
 							+ (e.getMessage() != null ? ": " + e.getMessage() : ""));

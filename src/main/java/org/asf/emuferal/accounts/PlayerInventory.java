@@ -484,6 +484,34 @@ public abstract class PlayerInventory {
 		}
 
 		/**
+		 * Retrieves the default color of a clothing color channel
+		 * 
+		 * @param defID   Clothing defID
+		 * @param channel Channel number
+		 * @return HSV string or null
+		 */
+		public String getDefaultClothingChannelHSV(int defID, int channel) {
+			try {
+				// Load helper
+				InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+						.getResourceAsStream("defaultitems/clothinghelper.json");
+				JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+						.get("Clothing").getAsJsonObject();
+				strm.close();
+
+				// Check existence
+				if (helper.has(Integer.toString(defID))) {
+					// Find channel
+					JsonObject data = helper.get(Integer.toString(defID)).getAsJsonObject();
+					if (data.has("color" + channel + "HSV"))
+						return data.get("color" + channel + "HSV").getAsJsonObject().get("_hsv").getAsString();
+				}
+			} catch (IOException e) {
+			}
+			return null;
+		}
+
+		/**
 		 * Adds a dye to the player's inventory
 		 * 
 		 * @param defID Dye defID

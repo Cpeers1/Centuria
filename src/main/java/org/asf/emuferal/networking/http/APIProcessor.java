@@ -155,7 +155,8 @@ public class APIProcessor extends HttpUploadProcessor {
 				}
 
 				// Check if the name is in use
-				if (manager.isDisplayNameInUse(newName)) {
+				if (manager.isDisplayNameInUse(newName)
+						&& !manager.getUserByDisplayName(newName).equals(acc.getAccountID())) {
 					return; // Name is in use
 				}
 

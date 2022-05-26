@@ -1,4 +1,4 @@
-package org.asf.emuferal.packets.xt.gameserver.objects;
+package org.asf.emuferal.packets.xt.gameserver.players;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

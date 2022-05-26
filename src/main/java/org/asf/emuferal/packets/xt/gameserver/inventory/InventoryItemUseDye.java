@@ -1,7 +1,8 @@
 package org.asf.emuferal.packets.xt.gameserver.inventory;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.data.XtReader;
@@ -15,7 +16,8 @@ import com.google.gson.JsonObject;
 public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 
 	public String itemID;
-	public HashMap<String, Integer> dyes = new HashMap<String, Integer>();
+	public LinkedHashMap<String, Integer> dyes = new LinkedHashMap<String, Integer>();
+	public ArrayList<Integer> undye = new ArrayList<Integer>();
 
 	@Override
 	public InventoryItemUseDye instantiate() {
@@ -38,6 +40,13 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 
 		for (String dye : dyes.keySet()) {
 			dyes.put(dye, reader.readInt() + 1);
+		}
+
+		if (reader.hasNext()) {
+			l = reader.readInt();
+			for (int i = 0; i < l; i++) {
+				undye.add(reader.readInt() + 1);
+			}
 		}
 	}
 
@@ -90,6 +99,16 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 
 				// Remove dye from inventory
 				inv.getAccessor().removeDye(dye);
+			}
+
+			// Apply undye
+			for (int ch : undye) {
+				String hsv = inv.getAccessor().getDefaultClothingChannelHSV(item.get("defId").getAsInt(), ch);
+				String obj = "color" + ch + "HSV";
+				if (target.has(obj) && hsv != null) {
+					target.get(obj).getAsJsonObject().remove("_hsv");
+					target.get(obj).getAsJsonObject().addProperty("_hsv", hsv);
+				}
 			}
 		}
 
