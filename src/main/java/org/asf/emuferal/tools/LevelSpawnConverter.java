@@ -20,12 +20,14 @@ public class LevelSpawnConverter {
 		JsonObject spawns = new JsonObject();
 		String lastMapName = "";
 		String lastData = null;
+		String lastID = null;
+		;
 		for (String line : Files.readAllLines(Path.of(args[0]))) {
 			if (line.startsWith("\"") && !line.startsWith("\"\"")) {
-				String id = line.substring(1);
-				lastMapName = id.substring(id.indexOf(",\"\"") + 3);
+				lastID = line.substring(1);
+				lastMapName = lastID.substring(lastID.indexOf(",\"\"") + 3);
 				lastMapName = lastMapName.substring(0, lastMapName.indexOf("\""));
-				id = id.substring(0, id.indexOf(","));
+				lastID = lastID.substring(0, lastID.indexOf(","));
 				lastData = "";
 			} else if (line.startsWith("\"\"")) {
 				lastData = "{\n" + lastData;
@@ -41,8 +43,8 @@ public class LevelSpawnConverter {
 								String id = map.get("uniqueMapId").getAsString();
 								if (lastMapName.equals("TutorialCityFera"))
 									continue;
-								if (spawns.has(id))
-									spawns.remove(id);
+								if (spawns.has(lastID + "/" + id))
+									spawns.remove(lastID + "/" + id);
 
 								JsonObject spawnData = new JsonObject();
 								spawnData.addProperty("worldID", lastMapName);
@@ -67,7 +69,7 @@ public class LevelSpawnConverter {
 								spawnData.addProperty("spawnRotZ", quat.z);
 								spawnData.addProperty("spawnRotW", quat.w);
 
-								spawns.add(id, spawnData);
+								spawns.add(lastID + "/" + id, spawnData);
 							}
 						}
 					}

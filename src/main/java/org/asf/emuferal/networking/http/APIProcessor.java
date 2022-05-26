@@ -246,6 +246,21 @@ public class APIProcessor extends HttpUploadProcessor {
 				break;
 			}
 			case "/xp/xp-details": {
+				// Parse JWT payload
+				String token = this.getHeader("Authorization").substring("Bearer ".length());
+
+				// Verify signature
+				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
+				String sig = token.split("\\.")[2];
+				if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
+					this.setResponseCode(403);
+					this.setResponseMessage("Access denied");
+					return;
+				}
+
+				// Parse body
+				JsonArray req = JsonParser.parseString(new String(body, "UTF-8")).getAsJsonArray();
+
 				setBody(""); // should cause the question mark // TODO: levels
 				break;
 			}

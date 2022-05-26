@@ -131,9 +131,9 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			strm.close();
 
 			// Check existence
-			if (helper.has(id)) {
+			if (helper.has(plr.roomID + "/" + id)) {
 				// Send response
-				helper = helper.get(id).getAsJsonObject();
+				helper = helper.get(plr.roomID + "/" + id).getAsJsonObject();
 				System.out.println("Player teleport: " + plr.account.getDisplayName() + ": "
 						+ helper.get("worldID").getAsString());
 				WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();

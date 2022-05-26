@@ -186,6 +186,7 @@ public class ChatClient {
 					client.getOutputStream().write((byte) ch);
 				}
 				client.getOutputStream().write(0);
+				client.getOutputStream().flush();
 				if (System.getProperty("debugMode") != null) {
 					System.out.println("[CHAT] Server to client (user " + player.getDisplayName() + "): " + packet);
 				}
