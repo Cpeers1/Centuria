@@ -84,15 +84,44 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Set location
 		plr.lastLocation = plr.respawn;
-		
+
 		// Mark as ready (for teleports etc)
 		plr.roomReady = true;
 
 		return true;
 	}
 
-	public static void handleSpawn(String id, Player plr, SmartfoxClient client) throws IOException {
+	private void handleSpawn(String id, Player plr, SmartfoxClient client) throws IOException {
 		// Find teleport
+
+		// First attempt to find a player with the ID
+		for (Player player : ((GameServer) client.getServer()).getPlayers()) {
+			if (player.account.getAccountID().equals(id)) {
+				// Send response
+				System.out.println(
+						"Player teleport: " + plr.account.getDisplayName() + ": " + player.account.getDisplayName());
+				WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
+				res.x = player.lastPosX;
+				res.y = player.lastPosX;
+				res.z = player.lastPosZ;
+				res.rw = player.lastRotW;
+				res.rx = player.lastRotX;
+				res.ry = player.lastRotY;
+				res.rz = player.lastRotZ;
+				plr.lastPosX = res.x;
+				plr.lastPosY = res.y;
+				plr.lastPosZ = res.z;
+				plr.lastRotW = res.rx;
+				plr.lastRotX = res.ry;
+				plr.lastRotY = res.rz;
+				plr.lastRotZ = res.rw;
+				client.sendPacket(res);
+				plr.respawn = res.x + "%" + res.y + "%" + res.z + "%" + res.rx + "%" + res.ry + "%" + res.rz + "%"
+						+ res.rw;
+				break;
+			}
+		}
+
 		// Load spawn helper
 		try {
 			// Load helper
@@ -105,7 +134,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			if (helper.has(id)) {
 				// Send response
 				helper = helper.get(id).getAsJsonObject();
-				System.out.println("Player teleport: " + plr.account.getDisplayName() + ": " + helper.get("worldID").getAsString());
+				System.out.println("Player teleport: " + plr.account.getDisplayName() + ": "
+						+ helper.get("worldID").getAsString());
 				WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
 				res.x = helper.get("spawnX").getAsDouble();
 				res.y = helper.get("spawnY").getAsDouble();
