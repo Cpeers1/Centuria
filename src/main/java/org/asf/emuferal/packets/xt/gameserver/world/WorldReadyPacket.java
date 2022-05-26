@@ -118,7 +118,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				client.sendPacket(res);
 				plr.respawn = res.x + "%" + res.y + "%" + res.z + "%" + res.rx + "%" + res.ry + "%" + res.rz + "%"
 						+ res.rw;
-				break;
+				return;
 			}
 		}
 
