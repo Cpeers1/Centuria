@@ -269,6 +269,11 @@ public class GameServer extends BaseSmartfoxServer {
 		System.out.println(
 				"Player connected: " + plr.account.getLoginName() + " (as " + plr.account.getDisplayName() + ")");
 		sendPacket(client, "%xt%ulc%-1%");
+		String playerMsg = "%xt%rfl%-1%true%";
+		for (Player player : getPlayers()) {
+			playerMsg += player.account.getAccountID() + "%-1%";
+		}
+		sendPacket(client, playerMsg); // TODO: verify that this is the player list packet!
 		players.add(plr);
 	}
 

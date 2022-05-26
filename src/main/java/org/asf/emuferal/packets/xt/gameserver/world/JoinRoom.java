@@ -15,6 +15,7 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 	public int playerID = 0;
 	public int mode = 0; // guessing
 	public String roomIdentifier = "0";
+	public String teleport = "";
 
 	@Override
 	public JoinRoom instantiate() {
@@ -40,7 +41,7 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 		writer.writeInt(roomID); // Room ID
 		writer.writeInt(mode); // Mode?
 		writer.writeInt(playerID); // Player ID
-		writer.writeString(""); // Idk but its usually empty
+		writer.writeString(teleport); // Specific teleport
 		writer.writeString(roomIdentifier); // Chat room ID
 
 		writer.writeString(""); // Data suffix

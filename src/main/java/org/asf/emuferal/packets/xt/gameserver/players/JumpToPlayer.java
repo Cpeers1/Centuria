@@ -60,6 +60,7 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 					join.playerID = player.account.getAccountNumericID();
 					join.roomID = plr.roomID;
 					join.mode = 0;
+					join.teleport = plr.account.getAccountID();
 					join.roomIdentifier = player.room;
 
 					// Switch player info over
