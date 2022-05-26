@@ -358,7 +358,7 @@ public abstract class PlayerInventory {
 		/**
 		 * Removes a clothing item
 		 * 
-		 * @param defID Clothing item ID
+		 * @param id Clothing item ID
 		 */
 		public void removeClothing(String id) {
 			// Load the inventory object
@@ -387,7 +387,7 @@ public abstract class PlayerInventory {
 		/**
 		 * Retrieves a clothing inventory object
 		 * 
-		 * @param defID Clothing item ID
+		 * @param id Clothing item ID
 		 * @return JsonObject or null
 		 */
 		public JsonObject getClothingData(String id) {
@@ -535,7 +535,7 @@ public abstract class PlayerInventory {
 		/**
 		 * Retrieves a dye inventory object
 		 * 
-		 * @param defID Dye item ID
+		 * @param id Dye item ID
 		 * @return JsonObject or null
 		 */
 		public JsonObject getDyeData(String id) {
@@ -583,7 +583,7 @@ public abstract class PlayerInventory {
 		/**
 		 * Removes a dye to the player's inventory
 		 * 
-		 * @param defID Dye item ID
+		 * @param id Dye item ID
 		 */
 		public void removeDye(String id) {
 			// Load the inventory object

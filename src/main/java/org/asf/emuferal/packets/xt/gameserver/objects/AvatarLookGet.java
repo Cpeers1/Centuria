@@ -9,10 +9,8 @@ import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
-import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
-import org.asf.emuferal.players.Player;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
