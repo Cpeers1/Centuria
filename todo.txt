@@ -1,4 +1,6 @@
 main todo:
+- token expiry check
+- fix displaced spawns
 - chat
 - warping
 - find player
@@ -11,7 +13,10 @@ main todo:
 - private chat
 
 follower update:
-- player cards & followers
+- player cards
+- followers
+- blocking
+
 
 interaction update:
 - general interactions

@@ -34,8 +34,8 @@ public class InteractionStart implements IXtPacket<InteractionStart> {
 		// TODO: verify this
 		writer.writeInt(-1); // Data prefix
 
-		writer.writeString(source);
 		writer.writeString(target);
+		writer.writeString(source);
 
 		writer.writeString(""); // Data suffix
 	}

@@ -32,6 +32,8 @@ import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectSetRespawn;
 import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectUpdate;
 import org.asf.emuferal.packets.xt.gameserver.players.AvatarAction;
 import org.asf.emuferal.packets.xt.gameserver.players.AvatarLookGet;
+import org.asf.emuferal.packets.xt.gameserver.players.FindPlayer;
+import org.asf.emuferal.packets.xt.gameserver.players.JumpToPlayer;
 import org.asf.emuferal.packets.xt.gameserver.players.PlayerOnlineStatus;
 import org.asf.emuferal.packets.xt.gameserver.shops.ShopList;
 import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
@@ -49,6 +51,7 @@ public class GameServer extends BaseSmartfoxServer {
 		super(socket);
 	}
 
+	public boolean maintenance = false;
 	private Random rnd = new Random();
 	private XmlMapper mapper = new XmlMapper();
 	private ArrayList<Player> players = new ArrayList<Player>();
@@ -85,6 +88,8 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new WorldObjectGlide());
 		registerPacket(new AvatarLookGet());
 		registerPacket(new PlayerOnlineStatus());
+		registerPacket(new JumpToPlayer());
+		registerPacket(new FindPlayer());
 		registerPacket(new AvatarAction());
 		registerPacket(new InteractionStart());
 		registerPacket(new InteractionCancel());
@@ -136,6 +141,31 @@ public class GameServer extends BaseSmartfoxServer {
 		EmuFeralAccount acc = AccountManager.getInstance().getAccount(payload.get("uuid").getAsString());
 		if (acc == null) {
 			client.disconnect();
+			return;
+		}
+
+		// If under maintenance, send error
+		if (maintenance) {
+			JsonObject response = new JsonObject();
+			JsonObject b = new JsonObject();
+			b.addProperty("r", auth.rField);
+			JsonObject o = new JsonObject();
+			o.addProperty("statusId", -16);
+			o.addProperty("_cmd", "login");
+			JsonObject params = new JsonObject();
+			params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
+			params.addProperty("pendingFlags", 0);
+			params.addProperty("activeLookId", acc.getActiveLook());
+			params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
+			params.addProperty("sessionId", acc.getAccountID());
+			params.addProperty("userId", acc.getAccountNumericID());
+			params.addProperty("avatarInvId", 0);
+			o.add("params", params);
+			o.addProperty("status", -16);
+			b.add("o", o);
+			response.add("b", b);
+			response.addProperty("t", "xt");
+			sendPacket(client, response.toString());
 			return;
 		}
 
@@ -239,11 +269,6 @@ public class GameServer extends BaseSmartfoxServer {
 		System.out.println(
 				"Player connected: " + plr.account.getLoginName() + " (as " + plr.account.getDisplayName() + ")");
 		sendPacket(client, "%xt%ulc%-1%");
-		String playerMsg = "%xt%rfl%-1%true%";
-		for (Player player : getPlayers()) {
-			playerMsg += player.account.getAccountID() + "%-1%";
-		}
-		sendPacket(client, playerMsg); // TODO: verify that this is the player list packet!
 		players.add(plr);
 	}
 

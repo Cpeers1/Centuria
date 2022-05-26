@@ -44,17 +44,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Load player
 		Player plr = (Player) client.container;
 
-		// Sync
-		GameServer srv = (GameServer) client.getServer();
-		for (Player player : srv.getPlayers()) {
-			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				plr.destroyAt(player);
-			}
-		}
-
-		// Disable sync
-		plr.room = null;
-
 		// Send to tutorial if new
 		if (plr.account.isPlayerNew()) {
 			// Tutorial spawn
@@ -78,23 +67,26 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Find spawn
 		handleSpawn(teleportUUID, plr, client);
 
-		// Set location
-		plr.lastLocation = plr.respawn;
+		// Sync spawn
+		GameServer server = (GameServer) client.getServer();
+		for (Player player : server.getPlayers()) {
+			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+				plr.syncTo(player);
+			}
+		}
 
 		// Send all other players to the current player
-		GameServer server = (GameServer) client.getServer();
 		for (Player player : server.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
 				player.syncTo(plr);
 			}
 		}
 
-		// Sync spawn
-		for (Player player : server.getPlayers()) {
-			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				plr.syncTo(player);
-			}
-		}
+		// Set location
+		plr.lastLocation = plr.respawn;
+		
+		// Mark as ready (for teleports etc)
+		plr.roomReady = true;
 
 		return true;
 	}
@@ -113,8 +105,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			if (helper.has(room)) {
 				// Send response
 				helper = helper.get(room).getAsJsonObject();
-				plr.room = helper.get("worldID").getAsString();
-				System.out.println("Player teleport: " + plr.account.getDisplayName() + ": " + plr.room);
+				System.out.println("Player teleport: " + plr.account.getDisplayName() + ": " + helper.get("worldID").getAsString());
 				WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
 				res.x = helper.get("spawnX").getAsDouble();
 				res.y = helper.get("spawnY").getAsDouble();
@@ -126,10 +117,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				plr.lastPosX = res.x;
 				plr.lastPosY = res.y;
 				plr.lastPosZ = res.z;
-				plr.lastRotW = res.rw;
-				plr.lastRotX = res.rx;
-				plr.lastRotY = res.ry;
-				plr.lastRotZ = res.rz;
+				plr.lastRotW = res.rx;
+				plr.lastRotX = res.ry;
+				plr.lastRotY = res.rz;
+				plr.lastRotZ = res.rw;
 				client.sendPacket(res);
 				plr.respawn = res.x + "%" + res.y + "%" + res.z + "%" + res.rx + "%" + res.ry + "%" + res.rz + "%"
 						+ res.rw;

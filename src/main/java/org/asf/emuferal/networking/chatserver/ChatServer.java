@@ -15,6 +15,7 @@ import org.asf.emuferal.networking.chatserver.packets.SendMessage;
 import org.asf.emuferal.networking.chatserver.packets.UserConversations;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 
 public class ChatServer {
@@ -91,7 +92,8 @@ public class ChatServer {
 					try {
 						client.handle(client.readRawPacket());
 					} catch (Exception e) {
-						if (e instanceof IOException || e instanceof IllegalArgumentException)
+						if (e instanceof JsonIOException || e instanceof IOException
+								|| e instanceof IllegalArgumentException)
 							throw e;
 					}
 				}

@@ -11,6 +11,8 @@ import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.processors.HttpUploadProcessor;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -245,6 +247,45 @@ public class APIProcessor extends HttpUploadProcessor {
 			}
 			case "/xp/xp-details": {
 				setBody(""); // should cause the question mark // TODO: levels
+				break;
+			}
+			case "/i/display_names": {
+				// Parse JWT payload
+				String token = this.getHeader("Authorization").substring("Bearer ".length());
+
+				// Verify signature
+				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
+				String sig = token.split("\\.")[2];
+				if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
+					this.setResponseCode(403);
+					this.setResponseMessage("Access denied");
+					return;
+				}
+
+				// Parse body
+				JsonObject req = JsonParser.parseString(new String(body, "UTF-8")).getAsJsonObject();
+
+				// Send response
+				JsonObject response = new JsonObject();
+				JsonArray found = new JsonArray();
+				JsonArray unrecognized = new JsonArray();
+				for (JsonElement uuid : req.get("uuids").getAsJsonArray()) {
+					// Find account
+					String id = uuid.getAsString();
+					EmuFeralAccount acc = manager.getAccount(id);
+					if (acc != null) {
+						JsonObject d = new JsonObject();
+						d.addProperty("display_name", acc.getDisplayName());
+						d.addProperty("uuid", id);
+						found.add(d);
+					} else {
+						unrecognized.add(id);
+					}
+				}
+				response.add("found", found);
+				response.add("not_found", (unrecognized.size() == 0 ? null : unrecognized));
+				setBody(response.toString());
+
 				break;
 			}
 			default:

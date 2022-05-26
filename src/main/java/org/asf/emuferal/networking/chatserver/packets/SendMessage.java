@@ -452,19 +452,57 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 					}
+					case "updatewarning": {
+						// Check perms
+						if (permLevel.equals("admin")) {
+							if (args.size() < 1) {
+								systemMessage("Missing argument: minutes-remaining", cmd, client);
+								return true;
+							}
+
+							// Parse arguments
+							int mins = 0;
+							try {
+								mins = Integer.valueOf(args.get(0));
+							} catch (Exception e) {
+								systemMessage("Invalid value for argument: minutes-remaining", cmd, client);
+								return true;
+							}
+
+							// Warn everyone
+							for (Player plr : EmuFeral.gameServer.getPlayers()) {
+								if (mins == 1)
+									plr.client.sendPacket("%xt%ua%-1%7390|1%");
+								else
+									plr.client.sendPacket("%xt%ua%-1%7391|" + mins + "%");
+							}
+
+							return true;
+						}
+					}
 					case "updateshutdown": {
 						// Check perms
 						if (permLevel.equals("admin")) {
-							// Shut down the director
-							EmuFeral.directorServer.stop();
-
 							// Disconnect everyone
 							for (Player plr : EmuFeral.gameServer.getPlayers()) {
-								plr.client.sendPacket("%xt%ua%-1%7389%"); // TODO: quit instead of ok
+								plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
+							}
+
+							// Inform the game server to disconnect with maintenance
+							EmuFeral.gameServer.maintenance = true;
+
+							// Wait a bit
+							int i = 0;
+							while (EmuFeral.gameServer.getPlayers().length != 0) {
+								i++;
+								if (i == 30)
+									break;
 								try {
-									Thread.sleep(3000);
+									Thread.sleep(1000);
 								} catch (InterruptedException e) {
 								}
+							}
+							for (Player plr : EmuFeral.gameServer.getPlayers()) {
 								plr.client.disconnect();
 							}
 
@@ -498,6 +536,7 @@ public class SendMessage extends AbstractChatPacket {
 							message += " - makeadmin \"<name>\"\n";
 							message += " - makemoderator \"<name>\"\n";
 							message += " - removeperms \"<name>\"\n";
+							message += " - updatewarning <minutes-remaining>\n";
 							message += " - updateshutdown\n";
 						}
 						message += " - help";
@@ -518,12 +557,12 @@ public class SendMessage extends AbstractChatPacket {
 	private void systemMessage(String message, String cmd, ChatClient client) {
 		// Send response
 		JsonObject res = new JsonObject();
-		res.addProperty("eventId", "chat.postMessage");
 		res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
 		res.addProperty("conversationId", room);
 		res.addProperty("message", "Issued chat command: " + cmd + ":\n[system] " + message);
 		res.addProperty("source", client.getPlayer().getAccountID());
 		res.addProperty("sentAt", LocalDateTime.now().toString());
+		res.addProperty("eventId", "chat.postMessage");
 		res.addProperty("success", true);
 		client.sendPacket(res);
 	}

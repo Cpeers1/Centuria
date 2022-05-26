@@ -113,6 +113,9 @@ public class ChatClient {
 
 	// Packet handling code
 	void handle(JsonObject packet) {
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[CHAT] Client to server (user " + player.getDisplayName() + "): " + packet);
+		}
 		if (!handlePacket(packet)) {
 			// Packet not found
 			// Allow debug mode to re-register packets
@@ -183,6 +186,9 @@ public class ChatClient {
 					client.getOutputStream().write((byte) ch);
 				}
 				client.getOutputStream().write(0);
+				if (System.getProperty("debugMode") != null) {
+					System.out.println("[CHAT] Server to client (user " + player.getDisplayName() + "): " + packet);
+				}
 			} catch (Exception e) {
 			}
 		});

@@ -18,19 +18,22 @@ public class Player {
 
 	public int pendingLookDefID = 8254;
 	public String pendingLookID = null;
+	
+	public boolean roomReady = false;
 	public String room = null;
 
 	public String respawn = null;
 	public String lastLocation = null;
 
 	public double lastPosX = 0;
-	public double lastPosY = 0;
+	public double lastPosY = -1000;
 	public double lastPosZ = 0;
 
 	public double lastRotW = 0;
 	public double lastRotX = 0;
 	public double lastRotY = 0;
 	public double lastRotZ = 0;
+	
 	public int lastAction = 0;
 
 	public void destroyAt(Player player) {
@@ -62,42 +65,36 @@ public class Player {
 			// Spawn player
 			XtWriter wr = new XtWriter();
 			wr.writeString("oi");
-			wr.writeInt(-1);
-			wr.writeString(account.getAccountID());
+			wr.writeInt(-1); // data prefix
+
+			// Object creation parameters
+			wr.writeString(account.getAccountID()); // World object ID
 			wr.writeInt(852);
-			wr.writeString(account.getAccountID());
-			wr.writeInt(account.getAccountNumericID());
+			wr.writeString(account.getAccountID()); // Owner ID
+
+			// Object info
+			wr.writeInt(4);
 			wr.writeLong(System.currentTimeMillis() / 1000);
-			wr.writeString((lastLocation == null ? respawn : lastLocation));
-			wr.writeString("0%0%0%0.0%0");
+			wr.writeDouble(lastPosX);
+			wr.writeDouble(lastPosY);
+			wr.writeDouble(lastPosZ);
+			wr.writeDouble(0);
+			wr.writeDouble(lastRotX);
+			wr.writeDouble(lastRotY);
+			wr.writeDouble(lastRotZ);
+			wr.writeDouble(0);
+			wr.writeDouble(0);
+			wr.writeDouble(0);
+			wr.writeDouble(lastRotW);
+			wr.writeInt(lastAction);
+
+			// Look and name
 			wr.writeString(lookObj.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject().get("info")
 					.toString());
 			wr.writeString(account.getDisplayName());
 			wr.writeInt(0);
-			wr.writeString("");
+			wr.writeString(""); // data suffix
 			player.client.sendPacket(wr.encode());
-
-			// Sync
-			XtWriter pk = new XtWriter();
-			pk.writeString("ou");
-			pk.writeInt(-1); // Data prefix
-			pk.writeString(account.getAccountID());
-			pk.writeInt(4);
-			pk.writeLong(System.currentTimeMillis() / 1000);
-			pk.writeDouble(lastPosX);
-			pk.writeDouble(lastPosY);
-			pk.writeDouble(lastPosZ);
-			pk.writeString("0");
-			pk.writeDouble(lastRotX);
-			pk.writeDouble(lastRotY);
-			pk.writeDouble(lastRotZ);
-			pk.writeString("0");
-			pk.writeString("0");
-			pk.writeString("0");
-			pk.writeDouble(lastRotW);
-			pk.writeInt(lastAction);
-			pk.writeString(""); // Data suffix
-			player.client.sendPacket(pk.encode());
 		}
 	}
 

@@ -29,8 +29,8 @@ public class ConvoHistoryDummy extends AbstractChatPacket {
 	public boolean handle(ChatClient client) {
 		// Send response
 		JsonObject res = new JsonObject();
-		res.addProperty("eventId", "conversations.history");
 		res.add("messages", new JsonArray());
+		res.addProperty("eventId", "conversations.history");
 		res.addProperty("success", true);
 		client.sendPacket(res);
 		return true;

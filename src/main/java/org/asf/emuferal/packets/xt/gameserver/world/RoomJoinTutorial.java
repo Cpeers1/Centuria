@@ -6,6 +6,7 @@ import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
+import org.asf.emuferal.players.Player;
 
 public class RoomJoinTutorial implements IXtPacket<RoomJoinTutorial> {
 
@@ -30,12 +31,18 @@ public class RoomJoinTutorial implements IXtPacket<RoomJoinTutorial> {
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Make the client load the tutorial
-		
+		Player plr = (Player) client.container;
+
+		// Assign room
+		plr.room = "25280";
+		plr.roomReady = false;
+
+		// Send response
 		JoinRoom join = new JoinRoom();
 		join.mode = 4;
 		join.roomID = 25280;
 		join.playerID = 35;
-		client.sendPacket(join);		
+		client.sendPacket(join);
 
 		return true;
 	}

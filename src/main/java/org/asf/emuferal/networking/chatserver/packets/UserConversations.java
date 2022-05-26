@@ -29,7 +29,6 @@ public class UserConversations extends AbstractChatPacket {
 
 	@Override
 	public boolean handle(ChatClient client) {
-
 		// Send response (we are not going to use this too much)
 		JsonObject res = new JsonObject();
 		JsonArray convos = new JsonArray();

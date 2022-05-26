@@ -2,7 +2,6 @@ package org.asf.emuferal.packets.xt.gameserver.inventory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.data.XtReader;
@@ -16,8 +15,14 @@ import com.google.gson.JsonObject;
 public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 
 	public String itemID;
-	public LinkedHashMap<String, Integer> dyes = new LinkedHashMap<String, Integer>();
+	public ArrayList<DyeInfo> dyes = new ArrayList<DyeInfo>();
 	public ArrayList<Integer> undye = new ArrayList<Integer>();
+
+	// Dye info
+	private static class DyeInfo {
+		public String dye;
+		public Integer channel;
+	}
 
 	@Override
 	public InventoryItemUseDye instantiate() {
@@ -35,11 +40,13 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 
 		int l = reader.readInt();
 		for (int i = 0; i < l; i++) {
-			dyes.put(reader.read(), -1);
+			DyeInfo d = new DyeInfo();
+			d.dye = reader.read();
+			dyes.add(d);
 		}
 
-		for (String dye : dyes.keySet()) {
-			dyes.put(dye, reader.readInt() + 1);
+		for (DyeInfo dye : dyes) {
+			dye.channel = reader.readInt() + 1;
 		}
 
 		if (reader.hasNext()) {
@@ -88,10 +95,12 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 		if (item.has("components") && item.get("components").getAsJsonObject().has("Colorable")) {
 			// Apply dyes
 			JsonObject target = item.get("components").getAsJsonObject().get("Colorable").getAsJsonObject();
-			for (String dye : dyes.keySet()) {
+			for (DyeInfo d : dyes) {
+				String dye = d.dye;
+
 				// Apply dye color
 				String hsv = inv.getAccessor().getDyeHSV(inv.getAccessor().getDyeData(dye).get("defId").getAsInt());
-				String obj = "color" + dyes.get(dye) + "HSV";
+				String obj = "color" + d.channel + "HSV";
 				if (target.has(obj) && hsv != null) {
 					target.get(obj).getAsJsonObject().remove("_hsv");
 					target.get(obj).getAsJsonObject().addProperty("_hsv", hsv);

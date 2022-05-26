@@ -47,6 +47,7 @@ public class AvatarEditorSelectLook implements IXtPacket<AvatarEditorSelectLook>
 		Player plr = (Player) client.container;
 
 		// Save the pending look ID
+		String lastLook = plr.activeLook;
 		plr.pendingLookID = lookID;
 		plr.activeLook = plr.pendingLookID;
 
@@ -74,12 +75,14 @@ public class AvatarEditorSelectLook implements IXtPacket<AvatarEditorSelectLook>
 			plr.pendingLookDefID = lookObj.get("defId").getAsInt();
 		}
 
-		// Sync
-		GameServer srv = (GameServer) client.getServer();
-		for (Player player : srv.getPlayers()) {
-			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				plr.destroyAt(player);
-				plr.syncTo(player);
+		if (lastLook == null || !lastLook.equals(lookID)) {
+			// Sync
+			GameServer srv = (GameServer) client.getServer();
+			for (Player player : srv.getPlayers()) {
+				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+					plr.destroyAt(player);
+					plr.syncTo(player);
+				}
 			}
 		}
 
