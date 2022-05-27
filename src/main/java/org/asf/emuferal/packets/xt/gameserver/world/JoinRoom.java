@@ -1,6 +1,7 @@
 package org.asf.emuferal.packets.xt.gameserver.world;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
@@ -69,7 +70,7 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 		plr.roomID = roomID;
 		plr.room = "room_" + roomID;
 		plr.roomReady = false;
-		join.roomIdentifier = plr.room;
+		join.roomIdentifier = "room_" + UUID.nameUUIDFromBytes(plr.room.getBytes("UTF-8"));
 		
 		// Send response
 		client.sendPacket(join);

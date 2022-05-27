@@ -3,11 +3,10 @@ main todo:
 - fix displaced spawns
 - chat
 - warping
-- find player
-- offline player avatars in player card
 - overhaul account storage
 - fix settings not being saved
 - make sure that warping uses privacy settings
+- make sure that private chat uses privacy settings
 - sanctuaries
 - feedback
 - private chat

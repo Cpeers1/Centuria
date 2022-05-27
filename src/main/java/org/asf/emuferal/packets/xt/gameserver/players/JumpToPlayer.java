@@ -1,6 +1,7 @@
 package org.asf.emuferal.packets.xt.gameserver.players;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
@@ -59,9 +60,8 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 					JoinRoom join = new JoinRoom();
 					join.playerID = player.account.getAccountNumericID();
 					join.roomID = plr.roomID;
-					join.mode = 0;
-					join.teleport = plr.account.getAccountID();
-					join.roomIdentifier = player.room;
+					join.mode = 1;
+					join.roomIdentifier = "room_" + UUID.nameUUIDFromBytes(player.room.getBytes("UTF-8"));
 
 					// Switch player info over
 					player.roomID = plr.roomID;

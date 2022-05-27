@@ -356,6 +356,32 @@ public abstract class PlayerInventory {
 		}
 
 		/**
+		 * Retrieves the amount of a specific clothing item the playe has
+		 * 
+		 * @param defID Clothing defID
+		 * @return Amount of the specific item
+		 */
+		public int getClothingCount(int defID) {
+			int count = 0;
+
+			// Load the inventory object
+			if (!inventory.containsItem("100"))
+				inventory.setItem("100", new JsonArray());
+			JsonArray items = inventory.getItem("100").getAsJsonArray();
+
+			// Find object
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				int itID = itm.get("defId").getAsInt();
+				if (itID == defID) {
+					count++;
+				}
+			}
+
+			return count;
+		}
+
+		/**
 		 * Removes a clothing item
 		 * 
 		 * @param id Clothing item ID

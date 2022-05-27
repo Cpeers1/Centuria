@@ -297,6 +297,7 @@ public class APIProcessor extends HttpUploadProcessor {
 						unrecognized.add(id);
 					}
 				}
+
 				response.add("found", found);
 				response.add("not_found", (unrecognized.size() == 0 ? null : unrecognized));
 				setBody(response.toString());

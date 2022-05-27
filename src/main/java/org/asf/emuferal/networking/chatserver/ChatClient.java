@@ -185,6 +185,8 @@ public class ChatClient {
 				for (char ch : d) {
 					client.getOutputStream().write((byte) ch);
 				}
+				client.getOutputStream().write(0x0d);
+				client.getOutputStream().write(0x0a);
 				client.getOutputStream().write(0);
 				client.getOutputStream().flush();
 				if (System.getProperty("debugMode") != null) {
