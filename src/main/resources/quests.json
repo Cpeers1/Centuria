@@ -1,0 +1,6262 @@
+{
+  "Quests": {
+    "17114": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_AncientHistory",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18171",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 3496,
+      "questGiverIconDefId": 6875,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "17115",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17116",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17117",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17118",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "13857": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_CaptainCluck",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18170",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 13856,
+      "questGiverIconDefId": 13855,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "13860",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13866",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "13861",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13867",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "13862",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13868",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "13863",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13869",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "13864",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13870",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "13865",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13871",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "8167": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_CollectBones",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18172",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 4092,
+      "questGiverIconDefId": 4918,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "8179",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "8180",
+              "targetProgress": 6,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "8181",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "8182",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "18368": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_GhostDog",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18363",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 18756,
+      "questGiverIconDefId": 18012,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "18369",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "18370",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "18371",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "18372",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "18373",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "18374",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "18375",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "18376",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "20866": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_GuardianAngel",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "20862",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8555,
+      "questGiverIconDefId": 9691,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "20885",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20884",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20883",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20882",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20881",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20880",
+              "targetProgress": 3,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20879",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20878",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20876",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20877",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "12211": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_HermitCollect",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18173",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8554,
+      "questGiverIconDefId": 9161,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "12219",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "12220",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "12221",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "12222",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "12223",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "12224",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "12225",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "12226",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "12227",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "12228",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "12229",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "12230",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "12231",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "12232",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "11860": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_HighAndDry",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18174",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 3504,
+      "questGiverIconDefId": 4494,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "11872",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "11873",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "11874",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "11875",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "20867": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_HocusPocus",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "20863",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8289,
+      "questGiverIconDefId": 8874,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "20868",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20869",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20870",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20871",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20872",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20873",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20874",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20875",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "15867": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_KarenUnhinged",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18175",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8554,
+      "questGiverIconDefId": 9161,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "15870",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "15871",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "15872",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "15873",
+              "targetProgress": 2,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17775",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17776",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "18971": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_LonelySnowbold",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18980",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8561,
+      "questGiverIconDefId": 9697,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "18972",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "18973",
+              "targetProgress": 1,
+              "showProgressText": false
+            },
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "18974",
+              "targetProgress": 1,
+              "showProgressText": false
+            },
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "18975",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "18976",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "18977",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "8118": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_LostPet",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18176",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8554,
+      "questGiverIconDefId": 9161,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "9534",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "9535",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "9536",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "9537",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "14228": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_PantsSequel",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18177",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8559,
+      "questGiverIconDefId": 9695,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "14247",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14248",
+              "targetProgress": 3,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "14249",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14250",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "14251",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14252",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "14253",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14254",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "14255",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14256",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "15025",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "15026",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "8711": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_PetBlooderfly",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18178",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8554,
+      "questGiverIconDefId": 9161,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "9539",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "9540",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "19257": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_PlantingSaplings",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "19255",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 2367,
+      "questGiverIconDefId": 6881,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "19258",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19259",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19260",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19261",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19262",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19263",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "19160": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_ProtectorsAssemble",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "19158",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8556,
+      "questGiverIconDefId": 9692,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "19161",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19162",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19163",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19164",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19165",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19166",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19167",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19168",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19169",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19170",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "7840": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_Quest1",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18179",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8554,
+      "questGiverIconDefId": 9161,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "9519",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "9520",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "9522",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "9523",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "8637": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_SearchingBonepiles",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18180",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8554,
+      "questGiverIconDefId": 9161,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "9661",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "9662",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "9663",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "9664",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "8117": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_SerialChiller",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18181",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8554,
+      "questGiverIconDefId": 9161,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "9526",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "9527",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "9528",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "9530",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "9531",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "9532",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "8159": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_Snakes",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18182",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8554,
+      "questGiverIconDefId": 9161,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "8162",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "8163",
+              "targetProgress": 10,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "8164",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "8165",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "17553": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_SnowShack",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18183",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 3507,
+      "questGiverIconDefId": 6866,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "17565",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17564",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17563",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17562",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17561",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17560",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17559",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17558",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17557",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17556",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17555",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17554",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "8229": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_TobogganNightmare",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18184",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8554,
+      "questGiverIconDefId": 9161,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "10568",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "10569",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "8233",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "8234",
+              "targetProgress": 3,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "8235",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "8236",
+              "targetProgress": 3,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "8239",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "8240",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "21094": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_TobogganRun",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "21092",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8562,
+      "questGiverIconDefId": 9698,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "21106",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "21107",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "8119": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_TundraGhost",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18185",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8554,
+      "questGiverIconDefId": 9161,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "9617",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "9618",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "9619",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "9620",
+              "targetProgress": 2,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "9621",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "9622",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "9623",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "9624",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "10380",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "10382",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "13062": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_WashedUp",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18186",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8554,
+      "questGiverIconDefId": 9161,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "13068",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13067",
+              "targetProgress": 1,
+              "showProgressText": false
+            },
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13069",
+              "targetProgress": 1,
+              "showProgressText": false
+            },
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13070",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "13072",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13071",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "13980": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_ZomboldApocalypse",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18187",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8557,
+      "questGiverIconDefId": 9693,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "13981",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13982",
+              "targetProgress": 20,
+              "showProgressText": false
+            },
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13984",
+              "targetProgress": 10,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "13983",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13986",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "15182": {
+      "challengeAffiliation": "0",
+      "questName": "BloodTundra_ZomboldApocalypse2",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18188",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 2,
+      "questGiverNameDefId": 8557,
+      "questGiverIconDefId": 9693,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "15183",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "15184",
+              "targetProgress": 10,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "15185",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "15186",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "4485": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_AxeFavor",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18189",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 4256,
+      "questGiverIconDefId": 4819,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "4374",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4373",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4375",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4376",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "18959": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_BabyBoomers",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18958",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 3347,
+      "questGiverIconDefId": 1529,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "18978",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "18979",
+              "targetProgress": 3,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "18982",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "18983",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "18985",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "18984",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "18987",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "18986",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "18989",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "18988",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "4449": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_BrendasAwakening",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18190",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 3364,
+      "questGiverIconDefId": 4127,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "4356",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4353",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4355",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4354",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "11857": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_BrodyRace",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18191",
+      "linearQuestAudioLevelOverrideDefId": "15227",
+      "baselevelRemoveLevelOverrideDefId": "7561",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 3349,
+      "questGiverIconDefId": 1658,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "13954",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13955",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "7748": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_BuildingBridges",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18192",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 1599,
+      "questGiverIconDefId": 584,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "7753",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "7754",
+              "targetProgress": 7,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "7755",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "7756",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "7761",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "7762",
+              "targetProgress": 7,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "7757",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "7758",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "4531": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_CandlelightVigil",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18193",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 5836,
+      "questGiverIconDefId": 6879,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "4534",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4536",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4538",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4540",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4542",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4544",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "19233": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_ChasingAwayTheBlues",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "19231",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 3498,
+      "questGiverIconDefId": 6877,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "19253",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19252",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19251",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19250",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19249",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19248",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19247",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19246",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "17286": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_CosmeticCon",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18194",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 4236,
+      "questGiverIconDefId": 4922,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "17287",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17288",
+              "targetProgress": 3,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17289",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17290",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "15106": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_FogPlant",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18195",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 3343,
+      "questGiverIconDefId": 1532,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "15107",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "15108",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "15109",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "15110",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "7537": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_HatsAndHatNots",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18196",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 1596,
+      "questGiverIconDefId": 1655,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "7545",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "7546",
+              "targetProgress": 8,
+              "showProgressText": false
+            },
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "7547",
+              "targetProgress": 8,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "7548",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "7549",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "14185": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_HatsBigDay",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18197",
+      "linearQuestAudioLevelOverrideDefId": "15226",
+      "baselevelRemoveLevelOverrideDefId": "7561",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 1601,
+      "questGiverIconDefId": 3454,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "14197",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14198",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "14199",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14200",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "14201",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14202",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "14203",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14204",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "14205",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14206",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "14207",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14208",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "15641": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_MakingAMurder",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18199",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 3341,
+      "questGiverIconDefId": 1531,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "15642",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "15643",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "15644",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "15645",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "20828": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_NovelRomance",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "20829",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 3343,
+      "questGiverIconDefId": 1532,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "20830",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20831",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20832",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20833",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20834",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20835",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20836",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20837",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "5710": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_OverAndOut",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18200",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 3355,
+      "questGiverIconDefId": 4817,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "5713",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "5714",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "5715",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "5716",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "12362": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_PizzaDelivery",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18201",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 13338,
+      "questGiverIconDefId": 13396,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "12363",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "12364",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "12365",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "12366",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "14059": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_PizzaDrones",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18202",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 13338,
+      "questGiverIconDefId": 13396,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "14060",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "14061",
+              "targetProgress": 3,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "14062",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "14063",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "21024": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_PoofyPoachers",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "21023",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 4256,
+      "questGiverIconDefId": 4819,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "21025",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "21026",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "21027",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "21028",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "21029",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "21030",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "21031",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "21032",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "16965": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_RiverOfWoes",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18203",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 4328,
+      "questGiverIconDefId": 4132,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "16967",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "16968",
+              "targetProgress": 3,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "16969",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "16970",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "12208": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_ScratchTrees",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18204",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 3339,
+      "questGiverIconDefId": 1530,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "12236",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "12237",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "12238",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "12239",
+              "targetProgress": 4,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "12240",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "12241",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "13739": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_Seagulls",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18205",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 3337,
+      "questGiverIconDefId": 1472,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "13740",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13741",
+              "targetProgress": 1,
+              "showProgressText": false
+            },
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13742",
+              "targetProgress": 1,
+              "showProgressText": false
+            },
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13743",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "13744",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13745",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "20568": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_SeasonalTea",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "20565",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 1602,
+      "questGiverIconDefId": 593,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "20597",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20598",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20599",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20600",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20601",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20602",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20603",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20604",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "11772": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_SoupOfRiddles",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18206",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 3507,
+      "questGiverIconDefId": 6866,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "11773",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "11774",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "4488": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_StrayPuppies",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18207",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 4328,
+      "questGiverIconDefId": 4132,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "4404",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4403",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4406",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4405",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "17359": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_TreehouseDisaster",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18208",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 18236,
+      "questGiverIconDefId": 18520,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "17360",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17361",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17362",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17363",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17364",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17365",
+              "targetProgress": 3,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17366",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17367",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17368",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17369",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17370",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17371",
+              "targetProgress": 3,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17372",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17373",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17374",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17375",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "19209": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_WellWishes",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "19208",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 3341,
+      "questGiverIconDefId": 1531,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "19210",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19211",
+              "targetProgress": 3,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19212",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19213",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "11745": {
+      "challengeAffiliation": "0",
+      "questName": "Forest_WizardTrials",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18209",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 1,
+      "questGiverNameDefId": 13339,
+      "questGiverIconDefId": 13398,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "11746",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "11747",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "11748",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "11749",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "4585": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_BackScratchers",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18210",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 4088,
+      "questGiverIconDefId": 4905,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "4575",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4576",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4577",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4578",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4579",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4580",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4581",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4582",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "20567": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_BestSleds",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "20566",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 4235,
+      "questGiverIconDefId": 4923,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "20591",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20592",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20593",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20594",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20595",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20596",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "20806": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_Boktoberfest",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "20805",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 4095,
+      "questGiverIconDefId": 4921,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "20807",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "20808",
+              "targetProgress": 3,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20809",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20810",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "14018": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_BouquetOfBells",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18211",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 4088,
+      "questGiverIconDefId": 4905,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "14030",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "14031",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "14032",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14033",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "5738": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_DetectiveKobold",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18212",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 3347,
+      "questGiverIconDefId": 1529,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "5725",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "5726",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "5727",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "5728",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "5729",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "5730",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "5731",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "5732",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "5733",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "5734",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "15322": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_EternalStench",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18213",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 4235,
+      "questGiverIconDefId": 4923,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "15324",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "15325",
+              "targetProgress": 10,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "15326",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "15327",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "4486": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_EvictSuckers",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18214",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 4235,
+      "questGiverIconDefId": 4923,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "4289",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4288",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4293",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4292",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "19128": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_FollowFootsteps",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "19129",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 5046,
+      "questGiverIconDefId": 19245,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "19130",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "19131",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19132",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19133",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19134",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19135",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19136",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19137",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19138",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19139",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19140",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19141",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19142",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19143",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19144",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19145",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "17272": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_GardenOfEvil",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18215",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 17657,
+      "questGiverIconDefId": 13397,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "17274",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17275",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17278",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17279",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17280",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17281",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "14036": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_GlassEye",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18216",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 14689,
+      "questGiverIconDefId": 14877,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "14048",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "14051",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "14049",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14050",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "5123": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_HappyBDay",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18217",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 4095,
+      "questGiverIconDefId": 4921,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "5695",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "5698",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "5699",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "5700",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "4487": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_HikingDisaster",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18218",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 4236,
+      "questGiverIconDefId": 4922,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "4384",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4383",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4385",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4386",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "15712": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_JediTraining",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18219",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 13339,
+      "questGiverIconDefId": 13398,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "15725",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "15726",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "15727",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "15728",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "12380": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_LocustInfestation",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18220",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 4235,
+      "questGiverIconDefId": 4923,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "12401",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "12402",
+              "targetProgress": 20,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "12403",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "12404",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "11982": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_MyrefolksNewClothes",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18221",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 2366,
+      "questGiverIconDefId": 6880,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "11990",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "11991",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "12212": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_PickenHunt",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18222",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 4095,
+      "questGiverIconDefId": 4921,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "12242",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "12243",
+              "targetProgress": 10,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "12244",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "12245",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "4855": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_PruningSkills",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18223",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 4092,
+      "questGiverIconDefId": 4918,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "4844",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4845",
+              "targetProgress": 10,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4846",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4847",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "19108": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_SprinkleBurrito",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "19107",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 5046,
+      "questGiverIconDefId": 5059,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "19110",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19111",
+              "targetProgress": 5,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19112",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19113",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "4670": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_StatueOfLimitations",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18224",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 3463,
+      "questGiverIconDefId": 1653,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "4680",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4681",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4682",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4683",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "13802": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_StatueRepair",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18225",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 4235,
+      "questGiverIconDefId": 4923,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "13793",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13794",
+              "targetProgress": 3,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "13795",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13796",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "13797",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13798",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "13799",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "13800",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "12006": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_StickySituation",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18226",
+      "linearQuestAudioLevelOverrideDefId": "13683",
+      "baselevelRemoveLevelOverrideDefId": "2486",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 13342,
+      "questGiverIconDefId": 13395,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "12020",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "12021",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "12022",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "12023",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "15950": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_StrangeMagic",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18227",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 3500,
+      "questGiverIconDefId": 3535,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "15961",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "15962",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "15963",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "15964",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "15965",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "15966",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "14134": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_TimeForSomeGrub",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18228",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 2366,
+      "questGiverIconDefId": 6880,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "14141",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14142",
+              "targetProgress": 3,
+              "showProgressText": false
+            },
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14143",
+              "targetProgress": 2,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "14144",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "14145",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "19094": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_TwiggleCountdown",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "19090",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 3362,
+      "questGiverIconDefId": 4125,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "19095",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "19096",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19097",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19098",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19099",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19100",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "19101",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "19102",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "20780": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_UnboundSouls",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "20778",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 17657,
+      "questGiverIconDefId": 13397,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "20781",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "20782",
+              "targetProgress": 3,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "20783",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "20784",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "-1",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    },
+    "17071": {
+      "challengeAffiliation": "0",
+      "questName": "Swamp_YellOPaint",
+      "imageRef": "-1",
+      "locGiverName": "-1",
+      "locLocation": "-1",
+      "difficulty": "0",
+      "isPlatformer": "-1",
+      "playAsPet": "-1",
+      "noLobby": "-1",
+      "locTitle": "-1",
+      "locDescription": "-1",
+      "baseRooms": "-1",
+      "questLevelOverrides": "-1",
+      "primaryObjectiveList": "-1",
+      "secondaryObjectiveLists": "-1",
+      "minPlayers": "0",
+      "maxPlayers": "0",
+      "gameImage": "-1",
+      "banner": "-1",
+      "summaryInfo": "",
+      "allCompleteLootRef": "-1",
+      "linearQuestLevelOverrideDefId": "18229",
+      "linearQuestAudioLevelOverrideDefId": "",
+      "baselevelRemoveLevelOverrideDefId": "",
+      "alwaysActive": false,
+      "socialExpanseArea": 0,
+      "questGiverNameDefId": 5046,
+      "questGiverIconDefId": 5062,
+      "primaryObjectives": [
+        {
+          "localizedTitleDefID": "17083",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17084",
+              "targetProgress": 10,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17085",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17086",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17087",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17088",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "17089",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "17090",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": false
+        },
+        {
+          "localizedTitleDefID": "4352",
+          "tasks": [
+            {
+              "imageDefId": "",
+              "localizedDescriptionDefID": "4351",
+              "targetProgress": 1,
+              "showProgressText": false
+            }
+          ],
+          "isFinalObjective": true
+        }
+      ]
+    }
+  }
+}
