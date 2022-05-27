@@ -66,7 +66,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			ts.addProperty("ts", System.currentTimeMillis());
 			components.add("Timestamp", ts);
 			obj.add("components", components);
-			obj.addProperty("id", new UUID(0, 0).toString());
+			obj.addProperty("id", UUID.randomUUID().toString());
 			obj.addProperty("type", 400);
 			itm.add(obj);
 
