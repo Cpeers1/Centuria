@@ -141,7 +141,6 @@ public class QuestConverter {
         String path = "quests.json";
 
         try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
-            Gson gson = new Gson();
             String jsonString = new Gson().newBuilder().setPrettyPrinting().create().toJson(res);
             out.write(jsonString);
         } catch (Exception e) {

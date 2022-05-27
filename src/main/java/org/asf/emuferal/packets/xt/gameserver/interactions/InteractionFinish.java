@@ -36,6 +36,10 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 		// Interaction finish
 		Player plr = (Player) client.container;
 
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[INTERACTION] [FINISH] Client to server (target: " + target + ")");
+		}
+		
 		// TODO
 		return true;
 	}

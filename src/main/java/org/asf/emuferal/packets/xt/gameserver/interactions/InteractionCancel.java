@@ -36,6 +36,11 @@ public class InteractionCancel implements IXtPacket<InteractionCancel> {
 		// Interaction cancel
 		Player plr = (Player) client.container;
 
+		//log interaction details	
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[INTERACTION] [CANCELED] Client to server (target: " + target + ")");
+		}
+		
 		// TODO
 		return true;
 	}

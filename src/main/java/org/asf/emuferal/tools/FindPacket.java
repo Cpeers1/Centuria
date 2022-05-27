@@ -1,6 +1,8 @@
 package org.asf.emuferal.tools;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -59,6 +61,19 @@ public class FindPacket {
 				for (String packet : packetData) {
 					System.out.println(packet.replace("\0", ""));
 				}
+				continue;
+			}
+			
+			if (id.equals("/dumpfile")) {
+				String fileOutPath = sc.nextLine();
+				
+				FileWriter fileOutWriter = new FileWriter(fileOutPath);
+				
+				for (String packet : packetData) {
+					fileOutWriter.write(packet + "\n");
+				}
+				
+				fileOutWriter.close();
 				continue;
 			}
 

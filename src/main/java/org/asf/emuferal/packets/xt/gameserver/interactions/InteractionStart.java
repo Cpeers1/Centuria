@@ -53,7 +53,12 @@ public class InteractionStart implements IXtPacket<InteractionStart> {
 				player.client.sendPacket(this);
 			}
 		}
-		plr = plr;
+		
+		//log interaction details
+		
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[INTERACTION] [START] Client to server (source " + source + ", target: " + target + ")");
+		}
 
 		// TODO
 		return true;

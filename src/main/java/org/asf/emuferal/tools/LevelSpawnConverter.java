@@ -21,7 +21,7 @@ public class LevelSpawnConverter {
 		String lastMapName = "";
 		String lastData = null;
 		String lastID = null;
-		;
+		
 		for (String line : Files.readAllLines(Path.of(args[0]))) {
 			if (line.startsWith("\"") && !line.startsWith("\"\"")) {
 				lastID = line.substring(1);
