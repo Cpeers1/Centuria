@@ -25,7 +25,7 @@ public class AvatarAction implements IXtPacket<AvatarAction> {
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
-		action = reader.readRemaining();
+		action = reader.read();
 	}
 
 	@Override
