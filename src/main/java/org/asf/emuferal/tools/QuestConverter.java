@@ -17,7 +17,7 @@ import com.google.gson.JsonParser;
 public class QuestConverter {
 
 	public static void main(String[] args) throws IOException {
-		// This tool generates a spawns.json file
+		// This tool generates a quests.json file
 		// Expected program arguments: <csv-file>
 
 		JsonObject res = new JsonObject();
