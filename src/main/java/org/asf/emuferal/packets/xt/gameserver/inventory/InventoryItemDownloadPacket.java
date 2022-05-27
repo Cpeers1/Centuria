@@ -160,8 +160,8 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 					// Add all clothes (2 of each)
 					for (String id : helper.keySet()) {
-						if (inv.getAccessor().getClothingCount(Integer.valueOf(id)) < 2) {
-							for (int i = 0; i < 2; i++) {
+						if (inv.getAccessor().getClothingCount(Integer.valueOf(id)) < 3) {
+							for (int i = inv.getAccessor().getClothingCount(Integer.valueOf(id)); i < 3; i++) {
 								inv.getAccessor().addClothing(Integer.valueOf(id), false);
 							}
 						}

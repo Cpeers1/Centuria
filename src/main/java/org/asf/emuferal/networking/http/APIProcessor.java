@@ -261,7 +261,13 @@ public class APIProcessor extends HttpUploadProcessor {
 				// Parse body
 				JsonArray req = JsonParser.parseString(new String(body, "UTF-8")).getAsJsonArray();
 
-				setBody(""); // should cause the question mark // TODO: levels
+				// Send response
+				JsonObject response = new JsonObject();
+				response.add("found", null);
+				response.add("not_found", req);
+				setBody(response.toString());
+
+				// TODO: levels
 				break;
 			}
 			case "/i/display_names": {
