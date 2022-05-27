@@ -34,7 +34,7 @@ public class Player {
 	public double lastRotX = 0;
 	public double lastRotY = 0;
 	public double lastRotZ = 0;
-	
+
 	public int lastAction = 0;
 
 	public void destroyAt(Player player) {
@@ -74,18 +74,18 @@ public class Player {
 			wr.writeString(account.getAccountID()); // Owner ID
 
 			// Object info
-			wr.writeInt(4);
+			wr.writeInt(0);
 			wr.writeLong(System.currentTimeMillis() / 1000);
 			wr.writeDouble(lastPosX);
 			wr.writeDouble(lastPosY);
 			wr.writeDouble(lastPosZ);
-			wr.writeDouble(0);
+			wr.writeInt(0);
 			wr.writeDouble(lastRotX);
 			wr.writeDouble(lastRotY);
 			wr.writeDouble(lastRotZ);
-			wr.writeDouble(0);
-			wr.writeDouble(0);
-			wr.writeDouble(0);
+			wr.writeInt(0);
+			wr.writeInt(0);
+			wr.writeInt(0);
 			wr.writeDouble(lastRotW);
 			wr.writeInt(lastAction);
 

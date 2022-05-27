@@ -57,7 +57,7 @@ public class FindPacket {
 
 			if (id.equals("/dump")) {
 				for (String packet : packetData) {
-					System.out.println(packet);
+					System.out.println(packet.replace("\0", ""));
 				}
 				continue;
 			}

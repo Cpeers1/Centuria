@@ -49,7 +49,7 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 					writer.writeString("");
 				} else {
 					writer.writeInt(1); // other world
-					writer.writeString("true");
+					writer.writeString(plr.account.getAccountID());
 				}
 				writer.writeString(""); // data suffix
 				client.sendPacket(writer.encode());
