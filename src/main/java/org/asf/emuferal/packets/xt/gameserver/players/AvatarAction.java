@@ -55,66 +55,55 @@ public class AvatarAction implements IXtPacket<AvatarAction> {
 		pk.writeDouble(plr.lastRotW);
 		switch (action) {
 		case "8930": { // Sleep
-			pk.writeInt(40);
 			plr.lastAction = 40;
 			break;
 		}
 		case "9108": { // Tired
-			pk.writeInt(41);
 			plr.lastAction = 41;
 			break;
 		}
 		case "9116": { // Sit
-			pk.writeInt(60);
 			plr.lastAction = 60;
 			break;
 		}
 		case "9121": { // Mad
-			pk.writeInt(70);
 			plr.lastAction = 70;
 			break;
 		}
 		case "9122": { // Excite
-			pk.writeInt(80);
 			plr.lastAction = 80;
 			break;
 		}
 		case "9143": { // Sad
-			pk.writeInt(180);
 			plr.lastAction = 180;
 			break;
 		}
 		case "9151": { // Flex
-			pk.writeInt(200);
 			plr.lastAction = 200;
 			break;
 		}
 		case "9190": { // Play
-			pk.writeInt(210);
 			plr.lastAction = 210;
 			break;
 		}
 		case "9147": { // Scared
-			pk.writeInt(190);
 			plr.lastAction = 190;
 			break;
 		}
 		case "9139": { // Eat
-			pk.writeInt(170);
 			plr.lastAction = 170;
 			break;
 		}
 		case "9131": { // Yes
-			pk.writeInt(110);
 			plr.lastAction = 110;
 			break;
 		}
 		case "9135": { // No
-			pk.writeInt(120);
 			plr.lastAction = 120;
 			break;
 		}
 		}
+		pk.writeInt(plr.lastAction);
 		pk.writeString(""); // Data suffix
 
 		// Broadcast sync

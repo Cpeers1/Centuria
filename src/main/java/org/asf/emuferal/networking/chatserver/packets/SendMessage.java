@@ -74,8 +74,7 @@ public class SendMessage extends AbstractChatPacket {
 
 			// Send to all in room
 			for (ChatClient cl : client.getServer().getClients()) {
-				if (cl.isInRoom(room))
-					cl.sendPacket(res);
+				cl.sendPacket(res);
 			}
 		}
 
