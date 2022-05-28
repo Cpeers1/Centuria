@@ -27,10 +27,8 @@ public class ChatClient {
 	private ArrayList<String> rooms = new ArrayList<String>();
 	private HashMap<String, Boolean> privateChat = new HashMap<String, Boolean>();
 
-	// TODO: cooldown and instaban
-	public int messageCooldown = 0;
-	public int lastMessageCount = 0;
-	public int cooldownLength = 0;
+	// Anti-hack
+	public int banCounter = 0;
 
 	// Room lock
 	public boolean isReady = false;
@@ -66,6 +64,18 @@ public class ChatClient {
 			}
 
 		});
+
+		Thread th = new Thread(() -> {
+			while (isConnected()) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
+				banCounter = 0;
+			}
+		}, "Anti-hack thread: " + client);
+		th.setDaemon(true);
+		th.start();
 	}
 
 	void stop() {

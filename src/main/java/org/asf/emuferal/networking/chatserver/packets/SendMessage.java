@@ -58,6 +58,35 @@ public class SendMessage extends AbstractChatPacket {
 			return true; // ignore chat
 		}
 
+		// Increase ban counter
+		client.banCounter++;
+
+		// Check it
+		if (client.banCounter >= 10) {
+			// Ban the hacker
+
+			JsonObject banInfo = new JsonObject();
+			banInfo.addProperty("type", "ban");
+			banInfo.addProperty("unbanTimestamp", -1);
+			client.getPlayer().getPlayerInventory().setItem("penalty", banInfo);
+
+			// Find online player
+			for (Player plr : EmuFeral.gameServer.getPlayers()) {
+				if (plr.account.getAccountID().equals(client.getPlayer().getAccountID())) {
+					// Kick the player
+					plr.client.sendPacket("%xt%ua%-1%3561%");
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e) {
+					}
+					plr.client.disconnect();
+					break;
+				}
+			}
+
+			return true;
+		}
+
 		// Check mute
 		EmuFeralAccount acc = client.getPlayer();
 		if (acc.getPlayerInventory().containsItem("penalty") && acc.getPlayerInventory().getItem("penalty")
@@ -910,6 +939,9 @@ public class SendMessage extends AbstractChatPacket {
 		res.addProperty("eventId", "chat.postMessage");
 		res.addProperty("success", true);
 		client.sendPacket(res);
+
+		// Log
+		System.out.println(client.getPlayer().getDisplayName() + " executed chat command: " + cmd + ": " + message);
 	}
 
 }

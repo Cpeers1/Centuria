@@ -19,7 +19,6 @@ import org.asf.emuferal.networking.chatserver.packets.SendMessage;
 import org.asf.emuferal.networking.chatserver.packets.UserConversations;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 
 public class ChatServer {
