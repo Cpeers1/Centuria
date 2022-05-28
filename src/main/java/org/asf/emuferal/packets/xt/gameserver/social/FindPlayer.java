@@ -1,4 +1,4 @@
-package org.asf.emuferal.packets.xt.gameserver.players;
+package org.asf.emuferal.packets.xt.gameserver.social;
 
 import java.io.IOException;
 
@@ -34,6 +34,12 @@ public class FindPlayer implements IXtPacket<FindPlayer> {
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Find avatar
+		
+		//log interaction details
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[SOCIAL] [FindPlayer] Client to server ( playerName: " + name + " )");
+		}
+		
 		String id = AccountManager.getInstance().getUserByDisplayName(name);
 		if (id == null) {
 			XtWriter writer = new XtWriter();
@@ -43,6 +49,12 @@ public class FindPlayer implements IXtPacket<FindPlayer> {
 			writer.writeString(""); // account ID
 			writer.writeString(""); // data suffix
 			client.sendPacket(writer.encode());
+			
+			//log interaction details
+			if (System.getProperty("debugMode") != null) {
+				System.out.println("[SOCIAL] [FindPlayer] Server to client ( success: false, accountId: )");
+			}
+			
 			return true; // Account not found
 		}
 
@@ -54,6 +66,11 @@ public class FindPlayer implements IXtPacket<FindPlayer> {
 		writer.writeString(AccountManager.getInstance().getAccount(id).getAccountID()); // account ID
 		writer.writeString(""); // data suffix
 		client.sendPacket(writer.encode());
+		
+		//log interaction details
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[SOCIAL] [FindPlayer] Server to client ( success: true, accountId: " + AccountManager.getInstance().getAccount(id).getAccountID() + " )");
+		}
 
 		return true;
 	}

@@ -1,4 +1,4 @@
-package org.asf.emuferal.packets.xt.gameserver.players;
+package org.asf.emuferal.packets.xt.gameserver.social;
 
 import java.io.IOException;
 

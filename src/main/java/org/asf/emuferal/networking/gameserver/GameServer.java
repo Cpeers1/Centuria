@@ -32,10 +32,12 @@ import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectSetRespawn;
 import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectUpdate;
 import org.asf.emuferal.packets.xt.gameserver.players.AvatarAction;
 import org.asf.emuferal.packets.xt.gameserver.players.AvatarLookGet;
-import org.asf.emuferal.packets.xt.gameserver.players.FindPlayer;
-import org.asf.emuferal.packets.xt.gameserver.players.JumpToPlayer;
-import org.asf.emuferal.packets.xt.gameserver.players.PlayerOnlineStatus;
 import org.asf.emuferal.packets.xt.gameserver.shops.ShopList;
+import org.asf.emuferal.packets.xt.gameserver.social.FindPlayer;
+import org.asf.emuferal.packets.xt.gameserver.social.FollowOnlineStatusUpdate;
+import org.asf.emuferal.packets.xt.gameserver.social.FollowingList;
+import org.asf.emuferal.packets.xt.gameserver.social.JumpToPlayer;
+import org.asf.emuferal.packets.xt.gameserver.social.PlayerOnlineStatus;
 import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
 import org.asf.emuferal.packets.xt.gameserver.world.RoomJoinTutorial;
 import org.asf.emuferal.packets.xt.gameserver.world.WorldReadyPacket;
@@ -97,6 +99,10 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new UserTutorialCompleted());
 		registerPacket(new AvatarEditorSelectLook());
 		registerPacket(new UserAvatarSave());
+		
+		//social packets
+		registerPacket(new FollowingList());
+		registerPacket(new FollowOnlineStatusUpdate());
 	}
 
 	@Override
