@@ -50,7 +50,7 @@ public class FileBasedFriendListManager extends FriendListManager {
 				friendList.add(followerListPropertyName, new JsonArray());
 				friendList.add(blockedListPropertyName, new JsonArray());
 				
-				Files.writeString(Path.of(friendListPath + "/" + UUID.fromString(playerID) + ".json"), friendList.toString());
+				Files.writeString(Path.of(friendListPath + "/" + playerID + ".json"), friendList.toString());
 			}
 		} catch (Exception e) {
 		}
@@ -59,7 +59,7 @@ public class FileBasedFriendListManager extends FriendListManager {
 	@Override
 	public boolean friendListExists(String playerID) {
 		try {
-			return new File("friendlists/" + UUID.fromString(playerID) + ".json").exists();
+			return new File(friendListPath + "/" + playerID + ".json").exists();
 		} catch (Exception e) {
 			return false;
 		}
@@ -72,7 +72,7 @@ public class FileBasedFriendListManager extends FriendListManager {
 
 		try {
 			// Parse following list
-			FileReader reader = new FileReader(friendListPath + "/" + UUID.fromString(playerID) + ".json");
+			FileReader reader = new FileReader(friendListPath + "/" + playerID + ".json");
 			JsonObject friendsList = JsonParser.parseReader(reader).getAsJsonObject();
 			JsonArray data = friendsList.get(followingListPropertyName).getAsJsonArray();
 			reader.close();
@@ -98,7 +98,7 @@ public class FileBasedFriendListManager extends FriendListManager {
 
 		try {
 			// Parse following list
-			FileReader reader = new FileReader(friendListPath + "/" + UUID.fromString(playerID) + ".json");
+			FileReader reader = new FileReader(friendListPath + "/" + playerID + ".json");
 			JsonObject friendsList = JsonParser.parseReader(reader).getAsJsonObject();
 			JsonArray data = friendsList.get(followerListPropertyName).getAsJsonArray();
 			reader.close();
@@ -124,7 +124,7 @@ public class FileBasedFriendListManager extends FriendListManager {
 
 		try {
 			// Parse following list
-			FileReader reader = new FileReader(friendListPath + "/" + UUID.fromString(playerID) + ".json");
+			FileReader reader = new FileReader(friendListPath + "/" + playerID + ".json");
 			JsonObject friendsList = JsonParser.parseReader(reader).getAsJsonObject();
 			JsonArray data = friendsList.get(blockedListPropertyName).getAsJsonArray();
 			reader.close();
@@ -150,17 +150,15 @@ public class FileBasedFriendListManager extends FriendListManager {
 
 		try {
 			// Parse DM
-			FileReader reader = new FileReader(friendListPath + "/" + UUID.fromString(playerID) + ".json");
+			FileReader reader = new FileReader(friendListPath + "/" + playerID + ".json");
 			JsonObject friendList = JsonParser.parseReader(reader).getAsJsonObject();
 			JsonArray data = friendList.get(followingListPropertyName).getAsJsonArray();
 			reader.close();
 			
 			// Add player into follow list
 			JsonObject newEntry = new JsonObject();
-			newEntry.addProperty(playerEntryIdPropertyName, playerID);
-			SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
-			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-			newEntry.addProperty(playerEntryAddedAtPropertyName, fmt.format(new Date()));
+			newEntry.addProperty(playerEntryIdPropertyName, playerToAdd.playerID);
+			newEntry.addProperty(playerEntryAddedAtPropertyName, playerToAdd.addedAt);
 			data.add(newEntry);
 
 			// Save to disk
@@ -171,7 +169,7 @@ public class FileBasedFriendListManager extends FriendListManager {
 					break;
 				}
 			activeIDs.add(playerID);
-			Files.writeString(Path.of("friendListPath/" + UUID.fromString(playerID) + ".json"), friendList.toString());
+			Files.writeString(Path.of("friendListPath/" + playerID + ".json"), friendList.toString());
 			activeIDs.remove(playerID);
 		} catch (IOException e) {
 			if (activeIDs.contains(playerID))
@@ -187,17 +185,15 @@ public class FileBasedFriendListManager extends FriendListManager {
 
 		try {
 			// Parse DM
-			FileReader reader = new FileReader(friendListPath + "/" + UUID.fromString(playerID) + ".json");
+			FileReader reader = new FileReader(friendListPath + "/" + playerID + ".json");
 			JsonObject friendList = JsonParser.parseReader(reader).getAsJsonObject();
 			JsonArray data = friendList.get(followerListPropertyName).getAsJsonArray();
 			reader.close();
 			
 			// Add player into follow list
 			JsonObject newEntry = new JsonObject();
-			newEntry.addProperty(playerEntryIdPropertyName, playerID);
-			SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
-			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-			newEntry.addProperty(playerEntryAddedAtPropertyName, fmt.format(new Date()));
+			newEntry.addProperty(playerEntryIdPropertyName, playerToAdd.playerID);
+			newEntry.addProperty(playerEntryAddedAtPropertyName, playerToAdd.addedAt);
 			data.add(newEntry);
 
 			// Save to disk
@@ -208,7 +204,7 @@ public class FileBasedFriendListManager extends FriendListManager {
 					break;
 				}
 			activeIDs.add(playerID);
-			Files.writeString(Path.of("friendListPath/" + UUID.fromString(playerID) + ".json"), friendList.toString());
+			Files.writeString(Path.of("friendListPath/" + playerID + ".json"), friendList.toString());
 			activeIDs.remove(playerID);
 		} catch (IOException e) {
 			if (activeIDs.contains(playerID))
@@ -225,17 +221,15 @@ public class FileBasedFriendListManager extends FriendListManager {
 
 		try {
 			// Parse DM
-			FileReader reader = new FileReader(friendListPath + "/" + UUID.fromString(playerID) + ".json");
+			FileReader reader = new FileReader(friendListPath + "/" + playerID + ".json");
 			JsonObject friendList = JsonParser.parseReader(reader).getAsJsonObject();
 			JsonArray data = friendList.get(blockedListPropertyName).getAsJsonArray();
 			reader.close();
 			
 			// Add player into follow list
 			JsonObject newEntry = new JsonObject();
-			newEntry.addProperty(playerEntryIdPropertyName, playerID);
-			SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
-			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-			newEntry.addProperty(playerEntryAddedAtPropertyName, fmt.format(new Date()));
+			newEntry.addProperty(playerEntryIdPropertyName, playerToAdd.playerID);
+			newEntry.addProperty(playerEntryAddedAtPropertyName, playerToAdd.addedAt);
 			data.add(newEntry);
 
 			// Save to disk

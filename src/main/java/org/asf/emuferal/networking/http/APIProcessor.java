@@ -2,14 +2,19 @@ package org.asf.emuferal.networking.http;
 
 import java.io.ByteArrayOutputStream;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.ConcurrentModificationException;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
+import org.asf.emuferal.friendlist.FriendListEntry;
+import org.asf.emuferal.friendlist.FriendListManager;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.processors.HttpUploadProcessor;
 
@@ -504,13 +509,37 @@ public class APIProcessor extends HttpUploadProcessor {
 
 					// log interaction details
 					if (System.getProperty("debugMode") != null) {
-						System.out.println(
-								"[API] [r/follow]  Client to server ( path:" + path + " ) ( body: " + body + " )");
+						System.out.println("[API] [r/follow]  Client to server ( path:" + path + " )");
 					}
-
-					// TODO: Following other players.
-
-				} else if (path.startsWith("/r/followers")) {
+					
+					String requestString = new String(body, "UTF-8");
+					
+					String targetPlayerUUID = path.split("/")[2];
+					String sourcePlayerID = UUID.nameUUIDFromBytes(body).toString();
+					
+					//open friend list
+					FriendListManager.getInstance().openFriendList(sourcePlayerID);
+					
+					//add player to friend list
+					FriendListEntry entry = new FriendListEntry();
+					SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
+					fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+					String createdAt = fmt.format(new Date());
+					entry.addedAt = createdAt;
+					entry.playerID = targetPlayerUUID;
+					
+					FriendListManager.getInstance().addFollowingPlayer(sourcePlayerID, entry);
+					
+					//construct response packet	
+					JsonObject response = new JsonObject();
+					response.addProperty("created_at", createdAt);
+					response.addProperty("success", "true");
+					
+					setBody(response.toString());
+					break;
+					
+				} else if (path.startsWith("/r/followers"))
+				{
 					// Parse JWT payload
 					String token = this.getHeader("Authorization").substring("Bearer ".length());
 
@@ -528,11 +557,12 @@ public class APIProcessor extends HttpUploadProcessor {
 						System.out.println(
 								"[API] [r/followers]  Client to server ( path:" + path + " ) ( body: " + body + " )");
 					}
-
-					// TODO: Retrieving followers.
-					// [{"created_at":"2022-03-26 16:24:20","favorite":true,"updated_at":"2022-03-26
-					// 18:28:32","uuid":"75d35f12-6614-4793-ba12-a11f0e9819c4"}]
-				} else if (path.startsWith("/r/followings")) {
+					
+					//TODO: Retrieving followers.
+					//[{"created_at":"2022-03-26 16:24:20","favorite":true,"updated_at":"2022-03-26 18:28:32","uuid":"75d35f12-6614-4793-ba12-a11f0e9819c4"}]
+					break;
+				} else if (path.startsWith("/r/followings"))
+				{					
 					// Parse JWT payload
 					String token = this.getHeader("Authorization").substring("Bearer ".length());
 
@@ -550,12 +580,13 @@ public class APIProcessor extends HttpUploadProcessor {
 						System.out.println(
 								"[API] [r/followings]  Client to server ( path:" + path + " ) ( body: " + body + " )");
 					}
-
-					// TODO: Retrieving players being followed.
-					// [{"created_at":"2022-03-26 16:24:20","favorite":true,"updated_at":"2022-03-26
-					// 18:28:32","uuid":"75d35f12-6614-4793-ba12-a11f0e9819c4"}]
-				} else {
-					// log details
+					
+					//TODO: Retrieving players being followed.
+					//[{"created_at":"2022-03-26 16:24:20","favorite":true,"updated_at":"2022-03-26 18:28:32","uuid":"75d35f12-6614-4793-ba12-a11f0e9819c4"}]
+					break;
+				}
+				else {
+					//log details
 					if (System.getProperty("debugMode") != null) {
 						System.err.println("[API] Unhandled Api Call: ( path:" + path + " ) ( body: " + body + " )");
 					}
