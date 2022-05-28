@@ -208,7 +208,7 @@ public class GameServer extends BaseSmartfoxServer {
 				.getAsJsonObject().get("type").getAsString().equals("ban")) {
 			JsonObject banInfo = acc.getPlayerInventory().getItem("penalty").getAsJsonObject();
 			if (banInfo.get("unbanTimestamp").getAsLong() == -1
-					|| banInfo.get("unbanTimestanp").getAsLong() > System.currentTimeMillis()) {
+					|| banInfo.get("unbanTimestamp").getAsLong() > System.currentTimeMillis()) {
 				// Disconnect with error
 				JsonObject response = new JsonObject();
 				JsonObject b = new JsonObject();
