@@ -113,6 +113,14 @@ public class ChatClient {
 		// Save account in memory
 		player = acc;
 
+		// Load DMs into memory
+		if (getPlayer().getPlayerInventory().containsItem("dms")) {
+			JsonObject dms = getPlayer().getPlayerInventory().getItem("dms").getAsJsonObject();
+			for (String user : dms.keySet()) {
+				joinRoom(dms.get(user).getAsString(), true);
+			}
+		}
+
 		// Send success
 		JsonObject res = new JsonObject();
 		res.addProperty("eventId", "sessions.start");

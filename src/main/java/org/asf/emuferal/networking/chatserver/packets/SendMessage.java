@@ -11,6 +11,8 @@ import java.util.stream.Stream;
 import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
+import org.asf.emuferal.dms.DMManager;
+import org.asf.emuferal.dms.PrivateChatMessage;
 import org.asf.emuferal.networking.chatserver.ChatClient;
 import org.asf.emuferal.packets.xt.gameserver.world.WorldReadyPacket;
 import org.asf.emuferal.players.Player;
@@ -74,6 +76,16 @@ public class SendMessage extends AbstractChatPacket {
 			res.addProperty("sentAt", fmt.format(new Date()));
 			res.addProperty("eventId", "chat.postMessage");
 			res.addProperty("success", true);
+
+			// If it is a DM, save message
+			DMManager manager = DMManager.getInstance();
+			if (client.isRoomPrivate(room) && manager.dmExists(room)) {
+				PrivateChatMessage msg = new PrivateChatMessage();
+				msg.content = message;
+				msg.sentAt = fmt.format(new Date());
+				msg.source = client.getPlayer().getAccountID();
+				manager.saveDMMessge(room, msg);
+			}
 
 			// Send to all in room
 			for (ChatClient cl : client.getServer().getClients()) {

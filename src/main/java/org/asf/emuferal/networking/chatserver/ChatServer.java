@@ -6,10 +6,14 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
+import org.asf.emuferal.dms.DMManager;
+import org.asf.emuferal.dms.PrivateChatMessage;
 import org.asf.emuferal.networking.chatserver.packets.AbstractChatPacket;
-import org.asf.emuferal.networking.chatserver.packets.ConvoHistoryDummy;
+import org.asf.emuferal.networking.chatserver.packets.HistoryPacket;
+import org.asf.emuferal.networking.chatserver.packets.CreateConversationPacket;
 import org.asf.emuferal.networking.chatserver.packets.GetConversation;
 import org.asf.emuferal.networking.chatserver.packets.JoinRoomPacket;
+import org.asf.emuferal.networking.chatserver.packets.OpenDMPacket;
 import org.asf.emuferal.networking.chatserver.packets.PingPacket;
 import org.asf.emuferal.networking.chatserver.packets.SendMessage;
 import org.asf.emuferal.networking.chatserver.packets.UserConversations;
@@ -35,8 +39,10 @@ public class ChatServer {
 		registerPacket(new JoinRoomPacket());
 		registerPacket(new UserConversations());
 		registerPacket(new GetConversation());
-		registerPacket(new ConvoHistoryDummy());
+		registerPacket(new HistoryPacket());
 		registerPacket(new SendMessage());
+		registerPacket(new OpenDMPacket());
+		registerPacket(new CreateConversationPacket());
 	}
 
 	public ChatClient[] getClients() {
@@ -147,18 +153,45 @@ public class ChatServer {
 	 * @param isPrivate True if the room is private, false otherwise
 	 * @return JsonObject instance
 	 */
-	public JsonObject roomObject(String room, Boolean isPrivate) {
+	public JsonObject roomObject(String room, boolean isPrivate) {
 		// Build object
 		JsonObject roomData = new JsonObject();
 		roomData.addProperty("conversation_id", room);
 		roomData.addProperty("title", "Room");
-		// Build participants object
-		JsonArray members = new JsonArray();
-		for (ChatClient cl : getClients()) {
-			if (cl.isInRoom(room))
-				members.add(cl.getPlayer().getAccountID());
+
+		// Load DM manager
+		DMManager manager = DMManager.getInstance();
+
+		// Check type and validity
+		if (!isPrivate || !manager.dmExists(room)) {
+			// Build participants object
+			JsonArray members = new JsonArray();
+			for (ChatClient cl : getClients()) {
+				if (cl.isInRoom(room))
+					members.add(cl.getPlayer().getAccountID());
+			}
+			roomData.add("participants", members);
+		} else {
+			// Build participants object
+			JsonArray members = new JsonArray();
+			for (String participant : manager.getDMParticipants(room)) {
+				members.add(participant);
+			}
+			roomData.add("participants", members);
+
+			// Find recent message
+			PrivateChatMessage[] msgs = manager.getDMHistory(room);
+			if (msgs.length != 0) {
+				// Add most recent
+				PrivateChatMessage recent = msgs[msgs.length - 1];
+				JsonObject msg = new JsonObject();
+				msg.addProperty("body", recent.content);
+				msg.addProperty("sent_at", recent.sentAt);
+				msg.addProperty("source", recent.source);
+				roomData.add("recent_message", msg);
+			}
 		}
-		roomData.add("participants", members);
+
 		roomData.addProperty("conversationType", isPrivate ? "private" : "room");
 		return roomData;
 	}

@@ -247,8 +247,10 @@ public class APIProcessor extends HttpUploadProcessor {
 				// Save new name
 				String oldName = acc.getDisplayName();
 				if (acc.updateDisplayName(newName)) {
-					// Unlock old name
-					manager.releaseDisplayName(oldName);
+					if (!acc.isRenameRequired()) {
+						// Unlock old name
+						manager.releaseDisplayName(oldName);
+					}
 
 					// Tell authorization to save password
 					manager.makePasswordUpdateRequested(acc.getAccountID());
