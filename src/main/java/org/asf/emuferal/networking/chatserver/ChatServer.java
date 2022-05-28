@@ -157,7 +157,7 @@ public class ChatServer {
 		// Build object
 		JsonObject roomData = new JsonObject();
 		roomData.addProperty("conversation_id", room);
-		roomData.addProperty("title", "Room");
+		roomData.addProperty("title", "");
 
 		// Load DM manager
 		DMManager manager = DMManager.getInstance();

@@ -1,5 +1,4 @@
 main todo:
-- private chat
 - warping
 - overhaul account storage
 - fix settings not being saved

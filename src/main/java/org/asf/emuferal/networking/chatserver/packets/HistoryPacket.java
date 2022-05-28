@@ -44,11 +44,11 @@ public class HistoryPacket extends AbstractChatPacket {
 		if (client.isInRoom(convo) && client.isRoomPrivate(convo) && manager.dmExists(convo)) {
 			JsonArray msgs = new JsonArray();
 			for (PrivateChatMessage msg : manager.getDMHistory(convo)) {
-				// Build member list
+				// Build participant list
 				JsonArray members = new JsonArray();
-				for (ChatClient cl : client.getServer().getClients()) {
-					if (cl.isInRoom(convo) && cl != client)
-						members.add(cl.getPlayer().getAccountID());
+				for (String participant : manager.getDMParticipants(convo)) {
+					if (!participant.equals(msg.source))
+						members.add(participant);
 				}
 
 				// Build message object
@@ -58,12 +58,12 @@ public class HistoryPacket extends AbstractChatPacket {
 				obj.addProperty("conversation_type", "private");
 				obj.add("mask", null);
 				try {
-					obj.addProperty("message_id", "msg-" + UUID.nameUUIDFromBytes(msg.sentAt.getBytes("UTF-8")));
+					obj.addProperty("message_id", UUID.nameUUIDFromBytes(msg.sentAt.getBytes("UTF-8")).toString());
 				} catch (UnsupportedEncodingException e) {
 				}
 				obj.add("participants", members);
 				obj.addProperty("sent_at", msg.sentAt);
-				obj.addProperty("source", msg.sentAt);
+				obj.addProperty("source", msg.source);
 				msgs.add(obj);
 			}
 			res.add("messages", msgs);
