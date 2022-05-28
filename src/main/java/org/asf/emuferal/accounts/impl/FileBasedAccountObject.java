@@ -77,6 +77,10 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 		if (!name.matches("^[0-9A-Za-z\\-_.]+") || name.length() > 16 || name.length() < 2)
 			return false;
 
+		// Remove lockout
+		if (isRenameRequired())
+			new File("accounts/" + userUUID + ".requirechangename").delete();
+
 		try {
 			// Store the name
 			displayName = name;
@@ -185,6 +189,20 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 			Files.writeString(activeSLookFileC.toPath(), lookID);
 		} catch (IOException e) {
 		}
+	}
+
+	@Override
+	public boolean isRenameRequired() {
+		return new File("accounts/" + userUUID + ".requirechangename").exists();
+	}
+
+	@Override
+	public void forceNameChange() {
+		if (!isRenameRequired())
+			try {
+				new File("accounts/" + userUUID + ".requirechangename").createNewFile();
+			} catch (IOException e) {
+			}
 	}
 
 }

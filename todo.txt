@@ -9,11 +9,6 @@ main todo:
 - feedback
 - reporting
 
-follower update:
-- player cards
-- followers
-- blocking
-
 interaction update:
 - general interactions
 - item collection

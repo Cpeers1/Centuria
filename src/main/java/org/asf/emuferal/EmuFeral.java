@@ -179,7 +179,7 @@ public class EmuFeral {
 			plr.client.disconnect();
 		}
 
-		// Wait for logoff and exit
+		// Wait for log off and exit
 		int l = 0;
 		while (EmuFeral.gameServer.getPlayers().length != 0) {
 			l++;

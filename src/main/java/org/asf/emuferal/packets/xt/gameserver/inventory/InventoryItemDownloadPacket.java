@@ -158,7 +158,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 							.getAsJsonObject().get("Clothing").getAsJsonObject();
 					strm.close();
 
-					// Add all clothes (2 of each)
+					// Add all clothes (3 of each)
 					for (String id : helper.keySet()) {
 						if (inv.getAccessor().getClothingCount(Integer.valueOf(id)) < 3) {
 							for (int i = inv.getAccessor().getClothingCount(Integer.valueOf(id)); i < 3; i++) {

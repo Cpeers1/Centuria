@@ -101,4 +101,16 @@ public abstract class EmuFeralAccount {
 	 */
 	public abstract void setActiveSanctuaryLook(String lookID);
 
+	/**
+	 * Checks if the account needs to be renamed
+	 * 
+	 * @return True if the account needs to be renamed, false otherwise
+	 */
+	public abstract boolean isRenameRequired();
+
+	/**
+	 * Forces the account to require a name change
+	 */
+	public abstract void forceNameChange();
+
 }

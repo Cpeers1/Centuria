@@ -192,8 +192,8 @@ public class APIProcessor extends HttpUploadProcessor {
 				response.addProperty("refresh_token", tkn);
 				response.addProperty("auth_token", headerD + "." + payloadD + "." + Base64.getUrlEncoder()
 						.encodeToString(EmuFeral.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
-				response.addProperty("rename_required", !manager.hasPassword(id) || changeName); // request user name if
-																									// new or migrating
+				response.addProperty("rename_required",
+						!manager.hasPassword(id) || changeName || acc.isRenameRequired());
 				response.addProperty("rename_required_key", "");
 				response.addProperty("email_update_required", false);
 				response.addProperty("email_update_required_key", "");
@@ -239,7 +239,8 @@ public class APIProcessor extends HttpUploadProcessor {
 
 				// Check if the name is in use
 				if (manager.isDisplayNameInUse(newName)
-						&& !manager.getUserByDisplayName(newName).equals(acc.getAccountID())) {
+						&& !manager.getUserByDisplayName(newName).equals(acc.getAccountID())
+						|| (manager.isDisplayNameInUse(newName) && acc.isRenameRequired())) {
 					return; // Name is in use
 				}
 

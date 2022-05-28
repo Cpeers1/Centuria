@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.stream.Stream;
 
 import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
@@ -357,6 +358,29 @@ public class SendMessage extends AbstractChatPacket {
 						systemMessage("Penalties removed from " + acc.getDisplayName() + ".", cmd, client);
 						return true;
 					}
+					case "forcenamechange": {
+						// Force name change command
+						if (args.size() < 1) {
+							systemMessage("Missing argument: player", cmd, client);
+							return true;
+						}
+
+						// Find player
+						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						EmuFeralAccount acc = AccountManager.getInstance().getAccount(uuid);
+						acc.forceNameChange();
+
+						// Player not found
+						systemMessage(
+								"Applied a name change requirement to the next login of " + acc.getDisplayName() + ".",
+								cmd, client);
+						return true;
+					}
 					case "kick": {
 						// Kick command
 						if (args.size() < 1) {
@@ -533,8 +557,180 @@ public class SendMessage extends AbstractChatPacket {
 								}
 							}
 
+							// Find online player
+							for (Player plr : EmuFeral.gameServer.getPlayers()) {
+								if (plr.account.getDisplayName().equals(args.get(0))) {
+									// Update inventory
+									plr.account.getPlayerInventory().deleteItem("permissions");
+									break;
+								}
+							}
+
 							// Completed
 							systemMessage("Removed all permissions from " + acc.getDisplayName() + ".", cmd, client);
+							return true;
+						} else {
+							break;
+						}
+					}
+					case "updatewarning": {
+						// Check perms
+						if (hasPerm(permLevel, "admin")) {
+							if (args.size() < 1) {
+								systemMessage("Missing argument: minutes-remaining", cmd, client);
+								return true;
+							}
+
+							// Parse arguments
+							int mins = 0;
+							try {
+								mins = Integer.valueOf(args.get(0));
+							} catch (Exception e) {
+								systemMessage("Invalid value for argument: minutes-remaining", cmd, client);
+								return true;
+							}
+
+							// Warn everyone
+							for (Player plr : EmuFeral.gameServer.getPlayers()) {
+								if (mins == 1)
+									plr.client.sendPacket("%xt%ua%-1%7390|1%");
+								else
+									plr.client.sendPacket("%xt%ua%-1%7391|" + mins + "%");
+							}
+
+							return true;
+						} else {
+							break;
+						}
+					}
+					case "update": {
+						// Check perms
+						if (hasPerm(permLevel, "admin")) {
+							if (args.size() < 1) {
+								systemMessage("Missing argument: minutes", cmd, client);
+								return true;
+							}
+
+							// Parse arguments
+							int mins = 0;
+							switch (args.get(0)) {
+							case "60":
+								mins = 60;
+								break;
+							case "30":
+								mins = 30;
+								break;
+							case "15":
+								mins = 15;
+								break;
+							case "10":
+								mins = 10;
+								break;
+							case "5":
+								mins = 5;
+								break;
+							case "3":
+								mins = 3;
+								break;
+							case "1":
+								mins = 1;
+								break;
+							default:
+								systemMessage("Invalid value for argument: minutes-remaining", cmd, client);
+								return true;
+							}
+
+							// Run timer
+							if (EmuFeral.runUpdater(mins)) {
+								systemMessage("Update timer has been started.", cmd, client);
+							} else {
+								systemMessage("Update timer is already running.", cmd, client);
+							}
+
+							return true;
+						} else {
+							break;
+						}
+					}
+					case "cancelupdate": {
+						// Check perms
+						if (hasPerm(permLevel, "admin")) {
+							// Cancel update
+							if (EmuFeral.cancelUpdate())
+								systemMessage("Update restart cancelled.", cmd, client);
+							else
+								systemMessage("Update timer is not running.", cmd, client);
+							return true;
+						} else {
+							break;
+						}
+					}
+					case "updateshutdown": {
+						// Check perms
+						if (hasPerm(permLevel, "admin")) {
+							// Shut down the server
+							EmuFeral.updateShutdown();
+							return true;
+						} else {
+							break;
+						}
+					}
+					case "startmaintenance": {
+						// Check perms
+						if (hasPerm(permLevel, "admin")) {
+							// Enable maintenance mode
+							EmuFeral.gameServer.maintenance = true;
+
+							// Disconnect everyone but the staff
+							for (Player plr : EmuFeral.gameServer.getPlayers()) {
+								if (!plr.account.getPlayerInventory().containsItem("permissions")
+										|| !hasPerm(
+												plr.account.getPlayerInventory().getItem("permissions")
+														.getAsJsonObject().get("permissionLevel").getAsString(),
+												"moderator"))
+									plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
+							}
+
+							// Wait a bit
+							int i = 0;
+							while (Stream.of(EmuFeral.gameServer.getPlayers())
+									.filter(plr -> !plr.account.getPlayerInventory().containsItem("permissions")
+											|| !hasPerm(
+													plr.account.getPlayerInventory().getItem("permissions")
+															.getAsJsonObject().get("permissionLevel").getAsString(),
+													"moderator"))
+									.findFirst().isPresent()) {
+								i++;
+								if (i == 30)
+									break;
+
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+								}
+							}
+							for (Player plr : EmuFeral.gameServer.getPlayers()) {
+								if (!plr.account.getPlayerInventory().containsItem("permissions")
+										|| !hasPerm(
+												plr.account.getPlayerInventory().getItem("permissions")
+														.getAsJsonObject().get("permissionLevel").getAsString(),
+												"moderator"))
+									plr.client.disconnect();
+							}
+
+							// Send message
+							systemMessage("Maintenance mode enabled.", cmd, client);
+							return true;
+						} else {
+							break;
+						}
+					}
+					case "endmaintenance": {
+						// Check perms
+						if (hasPerm(permLevel, "admin")) {
+							// Disable maintenance mode
+							EmuFeral.gameServer.maintenance = false;
+							systemMessage("Maintenance mode disabled.", cmd, client);
 							return true;
 						} else {
 							break;
@@ -590,108 +786,6 @@ public class SendMessage extends AbstractChatPacket {
 							break;
 						}
 					}
-					case "updatewarning": {
-						// Check perms
-						if (hasPerm(permLevel, "developer")) {
-							if (args.size() < 1) {
-								systemMessage("Missing argument: minutes-remaining", cmd, client);
-								return true;
-							}
-
-							// Parse arguments
-							int mins = 0;
-							try {
-								mins = Integer.valueOf(args.get(0));
-							} catch (Exception e) {
-								systemMessage("Invalid value for argument: minutes-remaining", cmd, client);
-								return true;
-							}
-
-							// Warn everyone
-							for (Player plr : EmuFeral.gameServer.getPlayers()) {
-								if (mins == 1)
-									plr.client.sendPacket("%xt%ua%-1%7390|1%");
-								else
-									plr.client.sendPacket("%xt%ua%-1%7391|" + mins + "%");
-							}
-
-							return true;
-						} else {
-							break;
-						}
-					}
-					case "update": {
-						// Check perms
-						if (hasPerm(permLevel, "developer")) {
-							if (args.size() < 1) {
-								systemMessage("Missing argument: minutes", cmd, client);
-								return true;
-							}
-
-							// Parse arguments
-							int mins = 0;
-							switch (args.get(0)) {
-							case "60":
-								mins = 60;
-								break;
-							case "30":
-								mins = 30;
-								break;
-							case "15":
-								mins = 15;
-								break;
-							case "10":
-								mins = 10;
-								break;
-							case "5":
-								mins = 5;
-								break;
-							case "3":
-								mins = 3;
-								break;
-							case "1":
-								mins = 1;
-								break;
-							default:
-								systemMessage("Invalid value for argument: minutes-remaining", cmd, client);
-								return true;
-							}
-
-							// Run timer
-							if (EmuFeral.runUpdater(mins)) {
-								systemMessage("Update timer has been started.", cmd, client);
-							} else {
-								systemMessage("Update timer is already running.", cmd, client);
-							}
-
-							return true;
-						} else {
-							break;
-						}
-					}
-					case "cancelupdate": {
-						// Check perms
-						if (hasPerm(permLevel, "developer")) {
-							// Cancel update
-							if (EmuFeral.cancelUpdate())
-								systemMessage("Update restart cancelled.", cmd, client);
-							else
-								systemMessage("Update timer is not running.", cmd, client);
-							return true;
-						} else {
-							break;
-						}
-					}
-					case "updateshutdown": {
-						// Check perms
-						if (hasPerm(permLevel, "developer")) {
-							// Shut down the server
-							EmuFeral.updateShutdown();
-							return true;
-						} else {
-							break;
-						}
-					}
 					case "tpm": {
 						// Teleports a player to a map.
 						if (hasPerm(permLevel, "developer")) {
@@ -724,19 +818,22 @@ public class SendMessage extends AbstractChatPacket {
 						message += " - kick \"<member>\"\n";
 						message += " - permbam \"<name>\"\n";
 						message += " - tempban \"<name>\" <days>\"\n";
+						message += " - forcenamechange \"<member>\"\n";
 						message += " - mute \"<name>\" <minutes> [hours] [days]\n";
 						message += " - pardon \"<name>\"\n";
 						if (hasPerm(permLevel, "developer")) {
-							message += " - updatewarning <minutes-remaining>\n";
-							message += " - updateshutdown\n";
-							message += " - update <60|30|15|10|5|3|1>\n";
-							message += " - cancelupdate\n";
 							message += " - makedeveloper \"<name>\"\n";
 						}
 						if (hasPerm(permLevel, "admin")) {
 							message += " - makeadmin \"<name>\"\n";
 							message += " - makemoderator \"<name>\"\n";
 							message += " - removeperms \"<name>\"\n";
+							message += " - startmaintenance\n";
+							message += " - endmaintenance\n";
+							message += " - updatewarning <minutes-remaining>\n";
+							message += " - updateshutdown\n";
+							message += " - update <60|30|15|10|5|3|1>\n";
+							message += " - cancelupdate\n";
 						}
 						message += " - help";
 						systemMessage(message, cmdId, client);

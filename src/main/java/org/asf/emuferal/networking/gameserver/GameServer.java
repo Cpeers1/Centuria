@@ -302,19 +302,21 @@ public class GameServer extends BaseSmartfoxServer {
 					plr.destroyAt(player);
 				}
 			}
+
+			// Check maintenance, exit server if noone is online during maintenance
+			if (maintenance && players.size() == 0) {
+				// Exit
+				System.exit(0);
+			}
 		}
 	}
 
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	protected void onStop() {
-		// TODO Auto-generated method stub
-
 	}
 
 }
