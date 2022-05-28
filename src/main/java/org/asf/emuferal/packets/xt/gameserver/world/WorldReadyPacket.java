@@ -143,7 +143,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			strm.close();
 
 			// Check existence
-			if (helper.has(plr.roomID + "/" + id)) {
+			if (helper.has(plr.pendingRoom + "/" + id)) {
 				// Send response
 				helper = helper.get(plr.roomID + "/" + id).getAsJsonObject();
 				System.out.println("Player teleport: " + plr.account.getDisplayName() + ": "
