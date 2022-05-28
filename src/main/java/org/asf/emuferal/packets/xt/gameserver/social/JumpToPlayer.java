@@ -57,14 +57,22 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 				if (!plr.room.equals(player.room)) {
 					// Build room join
 					JoinRoom join = new JoinRoom();
-					join.playerID = player.account.getAccountNumericID();
-					join.roomID = plr.roomID;
 					join.mode = 0;
+					join.roomID = plr.roomID;
+					join.playerID = player.account.getAccountNumericID();
 					join.roomIdentifier = "room_" + join.roomID;
 
-					// Switch player info over
-					player.roomID = plr.roomID;
-					player.room = plr.room;
+					// Sync
+					GameServer srv = (GameServer) client.getServer();
+					for (Player plr2 : srv.getPlayers()) {
+						if (plr.room != null && player.room != null && plr2.room.equals(plr.room) && plr2 != plr) {
+							plr.destroyAt(plr2);
+						}
+					}
+
+					// Assign room
+					plr.roomReady = false;
+					plr.pendingRoom = plr.roomID;
 					player.roomReady = false;
 
 					// SEnd packet
