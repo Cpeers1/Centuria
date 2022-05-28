@@ -67,6 +67,18 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Find spawn
 		handleSpawn(teleportUUID, plr, client);
 
+		// Sync
+		GameServer srv = (GameServer) client.getServer();
+		for (Player player : srv.getPlayers()) {
+			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+				plr.destroyAt(player);
+			}
+		}
+
+		// Assing info
+		plr.roomID = plr.pendingRoom;
+		plr.room = "room_" + plr.pendingRoom;
+
 		// Sync spawn
 		GameServer server = (GameServer) client.getServer();
 		for (Player player : server.getPlayers()) {

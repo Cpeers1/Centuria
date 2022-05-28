@@ -48,21 +48,20 @@ public class JoinRoomPacket extends AbstractChatPacket {
 				client.leaveRoom(room);
 		}
 
-		// Send response
-		JsonObject res = new JsonObject();
-		res.addProperty("conversationId", room);
-		res.addProperty("participant", participant);
-		res.addProperty("eventId", "conversations.addParticipant");
-		res.addProperty("success", true);
-		client.sendPacket(res);
-
-		// Broadcast join
-		for (ChatClient cl : cCl.getServer().getClients())
-			if (cl != client && cl.isInRoom(room))
-				cl.sendPacket(res);
+		if (!client.isReady) {
+			// Send response
+			JsonObject res = new JsonObject();
+			res.addProperty("conversationId", "CHAT");
+			res.addProperty("participant", participant);
+			res.addProperty("eventId", "conversations.addParticipant");
+			res.addProperty("success", true);
+			client.sendPacket(res);
+			client.isReady = true;
+		}
 
 		// Join room
-		client.joinRoom(room, false); // TODO: private chat support
+		if (!client.isInRoom(room))
+			client.joinRoom(room, false);
 
 		return true;
 	}

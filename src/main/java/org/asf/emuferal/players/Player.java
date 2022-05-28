@@ -25,6 +25,7 @@ public class Player {
 	public String pendingLookID = null;
 
 	public int roomID = 0;
+	public int pendingRoom = 0;
 	public String room = null;
 	public boolean roomReady = false;
 

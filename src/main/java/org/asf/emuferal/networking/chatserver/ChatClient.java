@@ -27,6 +27,9 @@ public class ChatClient {
 	private ArrayList<String> rooms = new ArrayList<String>();
 	private HashMap<String, Boolean> privateChat = new HashMap<String, Boolean>();
 
+	// Room lock
+	public boolean isReady = false;
+
 	private TaskThread taskThread;
 
 	/**
