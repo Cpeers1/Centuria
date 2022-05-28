@@ -6,14 +6,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.UUID;
 
 import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.networking.chatserver.ChatClient;
-import org.asf.emuferal.networking.gameserver.GameServer;
-import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
 import org.asf.emuferal.packets.xt.gameserver.world.WorldReadyPacket;
 import org.asf.emuferal.players.Player;
 
@@ -128,7 +125,7 @@ public class SendMessage extends AbstractChatPacket {
 				ArrayList<String> args = parseCommand(cmd);
 				String cmdId = "";
 				if (args.size() > 0) {
-					cmdId = args.remove(0);
+					cmdId = args.remove(0).toLowerCase();
 					cmd = cmdId;
 
 					// Run command

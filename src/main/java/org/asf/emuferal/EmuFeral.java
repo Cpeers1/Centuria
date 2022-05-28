@@ -46,7 +46,7 @@ import org.asf.rats.ConnectiveServerFactory;
 
 public class EmuFeral {
 	// Update
-	public static final String SERVER_UPDATE_VERSION = "1.0.0.A9";
+	public static final String SERVER_UPDATE_VERSION = "1.0.0.A8";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/emuferal";
 
 	// Configuration

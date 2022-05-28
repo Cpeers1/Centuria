@@ -1,6 +1,5 @@
 main todo:
 - token expiry check
-- fix displaced spawns
 - chat
 - warping
 - overhaul account storage

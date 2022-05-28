@@ -1,7 +1,9 @@
 package org.asf.emuferal.networking.http;
 
 import java.io.ByteArrayOutputStream;
+import java.net.HttpURLConnection;
 import java.net.Socket;
+import java.net.URL;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -331,6 +333,29 @@ public class APIProcessor extends HttpUploadProcessor {
 					response.addProperty("autorization_key", headerD + "." + payloadD + "." + Base64.getUrlEncoder()
 							.encodeToString(EmuFeral.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
 					setBody(response.toString());
+				} else if (path.startsWith("/r/block/")) {
+					// Parse JWT payload
+					String token = this.getHeader("Authorization").substring("Bearer ".length());
+
+					// Verify signature
+					String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
+					String sig = token.split("\\.")[2];
+					if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
+						this.setResponseCode(403);
+						this.setResponseMessage("Access denied");
+						return;
+					}
+
+					// Request
+					String id = path.substring("/r/block/".length());
+
+					// Send response
+					JsonObject response = new JsonObject();
+					// TODO: blocking users
+					response.addProperty("error", "not_blocked");
+					setBody(response.toString());
+
+					break;
 				} else {
 					setResponseCode(400);
 					path = path;

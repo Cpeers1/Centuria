@@ -65,10 +65,18 @@ public class FileBasedAccountManager extends AccountManager {
 
 				// Compare hashes
 				if (hash.length != cHash.length) {
+					try {
+						Thread.sleep(8000);
+					} catch (InterruptedException e) {
+					}
 					return null;
 				}
 				for (int i = 0; i < hash.length; i++) {
 					if (hash[i] != cHash[i]) {
+						try {
+							Thread.sleep(8000);
+						} catch (InterruptedException e) {
+						}
 						return null;
 					}
 				}
