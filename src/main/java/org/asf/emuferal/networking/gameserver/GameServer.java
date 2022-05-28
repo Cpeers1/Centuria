@@ -132,6 +132,15 @@ public class GameServer extends BaseSmartfoxServer {
 			return;
 		}
 
+		// Verify expiry
+		JsonObject jwtPl = JsonParser
+				.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+				.getAsJsonObject();
+		if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
+			client.disconnect();
+			return;
+		}
+
 		// Parse JWT
 		JsonObject payload = JsonParser
 				.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))

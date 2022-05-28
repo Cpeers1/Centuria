@@ -1,10 +1,10 @@
 package org.asf.emuferal.networking.http;
 
 import java.io.ByteArrayOutputStream;
-import java.net.HttpURLConnection;
 import java.net.Socket;
-import java.net.URL;
 import java.util.Base64;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.asf.emuferal.EmuFeral;
@@ -21,6 +21,62 @@ import com.google.gson.JsonParser;
 public class APIProcessor extends HttpUploadProcessor {
 
 	public static String KeyID = UUID.randomUUID().toString();
+	private static HashMap<String, TokenData> refreshTokens = new HashMap<String, TokenData>();
+
+	private static class TokenData {
+		public String refreshToken;
+		public long timeRemaining;
+	}
+
+	private String getUser(String token) {
+		HashMap<String, TokenData> refreshTokens;
+		while (true) {
+			try {
+				refreshTokens = new HashMap<String, TokenData>(APIProcessor.refreshTokens);
+				break;
+			} catch (ConcurrentModificationException e) {
+			}
+		}
+
+		// Find token by user ID
+		for (String uid : refreshTokens.keySet()) {
+			if (refreshTokens.get(uid).refreshToken.equals(token))
+				return uid;
+		}
+
+		return null;
+	}
+
+	static {
+		Thread th = new Thread(() -> {
+			while (true) {
+				HashMap<String, TokenData> refreshTokens;
+				while (true) {
+					try {
+						refreshTokens = new HashMap<String, TokenData>(APIProcessor.refreshTokens);
+						break;
+					} catch (ConcurrentModificationException e) {
+					}
+				}
+
+				for (String pwd : refreshTokens.keySet()) {
+					if (refreshTokens.get(pwd).timeRemaining - 1 <= 0) {
+						APIProcessor.refreshTokens.remove(pwd);
+					} else {
+						refreshTokens.get(pwd).timeRemaining--;
+					}
+				}
+
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					break;
+				}
+			}
+		});
+		th.setDaemon(true);
+		th.start();
+	}
 
 	@Override
 	public void process(String contentType, Socket client, String method) {
@@ -86,7 +142,7 @@ public class APIProcessor extends HttpUploadProcessor {
 				// Find account
 				EmuFeralAccount acc = manager.getAccount(id);
 				if (acc == null) {
-					this.setResponseCode(403);
+					this.setResponseCode(401);
 					this.setResponseMessage("Access denied");
 					return;
 				}
@@ -112,15 +168,28 @@ public class APIProcessor extends HttpUploadProcessor {
 				JsonObject payload = new JsonObject();
 				payload.addProperty("iat", System.currentTimeMillis() / 1000);
 				payload.addProperty("exp", (System.currentTimeMillis() / 1000) + (24 * 60 * 60));
+				payload.addProperty("jti", UUID.randomUUID().toString());
 				payload.addProperty("iss", "EmuFeral");
 				payload.addProperty("sub", "EmuFeral");
 				payload.addProperty("uuid", id);
 				String payloadD = Base64.getUrlEncoder().encodeToString(payload.toString().getBytes("UTF-8"));
 
+				// Generate refresh
+				String tkn = UUID.randomUUID() + "-" + UUID.randomUUID() + "-" + UUID.randomUUID();
+				while (getUser(tkn) != null) {
+					tkn = UUID.randomUUID() + "-" + UUID.randomUUID() + "-" + UUID.randomUUID();
+				}
+
+				// Save token
+				TokenData tk = new TokenData();
+				tk.refreshToken = tkn;
+				tk.timeRemaining = (24 * 60 * 60) + 30;
+				refreshTokens.put(acc.getAccountID(), tk);
+
 				// Send response
 				JsonObject response = new JsonObject();
 				response.addProperty("uuid", id);
-				response.addProperty("refresh_token", id);
+				response.addProperty("refresh_token", tkn);
 				response.addProperty("auth_token", headerD + "." + payloadD + "." + Base64.getUrlEncoder()
 						.encodeToString(EmuFeral.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
 				response.addProperty("rename_required", !manager.hasPassword(id) || changeName); // request user name if
@@ -146,6 +215,16 @@ public class APIProcessor extends HttpUploadProcessor {
 					return;
 				}
 
+				// Verify expiry
+				JsonObject jwtPl = JsonParser
+						.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+						.getAsJsonObject();
+				if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
+					this.setResponseCode(401);
+					this.setResponseMessage("Access denied");
+					return;
+				}
+
 				JsonObject jP = JsonParser
 						.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
 						.getAsJsonObject();
@@ -153,7 +232,7 @@ public class APIProcessor extends HttpUploadProcessor {
 				// Find account
 				EmuFeralAccount acc = manager.getAccount(jP.get("uuid").getAsString());
 				if (acc == null) {
-					this.setResponseCode(403);
+					this.setResponseCode(401);
 					this.setResponseMessage("Access denied");
 					return;
 				}
@@ -184,7 +263,17 @@ public class APIProcessor extends HttpUploadProcessor {
 				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
 				String sig = token.split("\\.")[2];
 				if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-					this.setResponseCode(403);
+					this.setResponseCode(401);
+					this.setResponseMessage("Access denied");
+					return;
+				}
+
+				// Verify expiry
+				JsonObject jwtPl = JsonParser
+						.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+						.getAsJsonObject();
+				if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
+					this.setResponseCode(401);
 					this.setResponseMessage("Access denied");
 					return;
 				}
@@ -196,7 +285,7 @@ public class APIProcessor extends HttpUploadProcessor {
 				// Find account
 				EmuFeralAccount acc = manager.getAccount(payload.get("uuid").getAsString());
 				if (acc == null) {
-					this.setResponseCode(403);
+					this.setResponseCode(401);
 					this.setResponseMessage("Access denied");
 					return;
 				}
@@ -222,7 +311,17 @@ public class APIProcessor extends HttpUploadProcessor {
 				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
 				String sig = token.split("\\.")[2];
 				if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-					this.setResponseCode(403);
+					this.setResponseCode(401);
+					this.setResponseMessage("Access denied");
+					return;
+				}
+
+				// Verify expiry
+				JsonObject jwtPl = JsonParser
+						.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+						.getAsJsonObject();
+				if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
+					this.setResponseCode(401);
 					this.setResponseMessage("Access denied");
 					return;
 				}
@@ -234,7 +333,7 @@ public class APIProcessor extends HttpUploadProcessor {
 				// Find account
 				EmuFeralAccount acc = manager.getAccount(payload.get("uuid").getAsString());
 				if (acc == null) {
-					this.setResponseCode(403);
+					this.setResponseCode(401);
 					this.setResponseMessage("Access denied");
 					return;
 				}
@@ -255,7 +354,17 @@ public class APIProcessor extends HttpUploadProcessor {
 				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
 				String sig = token.split("\\.")[2];
 				if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-					this.setResponseCode(403);
+					this.setResponseCode(401);
+					this.setResponseMessage("Access denied");
+					return;
+				}
+
+				// Verify expiry
+				JsonObject jwtPl = JsonParser
+						.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+						.getAsJsonObject();
+				if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
+					this.setResponseCode(401);
 					this.setResponseMessage("Access denied");
 					return;
 				}
@@ -280,7 +389,17 @@ public class APIProcessor extends HttpUploadProcessor {
 				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
 				String sig = token.split("\\.")[2];
 				if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-					this.setResponseCode(403);
+					this.setResponseCode(401);
+					this.setResponseMessage("Access denied");
+					return;
+				}
+
+				// Verify expiry
+				JsonObject jwtPl = JsonParser
+						.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+						.getAsJsonObject();
+				if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
+					this.setResponseCode(401);
 					this.setResponseMessage("Access denied");
 					return;
 				}
@@ -323,7 +442,8 @@ public class APIProcessor extends HttpUploadProcessor {
 
 					JsonObject payload = new JsonObject();
 					payload.addProperty("iat", System.currentTimeMillis() / 1000);
-					payload.addProperty("exp", (System.currentTimeMillis() / 1000) + (24 * 60 * 60));
+					payload.addProperty("exp", (System.currentTimeMillis() / 1000) + 30);
+					payload.addProperty("jti", UUID.randomUUID().toString());
 					payload.addProperty("iss", "EmuFeral");
 					payload.addProperty("sub", "EmuFeral");
 					String payloadD = Base64.getUrlEncoder().encodeToString(payload.toString().getBytes("UTF-8"));
@@ -341,7 +461,17 @@ public class APIProcessor extends HttpUploadProcessor {
 					String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
 					String sig = token.split("\\.")[2];
 					if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-						this.setResponseCode(403);
+						this.setResponseCode(401);
+						this.setResponseMessage("Access denied");
+						return;
+					}
+
+					// Verify expiry
+					JsonObject jwtPl = JsonParser
+							.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+							.getAsJsonObject();
+					if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
+						this.setResponseCode(401);
 						this.setResponseMessage("Access denied");
 						return;
 					}

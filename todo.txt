@@ -1,6 +1,4 @@
 main todo:
-- token expiry check
-- overhauld commands
 - private chat
 - warping
 - overhaul account storage
@@ -9,12 +7,12 @@ main todo:
 - make sure that private chat uses privacy settings
 - sanctuaries
 - feedback
+- reporting
 
 follower update:
 - player cards
 - followers
 - blocking
-
 
 interaction update:
 - general interactions
