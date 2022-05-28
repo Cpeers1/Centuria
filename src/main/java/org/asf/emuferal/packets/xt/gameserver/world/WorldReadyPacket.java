@@ -77,7 +77,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Assing info
 		plr.roomID = plr.pendingRoom;
-		plr.room = "room_" + plr.pendingRoom;
 
 		// Sync spawn
 		GameServer server = (GameServer) client.getServer();
