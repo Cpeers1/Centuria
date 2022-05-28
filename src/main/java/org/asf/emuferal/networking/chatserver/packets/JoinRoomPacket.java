@@ -48,16 +48,13 @@ public class JoinRoomPacket extends AbstractChatPacket {
 				client.leaveRoom(room);
 		}
 
-		if (!client.isReady) {
-			// Send response
-			JsonObject res = new JsonObject();
-			res.addProperty("conversationId", "CHAT");
-			res.addProperty("participant", participant);
-			res.addProperty("eventId", "conversations.addParticipant");
-			res.addProperty("success", true);
-			client.sendPacket(res);
-			client.isReady = true;
-		}
+		// Send response
+		JsonObject res = new JsonObject();
+		res.addProperty("conversationId", room);
+		res.addProperty("participant", participant);
+		res.addProperty("eventId", "conversations.addParticipant");
+		res.addProperty("success", true);
+		client.sendPacket(res);
 
 		// Join room
 		if (!client.isInRoom(room))
