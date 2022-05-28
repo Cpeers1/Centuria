@@ -1,8 +1,13 @@
 package org.asf.emuferal.players;
 
+import java.io.UnsupportedEncodingException;
+import java.util.UUID;
+
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
+import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -36,6 +41,10 @@ public class Player {
 	public double lastRotZ = 0;
 
 	public int lastAction = 0;
+	
+	//Interacting with. if this is null, the player isn't interacting with an object.
+	//If this is true, the player is interacting with something.
+	public String interactingWithID = null;
 
 	public void destroyAt(Player player) {
 		// Delete character
@@ -99,4 +108,18 @@ public class Player {
 		}
 	}
 
+	public void beginInteraction(String source)
+	{
+		interactingWithID = source;
+	}
+	
+	public void endInteraction(String source)
+	{
+		interactingWithID = null;
+	}
+	
+	public void finishInteraction()
+	{
+		//TODO
+	}
 }

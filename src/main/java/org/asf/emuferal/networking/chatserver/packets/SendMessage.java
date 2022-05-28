@@ -1,15 +1,20 @@
 package org.asf.emuferal.networking.chatserver.packets;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.networking.chatserver.ChatClient;
+import org.asf.emuferal.networking.gameserver.GameServer;
+import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
+import org.asf.emuferal.packets.xt.gameserver.world.WorldReadyPacket;
 import org.asf.emuferal.players.Player;
 
 import com.google.gson.JsonObject;
@@ -118,7 +123,7 @@ public class SendMessage extends AbstractChatPacket {
 		if (client.getPlayer().getPlayerInventory().containsItem("permissions")) {
 			String permLevel = client.getPlayer().getPlayerInventory().getItem("permissions").getAsJsonObject()
 					.get("permissionLevel").getAsString();
-			if (permLevel.equals("moderator") || permLevel.equals("admin")) {
+			if (permLevel.equals("moderator") || permLevel.equals("admin") || permLevel.equals("developer")) {
 				// Parse command
 				ArrayList<String> args = parseCommand(cmd);
 				String cmdId = "";
@@ -328,7 +333,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "removeperms": {
 						// Check perms
-						if (permLevel.equals("admin")) {
+						if (permLevel.equals("admin") || permLevel.equals("developer")) {
 							// Permanent ban
 							if (args.size() < 1) {
 								systemMessage("Missing argument: player", cmd, client);
@@ -364,7 +369,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "makeadmin": {
 						// Check perms
-						if (permLevel.equals("admin")) {
+						if (permLevel.equals("admin") || permLevel.equals("developer")) {
 							// Permanent ban
 							if (args.size() < 1) {
 								systemMessage("Missing argument: player", cmd, client);
@@ -409,7 +414,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "makemoderator": {
 						// Check perms
-						if (permLevel.equals("admin")) {
+						if (permLevel.equals("admin") || permLevel.equals("developer")) {
 							// Permanent ban
 							if (args.size() < 1) {
 								systemMessage("Missing argument: player", cmd, client);
@@ -454,7 +459,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "updatewarning": {
 						// Check perms
-						if (permLevel.equals("admin")) {
+						if (permLevel.equals("admin") || permLevel.equals("developer")) {
 							if (args.size() < 1) {
 								systemMessage("Missing argument: minutes-remaining", cmd, client);
 								return true;
@@ -482,7 +487,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "updateshutdown": {
 						// Check perms
-						if (permLevel.equals("admin")) {
+						if (permLevel.equals("admin") || permLevel.equals("developer")) {
 							// Disconnect everyone
 							for (Player plr : EmuFeral.gameServer.getPlayers()) {
 								plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
@@ -524,6 +529,30 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 					}
+					//Developer commands below..
+					case "tpm": {
+						//Teleports a player to a map.
+						if (permLevel.equals("developer")) {
+							if (args.size() < 1) {
+								systemMessage("Missing argument: teleport UUID", cmd, client);
+								return true;
+							}
+							
+							WorldReadyPacket wrp = new WorldReadyPacket();
+							wrp.teleportUUID = args.get(0);
+							
+							try {
+								wrp.handle(((Player)client.container).client);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								systemMessage("Error: " + e.getMessage(), cmd, client);
+							}
+						
+							return true;
+						}
+						return true;
+					}		
+					
 					case "help": {
 						// Help command
 						String message = "List of commands:\n";
@@ -532,7 +561,7 @@ public class SendMessage extends AbstractChatPacket {
 						message += " - tempban \"<name>\" <days>\"\n";
 						message += " - mute \"<name>\" <minutes> [hours] [days]\n";
 						message += " - pardon \"<name>\"\n";
-						if (permLevel.equals("admin")) {
+						if (permLevel.equals("admin") || permLevel.equals("developer")) {
 							message += " - makeadmin \"<name>\"\n";
 							message += " - makemoderator \"<name>\"\n";
 							message += " - removeperms \"<name>\"\n";

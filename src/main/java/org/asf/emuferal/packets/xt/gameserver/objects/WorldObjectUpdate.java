@@ -180,7 +180,10 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 			break; // FIXME: switch to the spawn finder when all spawns are implemented
 		}
 		default:
-			mode = mode;
+			//Print out world object update call..
+			if (System.getProperty("debugMode") != null) {
+				System.out.println("[OBJECTS] [OU] Unhandled Mode " + mode + " call : " + data);
+			}
 		}
 		pk.writeString(""); // Data suffix
 
@@ -196,6 +199,9 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 				player.client.sendPacket(msg);
 			}
 		}
+		
+
+		
 
 		// TODO
 		return true;

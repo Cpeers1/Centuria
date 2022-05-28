@@ -205,6 +205,37 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		if (slot.equals("200")) {
 			fixBrokenAvatars(item.getAsJsonArray(), inv);
 		}
+		
+		// quest progression items
+		if(slot.equals("311"))
+		{
+
+			if(inv.getItem("311") == null)
+			{
+				//initalize the item if its null
+				inv.setItem("311", new JsonArray());
+			}
+
+			JsonArray itm = inv.getItem("311").getAsJsonArray();
+
+			// Build entry
+			JsonObject obj = new JsonObject();
+			obj.addProperty("defId", 22781);
+			JsonObject components = new JsonObject();
+			JsonObject questObject = new JsonObject();
+			questObject.add("completedQuests", new JsonArray());
+			components.add("SocialExpanseLinearGenericQuestsCompletion", questObject);
+			obj.add("components", components);
+			obj.addProperty("id", UUID.randomUUID().toString());
+			obj.addProperty("type", 311);
+			itm.add(obj);
+			
+			// Send the item to the client
+			InventoryItemPacket pkt = new InventoryItemPacket();
+			pkt.item = itm;
+			client.sendPacket(pkt);
+			return true;
+		}
 
 		// Send the item to the client
 		if (item == null)
