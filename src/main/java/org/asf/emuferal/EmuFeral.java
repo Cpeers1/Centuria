@@ -41,12 +41,13 @@ import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.http.APIProcessor;
 import org.asf.emuferal.networking.http.DirectorProcessor;
 import org.asf.emuferal.networking.http.PaymentsProcessor;
+import org.asf.emuferal.players.Player;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.ConnectiveServerFactory;
 
 public class EmuFeral {
 	// Update
-	public static final String SERVER_UPDATE_VERSION = "1.0.0.A8";
+	public static final String SERVER_UPDATE_VERSION = "1.0.0.A9";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/emuferal";
 
 	// Configuration
@@ -70,6 +71,131 @@ public class EmuFeral {
 	private static PrivateKey privateKey;
 	private static PublicKey publicKey;
 
+	// Updating
+	private static boolean cancelUpdate = false;
+	private static boolean updating = false;
+
+	/**
+	 * Cancels the update
+	 * 
+	 * @return True if successful, false otherwise
+	 */
+	public static boolean cancelUpdate() {
+		if (updating) {
+			cancelUpdate = true;
+			return true;
+		} else
+			return false;
+	}
+
+	/**
+	 * Runs the update timer (kicks players after a specified time for server
+	 * reboot)
+	 * 
+	 * @param mins Time given before restart in minutes
+	 * @return True if successful, false otherwise
+	 */
+	public static boolean runUpdater(int mins) {
+		// Run timer
+		if (!cancelUpdate) {
+			updating = true;
+			final int minutes = mins;
+			Thread th = new Thread(() -> {
+				int remaining = minutes;
+				while (!cancelUpdate) {
+					String message = null;
+					switch (remaining) {
+					case 60:
+					case 30:
+					case 15:
+					case 10:
+					case 5:
+					case 3:
+						message = "%xt%ua%-1%7391|" + remaining + "%";
+						break;
+					case 1:
+						message = "%xt%ua%-1%7390|1%";
+						break;
+					case 0:
+						updateShutdown();
+						cancelUpdate = false;
+						return;
+					}
+
+					if (message != null) {
+						// Warn everyone
+						for (Player plr : EmuFeral.gameServer.getPlayers()) {
+							plr.client.sendPacket(message);
+						}
+					}
+
+					for (int i = 0; i < 60; i++) {
+						if (cancelUpdate)
+							break;
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+						}
+					}
+
+					remaining--;
+				}
+				cancelUpdate = false;
+				updating = false;
+			});
+			th.setName("Update Thread");
+			th.start();
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Shuts down the server with a update message
+	 */
+	public static void updateShutdown() {
+		// Disconnect everyone
+		for (Player plr : EmuFeral.gameServer.getPlayers()) {
+			plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
+		}
+
+		// Inform the game server to disconnect with maintenance
+		EmuFeral.gameServer.maintenance = true;
+
+		// Wait a bit
+		int i = 0;
+		while (EmuFeral.gameServer.getPlayers().length != 0) {
+			i++;
+			if (i == 30)
+				break;
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+			}
+		}
+		for (Player plr : EmuFeral.gameServer.getPlayers()) {
+			plr.client.disconnect();
+		}
+
+		// Wait for logoff and exit
+		int l = 0;
+		while (EmuFeral.gameServer.getPlayers().length != 0) {
+			l++;
+			if (l == 60) {
+				break;
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+			}
+		}
+
+		// Exit
+		System.exit(0);
+	}
+
 	public static void main(String[] args) throws InvocationTargetException, IOException, NoSuchAlgorithmException {
 		// Update configuration
 		String updateChannel = "alpha";
@@ -92,6 +218,62 @@ public class EmuFeral {
 
 			// Check if disabled
 			disableUpdater = Boolean.parseBoolean(properties.getOrDefault("disable", "false"));
+
+			// Check if automatic updating is enabled
+			if (Boolean.parseBoolean(properties.getOrDefault("runtime-auto-update", "false"))) {
+				int mins = Integer.parseInt(properties.getOrDefault("runtime-update-timer-length", "10"));
+
+				// Start the automatic update thread
+				final String channel = updateChannel;
+				Thread updater = new Thread(() -> {
+					while (true) {
+						// Run every 2 minutes
+						try {
+							Thread.sleep(120000);
+						} catch (InterruptedException e) {
+						}
+
+						// Check for updates
+						System.out.println("Checking for updates...");
+						try {
+							InputStream updateLog = new URL(EmuFeral.DOWNLOAD_BASE_URL + "/" + channel + "/update.info")
+									.openStream();
+							String update = new String(updateLog.readAllBytes(), "UTF-8").trim();
+							updateLog.close();
+
+							if (!SERVER_UPDATE_VERSION.equals(update)) {
+								// Download the update list
+								System.out.println("Update available, new version: " + update);
+								System.out.println("Preparing to update EmuFeral...");
+								InputStream strm = new URL(
+										EmuFeral.DOWNLOAD_BASE_URL + "/" + channel + "/" + update + "/update.list")
+										.openStream();
+								String fileList = new String(strm.readAllBytes(), "UTF-8").trim();
+								strm.close();
+
+								// Parse the file list (newline-separated)
+								String downloadList = "";
+								for (String file : fileList.split("\n")) {
+									if (!file.isEmpty()) {
+										downloadList += file + "=" + EmuFeral.DOWNLOAD_BASE_URL + "/" + channel + "/"
+												+ update + "/" + file + "\n";
+									}
+								}
+
+								// Save the file, copy jar and run the shutdown timer
+								Files.writeString(Path.of("update.list"), downloadList);
+								if (!new File("updater.jar").exists())
+									Files.copy(Path.of("EmuFeral.jar"), Path.of("updater.jar"));
+								runUpdater(mins);
+								return;
+							}
+						} catch (IOException e) {
+						}
+					}
+				}, "Automatic update thread");
+				updater.setDaemon(true);
+				updater.start();
+			}
 		}
 
 		// Splash message

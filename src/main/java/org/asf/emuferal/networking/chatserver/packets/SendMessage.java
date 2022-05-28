@@ -130,6 +130,9 @@ public class SendMessage extends AbstractChatPacket {
 
 					// Run command
 					switch (cmdId) {
+
+					//
+					// Moderator commands below
 					case "mute": {
 						// Mute
 						if (args.size() < 1) {
@@ -394,6 +397,9 @@ public class SendMessage extends AbstractChatPacket {
 						systemMessage("Player is not online.", cmd, client);
 						return true;
 					}
+
+					//
+					// Admin commands below
 					case "makeadmin": {
 						// Check perms
 						if (hasPerm(permLevel, "admin")) {
@@ -488,6 +494,55 @@ public class SendMessage extends AbstractChatPacket {
 							break;
 						}
 					}
+					case "removeperms": {
+						// Check perms
+						if (hasPerm(permLevel, "admin")) {
+							// Permanent ban
+							if (args.size() < 1) {
+								systemMessage("Missing argument: player", cmd, client);
+								return true;
+							}
+
+							// Find player
+							String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+							EmuFeralAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// Take permissions away
+							if (acc.getPlayerInventory().containsItem("permissions")) {
+								if (hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+										.get("permissionLevel").getAsString(), "developer")
+										&& !hasPerm(permLevel, "developer")) {
+									systemMessage("Unable to remove permissions from higher-ranking users.", cmd,
+											client);
+									return true;
+								}
+								acc.getPlayerInventory().deleteItem("permissions");
+							}
+
+							// Find online player
+							for (ChatClient plr : client.getServer().getClients()) {
+								if (plr.getPlayer().getDisplayName().equals(args.get(0))) {
+									// Update inventory
+									plr.getPlayer().getPlayerInventory().deleteItem("permissions");
+									break;
+								}
+							}
+
+							// Completed
+							systemMessage("Removed all permissions from " + acc.getDisplayName() + ".", cmd, client);
+							return true;
+						} else {
+							break;
+						}
+					}
+
+					//
+					// Developer commands below..
 					case "makedeveloper": {
 						// Check perms
 						if (hasPerm(permLevel, "developer")) {
@@ -535,52 +590,6 @@ public class SendMessage extends AbstractChatPacket {
 							break;
 						}
 					}
-					case "removeperms": {
-						// Check perms
-						if (hasPerm(permLevel, "admin")) {
-							// Permanent ban
-							if (args.size() < 1) {
-								systemMessage("Missing argument: player", cmd, client);
-								return true;
-							}
-
-							// Find player
-							String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
-							if (uuid == null) {
-								// Player not found
-								systemMessage("Specified account could not be located.", cmd, client);
-								return true;
-							}
-							EmuFeralAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-							// Take permissions away
-							if (acc.getPlayerInventory().containsItem("permissions")) {
-								if (hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-										.get("permissionLevel").getAsString(), "developer")
-										&& !hasPerm(permLevel, "developer")) {
-									systemMessage("Unable to remove permissions from higher-ranking users.", cmd,
-											client);
-									return true;
-								}
-								acc.getPlayerInventory().deleteItem("permissions");
-							}
-
-							// Find online player
-							for (ChatClient plr : client.getServer().getClients()) {
-								if (plr.getPlayer().getDisplayName().equals(args.get(0))) {
-									// Update inventory
-									plr.getPlayer().getPlayerInventory().deleteItem("permissions");
-									break;
-								}
-							}
-
-							// Completed
-							systemMessage("Removed all permissions from " + acc.getDisplayName() + ".", cmd, client);
-							return true;
-						} else {
-							break;
-						}
-					}
 					case "updatewarning": {
 						// Check perms
 						if (hasPerm(permLevel, "developer")) {
@@ -611,53 +620,78 @@ public class SendMessage extends AbstractChatPacket {
 							break;
 						}
 					}
-					case "updateshutdown": {
+					case "update": {
 						// Check perms
 						if (hasPerm(permLevel, "developer")) {
-							// Disconnect everyone
-							for (Player plr : EmuFeral.gameServer.getPlayers()) {
-								plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
+							if (args.size() < 1) {
+								systemMessage("Missing argument: minutes", cmd, client);
+								return true;
 							}
 
-							// Inform the game server to disconnect with maintenance
-							EmuFeral.gameServer.maintenance = true;
-
-							// Wait a bit
-							int i = 0;
-							while (EmuFeral.gameServer.getPlayers().length != 0) {
-								i++;
-								if (i == 30)
-									break;
-								try {
-									Thread.sleep(1000);
-								} catch (InterruptedException e) {
-								}
-							}
-							for (Player plr : EmuFeral.gameServer.getPlayers()) {
-								plr.client.disconnect();
-							}
-
-							// Wait for logoff and exit
-							int l = 0;
-							while (EmuFeral.gameServer.getPlayers().length != 0) {
-								l++;
-								if (l == 60) {
-									break;
-								}
-								try {
-									Thread.sleep(1000);
-								} catch (InterruptedException e) {
-								}
+							// Parse arguments
+							int mins = 0;
+							switch (args.get(0)) {
+							case "60":
+								mins = 60;
+								break;
+							case "30":
+								mins = 30;
+								break;
+							case "15":
+								mins = 15;
+								break;
+							case "10":
+								mins = 10;
+								break;
+							case "5":
+								mins = 5;
+								break;
+							case "3":
+								mins = 3;
+								break;
+							case "1":
+								mins = 1;
+								break;
+							default:
+								systemMessage("Invalid value for argument: minutes-remaining", cmd, client);
+								return true;
 							}
 
-							// Exit
-							System.exit(0);
+							// Run timer
+							if (EmuFeral.runUpdater(mins)) {
+								systemMessage("Update timer has been started.", cmd, client);
+							} else {
+								systemMessage("Update timer is already running.", cmd, client);
+							}
+
 							return true;
 						} else {
 							break;
 						}
 					}
-					// Developer commands below..
+					case "cancelupdate": {
+						// Check perms
+						if (hasPerm(permLevel, "developer")) {
+							// Cancel update
+							if (!EmuFeral.cancelUpdate())
+								systemMessage("Update restart cancelled.", cmd, client);
+							else
+								systemMessage("Update timer is not running.", cmd, client);
+							return true;
+						} else {
+							break;
+						}
+					}
+					case "updateshutdown": {
+						// Check perms
+						if (hasPerm(permLevel, "developer")) {
+							// Shut down the server
+							EmuFeral.updateShutdown();
+							return true;
+						} else {
+							break;
+						}
+					}
 					case "tpm": {
 						// Teleports a player to a map.
 						if (hasPerm(permLevel, "developer")) {
@@ -682,6 +716,8 @@ public class SendMessage extends AbstractChatPacket {
 						}
 					}
 
+					//
+					// Help command
 					case "help": {
 						// Help command
 						String message = "List of commands:\n";
@@ -693,6 +729,8 @@ public class SendMessage extends AbstractChatPacket {
 						if (hasPerm(permLevel, "developer")) {
 							message += " - updatewarning <minutes-remaining>\n";
 							message += " - updateshutdown\n";
+							message += " - update <60|30|15|10|5|3|1>\n";
+							message += " - cancelupdate\n";
 							message += " - makedeveloper \"<name>\"\n";
 						}
 						if (hasPerm(permLevel, "admin")) {
