@@ -1,7 +1,10 @@
 package org.asf.emuferal.networking.gameserver;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.ConcurrentModificationException;
@@ -59,6 +62,11 @@ public class GameServer extends BaseSmartfoxServer {
 	private Random rnd = new Random();
 	private XmlMapper mapper = new XmlMapper();
 	private ArrayList<Player> players = new ArrayList<Player>();
+
+	public ArrayList<String> vpnIpsV4 = new ArrayList<String>();
+	public ArrayList<String> vpnIpsV6 = new ArrayList<String>();
+
+	public String whitelistFile = null;
 
 	public Player[] getPlayers() {
 		while (true) {
@@ -250,6 +258,32 @@ public class GameServer extends BaseSmartfoxServer {
 			return;
 		}
 
+		// Check ip ban
+		if (isIPBanned(client.getSocket(), acc, vpnIpsV4, vpnIpsV6, whitelistFile)) {
+			// Disconnect silently
+			JsonObject response = new JsonObject();
+			JsonObject b = new JsonObject();
+			b.addProperty("r", auth.rField);
+			JsonObject o = new JsonObject();
+			o.addProperty("statusId", -23);
+			o.addProperty("_cmd", "login");
+			JsonObject params = new JsonObject();
+			params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
+			params.addProperty("pendingFlags", 0);
+			params.addProperty("activeLookId", acc.getActiveLook());
+			params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
+			params.addProperty("sessionId", acc.getAccountID());
+			params.addProperty("userId", acc.getAccountNumericID());
+			params.addProperty("avatarInvId", 0);
+			o.add("params", params);
+			o.addProperty("status", -23);
+			b.add("o", o);
+			response.add("b", b);
+			response.addProperty("t", "xt");
+			sendPacket(client, response.toString());
+			return;
+		}
+
 		// Disconnect an already connected instance
 		for (Player player : getPlayers()) {
 			if (player.account.getAccountID().equals(acc.getAccountID())) {
@@ -294,6 +328,44 @@ public class GameServer extends BaseSmartfoxServer {
 				"Player connected: " + plr.account.getLoginName() + " (as " + plr.account.getDisplayName() + ")");
 		sendPacket(client, "%xt%ulc%-1%");
 		players.add(plr);
+	}
+
+	// IP ban checks (both vpn block and ip banning)
+	public static boolean isIPBanned(Socket socket, EmuFeralAccount acc, ArrayList<String> vpnIpsV4,
+			ArrayList<String> vpnIpsV6, String whitelistFile) throws IOException {
+
+		// Check ip ban
+		if (isIPBanned(socket))
+			return true;
+
+		// Check whitelisted accounts
+		if (whitelistFile != null) {
+			File whitelistData = new File(whitelistFile);
+			if (whitelistData.exists()) {
+				for (String login : Files.readAllLines(whitelistData.toPath())) {
+					if (acc.getLoginName().equals(login))
+						return false;
+				}
+			}
+		}
+
+		// Check VPN ban
+		if (isEndpointVPN(socket, vpnIpsV4, vpnIpsV6))
+			return true;
+
+		return false;
+	}
+
+	// VPN check
+	private static boolean isEndpointVPN(Socket socket, ArrayList<String> vpnIpsV4, ArrayList<String> vpnIpsV6) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	// IP ban check
+	private static boolean isIPBanned(Socket socket) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	public boolean isBanned(EmuFeralAccount acc) {

@@ -351,7 +351,9 @@ public class EmuFeral {
 							+ "chat-port=6972\n" + "allow-registration=true\n" + "give-all-avatars=true\n"
 							+ "give-all-mods=true\n" + "give-all-clothes=true\n" + "give-all-wings=true\n"
 							+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
-							+ "encrypt-payments=true\n" + "encrypt-game=false");
+							+ "encrypt-payments=true\n" + "encrypt-game=false\n\nvpn-user-whitelist=vpn-whitelist\n"
+							+ "vpn-ipv4-banlist=https://raw.githubusercontent.com/ejrv/VPNs/master/vpn-ipv4.txt\n"
+							+ "vpn-ipv6-banlist=https://raw.githubusercontent.com/ejrv/VPNs/master/vpn-ipv6.txt");
 		}
 
 		// Parse properties
@@ -451,7 +453,7 @@ public class EmuFeral {
 		paymentServer = factory.build();
 		paymentServer.registerProcessor(new PaymentsProcessor());
 
-		// Start game server
+		// Load game server
 		ServerSocket sock;
 		System.out.println("Starting Emulated Feral Game server...");
 		if (encryptGame)
@@ -468,6 +470,34 @@ public class EmuFeral {
 		else
 			sock = new ServerSocket(Integer.parseInt(properties.get("game-port")), 0, InetAddress.getByName("0.0.0.0"));
 		gameServer = new GameServer(sock);
+
+		// Server settings
+		gameServer.whitelistFile = properties.get("vpn-user-whitelist");
+
+		// Download VPN ips
+		try {
+			InputStream strm = new URL(properties.getOrDefault("vpn-ipv4-banlist",
+					"https://raw.githubusercontent.com/ejrv/VPNs/master/vpn-ipv4.txt")).openStream();
+			String data = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+			for (String line : data.split("\n")) {
+				if (line.isBlank() || line.startsWith("#"))
+					continue;
+				gameServer.vpnIpsV4.add(line);
+			}
+			strm.close();
+			strm = new URL(properties.getOrDefault("vpn-ipv6-banlist",
+					"https://raw.githubusercontent.com/ejrv/VPNs/master/vpn-ipv6.txt")).openStream();
+			data = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+			for (String line : data.split("\n")) {
+				if (line.isBlank() || line.startsWith("#"))
+					continue;
+				gameServer.vpnIpsV6.add(line);
+			}
+			strm.close();
+		} catch (IOException e) {
+		}
+
+		// Start game server
 		gameServer.start();
 
 		// Start chat server

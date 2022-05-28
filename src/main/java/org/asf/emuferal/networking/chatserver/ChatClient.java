@@ -154,6 +154,13 @@ public class ChatClient {
 			return;
 		}
 
+		// Check ip ban
+		if (GameServer.isIPBanned(client, acc, EmuFeral.gameServer.vpnIpsV4, EmuFeral.gameServer.vpnIpsV6,
+				EmuFeral.gameServer.whitelistFile)) {
+			disconnect();
+			return;
+		}
+
 		// Save account in memory
 		player = acc;
 

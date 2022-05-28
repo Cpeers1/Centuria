@@ -21,7 +21,7 @@ public class DirectorProcessor extends HttpUploadProcessor {
 
 	public void process(String contentType, Socket client, String method) {
 		String path = this.getRequestPath();
-
+		
 		try {
 			switch (path) {
 			case "/v1/bestGameServer": {
