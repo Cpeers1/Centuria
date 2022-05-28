@@ -9,6 +9,13 @@ main todo:
 - feedback
 - reporting
 
+social system update:
+- player cards
+- favoriting
+- followers
+- blocking
+- trading
+
 interaction update:
 - general interactions
 - item collection
@@ -18,7 +25,7 @@ interaction update:
 - sketchbook
 
 shop update:
-- implement the shop
+- implement the shops
 - currency
 - 10k star fragments on join (can be disabled)
 - avatar purchases
