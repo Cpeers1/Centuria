@@ -53,6 +53,11 @@ public class SendMessage extends AbstractChatPacket {
 				return true;
 		}
 
+		// Check content
+		if (message.isBlank()) {
+			return true; // ignore chat
+		}
+
 		// Check mute
 		EmuFeralAccount acc = client.getPlayer();
 		if (acc.getPlayerInventory().containsItem("penalty") && acc.getPlayerInventory().getItem("penalty")

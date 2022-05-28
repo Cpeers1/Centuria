@@ -27,6 +27,11 @@ public class ChatClient {
 	private ArrayList<String> rooms = new ArrayList<String>();
 	private HashMap<String, Boolean> privateChat = new HashMap<String, Boolean>();
 
+	// TODO: cooldown and instaban
+	public int messageCooldown = 0;
+	public int lastMessageCount = 0;
+	public int cooldownLength = 0;
+
 	// Room lock
 	public boolean isReady = false;
 
@@ -88,6 +93,12 @@ public class ChatClient {
 		String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
 		String sig = token.split("\\.")[2];
 		if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
+			disconnect();
+			return;
+		}
+
+		// Check maintenance mode
+		if (EmuFeral.gameServer.maintenance) {
 			disconnect();
 			return;
 		}

@@ -95,12 +95,10 @@ public class ChatServer {
 
 				// Client loop
 				while (client.getSocket() != null) {
+					JsonObject obj = client.readRawPacket();
 					try {
-						client.handle(client.readRawPacket());
+						client.handle(obj);
 					} catch (Exception e) {
-						if (e instanceof JsonIOException || e instanceof IOException
-								|| e instanceof IllegalArgumentException)
-							throw e;
 					}
 				}
 

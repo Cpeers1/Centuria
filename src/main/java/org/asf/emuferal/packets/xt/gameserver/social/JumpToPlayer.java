@@ -73,8 +73,6 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 					// Assign room
 					player.roomReady = false;
 					player.pendingRoom = plr.roomID;
-					player.room = "room_" + plr.pendingRoom;
-					player.roomReady = false;
 
 					// SEnd packet
 					client.sendPacket(join);
