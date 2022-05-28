@@ -673,7 +673,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check perms
 						if (hasPerm(permLevel, "developer")) {
 							// Cancel update
-							if (!EmuFeral.cancelUpdate())
+							if (EmuFeral.cancelUpdate())
 								systemMessage("Update restart cancelled.", cmd, client);
 							else
 								systemMessage("Update timer is not running.", cmd, client);
