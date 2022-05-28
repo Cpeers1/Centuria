@@ -11,6 +11,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.UUID;
 
 import javax.crypto.SecretKeyFactory;
@@ -22,6 +24,38 @@ import org.asf.emuferal.accounts.EmuFeralAccount;
 public class FileBasedAccountManager extends AccountManager {
 
 	private static SecureRandom rnd = new SecureRandom();
+	private static HashMap<String, Integer> passswordLock = new HashMap<String, Integer>();
+
+	static {
+		Thread th = new Thread(() -> {
+			while (true) {
+				HashMap<String, Integer> passswordLock;
+				while (true) {
+					try {
+						passswordLock = new HashMap<String, Integer>(FileBasedAccountManager.passswordLock);
+						break;
+					} catch (ConcurrentModificationException e) {
+					}
+				}
+
+				for (String pwd : passswordLock.keySet()) {
+					if (passswordLock.get(pwd) - 1 <= 0) {
+						FileBasedAccountManager.passswordLock.remove(pwd);
+					} else {
+						FileBasedAccountManager.passswordLock.put(pwd, passswordLock.get(pwd) - 1);
+					}
+				}
+
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					break;
+				}
+			}
+		});
+		th.setDaemon(true);
+		th.start();
+	}
 
 	@Override
 	public String authenticate(String username, char[] password) {
@@ -40,6 +74,10 @@ public class FileBasedAccountManager extends AccountManager {
 			} catch (IOException e) {
 			}
 		} else
+			return null;
+
+		// Return null if the password is on cooldown
+		if (passswordLock.containsKey(id))
 			return null;
 
 		// If it has one, check password
@@ -65,6 +103,7 @@ public class FileBasedAccountManager extends AccountManager {
 
 				// Compare hashes
 				if (hash.length != cHash.length) {
+					passswordLock.put(id, 8);
 					try {
 						Thread.sleep(8000);
 					} catch (InterruptedException e) {
@@ -72,6 +111,7 @@ public class FileBasedAccountManager extends AccountManager {
 					return null;
 				}
 				for (int i = 0; i < hash.length; i++) {
+					passswordLock.put(id, 8);
 					if (hash[i] != cHash[i]) {
 						try {
 							Thread.sleep(8000);
