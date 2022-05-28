@@ -14,6 +14,7 @@ import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.dms.DMManager;
 import org.asf.emuferal.dms.PrivateChatMessage;
 import org.asf.emuferal.networking.chatserver.ChatClient;
+import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.packets.xt.gameserver.world.WorldReadyPacket;
 import org.asf.emuferal.players.Player;
 
@@ -82,7 +83,7 @@ public class SendMessage extends AbstractChatPacket {
 					break;
 				}
 			}
-			
+
 			// Disconnect
 			client.disconnect();
 
@@ -169,7 +170,7 @@ public class SendMessage extends AbstractChatPacket {
 		if (client.getPlayer().getPlayerInventory().containsItem("permissions")) {
 			String permLevel = client.getPlayer().getPlayerInventory().getItem("permissions").getAsJsonObject()
 					.get("permissionLevel").getAsString();
-			if (hasPerm(permLevel, "moderator")) {
+			if (GameServer.hasPerm(permLevel, "moderator")) {
 				// Parse command
 				ArrayList<String> args = parseCommand(cmd);
 				String cmdId = "";
@@ -227,12 +228,14 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Check rank
 						if (acc.getPlayerInventory().containsItem("permissions")) {
-							if ((hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-									.get("permissionLevel").getAsString(), "developer")
-									&& !hasPerm(permLevel, "developer"))
-									|| hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-											.get("permissionLevel").getAsString(), "admin")
-											&& !hasPerm(permLevel, "admin")) {
+							if ((GameServer
+									.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString(), "developer")
+									&& !GameServer.hasPerm(permLevel, "developer"))
+									|| GameServer
+											.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+													.get("permissionLevel").getAsString(), "admin")
+											&& !GameServer.hasPerm(permLevel, "admin")) {
 								systemMessage("Unable to mute higher-ranking users.", cmd, client);
 								return true;
 							}
@@ -283,12 +286,14 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Check rank
 						if (acc.getPlayerInventory().containsItem("permissions")) {
-							if ((hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-									.get("permissionLevel").getAsString(), "developer")
-									&& !hasPerm(permLevel, "developer"))
-									|| hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-											.get("permissionLevel").getAsString(), "admin")
-											&& !hasPerm(permLevel, "admin")) {
+							if ((GameServer
+									.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString(), "developer")
+									&& !GameServer.hasPerm(permLevel, "developer"))
+									|| GameServer
+											.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+													.get("permissionLevel").getAsString(), "admin")
+											&& !GameServer.hasPerm(permLevel, "admin")) {
 								systemMessage("Unable to ban higher-ranking users.", cmd, client);
 								return true;
 							}
@@ -336,12 +341,14 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Check rank
 						if (acc.getPlayerInventory().containsItem("permissions")) {
-							if ((hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-									.get("permissionLevel").getAsString(), "developer")
-									&& !hasPerm(permLevel, "developer"))
-									|| hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-											.get("permissionLevel").getAsString(), "admin")
-											&& !hasPerm(permLevel, "admin")) {
+							if ((GameServer
+									.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString(), "developer")
+									&& !GameServer.hasPerm(permLevel, "developer"))
+									|| GameServer
+											.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+													.get("permissionLevel").getAsString(), "admin")
+											&& !GameServer.hasPerm(permLevel, "admin")) {
 								systemMessage("Unable to ban higher-ranking users.", cmd, client);
 								return true;
 							}
@@ -388,12 +395,14 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Check rank
 						if (acc.getPlayerInventory().containsItem("permissions")) {
-							if ((hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-									.get("permissionLevel").getAsString(), "developer")
-									&& !hasPerm(permLevel, "developer"))
-									|| hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-											.get("permissionLevel").getAsString(), "admin")
-											&& !hasPerm(permLevel, "admin")) {
+							if ((GameServer
+									.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString(), "developer")
+									&& !GameServer.hasPerm(permLevel, "developer"))
+									|| GameServer
+											.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+													.get("permissionLevel").getAsString(), "admin")
+											&& !GameServer.hasPerm(permLevel, "admin")) {
 								systemMessage("Unable to pardon higher-ranking users.", cmd, client);
 								return true;
 							}
@@ -441,13 +450,13 @@ public class SendMessage extends AbstractChatPacket {
 							if (plr.account.getDisplayName().equals(args.get(0))) {
 								// Check rank
 								if (plr.account.getPlayerInventory().containsItem("permissions")) {
-									if ((hasPerm(plr.account.getPlayerInventory().getItem("permissions")
+									if ((GameServer.hasPerm(plr.account.getPlayerInventory().getItem("permissions")
 											.getAsJsonObject().get("permissionLevel").getAsString(), "developer")
-											&& !hasPerm(permLevel, "developer"))
-											|| hasPerm(
+											&& !GameServer.hasPerm(permLevel, "developer"))
+											|| GameServer.hasPerm(
 													plr.account.getPlayerInventory().getItem("permissions")
 															.getAsJsonObject().get("permissionLevel").getAsString(),
-													"admin") && !hasPerm(permLevel, "admin")) {
+													"admin") && !GameServer.hasPerm(permLevel, "admin")) {
 										systemMessage("Unable to kick higher-ranking users.", cmd, client);
 										return true;
 									}
@@ -474,7 +483,7 @@ public class SendMessage extends AbstractChatPacket {
 					// Admin commands below
 					case "makeadmin": {
 						// Check perms
-						if (hasPerm(permLevel, "admin")) {
+						if (GameServer.hasPerm(permLevel, "admin")) {
 							// Permanent ban
 							if (args.size() < 1) {
 								systemMessage("Missing argument: player", cmd, client);
@@ -521,7 +530,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "makemoderator": {
 						// Check perms
-						if (hasPerm(permLevel, "admin")) {
+						if (GameServer.hasPerm(permLevel, "admin")) {
 							// Permanent ban
 							if (args.size() < 1) {
 								systemMessage("Missing argument: player", cmd, client);
@@ -568,7 +577,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "removeperms": {
 						// Check perms
-						if (hasPerm(permLevel, "admin")) {
+						if (GameServer.hasPerm(permLevel, "admin")) {
 							// Permanent ban
 							if (args.size() < 1) {
 								systemMessage("Missing argument: player", cmd, client);
@@ -586,9 +595,10 @@ public class SendMessage extends AbstractChatPacket {
 
 							// Take permissions away
 							if (acc.getPlayerInventory().containsItem("permissions")) {
-								if (hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-										.get("permissionLevel").getAsString(), "developer")
-										&& !hasPerm(permLevel, "developer")) {
+								if (GameServer
+										.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+												.get("permissionLevel").getAsString(), "developer")
+										&& !GameServer.hasPerm(permLevel, "developer")) {
 									systemMessage("Unable to remove permissions from higher-ranking users.", cmd,
 											client);
 									return true;
@@ -623,7 +633,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "updatewarning": {
 						// Check perms
-						if (hasPerm(permLevel, "admin")) {
+						if (GameServer.hasPerm(permLevel, "admin")) {
 							if (args.size() < 1) {
 								systemMessage("Missing argument: minutes-remaining", cmd, client);
 								return true;
@@ -653,7 +663,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "update": {
 						// Check perms
-						if (hasPerm(permLevel, "admin")) {
+						if (GameServer.hasPerm(permLevel, "admin")) {
 							if (args.size() < 1) {
 								systemMessage("Missing argument: minutes", cmd, client);
 								return true;
@@ -702,7 +712,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "cancelupdate": {
 						// Check perms
-						if (hasPerm(permLevel, "admin")) {
+						if (GameServer.hasPerm(permLevel, "admin")) {
 							// Cancel update
 							if (EmuFeral.cancelUpdate())
 								systemMessage("Update restart cancelled.", cmd, client);
@@ -715,7 +725,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "updateshutdown": {
 						// Check perms
-						if (hasPerm(permLevel, "admin")) {
+						if (GameServer.hasPerm(permLevel, "admin")) {
 							// Shut down the server
 							EmuFeral.updateShutdown();
 							return true;
@@ -725,14 +735,14 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "startmaintenance": {
 						// Check perms
-						if (hasPerm(permLevel, "admin")) {
+						if (GameServer.hasPerm(permLevel, "admin")) {
 							// Enable maintenance mode
 							EmuFeral.gameServer.maintenance = true;
 
 							// Disconnect everyone but the staff
 							for (Player plr : EmuFeral.gameServer.getPlayers()) {
 								if (!plr.account.getPlayerInventory().containsItem("permissions")
-										|| !hasPerm(
+										|| !GameServer.hasPerm(
 												plr.account.getPlayerInventory().getItem("permissions")
 														.getAsJsonObject().get("permissionLevel").getAsString(),
 												"moderator"))
@@ -743,7 +753,7 @@ public class SendMessage extends AbstractChatPacket {
 							int i = 0;
 							while (Stream.of(EmuFeral.gameServer.getPlayers())
 									.filter(plr -> !plr.account.getPlayerInventory().containsItem("permissions")
-											|| !hasPerm(
+											|| !GameServer.hasPerm(
 													plr.account.getPlayerInventory().getItem("permissions")
 															.getAsJsonObject().get("permissionLevel").getAsString(),
 													"moderator"))
@@ -759,7 +769,7 @@ public class SendMessage extends AbstractChatPacket {
 							}
 							for (Player plr : EmuFeral.gameServer.getPlayers()) {
 								if (!plr.account.getPlayerInventory().containsItem("permissions")
-										|| !hasPerm(
+										|| !GameServer.hasPerm(
 												plr.account.getPlayerInventory().getItem("permissions")
 														.getAsJsonObject().get("permissionLevel").getAsString(),
 												"moderator"))
@@ -775,7 +785,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "endmaintenance": {
 						// Check perms
-						if (hasPerm(permLevel, "admin")) {
+						if (GameServer.hasPerm(permLevel, "admin")) {
 							// Disable maintenance mode
 							EmuFeral.gameServer.maintenance = false;
 							systemMessage("Maintenance mode disabled.", cmd, client);
@@ -789,7 +799,7 @@ public class SendMessage extends AbstractChatPacket {
 					// Developer commands below..
 					case "makedeveloper": {
 						// Check perms
-						if (hasPerm(permLevel, "developer")) {
+						if (GameServer.hasPerm(permLevel, "developer")) {
 							// Permanent ban
 							if (args.size() < 1) {
 								systemMessage("Missing argument: player", cmd, client);
@@ -836,7 +846,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "tpm": {
 						// Teleports a player to a map.
-						if (hasPerm(permLevel, "developer")) {
+						if (GameServer.hasPerm(permLevel, "developer")) {
 							if (args.size() < 1) {
 								systemMessage("Missing argument: teleport UUID", cmd, client);
 								return true;
@@ -869,10 +879,10 @@ public class SendMessage extends AbstractChatPacket {
 						message += " - forcenamechange \"<member>\"\n";
 						message += " - mute \"<name>\" <minutes> [hours] [days]\n";
 						message += " - pardon \"<name>\"\n";
-						if (hasPerm(permLevel, "developer")) {
+						if (GameServer.hasPerm(permLevel, "developer")) {
 							message += " - makedeveloper \"<name>\"\n";
 						}
-						if (hasPerm(permLevel, "admin")) {
+						if (GameServer.hasPerm(permLevel, "admin")) {
 							message += " - makeadmin \"<name>\"\n";
 							message += " - makemoderator \"<name>\"\n";
 							message += " - removeperms \"<name>\"\n";
@@ -895,38 +905,6 @@ public class SendMessage extends AbstractChatPacket {
 				return true;
 			}
 		}
-		return false;
-	}
-
-	// Used to check permissions
-	private boolean hasPerm(String level, String perm) {
-		switch (level) {
-		case "moderator":
-			return perm.equals("moderator");
-
-		case "admin":
-			switch (perm) {
-			case "moderator":
-				return true;
-			case "admin":
-				return true;
-			default:
-				return false;
-			}
-
-		case "developer":
-			switch (perm) {
-			case "moderator":
-				return true;
-			case "admin":
-				return true;
-			case "developer":
-				return true;
-			default:
-				return false;
-			}
-		}
-
 		return false;
 	}
 

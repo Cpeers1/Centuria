@@ -162,27 +162,40 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// If under maintenance, send error
 		if (maintenance) {
-			JsonObject response = new JsonObject();
-			JsonObject b = new JsonObject();
-			b.addProperty("r", auth.rField);
-			JsonObject o = new JsonObject();
-			o.addProperty("statusId", -16);
-			o.addProperty("_cmd", "login");
-			JsonObject params = new JsonObject();
-			params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
-			params.addProperty("pendingFlags", 0);
-			params.addProperty("activeLookId", acc.getActiveLook());
-			params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
-			params.addProperty("sessionId", acc.getAccountID());
-			params.addProperty("userId", acc.getAccountNumericID());
-			params.addProperty("avatarInvId", 0);
-			o.add("params", params);
-			o.addProperty("status", -16);
-			b.add("o", o);
-			response.add("b", b);
-			response.addProperty("t", "xt");
-			sendPacket(client, response.toString());
-			return;
+			boolean lockout = true;
+
+			// Check permissions
+			if (acc.getPlayerInventory().containsItem("permissions")) {
+				String permLevel = acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+						.get("permissionLevel").getAsString();
+				if (hasPerm(permLevel, "moderator")) {
+					lockout = false;
+				}
+			}
+
+			if (lockout) {
+				JsonObject response = new JsonObject();
+				JsonObject b = new JsonObject();
+				b.addProperty("r", auth.rField);
+				JsonObject o = new JsonObject();
+				o.addProperty("statusId", -16);
+				o.addProperty("_cmd", "login");
+				JsonObject params = new JsonObject();
+				params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
+				params.addProperty("pendingFlags", 0);
+				params.addProperty("activeLookId", acc.getActiveLook());
+				params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
+				params.addProperty("sessionId", acc.getAccountID());
+				params.addProperty("userId", acc.getAccountNumericID());
+				params.addProperty("avatarInvId", 0);
+				o.add("params", params);
+				o.addProperty("status", -16);
+				b.add("o", o);
+				response.add("b", b);
+				response.addProperty("t", "xt");
+				sendPacket(client, response.toString());
+				return;
+			}
 		}
 
 		// If the client is out of date, send error
@@ -334,6 +347,38 @@ public class GameServer extends BaseSmartfoxServer {
 
 	@Override
 	protected void onStop() {
+	}
+
+	// Used to check permissions
+	public static boolean hasPerm(String level, String perm) {
+		switch (level) {
+		case "moderator":
+			return perm.equals("moderator");
+
+		case "admin":
+			switch (perm) {
+			case "moderator":
+				return true;
+			case "admin":
+				return true;
+			default:
+				return false;
+			}
+
+		case "developer":
+			switch (perm) {
+			case "moderator":
+				return true;
+			case "admin":
+				return true;
+			case "developer":
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		return false;
 	}
 
 }
