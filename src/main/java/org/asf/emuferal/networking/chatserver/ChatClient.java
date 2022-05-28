@@ -12,6 +12,7 @@ import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.networking.chatserver.packets.AbstractChatPacket;
+import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.util.TaskThread;
 
 import com.google.gson.JsonObject;
@@ -107,12 +108,6 @@ public class ChatClient {
 			return;
 		}
 
-		// Check maintenance mode
-		if (EmuFeral.gameServer.maintenance) {
-			disconnect();
-			return;
-		}
-
 		// Verify expiry
 		JsonObject jwtPl = JsonParser
 				.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
@@ -133,7 +128,26 @@ public class ChatClient {
 			disconnect();
 			return;
 		}
-		
+
+		// Check maintenance mode
+		if (EmuFeral.gameServer.maintenance) {
+			boolean lockout = true;
+
+			// Check permissions
+			if (acc.getPlayerInventory().containsItem("permissions")) {
+				String permLevel = acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+						.get("permissionLevel").getAsString();
+				if (GameServer.hasPerm(permLevel, "moderator")) {
+					lockout = false;
+				}
+			}
+
+			if (lockout || EmuFeral.gameServer.shutdown) {
+				disconnect();
+				return;
+			}
+		}
+
 		// Check bans
 		if (EmuFeral.gameServer.isBanned(acc)) {
 			disconnect();

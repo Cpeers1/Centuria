@@ -47,7 +47,7 @@ import org.asf.rats.ConnectiveServerFactory;
 
 public class EmuFeral {
 	// Update
-	public static final String SERVER_UPDATE_VERSION = "1.0.0.A12";
+	public static final String SERVER_UPDATE_VERSION = "1.0.0.A14";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/emuferal";
 
 	// Configuration
@@ -162,6 +162,7 @@ public class EmuFeral {
 		}
 
 		// Inform the game server to disconnect with maintenance
+		EmuFeral.gameServer.shutdown = true;
 		EmuFeral.gameServer.maintenance = true;
 
 		// Wait a bit
@@ -282,7 +283,7 @@ public class EmuFeral {
 		System.out.println("                              EmuFeral                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                         Version: 1.0.0.A12                         "); // not doing this
+		System.out.println("                         Version: 1.0.0.A14                         "); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain

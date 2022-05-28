@@ -55,6 +55,7 @@ public class GameServer extends BaseSmartfoxServer {
 	}
 
 	public boolean maintenance = false;
+	public boolean shutdown = false;
 	private Random rnd = new Random();
 	private XmlMapper mapper = new XmlMapper();
 	private ArrayList<Player> players = new ArrayList<Player>();
@@ -173,7 +174,7 @@ public class GameServer extends BaseSmartfoxServer {
 				}
 			}
 
-			if (lockout) {
+			if (lockout || shutdown) {
 				JsonObject response = new JsonObject();
 				JsonObject b = new JsonObject();
 				b.addProperty("r", auth.rField);
