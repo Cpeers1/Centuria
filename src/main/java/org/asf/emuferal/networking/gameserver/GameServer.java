@@ -10,6 +10,7 @@ import java.util.Random;
 import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
+import org.asf.emuferal.networking.chatserver.ChatClient;
 import org.asf.emuferal.networking.smartfox.BaseSmartfoxServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.smartfox.ISmartfoxPacket;
@@ -99,8 +100,8 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new UserTutorialCompleted());
 		registerPacket(new AvatarEditorSelectLook());
 		registerPacket(new UserAvatarSave());
-		
-		//social packets
+
+		// social packets
 		registerPacket(new FollowingList());
 		registerPacket(new FollowOnlineStatusUpdate());
 	}
@@ -210,35 +211,29 @@ public class GameServer extends BaseSmartfoxServer {
 		}
 
 		// Check ban
-		if (acc.getPlayerInventory().containsItem("penalty") && acc.getPlayerInventory().getItem("penalty")
-				.getAsJsonObject().get("type").getAsString().equals("ban")) {
-			JsonObject banInfo = acc.getPlayerInventory().getItem("penalty").getAsJsonObject();
-			if (banInfo.get("unbanTimestamp").getAsLong() == -1
-					|| banInfo.get("unbanTimestamp").getAsLong() > System.currentTimeMillis()) {
-				// Disconnect with error
-				JsonObject response = new JsonObject();
-				JsonObject b = new JsonObject();
-				b.addProperty("r", auth.rField);
-				JsonObject o = new JsonObject();
-				o.addProperty("statusId", -15);
-				o.addProperty("_cmd", "login");
-				JsonObject params = new JsonObject();
-				params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
-				params.addProperty("pendingFlags", 0);
-				params.addProperty("activeLookId", acc.getActiveLook());
-				params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
-				params.addProperty("sessionId", acc.getAccountID());
-				params.addProperty("userId", acc.getAccountNumericID());
-				params.addProperty("avatarInvId", 0);
-				o.add("params", params);
-				o.addProperty("status", -15);
-				b.add("o", o);
-				response.add("b", b);
-				response.addProperty("t", "xt");
-				sendPacket(client, response.toString());
-				return;
-			} else
-				acc.getPlayerInventory().deleteItem("penalty");
+		if (isBanned(acc)) {
+			// Disconnect with error
+			JsonObject response = new JsonObject();
+			JsonObject b = new JsonObject();
+			b.addProperty("r", auth.rField);
+			JsonObject o = new JsonObject();
+			o.addProperty("statusId", -15);
+			o.addProperty("_cmd", "login");
+			JsonObject params = new JsonObject();
+			params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
+			params.addProperty("pendingFlags", 0);
+			params.addProperty("activeLookId", acc.getActiveLook());
+			params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
+			params.addProperty("sessionId", acc.getAccountID());
+			params.addProperty("userId", acc.getAccountNumericID());
+			params.addProperty("avatarInvId", 0);
+			o.add("params", params);
+			o.addProperty("status", -15);
+			b.add("o", o);
+			response.add("b", b);
+			response.addProperty("t", "xt");
+			sendPacket(client, response.toString());
+			return;
 		}
 
 		// Disconnect an already connected instance
@@ -287,6 +282,20 @@ public class GameServer extends BaseSmartfoxServer {
 		players.add(plr);
 	}
 
+	public boolean isBanned(EmuFeralAccount acc) {
+		if (acc.getPlayerInventory().containsItem("penalty") && acc.getPlayerInventory().getItem("penalty")
+				.getAsJsonObject().get("type").getAsString().equals("ban")) {
+			JsonObject banInfo = acc.getPlayerInventory().getItem("penalty").getAsJsonObject();
+			if (banInfo.get("unbanTimestamp").getAsLong() == -1
+					|| banInfo.get("unbanTimestamp").getAsLong() > System.currentTimeMillis()) {
+				return true;
+			} else
+				acc.getPlayerInventory().deleteItem("penalty");
+		}
+
+		return false;
+	}
+
 	@Override
 	protected void clientDisconnect(SmartfoxClient client) {
 		if (client.container != null && client.container instanceof Player) {
@@ -301,6 +310,13 @@ public class GameServer extends BaseSmartfoxServer {
 			for (Player player : getPlayers()) {
 				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
 					plr.destroyAt(player);
+				}
+			}
+
+			// Disconnect the player from the chat server
+			for (ChatClient chClient : EmuFeral.chatServer.getClients()) {
+				if (chClient.getPlayer().getAccountID().equals(plr.account.getAccountID())) {
+					chClient.disconnect();
 				}
 			}
 

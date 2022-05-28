@@ -117,7 +117,7 @@ public class APIProcessor extends HttpUploadProcessor {
 				// Check existence
 				if (id == null) {
 					// Check if registration is enabled, if not, prevent login
-					if (!EmuFeral.allowRegistration) {
+					if (!EmuFeral.allowRegistration || EmuFeral.gameServer.maintenance) {
 						// Not sure what to send but sending this causes an error in the next request
 						// triggering the client into saying invalid password.
 						this.setResponseCode(200);
@@ -501,17 +501,16 @@ public class APIProcessor extends HttpUploadProcessor {
 						this.setResponseMessage("Access denied");
 						return;
 					}
-					
-					//log interaction details
-					if (System.getProperty("debugMode") != null) {
-						System.out.println("[API] [r/follow]  Client to server ( path:" + path + " ) ( body: " + body + " )");
-					}
-					
-					//TODO: Following other players.
 
-				
-				} else if (path.startsWith("/r/followers"))
-				{
+					// log interaction details
+					if (System.getProperty("debugMode") != null) {
+						System.out.println(
+								"[API] [r/follow]  Client to server ( path:" + path + " ) ( body: " + body + " )");
+					}
+
+					// TODO: Following other players.
+
+				} else if (path.startsWith("/r/followers")) {
 					// Parse JWT payload
 					String token = this.getHeader("Authorization").substring("Bearer ".length());
 
@@ -523,16 +522,17 @@ public class APIProcessor extends HttpUploadProcessor {
 						this.setResponseMessage("Access denied");
 						return;
 					}
-					
-					//log details
+
+					// log details
 					if (System.getProperty("debugMode") != null) {
-						System.out.println("[API] [r/followers]  Client to server ( path:" + path + " ) ( body: " + body + " )");
+						System.out.println(
+								"[API] [r/followers]  Client to server ( path:" + path + " ) ( body: " + body + " )");
 					}
-					
-					//TODO: Retrieving followers.
-					//[{"created_at":"2022-03-26 16:24:20","favorite":true,"updated_at":"2022-03-26 18:28:32","uuid":"75d35f12-6614-4793-ba12-a11f0e9819c4"}]
-				} else if (path.startsWith("/r/followings"))
-				{					
+
+					// TODO: Retrieving followers.
+					// [{"created_at":"2022-03-26 16:24:20","favorite":true,"updated_at":"2022-03-26
+					// 18:28:32","uuid":"75d35f12-6614-4793-ba12-a11f0e9819c4"}]
+				} else if (path.startsWith("/r/followings")) {
 					// Parse JWT payload
 					String token = this.getHeader("Authorization").substring("Bearer ".length());
 
@@ -544,21 +544,22 @@ public class APIProcessor extends HttpUploadProcessor {
 						this.setResponseMessage("Access denied");
 						return;
 					}
-					
-					//log details
+
+					// log details
 					if (System.getProperty("debugMode") != null) {
-						System.out.println("[API] [r/followings]  Client to server ( path:" + path + " ) ( body: " + body + " )");
+						System.out.println(
+								"[API] [r/followings]  Client to server ( path:" + path + " ) ( body: " + body + " )");
 					}
-					
-					//TODO: Retrieving players being followed.
-					//[{"created_at":"2022-03-26 16:24:20","favorite":true,"updated_at":"2022-03-26 18:28:32","uuid":"75d35f12-6614-4793-ba12-a11f0e9819c4"}]
-				}
-				else {
-					//log details
+
+					// TODO: Retrieving players being followed.
+					// [{"created_at":"2022-03-26 16:24:20","favorite":true,"updated_at":"2022-03-26
+					// 18:28:32","uuid":"75d35f12-6614-4793-ba12-a11f0e9819c4"}]
+				} else {
+					// log details
 					if (System.getProperty("debugMode") != null) {
 						System.err.println("[API] Unhandled Api Call: ( path:" + path + " ) ( body: " + body + " )");
 					}
-					
+
 					setResponseCode(400);
 					path = path;
 					setBody("{}");

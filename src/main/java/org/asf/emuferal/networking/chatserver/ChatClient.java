@@ -133,6 +133,12 @@ public class ChatClient {
 			disconnect();
 			return;
 		}
+		
+		// Check bans
+		if (EmuFeral.gameServer.isBanned(acc)) {
+			disconnect();
+			return;
+		}
 
 		// Save account in memory
 		player = acc;

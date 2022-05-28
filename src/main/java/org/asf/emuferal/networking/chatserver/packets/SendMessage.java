@@ -64,7 +64,6 @@ public class SendMessage extends AbstractChatPacket {
 		// Check it
 		if (client.banCounter >= 10) {
 			// Ban the hacker
-
 			JsonObject banInfo = new JsonObject();
 			banInfo.addProperty("type", "ban");
 			banInfo.addProperty("unbanTimestamp", -1);
@@ -83,6 +82,9 @@ public class SendMessage extends AbstractChatPacket {
 					break;
 				}
 			}
+			
+			// Disconnect
+			client.disconnect();
 
 			return true;
 		}
