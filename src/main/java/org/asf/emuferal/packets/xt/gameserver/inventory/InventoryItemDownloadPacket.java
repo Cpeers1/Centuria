@@ -352,7 +352,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				for (JsonElement elem : items.deepCopy()) {
 					JsonObject clothing = elem.getAsJsonObject();
 					String id = clothing.get("itemInvID").getAsString();
-					if (id.isEmpty()) {
+					if (id.isEmpty() || inv.getAccessor().getClothingData(id) == null) {
 						// Fix it
 						items.remove(clothing);
 						changed = true;

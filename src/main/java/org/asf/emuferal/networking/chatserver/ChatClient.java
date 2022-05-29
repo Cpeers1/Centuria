@@ -36,11 +36,6 @@ public class ChatClient {
 
 	private TaskThread taskThread;
 
-	/**
-	 * Field for storing, eg. a player instance object
-	 */
-	public Object container;
-
 	public ChatClient(Socket client, ChatServer server) {
 		this.client = client;
 		this.server = server;

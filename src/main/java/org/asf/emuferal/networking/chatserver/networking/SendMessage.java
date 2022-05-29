@@ -615,9 +615,33 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Change name
+						// Load info
 						EmuFeralAccount acc = AccountManager.getInstance().getAccount(uuid);
 						String oldName = acc.getDisplayName();
+
+						// Check rank
+						if (acc.getPlayerInventory().containsItem("permissions")) {
+							if ((GameServer
+									.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString(), "developer")
+									&& !GameServer.hasPerm(permLevel, "developer"))
+									|| GameServer
+											.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+													.get("permissionLevel").getAsString(), "admin")
+											&& !GameServer.hasPerm(permLevel, "admin")) {
+								systemMessage("Unable to rename higher-ranking users.", cmd, client);
+								return true;
+							}
+						}
+
+						// Check name lock
+						if (AccountManager.getInstance().isDisplayNameInUse(args.get(1))) {
+							// Failure
+							systemMessage("Invalid value for argument: new-name: display name is in use", cmd, client);
+							return true;
+						}
+
+						// Change name
 						if (!acc.updateDisplayName(args.get(1))) {
 							// Failure
 							systemMessage("Invalid value for argument: new-name: invalid characters", cmd, client);
@@ -626,6 +650,19 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Lock new name
 						AccountManager.getInstance().lockDisplayName(args.get(1), acc.getAccountID());
+
+						// Kick online player
+						for (Player plr : EmuFeral.gameServer.getPlayers()) {
+							if (plr.account.getDisplayName().equals(args.get(0))) {
+								// Kick the player
+								plr.client.sendPacket("%xt%ua%-1%4086%");
+								try {
+									Thread.sleep(3000);
+								} catch (InterruptedException e) {
+								}
+								plr.client.disconnect();
+							}
+						}
 
 						// Success
 						systemMessage("Renamed " + oldName + " " + args.get(1) + ".", cmd, client);
@@ -1048,11 +1085,17 @@ public class SendMessage extends AbstractChatPacket {
 							WorldReadyPacket wrp = new WorldReadyPacket();
 							wrp.teleportUUID = args.get(0);
 
-							try {
-								wrp.handle(((Player) client.container).client);
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								systemMessage("Error: " + e.getMessage(), cmd, client);
+							// Find online player
+							for (Player plr : EmuFeral.gameServer.getPlayers()) {
+								if (plr.account.getAccountID().equals(client.getPlayer().getAccountID())) {
+									try {
+										wrp.handle(plr.client);
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										systemMessage("Error: " + e.getMessage(), cmd, client);
+									}
+									break;
+								}
 							}
 
 							return true;
