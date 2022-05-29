@@ -33,19 +33,10 @@ public class UserConversations extends AbstractChatPacket {
 		JsonObject res = new JsonObject();
 		JsonArray convos = new JsonArray();
 
-		// Find rooms
-		HashMap<String, Boolean> conversations = new HashMap<String, Boolean>();
-		for (ChatClient cl : client.getServer().getClients()) {
-			String[] rooms = cl.getRooms();
-			for (String room : rooms) {
-				if (!conversations.containsKey(room) && cl.isRoomPrivate(room) && cl.isInRoom(room))
-					conversations.put(room, true);
-			}
-		}
-
 		// Add room objects
-		for (String room : conversations.keySet()) {
-			convos.add(client.getServer().roomObject(room, conversations.get(room)));
+		for (String room : client.getRooms()) {
+			if (client.isRoomPrivate(room))
+				convos.add(client.getServer().roomObject(room, true));
 		}
 
 		res.add("conversations", convos);
