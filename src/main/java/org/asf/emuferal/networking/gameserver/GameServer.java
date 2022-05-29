@@ -375,8 +375,8 @@ public class GameServer extends BaseSmartfoxServer {
 		// TODO Auto-generated method stub
 		
 		//get client's remote socket address
-		//String address = socket.getRemoteSocketAddress().toString().substring(1).split(":")[0];
-		String address = "185.62.206.20";
+		String address = socket.getRemoteSocketAddress().toString().substring(1).split(":")[0];
+		//String address = "185.62.206.20";
 		
 		ArrayList<String> vpnIpsToCheck = new ArrayList<String>();
 		
