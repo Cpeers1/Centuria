@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -46,6 +47,8 @@ import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
 import org.asf.emuferal.packets.xt.gameserver.world.RoomJoinTutorial;
 import org.asf.emuferal.packets.xt.gameserver.world.WorldReadyPacket;
 import org.asf.emuferal.players.Player;
+import org.asf.emuferal.security.AddressChecker;
+import org.asf.emuferal.security.IpAddressMatcher;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.JsonObject;
@@ -359,6 +362,35 @@ public class GameServer extends BaseSmartfoxServer {
 	// VPN check
 	private static boolean isEndpointVPN(Socket socket, ArrayList<String> vpnIpsV4, ArrayList<String> vpnIpsV6) {
 		// TODO Auto-generated method stub
+		
+		//get client's remote socket address
+		//String address = socket.getRemoteSocketAddress().toString().substring(1).split(":")[0];
+		String address = "185.62.206.20";
+		
+		ArrayList<String> vpnIpsToCheck = new ArrayList<String>();
+		
+		//is the address ipv4, or ipv6? we don't need to loop through both
+		if(AddressChecker.isIPv4(address))
+		{
+			vpnIpsToCheck.addAll(vpnIpsV4);
+		}
+		else if(AddressChecker.isIPv6(address))
+		{
+			vpnIpsToCheck.addAll(vpnIpsV6);
+		}
+		
+		for(String ipToCheckAgainst : vpnIpsToCheck)
+		{
+			IpAddressMatcher matcher = new IpAddressMatcher(ipToCheckAgainst);
+			
+			if(matcher.matches(address))
+			{
+				//VPN detected
+				return true;
+			}		
+		}
+
+		//no VPN
 		return false;
 	}
 
