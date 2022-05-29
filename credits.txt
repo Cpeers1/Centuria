@@ -1,0 +1,14 @@
+ - Owen (owenvii): programmer
+ - Zera (skyswimmer): programmer
+ - Kiwido/Rawaho: low-level reverse-engineering (early versions of the project)
+
+ - Ninnteen (test): testing
+ - Joey (joey): network inspection and testing
+ - Suiren (cloudy): testing, packet data provider
+ - Wyldcard (wyldcard): testing, packet data provider
+ - Weirdedout (peanut): packet data provider
+ - lazy (lazy): testing, packet data provider
+ - WLHQ (wlhq): testing
+ - Galaxysearcher the Dragon (galaxysearcher): testing
+ - 'But like for feral' (qualm): icon and testing
+ 

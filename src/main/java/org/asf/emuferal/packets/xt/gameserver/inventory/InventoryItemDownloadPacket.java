@@ -205,14 +205,12 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		if (slot.equals("200")) {
 			fixBrokenAvatars(item.getAsJsonArray(), inv);
 		}
-		
-		// quest progression items
-		if(slot.equals("311"))
-		{
 
-			if(inv.getItem("311") == null)
-			{
-				//initalize the item if its null
+		// quest progression items
+		if (slot.equals("311")) {
+
+			if (inv.getItem("311") == null) {
+				// initalize the item if its null
 				inv.setItem("311", new JsonArray());
 			}
 
@@ -229,7 +227,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			obj.addProperty("id", UUID.randomUUID().toString());
 			obj.addProperty("type", 311);
 			itm.add(obj);
-			
+
 			// Send the item to the client
 			InventoryItemPacket pkt = new InventoryItemPacket();
 			pkt.item = itm;
@@ -343,6 +341,24 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			if (lookCount > 12)
 				item.remove(ava);
 			changed = true;
+		}
+
+		// Fix broken clothes
+		for (JsonElement ele : item) {
+			JsonObject ava = ele.getAsJsonObject().get("components").getAsJsonObject().get("AvatarLook")
+					.getAsJsonObject().get("info").getAsJsonObject();
+			if (ava.has("clothingItems")) {
+				JsonArray items = ava.get("clothingItems").getAsJsonArray();
+				for (JsonElement elem : items.deepCopy()) {
+					JsonObject clothing = elem.getAsJsonObject();
+					String id = clothing.get("itemInvID").getAsString();
+					if (id.isEmpty()) {
+						// Fix it
+						items.remove(clothing);
+						changed = true;
+					}
+				}
+			}
 		}
 
 		// Save
