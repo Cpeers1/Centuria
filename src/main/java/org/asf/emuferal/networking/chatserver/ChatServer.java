@@ -124,7 +124,7 @@ public class ChatServer {
 				}
 
 				// Log disconnect
-				if (!(e instanceof IOException)) {
+				if (!(e instanceof IOException) && !(e instanceof IllegalArgumentException)) {
 					System.err.println("Chat connection died! Error: " + e.getClass().getName()
 							+ (e.getMessage() != null ? ": " + e.getMessage() : ""));
 					e.printStackTrace();
