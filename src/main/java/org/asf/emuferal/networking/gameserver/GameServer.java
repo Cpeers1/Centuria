@@ -2,6 +2,8 @@ package org.asf.emuferal.networking.gameserver;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -13,6 +15,7 @@ import java.util.Random;
 import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
+import org.asf.emuferal.ipbans.IpBanManager;
 import org.asf.emuferal.networking.chatserver.ChatClient;
 import org.asf.emuferal.networking.smartfox.BaseSmartfoxServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
@@ -203,6 +206,7 @@ public class GameServer extends BaseSmartfoxServer {
 				response.add("b", b);
 				response.addProperty("t", "xt");
 				sendPacket(client, response.toString());
+				client.disconnect();
 				return;
 			}
 		}
@@ -229,11 +233,14 @@ public class GameServer extends BaseSmartfoxServer {
 			response.add("b", b);
 			response.addProperty("t", "xt");
 			sendPacket(client, response.toString());
+			client.disconnect();
 			return;
 		}
 
 		// Check ban
 		if (isBanned(acc)) {
+			System.out.println("User '" + acc.getDisplayName() + "' could not connect: user is banned.");
+
 			// Disconnect with error
 			JsonObject response = new JsonObject();
 			JsonObject b = new JsonObject();
@@ -255,11 +262,14 @@ public class GameServer extends BaseSmartfoxServer {
 			response.add("b", b);
 			response.addProperty("t", "xt");
 			sendPacket(client, response.toString());
+			client.disconnect();
 			return;
 		}
 
 		// Check ip ban
 		if (isIPBanned(client.getSocket(), acc, vpnIpsV4, vpnIpsV6, whitelistFile)) {
+			System.out.println("User '" + acc.getDisplayName() + "' could not connect: user is IP or VPN banned.");
+
 			// Disconnect silently
 			JsonObject response = new JsonObject();
 			JsonObject b = new JsonObject();
@@ -281,6 +291,7 @@ public class GameServer extends BaseSmartfoxServer {
 			response.add("b", b);
 			response.addProperty("t", "xt");
 			sendPacket(client, response.toString());
+			client.disconnect();
 			return;
 		}
 
@@ -364,8 +375,11 @@ public class GameServer extends BaseSmartfoxServer {
 
 	// IP ban check
 	private static boolean isIPBanned(Socket socket) {
-		// TODO Auto-generated method stub
-		return false;
+		InetSocketAddress ip = (InetSocketAddress) socket.getRemoteSocketAddress();
+		InetAddress addr = ip.getAddress();
+		String ipaddr = addr.getHostAddress();
+
+		return IpBanManager.getInstance().isIPBanned(ipaddr);
 	}
 
 	public boolean isBanned(EmuFeralAccount acc) {

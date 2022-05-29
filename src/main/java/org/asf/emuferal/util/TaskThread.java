@@ -73,4 +73,16 @@ public class TaskThread extends Thread {
 		tasks.clear();
 	}
 
+	/**
+	 * Waits for all tasks to finish
+	 */
+	public void flush() {
+		while (!tasks.isEmpty()) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+
 }

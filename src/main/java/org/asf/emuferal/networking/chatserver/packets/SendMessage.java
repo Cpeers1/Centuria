@@ -1,6 +1,10 @@
 package org.asf.emuferal.networking.chatserver.packets;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,14 +17,63 @@ import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.dms.DMManager;
 import org.asf.emuferal.dms.PrivateChatMessage;
+import org.asf.emuferal.ipbans.IpBanManager;
 import org.asf.emuferal.networking.chatserver.ChatClient;
 import org.asf.emuferal.networking.gameserver.GameServer;
+import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.emuferal.packets.xt.gameserver.world.WorldReadyPacket;
 import org.asf.emuferal.players.Player;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 public class SendMessage extends AbstractChatPacket {
+
+	private static ArrayList<String> banWords = new ArrayList<String>();
+	private static ArrayList<String> filterWords = new ArrayList<String>();
+
+	static {
+		// Load filter
+		try {
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("textfilter/filter.txt");
+			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+			for (String line : lines.split("\n")) {
+				if (line.isEmpty() || line.startsWith("#"))
+					continue;
+
+				String data = line.trim();
+				while (data.contains("  "))
+					data = data.replace("  ", "");
+
+				for (String word : data.split(" "))
+					filterWords.add(word);
+			}
+			strm.close();
+		} catch (IOException e) {
+		}
+
+		// Load ban words
+		try {
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("textfilter/instaban.txt");
+			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+			for (String line : lines.split("\n")) {
+				if (line.isEmpty() || line.startsWith("#"))
+					continue;
+
+				String data = line.trim();
+				while (data.contains("  "))
+					data = data.replace("  ", "");
+
+				for (String word : data.split(" "))
+					banWords.add(word);
+			}
+			strm.close();
+		} catch (IOException e) {
+		}
+	}
 
 	private String message;
 	private String room;
@@ -323,58 +376,74 @@ public class SendMessage extends AbstractChatPacket {
 						systemMessage("Temporarily banned " + acc.getDisplayName() + ".", cmd, client);
 						return true;
 					}
-					case "permban": {
-						// Permanent ban
+					case "ipban": {
+						// IP-ban command
 						if (args.size() < 1) {
 							systemMessage("Missing argument: player", cmd, client);
 							return true;
 						}
 
 						// Find player
-						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						EmuFeralAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-						// Check rank
-						if (acc.getPlayerInventory().containsItem("permissions")) {
-							if ((GameServer
-									.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-											.get("permissionLevel").getAsString(), "developer")
-									&& !GameServer.hasPerm(permLevel, "developer"))
-									|| GameServer
-											.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-													.get("permissionLevel").getAsString(), "admin")
-											&& !GameServer.hasPerm(permLevel, "admin")) {
-								systemMessage("Unable to ban higher-ranking users.", cmd, client);
-								return true;
-							}
-						}
-
-						// Ban permanently
-						JsonObject banInfo = new JsonObject();
-						banInfo.addProperty("type", "ban");
-						banInfo.addProperty("unbanTimestamp", -1);
-						acc.getPlayerInventory().setItem("penalty", banInfo);
-
-						// Find online player
 						for (Player plr : EmuFeral.gameServer.getPlayers()) {
 							if (plr.account.getDisplayName().equals(args.get(0))) {
+								// Check rank
+								if (plr.account.getPlayerInventory().containsItem("permissions")) {
+									if ((GameServer.hasPerm(plr.account.getPlayerInventory().getItem("permissions")
+											.getAsJsonObject().get("permissionLevel").getAsString(), "developer")
+											&& !GameServer.hasPerm(permLevel, "developer"))
+											|| GameServer.hasPerm(
+													plr.account.getPlayerInventory().getItem("permissions")
+															.getAsJsonObject().get("permissionLevel").getAsString(),
+													"admin") && !GameServer.hasPerm(permLevel, "admin")) {
+										systemMessage("Unable to kick higher-ranking users.", cmd, client);
+										return true;
+									}
+								}
+
+								// Ban permanently
+								JsonObject banInfo = new JsonObject();
+								banInfo.addProperty("type", "ban");
+								banInfo.addProperty("unbanTimestamp", -1);
+								plr.account.getPlayerInventory().setItem("penalty", banInfo);
+
+								// Ban IP
+								InetSocketAddress ip = (InetSocketAddress) plr.client.getSocket()
+										.getRemoteSocketAddress();
+								InetAddress addr = ip.getAddress();
+								String ipaddr = addr.getHostAddress();
+								IpBanManager manager = IpBanManager.getInstance();
+								if (!manager.isIPBanned(ipaddr))
+									manager.banIP(ipaddr);
+
 								// Kick the player
+								systemMessage("IP-banned " + plr.account.getDisplayName() + ".", cmd, client);
 								plr.client.sendPacket("%xt%ua%-1%3561%");
 								try {
 									Thread.sleep(3000);
 								} catch (InterruptedException e) {
 								}
 								plr.client.disconnect();
-								break;
+								return true;
 							}
 						}
 
-						systemMessage("Banned " + acc.getDisplayName() + ".", cmd, client);
+						// Player not found
+						systemMessage("Player is not online.", cmd, client);
+						return true;
+					}
+					case "pardonip": {
+						// Remove all penalties
+						if (args.size() < 1) {
+							systemMessage("Missing argument: ip", cmd, client);
+							return true;
+						}
+
+						// Check ip ban
+						IpBanManager manager = IpBanManager.getInstance();
+						if (manager.isIPBanned(args.get(0)))
+							manager.unbanIP(args.get(0));
+
+						systemMessage("Removed IP ban: " + args.get(0) + ".", cmd, client);
 						return true;
 					}
 					case "pardon": {
@@ -873,19 +942,22 @@ public class SendMessage extends AbstractChatPacket {
 					case "help": {
 						// Help command
 						String message = "List of commands:\n";
-						message += " - kick \"<member>\"\n";
-						message += " - permbam \"<name>\"\n";
-						message += " - tempban \"<name>\" <days>\"\n";
-						message += " - forcenamechange \"<member>\"\n";
-						message += " - mute \"<name>\" <minutes> [hours] [days]\n";
-						message += " - pardon \"<name>\"\n";
+						message += " - kick \"<player>\"\n";
+						message += " - ipban \"<player>\"\n";
+						message += " - pardonip \"<ip>\"\n";
+						message += " - permban \"<player>\"\n";
+						message += " - tempban \"<player>\" <days>\"\n";
+						message += " - forcenamechange \"<player>\"\n";
+						message += " - changename \"<player>\" <new-name>\n"; // TODO
+						message += " - mute \"<player>\" <minutes> [hours] [days]\n";
+						message += " - pardon \"<player>\"\n";
 						if (GameServer.hasPerm(permLevel, "developer")) {
 							message += " - makedeveloper \"<name>\"\n";
 						}
 						if (GameServer.hasPerm(permLevel, "admin")) {
-							message += " - makeadmin \"<name>\"\n";
-							message += " - makemoderator \"<name>\"\n";
-							message += " - removeperms \"<name>\"\n";
+							message += " - makeadmin \"<player>\"\n";
+							message += " - makemoderator \"<player>\"\n";
+							message += " - removeperms \"<player>\"\n";
 							message += " - startmaintenance\n";
 							message += " - endmaintenance\n";
 							message += " - updatewarning <minutes-remaining>\n";
@@ -893,6 +965,7 @@ public class SendMessage extends AbstractChatPacket {
 							message += " - update <60|30|15|10|5|3|1>\n";
 							message += " - cancelupdate\n";
 						}
+						message += " - staffroom\n"; // TODO
 						message += " - help";
 						systemMessage(message, cmdId, client);
 						return true;
