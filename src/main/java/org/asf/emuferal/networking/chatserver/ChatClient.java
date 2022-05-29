@@ -11,7 +11,7 @@ import java.util.HashMap;
 import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
-import org.asf.emuferal.networking.chatserver.packets.AbstractChatPacket;
+import org.asf.emuferal.networking.chatserver.networking.AbstractChatPacket;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.util.TaskThread;
 

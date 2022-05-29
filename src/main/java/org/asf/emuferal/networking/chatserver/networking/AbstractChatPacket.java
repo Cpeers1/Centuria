@@ -1,4 +1,4 @@
-package org.asf.emuferal.networking.chatserver.packets;
+package org.asf.emuferal.networking.chatserver.networking;
 
 import org.asf.emuferal.networking.chatserver.ChatClient;
 

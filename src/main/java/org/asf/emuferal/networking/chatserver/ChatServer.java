@@ -8,15 +8,15 @@ import java.util.ConcurrentModificationException;
 
 import org.asf.emuferal.dms.DMManager;
 import org.asf.emuferal.dms.PrivateChatMessage;
-import org.asf.emuferal.networking.chatserver.packets.AbstractChatPacket;
-import org.asf.emuferal.networking.chatserver.packets.HistoryPacket;
-import org.asf.emuferal.networking.chatserver.packets.CreateConversationPacket;
-import org.asf.emuferal.networking.chatserver.packets.GetConversation;
-import org.asf.emuferal.networking.chatserver.packets.JoinRoomPacket;
-import org.asf.emuferal.networking.chatserver.packets.OpenDMPacket;
-import org.asf.emuferal.networking.chatserver.packets.PingPacket;
-import org.asf.emuferal.networking.chatserver.packets.SendMessage;
-import org.asf.emuferal.networking.chatserver.packets.UserConversations;
+import org.asf.emuferal.networking.chatserver.networking.AbstractChatPacket;
+import org.asf.emuferal.networking.chatserver.networking.CreateConversationPacket;
+import org.asf.emuferal.networking.chatserver.networking.GetConversation;
+import org.asf.emuferal.networking.chatserver.networking.HistoryPacket;
+import org.asf.emuferal.networking.chatserver.networking.JoinRoomPacket;
+import org.asf.emuferal.networking.chatserver.networking.OpenDMPacket;
+import org.asf.emuferal.networking.chatserver.networking.PingPacket;
+import org.asf.emuferal.networking.chatserver.networking.SendMessage;
+import org.asf.emuferal.networking.chatserver.networking.UserConversations;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

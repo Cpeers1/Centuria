@@ -1,26 +1,23 @@
-package org.asf.emuferal.networking.chatserver.packets;
+package org.asf.emuferal.networking.chatserver.networking;
 
 import org.asf.emuferal.networking.chatserver.ChatClient;
 
 import com.google.gson.JsonObject;
 
-public class GetConversation extends AbstractChatPacket {
-
-	private String convo;
+public class PingPacket extends AbstractChatPacket {
 
 	@Override
 	public String id() {
-		return "conversations.get";
+		return "ping";
 	}
 
 	@Override
 	public AbstractChatPacket instantiate() {
-		return new GetConversation();
+		return new PingPacket();
 	}
 
 	@Override
 	public void parse(JsonObject data) {
-		convo = data.get("conversationId").getAsString();
 	}
 
 	@Override
@@ -31,8 +28,7 @@ public class GetConversation extends AbstractChatPacket {
 	public boolean handle(ChatClient client) {
 		// Send response
 		JsonObject res = new JsonObject();
-		res.add("conversation", client.getServer().roomObject(convo, client.isRoomPrivate(convo)));
-		res.addProperty("eventId", "conversations.get");
+		res.addProperty("eventId", "ping");
 		res.addProperty("success", true);
 		client.sendPacket(res);
 

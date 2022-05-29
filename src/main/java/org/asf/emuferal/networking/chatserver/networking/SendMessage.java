@@ -1,4 +1,4 @@
-package org.asf.emuferal.networking.chatserver.packets;
+package org.asf.emuferal.networking.chatserver.networking;
 
 import java.io.IOException;
 import java.io.InputStream;
