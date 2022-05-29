@@ -373,35 +373,30 @@ public class GameServer extends BaseSmartfoxServer {
 	// VPN check
 	private static boolean isEndpointVPN(Socket socket, ArrayList<String> vpnIpsV4, ArrayList<String> vpnIpsV6) {
 		// TODO Auto-generated method stub
-		
-		//get client's remote socket address
+
+		// get client's remote socket address
 		String address = socket.getRemoteSocketAddress().toString().substring(1).split(":")[0];
-		//String address = "185.62.206.20";
-		
+		// String address = "185.62.206.20";
+
 		ArrayList<String> vpnIpsToCheck = new ArrayList<String>();
-		
-		//is the address ipv4, or ipv6? we don't need to loop through both
-		if(AddressChecker.isIPv4(address))
-		{
+
+		// is the address ipv4, or ipv6? we don't need to loop through both
+		if (AddressChecker.isIPv4(address)) {
 			vpnIpsToCheck.addAll(vpnIpsV4);
-		}
-		else if(AddressChecker.isIPv6(address))
-		{
+		} else if (AddressChecker.isIPv6(address)) {
 			vpnIpsToCheck.addAll(vpnIpsV6);
 		}
-		
-		for(String ipToCheckAgainst : vpnIpsToCheck)
-		{
+
+		for (String ipToCheckAgainst : vpnIpsToCheck) {
 			IpAddressMatcher matcher = new IpAddressMatcher(ipToCheckAgainst);
-			
-			if(matcher.matches(address))
-			{
-				//VPN detected
+
+			if (matcher.matches(address)) {
+				// VPN detected
 				return true;
-			}		
+			}
 		}
 
-		//no VPN
+		// no VPN
 		return false;
 	}
 

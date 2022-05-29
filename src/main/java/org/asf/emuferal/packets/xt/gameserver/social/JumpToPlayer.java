@@ -58,7 +58,6 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 					// Build room join
 					JoinRoom join = new JoinRoom();
 					join.mode = 0;
-					join.roomID = plr.roomID;
 					join.playerID = player.account.getAccountNumericID();
 					join.roomIdentifier = "room_" + join.roomID;
 
@@ -72,7 +71,7 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 
 					// Assign room
 					player.roomReady = false;
-					player.pendingRoom = plr.roomID;
+					player.pendingRoom = "room_" + join.roomID;
 
 					// SEnd packet
 					client.sendPacket(join);

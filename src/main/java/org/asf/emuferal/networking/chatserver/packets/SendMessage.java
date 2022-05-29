@@ -2,7 +2,6 @@ package org.asf.emuferal.networking.chatserver.packets;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
@@ -21,12 +20,11 @@ import org.asf.emuferal.ipbans.IpBanManager;
 import org.asf.emuferal.networking.chatserver.ChatClient;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
 import org.asf.emuferal.packets.xt.gameserver.world.WorldReadyPacket;
 import org.asf.emuferal.players.Player;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 
 public class SendMessage extends AbstractChatPacket {
 
@@ -48,7 +46,7 @@ public class SendMessage extends AbstractChatPacket {
 					data = data.replace("  ", "");
 
 				for (String word : data.split(" "))
-					filterWords.add(word);
+					filterWords.add(word.toLowerCase());
 			}
 			strm.close();
 		} catch (IOException e) {
@@ -68,7 +66,7 @@ public class SendMessage extends AbstractChatPacket {
 					data = data.replace("  ", "");
 
 				for (String word : data.split(" "))
-					banWords.add(word);
+					banWords.add(word.toLowerCase());
 			}
 			strm.close();
 		} catch (IOException e) {
@@ -112,11 +110,67 @@ public class SendMessage extends AbstractChatPacket {
 			return true; // ignore chat
 		}
 
+		// Check filter
+		String newMessage = "";
+		for (String word : message.split(" ")) {
+			if (banWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				// Ban
+				JsonObject banInfo = new JsonObject();
+				banInfo.addProperty("type", "ban");
+				banInfo.addProperty("unbanTimestamp", -1);
+				client.getPlayer().getPlayerInventory().setItem("penalty", banInfo);
+
+				// Find online player
+				for (Player plr : EmuFeral.gameServer.getPlayers()) {
+					if (plr.account.getAccountID().equals(client.getPlayer().getAccountID())) {
+						// Kick the player
+						plr.client.sendPacket("%xt%ua%-1%3561%");
+						try {
+							Thread.sleep(3000);
+						} catch (InterruptedException e) {
+						}
+						plr.client.disconnect();
+						break;
+					}
+				}
+
+				// Disconnect
+				client.disconnect();
+
+				return true;
+			}
+
+			if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				// TODO
+				if (true)
+					continue;
+
+				// Filter it
+				for (String filter : filterWords) {
+					while (word.toLowerCase().contains(filter.toLowerCase())) {
+						String start = word.substring(0, word.toLowerCase().indexOf(filter.toLowerCase()));
+						String rest = word.substring(word.toLowerCase().indexOf(filter.toLowerCase()) + 1);
+						String tag = "";
+						for (int i = 0; i < filter.length(); i++) {
+							tag += "#";
+						}
+						word = start + tag + rest;
+					}
+				}
+			}
+
+			if (!newMessage.isEmpty())
+				newMessage += " " + word;
+			else
+				newMessage = word;
+		}
+		message = newMessage;
+
 		// Increase ban counter
 		client.banCounter++;
 
 		// Check it
-		if (client.banCounter >= 10) {
+		if (client.banCounter >= 7) {
 			// Ban the hacker
 			JsonObject banInfo = new JsonObject();
 			banInfo.addProperty("type", "ban");
@@ -431,8 +485,43 @@ public class SendMessage extends AbstractChatPacket {
 						systemMessage("Player is not online.", cmd, client);
 						return true;
 					}
+					case "staffroom": {
+						// Teleport to staff room
+
+						// Find online player
+						for (Player plr : EmuFeral.gameServer.getPlayers()) {
+							if (plr.account.getDisplayName().equals(client.getPlayer().getAccountID())) {
+								// Load the requested room
+								JoinRoom join = new JoinRoom();
+								join.mode = 0;
+								join.roomID = 1718;
+								join.playerID = plr.account.getAccountNumericID();
+
+								// Sync
+								GameServer srv = (GameServer) plr.client.getServer();
+								for (Player player : srv.getPlayers()) {
+									if (plr.room != null && player.room != null && player.room.equals(plr.room)
+											&& player != plr) {
+										plr.destroyAt(player);
+									}
+								}
+
+								// Assign room
+								plr.roomReady = false;
+								plr.pendingRoom = "room_STAFFROOM";
+								join.roomIdentifier = "room_STAFFROOM";
+
+								// Send response
+								plr.client.sendPacket(join);
+
+								break;
+							}
+						}
+
+						return true;
+					}
 					case "pardonip": {
-						// Remove all penalties
+						// Remove IP ban
 						if (args.size() < 1) {
 							systemMessage("Missing argument: ip", cmd, client);
 							return true;
@@ -501,10 +590,44 @@ public class SendMessage extends AbstractChatPacket {
 						EmuFeralAccount acc = AccountManager.getInstance().getAccount(uuid);
 						acc.forceNameChange();
 
-						// Player not found
+						// Player found
 						systemMessage(
 								"Applied a name change requirement to the next login of " + acc.getDisplayName() + ".",
 								cmd, client);
+						return true;
+					}
+					case "changeothername": {
+						// Name change command
+						if (args.size() < 1) {
+							systemMessage("Missing argument: player", cmd, client);
+							return true;
+						} else if (args.size() < 1) {
+							systemMessage("Missing argument: new-name", cmd, client);
+							return true;
+						}
+
+						// Find player
+						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+
+						// Change name
+						EmuFeralAccount acc = AccountManager.getInstance().getAccount(uuid);
+						String oldName = acc.getDisplayName();
+						if (!acc.updateDisplayName(args.get(1))) {
+							// Failure
+							systemMessage("Invalid value for argument: new-name: invalid characters", cmd, client);
+							return true;
+						}
+
+						// Lock new name
+						AccountManager.getInstance().lockDisplayName(args.get(1), acc.getAccountID());
+
+						// Success
+						systemMessage("Renamed " + oldName + " " + args.get(1) + ".", cmd, client);
 						return true;
 					}
 					case "kick": {
@@ -948,7 +1071,7 @@ public class SendMessage extends AbstractChatPacket {
 						message += " - permban \"<player>\"\n";
 						message += " - tempban \"<player>\" <days>\"\n";
 						message += " - forcenamechange \"<player>\"\n";
-						message += " - changename \"<player>\" <new-name>\n"; // TODO
+						message += " - changeothername \"<player>\" <new-name>\n";
 						message += " - mute \"<player>\" <minutes> [hours] [days]\n";
 						message += " - pardon \"<player>\"\n";
 						if (GameServer.hasPerm(permLevel, "developer")) {
@@ -965,7 +1088,7 @@ public class SendMessage extends AbstractChatPacket {
 							message += " - update <60|30|15|10|5|3|1>\n";
 							message += " - cancelupdate\n";
 						}
-						message += " - staffroom\n"; // TODO
+						message += " - staffroom\n";
 						message += " - help";
 						systemMessage(message, cmdId, client);
 						return true;

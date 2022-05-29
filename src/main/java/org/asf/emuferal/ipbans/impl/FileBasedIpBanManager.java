@@ -9,7 +9,6 @@ import org.asf.emuferal.ipbans.IpBanManager;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 
 public class FileBasedIpBanManager extends IpBanManager {
 
