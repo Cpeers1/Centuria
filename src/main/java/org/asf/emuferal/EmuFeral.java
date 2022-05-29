@@ -38,9 +38,15 @@ import javax.net.ssl.SSLContext;
 import org.asf.connective.https.ConnectiveHTTPSServer;
 import org.asf.emuferal.networking.chatserver.ChatServer;
 import org.asf.emuferal.networking.gameserver.GameServer;
-import org.asf.emuferal.networking.http.APIProcessor;
-import org.asf.emuferal.networking.http.DirectorProcessor;
-import org.asf.emuferal.networking.http.PaymentsProcessor;
+import org.asf.emuferal.networking.http.api.FallbackAPIProcessor;
+import org.asf.emuferal.networking.http.api.AuthenticateHandler;
+import org.asf.emuferal.networking.http.api.DisplayNamesRequestHandler;
+import org.asf.emuferal.networking.http.api.RequestTokenHandler;
+import org.asf.emuferal.networking.http.api.SettingsHandler;
+import org.asf.emuferal.networking.http.api.UpdateDisplayNameHandler;
+import org.asf.emuferal.networking.http.api.UserHandler;
+import org.asf.emuferal.networking.http.api.XPDetailsHandler;
+import org.asf.emuferal.networking.http.director.GameServerRequestHandler;
 import org.asf.emuferal.players.Player;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.ConnectiveServerFactory;
@@ -63,7 +69,6 @@ public class EmuFeral {
 	// Servers
 	private static ConnectiveHTTPServer apiServer;
 	public static ConnectiveHTTPServer directorServer;
-	private static ConnectiveHTTPServer paymentServer;
 	public static GameServer gameServer;
 	public static ChatServer chatServer;
 
@@ -334,7 +339,6 @@ public class EmuFeral {
 		startServer();
 
 		// Wait for exit
-		paymentServer.waitExit();
 		directorServer.waitExit();
 		apiServer.waitExit();
 		chatServer.getServerSocket().close();
@@ -347,11 +351,11 @@ public class EmuFeral {
 		File serverConf = new File("server.conf");
 		if (!serverConf.exists()) {
 			Files.writeString(serverConf.toPath(),
-					"api-port=6\n" + "director-port=6969\n" + "payments-port=6971\n" + "game-port=6968\n"
-							+ "chat-port=6972\n" + "allow-registration=true\n" + "give-all-avatars=true\n"
-							+ "give-all-mods=true\n" + "give-all-clothes=true\n" + "give-all-wings=true\n"
+					"api-port=6\n" + "director-port=6969\n" + "game-port=6968\n" + "chat-port=6972\n"
+							+ "allow-registration=true\n" + "give-all-avatars=true\n" + "give-all-mods=true\n"
+							+ "give-all-clothes=true\n" + "give-all-wings=true\n"
 							+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
-							+ "encrypt-payments=true\n" + "encrypt-game=false\n\nvpn-user-whitelist=vpn-whitelist\n"
+							+ "encrypt-game=false\n\nvpn-user-whitelist=vpn-whitelist\n"
 							+ "vpn-ipv4-banlist=https://raw.githubusercontent.com/ejrv/VPNs/master/vpn-ipv4.txt\n"
 							+ "vpn-ipv6-banlist=https://raw.githubusercontent.com/ejrv/VPNs/master/vpn-ipv6.txt");
 		}
@@ -405,6 +409,7 @@ public class EmuFeral {
 		// Start the servers
 		System.out.println("Starting Emulated Feral API server...");
 
+		//
 		// Start API server
 		ConnectiveServerFactory factory;
 		try {
@@ -432,27 +437,26 @@ public class EmuFeral {
 
 			apiServer = factory.build();
 		}
-		apiServer.registerProcessor(new APIProcessor());
 
+		// API processors
+		apiServer.registerProcessor(new UserHandler());
+		apiServer.registerProcessor(new XPDetailsHandler());
+		apiServer.registerProcessor(new SettingsHandler());
+		apiServer.registerProcessor(new AuthenticateHandler());
+		apiServer.registerProcessor(new UpdateDisplayNameHandler());
+		apiServer.registerProcessor(new DisplayNamesRequestHandler());
+		apiServer.registerProcessor(new RequestTokenHandler());
+		apiServer.registerProcessor(new FallbackAPIProcessor());
+
+		//
 		// Start director server
 		System.out.println("Starting Emulated Feral Director server...");
 		directorServer = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("director-port")))
 				.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
 				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
-		directorServer.registerProcessor(new DirectorProcessor());
+		directorServer.registerProcessor(new GameServerRequestHandler());
 
-		// Start payments server
-		System.out.println("Starting Emulated Feral Fake Payment server...");
-		factory = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("payments-port")))
-				.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
-				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT);
-		if (properties.getOrDefault("encrypt-payments", "false").equals("true") && new File("keystore.jks").exists()
-				&& new File("keystore.jks.password").exists()) {
-			factory = factory.setImplementation(ConnectiveHTTPSServer.class);
-		}
-		paymentServer = factory.build();
-		paymentServer.registerProcessor(new PaymentsProcessor());
-
+		//
 		// Load game server
 		ServerSocket sock;
 		System.out.println("Starting Emulated Feral Game server...");
@@ -500,6 +504,7 @@ public class EmuFeral {
 		// Start game server
 		gameServer.start();
 
+		//
 		// Start chat server
 		System.out.println("Starting Emulated Feral Chat server...");
 		if (encryptChat)

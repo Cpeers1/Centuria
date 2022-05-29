@@ -43,7 +43,7 @@ public class AvatarLookGet implements IXtPacket<AvatarLookGet> {
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Find avatar
 		EmuFeralAccount account = AccountManager.getInstance().getAccount(accountID);
-		if (account == null || !account.getPlayerInventory().containsItem("200"))
+		if (account == null || !account.getPlayerInventory().containsItem("avatars"))
 			return true; // Account not found
 
 		JsonArray items = account.getPlayerInventory().getItem("avatars").getAsJsonArray();

@@ -102,8 +102,11 @@ public class ChatServer {
 				}
 
 				// Remove client
-				if (clients.contains(client))
+				if (clients.contains(client)) {
+					System.out.println(
+							"Player " + client.getPlayer().getDisplayName() + " disconnected from the chat server.");
 					clients.remove(client);
+				}
 				client.stop();
 			} catch (Exception e) {
 				// Close connection
@@ -114,8 +117,19 @@ public class ChatServer {
 				}
 
 				// Remove client
-				if (clients.contains(client))
+				if (clients.contains(client)) {
+					System.out.println(
+							"Player " + client.getPlayer().getDisplayName() + " disconnected from the chat server.");
 					clients.remove(client);
+				}
+
+				// Log disconnect
+				if (!(e instanceof IOException)) {
+					System.err.println("Chat connection died! Error: " + e.getClass().getName()
+							+ (e.getMessage() != null ? ": " + e.getMessage() : ""));
+					e.printStackTrace();
+				}
+
 				client.stop();
 			}
 		}, "Chat Client Thread: " + client);

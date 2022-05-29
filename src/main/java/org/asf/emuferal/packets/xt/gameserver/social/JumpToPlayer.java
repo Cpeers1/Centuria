@@ -43,6 +43,7 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 				XtWriter writer = new XtWriter();
 				writer.writeString("rfjtr");
 				writer.writeInt(-1); // data prefix
+				
 				// Check world
 				if (plr.room.equals(player.room)) {
 					writer.writeInt(1); // current world

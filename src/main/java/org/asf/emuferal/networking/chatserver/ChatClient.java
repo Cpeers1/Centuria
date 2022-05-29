@@ -163,6 +163,7 @@ public class ChatClient {
 
 		// Save account in memory
 		player = acc;
+		System.out.println("Player " + getPlayer().getDisplayName() + " connected to the chat server.");
 
 		// Load DMs into memory
 		if (getPlayer().getPlayerInventory().containsItem("dms")) {
