@@ -94,7 +94,13 @@ public class ChatServer {
 
 				// Client loop
 				while (client.getSocket() != null) {
-					JsonObject obj = client.readRawPacket();
+					JsonObject obj;
+					try {
+						obj = client.readRawPacket();
+					} catch (IllegalArgumentException e) {
+						throw new IOException("Read failure");
+					}
+
 					try {
 						client.handle(obj);
 					} catch (Exception e) {
@@ -124,7 +130,7 @@ public class ChatServer {
 				}
 
 				// Log disconnect
-				if (!(e instanceof IOException) && !(e instanceof IllegalArgumentException)) {
+				if (!(e instanceof IOException)) {
 					System.err.println("Chat connection died! Error: " + e.getClass().getName()
 							+ (e.getMessage() != null ? ": " + e.getMessage() : ""));
 					e.printStackTrace();
