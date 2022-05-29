@@ -508,6 +508,7 @@ public class SendMessage extends AbstractChatPacket {
 
 								// Assign room
 								plr.roomReady = false;
+								plr.pendingRoomID = 1718;
 								plr.pendingRoom = "room_STAFFROOM";
 								join.roomIdentifier = "room_STAFFROOM";
 

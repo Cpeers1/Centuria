@@ -77,6 +77,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Assign info
 		plr.room = plr.pendingRoom;
+		plr.roomID = plr.pendingRoomID;
 
 		// Sync spawn
 		GameServer server = (GameServer) client.getServer();
@@ -142,9 +143,9 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			strm.close();
 
 			// Check existence
-			if (helper.has(plr.pendingRoom + "/" + id)) {
+			if (helper.has(plr.pendingRoomID + "/" + id)) {
 				// Send response
-				helper = helper.get(plr.pendingRoom + "/" + id).getAsJsonObject();
+				helper = helper.get(plr.pendingRoomID + "/" + id).getAsJsonObject();
 				System.out.println("Player teleport: " + plr.account.getDisplayName() + ": "
 						+ helper.get("worldID").getAsString());
 				WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
