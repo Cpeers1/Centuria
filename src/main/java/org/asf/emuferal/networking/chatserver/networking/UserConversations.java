@@ -1,7 +1,5 @@
 package org.asf.emuferal.networking.chatserver.networking;
 
-import java.util.HashMap;
-
 import org.asf.emuferal.networking.chatserver.ChatClient;
 
 import com.google.gson.JsonArray;
@@ -29,7 +27,7 @@ public class UserConversations extends AbstractChatPacket {
 
 	@Override
 	public boolean handle(ChatClient client) {
-		// Send response (we are not going to use this too much)
+		// Send response
 		JsonObject res = new JsonObject();
 		JsonArray convos = new JsonArray();
 

@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.stream.Stream;
 
 import org.asf.emuferal.EmuFeral;
@@ -212,7 +215,9 @@ public class SendMessage extends AbstractChatPacket {
 			res.addProperty("conversationId", room);
 			res.addProperty("message", message);
 			res.addProperty("source", client.getPlayer().getAccountID());
-			res.addProperty("sentAt", LocalDateTime.now().toString());
+			SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");
+			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+			res.addProperty("sentAt", fmt.format(new Date()));
 			res.addProperty("eventId", "chat.postMessage");
 			res.addProperty("success", true);
 
@@ -221,7 +226,7 @@ public class SendMessage extends AbstractChatPacket {
 			if (client.isRoomPrivate(room) && manager.dmExists(room)) {
 				PrivateChatMessage msg = new PrivateChatMessage();
 				msg.content = message;
-				msg.sentAt = client.getPlayer().getAccountID();
+				msg.sentAt = fmt.format(new Date());
 				msg.source = client.getPlayer().getAccountID();
 				manager.saveDMMessge(room, msg);
 			}

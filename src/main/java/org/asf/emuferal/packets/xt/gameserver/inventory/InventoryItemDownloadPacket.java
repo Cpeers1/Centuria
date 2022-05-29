@@ -238,6 +238,17 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		// Send the item to the client
 		if (item == null)
 			item = new JsonArray();
+
+		// Remove invalid items
+		if (item instanceof JsonArray) {
+			for (JsonElement itm : ((JsonArray) item).deepCopy()) {
+				if (itm.isJsonObject() && itm.getAsJsonObject().has("type")
+						&& !itm.getAsJsonObject().get("type").getAsString().equals(slot)) {
+					((JsonArray) item).remove(itm);
+				}
+			}
+		}
+
 		InventoryItemPacket pkt = new InventoryItemPacket();
 		pkt.item = item;
 		client.sendPacket(pkt);
