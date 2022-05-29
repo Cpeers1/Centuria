@@ -490,7 +490,7 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Find online player
 						for (Player plr : EmuFeral.gameServer.getPlayers()) {
-							if (plr.account.getDisplayName().equals(client.getPlayer().getAccountID())) {
+							if (plr.account.getAccountID().equals(client.getPlayer().getAccountID())) {
 								// Load the requested room
 								JoinRoom join = new JoinRoom();
 								join.mode = 0;
