@@ -1,17 +1,26 @@
 package org.asf.emuferal.networking.http.api;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
+import org.asf.emuferal.accounts.EmuFeralAccount;
+import org.asf.emuferal.friendlist.FriendListEntry;
+import org.asf.emuferal.friendlist.FriendListManager;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.processors.HttpUploadProcessor;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 public class FallbackAPIProcessor extends HttpUploadProcessor {
 
@@ -74,14 +83,39 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 					this.setResponseMessage("Access denied");
 					return;
 				}
+				
+	            JsonObject payload = JsonParser
+	                    .parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+	                    .getAsJsonObject();
 
-				// Request
-				String id = path.substring("/r/block/".length());
-
-				// Send response
+	            // Find account
+	            EmuFeralAccount acc = manager.getAccount(payload.get("uuid").getAsString());
+	            if (acc == null) {
+	                this.setResponseCode(401);
+	                this.setResponseMessage("Access denied");
+	                return;
+	            }
+	            
 				JsonObject response = new JsonObject();
-				// TODO: blocking users
-				response.addProperty("error", "not_blocked");
+	            switch(method.toLowerCase())
+	            {
+	            	case "get":
+	            	{
+	    				String sourcePlayerID = acc.getAccountID();
+	    				
+	    				// log details
+	    				if (System.getProperty("debugMode") != null) {
+	    					System.out.println("[API] [r/block] [" + method + "] inbound: ( source: " + sourcePlayerID + " )");
+	    				}
+
+	    				// Request
+	    				String id = path.substring("/r/block/".length());
+
+	    				// Send response
+	    				response.addProperty("error", "not_blocked");     		
+	            	}
+	            }
+	            
 				setBody(response.toString());
 			} else if (path.startsWith("/r/follow/")) {
 				// Parse JWT payload
@@ -95,70 +129,217 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 					this.setResponseMessage("Access denied");
 					return;
 				}
+				
+	             // Verify expiry
+	            JsonObject jwtPl = JsonParser
+	                    .parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+	                    .getAsJsonObject();
+	            if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
+	                this.setResponseCode(401);
+	                this.setResponseMessage("Access denied");
+	                return;
+	            }
 
+	            JsonObject payload = JsonParser
+	                    .parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+	                    .getAsJsonObject();
+
+	            // Find account
+	            EmuFeralAccount acc = manager.getAccount(payload.get("uuid").getAsString());
+	            if (acc == null) {
+	                this.setResponseCode(401);
+	                this.setResponseMessage("Access denied");
+	                return;
+	            }
+				
+				String targetPlayerID = path.split("/")[3];
+				String sourcePlayerID = acc.getAccountID();
+				
+				// log details
+				if (System.getProperty("debugMode") != null) {
+					System.out.println("[API] [r/follow] [" + method + "] inbound: ( source: " + sourcePlayerID + ", target: " + targetPlayerID + " )");
+				}
+				
+				//open friend list
+				FriendListManager.getInstance().openFriendList(sourcePlayerID);
+				FriendListManager.getInstance().openFriendList(targetPlayerID);
+				
+				switch(method.toLowerCase())
+				{
+					case "post":
+					{
+						//doing date stuff ahead of time
+						SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
+						fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+						String createdAt = fmt.format(new Date());
+						
+						//add player to friend list
+						FriendListEntry entry = new FriendListEntry();
+						entry.addedAt = createdAt;
+						entry.playerID = targetPlayerID;
+						entry.favorite = false;
+						
+						FriendListManager.getInstance().addFollowingPlayer(sourcePlayerID, entry);
+						
+						//for the other player, add them to followers
+						FriendListEntry followerEntry = new FriendListEntry();
+						followerEntry.addedAt = createdAt;
+						followerEntry.playerID = sourcePlayerID;
+						followerEntry.favorite = false;
+						
+						FriendListManager.getInstance().addFollowerPlayer(targetPlayerID, followerEntry);
+
+						setResponseCode(201);
+						
+						// log interaction details
+						if (System.getProperty("debugMode") != null) {
+							System.out.println("[API] [r/follow] Processed friend request, sending 201... ");
+						}
+						
+						break;						
+					}
+					case "delete":
+					{
+						//must be trying to remove friend					
+						FriendListManager.getInstance().removeFollowingPlayer(sourcePlayerID, targetPlayerID);
+						FriendListManager.getInstance().removeFollowerPlayer(targetPlayerID, sourcePlayerID);
+						break;
+					}	
+				}				
+			} else if (path.startsWith("/r/followers")) {
+				
+				//verify token and get the account.
+				var acc = verifyAndGetAcc(manager);
+	            if (acc == null) {
+	                this.setResponseCode(401);
+	                this.setResponseMessage("Access denied");
+	                return;
+	            }
+	            
+				String sourcePlayerID = acc.getAccountID();
+
+				// log details
+				if (System.getProperty("debugMode") != null) {
+					System.out.println(
+							"[API] [r/followers] [" + method + "] Client to server ( source: " + sourcePlayerID + " )");
+				}
+
+				// TODO: UPDATED AT FIELD.
+				
+				//open friend list
+				FriendListManager.getInstance().openFriendList(sourcePlayerID);
+				
+				//get followers list
+				var followerList = FriendListManager.getInstance().getFollowerList(sourcePlayerID);
+				
+				//make new json Array
+				JsonArray jsonArray = new JsonArray();
+				
+				for(FriendListEntry entry : followerList)
+				{
+					//make a new json object for the entry
+					var newJsonObject = new JsonObject();
+					newJsonObject.addProperty("created_at", entry.addedAt);
+					newJsonObject.addProperty("favorite", entry.favorite);
+					
+					SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
+					fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+					String updatedAt = fmt.format(new Date());
+					
+					newJsonObject.addProperty("updated_at", updatedAt);
+					newJsonObject.addProperty("uuid", entry.playerID);
+					
+					jsonArray.add(newJsonObject);
+				}
+				
+				//send response packet			
+				setBody(jsonArray.toString());	
+				
 				// log interaction details
 				if (System.getProperty("debugMode") != null) {
-					System.out
-							.println("[API] [r/follow]  Client to server ( path:" + path + " ) ( body: " + body + " )");
+					System.out.println("[API] [r/followers] outbound: ( " + jsonArray.toString() + " )");
 				}
 
-				// TODO: Following other players.
-			} else if (path.startsWith("/r/followers")) {
-				// Parse JWT payload
-				String token = this.getHeader("Authorization").substring("Bearer ".length());
-
-				// Verify signature
-				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
-				String sig = token.split("\\.")[2];
-				if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-					this.setResponseCode(401);
-					this.setResponseMessage("Access denied");
-					return;
-				}
-
-				// log details
-				if (System.getProperty("debugMode") != null) {
-					System.out.println(
-							"[API] [r/followers]  Client to server ( path:" + path + " ) ( body: " + body + " )");
-				}
-
-				// TODO: Retrieving followers.
-				// [{"created_at":"2022-03-26 16:24:20","favorite":true,"updated_at":"2022-03-26
-				// 18:28:32","uuid":"75d35f12-6614-4793-ba12-a11f0e9819c4"}]
 			} else if (path.startsWith("/r/followings")) {
-				// Parse JWT payload
-				String token = this.getHeader("Authorization").substring("Bearer ".length());
 
-				// Verify signature
-				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
-				String sig = token.split("\\.")[2];
-				if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-					this.setResponseCode(401);
-					this.setResponseMessage("Access denied");
-					return;
-				}
+				//verify token and get the account.
+				var acc = verifyAndGetAcc(manager);
+				
+	            if (acc == null) {
+	                this.setResponseCode(401);
+	                this.setResponseMessage("Access denied");
+	                return;
+	            }
+	            
+				String sourcePlayerID = acc.getAccountID();
 
 				// log details
 				if (System.getProperty("debugMode") != null) {
 					System.out.println(
-							"[API] [r/followings]  Client to server ( path:" + path + " ) ( body: " + body + " )");
+							"[API] [r/followings] [" + method + "]  Client to server ( source: " + sourcePlayerID + " )");
 				}
+				
+				//open friend list
+				FriendListManager.getInstance().openFriendList(sourcePlayerID);
+				
+				//get following list
+				var followingList = FriendListManager.getInstance().getFollowingList(sourcePlayerID);
+				
+				//make new json Array
+				JsonArray jsonArray = new JsonArray();
+				
+				for(FriendListEntry entry : followingList)
+				{
+					//make a new json object for the entry
+					var newJsonObject = new JsonObject();
+					newJsonObject.addProperty("created_at", entry.addedAt);
+					newJsonObject.addProperty("favorite", entry.favorite);
+					
+					SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
+					fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+					String updatedAt = fmt.format(new Date());
+					
+					newJsonObject.addProperty("updated_at", updatedAt);
+					newJsonObject.addProperty("uuid", entry.playerID);
+					
+					jsonArray.add(newJsonObject);
+				}
+				
+				//send response packet			
+				setBody(jsonArray.toString());	
+				
+				// log interaction details
+				if (System.getProperty("debugMode") != null) {
+					System.out.println("[API] [r/followings] outbound: ( " + jsonArray.toString() + " )");
+				}
+			} else if (path.startsWith("r/favorite")) {
+				
+				
+				//TODO: Favouriting
+				
+				
+			} else if (path.startsWith("/s/desktop")) {
 
-				// TODO: Retrieving players being followed.
-				// [{"created_at":"2022-03-26 16:24:20","favorite":true,"updated_at":"2022-03-26
-				// 18:28:32","uuid":"75d35f12-6614-4793-ba12-a11f0e9819c4"}]
+				//dud handler
+				
+				// log details
+				if (System.getProperty("debugMode") != null) {
+					System.out.println(
+							"[API] [/s/desktop] [" + method + "] DUD");
+				}			
 			} else {
 				// log details
 				if (System.getProperty("debugMode") != null) {
-					System.err.println("[API] Unhandled Api Call: ( path:" + path + " ) ( body: " + body + " )");
+					System.err.println("[API] Unhandled Api Call: ( path:" + path + " ) ( method: " + method + " ) ( body: " + body + " )");
 				}
 
 				setResponseCode(400);
-				path = path;
 				setBody("{}");
 			}
 		} catch (Exception e) {
-			e = e;
+			if (System.getProperty("debugMode") != null) {
+				System.err.println("[FALLBACKAPI] ERROR : " + e.getMessage() + " )");
+			}
 		}
 	}
 
@@ -180,6 +361,36 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 	@Override
 	public boolean supportsChildPaths() {
 		return true;
+	}
+	
+	private EmuFeralAccount verifyAndGetAcc(AccountManager manager) throws JsonSyntaxException, UnsupportedEncodingException
+	{
+		// Parse JWT payload
+		String token = this.getHeader("Authorization").substring("Bearer ".length());
+
+		// Verify signature
+		String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
+		String sig = token.split("\\.")[2];
+		if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
+			return null;
+		}
+		
+         // Verify expiry
+        JsonObject jwtPl = JsonParser
+                .parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+                .getAsJsonObject();
+        if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
+            return null;
+        }
+
+        JsonObject payload = JsonParser
+                .parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+                .getAsJsonObject();
+        
+        // Find account
+        EmuFeralAccount acc = manager.getAccount(payload.get("uuid").getAsString());
+        
+        return acc;
 	}
 
 }
