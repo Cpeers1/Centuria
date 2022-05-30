@@ -12,8 +12,8 @@ import java.util.UUID;
 import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
-import org.asf.emuferal.friendlist.FriendListEntry;
-import org.asf.emuferal.friendlist.FriendListManager;
+import org.asf.emuferal.social.SocialEntry;
+import org.asf.emuferal.social.SocialManager;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.processors.HttpUploadProcessor;
 
@@ -62,90 +62,93 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 						.encodeToString(EmuFeral.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
 				setBody(response.toString());
 			} else if (path.startsWith("/r/block/")) {
-				// Parse JWT payload
-				String token = this.getHeader("Authorization").substring("Bearer ".length());
-
-				// Verify signature
-				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
-				String sig = token.split("\\.")[2];
-				if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-					this.setResponseCode(401);
-					this.setResponseMessage("Access denied");
-					return;
-				}
-
-				// Verify expiry
-				JsonObject jwtPl = JsonParser
-						.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
-						.getAsJsonObject();
-				if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
-					this.setResponseCode(401);
-					this.setResponseMessage("Access denied");
-					return;
-				}
-				
-	            JsonObject payload = JsonParser
-	                    .parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
-	                    .getAsJsonObject();
-
 	            // Find account
-	            EmuFeralAccount acc = manager.getAccount(payload.get("uuid").getAsString());
+	            EmuFeralAccount acc = verifyAndGetAcc(manager);
 	            if (acc == null) {
 	                this.setResponseCode(401);
 	                this.setResponseMessage("Access denied");
 	                return;
 	            }
-	            
+				
 				JsonObject response = new JsonObject();
 	            switch(method.toLowerCase())
 	            {
 	            	case "get":
 	            	{
 	    				String sourcePlayerID = acc.getAccountID();
+	    				String targetPlayerID = path.substring("/r/block/".length());
 	    				
-	    				// log details
-	    				if (System.getProperty("debugMode") != null) {
-	    					System.out.println("[API] [r/block] [" + method + "] inbound: ( source: " + sourcePlayerID + " )");
+	    				var socialListManager = SocialManager.getInstance();
+	    				//open friend list
+	    				socialListManager.openSocialList(targetPlayerID);
+	    				if(socialListManager.getPlayerIsBlocked(sourcePlayerID, targetPlayerID)) {
+
+							SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
+							fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+							String createdAt = fmt.format(new Date());
+							
+	    					response.addProperty("created_at", createdAt);
+	    				}
+	    				else {
+		    				response.addProperty("error", "not_blocked");  
 	    				}
 
-	    				// Request
-	    				String id = path.substring("/r/block/".length());
+	    				if (System.getProperty("debugMode") != null) {
+	    					System.out.println("[API] [r/block] [" + method + "] | Processed get block status request ");
+	    				}
 
-	    				// Send response
-	    				response.addProperty("error", "not_blocked");     		
+	    				break;
+	            	}
+	            	case "post":
+	            	{				
+	    				String sourcePlayerID = acc.getAccountID();
+	    				String targetPlayerID = path.substring("/r/block/".length());
+	    				
+	    				var socialListManager = SocialManager.getInstance();
+	    				
+	    				//open friend list
+	    				socialListManager.openSocialList(sourcePlayerID);
+	    				
+	    				//add player is blocked.
+	    				socialListManager.setBlockedPlayer(sourcePlayerID, targetPlayerID, true);
+	    				
+	    				if (System.getProperty("debugMode") != null) {
+	    					System.out.println("[API] [r/block] [" + method + "] | Processed block Request ");
+	    				}
+	    				
+						setResponseCode(201);
+						break;
+	            	}
+	            	case "delete":
+	            	{
+	    				String sourcePlayerID = acc.getAccountID();
+	    				String targetPlayerID = path.substring("/r/block/".length());
+	    				
+	    				var socialListManager = SocialManager.getInstance();
+	    				//open friend list
+	    				socialListManager.openSocialList(sourcePlayerID);
+    					socialListManager.setBlockedPlayer(sourcePlayerID, targetPlayerID, false);
+	    				
+	    				if (System.getProperty("debugMode") != null) {
+	    					System.out.println("[API] [r/block] [" + method + "] | Processed Unblock Request ");
+	    				}
+	    				
+						break;
+	            	}
+	            	default:
+	            	{ 	            
+	    				// log details
+	    				if (System.getProperty("debugMode") != null) {
+	    					System.err.println("[API] [r/block] [" + method + "] | Unhandled method ");
+	    				}
 	            	}
 	            }
 	            
 				setBody(response.toString());
 			} else if (path.startsWith("/r/follow/")) {
-				// Parse JWT payload
-				String token = this.getHeader("Authorization").substring("Bearer ".length());
-
-				// Verify signature
-				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
-				String sig = token.split("\\.")[2];
-				if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-					this.setResponseCode(401);
-					this.setResponseMessage("Access denied");
-					return;
-				}
 				
-	             // Verify expiry
-	            JsonObject jwtPl = JsonParser
-	                    .parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
-	                    .getAsJsonObject();
-	            if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
-	                this.setResponseCode(401);
-	                this.setResponseMessage("Access denied");
-	                return;
-	            }
-
-	            JsonObject payload = JsonParser
-	                    .parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
-	                    .getAsJsonObject();
-
 	            // Find account
-	            EmuFeralAccount acc = manager.getAccount(payload.get("uuid").getAsString());
+	            EmuFeralAccount acc = verifyAndGetAcc(manager);
 	            if (acc == null) {
 	                this.setResponseCode(401);
 	                this.setResponseMessage("Access denied");
@@ -161,33 +164,15 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				}
 				
 				//open friend list
-				FriendListManager.getInstance().openFriendList(sourcePlayerID);
-				FriendListManager.getInstance().openFriendList(targetPlayerID);
+				SocialManager.getInstance().openSocialList(sourcePlayerID);
+				SocialManager.getInstance().openSocialList(targetPlayerID);
 				
 				switch(method.toLowerCase())
 				{
 					case "post":
-					{
-						//doing date stuff ahead of time
-						SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
-						fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-						String createdAt = fmt.format(new Date());
-						
-						//add player to friend list
-						FriendListEntry entry = new FriendListEntry();
-						entry.addedAt = createdAt;
-						entry.playerID = targetPlayerID;
-						entry.favorite = false;
-						
-						FriendListManager.getInstance().addFollowingPlayer(sourcePlayerID, entry);
-						
-						//for the other player, add them to followers
-						FriendListEntry followerEntry = new FriendListEntry();
-						followerEntry.addedAt = createdAt;
-						followerEntry.playerID = sourcePlayerID;
-						followerEntry.favorite = false;
-						
-						FriendListManager.getInstance().addFollowerPlayer(targetPlayerID, followerEntry);
+					{	
+						SocialManager.getInstance().setFollowingPlayer(sourcePlayerID, targetPlayerID, true);				
+						SocialManager.getInstance().setFollowerPlayer(targetPlayerID, sourcePlayerID, true);
 
 						setResponseCode(201);
 						
@@ -201,10 +186,17 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 					case "delete":
 					{
 						//must be trying to remove friend					
-						FriendListManager.getInstance().removeFollowingPlayer(sourcePlayerID, targetPlayerID);
-						FriendListManager.getInstance().removeFollowerPlayer(targetPlayerID, sourcePlayerID);
+						SocialManager.getInstance().setFollowingPlayer(sourcePlayerID, targetPlayerID, false);
+						SocialManager.getInstance().setFollowerPlayer(targetPlayerID, sourcePlayerID, false);
 						break;
 					}	
+					default:
+					{
+	    				// log details
+	    				if (System.getProperty("debugMode") != null) {
+	    					System.err.println("[API] [r/follow] [" + method + "] | Unhandled method ");
+	    				}
+					}
 				}				
 			} else if (path.startsWith("/r/followers")) {
 				
@@ -227,26 +219,21 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				// TODO: UPDATED AT FIELD.
 				
 				//open friend list
-				FriendListManager.getInstance().openFriendList(sourcePlayerID);
+				SocialManager.getInstance().openSocialList(sourcePlayerID);
 				
 				//get followers list
-				var followerList = FriendListManager.getInstance().getFollowerList(sourcePlayerID);
+				var followerList = SocialManager.getInstance().getFollowerPlayers(sourcePlayerID);
 				
 				//make new json Array
 				JsonArray jsonArray = new JsonArray();
 				
-				for(FriendListEntry entry : followerList)
+				for(SocialEntry entry : followerList)
 				{
 					//make a new json object for the entry
 					var newJsonObject = new JsonObject();
 					newJsonObject.addProperty("created_at", entry.addedAt);
-					newJsonObject.addProperty("favorite", entry.favorite);
-					
-					SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
-					fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-					String updatedAt = fmt.format(new Date());
-					
-					newJsonObject.addProperty("updated_at", updatedAt);
+					newJsonObject.addProperty("favorite", entry.favorite);				
+					newJsonObject.addProperty("updated_at", entry.updatedAt);
 					newJsonObject.addProperty("uuid", entry.playerID);
 					
 					jsonArray.add(newJsonObject);
@@ -280,26 +267,21 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				}
 				
 				//open friend list
-				FriendListManager.getInstance().openFriendList(sourcePlayerID);
+				SocialManager.getInstance().openSocialList(sourcePlayerID);
 				
 				//get following list
-				var followingList = FriendListManager.getInstance().getFollowingList(sourcePlayerID);
+				var followingList = SocialManager.getInstance().getFollowingPlayers(sourcePlayerID);
 				
 				//make new json Array
 				JsonArray jsonArray = new JsonArray();
 				
-				for(FriendListEntry entry : followingList)
+				for(SocialEntry entry : followingList)
 				{
 					//make a new json object for the entry
 					var newJsonObject = new JsonObject();
 					newJsonObject.addProperty("created_at", entry.addedAt);
 					newJsonObject.addProperty("favorite", entry.favorite);
-					
-					SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
-					fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-					String updatedAt = fmt.format(new Date());
-					
-					newJsonObject.addProperty("updated_at", updatedAt);
+					newJsonObject.addProperty("updated_at", entry.updatedAt);
 					newJsonObject.addProperty("uuid", entry.playerID);
 					
 					jsonArray.add(newJsonObject);
@@ -312,12 +294,66 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				if (System.getProperty("debugMode") != null) {
 					System.out.println("[API] [r/followings] outbound: ( " + jsonArray.toString() + " )");
 				}
-			} else if (path.startsWith("r/favorite")) {
+			} else if (path.startsWith("/r/favorite")) {
 				
+				//verify token and get the account.
+				var acc = verifyAndGetAcc(manager);
 				
-				//TODO: Favouriting
+	            if (acc == null) {
+	                this.setResponseCode(401);
+	                this.setResponseMessage("Access denied");
+	                return;
+	            }
+
+				String targetPlayerID = path.split("/")[3];
+				String sourcePlayerID = acc.getAccountID();
+								
+				// log details
+				if (System.getProperty("debugMode") != null) {
+					System.out.println(
+							"[API] [r/favorite] [" + method + "]  Client to server ( source: " + sourcePlayerID + ", target : " + targetPlayerID + ", body: " + body + " )");
+				}
 				
+				var friendListManager = SocialManager.getInstance();
+				//open friend list
+				friendListManager.openSocialList(sourcePlayerID);
 				
+				switch(method.toLowerCase())
+				{
+					case "post":
+					{		
+						friendListManager.setFavoritePlayer(sourcePlayerID, targetPlayerID, true);
+						setResponseCode(201);
+						
+						// log details
+						if (System.getProperty("debugMode") != null) {
+							System.out.println(
+									"[API] [r/favorite] [" + method + "] Handled.");
+						}
+						
+						break;
+					}
+					case "delete":
+					{
+						//oops.. its kind of the same
+						friendListManager.setFavoritePlayer(sourcePlayerID, targetPlayerID, false);
+						
+						// log details
+						if (System.getProperty("debugMode") != null) {
+							System.out.println(
+									"[API] [r/favorite] [" + method + "] Handled.");
+						}
+						break;
+					}
+					default:
+					{
+	    				// log details
+	    				if (System.getProperty("debugMode") != null) {
+	    					System.err.println("[API] [r/favorite] [" + method + "] | Unhandled method ");
+	    				}
+					}
+				}
+
 			} else if (path.startsWith("/s/desktop")) {
 
 				//dud handler
