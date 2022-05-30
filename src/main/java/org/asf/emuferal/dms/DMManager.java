@@ -55,4 +55,11 @@ public abstract class DMManager {
 	 */
 	public abstract void saveDMMessge(String dmID, PrivateChatMessage message);
 
+	/**
+	 * Deletes a DM
+	 * 
+	 * @param dmID Conversation ID to delete
+	 */
+	public abstract void deleteDM(String dmID);
+
 }

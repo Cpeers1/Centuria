@@ -12,8 +12,7 @@ import org.asf.emuferal.players.Player;
 public class JoinRoom implements IXtPacket<JoinRoom> {
 
 	public int roomID = 0;
-	public int playerID = 0;
-	public int mode = 0; // guessing
+	public int roomType = 0; // guessing
 	public String roomIdentifier = "0";
 	public String teleport = "";
 
@@ -30,7 +29,7 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 	@Override
 	public void parse(XtReader reader) throws IOException {
 		roomID = reader.readInt();
-		mode = reader.readInt();
+		roomType = reader.readInt();
 	}
 
 	@Override
@@ -39,8 +38,8 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 
 		writer.writeBoolean(true); // Success
 		writer.writeInt(roomID); // Room ID
-		writer.writeInt(mode); // Mode?
-		writer.writeInt(playerID); // Player ID
+		writer.writeInt(roomType); // Room type
+		writer.writeInt(-1); // Iss Room ID (unused as we dont support it)
 		writer.writeString(teleport); // Specific teleport
 		writer.writeString(roomIdentifier); // Chat room ID
 
@@ -53,9 +52,8 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 		Player plr = (Player) client.container;
 
 		JoinRoom join = new JoinRoom();
-		join.mode = 0;
+		join.roomType = roomType;
 		join.roomID = roomID;
-		join.playerID = plr.account.getAccountNumericID();
 
 		// Sync
 		GameServer srv = (GameServer) client.getServer();
@@ -69,6 +67,7 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 		plr.roomReady = false;
 		plr.pendingRoomID = roomID;
 		plr.pendingRoom = "room_" + roomID;
+		plr.roomType = roomType;
 		join.roomIdentifier = "room_" + roomID;
 
 		// Send response

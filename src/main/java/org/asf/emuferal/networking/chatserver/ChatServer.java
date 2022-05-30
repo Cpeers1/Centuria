@@ -3,6 +3,7 @@ package org.asf.emuferal.networking.chatserver;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
@@ -114,7 +115,10 @@ public class ChatServer {
 							"Player " + client.getPlayer().getDisplayName() + " disconnected from the chat server.");
 					clients.remove(client);
 				}
-				client.stop();
+
+				// Mark disconnected
+				if (client.isConnected())
+					client.disconnect();
 			} catch (Exception e) {
 				// Close connection
 				try {
@@ -131,13 +135,15 @@ public class ChatServer {
 				}
 
 				// Log disconnect
-				if (!(e instanceof IOException)) {
+				if (!(e instanceof IOException) && !(e instanceof SocketException)) {
 					System.err.println("Chat connection died! Error: " + e.getClass().getName()
 							+ (e.getMessage() != null ? ": " + e.getMessage() : ""));
 					e.printStackTrace();
 				}
 
-				client.stop();
+				// Mark disconnected
+				if (client.isConnected())
+					client.disconnect();
 			}
 		}, "Chat Client Thread: " + client);
 		th.setDaemon(true);

@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.util.UUID;
 
 import org.asf.emuferal.accounts.EmuFeralAccount;
+import org.asf.emuferal.accounts.LevelInfo;
 import org.asf.emuferal.accounts.PlayerInventory;
 
 import com.google.gson.JsonObject;
@@ -21,6 +22,9 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 	private String displayName;
 	private FileBasedPlayerInventory inv;
 	private JsonObject privacy;
+	private LevelInfo level;
+	private long lastLogin = -1;
+	private File userFile;
 
 	public FileBasedAccountObject(File uf) throws IOException {
 		// Parse account file
@@ -30,8 +34,12 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 		displayName = Files.readAllLines(uf.toPath()).get(3);
 		userID = Integer.parseInt(Files.readAllLines(uf.toPath()).get(4));
 
-		// Load inventory object
+		// Load inventory
 		inv = new FileBasedPlayerInventory(userUUID);
+
+		// Load login timestamp
+		lastLogin = uf.lastModified() / 1000;
+		userFile = uf;
 	}
 
 	@Override
@@ -74,7 +82,7 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 	@Override
 	public boolean updateDisplayName(String name) {
 		// Check validity
-		if (!name.matches("^[0-9A-Za-z\\-_.]+") || name.length() > 16 || name.length() < 2)
+		if (!name.matches("^[0-9A-Za-z\\-_. ]+") || name.length() > 16 || name.length() < 2)
 			return false;
 
 		// Remove lockout
@@ -203,6 +211,64 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 				new File("accounts/" + userUUID + ".requirechangename").createNewFile();
 			} catch (IOException e) {
 			}
+	}
+
+	@Override
+	public LevelInfo getLevel() {
+		// TODO Auto-generated method stub
+
+		if (level == null)
+			level = new LevelInfo() {
+
+				@Override
+				public boolean isLevelAvailable() {
+					return false;
+				}
+
+				@Override
+				public int getLevel() {
+					return -1;
+				}
+
+				@Override
+				public int getTotalXP() {
+					return -1;
+				}
+
+				@Override
+				public int getCurrentXP() {
+					return -1;
+				}
+
+				@Override
+				public int getLevelupXPCount() {
+					return -1;
+				}
+
+				@Override
+				public void addXP(int xp) {
+				}
+			};
+
+		return level;
+	}
+
+	@Override
+	public long getLastLoginTime() {
+		return lastLogin;
+	}
+
+	@Override
+	public void login() {
+		long time = System.currentTimeMillis();
+		userFile.setLastModified(time);
+		lastLogin = time / 1000;
+	}
+
+	@Override
+	public void deleteAccount() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

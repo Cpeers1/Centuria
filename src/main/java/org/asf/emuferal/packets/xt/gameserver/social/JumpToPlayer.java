@@ -39,11 +39,11 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 
 		// Find player
 		for (Player plr : ((GameServer) client.getServer()).getPlayers()) {
-			if (plr.account.getAccountID().equals(accountID) && plr.roomReady) { // TODO: privacy settings
+			if (plr.account.getAccountID().equals(accountID) && plr.roomReady && !plr.room.equals("room_STAFFROOM")) { // TODO: privacy settings
 				XtWriter writer = new XtWriter();
 				writer.writeString("rfjtr");
 				writer.writeInt(-1); // data prefix
-				
+
 				// Check world
 				if (plr.room.equals(player.room)) {
 					writer.writeInt(1); // current world
@@ -58,8 +58,7 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 				if (!plr.room.equals(player.room)) {
 					// Build room join
 					JoinRoom join = new JoinRoom();
-					join.mode = 0;
-					join.playerID = player.account.getAccountNumericID();
+					join.roomType = plr.roomType;
 					join.roomIdentifier = "room_" + join.roomID;
 
 					// Sync
@@ -73,9 +72,9 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 					// Assign room
 					player.roomReady = false;
 					player.pendingRoomID = plr.roomID;
-					player.pendingRoom = "room_" + join.roomID;
+					player.pendingRoom = plr.room;
 
-					// SEnd packet
+					// Send packet
 					client.sendPacket(join);
 				}
 				return true;

@@ -2,6 +2,7 @@ package org.asf.emuferal.launcher;
 
 import java.awt.EventQueue;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -77,6 +78,12 @@ public class OnlineLauncherMain {
 		frmEmuferalLauncher.setBounds(100, 100, 651, 342);
 		frmEmuferalLauncher.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmEmuferalLauncher.setLocationRelativeTo(null);
+		try {
+			InputStream strmi = getClass().getClassLoader().getResourceAsStream("emulogo_purple.png");
+			frmEmuferalLauncher.setIconImage(ImageIO.read(strmi));
+			strmi.close();
+		} catch (IOException e1) {
+		}
 
 		JPanel panel = new JPanel();
 		frmEmuferalLauncher.getContentPane().add(panel, BorderLayout.SOUTH);
@@ -210,8 +217,7 @@ public class OnlineLauncherMain {
 						File modOut = new File("client/build/Fer.al_Data/sharedassets1.assets");
 						FileOutputStream os = new FileOutputStream(modOut);
 						InputStream is = new URL(
-								"https://aerialworks.ddns.net/extra/emuferal/sharedassets1-online.assets")
-								.openStream();
+								"https://aerialworks.ddns.net/extra/emuferal/sharedassets1-online.assets").openStream();
 						is.transferTo(os);
 						os.close();
 						is.close();

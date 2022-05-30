@@ -875,5 +875,4 @@ public abstract class PlayerInventory {
 	 * @return True if the item is present, false otherwise
 	 */
 	public abstract boolean containsItem(String itemID);
-
 }

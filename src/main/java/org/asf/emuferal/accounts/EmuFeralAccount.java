@@ -113,4 +113,28 @@ public abstract class EmuFeralAccount {
 	 */
 	public abstract void forceNameChange();
 
+	/**
+	 * Retrieves the last time this account was logged into
+	 * 
+	 * @return Login Unix timestamp (seconds) or -1 if not found
+	 */
+	public abstract long getLastLoginTime();
+
+	/**
+	 * Updates the last login timestamp
+	 */
+	public abstract void login();
+
+	/**
+	 * Retrieves the player level object
+	 * 
+	 * @return LevelInfo instance
+	 */
+	public abstract LevelInfo getLevel();
+
+	/**
+	 * Deletes the account from disk and kicks all connected instances
+	 */
+	public abstract void deleteAccount();
+
 }

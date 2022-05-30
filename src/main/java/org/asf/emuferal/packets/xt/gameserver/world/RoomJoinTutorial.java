@@ -39,9 +39,8 @@ public class RoomJoinTutorial implements IXtPacket<RoomJoinTutorial> {
 
 		// Send response
 		JoinRoom join = new JoinRoom();
-		join.mode = 4;
+		join.roomType = 4;
 		join.roomID = 25280;
-		join.playerID = 35;
 		client.sendPacket(join);
 
 		return true;

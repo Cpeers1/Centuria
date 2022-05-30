@@ -2,6 +2,7 @@ package org.asf.emuferal.launcher;
 
 import java.awt.EventQueue;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -78,6 +79,12 @@ public class LauncherMain {
 		frmEmuferalLauncher.setBounds(100, 100, 651, 342);
 		frmEmuferalLauncher.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmEmuferalLauncher.setLocationRelativeTo(null);
+		try {
+			InputStream strmi = getClass().getClassLoader().getResourceAsStream("emulogo_purple.png");
+			frmEmuferalLauncher.setIconImage(ImageIO.read(strmi));
+			strmi.close();
+		} catch (IOException e1) {
+		}
 
 		JPanel panel = new JPanel();
 		frmEmuferalLauncher.getContentPane().add(panel, BorderLayout.SOUTH);

@@ -18,6 +18,7 @@ public class Player {
 	public int pendingLookDefID = 8254;
 	public String pendingLookID = null;
 
+	public int roomType = 0;
 	public int roomID = 0;
 	public int pendingRoomID = 0;
 	public String pendingRoom = "0";

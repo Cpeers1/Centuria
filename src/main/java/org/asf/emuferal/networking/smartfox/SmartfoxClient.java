@@ -38,6 +38,7 @@ public class SmartfoxClient {
 
 	void stop() {
 		taskThread.stopCleanly();
+		client = null;
 	}
 
 	/**
@@ -60,7 +61,6 @@ public class SmartfoxClient {
 		}
 		server.clientDisconnect(this);
 		stop();
-		client = null;
 	}
 
 	/**

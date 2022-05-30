@@ -134,4 +134,10 @@ public class FileBasedDMManager extends DMManager {
 		return participants.toArray(t -> new String[t]);
 	}
 
+	@Override
+	public void deleteDM(String dmID) {
+		if (dmExists(dmID))
+			new File("dms/" + UUID.fromString(dmID) + ".json").delete();
+	}
+
 }

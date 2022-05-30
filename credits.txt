@@ -10,5 +10,6 @@
  - lazy (lazy): testing, packet data provider
  - WLHQ (wlhq): testing
  - Galaxysearcher the Dragon (galaxysearcher): testing
- - 'But like for feral' (qualm): icon and testing
+ - 'But like for feral' (qualmonade) & kibbun: icon and testing
+ - Cheekinqski: fer.ever logo
  

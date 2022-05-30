@@ -25,6 +25,18 @@ public class FileBasedAccountManager extends AccountManager {
 
 	private static SecureRandom rnd = new SecureRandom();
 	private static HashMap<String, Integer> passswordLock = new HashMap<String, Integer>();
+	private int lastAccountID = 0;
+
+	public FileBasedAccountManager() {
+		File idTrackFile = new File("account.lastid.info");
+		if (!idTrackFile.exists())
+			lastAccountID = new File("accounts").listFiles().length;
+		else
+			try {
+				lastAccountID = Integer.valueOf(Files.readAllLines(idTrackFile.toPath()).get(0));
+			} catch (NumberFormatException | IOException e) {
+			}
+	}
 
 	static {
 		Thread th = new Thread(() -> {
@@ -60,7 +72,7 @@ public class FileBasedAccountManager extends AccountManager {
 	@Override
 	public String authenticate(String username, char[] password) {
 		// Check name validity
-		if (!username.matches("^[A-Za-z0-9@\\-._#]+$"))
+		if (!username.matches("^[A-Za-z0-9@._#]+$") || username.contains(".cred"))
 			return null;
 
 		// Find the account
@@ -175,7 +187,7 @@ public class FileBasedAccountManager extends AccountManager {
 	@Override
 	public String register(String username) {
 		// Check name validity
-		if (!username.matches("^[A-Za-z0-9@\\-._#]+$"))
+		if (!username.matches("^[A-Za-z0-9@\\-._#]+$") || username.contains(".cred"))
 			return null;
 
 		try {
@@ -194,9 +206,14 @@ public class FileBasedAccountManager extends AccountManager {
 				// Account exists, return null
 				return null;
 			}
+
+			// Increase last ID and save it to disk
+			lastAccountID++;
+			Files.writeString(Path.of("account.lastid.info"), Integer.toString(lastAccountID));
+
 			Files.writeString(uf.toPath(), id + "\n" + username);
 			Files.writeString(new File("accounts/" + id).toPath(),
-					id + "\n" + username + "\ntrue\n" + username + "\n" + new File("accounts").listFiles().length);
+					id + "\n" + username + "\ntrue\n" + username + "\n" + lastAccountID);
 
 			// Return account ID
 			return id;

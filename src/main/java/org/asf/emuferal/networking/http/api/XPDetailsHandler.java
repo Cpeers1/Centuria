@@ -5,10 +5,13 @@ import java.net.Socket;
 import java.util.Base64;
 
 import org.asf.emuferal.EmuFeral;
+import org.asf.emuferal.accounts.AccountManager;
+import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.processors.HttpUploadProcessor;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -48,13 +51,31 @@ public class XPDetailsHandler extends HttpUploadProcessor {
 			// Parse body
 			JsonArray req = JsonParser.parseString(new String(body, "UTF-8")).getAsJsonArray();
 
-			// Send response
+			// Build response
 			JsonObject response = new JsonObject();
-			response.add("found", null);
+			JsonArray found = new JsonArray();
+			for (JsonElement ele : req) {
+				String uuid = ele.getAsString();
+
+				// Locate account
+				EmuFeralAccount acc = AccountManager.getInstance().getAccount(uuid);
+				if (acc.getLevel().isLevelAvailable()) {
+					JsonObject lvD = new JsonObject();
+					JsonObject cLv = new JsonObject();
+					cLv.addProperty("level", acc.getLevel().getCurrentXP());
+					cLv.addProperty("required", acc.getLevel().getLevelupXPCount());
+					cLv.addProperty("xp", acc.getLevel().getCurrentXP());
+					lvD.add("current_level", lvD);
+					lvD.addProperty("total_xp", acc.getLevel().getTotalXP());
+					lvD.addProperty("uuid", uuid);
+					found.add(lvD);
+				}
+			}
+
+			// Send response
+			response.add("found", found);
 			response.add("not_found", req);
 			setBody(response.toString());
-
-			// TODO: levels
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");

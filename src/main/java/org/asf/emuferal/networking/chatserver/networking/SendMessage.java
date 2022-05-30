@@ -98,6 +98,9 @@ public class SendMessage extends AbstractChatPacket {
 
 	@Override
 	public boolean handle(ChatClient client) {
+		// Clean message
+		message = message.trim();
+
 		// Chat commands
 		if (message.startsWith(">")) {
 			String cmd = message.substring(1).trim();
@@ -493,9 +496,8 @@ public class SendMessage extends AbstractChatPacket {
 							if (plr.account.getAccountID().equals(client.getPlayer().getAccountID())) {
 								// Load the requested room
 								JoinRoom join = new JoinRoom();
-								join.mode = 0;
+								join.roomType = 0; // World
 								join.roomID = 1718;
-								join.playerID = plr.account.getAccountNumericID();
 
 								// Sync
 								GameServer srv = (GameServer) plr.client.getServer();
@@ -564,6 +566,16 @@ public class SendMessage extends AbstractChatPacket {
 											&& !GameServer.hasPerm(permLevel, "admin")) {
 								systemMessage("Unable to pardon higher-ranking users.", cmd, client);
 								return true;
+							}
+						}
+
+						// Sync online player
+						for (Player plr : EmuFeral.gameServer.getPlayers()) {
+							if (plr.account.getDisplayName().equals(args.get(0))) {
+								// Remove penalties
+								if (plr.account.getPlayerInventory().containsItem("penalty"))
+									plr.account.getPlayerInventory().deleteItem("penalty");
+								break;
 							}
 						}
 
@@ -1115,7 +1127,7 @@ public class SendMessage extends AbstractChatPacket {
 						message += " - permban \"<player>\"\n";
 						message += " - tempban \"<player>\" <days>\"\n";
 						message += " - forcenamechange \"<player>\"\n";
-						message += " - changeothername \"<player>\" <new-name>\n";
+						message += " - changeothername \"<player>\" \"<new-name>\"\n";
 						message += " - mute \"<player>\" <minutes> [hours] [days]\n";
 						message += " - pardon \"<player>\"\n";
 						if (GameServer.hasPerm(permLevel, "developer")) {

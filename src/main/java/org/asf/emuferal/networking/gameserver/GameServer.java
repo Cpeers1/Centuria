@@ -311,6 +311,9 @@ public class GameServer extends BaseSmartfoxServer {
 		plr.activeLook = acc.getActiveLook();
 		plr.activeSanctuaryLook = acc.getActiveSanctuaryLook();
 
+		// Update login timestamp
+		acc.login();
+
 		// Save player in the client object
 		client.container = plr;
 
