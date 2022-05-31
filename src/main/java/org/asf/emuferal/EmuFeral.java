@@ -36,6 +36,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
 import org.asf.connective.https.ConnectiveHTTPSServer;
+import org.asf.emuferal.modules.IEmuFeralModule;
 import org.asf.emuferal.modules.ModuleManager;
 import org.asf.emuferal.networking.chatserver.ChatServer;
 import org.asf.emuferal.networking.gameserver.GameServer;
@@ -150,7 +151,6 @@ public class EmuFeral {
 			}
 		}
 
-
 		// Updater
 		if (!disableUpdater
 				&& (System.getProperty("debugMode") == null || System.getProperty("debugMode").equals("false"))) {
@@ -159,7 +159,7 @@ public class EmuFeral {
 				System.exit(0);
 			}
 		}
-		
+
 		// Start the servers
 		startServer();
 
@@ -470,6 +470,13 @@ public class EmuFeral {
 					InetAddress.getByName("0.0.0.0"));
 		chatServer = new ChatServer(sock);
 		chatServer.start();
+
+		// Post-initialize modules
+		System.out.println("Post-initializing EmuFeral modules...");
+		for (IEmuFeralModule module : ModuleManager.getInstance().getAllModules()) {
+			System.out.println("Post-initializing module: " + module.id());
+			module.postInit();
+		}
 
 		// Log completion
 		System.out.println("Successfully started emulated servers.");

@@ -16,6 +16,7 @@ import org.asf.cyan.api.common.CyanComponent;
 import org.asf.cyan.api.config.serializing.internal.Splitter;
 import org.asf.cyan.fluid.bytecode.FluidClassPool;
 import org.asf.cyan.fluid.bytecode.sources.LoaderClassSourceProvider;
+import org.asf.emuferal.modules.eventbus.EventBus;
 import org.objectweb.asm.tree.ClassNode;
 
 @CYAN_COMPONENT
@@ -187,6 +188,7 @@ public class ModuleManager extends CyanComponent {
 				module.preInit();
 				System.out.println("Loading module: " + module.id());
 				this.modules.put(module.id(), module);
+				EventBus.getInstance().addEventReceiver(module);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				System.err.println("Module loading failure: " + mod.getTypeName() + ": " + e.getClass().getSimpleName()
@@ -244,5 +246,30 @@ public class ModuleManager extends CyanComponent {
 
 		// Not a subtype of IEmuFeralModule
 		return false;
+	}
+
+	//
+	// Module management
+	//
+
+	/**
+	 * Retrieves all module instances
+	 * 
+	 * @return Array of IEmuFeralModule instances
+	 */
+	public IEmuFeralModule[] getAllModules() {
+		return modules.values().toArray(t -> new IEmuFeralModule[t]);
+	}
+
+	/**
+	 * Retrieves a module by ID
+	 * 
+	 * @param id Module ID
+	 * @return IEmuFeralModule instance or null
+	 */
+	public IEmuFeralModule getModule(String id) {
+		if (modules.containsKey(id))
+			return modules.get(id);
+		return null;
 	}
 }

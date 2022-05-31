@@ -1,6 +1,8 @@
 package org.asf.emuferal.modules;
 
-public interface IEmuFeralModule {
+import org.asf.emuferal.modules.eventbus.IEventReceiver;
+
+public interface IEmuFeralModule extends IEventReceiver {
 
 	/**
 	 * Defines the module ID
