@@ -16,7 +16,6 @@ import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.ipbans.IpBanManager;
-import org.asf.emuferal.networking.chatserver.ChatClient;
 import org.asf.emuferal.networking.smartfox.BaseSmartfoxServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.smartfox.ISmartfoxPacket;
@@ -337,7 +336,7 @@ public class GameServer extends BaseSmartfoxServer {
 		System.out.println(
 				"Player connected: " + plr.account.getLoginName() + " (as " + plr.account.getDisplayName() + ")");
 		sendPacket(client, "%xt%ulc%-1%");
-		
+
 		// Player list
 		String playerMsg = "%xt%rfl%-1%true%";
 		for (Player player : getPlayers()) {
@@ -440,13 +439,6 @@ public class GameServer extends BaseSmartfoxServer {
 			for (Player player : getPlayers()) {
 				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
 					plr.destroyAt(player);
-				}
-			}
-
-			// Disconnect the player from the chat server
-			for (ChatClient chClient : EmuFeral.chatServer.getClients()) {
-				if (chClient.getPlayer().getAccountID().equals(plr.account.getAccountID())) {
-					chClient.disconnect();
 				}
 			}
 
