@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import org.asf.emuferal.dms.DMManager;
 import org.asf.emuferal.dms.PrivateChatMessage;
+import org.asf.emuferal.social.SocialManager;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -48,7 +49,7 @@ public class FileBasedDMManager extends DMManager {
 	}
 
 	@Override
-	public PrivateChatMessage[] getDMHistory(String dmID) {
+	public PrivateChatMessage[] getDMHistory(String dmID, String requester) {
 		if (!dmExists(dmID))
 			throw new IllegalArgumentException("DM not found");
 
@@ -62,9 +63,15 @@ public class FileBasedDMManager extends DMManager {
 			ArrayList<PrivateChatMessage> messages = new ArrayList<PrivateChatMessage>();
 			for (JsonElement ele : data) {
 				JsonObject msg = ele.getAsJsonObject();
+				String source = msg.get("source").getAsString();
+
+				if (SocialManager.getInstance().socialListExists(source)
+						&& SocialManager.getInstance().getPlayerIsBlocked(source, requester))
+					continue;
+
 				PrivateChatMessage message = new PrivateChatMessage();
 				message.content = msg.get("content").getAsString();
-				message.source = msg.get("source").getAsString();
+				message.source = source;
 				message.sentAt = msg.get("sentAt").getAsString();
 				messages.add(message);
 			}

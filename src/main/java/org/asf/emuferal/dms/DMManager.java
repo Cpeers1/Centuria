@@ -42,10 +42,11 @@ public abstract class DMManager {
 	/**
 	 * Retrieves the messages sent in a DM
 	 * 
-	 * @param dmID Conversation ID
+	 * @param dmID      Conversation ID
+	 * @param requester Player requesting the history
 	 * @return Array of PrivateChatMessage instances
 	 */
-	public abstract PrivateChatMessage[] getDMHistory(String dmID);
+	public abstract PrivateChatMessage[] getDMHistory(String dmID, String requester);
 
 	/**
 	 * Saves a DM message to disk or memory

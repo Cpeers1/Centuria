@@ -34,7 +34,7 @@ public class UserConversations extends AbstractChatPacket {
 		// Add room objects
 		for (String room : client.getRooms()) {
 			if (client.isRoomPrivate(room))
-				convos.add(client.getServer().roomObject(room, true));
+				convos.add(client.getServer().roomObject(room, true, client.getPlayer().getAccountID()));
 		}
 
 		res.add("conversations", convos);

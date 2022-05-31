@@ -31,7 +31,8 @@ public class GetConversation extends AbstractChatPacket {
 	public boolean handle(ChatClient client) {
 		// Send response
 		JsonObject res = new JsonObject();
-		res.add("conversation", client.getServer().roomObject(convo, client.isRoomPrivate(convo)));
+		res.add("conversation",
+				client.getServer().roomObject(convo, client.isRoomPrivate(convo), client.getPlayer().getAccountID()));
 		res.addProperty("eventId", "conversations.get");
 		res.addProperty("success", true);
 		client.sendPacket(res);

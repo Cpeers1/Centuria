@@ -35,7 +35,6 @@ public class HistoryPacket extends AbstractChatPacket {
 
 	@Override
 	public boolean handle(ChatClient client) {
-
 		// Send response
 		JsonObject res = new JsonObject();
 
@@ -43,7 +42,7 @@ public class HistoryPacket extends AbstractChatPacket {
 		DMManager manager = DMManager.getInstance();
 		if (client.isInRoom(convo) && client.isRoomPrivate(convo) && manager.dmExists(convo)) {
 			JsonArray msgs = new JsonArray();
-			for (PrivateChatMessage msg : manager.getDMHistory(convo)) {
+			for (PrivateChatMessage msg : manager.getDMHistory(convo, client.getPlayer().getAccountID())) {
 				// Build participant list
 				JsonArray members = new JsonArray();
 				for (String participant : manager.getDMParticipants(convo)) {

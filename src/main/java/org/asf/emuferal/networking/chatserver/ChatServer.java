@@ -175,9 +175,10 @@ public class ChatServer {
 	 * 
 	 * @param room      Room ID
 	 * @param isPrivate True if the room is private, false otherwise
+	 * @param requester Player making the request
 	 * @return JsonObject instance
 	 */
-	public JsonObject roomObject(String room, boolean isPrivate) {
+	public JsonObject roomObject(String room, boolean isPrivate, String requester) {
 		// Build object
 		JsonObject roomData = new JsonObject();
 		roomData.addProperty("conversation_id", room);
@@ -204,7 +205,7 @@ public class ChatServer {
 			roomData.add("participants", members);
 
 			// Find recent message
-			PrivateChatMessage[] msgs = manager.getDMHistory(room);
+			PrivateChatMessage[] msgs = manager.getDMHistory(room, requester);
 			if (msgs.length != 0) {
 				// Add most recent
 				PrivateChatMessage recent = msgs[msgs.length - 1];
