@@ -7,6 +7,7 @@ import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.dms.DMManager;
 import org.asf.emuferal.networking.chatserver.ChatClient;
+import org.asf.emuferal.social.SocialManager;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -60,12 +61,19 @@ public class CreateConversationPacket extends AbstractChatPacket {
 			// TODO: privacy
 			String id = participant.getAsString();
 
-//			JsonObject res = new JsonObject();
-//			res.addProperty("eventId", "conversations.create");
-//			res.addProperty("error", "privacy");
-//			res.addProperty("success", false);
-//			client.sendPacket(res);
-//			return true;
+			// Block check
+			if (SocialManager.getInstance().socialListExists(id)
+					&& SocialManager.getInstance().getPlayerIsBlocked(id, client.getPlayer().getAccountID())) {
+
+				// Send response
+				JsonObject res = new JsonObject();
+				res.addProperty("eventId", "conversations.openPrivate");
+				res.addProperty("error", "blocked");
+				res.addProperty("success", false);
+				client.sendPacket(res);
+
+				return true;
+			}
 
 			// Find online player
 			boolean found = false;

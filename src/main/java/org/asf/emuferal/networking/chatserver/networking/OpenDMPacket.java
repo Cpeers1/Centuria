@@ -2,6 +2,7 @@ package org.asf.emuferal.networking.chatserver.networking;
 
 import org.asf.emuferal.dms.DMManager;
 import org.asf.emuferal.networking.chatserver.ChatClient;
+import org.asf.emuferal.social.SocialManager;
 
 import com.google.gson.JsonObject;
 
@@ -30,12 +31,19 @@ public class OpenDMPacket extends AbstractChatPacket {
 
 	@Override
 	public boolean handle(ChatClient client) {
-		// TODO: privacy check
-//		JsonObject res = new JsonObject();
-//		res.addProperty("eventId", "conversations.openPrivate");
-//		res.addProperty("error", "privacy");
-//		res.addProperty("success", false);
-//		client.sendPacket(res);
+		// Block check
+		if (SocialManager.getInstance().socialListExists(participant)
+				&& SocialManager.getInstance().getPlayerIsBlocked(participant, client.getPlayer().getAccountID())) {
+
+			// Send response
+			JsonObject res = new JsonObject();
+			res.addProperty("eventId", "conversations.openPrivate");
+			res.addProperty("error", "blocked");
+			res.addProperty("success", false);
+			client.sendPacket(res);
+
+			return true;
+		}
 
 		// Load data
 		DMManager manager = DMManager.getInstance();
