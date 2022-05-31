@@ -1,9 +1,8 @@
 package org.asf.emuferal;
 
 import org.asf.emuferal.modules.IEmuFeralModule;
-import org.asf.emuferal.modules.eventbus.EventBus;
 import org.asf.emuferal.modules.eventbus.EventListener;
-import org.asf.emuferal.modules.events.GameServerStartupEvent;
+import org.asf.emuferal.modules.events.servers.APIServerStartupEvent;
 
 public class TestModule implements IEmuFeralModule {
 
@@ -22,7 +21,7 @@ public class TestModule implements IEmuFeralModule {
 	}
 
 	@EventListener
-	public void startServer(GameServerStartupEvent event) {
+	public void startServer(APIServerStartupEvent event) {
 		event = event;
 	}
 

@@ -9,6 +9,8 @@ import java.util.ConcurrentModificationException;
 
 import org.asf.emuferal.dms.DMManager;
 import org.asf.emuferal.dms.PrivateChatMessage;
+import org.asf.emuferal.modules.eventbus.EventBus;
+import org.asf.emuferal.modules.events.servers.ChatServerStartupEvent;
 import org.asf.emuferal.networking.chatserver.networking.AbstractChatPacket;
 import org.asf.emuferal.networking.chatserver.networking.CreateConversationPacket;
 import org.asf.emuferal.networking.chatserver.networking.GetConversation;
@@ -44,6 +46,10 @@ public class ChatServer {
 		registerPacket(new SendMessage());
 		registerPacket(new OpenDMPacket());
 		registerPacket(new CreateConversationPacket());
+
+		// Allow modules to register packets
+		ChatServerStartupEvent ev = new ChatServerStartupEvent(this, t -> registerPacket(t));
+		EventBus.getInstance().dispatchEvent(ev);
 	}
 
 	public ChatClient[] getClients() {

@@ -16,6 +16,8 @@ import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.ipbans.IpBanManager;
+import org.asf.emuferal.modules.eventbus.EventBus;
+import org.asf.emuferal.modules.events.servers.GameServerStartupEvent;
 import org.asf.emuferal.networking.smartfox.BaseSmartfoxServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.smartfox.ISmartfoxPacket;
@@ -111,6 +113,10 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new UserTutorialCompleted());
 		registerPacket(new AvatarEditorSelectLook());
 		registerPacket(new UserAvatarSave());
+
+		// Allow modules to register packets
+		GameServerStartupEvent ev = new GameServerStartupEvent(this, t -> registerPacket(t));
+		EventBus.getInstance().dispatchEvent(ev);
 	}
 
 	@Override

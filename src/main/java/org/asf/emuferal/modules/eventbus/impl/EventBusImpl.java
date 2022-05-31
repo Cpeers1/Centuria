@@ -49,13 +49,17 @@ public class EventBusImpl extends EventBus {
 	public void dispatchEvent(EventObject event) {
 		if (listeners.containsKey(event.eventPath())) {
 			// Dispatch event
-			listeners.get(event.eventPath()).forEach((mth, cont) -> {
+			HashMap<Method, IEventReceiver> listeners = this.listeners.get(event.eventPath());
+			for (Method mth : listeners.keySet()) {
+				if (event.isHandled())
+					return; // End loop, event was handled
+
 				try {
-					mth.invoke(cont, event);
+					mth.invoke(listeners.get(mth), event);
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 					throw new RuntimeException(e);
 				}
-			});
+			}
 		}
 	}
 }

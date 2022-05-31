@@ -38,6 +38,9 @@ import javax.net.ssl.SSLContext;
 import org.asf.connective.https.ConnectiveHTTPSServer;
 import org.asf.emuferal.modules.IEmuFeralModule;
 import org.asf.emuferal.modules.ModuleManager;
+import org.asf.emuferal.modules.eventbus.EventBus;
+import org.asf.emuferal.modules.events.servers.APIServerStartupEvent;
+import org.asf.emuferal.modules.events.servers.DirectorServerStartupEvent;
 import org.asf.emuferal.networking.chatserver.ChatServer;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.http.api.FallbackAPIProcessor;
@@ -395,6 +398,9 @@ public class EmuFeral {
 		apiServer.registerProcessor(new RequestTokenHandler());
 		apiServer.registerProcessor(new FallbackAPIProcessor());
 
+		// Allow modules to register handlers
+		EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
+
 		//
 		// Start director server
 		System.out.println("Starting Emulated Feral Director server...");
@@ -402,6 +408,7 @@ public class EmuFeral {
 				.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
 				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
 		directorServer.registerProcessor(new GameServerRequestHandler());
+		EventBus.getInstance().dispatchEvent(new DirectorServerStartupEvent(directorServer));
 
 		//
 		// Load game server

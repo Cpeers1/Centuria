@@ -1,4 +1,4 @@
-package org.asf.emuferal.modules.events;
+package org.asf.emuferal.modules.events.servers;
 
 import java.util.function.Consumer;
 

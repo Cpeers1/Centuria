@@ -237,19 +237,62 @@ public class SendMessage extends AbstractChatPacket {
 
 	// Command handler
 	private boolean handleCommand(String cmd, ChatClient client) {
-		// Check permissions
+		// Load permission level
+		String permLevel = "member";
 		if (client.getPlayer().getPlayerInventory().containsItem("permissions")) {
-			String permLevel = client.getPlayer().getPlayerInventory().getItem("permissions").getAsJsonObject()
+			permLevel = client.getPlayer().getPlayerInventory().getItem("permissions").getAsJsonObject()
 					.get("permissionLevel").getAsString();
-			if (GameServer.hasPerm(permLevel, "moderator")) {
-				// Parse command
-				ArrayList<String> args = parseCommand(cmd);
-				String cmdId = "";
-				if (args.size() > 0) {
-					cmdId = args.remove(0).toLowerCase();
-					cmd = cmdId;
+		}
 
-					// Run command
+		// Generate the command list
+		ArrayList<String> commandMessages = new ArrayList<String>();
+		if (GameServer.hasPerm(permLevel, "moderator")) {
+			commandMessages.add("kick \"<player>\"\n");
+			commandMessages.add("ipban \"<player>\"\n");
+			commandMessages.add("pardonip \"<ip>\"\n");
+			commandMessages.add("permban \"<player>\"");
+			commandMessages.add("tempban \"<player>\" <days>\"");
+			commandMessages.add("forcenamechange \"<player>\"");
+			commandMessages.add("changeothername \"<player>\" \"<new-name>\"");
+			commandMessages.add("mute \"<player>\" <minutes> [hours] [days]");
+			commandMessages.add("pardon \"<player>\"");
+			if (GameServer.hasPerm(permLevel, "developer")) {
+				commandMessages.add("makedeveloper \"<name>\"");
+			}
+			if (GameServer.hasPerm(permLevel, "admin")) {
+				commandMessages.add("makeadmin \"<player>\"");
+				commandMessages.add("makemoderator \"<player>\"");
+				commandMessages.add("removeperms \"<player>\"");
+				commandMessages.add("startmaintenance");
+				commandMessages.add("endmaintenance");
+				commandMessages.add("updatewarning <minutes-remaining>");
+				commandMessages.add("updateshutdown");
+				commandMessages.add("update <60|30|15|10|5|3|1>");
+				commandMessages.add("cancelupdate");
+			}
+			commandMessages.add("staffroom");
+		}
+
+		// Add module commands
+		// TODO
+
+		// Add help if not empty
+		if (!commandMessages.isEmpty())
+			commandMessages.add("help");
+
+		// Run command
+		if (!commandMessages.isEmpty()) {
+			// Parse command
+			ArrayList<String> args = parseCommand(cmd);
+			String cmdId = "";
+			if (args.size() > 0) {
+				cmdId = args.remove(0).toLowerCase();
+				cmd = cmdId;
+
+				// TODO: module command hooks
+
+				// Run system command
+				if (GameServer.hasPerm(permLevel, "moderator")) {
 					switch (cmdId) {
 
 					//
@@ -1049,47 +1092,24 @@ public class SendMessage extends AbstractChatPacket {
 							break;
 						}
 					}
-
-					//
-					// Help command
-					case "help": {
-						// Help command
-						String message = "List of commands:\n";
-						message += " - kick \"<player>\"\n";
-						message += " - ipban \"<player>\"\n";
-						message += " - pardonip \"<ip>\"\n";
-						message += " - permban \"<player>\"\n";
-						message += " - tempban \"<player>\" <days>\"\n";
-						message += " - forcenamechange \"<player>\"\n";
-						message += " - changeothername \"<player>\" \"<new-name>\"\n";
-						message += " - mute \"<player>\" <minutes> [hours] [days]\n";
-						message += " - pardon \"<player>\"\n";
-						if (GameServer.hasPerm(permLevel, "developer")) {
-							message += " - makedeveloper \"<name>\"\n";
-						}
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							message += " - makeadmin \"<player>\"\n";
-							message += " - makemoderator \"<player>\"\n";
-							message += " - removeperms \"<player>\"\n";
-							message += " - startmaintenance\n";
-							message += " - endmaintenance\n";
-							message += " - updatewarning <minutes-remaining>\n";
-							message += " - updateshutdown\n";
-							message += " - update <60|30|15|10|5|3|1>\n";
-							message += " - cancelupdate\n";
-						}
-						message += " - staffroom\n";
-						message += " - help";
-						systemMessage(message, cmdId, client);
-						return true;
-					}
 					}
 				}
 
-				// Command not found
-				systemMessage("Command not recognized, use help for a list of commands", cmd, client);
-				return true;
+				//
+				// Help command
+				if (cmd.equals("help")) {
+					String message = "List of commands:";
+					for (String commandMessage : commandMessages) {
+						message += "\n" + commandMessage;
+					}
+					systemMessage(message, cmdId, client);
+					return true;
+				}
 			}
+
+			// Command not found
+			systemMessage("Command not recognized, use help for a list of commands", cmd, client);
+			return true;
 		}
 		return false;
 	}
