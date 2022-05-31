@@ -204,6 +204,15 @@ public class FileBasedSocialManager extends SocialManager {
 
 				playerObject.remove(playerEntryUpdatedAtPropertyName);
 				playerObject.addProperty(playerEntryUpdatedAtPropertyName, updatedAt);
+
+				// check if the entry is empty
+				if (!playerObject.get(playerEntryBlockedPropertyName).getAsBoolean()
+						&& !playerObject.get(playerEntryFavouritedPropertyName).getAsBoolean()
+						&& !playerObject.get(playerEntryFollowingPropertyName).getAsBoolean()
+						&& !playerObject.get(playerEntryFollowerPropertyName).getAsBoolean()) {
+					// Delete the entry
+					socialList.remove(targetPlayerID);
+				}
 			} else {
 				// create a new entry for this player
 				socialList.add(targetPlayerID, createNewPlayerEntry(following, false, false, false));
@@ -242,6 +251,15 @@ public class FileBasedSocialManager extends SocialManager {
 
 				playerObject.remove(playerEntryUpdatedAtPropertyName);
 				playerObject.addProperty(playerEntryUpdatedAtPropertyName, updatedAt);
+
+				// check if the entry is empty
+				if (!playerObject.get(playerEntryBlockedPropertyName).getAsBoolean()
+						&& !playerObject.get(playerEntryFavouritedPropertyName).getAsBoolean()
+						&& !playerObject.get(playerEntryFollowingPropertyName).getAsBoolean()
+						&& !playerObject.get(playerEntryFollowerPropertyName).getAsBoolean()) {
+					// Delete the entry
+					socialList.remove(targetPlayerID);
+				}
 			} else {
 				// create a new entry for this player
 				socialList.add(targetPlayerID, createNewPlayerEntry(false, follower, false, false));
@@ -280,6 +298,15 @@ public class FileBasedSocialManager extends SocialManager {
 
 				playerObject.remove(playerEntryUpdatedAtPropertyName);
 				playerObject.addProperty(playerEntryUpdatedAtPropertyName, updatedAt);
+
+				// check if the entry is empty
+				if (!playerObject.get(playerEntryBlockedPropertyName).getAsBoolean()
+						&& !playerObject.get(playerEntryFavouritedPropertyName).getAsBoolean()
+						&& !playerObject.get(playerEntryFollowingPropertyName).getAsBoolean()
+						&& !playerObject.get(playerEntryFollowerPropertyName).getAsBoolean()) {
+					// Delete the entry
+					socialList.remove(targetPlayerID);
+				}
 			} else {
 				// create a new entry for this player
 				socialList.add(targetPlayerID, createNewPlayerEntry(false, false, blocked, false));
@@ -318,6 +345,15 @@ public class FileBasedSocialManager extends SocialManager {
 
 				playerObject.remove(playerEntryUpdatedAtPropertyName);
 				playerObject.addProperty(playerEntryUpdatedAtPropertyName, updatedAt);
+
+				// check if the entry is empty
+				if (!playerObject.get(playerEntryBlockedPropertyName).getAsBoolean()
+						&& !playerObject.get(playerEntryFavouritedPropertyName).getAsBoolean()
+						&& !playerObject.get(playerEntryFollowingPropertyName).getAsBoolean()
+						&& !playerObject.get(playerEntryFollowerPropertyName).getAsBoolean()) {
+					// Delete the entry
+					socialList.remove(targetPlayerID);
+				}
 			} else {
 				// create a new entry for this player (should never happen for favorite but a
 				// fallback)

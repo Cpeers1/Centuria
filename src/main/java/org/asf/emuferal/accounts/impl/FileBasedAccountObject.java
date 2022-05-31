@@ -6,10 +6,14 @@ import java.nio.file.Files;
 import java.util.UUID;
 
 import org.asf.emuferal.EmuFeral;
+import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.accounts.LevelInfo;
 import org.asf.emuferal.accounts.PlayerInventory;
+import org.asf.emuferal.dms.DMManager;
 import org.asf.emuferal.players.Player;
+import org.asf.emuferal.social.SocialEntry;
+import org.asf.emuferal.social.SocialManager;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -36,8 +40,15 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 		displayName = Files.readAllLines(uf.toPath()).get(3);
 		userID = Integer.parseInt(Files.readAllLines(uf.toPath()).get(4));
 
-		// Load inventory
-		inv = new FileBasedPlayerInventory(userUUID);
+		// Find existing inventory
+		Player old = getOnlinePlayerInstance();
+		if (old == null || !(old.account.getPlayerInventory() instanceof FileBasedPlayerInventory)) {
+			// Load inventory
+			inv = new FileBasedPlayerInventory(userUUID);
+		} else {
+			// Use the existing inventory object
+			inv = (FileBasedPlayerInventory) old.account.getPlayerInventory();
+		}
 
 		// Load login timestamp
 		lastLogin = uf.lastModified() / 1000;
@@ -274,8 +285,158 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 
 	@Override
 	public void deleteAccount() {
+		if (!new File("accounts/" + loginName).exists()) {
+			// Account does not exist
+			return;
+		}
+
+		// Delete login file
+		new File("accounts/" + loginName).delete();
+
+		// Kick online player first
+		kick();
+
+		// Delete account file
+		new File("accounts/" + userUUID).delete();
+
+		// Delete account password file
+		if (new File("accounts/" + userUUID + ".cred").exists())
+			new File("accounts/" + userUUID + ".cred").delete();
+
+		// Delete looks
+		deleteDir(new File("accounts/" + userUUID + ".looks"));
+		deleteDir(new File("accounts/" + userUUID + ".sanctuary.looks"));
+
+		// Release display name
+		AccountManager.getInstance().releaseDisplayName(displayName);
+
+		// Delete account from the social system
+		if (SocialManager.getInstance().socialListExists(userUUID)) {
+			SocialEntry[] followers = SocialManager.getInstance().getFollowerPlayers(userUUID);
+			SocialEntry[] followings = SocialManager.getInstance().getFollowingPlayers(userUUID);
+			for (SocialEntry user : followers) {
+				SocialManager.getInstance().setBlockedPlayer(user.playerID, userUUID, false);
+				SocialManager.getInstance().setFollowerPlayer(user.playerID, userUUID, false);
+				SocialManager.getInstance().setFollowingPlayer(user.playerID, userUUID, false);
+			}
+			for (SocialEntry user : followings) {
+				SocialManager.getInstance().setBlockedPlayer(user.playerID, userUUID, false);
+				SocialManager.getInstance().setFollowerPlayer(user.playerID, userUUID, false);
+				SocialManager.getInstance().setFollowingPlayer(user.playerID, userUUID, false);
+			}
+			SocialManager.getInstance().deleteSocialList(userUUID);
+		}
+
+		// Delete DMs
+		DMManager manager = DMManager.getInstance();
+		if (getPlayerInventory().containsItem("dms")) {
+			// Loop through all DMs and close them
+			JsonObject dms = getPlayerInventory().getItem("dms").getAsJsonObject();
+			for (String userID : dms.keySet()) {
+				// Load DM id
+				String dmID = dms.get(userID).getAsString();
+
+				// Remove all participants
+				String[] participants = manager.getDMParticipants(dmID);
+				for (String participant : participants) {
+					// Remove the DM from player
+					EmuFeralAccount otherAccount = AccountManager.getInstance().getAccount(participant);
+					if (otherAccount != null) {
+						// Find DMs
+						if (otherAccount.getPlayerInventory().containsItem("dms")) {
+							// Load dm from player
+							JsonObject otherDMs = otherAccount.getPlayerInventory().getItem("dms").getAsJsonObject();
+
+							// Find DM
+							for (String plr : otherDMs.keySet()) {
+								if (otherDMs.get(plr).getAsString().equals(dmID)) {
+									// Remove DM from player
+									otherDMs.remove(plr);
+									break;
+								}
+							}
+
+							// Save DM object
+							otherAccount.getPlayerInventory().setItem("dms", dms);
+						}
+					}
+				}
+
+				// Delete DM
+				manager.deleteDM(dmID);
+			}
+			getPlayerInventory().setItem("dms", dms);
+		}
+
+		// Delete inventory
+		inv.delete();
+
+		// TODO
+	}
+
+	@Override
+	public boolean kick() {
+		// Locate online player
+		Player plr = getOnlinePlayerInstance();
+
+		if (plr != null) {
+			// Kick the player
+			plr.client.sendPacket("%xt%ua%-1%4086%");
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+			}
+			plr.client.disconnect();
+
+			// Return success
+			return true;
+		}
+
+		// Return failure
+		return false;
+	}
+
+	@Override
+	public void ban() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public boolean ipban() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void tempban(int days) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mute(int days, int hours, int minutes) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void pardon() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void deleteDir(File dir) {
+		if (!dir.exists())
+			return;
+
+		for (File subDir : dir.listFiles(t -> t.isDirectory())) {
+			deleteDir(subDir);
+		}
+		for (File file : dir.listFiles(t -> !t.isDirectory())) {
+			file.delete();
+		}
+		dir.delete();
 	}
 
 }

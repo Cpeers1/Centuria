@@ -142,6 +142,42 @@ public abstract class EmuFeralAccount {
 	public abstract Player getOnlinePlayerInstance();
 
 	/**
+	 * Kicks the player if online
+	 * 
+	 * @return true if successful, false otherwise
+	 */
+	public abstract boolean kick();
+
+	/**
+	 * Bans the player
+	 */
+	public abstract void ban();
+
+	/**
+	 * IP-bans online players
+	 * 
+	 * @return true if successful, false otherwise
+	 */
+	public abstract boolean ipban();
+
+	/**
+	 * Temporarily bans the player
+	 * 
+	 * @param days How long to ban the player in days
+	 */
+	public abstract void tempban(int days);
+
+	/**
+	 * Mutes the player
+	 */
+	public abstract void mute(int days, int hours, int minutes);
+
+	/**
+	 * Pardons the player
+	 */
+	public abstract void pardon();
+
+	/**
 	 * Deletes the account from disk and kicks all connected instances
 	 */
 	public abstract void deleteAccount();

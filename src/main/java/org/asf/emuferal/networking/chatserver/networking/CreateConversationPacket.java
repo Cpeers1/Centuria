@@ -67,7 +67,7 @@ public class CreateConversationPacket extends AbstractChatPacket {
 
 				// Send response
 				JsonObject res = new JsonObject();
-				res.addProperty("eventId", "conversations.openPrivate");
+				res.addProperty("eventId", "conversations.create");
 				res.addProperty("error", "blocked");
 				res.addProperty("success", false);
 				client.sendPacket(res);

@@ -457,7 +457,7 @@ public class SendMessage extends AbstractChatPacket {
 													plr.account.getPlayerInventory().getItem("permissions")
 															.getAsJsonObject().get("permissionLevel").getAsString(),
 													"admin") && !GameServer.hasPerm(permLevel, "admin")) {
-										systemMessage("Unable to kick higher-ranking users.", cmd, client);
+										systemMessage("Unable to ban higher-ranking users.", cmd, client);
 										return true;
 									}
 								}
@@ -711,12 +711,7 @@ public class SendMessage extends AbstractChatPacket {
 
 								// Kick the player
 								systemMessage("Kicked " + plr.account.getDisplayName() + ".", cmd, client);
-								plr.client.sendPacket("%xt%ua%-1%4086%");
-								try {
-									Thread.sleep(3000);
-								} catch (InterruptedException e) {
-								}
-								plr.client.disconnect();
+								plr.account.kick();
 								return true;
 							}
 						}

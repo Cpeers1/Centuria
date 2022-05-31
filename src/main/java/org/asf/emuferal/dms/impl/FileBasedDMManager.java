@@ -65,8 +65,8 @@ public class FileBasedDMManager extends DMManager {
 				JsonObject msg = ele.getAsJsonObject();
 				String source = msg.get("source").getAsString();
 
-				if (SocialManager.getInstance().socialListExists(source)
-						&& SocialManager.getInstance().getPlayerIsBlocked(source, requester))
+				if (SocialManager.getInstance().socialListExists(requester)
+						&& SocialManager.getInstance().getPlayerIsBlocked(requester, source))
 					continue;
 
 				PrivateChatMessage message = new PrivateChatMessage();

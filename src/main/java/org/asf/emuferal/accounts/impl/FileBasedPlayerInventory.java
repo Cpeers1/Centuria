@@ -76,4 +76,21 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 			new File("inventories/" + id + "/" + itemID + ".json").delete();
 	}
 
+	/**
+	 * Deletes the inventory from disk
+	 */
+	public void delete() {
+		deleteDir(new File("inventories/" + id));
+	}
+
+	private void deleteDir(File dir) {
+		for (File subDir : dir.listFiles(t -> t.isDirectory())) {
+			deleteDir(subDir);
+		}
+		for (File file : dir.listFiles(t -> !t.isDirectory())) {
+			file.delete();
+		}
+		dir.delete();
+	}
+
 }
