@@ -23,6 +23,7 @@ import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPac
 import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
 import org.asf.emuferal.packets.xt.gameserver.world.WorldReadyPacket;
 import org.asf.emuferal.players.Player;
+import org.asf.emuferal.social.SocialManager;
 
 import com.google.gson.JsonObject;
 
@@ -202,8 +203,8 @@ public class SendMessage extends AbstractChatPacket {
 
 		// Check mute
 		EmuFeralAccount acc = client.getPlayer();
-		if (acc.getPlayerInventory().containsItem("penalty") && acc.getPlayerInventory().getItem("penalty")
-				.getAsJsonObject().get("type").getAsString().equals("mute")) {
+		if (!client.isRoomPrivate(room) && acc.getPlayerInventory().containsItem("penalty") && acc.getPlayerInventory()
+				.getItem("penalty").getAsJsonObject().get("type").getAsString().equals("mute")) {
 			JsonObject banInfo = acc.getPlayerInventory().getItem("penalty").getAsJsonObject();
 			if (banInfo.get("unmuteTimestamp").getAsLong() == -1
 					|| banInfo.get("unmuteTimestamp").getAsLong() > System.currentTimeMillis()) {
@@ -235,9 +236,13 @@ public class SendMessage extends AbstractChatPacket {
 			}
 
 			// Send to all in room
+			SocialManager socialManager = SocialManager.getInstance();
 			for (ChatClient cl : client.getServer().getClients()) {
-				if (cl.isInRoom(room))
-					cl.sendPacket(res);
+				if (cl.isInRoom(room)) {
+					if (!socialManager.socialListExists(cl.getPlayer().getAccountID()) || !socialManager
+							.getPlayerIsBlocked(cl.getPlayer().getAccountID(), client.getPlayer().getAccountID()))
+						cl.sendPacket(res);
+				}
 			}
 		}
 

@@ -8,13 +8,6 @@ main todo:
 - feedback
 - reporting
 
-social system update:
-- player cards
-- favoriting
-- followers
-- blocking
-- trading
-
 interaction update:
 - general interactions
 - item collection
@@ -28,3 +21,6 @@ shop update:
 - currency
 - 10k star fragments on join (can be disabled)
 - avatar purchases
+
+trade system update:
+- trading

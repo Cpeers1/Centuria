@@ -1,5 +1,7 @@
 package org.asf.emuferal.accounts;
 
+import org.asf.emuferal.players.Player;
+
 import com.google.gson.JsonObject;
 
 public abstract class EmuFeralAccount {
@@ -131,6 +133,13 @@ public abstract class EmuFeralAccount {
 	 * @return LevelInfo instance
 	 */
 	public abstract LevelInfo getLevel();
+
+	/**
+	 * Retrieves the player object
+	 * 
+	 * @return Player instance or null if offline
+	 */
+	public abstract Player getOnlinePlayerInstance();
 
 	/**
 	 * Deletes the account from disk and kicks all connected instances

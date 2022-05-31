@@ -1,6 +1,5 @@
 package org.asf.emuferal.social;
 
-import org.asf.emuferal.dms.impl.FileBasedDMManager;
 import org.asf.emuferal.social.impl.FileBasedSocialManager;
 
 public abstract class SocialManager {
@@ -69,7 +68,7 @@ public abstract class SocialManager {
 	 * @param targetPlayerID	ID for the target player.
 	 * @return A boolean value representing whether the main player has the target player in their following list.
 	 */
-	public abstract Boolean getPlayerIsFollowing(String sourcePlayerID, String targetPlayerID);
+	public abstract boolean getPlayerIsFollowing(String sourcePlayerID, String targetPlayerID);
 	
 	/**
 	 * Gets if the player (by the player id to check) is in the players followers list.
@@ -78,7 +77,7 @@ public abstract class SocialManager {
 	 * @param targetPlayerID	ID for the target player.
 	 * @return A boolean value representing whether the main player has the target player in their follower list.
 	 */
-	public abstract Boolean getPlayerIsFollower(String sourcePlayerID, String targetPlayerID);
+	public abstract boolean getPlayerIsFollower(String sourcePlayerID, String targetPlayerID);
 	
 	/**
 	 * Gets if the player (by the player id to check) is in the players blocked list.
@@ -87,7 +86,7 @@ public abstract class SocialManager {
 	 * @param targetPlayerID	ID for the target player.
 	 * @return A boolean value representing whether the main player has the target player in their blocked list.
 	 */
-	public abstract Boolean getPlayerIsBlocked(String sourcePlayerID, String targetPlayerID);
+	public abstract boolean getPlayerIsBlocked(String sourcePlayerID, String targetPlayerID);
 	
 	/**
 	 * Gets if the player (by the player id to check) is favorited.
@@ -96,7 +95,7 @@ public abstract class SocialManager {
 	 * @param targetPlayerID	ID for the target player.
 	 * @return A boolean value representing whether the main player has the target player in their blocked list.
 	 */
-	public abstract Boolean getPlayerIsFavorite(String sourcePlayerID, String targetPlayerID);
+	public abstract boolean getPlayerIsFavorite(String sourcePlayerID, String targetPlayerID);
 
 	/**
 	 * Adds a new entry for a player who this player is following.

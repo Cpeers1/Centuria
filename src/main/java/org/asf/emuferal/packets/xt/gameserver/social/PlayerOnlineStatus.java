@@ -8,6 +8,7 @@ import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;
+import org.asf.emuferal.social.SocialManager;
 
 public class PlayerOnlineStatus implements IXtPacket<PlayerOnlineStatus> {
 
@@ -36,10 +37,16 @@ public class PlayerOnlineStatus implements IXtPacket<PlayerOnlineStatus> {
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Find online player
 		boolean online = false;
-		for (Player plr : ((GameServer) client.getServer()).getPlayers()) {
-			if (plr.account.getAccountID().equals(playerID)) {
-				online = true;
-				break;
+
+		// Check block
+		SocialManager socialManager = SocialManager.getInstance();
+		if (!socialManager.socialListExists(playerID)
+				|| !socialManager.getPlayerIsBlocked(playerID, ((Player) client.container).account.getAccountID())) {
+			for (Player plr : ((GameServer) client.getServer()).getPlayers()) {
+				if (plr.account.getAccountID().equals(playerID)) {
+					online = true;
+					break;
+				}
 			}
 		}
 

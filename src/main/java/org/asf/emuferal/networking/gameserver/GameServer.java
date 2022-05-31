@@ -41,8 +41,6 @@ import org.asf.emuferal.packets.xt.gameserver.players.AvatarAction;
 import org.asf.emuferal.packets.xt.gameserver.players.AvatarLookGet;
 import org.asf.emuferal.packets.xt.gameserver.shops.ShopList;
 import org.asf.emuferal.packets.xt.gameserver.social.FindPlayer;
-import org.asf.emuferal.packets.xt.gameserver.social.FollowOnlineStatusUpdate;
-import org.asf.emuferal.packets.xt.gameserver.social.FollowingList;
 import org.asf.emuferal.packets.xt.gameserver.social.JumpToPlayer;
 import org.asf.emuferal.packets.xt.gameserver.social.PlayerOnlineStatus;
 import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
@@ -114,10 +112,6 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new UserTutorialCompleted());
 		registerPacket(new AvatarEditorSelectLook());
 		registerPacket(new UserAvatarSave());
-
-		// social packets
-		registerPacket(new FollowingList());
-		registerPacket(new FollowOnlineStatusUpdate());
 	}
 
 	@Override
@@ -495,6 +489,19 @@ public class GameServer extends BaseSmartfoxServer {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Retrieves a online player by ID
+	 * 
+	 * @param accountID Player ID
+	 * @return Player instance or null if offline
+	 */
+	public Player getPlayer(String accountID) {
+		for (Player plr : EmuFeral.gameServer.getPlayers())
+			if (plr.account.getAccountID().equals(accountID))
+				return plr;
+		return null;
 	}
 
 }

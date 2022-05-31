@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.UUID;
 
+import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.accounts.LevelInfo;
 import org.asf.emuferal.accounts.PlayerInventory;
+import org.asf.emuferal.players.Player;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -263,6 +265,11 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 		long time = System.currentTimeMillis();
 		userFile.setLastModified(time);
 		lastLogin = time / 1000;
+	}
+
+	@Override
+	public Player getOnlinePlayerInstance() {
+		return EmuFeral.gameServer.getPlayer(getAccountID());
 	}
 
 	@Override

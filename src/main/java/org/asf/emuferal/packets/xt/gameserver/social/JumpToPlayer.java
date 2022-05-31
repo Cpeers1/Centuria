@@ -9,6 +9,7 @@ import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
 import org.asf.emuferal.players.Player;
+import org.asf.emuferal.social.SocialManager;
 
 public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 
@@ -39,7 +40,9 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 
 		// Find player
 		for (Player plr : ((GameServer) client.getServer()).getPlayers()) {
-			if (plr.account.getAccountID().equals(accountID) && plr.roomReady && !plr.room.equals("room_STAFFROOM")) { // TODO: privacy settings
+			if (plr.account.getAccountID().equals(accountID) && plr.roomReady && !plr.room.equals("room_STAFFROOM")
+					&& (!SocialManager.getInstance().socialListExists(accountID) || !SocialManager.getInstance()
+							.getPlayerIsBlocked(accountID, player.account.getAccountID()))) { // TODO: privacy settings
 				XtWriter writer = new XtWriter();
 				writer.writeString("rfjtr");
 				writer.writeInt(-1); // data prefix
@@ -60,6 +63,7 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 					JoinRoom join = new JoinRoom();
 					join.roomType = plr.roomType;
 					join.roomIdentifier = "room_" + join.roomID;
+//					join.teleport = plr.account.getAccountID(); // TODO: get this to work
 
 					// Sync
 					GameServer srv = (GameServer) client.getServer();

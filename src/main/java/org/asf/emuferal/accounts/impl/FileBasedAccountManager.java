@@ -29,9 +29,13 @@ public class FileBasedAccountManager extends AccountManager {
 
 	public FileBasedAccountManager() {
 		File idTrackFile = new File("account.lastid.info");
-		if (!idTrackFile.exists())
+		if (!idTrackFile.exists()) {
 			lastAccountID = new File("accounts").listFiles().length;
-		else
+			try {
+				Files.writeString(Path.of("account.lastid.info"), Integer.toString(lastAccountID));
+			} catch (IOException e) {
+			}
+		} else
 			try {
 				lastAccountID = Integer.valueOf(Files.readAllLines(idTrackFile.toPath()).get(0));
 			} catch (NumberFormatException | IOException e) {
@@ -72,7 +76,8 @@ public class FileBasedAccountManager extends AccountManager {
 	@Override
 	public String authenticate(String username, char[] password) {
 		// Check name validity
-		if (!username.matches("^[A-Za-z0-9@._#]+$") || username.contains(".cred"))
+		if (!username.matches("^[A-Za-z0-9@._#]+$") || username.contains(".cred")
+				|| !username.matches(".*[A-Za-z0-9]+.*") || username.isBlank())
 			return null;
 
 		// Find the account
@@ -187,7 +192,8 @@ public class FileBasedAccountManager extends AccountManager {
 	@Override
 	public String register(String username) {
 		// Check name validity
-		if (!username.matches("^[A-Za-z0-9@\\-._#]+$") || username.contains(".cred"))
+		if (!username.matches("^[A-Za-z0-9@._#]+$") || username.contains(".cred")
+				|| !username.matches(".*[A-Za-z0-9]+.*") || username.isBlank())
 			return null;
 
 		try {
