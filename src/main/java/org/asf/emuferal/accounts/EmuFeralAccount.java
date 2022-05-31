@@ -1,5 +1,9 @@
 package org.asf.emuferal.accounts;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+
+import org.asf.emuferal.ipbans.IpBanManager;
 import org.asf.emuferal.players.Player;
 
 import com.google.gson.JsonObject;
@@ -142,44 +146,140 @@ public abstract class EmuFeralAccount {
 	public abstract Player getOnlinePlayerInstance();
 
 	/**
+	 * Deletes the account from disk and kicks all connected instances
+	 */
+	public abstract void deleteAccount();
+
+	/**
 	 * Kicks the player if online
 	 * 
 	 * @return true if successful, false otherwise
 	 */
-	public abstract boolean kick();
+	public boolean kick() {
+		// Locate online player
+		Player plr = getOnlinePlayerInstance();
 
-	/**
-	 * Bans the player
-	 */
-	public abstract void ban();
+		if (plr != null) {
+			// Kick the player
+			plr.client.sendPacket("%xt%ua%-1%4086%");
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+			}
+			plr.client.disconnect();
+
+			// Return success
+			return true;
+		}
+
+		// Return failure
+		return false;
+	}
 
 	/**
 	 * IP-bans online players
 	 * 
 	 * @return true if successful, false otherwise
 	 */
-	public abstract boolean ipban();
+	public boolean ipban() {
+		Player plr = getOnlinePlayerInstance();
+		if (plr != null) {
+			// Apply IP ban
+			InetSocketAddress ip = (InetSocketAddress) plr.client.getSocket().getRemoteSocketAddress();
+			InetAddress addr = ip.getAddress();
+			String ipaddr = addr.getHostAddress();
+			IpBanManager manager = IpBanManager.getInstance();
+			if (!manager.isIPBanned(ipaddr))
+				manager.banIP(ipaddr);
+
+			// Apply regular ban
+			ban();
+
+			// Return success
+			return true;
+		}
+
+		// Return failure
+		return false;
+	}
+
+	/**
+	 * Bans the player
+	 */
+	public void ban() {
+		// Ban the player
+		JsonObject banInfo = new JsonObject();
+		banInfo.addProperty("type", "ban");
+		banInfo.addProperty("unbanTimestamp", -1);
+		getPlayerInventory().setItem("penalty", banInfo);
+
+		// Find online player
+		Player plr = getOnlinePlayerInstance();
+		if (plr != null) {
+			// Kick the player
+			plr.client.sendPacket("%xt%ua%-1%3561%");
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+			}
+			plr.client.disconnect();
+		}
+	}
 
 	/**
 	 * Temporarily bans the player
 	 * 
 	 * @param days How long to ban the player in days
 	 */
-	public abstract void tempban(int days);
+	public void tempban(int days) {
+		// Ban the player
+		JsonObject banInfo = new JsonObject();
+		banInfo.addProperty("type", "ban");
+		banInfo.addProperty("unbanTimestamp", System.currentTimeMillis() + (days * 24 * 60 * 60 * 1000));
+		getPlayerInventory().setItem("penalty", banInfo);
+
+		// Find online player
+		Player plr = getOnlinePlayerInstance();
+		if (plr != null) {
+			// Kick the player
+			plr.client.sendPacket("%xt%ua%-1%3561%");
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+			}
+			plr.client.disconnect();
+		}
+	}
 
 	/**
 	 * Mutes the player
 	 */
-	public abstract void mute(int days, int hours, int minutes);
+	public void mute(int days, int hours, int minutes) {
+		// Apply mute
+		JsonObject muteInfo = new JsonObject();
+		muteInfo.addProperty("type", "mute");
+		muteInfo.addProperty("unmuteTimestamp", System.currentTimeMillis() + (minutes * 60 * 1000)
+				+ (hours * 60 * 60 * 1000) + (days * 24 * 60 * 60 * 1000));
+		getPlayerInventory().setItem("penalty", muteInfo);
+
+		// Sync online player
+		Player plr = getOnlinePlayerInstance();
+		if (plr != null && plr.account != this)
+			plr.account.mute(days, hours, minutes);
+	}
 
 	/**
 	 * Pardons the player
 	 */
-	public abstract void pardon();
+	public void pardon() {
+		// Remove penalties
+		if (getPlayerInventory().containsItem("penalty"))
+			getPlayerInventory().deleteItem("penalty");
 
-	/**
-	 * Deletes the account from disk and kicks all connected instances
-	 */
-	public abstract void deleteAccount();
+		// Sync online player
+		Player plr = getOnlinePlayerInstance();
+		if (plr != null && plr.account != this)
+			plr.account.pardon();
+	}
 
 }

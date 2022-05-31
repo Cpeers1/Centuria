@@ -374,58 +374,6 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 		// TODO
 	}
 
-	@Override
-	public boolean kick() {
-		// Locate online player
-		Player plr = getOnlinePlayerInstance();
-
-		if (plr != null) {
-			// Kick the player
-			plr.client.sendPacket("%xt%ua%-1%4086%");
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-			}
-			plr.client.disconnect();
-
-			// Return success
-			return true;
-		}
-
-		// Return failure
-		return false;
-	}
-
-	@Override
-	public void ban() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean ipban() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void tempban(int days) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mute(int days, int hours, int minutes) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void pardon() {
-		// TODO Auto-generated method stub
-
-	}
-
 	private void deleteDir(File dir) {
 		if (!dir.exists())
 			return;

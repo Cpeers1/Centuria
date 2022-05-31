@@ -2,8 +2,6 @@ package org.asf.emuferal.networking.chatserver.networking;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -356,7 +354,7 @@ public class SendMessage extends AbstractChatPacket {
 							}
 						}
 
-						// Mute
+						// Check if banned
 						if (acc.getPlayerInventory().containsItem("penalty") && acc.getPlayerInventory()
 								.getItem("penalty").getAsJsonObject().get("type").getAsString().equals("ban")) {
 							// Check ban
@@ -364,12 +362,8 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						JsonObject banInfo = new JsonObject();
-						banInfo.addProperty("type", "mute");
-						banInfo.addProperty("unmuteTimestamp", System.currentTimeMillis() + (minutes * 60 * 1000)
-								+ (hours * 60 * 60 * 1000) + (days * 24 * 60 * 60 * 1000));
-						acc.getPlayerInventory().setItem("penalty", banInfo);
-
+						// Mute
+						acc.mute(days, hours, minutes);
 						systemMessage("Muted " + acc.getDisplayName() + ".", cmd, client);
 						return true;
 					}
@@ -415,27 +409,44 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						// Ban temporarily
-						JsonObject banInfo = new JsonObject();
-						banInfo.addProperty("type", "ban");
-						banInfo.addProperty("unbanTimestamp",
-								System.currentTimeMillis() + (days * 24 * 60 * 60 * 1000));
-						acc.getPlayerInventory().setItem("penalty", banInfo);
+						acc.tempban(days);
+						systemMessage("Temporarily banned " + acc.getDisplayName() + ".", cmd, client);
+						return true;
+					}
+					case "permban": {
+						// Temporary ban
+						if (args.size() < 1) {
+							systemMessage("Missing argument: player", cmd, client);
+							return true;
+						}
 
-						// Find online player
-						for (Player plr : EmuFeral.gameServer.getPlayers()) {
-							if (plr.account.getDisplayName().equals(args.get(0))) {
-								// Kick the player
-								plr.client.sendPacket("%xt%ua%-1%3561%");
-								try {
-									Thread.sleep(3000);
-								} catch (InterruptedException e) {
-								}
-								plr.client.disconnect();
-								break;
+						// Find player
+						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						EmuFeralAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Check rank
+						if (acc.getPlayerInventory().containsItem("permissions")) {
+							if ((GameServer
+									.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString(), "developer")
+									&& !GameServer.hasPerm(permLevel, "developer"))
+									|| GameServer
+											.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+													.get("permissionLevel").getAsString(), "admin")
+											&& !GameServer.hasPerm(permLevel, "admin")) {
+								systemMessage("Unable to ban higher-ranking users.", cmd, client);
+								return true;
 							}
 						}
 
-						systemMessage("Temporarily banned " + acc.getDisplayName() + ".", cmd, client);
+						// Ban permanently
+						acc.ban();
+						systemMessage("Permanently banned " + acc.getDisplayName() + ".", cmd, client);
 						return true;
 					}
 					case "ipban": {
@@ -462,29 +473,11 @@ public class SendMessage extends AbstractChatPacket {
 									}
 								}
 
-								// Ban permanently
-								JsonObject banInfo = new JsonObject();
-								banInfo.addProperty("type", "ban");
-								banInfo.addProperty("unbanTimestamp", -1);
-								plr.account.getPlayerInventory().setItem("penalty", banInfo);
-
 								// Ban IP
-								InetSocketAddress ip = (InetSocketAddress) plr.client.getSocket()
-										.getRemoteSocketAddress();
-								InetAddress addr = ip.getAddress();
-								String ipaddr = addr.getHostAddress();
-								IpBanManager manager = IpBanManager.getInstance();
-								if (!manager.isIPBanned(ipaddr))
-									manager.banIP(ipaddr);
+								plr.account.ipban();
 
 								// Kick the player
 								systemMessage("IP-banned " + plr.account.getDisplayName() + ".", cmd, client);
-								plr.client.sendPacket("%xt%ua%-1%3561%");
-								try {
-									Thread.sleep(3000);
-								} catch (InterruptedException e) {
-								}
-								plr.client.disconnect();
 								return true;
 							}
 						}
@@ -574,20 +567,8 @@ public class SendMessage extends AbstractChatPacket {
 							}
 						}
 
-						// Sync online player
-						for (Player plr : EmuFeral.gameServer.getPlayers()) {
-							if (plr.account.getDisplayName().equals(args.get(0))) {
-								// Remove penalties
-								if (plr.account.getPlayerInventory().containsItem("penalty"))
-									plr.account.getPlayerInventory().deleteItem("penalty");
-								break;
-							}
-						}
-
-						// Remove penalties
-						if (acc.getPlayerInventory().containsItem("penalty"))
-							acc.getPlayerInventory().deleteItem("penalty");
-
+						// Pardon player
+						acc.pardon();
 						systemMessage("Penalties removed from " + acc.getDisplayName() + ".", cmd, client);
 						return true;
 					}
@@ -669,19 +650,7 @@ public class SendMessage extends AbstractChatPacket {
 						AccountManager.getInstance().lockDisplayName(args.get(1), acc.getAccountID());
 
 						// Kick online player
-						for (Player plr : EmuFeral.gameServer.getPlayers()) {
-							if (plr.account.getDisplayName().equals(args.get(0))) {
-								// Kick the player
-								plr.client.sendPacket("%xt%ua%-1%4086%");
-								try {
-									Thread.sleep(3000);
-								} catch (InterruptedException e) {
-								}
-								plr.client.disconnect();
-							}
-						}
-
-						// Success
+						acc.kick();
 						systemMessage("Renamed " + oldName + " " + args.get(1) + ".", cmd, client);
 						return true;
 					}
