@@ -36,6 +36,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
 import org.asf.connective.https.ConnectiveHTTPSServer;
+import org.asf.emuferal.modules.ModuleManager;
 import org.asf.emuferal.networking.chatserver.ChatServer;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.http.api.FallbackAPIProcessor;
@@ -79,6 +80,95 @@ public class EmuFeral {
 	// Updating
 	private static boolean cancelUpdate = false;
 	private static boolean updating = false;
+
+	/**
+	 * Main method used to start the servers
+	 */
+	public static void main(String[] args) throws InvocationTargetException, IOException, NoSuchAlgorithmException {
+		// Splash message
+		System.out.println("--------------------------------------------------------------------");
+		System.out.println("                                                                    ");
+		System.out.println("                              EmuFeral                              ");
+		System.out.println("                       Fer.al Server Emulator                       ");
+		System.out.println("                                                                    ");
+		System.out.println("                         Version: 1.0.0.A20                         "); // not doing this
+																									// dynamically as
+																									// centering is a
+																									// pain
+		System.out.println("                                                                    ");
+		System.out.println("--------------------------------------------------------------------");
+		System.out.println("");
+
+		// Load modules
+		ModuleManager.getInstance().initializeComponents();
+
+		// Update configuration
+		String updateChannel = "alpha";
+		boolean disableUpdater = false;
+		if (new File("updater.conf").exists()) {
+			// Parse properties
+			HashMap<String, String> properties = new HashMap<String, String>();
+			for (String line : Files.readAllLines(Path.of("updater.conf"))) {
+				String key = line;
+				String value = "";
+				if (key.contains("=")) {
+					value = key.substring(key.indexOf("=") + 1);
+					key = key.substring(0, key.indexOf("="));
+				}
+				properties.put(key, value);
+			}
+
+			// Load channel
+			updateChannel = properties.getOrDefault("channel", updateChannel);
+
+			// Check if disabled
+			disableUpdater = Boolean.parseBoolean(properties.getOrDefault("disable", "false"));
+
+			// Check if automatic updating is enabled
+			if (Boolean.parseBoolean(properties.getOrDefault("runtime-auto-update", "false"))) {
+				int mins = Integer.parseInt(properties.getOrDefault("runtime-update-timer-length", "10"));
+
+				// Start the automatic update thread
+				final String channel = updateChannel;
+				Thread updater = new Thread(() -> {
+					while (true) {
+						// Run every 2 minutes
+						try {
+							Thread.sleep(120000);
+						} catch (InterruptedException e) {
+						}
+
+						// Check for updates
+						if (shouldUpdate(channel)) {
+							runUpdater(mins);
+							return;
+						}
+					}
+				}, "Automatic update thread");
+				updater.setDaemon(true);
+				updater.start();
+			}
+		}
+
+
+		// Updater
+		if (!disableUpdater
+				&& (System.getProperty("debugMode") == null || System.getProperty("debugMode").equals("false"))) {
+			// Check for updates
+			if (shouldUpdate(updateChannel)) {
+				System.exit(0);
+			}
+		}
+		
+		// Start the servers
+		startServer();
+
+		// Wait for exit
+		directorServer.waitExit();
+		apiServer.waitExit();
+		chatServer.getServerSocket().close();
+		gameServer.getServerSocket().close();
+	}
 
 	/**
 	 * Cancels the update
@@ -200,149 +290,6 @@ public class EmuFeral {
 
 		// Exit
 		System.exit(0);
-	}
-
-	public static void main(String[] args) throws InvocationTargetException, IOException, NoSuchAlgorithmException {
-		// Update configuration
-		String updateChannel = "alpha";
-		boolean disableUpdater = false;
-		if (new File("updater.conf").exists()) {
-			// Parse properties
-			HashMap<String, String> properties = new HashMap<String, String>();
-			for (String line : Files.readAllLines(Path.of("updater.conf"))) {
-				String key = line;
-				String value = "";
-				if (key.contains("=")) {
-					value = key.substring(key.indexOf("=") + 1);
-					key = key.substring(0, key.indexOf("="));
-				}
-				properties.put(key, value);
-			}
-
-			// Load channel
-			updateChannel = properties.getOrDefault("channel", updateChannel);
-
-			// Check if disabled
-			disableUpdater = Boolean.parseBoolean(properties.getOrDefault("disable", "false"));
-
-			// Check if automatic updating is enabled
-			if (Boolean.parseBoolean(properties.getOrDefault("runtime-auto-update", "false"))) {
-				int mins = Integer.parseInt(properties.getOrDefault("runtime-update-timer-length", "10"));
-
-				// Start the automatic update thread
-				final String channel = updateChannel;
-				Thread updater = new Thread(() -> {
-					while (true) {
-						// Run every 2 minutes
-						try {
-							Thread.sleep(120000);
-						} catch (InterruptedException e) {
-						}
-
-						// Check for updates
-						System.out.println("Checking for updates...");
-						try {
-							InputStream updateLog = new URL(EmuFeral.DOWNLOAD_BASE_URL + "/" + channel + "/update.info")
-									.openStream();
-							String update = new String(updateLog.readAllBytes(), "UTF-8").trim();
-							updateLog.close();
-
-							if (!SERVER_UPDATE_VERSION.equals(update)) {
-								// Download the update list
-								System.out.println("Update available, new version: " + update);
-								System.out.println("Preparing to update EmuFeral...");
-								InputStream strm = new URL(
-										EmuFeral.DOWNLOAD_BASE_URL + "/" + channel + "/" + update + "/update.list")
-										.openStream();
-								String fileList = new String(strm.readAllBytes(), "UTF-8").trim();
-								strm.close();
-
-								// Parse the file list (newline-separated)
-								String downloadList = "";
-								for (String file : fileList.split("\n")) {
-									if (!file.isEmpty()) {
-										downloadList += file + "=" + EmuFeral.DOWNLOAD_BASE_URL + "/" + channel + "/"
-												+ update + "/" + file + "\n";
-									}
-								}
-
-								// Save the file, copy jar and run the shutdown timer
-								Files.writeString(Path.of("update.list"), downloadList);
-								if (!new File("updater.jar").exists())
-									Files.copy(Path.of("EmuFeral.jar"), Path.of("updater.jar"));
-								runUpdater(mins);
-								return;
-							}
-						} catch (IOException e) {
-						}
-					}
-				}, "Automatic update thread");
-				updater.setDaemon(true);
-				updater.start();
-			}
-		}
-
-		// Splash message
-		System.out.println("--------------------------------------------------------------------");
-		System.out.println("                                                                    ");
-		System.out.println("                              EmuFeral                              ");
-		System.out.println("                       Fer.al Server Emulator                       ");
-		System.out.println("                                                                    ");
-		System.out.println("                         Version: 1.0.0.A20                         "); // not doing this
-																									// dynamically as
-																									// centering is a
-																									// pain
-		System.out.println("                                                                    ");
-		System.out.println("--------------------------------------------------------------------");
-		System.out.println("");
-
-		if (!disableUpdater
-				&& (System.getProperty("debugMode") == null || System.getProperty("debugMode").equals("false"))) {
-			// Check for updates
-			System.out.println("Checking for updates...");
-			try {
-				InputStream updateLog = new URL(EmuFeral.DOWNLOAD_BASE_URL + "/" + updateChannel + "/update.info")
-						.openStream();
-				String update = new String(updateLog.readAllBytes(), "UTF-8").trim();
-				updateLog.close();
-
-				if (!SERVER_UPDATE_VERSION.equals(update)) {
-					// Download the update list
-					System.out.println("Update available, new version: " + update);
-					System.out.println("Preparing to update EmuFeral...");
-					InputStream strm = new URL(
-							EmuFeral.DOWNLOAD_BASE_URL + "/" + updateChannel + "/" + update + "/update.list")
-							.openStream();
-					String fileList = new String(strm.readAllBytes(), "UTF-8").trim();
-					strm.close();
-
-					// Parse the file list (newline-separated)
-					String downloadList = "";
-					for (String file : fileList.split("\n")) {
-						if (!file.isEmpty()) {
-							downloadList += file + "=" + EmuFeral.DOWNLOAD_BASE_URL + "/" + updateChannel + "/" + update
-									+ "/" + file + "\n";
-						}
-					}
-
-					// Save the file, copy jar and exit
-					Files.writeString(Path.of("update.list"), downloadList);
-					if (!new File("updater.jar").exists())
-						Files.copy(Path.of("EmuFeral.jar"), Path.of("updater.jar"));
-					System.exit(0);
-				}
-			} catch (IOException e) {
-			}
-		}
-
-		// Start the servers
-		startServer();
-
-		// Wait for exit
-		directorServer.waitExit();
-		apiServer.waitExit();
-		chatServer.getServerSocket().close();
-		gameServer.getServerSocket().close();
 	}
 
 	public static void startServer()
@@ -626,5 +573,47 @@ public class EmuFeral {
 		} catch (SignatureException | NoSuchAlgorithmException | InvalidKeyException e) {
 			return false;
 		}
+	}
+
+	// Updater
+	private static boolean shouldUpdate(String channel) {
+		System.out.println("Checking for updates...");
+
+		try {
+			InputStream updateLog = new URL(EmuFeral.DOWNLOAD_BASE_URL + "/" + channel + "/update.info").openStream();
+			String update = new String(updateLog.readAllBytes(), "UTF-8").trim();
+			updateLog.close();
+
+			if (!SERVER_UPDATE_VERSION.equals(update)) {
+				// Download the update list
+				System.out.println("Update available, new version: " + update);
+				System.out.println("Preparing to update EmuFeral...");
+				InputStream strm = new URL(EmuFeral.DOWNLOAD_BASE_URL + "/" + channel + "/" + update + "/update.list")
+						.openStream();
+				String fileList = new String(strm.readAllBytes(), "UTF-8").trim();
+				strm.close();
+
+				// Parse the file list (newline-separated)
+				String downloadList = "";
+				for (String file : fileList.split("\n")) {
+					if (!file.isEmpty()) {
+						downloadList += file + "=" + EmuFeral.DOWNLOAD_BASE_URL + "/" + channel + "/" + update + "/"
+								+ file + "\n";
+					}
+				}
+
+				// Save the file, copy jar and run the shutdown timer
+				Files.writeString(Path.of("update.list"), downloadList);
+				if (!new File("updater.jar").exists())
+					Files.copy(Path.of("EmuFeral.jar"), Path.of("updater.jar"));
+
+				// Update available
+				return true;
+			}
+		} catch (IOException e) {
+		}
+
+		// No update available
+		return false;
 	}
 }

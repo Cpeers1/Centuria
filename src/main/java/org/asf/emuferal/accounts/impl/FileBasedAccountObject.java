@@ -370,8 +370,6 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 
 		// Delete inventory
 		inv.delete();
-
-		// TODO
 	}
 
 	private void deleteDir(File dir) {
