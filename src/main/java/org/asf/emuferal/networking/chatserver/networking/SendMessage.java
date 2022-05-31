@@ -118,9 +118,6 @@ public class SendMessage extends AbstractChatPacket {
 			if (banWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 				// Ban
 				client.getPlayer().ban();
-
-				// Disconnect
-				client.disconnect();
 				return true;
 			}
 
@@ -157,10 +154,6 @@ public class SendMessage extends AbstractChatPacket {
 		if (client.banCounter >= 7) {
 			// Ban the hacker
 			client.getPlayer().ban();
-
-			// Disconnect
-			client.disconnect();
-
 			return true;
 		}
 
@@ -376,13 +369,6 @@ public class SendMessage extends AbstractChatPacket {
 						// Ban temporarily
 						acc.tempban(days);
 						systemMessage("Temporarily banned " + acc.getDisplayName() + ".", cmd, client);
-
-						// Disconnect it from the chat server
-						for (ChatClient cl : client.getServer().getClients()) {
-							if (cl.getPlayer().getAccountID().equals(acc.getAccountID())) {
-								cl.disconnect();
-							}
-						}
 						return true;
 					}
 					case "permban": {
@@ -419,13 +405,6 @@ public class SendMessage extends AbstractChatPacket {
 						// Ban permanently
 						acc.ban();
 						systemMessage("Permanently banned " + acc.getDisplayName() + ".", cmd, client);
-
-						// Disconnect it from the chat server
-						for (ChatClient cl : client.getServer().getClients()) {
-							if (cl.getPlayer().getAccountID().equals(acc.getAccountID())) {
-								cl.disconnect();
-							}
-						}
 						return true;
 					}
 					case "ipban": {
@@ -454,16 +433,7 @@ public class SendMessage extends AbstractChatPacket {
 
 								// Ban IP
 								plr.account.ipban();
-
-								// Kick the player
 								systemMessage("IP-banned " + plr.account.getDisplayName() + ".", cmd, client);
-
-								// Disconnect it from the chat server
-								for (ChatClient cl : client.getServer().getClients()) {
-									if (cl.getPlayer().getAccountID().equals(plr.account.getAccountID())) {
-										cl.disconnect();
-									}
-								}
 								return true;
 							}
 						}
@@ -667,13 +637,6 @@ public class SendMessage extends AbstractChatPacket {
 								// Kick the player
 								systemMessage("Kicked " + plr.account.getDisplayName() + ".", cmd, client);
 								plr.account.kick();
-
-								// Disconnect it from the chat server
-								for (ChatClient cl : client.getServer().getClients()) {
-									if (cl.getPlayer().getAccountID().equals(plr.account.getAccountID())) {
-										cl.disconnect();
-									}
-								}
 								return true;
 							}
 						}
@@ -976,8 +939,17 @@ public class SendMessage extends AbstractChatPacket {
 										|| !GameServer.hasPerm(
 												plr.account.getPlayerInventory().getItem("permissions")
 														.getAsJsonObject().get("permissionLevel").getAsString(),
-												"moderator"))
+												"moderator")) {
+									// Disconnect from the game server
 									plr.client.disconnect();
+
+									// Disconnect it from the chat server
+									for (ChatClient cl : client.getServer().getClients()) {
+										if (cl.getPlayer().getAccountID().equals(plr.account.getAccountID())) {
+											cl.disconnect();
+										}
+									}
+								}
 							}
 
 							// Send message

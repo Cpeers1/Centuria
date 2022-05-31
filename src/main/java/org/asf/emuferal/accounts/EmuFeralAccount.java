@@ -3,7 +3,9 @@ package org.asf.emuferal.accounts;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
+import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.ipbans.IpBanManager;
+import org.asf.emuferal.networking.chatserver.ChatClient;
 import org.asf.emuferal.players.Player;
 
 import com.google.gson.JsonObject;
@@ -223,6 +225,13 @@ public abstract class EmuFeralAccount {
 			} catch (InterruptedException e) {
 			}
 			plr.client.disconnect();
+		}
+
+		// Disconnect it from the chat server
+		for (ChatClient cl : EmuFeral.chatServer.getClients()) {
+			if (cl.getPlayer().getAccountID().equals(getAccountID())) {
+				cl.disconnect();
+			}
 		}
 	}
 
