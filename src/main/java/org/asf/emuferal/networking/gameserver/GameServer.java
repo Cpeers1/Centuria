@@ -15,6 +15,7 @@ import java.util.Random;
 import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
+import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.ipbans.IpBanManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
 import org.asf.emuferal.modules.events.servers.GameServerStartupEvent;
@@ -50,6 +51,8 @@ import org.asf.emuferal.packets.xt.gameserver.world.WorldReadyPacket;
 import org.asf.emuferal.players.Player;
 import org.asf.emuferal.security.AddressChecker;
 import org.asf.emuferal.security.IpAddressMatcher;
+import org.asf.emuferal.social.SocialEntry;
+import org.asf.emuferal.social.SocialManager;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.JsonObject;
@@ -346,6 +349,27 @@ public class GameServer extends BaseSmartfoxServer {
 				"Player connected: " + plr.account.getLoginName() + " (as " + plr.account.getDisplayName() + ")");
 		sendPacket(client, "%xt%ulc%-1%");
 
+		// Notify followers
+		if (SocialManager.getInstance().socialListExists(plr.account.getAccountID())) {
+			// Find all followers
+			for (SocialEntry ent : SocialManager.getInstance().getFollowerPlayers(plr.account.getAccountID())) {
+				// Check soocial list of other player if they favorited the player logging in
+				if (SocialManager.getInstance().getPlayerIsFavorite(ent.playerID, plr.account.getAccountID())) {
+					// Send online status update
+					Player player = getPlayer(ent.playerID);
+					if (player != null) {
+						XtWriter wr = new XtWriter();
+						wr.writeString("rfosu"); // ID
+						wr.writeInt(-1); // Data prefix
+						wr.writeString(plr.account.getAccountID()); // Player who joined
+						wr.writeInt(1); // Online
+						wr.writeString(""); // Data suffix
+						player.client.sendPacket(wr.encode());
+					}
+				}
+			}
+		}
+
 		// Player list
 		String playerMsg = "%xt%rfl%-1%true%";
 		for (Player player : getPlayers()) {
@@ -455,6 +479,27 @@ public class GameServer extends BaseSmartfoxServer {
 			if (maintenance && players.size() == 0) {
 				// Exit
 				System.exit(0);
+			} else {
+				// Notify followers
+				if (SocialManager.getInstance().socialListExists(plr.account.getAccountID())) {
+					// Find all followers
+					for (SocialEntry ent : SocialManager.getInstance().getFollowerPlayers(plr.account.getAccountID())) {
+						// Check soocial list of other player if they favorited the player logging in
+						if (SocialManager.getInstance().getPlayerIsFavorite(ent.playerID, plr.account.getAccountID())) {
+							// Send online status update
+							Player player = getPlayer(ent.playerID);
+							if (player != null) {
+								XtWriter wr = new XtWriter();
+								wr.writeString("rfosu"); // ID
+								wr.writeInt(-1); // Data prefix
+								wr.writeString(plr.account.getAccountID()); // Player who joined
+								wr.writeInt(-1); // Offline
+								wr.writeString(""); // Data suffix
+								player.client.sendPacket(wr.encode());
+							}
+						}
+					}
+				}
 			}
 		}
 	}

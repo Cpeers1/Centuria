@@ -84,6 +84,7 @@ public class EmuFeral {
 	// Updating
 	private static boolean cancelUpdate = false;
 	private static boolean updating = false;
+	private static String nextVersion = null;
 
 	/**
 	 * Main method used to start the servers
@@ -181,6 +182,7 @@ public class EmuFeral {
 	public static boolean cancelUpdate() {
 		if (updating) {
 			cancelUpdate = true;
+			nextVersion = null;
 			return true;
 		} else
 			return false;
@@ -620,6 +622,9 @@ public class EmuFeral {
 				Files.writeString(Path.of("update.list"), downloadList);
 				if (!new File("updater.jar").exists())
 					Files.copy(Path.of("EmuFeral.jar"), Path.of("updater.jar"));
+
+				// Save new version in memory
+				nextVersion = update;
 
 				// Update available
 				return true;
