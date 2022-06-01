@@ -43,7 +43,7 @@ public class WorldObjectGlide implements IXtPacket<WorldObjectGlide> {
 		playerUUID = plr.account.getAccountID();
 		plr.client.sendPacket(this);
 
-		// Broadcast respawn
+		// Broadcast packet
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {

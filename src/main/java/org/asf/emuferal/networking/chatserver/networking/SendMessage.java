@@ -2,6 +2,8 @@ package org.asf.emuferal.networking.chatserver.networking;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -248,7 +250,7 @@ public class SendMessage extends AbstractChatPacket {
 		ArrayList<String> commandMessages = new ArrayList<String>();
 		if (GameServer.hasPerm(permLevel, "moderator")) {
 			commandMessages.add("kick \"<player>\"\n");
-			commandMessages.add("ipban \"<player>\"\n");
+			commandMessages.add("ipban \"<player/address>\"\n");
 			commandMessages.add("pardonip \"<ip>\"\n");
 			commandMessages.add("permban \"<player>\"");
 			commandMessages.add("tempban \"<player>\" <days>\"");
@@ -453,7 +455,7 @@ public class SendMessage extends AbstractChatPacket {
 					case "ipban": {
 						// IP-ban command
 						if (args.size() < 1) {
-							systemMessage("Missing argument: player", cmd, client);
+							systemMessage("Missing argument: player or address", cmd, client);
 							return true;
 						}
 
@@ -479,6 +481,36 @@ public class SendMessage extends AbstractChatPacket {
 								systemMessage("IP-banned " + plr.account.getDisplayName() + ".", cmd, client);
 								return true;
 							}
+						}
+
+						// Check if the inputted address is a IP addres
+						try {
+							InetAddress.getByName(args.get(0));
+
+							// Ban the IP
+							IpBanManager.getInstance().banIP(args.get(0));
+
+							// Disconnect all with the given IP address (or attempt to)
+							for (Player plr : EmuFeral.gameServer.getPlayers()) {
+								// Get IP of player
+								try {
+									InetSocketAddress ip = (InetSocketAddress) plr.client.getSocket()
+											.getRemoteSocketAddress();
+									InetAddress addr = ip.getAddress();
+									String ipaddr = addr.getHostAddress();
+									if (ipaddr.equals(args.get(0))) {
+										// Ban player
+										plr.account.ban();
+									}
+									
+									return true;
+								} catch (Exception e) {
+								}
+							}
+
+							// Log completion
+							systemMessage("Banned IP: " + args.get(0), cmd, client);
+						} catch (Exception e) {
 						}
 
 						// Player not found

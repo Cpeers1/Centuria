@@ -13,6 +13,7 @@ import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.networking.chatserver.networking.AbstractChatPacket;
 import org.asf.emuferal.networking.gameserver.GameServer;
+import org.asf.emuferal.players.Player;
 import org.asf.emuferal.util.TaskThread;
 
 import com.google.gson.JsonObject;
@@ -155,6 +156,21 @@ public class ChatClient {
 			disconnect();
 			return;
 		}
+
+		// Check if the player is ingame
+		Player plr = acc.getOnlinePlayerInstance();
+		if (plr == null) {
+			// The player is offline
+			disconnect();
+			return;
+		} else {
+			// Check if the player was in chat
+			if (plr.wasInChat)
+				joinRoom(plr.room, false);
+		}
+
+		// Log the login attempt
+		System.out.println("Chat login from IP: " + client.getRemoteSocketAddress() + ": " + acc.getLoginName());
 
 		// Save account in memory
 		player = acc;

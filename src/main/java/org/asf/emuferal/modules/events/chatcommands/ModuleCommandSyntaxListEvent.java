@@ -10,7 +10,7 @@ import org.asf.emuferal.modules.eventbus.EventObject;
  *
  */
 public class ModuleCommandSyntaxListEvent extends EventObject {
-
+	
 	@Override
 	public String eventPath() {
 		return "chatcommands.helpsyntax";

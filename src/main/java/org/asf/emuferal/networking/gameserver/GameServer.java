@@ -303,6 +303,9 @@ public class GameServer extends BaseSmartfoxServer {
 			}
 		}
 
+		// Log the login attempt
+		System.out.println("Login from IP: " + client.getSocket().getRemoteSocketAddress() + ": " + acc.getLoginName());
+
 		// Build Player object
 		Player plr = new Player();
 		plr.client = client;

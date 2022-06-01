@@ -68,7 +68,8 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 					// Sync
 					GameServer srv = (GameServer) client.getServer();
 					for (Player plr2 : srv.getPlayers()) {
-						if (plr.room != null && player.room != null && plr2.room.equals(plr.room) && plr2 != plr) {
+						if (plr2.room != null && plr.room != null && player.room != null && plr2.room.equals(plr.room)
+								&& plr2 != plr) {
 							plr.destroyAt(plr2);
 						}
 					}

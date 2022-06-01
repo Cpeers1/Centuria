@@ -68,6 +68,10 @@ public class JoinRoomPacket extends AbstractChatPacket {
 		res.addProperty("success", true);
 		client.sendPacket(res);
 
+		// Check online player
+		if (cCl.getPlayer().getOnlinePlayerInstance() != null)
+			cCl.getPlayer().getOnlinePlayerInstance().wasInChat = true;
+
 		// Join room
 		if (!client.isInRoom(room))
 			client.joinRoom(room, false);
