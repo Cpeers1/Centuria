@@ -18,10 +18,11 @@ public class LevelSpawnConverter {
 
 		JsonObject res = new JsonObject();
 		JsonObject spawns = new JsonObject();
+		JsonObject maps = new JsonObject();
 		String lastMapName = "";
 		String lastData = null;
 		String lastID = null;
-		
+
 		for (String line : Files.readAllLines(Path.of(args[0]))) {
 			if (line.startsWith("\"") && !line.startsWith("\"\"")) {
 				lastID = line.substring(1);
@@ -45,6 +46,8 @@ public class LevelSpawnConverter {
 									continue;
 								if (spawns.has(lastID + "/" + id))
 									spawns.remove(lastID + "/" + id);
+								if (!maps.has(lastID))
+									maps.addProperty(lastID, lastMapName);
 
 								JsonObject spawnData = new JsonObject();
 								spawnData.addProperty("worldID", lastMapName);
@@ -80,6 +83,7 @@ public class LevelSpawnConverter {
 			}
 		}
 		res.add("Spawns", spawns);
+		res.add("Maps", maps);
 
 		System.out.println(new Gson().newBuilder().setPrettyPrinting().create().toJson(res));
 	}

@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.TimeZone;
 import java.util.stream.Stream;
 
@@ -29,6 +30,7 @@ import org.asf.emuferal.players.Player;
 import org.asf.emuferal.social.SocialManager;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class SendMessage extends AbstractChatPacket {
 
@@ -271,9 +273,9 @@ public class SendMessage extends AbstractChatPacket {
 		// Generate the command list
 		ArrayList<String> commandMessages = new ArrayList<String>();
 		if (GameServer.hasPerm(permLevel, "moderator")) {
-			commandMessages.add("kick \"<player>\"\n");
-			commandMessages.add("ipban \"<player/address>\"\n");
-			commandMessages.add("pardonip \"<ip>\"\n");
+			commandMessages.add("kick \"<player>\"");
+			commandMessages.add("ipban \"<player/address>\"");
+			commandMessages.add("pardonip \"<ip>\"");
 			commandMessages.add("permban \"<player>\"");
 			commandMessages.add("tempban \"<player>\" <days>\"");
 			commandMessages.add("forcenamechange \"<player>\"");
@@ -295,6 +297,7 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("cancelupdate");
 			}
 			commandMessages.add("staffroom");
+			commandMessages.add("listplayers");
 		}
 
 		// Add module commands
@@ -330,6 +333,54 @@ public class SendMessage extends AbstractChatPacket {
 
 					//
 					// Moderator commands below
+					case "listplayers": {
+						// Load spawn helper
+						JsonObject helper = null;
+						try {
+							// Load helper
+							InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+									.getResourceAsStream("spawns.json");
+							helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+									.get("Maps").getAsJsonObject();
+							strm.close();
+						} catch (Exception e) {
+						}
+
+						// Locate suspicious clients
+						HashMap<ChatClient, String> suspiciousClients = new HashMap<ChatClient, String>();
+						for (ChatClient cl : client.getServer().getClients()) {
+							Player plr = cl.getPlayer().getOnlinePlayerInstance();
+							if (plr == null) {
+								suspiciousClients.put(client, "no gameserver connection");
+							} else if (!plr.roomReady || plr.room == null) {
+								suspiciousClients.put(client, "limbo");
+							}
+						}
+						// Build message
+						String response = "List of online players:";
+						for (ChatClient cl : client.getServer().getClients()) {
+							Player plr = cl.getPlayer().getOnlinePlayerInstance();
+							if (plr != null) {
+								String map = "UNKOWN: " + plr.roomID;
+								if (helper.has(Integer.toString(plr.roomID)))
+									map = helper.get(Integer.toString(plr.roomID)).getAsString();
+								response += "\n" + plr.account.getDisplayName() + " (" + map + ")";
+							} else if (!suspiciousClients.containsKey(cl)) {
+								suspiciousClients.put(cl, "no gameserver connection");
+							}
+						}
+						// Add suspicious clients
+						if (suspiciousClients.size() != 0) {
+							response += "\n";
+							response += "\nSuspicious clients:";
+							for (ChatClient cl : suspiciousClients.keySet())
+								response += "\n" + cl.getPlayer().getDisplayName() + " [" + suspiciousClients.get(cl)
+										+ "]";
+						}
+						// Send response
+						systemMessage(response, cmd, client);
+						break;
+					}
 					case "mute": {
 						// Mute
 						if (args.size() < 1) {

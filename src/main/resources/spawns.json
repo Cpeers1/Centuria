@@ -970,5 +970,22 @@
       "spawnRotZ": 0.0,
       "spawnRotW": -0.77810174
     }
+  },
+  "Maps": {
+    "2364": "BloodTundraSocial01",
+    "1716": "CF_ClothingStore",
+    "1717": "CF_DyeShop",
+    "1718": "CF_Lounge",
+    "820": "CityFera",
+    "9687": "ForestSocial01",
+    "1689": "Sanctuary",
+    "2711": "Script1",
+    "2712": "Script2_Quest",
+    "7791": "ST_CharmShop",
+    "7790": "ST_UncraftingInterior",
+    "3273": "SunkenThicket",
+    "2147": "SwampSocial01",
+    "2619": "TP_FurnitureStore",
+    "1825": "TradersPort"
   }
 }

@@ -6,4 +6,5 @@ Changes in EmuFeral 1.0.0.A22:
  - Made display name search case-insensitive
  - Fix crash with offline servers
  - Fix oversight in chat server security
-
+ - Fix help command output
+ - Implement a listplayers command
