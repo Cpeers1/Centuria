@@ -17,6 +17,9 @@ import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.dms.DMManager;
 import org.asf.emuferal.dms.PrivateChatMessage;
 import org.asf.emuferal.ipbans.IpBanManager;
+import org.asf.emuferal.modules.eventbus.EventBus;
+import org.asf.emuferal.modules.events.chatcommands.ChatCommandEvent;
+import org.asf.emuferal.modules.events.chatcommands.ModuleCommandSyntaxListEvent;
 import org.asf.emuferal.networking.chatserver.ChatClient;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
@@ -276,7 +279,9 @@ public class SendMessage extends AbstractChatPacket {
 		}
 
 		// Add module commands
-		// TODO
+		ModuleCommandSyntaxListEvent evMCSL = new ModuleCommandSyntaxListEvent(commandMessages, client,
+				client.getPlayer(), permLevel);
+		EventBus.getInstance().dispatchEvent(evMCSL);
 
 		// Add help if not empty
 		if (!commandMessages.isEmpty())
@@ -291,7 +296,14 @@ public class SendMessage extends AbstractChatPacket {
 				cmdId = args.remove(0).toLowerCase();
 				cmd = cmdId;
 
-				// TODO: module command hooks
+				// Run module command
+				final String cmdIdentifier = cmd;
+				ChatCommandEvent ev = new ChatCommandEvent(cmdId, args, client, client.getPlayer(), permLevel, t -> {
+					systemMessage(t, cmdIdentifier, client);
+				});
+				EventBus.getInstance().dispatchEvent(ev);
+				if (ev.isHandled())
+					return true;
 
 				// Run system command
 				if (GameServer.hasPerm(permLevel, "moderator")) {
@@ -502,7 +514,7 @@ public class SendMessage extends AbstractChatPacket {
 										// Ban player
 										plr.account.ban();
 									}
-									
+
 									return true;
 								} catch (Exception e) {
 								}
@@ -1132,7 +1144,7 @@ public class SendMessage extends AbstractChatPacket {
 				if (cmd.equals("help")) {
 					String message = "List of commands:";
 					for (String commandMessage : commandMessages) {
-						message += "\n" + commandMessage;
+						message += "\n - " + commandMessage;
 					}
 					systemMessage(message, cmdId, client);
 					return true;

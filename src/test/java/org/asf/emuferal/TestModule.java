@@ -2,6 +2,8 @@ package org.asf.emuferal;
 
 import org.asf.emuferal.modules.IEmuFeralModule;
 import org.asf.emuferal.modules.eventbus.EventListener;
+import org.asf.emuferal.modules.events.chatcommands.ChatCommandEvent;
+import org.asf.emuferal.modules.events.chatcommands.ModuleCommandSyntaxListEvent;
 import org.asf.emuferal.modules.events.servers.APIServerStartupEvent;
 
 public class TestModule implements IEmuFeralModule {
@@ -21,8 +23,14 @@ public class TestModule implements IEmuFeralModule {
 	}
 
 	@EventListener
-	public void startServer(APIServerStartupEvent event) {
-		event = event;
+	public void registerCommands(ModuleCommandSyntaxListEvent event) {
+		event.addCommandSyntaxMessage("test");
+	}
+
+	@EventListener
+	public void runCommand(ChatCommandEvent event) {
+		if (event.getCommandID().equals("test"))
+			event.respond("Test 123");
 	}
 
 }

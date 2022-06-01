@@ -1,6 +1,7 @@
 package org.asf.emuferal.modules.events.chatcommands;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.modules.eventbus.EventObject;
@@ -11,24 +12,28 @@ import org.asf.emuferal.networking.gameserver.GameServer;
 
 /**
  * 
- * Event called to register command syntaxes (for the help command)
+ * Event called to handle module chat commands
  * 
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("chatcommands.helpsyntax")
-public class ModuleCommandSyntaxListEvent extends EventObject {
+@EventPath("chatcommands.run")
+public class ChatCommandEvent extends EventObject {
 
-	private ArrayList<String> commandMessages;
+	private Consumer<String> messageCallback;
+	private ArrayList<String> args;
+	private String cmdID;
 
 	private String permLevel;
 	private ChatClient client;
 	private ChatServer server;
 	private EmuFeralAccount account;
 
-	public ModuleCommandSyntaxListEvent(ArrayList<String> commandMessages, ChatClient client, EmuFeralAccount account,
-			String permLevel) {
-		this.commandMessages = commandMessages;
+	public ChatCommandEvent(String cmdID, ArrayList<String> commandMessages, ChatClient client, EmuFeralAccount account,
+			String permLevel, Consumer<String> messageCallback) {
+		this.messageCallback = messageCallback;
+		this.cmdID = cmdID;
+		this.args = commandMessages;
 		this.client = client;
 		this.server = client.getServer();
 		this.account = account;
@@ -37,7 +42,25 @@ public class ModuleCommandSyntaxListEvent extends EventObject {
 
 	@Override
 	public String eventPath() {
-		return "chatcommands.helpsyntax";
+		return "chatcommands.run";
+	}
+
+	/**
+	 * Retrieves the ID of the invoked command
+	 * 
+	 * @return Command ID string
+	 */
+	public String getCommandID() {
+		return cmdID;
+	}
+
+	/**
+	 * Retrieves the command argument array
+	 * 
+	 * @return Array of command arguments
+	 */
+	public String[] getCommandArguments() {
+		return args.toArray(t -> new String[t]);
 	}
 
 	/**
@@ -68,15 +91,6 @@ public class ModuleCommandSyntaxListEvent extends EventObject {
 	}
 
 	/**
-	 * Adds a command syntax message to the help command
-	 * 
-	 * @param message Message to add
-	 */
-	public void addCommandSyntaxMessage(String message) {
-		commandMessages.add(message);
-	}
-
-	/**
 	 * Checks if the player has a specific permission level
 	 * 
 	 * @param perm Permission level to check
@@ -85,6 +99,16 @@ public class ModuleCommandSyntaxListEvent extends EventObject {
 	 */
 	public boolean hasPermission(String perm) {
 		return GameServer.hasPerm(permLevel, perm);
+	}
+
+	/**
+	 * Sends a response to the command
+	 * 
+	 * @param message Message to send
+	 */
+	public void respond(String message) {
+		setHandled();
+		messageCallback.accept(message);
 	}
 
 }
