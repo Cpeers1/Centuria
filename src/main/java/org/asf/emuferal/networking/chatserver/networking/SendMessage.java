@@ -360,7 +360,7 @@ public class SendMessage extends AbstractChatPacket {
 						String response = "List of online players:";
 						for (ChatClient cl : client.getServer().getClients()) {
 							Player plr = cl.getPlayer().getOnlinePlayerInstance();
-							if (plr != null) {
+							if (plr != null && !suspiciousClients.containsKey(cl)) {
 								String map = "UNKOWN: " + plr.roomID;
 								if (helper.has(Integer.toString(plr.roomID)))
 									map = helper.get(Integer.toString(plr.roomID)).getAsString();
