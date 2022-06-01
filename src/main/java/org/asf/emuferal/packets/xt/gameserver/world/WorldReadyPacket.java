@@ -59,14 +59,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			return true;
 		}
 
-		try {
-			Thread.sleep(5000); // Temporary wait
-		} catch (InterruptedException e) {
-		}
-
-		// Find spawn
-		handleSpawn(teleportUUID, plr, client);
-
 		// Sync
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {
@@ -79,18 +71,26 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		plr.room = plr.pendingRoom;
 		plr.roomID = plr.pendingRoomID;
 
-		// Sync spawn
+		// Send all other players to the current player
 		GameServer server = (GameServer) client.getServer();
 		for (Player player : server.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				plr.syncTo(player);
+				player.syncTo(plr);
 			}
 		}
 
-		// Send all other players to the current player
+		try {
+			Thread.sleep(5000); // Temporary wait
+		} catch (InterruptedException e) {
+		}
+
+		// Find spawn
+		handleSpawn(teleportUUID, plr, client);
+
+		// Sync spawn
 		for (Player player : server.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				player.syncTo(plr);
+				plr.syncTo(player);
 			}
 		}
 

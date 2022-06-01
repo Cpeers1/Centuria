@@ -4,3 +4,6 @@ Changes in EmuFeral 1.0.0.A22:
  - Implemented event for API, Director, Chat and Game server startup (with the ability to register packets and handlers)
  - Implemented events for chat commands
  - Made display name search case-insensitive
+ - Fix crash with offline servers
+ - Fix oversight in chat server security
+

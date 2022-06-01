@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.Random;
 
 import org.asf.emuferal.EmuFeral;
@@ -68,7 +69,7 @@ public class GameServer extends BaseSmartfoxServer {
 	public boolean shutdown = false;
 	private Random rnd = new Random();
 	private XmlMapper mapper = new XmlMapper();
-	private ArrayList<Player> players = new ArrayList<Player>();
+	private HashMap<String, Player> players = new HashMap<String, Player>();
 
 	public ArrayList<String> vpnIpsV4 = new ArrayList<String>();
 	public ArrayList<String> vpnIpsV6 = new ArrayList<String>();
@@ -78,7 +79,7 @@ public class GameServer extends BaseSmartfoxServer {
 	public Player[] getPlayers() {
 		while (true) {
 			try {
-				return players.toArray(t -> new Player[t]);
+				return players.values().toArray(t -> new Player[t]);
 			} catch (ConcurrentModificationException e) {
 			}
 		}
@@ -300,11 +301,9 @@ public class GameServer extends BaseSmartfoxServer {
 		}
 
 		// Disconnect an already connected instance
-		for (Player player : getPlayers()) {
-			if (player.account.getAccountID().equals(acc.getAccountID())) {
-				player.client.disconnect();
-			}
-		}
+		Player ePlr = getPlayer(acc.getAccountID());
+		if (ePlr != null)
+			ePlr.client.disconnect();
 
 		// Log the login attempt
 		System.out.println("Login from IP: " + client.getSocket().getRemoteSocketAddress() + ": " + acc.getLoginName());
@@ -373,7 +372,7 @@ public class GameServer extends BaseSmartfoxServer {
 			playerMsg += player.account.getAccountID() + "%-1%";
 		}
 		sendPacket(client, playerMsg);
-		players.add(plr);
+		players.put(plr.account.getAccountID(), plr);
 	}
 
 	// IP ban checks (both vpn block and ip banning)
@@ -459,8 +458,8 @@ public class GameServer extends BaseSmartfoxServer {
 	protected void clientDisconnect(SmartfoxClient client) {
 		if (client.container != null && client.container instanceof Player) {
 			Player plr = (Player) client.container;
-			if (players.contains(plr)) {
-				players.remove(plr);
+			if (players.containsKey(plr.account.getAccountID())) {
+				players.remove(plr.account.getAccountID());
 				System.out.println("Player disconnected: " + plr.account.getLoginName() + " (was "
 						+ plr.account.getDisplayName() + ")");
 			}
@@ -545,9 +544,8 @@ public class GameServer extends BaseSmartfoxServer {
 	 * @return Player instance or null if offline
 	 */
 	public Player getPlayer(String accountID) {
-		for (Player plr : EmuFeral.gameServer.getPlayers())
-			if (plr.account.getAccountID().equals(accountID))
-				return plr;
+		if (players.containsKey(accountID))
+			return players.get(accountID);
 		return null;
 	}
 

@@ -30,7 +30,8 @@ public class FileBasedAccountManager extends AccountManager {
 	public FileBasedAccountManager() {
 		File idTrackFile = new File("account.lastid.info");
 		if (!idTrackFile.exists()) {
-			lastAccountID = new File("accounts").listFiles().length;
+			if (new File("accounts").exists())
+				lastAccountID = new File("accounts").listFiles().length;
 			try {
 				Files.writeString(Path.of("account.lastid.info"), Integer.toString(lastAccountID));
 			} catch (IOException e) {
@@ -319,7 +320,7 @@ public class FileBasedAccountManager extends AccountManager {
 
 	@Override
 	public boolean lockDisplayName(String displayName, String userID) {
-		if (isDisplayNameInUse(displayName)) {
+		if (!isDisplayNameInUse(displayName)) {
 			if (!new File("displaynames").exists())
 				new File("displaynames").mkdirs();
 

@@ -5,6 +5,7 @@ import org.asf.emuferal.modules.eventbus.EventListener;
 import org.asf.emuferal.modules.events.chatcommands.ChatCommandEvent;
 import org.asf.emuferal.modules.events.chatcommands.ModuleCommandSyntaxListEvent;
 import org.asf.emuferal.modules.events.servers.APIServerStartupEvent;
+import org.asf.emuferal.modules.events.updates.ServerUpdateEvent;
 
 public class TestModule implements IEmuFeralModule {
 
@@ -20,6 +21,11 @@ public class TestModule implements IEmuFeralModule {
 
 	@Override
 	public void init() {
+	}
+
+	@EventListener
+	public void update(ServerUpdateEvent event) {
+		event = event;
 	}
 
 	@EventListener

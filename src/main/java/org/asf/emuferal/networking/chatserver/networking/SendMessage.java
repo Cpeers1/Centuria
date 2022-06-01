@@ -102,6 +102,18 @@ public class SendMessage extends AbstractChatPacket {
 
 	@Override
 	public boolean handle(ChatClient client) {
+		// Ignore 'limbo' players
+		Player gameClient = client.getPlayer().getOnlinePlayerInstance();
+		if (gameClient == null) {
+			// Ok, even worse, hacker, disconnect them after banning
+			client.getPlayer().ban();
+			client.disconnect();
+			return true;
+		} else if (!gameClient.roomReady || gameClient.room == null) {
+			// Limbo player
+			return true;
+		}
+
 		// Clean message
 		message = message.trim();
 
@@ -201,8 +213,15 @@ public class SendMessage extends AbstractChatPacket {
 			for (ChatClient cl : client.getServer().getClients()) {
 				if (cl.isInRoom(room)) {
 					if (!socialManager.socialListExists(cl.getPlayer().getAccountID()) || !socialManager
-							.getPlayerIsBlocked(cl.getPlayer().getAccountID(), client.getPlayer().getAccountID()))
+							.getPlayerIsBlocked(cl.getPlayer().getAccountID(), client.getPlayer().getAccountID())) {
+						// Check limbo player
+						gameClient = cl.getPlayer().getOnlinePlayerInstance();
+						if (gameClient != null && !gameClient.roomReady || gameClient.room == null)
+							continue;
+
+						// Send message
 						cl.sendPacket(res);
+					}
 				}
 			}
 		}

@@ -41,6 +41,9 @@ import org.asf.emuferal.modules.ModuleManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
 import org.asf.emuferal.modules.events.servers.APIServerStartupEvent;
 import org.asf.emuferal.modules.events.servers.DirectorServerStartupEvent;
+import org.asf.emuferal.modules.events.updates.ServerUpdateCompletionEvent;
+import org.asf.emuferal.modules.events.updates.ServerUpdateEvent;
+import org.asf.emuferal.modules.events.updates.UpdateCancelEvent;
 import org.asf.emuferal.networking.chatserver.ChatServer;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.http.api.FallbackAPIProcessor;
@@ -160,6 +163,13 @@ public class EmuFeral {
 				&& (System.getProperty("debugMode") == null || System.getProperty("debugMode").equals("false"))) {
 			// Check for updates
 			if (shouldUpdate(updateChannel)) {
+				// Dispatch event
+				EventBus.getInstance().dispatchEvent(new ServerUpdateEvent(nextVersion, -1));
+
+				// Dispatch completion event
+				EventBus.getInstance().dispatchEvent(new ServerUpdateCompletionEvent(nextVersion));
+
+				// Exit server
 				System.exit(0);
 			}
 		}
@@ -183,6 +193,7 @@ public class EmuFeral {
 		if (updating) {
 			cancelUpdate = true;
 			nextVersion = null;
+			EventBus.getInstance().dispatchEvent(new UpdateCancelEvent());
 			return true;
 		} else
 			return false;
@@ -256,6 +267,11 @@ public class EmuFeral {
 	 * Shuts down the server with a update message
 	 */
 	public static void updateShutdown() {
+		// Dispatch event if the update was instant
+		if (!updating) {
+			EventBus.getInstance().dispatchEvent(new ServerUpdateEvent(nextVersion, -1));
+		}
+
 		// Disconnect everyone
 		for (Player plr : EmuFeral.gameServer.getPlayers()) {
 			plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
@@ -292,6 +308,9 @@ public class EmuFeral {
 			} catch (InterruptedException e) {
 			}
 		}
+
+		// Dispatch completion event
+		EventBus.getInstance().dispatchEvent(new ServerUpdateCompletionEvent(nextVersion));
 
 		// Exit
 		System.exit(0);
