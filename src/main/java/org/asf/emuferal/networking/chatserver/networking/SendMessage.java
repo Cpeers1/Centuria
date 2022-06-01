@@ -351,9 +351,9 @@ public class SendMessage extends AbstractChatPacket {
 						for (ChatClient cl : client.getServer().getClients()) {
 							Player plr = cl.getPlayer().getOnlinePlayerInstance();
 							if (plr == null) {
-								suspiciousClients.put(client, "no gameserver connection");
+								suspiciousClients.put(cl, "no gameserver connection");
 							} else if (!plr.roomReady || plr.room == null) {
-								suspiciousClients.put(client, "limbo");
+								suspiciousClients.put(cl, "limbo");
 							}
 						}
 						// Build message
