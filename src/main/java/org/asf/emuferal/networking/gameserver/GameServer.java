@@ -353,19 +353,16 @@ public class GameServer extends BaseSmartfoxServer {
 		if (SocialManager.getInstance().socialListExists(plr.account.getAccountID())) {
 			// Find all followers
 			for (SocialEntry ent : SocialManager.getInstance().getFollowerPlayers(plr.account.getAccountID())) {
-				// Check soocial list of other player if they favorited the player logging in
-				if (SocialManager.getInstance().getPlayerIsFavorite(ent.playerID, plr.account.getAccountID())) {
-					// Send online status update
-					Player player = getPlayer(ent.playerID);
-					if (player != null) {
-						XtWriter wr = new XtWriter();
-						wr.writeString("rfosu"); // ID
-						wr.writeInt(-1); // Data prefix
-						wr.writeString(plr.account.getAccountID()); // Player who joined
-						wr.writeInt(1); // Online
-						wr.writeString(""); // Data suffix
-						player.client.sendPacket(wr.encode());
-					}
+				// Send online status update
+				Player player = getPlayer(ent.playerID);
+				if (player != null) {
+					XtWriter wr = new XtWriter();
+					wr.writeString("rfosu"); // ID
+					wr.writeInt(-1); // Data prefix
+					wr.writeString(plr.account.getAccountID()); // Player who joined
+					wr.writeInt(1); // Online
+					wr.writeString(""); // Data suffix
+					player.client.sendPacket(wr.encode());
 				}
 			}
 		}
@@ -484,19 +481,16 @@ public class GameServer extends BaseSmartfoxServer {
 				if (SocialManager.getInstance().socialListExists(plr.account.getAccountID())) {
 					// Find all followers
 					for (SocialEntry ent : SocialManager.getInstance().getFollowerPlayers(plr.account.getAccountID())) {
-						// Check soocial list of other player if they favorited the player logging in
-						if (SocialManager.getInstance().getPlayerIsFavorite(ent.playerID, plr.account.getAccountID())) {
-							// Send online status update
-							Player player = getPlayer(ent.playerID);
-							if (player != null) {
-								XtWriter wr = new XtWriter();
-								wr.writeString("rfosu"); // ID
-								wr.writeInt(-1); // Data prefix
-								wr.writeString(plr.account.getAccountID()); // Player who joined
-								wr.writeInt(-1); // Offline
-								wr.writeString(""); // Data suffix
-								player.client.sendPacket(wr.encode());
-							}
+						// Send online status update
+						Player player = getPlayer(ent.playerID);
+						if (player != null) {
+							XtWriter wr = new XtWriter();
+							wr.writeString("rfosu"); // ID
+							wr.writeInt(-1); // Data prefix
+							wr.writeString(plr.account.getAccountID()); // Player who left
+							wr.writeInt(-1); // Offline
+							wr.writeString(""); // Data suffix
+							player.client.sendPacket(wr.encode());
 						}
 					}
 				}
