@@ -262,18 +262,40 @@ public class FileBasedAccountManager extends AccountManager {
 
 	@Override
 	public String getUserByDisplayName(String displayName) {
+		// Find file
 		if (new File("displaynames/" + displayName).exists()) {
 			try {
 				return Files.readAllLines(Path.of("displaynames/" + displayName)).get(0);
 			} catch (IOException e) {
 			}
 		}
+
+		// Attempt to find using a case-insensitive method
+		if (new File("displaynames").exists())
+			for (File dsp : new File("displaynames").listFiles(t -> !t.isDirectory())) {
+				if (dsp.getName().equalsIgnoreCase(displayName))
+					try {
+						return Files.readAllLines(dsp.toPath()).get(0);
+					} catch (IOException e) {
+					}
+			}
+
 		return null;
 	}
 
 	@Override
 	public boolean isDisplayNameInUse(String displayName) {
-		return new File("displaynames/" + displayName).exists();
+		if (new File("displaynames/" + displayName).exists())
+			return true;
+
+		// Attempt to find using a case-insensitive method
+		if (new File("displaynames").exists())
+			for (File dsp : new File("displaynames").listFiles(t -> !t.isDirectory())) {
+				if (dsp.getName().equalsIgnoreCase(displayName))
+					return true;
+			}
+
+		return false;
 	}
 
 	@Override
@@ -282,12 +304,22 @@ public class FileBasedAccountManager extends AccountManager {
 			new File("displaynames/" + displayName).delete();
 			return true;
 		}
+
+		// Attempt to find using a case-insensitive method
+		if (new File("displaynames").exists())
+			for (File dsp : new File("displaynames").listFiles(t -> !t.isDirectory())) {
+				if (dsp.getName().equalsIgnoreCase(displayName)) {
+					dsp.delete();
+					return true;
+				}
+			}
+
 		return false;
 	}
 
 	@Override
 	public boolean lockDisplayName(String displayName, String userID) {
-		if (!new File("displaynames/" + displayName).exists()) {
+		if (isDisplayNameInUse(displayName)) {
 			if (!new File("displaynames").exists())
 				new File("displaynames").mkdirs();
 

@@ -80,7 +80,6 @@ public class AvatarEditorSelectLook implements IXtPacket<AvatarEditorSelectLook>
 			GameServer srv = (GameServer) client.getServer();
 			for (Player player : srv.getPlayers()) {
 				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-					plr.destroyAt(player);
 					plr.syncTo(player);
 				}
 			}
