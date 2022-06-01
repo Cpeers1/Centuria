@@ -364,7 +364,7 @@ public class SendMessage extends AbstractChatPacket {
 								String map = "UNKOWN: " + plr.roomID;
 								if (helper.has(Integer.toString(plr.roomID)))
 									map = helper.get(Integer.toString(plr.roomID)).getAsString();
-								response += "\n" + plr.account.getDisplayName() + " (" + map + ")";
+								response += "\n - " + plr.account.getDisplayName() + " (" + map + ")";
 							} else if (!suspiciousClients.containsKey(cl)) {
 								suspiciousClients.put(cl, "no gameserver connection");
 							}
@@ -374,12 +374,12 @@ public class SendMessage extends AbstractChatPacket {
 							response += "\n";
 							response += "\nSuspicious clients:";
 							for (ChatClient cl : suspiciousClients.keySet())
-								response += "\n" + cl.getPlayer().getDisplayName() + " [" + suspiciousClients.get(cl)
+								response += "\n - " + cl.getPlayer().getDisplayName() + " [" + suspiciousClients.get(cl)
 										+ "]";
 						}
 						// Send response
 						systemMessage(response, cmd, client);
-						break;
+						return true;
 					}
 					case "mute": {
 						// Mute
