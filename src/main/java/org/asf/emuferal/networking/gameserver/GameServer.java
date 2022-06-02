@@ -20,6 +20,7 @@ import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.ipbans.IpBanManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
 import org.asf.emuferal.modules.events.accounts.LoginEvent;
+import org.asf.emuferal.modules.events.accounts.LoginSuccessEvent;
 import org.asf.emuferal.modules.events.servers.GameServerStartupEvent;
 import org.asf.emuferal.networking.smartfox.BaseSmartfoxServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
@@ -402,6 +403,9 @@ public class GameServer extends BaseSmartfoxServer {
 		}
 		sendPacket(client, playerMsg);
 		players.put(plr.account.getAccountID(), plr);
+
+		// Dispatch join event
+		EventBus.getInstance().dispatchEvent(new LoginSuccessEvent(plr, acc, client));
 	}
 
 	// IP ban checks (both vpn block and ip banning)
