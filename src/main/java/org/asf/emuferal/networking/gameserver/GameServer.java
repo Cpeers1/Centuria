@@ -20,7 +20,8 @@ import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.ipbans.IpBanManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
 import org.asf.emuferal.modules.events.accounts.LoginEvent;
-import org.asf.emuferal.modules.events.accounts.LoginSuccessEvent;
+import org.asf.emuferal.modules.events.players.PlayerJoinEvent;
+import org.asf.emuferal.modules.events.players.PlayerLeaveEvent;
 import org.asf.emuferal.modules.events.servers.GameServerStartupEvent;
 import org.asf.emuferal.networking.smartfox.BaseSmartfoxServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
@@ -311,7 +312,7 @@ public class GameServer extends BaseSmartfoxServer {
 		System.out.println("Login from IP: " + client.getSocket().getRemoteSocketAddress() + ": " + acc.getLoginName());
 
 		// Run module handshake code
-		LoginEvent ev = new LoginEvent(acc, client);
+		LoginEvent ev = new LoginEvent(this, acc, client);
 		EventBus.getInstance().dispatchEvent(ev);
 		if (ev.isHandled() && ev.getStatus() != 1) {
 			JsonObject response = new JsonObject();
@@ -405,7 +406,7 @@ public class GameServer extends BaseSmartfoxServer {
 		players.put(plr.account.getAccountID(), plr);
 
 		// Dispatch join event
-		EventBus.getInstance().dispatchEvent(new LoginSuccessEvent(plr, acc, client));
+		EventBus.getInstance().dispatchEvent(new PlayerJoinEvent(this, plr, acc, client));
 	}
 
 	// IP ban checks (both vpn block and ip banning)
@@ -495,6 +496,9 @@ public class GameServer extends BaseSmartfoxServer {
 				players.remove(plr.account.getAccountID());
 				System.out.println("Player disconnected: " + plr.account.getLoginName() + " (was "
 						+ plr.account.getDisplayName() + ")");
+
+				// Dispatch leave event
+				EventBus.getInstance().dispatchEvent(new PlayerLeaveEvent(this, plr, plr.account, client));
 			}
 
 			// Remove player character from all clients

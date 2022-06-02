@@ -1,35 +1,37 @@
-package org.asf.emuferal.modules.events.accounts;
+package org.asf.emuferal.modules.events.players;
 
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.modules.eventbus.EventObject;
 import org.asf.emuferal.modules.eventbus.EventPath;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
+import org.asf.emuferal.players.Player;
 
 /**
  * 
- * Login Event - used to implement custom handshakes.
+ * Player Join Event - called when a client successfully logs into the server
  * 
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("accounts.login")
-public class LoginEvent extends EventObject {
+@EventPath("players.join")
+public class PlayerJoinEvent extends EventObject {
 
-	private GameServer server;
+	private Player player;
 	private SmartfoxClient client;
 	private EmuFeralAccount account;
-	private int status = 1;
+	private GameServer server;
 
-	public LoginEvent(GameServer server, EmuFeralAccount account, SmartfoxClient client) {
+	public PlayerJoinEvent(GameServer server, Player player, EmuFeralAccount account, SmartfoxClient client) {
 		this.client = client;
 		this.account = account;
+		this.player = player;
 		this.server = server;
 	}
 
 	@Override
 	public String eventPath() {
-		return "accounts.login";
+		return "players.join";
 	}
 
 	/**
@@ -42,7 +44,7 @@ public class LoginEvent extends EventObject {
 	}
 
 	/**
-	 * Retrieves the account that is being logged into
+	 * Retrieves the player account
 	 * 
 	 * @return EmuFeralAccount instance
 	 */
@@ -51,22 +53,12 @@ public class LoginEvent extends EventObject {
 	}
 
 	/**
-	 * Retrieves the current login status code
+	 * Retrieves the player instance
 	 * 
-	 * @return Status code
+	 * @return Player instance
 	 */
-	public int getStatus() {
-		return status;
-	}
-
-	/**
-	 * Assigns the login status code and marks the event as handled
-	 * 
-	 * @param status Login status code
-	 */
-	public void setStatus(int status) {
-		setHandled();
-		this.status = status;
+	public Player getPlayer() {
+		return player;
 	}
 
 	/**

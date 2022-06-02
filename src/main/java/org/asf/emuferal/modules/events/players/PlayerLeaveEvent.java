@@ -1,34 +1,37 @@
-package org.asf.emuferal.modules.events.accounts;
+package org.asf.emuferal.modules.events.players;
 
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.modules.eventbus.EventObject;
 import org.asf.emuferal.modules.eventbus.EventPath;
+import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.players.Player;
 
 /**
  * 
- * Login Success Event - called when a client successfully logs into the server
+ * Player Leave Event - called when a player leaves the game
  * 
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("accounts.join")
-public class LoginSuccessEvent extends EventObject {
+@EventPath("players.leave")
+public class PlayerLeaveEvent extends EventObject {
 
 	private Player player;
 	private SmartfoxClient client;
 	private EmuFeralAccount account;
+	private GameServer server;
 
-	public LoginSuccessEvent(Player player, EmuFeralAccount account, SmartfoxClient client) {
+	public PlayerLeaveEvent(GameServer server, Player player, EmuFeralAccount account, SmartfoxClient client) {
 		this.client = client;
 		this.account = account;
 		this.player = player;
+		this.server = server;
 	}
 
 	@Override
 	public String eventPath() {
-		return "accounts.join";
+		return "players.leave";
 	}
 
 	/**
@@ -41,7 +44,7 @@ public class LoginSuccessEvent extends EventObject {
 	}
 
 	/**
-	 * Retrieves the account that is being logged into
+	 * Retrieves the player account
 	 * 
 	 * @return EmuFeralAccount instance
 	 */
@@ -56,6 +59,15 @@ public class LoginSuccessEvent extends EventObject {
 	 */
 	public Player getPlayer() {
 		return player;
+	}
+
+	/**
+	 * Retrieves the game server
+	 * 
+	 * @return GameServer instance
+	 */
+	public GameServer getServer() {
+		return server;
 	}
 
 }
