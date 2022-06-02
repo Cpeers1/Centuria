@@ -218,7 +218,7 @@ public class SendMessage extends AbstractChatPacket {
 							.getPlayerIsBlocked(cl.getPlayer().getAccountID(), client.getPlayer().getAccountID())) {
 						// Check limbo player
 						gameClient = cl.getPlayer().getOnlinePlayerInstance();
-						if (gameClient != null && !gameClient.roomReady || gameClient.room == null)
+						if (gameClient == null || !gameClient.roomReady || gameClient.room == null)
 							continue;
 
 						// Send message

@@ -165,7 +165,7 @@ public class ChatClient {
 			return;
 		} else {
 			// Check if the player was in chat
-			if (plr.wasInChat)
+			if (plr.wasInChat && plr.room != null)
 				joinRoom(plr.room, false);
 		}
 
