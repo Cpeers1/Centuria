@@ -1,0 +1,107 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		maven {
+			name = "AerialWorks"; url = "https://aerialworks.ddns.net/maven"
+		}
+	}
+	dependencies {
+		classpath 'org.asf.cyan.cornflower:Cornflower:1.0.0.A30'
+	}
+}
+
+plugins {
+	id 'java'
+	id 'maven-publish'
+}
+
+
+// Basic information
+version = "1.0.0.A1"
+group = "org.example.examplemodule"
+
+ext.modulePackage = "org.example.examplemodule"
+ext.moduleClass = "ExampleModule"
+ext.authorname = "AerialWorks Software Foundation"
+
+// Internal
+apply plugin: 'eclipse'
+apply plugin: 'org.asf.cyan.cornflower'
+
+Calendar cal = new GregorianCalendar();
+cal.setTime(new Date());
+ext.buildyear = cal.get(Calendar.YEAR).toString();
+
+repositories {
+	mavenCentral()
+	maven { name = "AerialWorks"; url = "https://aerialworks.ddns.net/maven" }
+	flatDir {
+		dirs 'libraries'
+	}
+}
+
+jar {
+	manifest {
+		attributes([
+			"Specification-Title": project.name,
+			"Specification-Vendor": "${authorname}",
+			"Specification-Version": project.version,
+			"Implementation-Title": project.name,
+			"Implementation-Version": project.version,
+			"Implementation-Vendor" :"${authorname}",
+			"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+		])
+	}
+	includeEmptyDirs = false
+}
+
+dependencies {
+	testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+
+	implementation name: "EmuFeral"
+	implementation name: "ConnectiveHTTP"
+}
+
+createEclipseLaunches {
+	name "Launch EmuFeral Server (${project.name})"
+
+	// Main server
+	mainClass "org.asf.emuferal.EmuFeral"
+	workingDir "server"
+
+	// Enable debug mode
+	jvm "-DdebugMode=true"
+
+	// Make sure the module is loaded into the server
+	jvm "-DaddCpModules=${modulePackage}.${moduleClass}"
+
+	// Server dependencies
+	classpath project // current project
+	classpath {
+		// libraries
+		for (File file : new File("libraries").listFiles()) {
+			archive file
+		}
+
+		// server libraries
+		for (File file : new File("server/libs").listFiles()) {
+			archive file
+		}
+		archive new File("server/EmuFeral.jar") // server jars
+	}
+
+	// Server source lookup
+	sourceLookup {
+		// libraries
+		for (File file : new File("libraries").listFiles()) {
+			archive file
+		}
+
+		// server libraries
+		for (File file : new File("server/libs").listFiles()) {
+			archive file
+		}
+		archive new File("server/EmuFeral.jar") // server jars
+	}
+}
+createEclipseLaunches.dependsOn 'eclipse'
