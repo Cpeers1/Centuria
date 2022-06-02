@@ -20,6 +20,8 @@ import javax.crypto.spec.PBEKeySpec;
 
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
+import org.asf.emuferal.modules.eventbus.EventBus;
+import org.asf.emuferal.modules.events.accounts.AccountRegistrationEvent;
 
 public class FileBasedAccountManager extends AccountManager {
 
@@ -221,6 +223,9 @@ public class FileBasedAccountManager extends AccountManager {
 			Files.writeString(uf.toPath(), id + "\n" + username);
 			Files.writeString(new File("accounts/" + id).toPath(),
 					id + "\n" + username + "\ntrue\n" + username + "\n" + lastAccountID);
+
+			// Dispatch event
+			EventBus.getInstance().dispatchEvent(new AccountRegistrationEvent(getAccount(id)));
 
 			// Return account ID
 			return id;

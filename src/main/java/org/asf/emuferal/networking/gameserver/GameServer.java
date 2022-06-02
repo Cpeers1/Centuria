@@ -19,7 +19,7 @@ import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.ipbans.IpBanManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
-import org.asf.emuferal.modules.events.accounts.LoginEvent;
+import org.asf.emuferal.modules.events.accounts.AccountLoginEvent;
 import org.asf.emuferal.modules.events.players.PlayerJoinEvent;
 import org.asf.emuferal.modules.events.players.PlayerLeaveEvent;
 import org.asf.emuferal.modules.events.servers.GameServerStartupEvent;
@@ -312,7 +312,7 @@ public class GameServer extends BaseSmartfoxServer {
 		System.out.println("Login from IP: " + client.getSocket().getRemoteSocketAddress() + ": " + acc.getLoginName());
 
 		// Run module handshake code
-		LoginEvent ev = new LoginEvent(this, acc, client);
+		AccountLoginEvent ev = new AccountLoginEvent(this, acc, client);
 		EventBus.getInstance().dispatchEvent(ev);
 		if (ev.isHandled() && ev.getStatus() != 1) {
 			JsonObject response = new JsonObject();

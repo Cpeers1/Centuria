@@ -11,6 +11,8 @@ import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.accounts.LevelInfo;
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.dms.DMManager;
+import org.asf.emuferal.modules.eventbus.EventBus;
+import org.asf.emuferal.modules.events.accounts.AccountDeletionEvent;
 import org.asf.emuferal.players.Player;
 import org.asf.emuferal.social.SocialEntry;
 import org.asf.emuferal.social.SocialManager;
@@ -289,6 +291,9 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 			// Account does not exist
 			return;
 		}
+		
+		// Dispatch event
+		EventBus.getInstance().dispatchEvent(new AccountDeletionEvent(this));
 
 		// Delete login file
 		new File("accounts/" + loginName).delete();

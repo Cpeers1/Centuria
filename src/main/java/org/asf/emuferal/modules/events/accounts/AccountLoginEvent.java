@@ -14,14 +14,14 @@ import org.asf.emuferal.networking.smartfox.SmartfoxClient;
  *
  */
 @EventPath("accounts.login")
-public class LoginEvent extends EventObject {
+public class AccountLoginEvent extends EventObject {
 
 	private GameServer server;
 	private SmartfoxClient client;
 	private EmuFeralAccount account;
 	private int status = 1;
 
-	public LoginEvent(GameServer server, EmuFeralAccount account, SmartfoxClient client) {
+	public AccountLoginEvent(GameServer server, EmuFeralAccount account, SmartfoxClient client) {
 		this.client = client;
 		this.account = account;
 		this.server = server;
