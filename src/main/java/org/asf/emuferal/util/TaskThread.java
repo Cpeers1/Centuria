@@ -77,8 +77,22 @@ public class TaskThread extends Thread {
 	 * Waits for all tasks to finish
 	 */
 	public void flush() {
+		flush(-1);
+	}
+
+	/**
+	 * Waits for all tasks to finish
+	 * 
+	 * @param timeout Wait timeout length in seconds
+	 */
+	public void flush(int timeout) {
+		int i = 0;
 		while (!tasks.isEmpty()) {
 			try {
+				if (i < timeout * 10)
+					i++;
+				else
+					break;
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 			}

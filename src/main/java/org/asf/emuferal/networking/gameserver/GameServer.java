@@ -19,6 +19,7 @@ import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.ipbans.IpBanManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
+import org.asf.emuferal.modules.events.accounts.LoginEvent;
 import org.asf.emuferal.modules.events.servers.GameServerStartupEvent;
 import org.asf.emuferal.networking.smartfox.BaseSmartfoxServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
@@ -307,6 +308,34 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Log the login attempt
 		System.out.println("Login from IP: " + client.getSocket().getRemoteSocketAddress() + ": " + acc.getLoginName());
+
+		// Run module handshake code
+		LoginEvent ev = new LoginEvent(acc, client);
+		EventBus.getInstance().dispatchEvent(ev);
+		if (ev.isHandled() && ev.getStatus() != 1) {
+			JsonObject response = new JsonObject();
+			JsonObject b = new JsonObject();
+			b.addProperty("r", auth.rField);
+			JsonObject o = new JsonObject();
+			o.addProperty("statusId", ev.getStatus());
+			o.addProperty("_cmd", "login");
+			JsonObject params = new JsonObject();
+			params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
+			params.addProperty("pendingFlags", 0);
+			params.addProperty("activeLookId", acc.getActiveLook());
+			params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
+			params.addProperty("sessionId", acc.getAccountID());
+			params.addProperty("userId", acc.getAccountNumericID());
+			params.addProperty("avatarInvId", 0);
+			o.add("params", params);
+			o.addProperty("status", ev.getStatus());
+			b.add("o", o);
+			response.add("b", b);
+			response.addProperty("t", "xt");
+			sendPacket(client, response.toString());
+			client.disconnect();
+			return;
+		}
 
 		// Build Player object
 		Player plr = new Player();

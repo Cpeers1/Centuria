@@ -21,6 +21,8 @@ import org.asf.emuferal.ipbans.IpBanManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
 import org.asf.emuferal.modules.events.chatcommands.ChatCommandEvent;
 import org.asf.emuferal.modules.events.chatcommands.ModuleCommandSyntaxListEvent;
+import org.asf.emuferal.modules.events.maintenance.MaintenanceEndEvent;
+import org.asf.emuferal.modules.events.maintenance.MaintenanceStartEvent;
 import org.asf.emuferal.networking.chatserver.ChatClient;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
@@ -1063,6 +1065,12 @@ public class SendMessage extends AbstractChatPacket {
 							// Enable maintenance mode
 							EmuFeral.gameServer.maintenance = true;
 
+							// Dispatch maintenance event
+							EventBus.getInstance().dispatchEvent(new MaintenanceStartEvent());
+							// Cancel if maintenance is disabled
+							if (!EmuFeral.gameServer.maintenance)
+								return true;
+
 							// Disconnect everyone but the staff
 							for (Player plr : EmuFeral.gameServer.getPlayers()) {
 								if (!plr.account.getPlayerInventory().containsItem("permissions")
@@ -1121,6 +1129,13 @@ public class SendMessage extends AbstractChatPacket {
 						if (GameServer.hasPerm(permLevel, "admin")) {
 							// Disable maintenance mode
 							EmuFeral.gameServer.maintenance = false;
+
+							// Dispatch maintenance end event
+							EventBus.getInstance().dispatchEvent(new MaintenanceEndEvent());
+							// Cancel if maintenance is enabled
+							if (EmuFeral.gameServer.maintenance)
+								return true;
+
 							systemMessage("Maintenance mode disabled.", cmd, client);
 							return true;
 						} else {

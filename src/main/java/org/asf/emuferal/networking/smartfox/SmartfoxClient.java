@@ -54,6 +54,7 @@ public class SmartfoxClient {
 	 * Disconnects the client
 	 */
 	public void disconnect() {
+		taskThread.flush(3);
 		try {
 			if (client != null)
 				client.close();
