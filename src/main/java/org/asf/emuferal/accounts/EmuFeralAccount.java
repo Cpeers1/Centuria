@@ -221,6 +221,12 @@ public abstract class EmuFeralAccount {
 
 		// Find online player
 		Player plr = getOnlinePlayerInstance();
+		if (plr != null && plr.account != this) {
+			// Sync to online player
+			plr.account.ban();
+			return;
+		}
+
 		if (plr != null) {
 			// Kick the player
 			plr.client.sendPacket("%xt%ua%-1%3561%");
@@ -283,8 +289,10 @@ public abstract class EmuFeralAccount {
 
 		// Sync online player
 		Player plr = getOnlinePlayerInstance();
-		if (plr != null && plr.account != this)
+		if (plr != null && plr.account != this) {
 			plr.account.mute(days, hours, minutes);
+			return;
+		}
 
 		// Dispatch event
 		EventBus.getInstance().dispatchEvent(new AccountMuteEvent(this, muteInfo.get("unmuteTimestamp").getAsLong()));
@@ -300,11 +308,51 @@ public abstract class EmuFeralAccount {
 
 		// Sync online player
 		Player plr = getOnlinePlayerInstance();
-		if (plr != null && plr.account != this)
+		if (plr != null && plr.account != this) {
 			plr.account.pardon();
+			return;
+		}
 
 		// Dispatch event
 		EventBus.getInstance().dispatchEvent(new AccountPardonEvent(this));
+	}
+
+	/**
+	 * Checks if the current user is banned
+	 * 
+	 * @return True if banned, false otherwise
+	 */
+	public boolean isBanned() {
+		if (getPlayerInventory().containsItem("penalty")
+				&& getPlayerInventory().getItem("penalty").getAsJsonObject().get("type").getAsString().equals("ban")) {
+			JsonObject banInfo = getPlayerInventory().getItem("penalty").getAsJsonObject();
+			if (banInfo.get("unbanTimestamp").getAsLong() == -1
+					|| banInfo.get("unbanTimestamp").getAsLong() > System.currentTimeMillis()) {
+				return true;
+			} else
+				getPlayerInventory().deleteItem("penalty");
+		}
+
+		return false;
+	}
+
+	/**
+	 * Checks if the current user is muted
+	 * 
+	 * @return True if muted, false otherwise
+	 */
+	public boolean isMuted() {
+		if (getPlayerInventory().containsItem("penalty")
+				&& getPlayerInventory().getItem("penalty").getAsJsonObject().get("type").getAsString().equals("mute")) {
+			JsonObject muteInfo = getPlayerInventory().getItem("penalty").getAsJsonObject();
+			if (muteInfo.get("unmuteTimestamp").getAsLong() == -1
+					|| muteInfo.get("unmuteTimestamp").getAsLong() > System.currentTimeMillis()) {
+				return true;
+			} else
+				getPlayerInventory().deleteItem("penalty");
+		}
+
+		return false;
 	}
 
 }
