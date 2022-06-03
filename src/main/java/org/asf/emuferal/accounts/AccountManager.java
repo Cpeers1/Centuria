@@ -34,6 +34,14 @@ public abstract class AccountManager {
 	public abstract String getUserByDisplayName(String displayName);
 
 	/**
+	 * Retrieves user IDs by login name
+	 * 
+	 * @param loginName Player login name
+	 * @return Player ID or null
+	 */
+	public abstract String getUserByLoginName(String loginName);
+
+	/**
 	 * Checks if a display name is in use
 	 * 
 	 * @param displayName Player display name
