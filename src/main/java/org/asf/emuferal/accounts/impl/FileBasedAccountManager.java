@@ -141,6 +141,10 @@ public class FileBasedAccountManager extends AccountManager {
 					}
 				}
 			} catch (IOException e) {
+				try {
+					Thread.sleep(8000);
+				} catch (InterruptedException e2) {
+				}
 				return null;
 			}
 		}
