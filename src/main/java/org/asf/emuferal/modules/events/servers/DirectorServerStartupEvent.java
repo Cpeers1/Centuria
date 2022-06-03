@@ -1,5 +1,7 @@
 package org.asf.emuferal.modules.events.servers;
 
+import java.util.Map;
+
 import org.asf.emuferal.modules.eventbus.EventObject;
 import org.asf.emuferal.modules.eventbus.EventPath;
 import org.asf.rats.ConnectiveHTTPServer;
@@ -35,4 +37,8 @@ public class DirectorServerStartupEvent extends EventObject {
 		return server;
 	}
 
+	@Override
+	public Map<String, String> eventProperties() {
+		return Map.of();
+	}
 }

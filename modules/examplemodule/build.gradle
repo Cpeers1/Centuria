@@ -60,6 +60,7 @@ dependencies {
 
 	implementation name: "EmuFeral"
 	implementation name: "ConnectiveHTTP"
+	implementation name: 'CyanComponents'
 }
 
 createEclipseLaunches {

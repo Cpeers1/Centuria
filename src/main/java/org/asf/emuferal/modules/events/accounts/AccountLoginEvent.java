@@ -1,5 +1,8 @@
 package org.asf.emuferal.modules.events.accounts;
 
+import java.net.InetSocketAddress;
+import java.util.Map;
+
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.modules.eventbus.EventObject;
 import org.asf.emuferal.modules.eventbus.EventPath;
@@ -76,6 +79,13 @@ public class AccountLoginEvent extends EventObject {
 	 */
 	public GameServer getServer() {
 		return server;
+	}
+
+	@Override
+	public Map<String, String> eventProperties() {
+		return Map.of("accountId", account.getAccountID(), "playerName", account.getDisplayName(), "accountName",
+				account.getLoginName(), "address",
+				((InetSocketAddress) client.getSocket().getRemoteSocketAddress()).getAddress().getHostAddress());
 	}
 
 }

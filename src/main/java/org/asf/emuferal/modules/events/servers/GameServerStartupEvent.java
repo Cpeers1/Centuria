@@ -1,5 +1,6 @@
 package org.asf.emuferal.modules.events.servers;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.asf.emuferal.modules.eventbus.EventObject;
@@ -47,6 +48,11 @@ public class GameServerStartupEvent extends EventObject {
 	 */
 	public void registerPacket(ISmartfoxPacket packet) {
 		registrationCommand.accept(packet);
+	}
+
+	@Override
+	public Map<String, String> eventProperties() {
+		return Map.of();
 	}
 
 }

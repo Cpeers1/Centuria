@@ -1,5 +1,7 @@
 package org.asf.emuferal.modules.events.updates;
 
+import java.util.Map;
+
 import org.asf.emuferal.modules.eventbus.EventObject;
 import org.asf.emuferal.modules.eventbus.EventPath;
 
@@ -43,4 +45,8 @@ public class ServerUpdateCompletionEvent extends EventObject {
 		return updateVersion;
 	}
 
+	@Override
+	public Map<String, String> eventProperties() {
+		return Map.of("version", updateVersion);
+	}
 }
