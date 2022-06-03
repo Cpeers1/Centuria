@@ -1,7 +1,5 @@
 package org.asf.emuferal.modules.events.maintenance;
 
-import java.util.Map;
-
 import org.asf.emuferal.modules.eventbus.EventObject;
 import org.asf.emuferal.modules.eventbus.EventPath;
 
@@ -20,8 +18,4 @@ public class MaintenanceEndEvent extends EventObject {
 		return "maintenance.end";
 	}
 
-	@Override
-	public Map<String, String> eventProperties() {
-		return Map.of();
-	}
 }

@@ -5,6 +5,10 @@ import java.net.InetSocketAddress;
 
 import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.ipbans.IpBanManager;
+import org.asf.emuferal.modules.eventbus.EventBus;
+import org.asf.emuferal.modules.events.accounts.AccountBanEvent;
+import org.asf.emuferal.modules.events.accounts.AccountMuteEvent;
+import org.asf.emuferal.modules.events.accounts.AccountPardonEvent;
 import org.asf.emuferal.networking.chatserver.ChatClient;
 import org.asf.emuferal.players.Player;
 
@@ -233,6 +237,9 @@ public abstract class EmuFeralAccount {
 				cl.disconnect();
 			}
 		}
+
+		// Dispatch event
+		EventBus.getInstance().dispatchEvent(new AccountBanEvent(this, -1));
 	}
 
 	/**
@@ -258,6 +265,9 @@ public abstract class EmuFeralAccount {
 			}
 			plr.client.disconnect();
 		}
+
+		// Dispatch event
+		EventBus.getInstance().dispatchEvent(new AccountBanEvent(this, days));
 	}
 
 	/**
@@ -275,6 +285,9 @@ public abstract class EmuFeralAccount {
 		Player plr = getOnlinePlayerInstance();
 		if (plr != null && plr.account != this)
 			plr.account.mute(days, hours, minutes);
+
+		// Dispatch event
+		EventBus.getInstance().dispatchEvent(new AccountMuteEvent(this, muteInfo.get("unmuteTimestamp").getAsLong()));
 	}
 
 	/**
@@ -289,6 +302,9 @@ public abstract class EmuFeralAccount {
 		Player plr = getOnlinePlayerInstance();
 		if (plr != null && plr.account != this)
 			plr.account.pardon();
+
+		// Dispatch event
+		EventBus.getInstance().dispatchEvent(new AccountPardonEvent(this));
 	}
 
 }

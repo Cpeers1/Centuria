@@ -1,7 +1,5 @@
 package org.asf.emuferal.modules.eventbus;
 
-import java.util.Map;
-
 /**
  * 
  * Abstract event object, needs to be annotated with EventPath for registration
@@ -33,23 +31,6 @@ public abstract class EventObject {
 	 */
 	public void setHandled() {
 		handled = true;
-	}
-
-	/**
-	 * Generates a map of event properties
-	 * 
-	 * @return Map of event properties
-	 */
-	public abstract Map<String, String> eventProperties();
-
-	@Override
-	public String toString() {
-		String data = "";
-		Map<String, String> props = eventProperties();
-		for (String key : props.keySet()) {
-			data += " " + key + ": " + props.get(key);
-		}
-		return "EventObject:[ name: " + eventPath() + "," + data + " ]";
 	}
 
 }

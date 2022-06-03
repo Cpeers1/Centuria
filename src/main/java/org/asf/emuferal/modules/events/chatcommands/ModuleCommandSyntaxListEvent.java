@@ -1,8 +1,6 @@
 package org.asf.emuferal.modules.events.chatcommands;
 
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.Map;
 
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.modules.eventbus.EventObject;
@@ -87,13 +85,6 @@ public class ModuleCommandSyntaxListEvent extends EventObject {
 	 */
 	public boolean hasPermission(String perm) {
 		return GameServer.hasPerm(permLevel, perm);
-	}
-
-	@Override
-	public Map<String, String> eventProperties() {
-		return Map.of("accountId", account.getAccountID(), "playerName", account.getDisplayName(), "accountName",
-				account.getLoginName(), "address",
-				((InetSocketAddress) client.getSocket().getRemoteSocketAddress()).getAddress().getHostAddress());
 	}
 
 }

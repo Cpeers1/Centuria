@@ -6,27 +6,27 @@ import org.asf.emuferal.modules.eventbus.EventPath;
 
 /**
  * 
- * Registration Event - called on account registration
+ * Pardon Event - called on account pardon
  * 
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("accounts.register")
-public class AccountRegistrationEvent extends EventObject {
+@EventPath("accounts.pardon")
+public class AccountPardonEvent extends EventObject {
 
 	private EmuFeralAccount account;
 
-	public AccountRegistrationEvent(EmuFeralAccount account) {
+	public AccountPardonEvent(EmuFeralAccount account) {
 		this.account = account;
 	}
 
 	@Override
 	public String eventPath() {
-		return "accounts.register";
+		return "accounts.pardon";
 	}
 
 	/**
-	 * Retrieves the account being registered
+	 * Retrieves the account that is being banned
 	 * 
 	 * @return EmuFeralAccount instance
 	 */

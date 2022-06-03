@@ -7,8 +7,10 @@ Changes in EmuFeral 1.0.0.A22:
  - Implemented player join/leave events
  - Implemented a account login event
  - Implemented account registration and deletion events
+ - Implement pardon, ban, mute and tempban events
  - Made display name search case-insensitive
  - Fix crash with offline servers
  - Fix oversight in chat server security
  - Fix help command output
  - Implement a listplayers command
+ - Fix connection crash when searching for invalid players

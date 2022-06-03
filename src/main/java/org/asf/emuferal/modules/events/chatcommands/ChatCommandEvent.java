@@ -1,8 +1,6 @@
 package org.asf.emuferal.modules.events.chatcommands;
 
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import org.asf.emuferal.accounts.EmuFeralAccount;
@@ -111,25 +109,6 @@ public class ChatCommandEvent extends EventObject {
 	public void respond(String message) {
 		setHandled();
 		messageCallback.accept(message);
-	}
-
-	@Override
-	public Map<String, String> eventProperties() {
-		String argsStr = "";
-		for (String str : args) {
-			if (!argsStr.isEmpty())
-				argsStr += " ";
-
-			if (str.contains(" "))
-				argsStr += "\"";
-			argsStr = str;
-			if (str.contains(" "))
-				argsStr += "\"";
-		}
-		return Map.of("accountId", account.getAccountID(), "playerName", account.getDisplayName(), "accountName",
-				account.getLoginName(), "address",
-				((InetSocketAddress) client.getSocket().getRemoteSocketAddress()).getAddress().getHostAddress(),
-				"command", cmdID, "arguments", argsStr);
 	}
 
 }
