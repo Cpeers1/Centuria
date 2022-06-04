@@ -40,6 +40,8 @@ public class ClothingConverter {
 								int channels = 0;
 								for (String key : data.keySet()) {
 									if (key.startsWith("color") && key.endsWith("HSVDefault")) {
+										if (data.get(key).getAsJsonObject().get("_hsv").getAsString().equals("0,0,0"))
+											continue;
 										String channel = key.substring("color".length());
 										channel = channel.substring(0, channel.lastIndexOf("HSVDefault"));
 										if (channel.matches("^[0-9]+$")) {
