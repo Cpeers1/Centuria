@@ -200,7 +200,7 @@ public class FileBasedAccountManager extends AccountManager {
 	public String register(String username) {
 		// Check name validity
 		if (!username.matches("^[A-Za-z0-9@._#]+$") || username.contains(".cred")
-				|| !username.matches(".*[A-Za-z0-9]+.*") || username.isBlank())
+				|| !username.matches(".*[A-Za-z0-9]+.*") || username.isBlank() || username.length() > 320)
 			return null;
 
 		try {

@@ -37,7 +37,18 @@ public class ClothingConverter {
 							JsonObject data = ele.getAsJsonObject();
 							if (data.get("componentClass").getAsString().equals("ColorableDefComponent")) {
 								data = data.get("componentJSON").getAsJsonObject();
-								int channels = data.get("channelCount").getAsInt();
+								int channels = 0;
+								for (String key : data.keySet()) {
+									if (key.startsWith("color") && key.endsWith("HSVDefault")) {
+										String channel = key.substring("color".length());
+										channel = channel.substring(0, channel.lastIndexOf("HSVDefault"));
+										if (channel.matches("^[0-9]+$")) {
+											int channelCount = Integer.valueOf(channel);
+											if (channelCount > channels)
+												channels = channelCount;
+										}
+									}
+								}
 								if (channels > 0) {
 									JsonObject itm = new JsonObject();
 									itm.addProperty("availableChannels", channels);
