@@ -4,7 +4,7 @@ import org.asf.emuferal.dms.impl.FileBasedDMManager;
 
 public abstract class DMManager {
 
-	private static DMManager implementation = new FileBasedDMManager();
+	protected static DMManager implementation = new FileBasedDMManager();
 
 	/**
 	 * Retrieves the DM manager

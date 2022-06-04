@@ -4,7 +4,7 @@ import org.asf.emuferal.social.impl.FileBasedSocialManager;
 
 public abstract class SocialManager {
 
-	private static SocialManager implementation = new FileBasedSocialManager();
+	protected static SocialManager implementation = new FileBasedSocialManager();
 
 	/**
 	 * Retrieves the DM manager

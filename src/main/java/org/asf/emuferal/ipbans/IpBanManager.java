@@ -4,7 +4,7 @@ import org.asf.emuferal.ipbans.impl.FileBasedIpBanManager;
 
 public abstract class IpBanManager {
 
-	private static IpBanManager implementation = new FileBasedIpBanManager();
+	protected static IpBanManager implementation = new FileBasedIpBanManager();
 
 	/**
 	 * Retrieves the IP ban manager

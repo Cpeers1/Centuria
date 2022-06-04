@@ -5,7 +5,7 @@ import org.asf.emuferal.accounts.impl.FileBasedAccountManager;
 public abstract class AccountManager {
 
 	// Account manager implementation
-	private static AccountManager instance = new FileBasedAccountManager();
+	protected static AccountManager instance = new FileBasedAccountManager();
 
 	/**
 	 * Retrieves the active account manager
