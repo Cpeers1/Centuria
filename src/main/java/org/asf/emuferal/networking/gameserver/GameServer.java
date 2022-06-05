@@ -542,6 +542,25 @@ public class GameServer extends BaseSmartfoxServer {
 
 	@Override
 	protected void onStart() {
+		// Anti-expiry (kicks players who go past token expiry)
+		Thread th = new Thread(() -> {
+			while (EmuFeral.directorServer.isActive()) {
+				// Find players who are logged in for longer than two days
+				for (Player plr : getPlayers()) {
+					long loginTimestamp = plr.account.getLastLoginTime();
+					if ((System.currentTimeMillis() / 1000) - (2 * 24 * 60) >= loginTimestamp) {
+						// Kick players that are ingame for wayyy to long
+						plr.account.kick();
+					}
+				}
+				try {
+					Thread.sleep(30000);
+				} catch (InterruptedException e) {
+				}
+			}
+		}, "Player API Access Watchdog");
+		th.setDaemon(true);
+		th.start();
 	}
 
 	@Override

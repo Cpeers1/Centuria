@@ -15,3 +15,4 @@ Changes in EmuFeral 1.0.0.A22:
  - Implement a listplayers command
  - Fix connection crash when searching for invalid players
  - Fix missing color options for some clothing items
+ - Implement a kick timer that will disconnect players that are ingame for too long

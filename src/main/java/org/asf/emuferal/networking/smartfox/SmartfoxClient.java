@@ -51,6 +51,15 @@ public class SmartfoxClient {
 	}
 
 	/**
+	 * Checks if the client is still connected
+	 * 
+	 * @return True if the client is connected, false otherwise
+	 */
+	public boolean isConnected() {
+		return client != null;
+	}
+
+	/**
 	 * Disconnects the client
 	 */
 	public void disconnect() {
