@@ -210,6 +210,8 @@ public class EmuFeral {
 		// Run timer
 		if (!cancelUpdate) {
 			updating = true;
+			
+			EventBus.getInstance().dispatchEvent(new ServerUpdateEvent(nextVersion, mins));
 			final int minutes = mins;
 			Thread th = new Thread(() -> {
 				int remaining = minutes;

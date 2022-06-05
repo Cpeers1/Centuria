@@ -51,7 +51,7 @@ public class ClothingConverter {
 										}
 									}
 								}
-								if (channels > 0) {
+								if (channels > 0 && data.get("channelCount").getAsInt() > 0) {
 									JsonObject itm = new JsonObject();
 									itm.addProperty("availableChannels", channels);
 									for (int i = 1; i <= channels; i++) {
