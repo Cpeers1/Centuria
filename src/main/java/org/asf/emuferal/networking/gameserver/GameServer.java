@@ -20,6 +20,7 @@ import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.ipbans.IpBanManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
 import org.asf.emuferal.modules.events.accounts.AccountLoginEvent;
+import org.asf.emuferal.modules.events.maintenance.MaintenanceEndEvent;
 import org.asf.emuferal.modules.events.players.PlayerJoinEvent;
 import org.asf.emuferal.modules.events.players.PlayerLeaveEvent;
 import org.asf.emuferal.modules.events.servers.GameServerStartupEvent;
@@ -334,6 +335,8 @@ public class GameServer extends BaseSmartfoxServer {
 			b.add("o", o);
 			response.add("b", b);
 			response.addProperty("t", "xt");
+			System.out.println("Login failure: " + acc.getLoginName() + ": module terminated login process with code "
+					+ ev.getStatus());
 			sendPacket(client, response.toString());
 			client.disconnect();
 			return;
@@ -510,6 +513,9 @@ public class GameServer extends BaseSmartfoxServer {
 
 			// Check maintenance, exit server if noone is online during maintenance
 			if (maintenance && players.size() == 0) {
+				// Dispatch maintenance end event
+				EventBus.getInstance().dispatchEvent(new MaintenanceEndEvent());
+
 				// Exit
 				System.exit(0);
 			} else {

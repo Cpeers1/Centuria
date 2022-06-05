@@ -51,7 +51,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 
 				JsonObject payload = new JsonObject();
 				payload.addProperty("iat", System.currentTimeMillis() / 1000);
-				payload.addProperty("exp", (System.currentTimeMillis() / 1000) + 30);
+				payload.addProperty("exp", (System.currentTimeMillis() / 1000) + (1 * 24 * 60));
 				payload.addProperty("jti", UUID.randomUUID().toString());
 				payload.addProperty("iss", "EmuFeral");
 				payload.addProperty("sub", "EmuFeral");

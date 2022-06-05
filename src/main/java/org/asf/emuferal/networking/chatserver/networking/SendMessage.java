@@ -1132,6 +1132,7 @@ public class SendMessage extends AbstractChatPacket {
 
 							// Dispatch maintenance end event
 							EventBus.getInstance().dispatchEvent(new MaintenanceEndEvent());
+							
 							// Cancel if maintenance is enabled
 							if (EmuFeral.gameServer.maintenance)
 								return true;
