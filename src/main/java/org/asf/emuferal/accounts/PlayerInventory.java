@@ -166,6 +166,8 @@ public abstract class PlayerInventory {
 				}
 
 				// Unlock the species
+				JsonObject speciesData = helper.get(type).getAsJsonObject();
+				String actorDefID = speciesData.get("info").getAsJsonObject().get("actorClassDefID").getAsString();
 				if (helper.has(type)) {
 					if (!inventory.containsItem("avatars")) {
 						inventory.setItem("avatars", new JsonArray());
@@ -193,9 +195,7 @@ public abstract class PlayerInventory {
 						slots = 12;
 
 					// Add the look files and scan in the ID
-					String actorDefID = "0";
 					boolean primary = true;
-					JsonObject speciesData = helper.get(type).getAsJsonObject();
 					for (int i = 0; i < slots + 1; i++) {
 						// Generate look ID
 						String lID = UUID.randomUUID().toString();
@@ -243,23 +243,39 @@ public abstract class PlayerInventory {
 						lookObj.addProperty("id", lID);
 						lookObj.addProperty("type", 200);
 
-						// Scan ID
-						actorDefID = speciesData.get("info").getAsJsonObject().get("actorClassDefID").getAsString();
-
 						// Add the avatar
 						avatars.add(lookObj);
 						primary = false;
 					}
 
-					// Add it to the avatar species list
-					if (!inventory.containsItem("1"))
-						inventory.setItem("1", new JsonArray());
-					JsonArray species = inventory.getItem("1").getAsJsonArray();
+					// Mark what files to save
+					if (!itemsToSave.contains("avatars"))
+						itemsToSave.add("avatars");
+				}
+
+				// Update the species list
+				if (!inventory.containsItem("1"))
+					inventory.setItem("1", new JsonArray());
+				JsonArray species = inventory.getItem("1").getAsJsonArray();
+
+				// Check if the species is unlocked
+				boolean found = false;
+				for (JsonElement ele : species) {
+					JsonObject sp = ele.getAsJsonObject();
+					String spID = sp.get("defID").getAsString();
+					if (spID.equals(actorDefID)) {
+						found = true;
+						break;
+					}
+				}
+
+				if (!found) {
 					JsonObject spD = new JsonObject();
+
 					// Generate item ID
 					String sID = UUID.randomUUID().toString();
 					while (true) {
-						boolean found = false;
+						found = false;
 						for (JsonElement ele : species) {
 							JsonObject sp = ele.getAsJsonObject();
 							String spID = sp.get("id").getAsString();
@@ -285,8 +301,8 @@ public abstract class PlayerInventory {
 					species.add(spD);
 
 					// Mark what files to save
-					itemsToSave.add("avatars");
-					itemsToSave.add("1");
+					if (!itemsToSave.contains("1"))
+						itemsToSave.add("1");
 				}
 			} catch (JsonSyntaxException | IOException e) {
 			}
