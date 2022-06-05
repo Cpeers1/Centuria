@@ -38,9 +38,9 @@ public class AccountMuteEvent extends EventObject {
 
 	/**
 	 * Retrieves the UNIX timestamp on which the account will be unmuted (UNIX
-	 * timestamp in seconds)
+	 * timestamp in miliseconds)
 	 * 
-	 * @return Unmute timestamp in seconds
+	 * @return Unmute timestamp in miliseconds
 	 */
 	public long getUnmuteTimestamp() {
 		return unmuteTimestamp;
