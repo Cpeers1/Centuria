@@ -112,11 +112,11 @@ task moduledata () {
 		for (ResolvedArtifact arti : project.configurations.implementation.resolvedConfiguration.getResolvedArtifacts()) {
 			if (arti.getClassifier() != null)
 				continue;
-			copy {
-			    String outFileNm = arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "")
-			    if (outFileNm.equals("EmuFeral"))
-			    	continue;
-			    
+				
+		    String outFileNm = arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "")
+		    if (outFileNm.equals("EmuFeral"))
+		    	continue;
+			copy {			    
 				from arti.file
 				rename arti.file.getName(), outFileNm + "." + arti.getExtension()
 				into "build/moduledata/libs"
