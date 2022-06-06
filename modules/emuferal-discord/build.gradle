@@ -118,8 +118,12 @@ task moduledata () {
 			if (arti.getClassifier() != null)
 				continue;
 			copy {
+			    String outFileNm = arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "")
+			    if (outFileNm.equals("EmuFeral"))
+			    	continue;
+			    
 				from arti.file
-				rename arti.file.getName(), arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "") + "." + arti.getExtension()
+				rename arti.file.getName(), outFileNm + "." + arti.getExtension()
 				into "build/moduledata/libs"
 			}
 		}
