@@ -1,0 +1,5 @@
+Changes in 1.0.0.A28:
+ - Fixed an issue with the token expiry check that causes random disconnects
+
+Sorry about the many updates released today.
+
