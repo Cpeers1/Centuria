@@ -1,5 +1,6 @@
 package org.asf.emuferal.discord.handlers.discord;
 
+import org.asf.emuferal.discord.handlers.discord.interactions.forms.AppealHandler;
 import org.asf.emuferal.discord.handlers.discord.interactions.forms.RegistrationHandler;
 import org.asf.emuferal.discord.handlers.discord.interactions.forms.UpdateDisplayNameHandler;
 
@@ -25,6 +26,8 @@ public class InteractionModalHandler {
 			return UpdateDisplayNameHandler.handle(id, event, gateway);
 		} else if (id.equals("accountregistration")) {
 			return RegistrationHandler.handle(id, event, gateway);
+		} else if (id.equals("appealform")) {
+			return AppealHandler.handle(id, event, gateway);
 		}
 
 		// Default handler

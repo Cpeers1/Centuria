@@ -2,7 +2,9 @@ package org.asf.emuferal.accounts.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.asf.emuferal.EmuFeral;
@@ -13,6 +15,7 @@ import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.dms.DMManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
 import org.asf.emuferal.modules.events.accounts.AccountDeletionEvent;
+import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.emuferal.players.Player;
 import org.asf.emuferal.social.SocialEntry;
 import org.asf.emuferal.social.SocialManager;
@@ -33,6 +36,54 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 	private LevelInfo level;
 	private long lastLogin = -1;
 	private File userFile;
+
+	private static String[] nameBlacklist = new String[] { "kit", "kitsendragn", "kitsendragon", "fera", "fero",
+			"wwadmin", "ayli", "komodorihero", "wwsam", "blinky", "fer.ocity" };
+
+	private static ArrayList<String> banWords = new ArrayList<String>();
+	private static ArrayList<String> filterWords = new ArrayList<String>();
+
+	static {
+		// Load filter
+		try {
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("textfilter/filter.txt");
+			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+			for (String line : lines.split("\n")) {
+				if (line.isEmpty() || line.startsWith("#"))
+					continue;
+
+				String data = line.trim();
+				while (data.contains("  "))
+					data = data.replace("  ", "");
+
+				for (String word : data.split(" "))
+					filterWords.add(word.toLowerCase());
+			}
+			strm.close();
+		} catch (IOException e) {
+		}
+
+		// Load ban words
+		try {
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("textfilter/instaban.txt");
+			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+			for (String line : lines.split("\n")) {
+				if (line.isEmpty() || line.startsWith("#"))
+					continue;
+
+				String data = line.trim();
+				while (data.contains("  "))
+					data = data.replace("  ", "");
+
+				for (String word : data.split(" "))
+					banWords.add(word.toLowerCase());
+			}
+			strm.close();
+		} catch (IOException e) {
+		}
+	}
 
 	public FileBasedAccountObject(File uf) throws IOException {
 		// Parse account file
@@ -99,6 +150,23 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 		// Check validity
 		if (!name.matches("^[0-9A-Za-z\\-_. ]+") || name.length() > 16 || name.length() < 2)
 			return false;
+
+		// Prevent blacklisted names from being used
+		for (String nm : nameBlacklist) {
+			if (name.equalsIgnoreCase(nm))
+				return false;
+		}
+
+		// Prevent banned and filtered words
+		for (String word : name.split(" ")) {
+			if (banWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				return false;
+			}
+
+			if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				return false;
+			}
+		}
 
 		// Remove lockout
 		if (isRenameRequired())
@@ -291,7 +359,7 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 			// Account does not exist
 			return;
 		}
-		
+
 		// Dispatch event
 		EventBus.getInstance().dispatchEvent(new AccountDeletionEvent(this));
 

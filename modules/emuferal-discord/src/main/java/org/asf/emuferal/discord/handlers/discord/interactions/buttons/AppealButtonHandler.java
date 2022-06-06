@@ -34,7 +34,7 @@ public class AppealButtonHandler {
 				// Show appeal form
 				InteractionPresentModalSpec.Builder modal = InteractionPresentModalSpec.builder();
 				modal.title("EmuFeral Online Ban Appeal");
-				modal.customId("appealform/" + uid + "/" + gid);
+				modal.customId("appealform");
 				modal.addComponent(ActionRow.of(TextInput.small("short_why", "What was the reason for your ban?")));
 				modal.addComponent(
 						ActionRow.of(TextInput.paragraph("appeal", "Why do you believe you should be pardoned?")));

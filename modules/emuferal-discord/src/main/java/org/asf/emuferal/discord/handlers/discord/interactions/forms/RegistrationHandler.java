@@ -1,10 +1,15 @@
 package org.asf.emuferal.discord.handlers.discord.interactions.forms;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.discord.DiscordBotModule;
 import org.asf.emuferal.discord.LinkUtils;
 import org.asf.emuferal.discord.TimedActions;
+import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
 import com.google.gson.JsonObject;
 
@@ -16,6 +21,54 @@ import discord4j.core.spec.MessageCreateSpec;
 import reactor.core.publisher.Mono;
 
 public class RegistrationHandler {
+
+	private static String[] nameBlacklist = new String[] { "kit", "kitsendragn", "kitsendragon", "fera", "fero",
+			"wwadmin", "ayli", "komodorihero", "wwsam", "blinky", "fer.ocity" };
+
+	private static ArrayList<String> banWords = new ArrayList<String>();
+	private static ArrayList<String> filterWords = new ArrayList<String>();
+
+	static {
+		// Load filter
+		try {
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("textfilter/filter.txt");
+			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+			for (String line : lines.split("\n")) {
+				if (line.isEmpty() || line.startsWith("#"))
+					continue;
+
+				String data = line.trim();
+				while (data.contains("  "))
+					data = data.replace("  ", "");
+
+				for (String word : data.split(" "))
+					filterWords.add(word.toLowerCase());
+			}
+			strm.close();
+		} catch (IOException e) {
+		}
+
+		// Load ban words
+		try {
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("textfilter/instaban.txt");
+			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+			for (String line : lines.split("\n")) {
+				if (line.isEmpty() || line.startsWith("#"))
+					continue;
+
+				String data = line.trim();
+				while (data.contains("  "))
+					data = data.replace("  ", "");
+
+				for (String word : data.split(" "))
+					banWords.add(word.toLowerCase());
+			}
+			strm.close();
+		} catch (IOException e) {
+		}
+	}
 
 	/**
 	 * Handles the registration form submission event
@@ -49,6 +102,48 @@ public class RegistrationHandler {
 				|| !accountName.matches(".*[A-Za-z0-9]+.*") || accountName.isBlank() || accountName.length() > 320) {
 			// Reply with error
 			return event.reply("Invalid value for `Enable 2-factor authentication`").withEphemeral(true);
+		}
+
+		// Verify login name blacklist
+		for (String name : nameBlacklist) {
+			if (!accountName.equalsIgnoreCase(name)) {
+				// Reply with error
+				return event.reply("Invalid login name: this name may not be used.").withEphemeral(true);
+			}
+		}
+
+		// Verify name blacklist
+		for (String name : nameBlacklist) {
+			if (!displayName.equalsIgnoreCase(name)) {
+				// Reply with error
+				return event.reply("Invalid display name: this name may not be used.").withEphemeral(true);
+			}
+		}
+
+		// Verify login name with filters
+		for (String word : accountName.split(" ")) {
+			if (banWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				// Reply with error
+				return event.reply("Invalid login name: this name may not be used.").withEphemeral(true);
+			}
+
+			if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				// Reply with error
+				return event.reply("Invalid login name: this name may not be used.").withEphemeral(true);
+			}
+		}
+
+		// Verify name with filters
+		for (String word : displayName.split(" ")) {
+			if (banWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				// Reply with error
+				return event.reply("Invalid login name: this name may not be used.").withEphemeral(true);
+			}
+
+			if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				// Reply with error
+				return event.reply("Invalid login name: this name may not be used.").withEphemeral(true);
+			}
 		}
 
 		// Verify login name validity

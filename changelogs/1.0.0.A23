@@ -2,3 +2,12 @@ Changes made in 1.0.0.A23:
  - Fix problem with chat server connections not being closed causing a rare occurance that could cause memory leaks
  - Kick command now works on chat-only connections
  - Players are disconnected from chat server on logout to prevent memory leaks
+ - Blacklist names from being used: wwsam, kit, ayli, komodorihero, blinky, fero, fera, fer.ocity
+ - Make sure banned words cannot be used in display and login names
+
+Changes to the Discord Bot Module:
+ - The bot should now inform a user its unable to DM when registration fails or the account panel fails to open
+ - Appeal forms via the moderation log
+ - Blacklist names from being used: wwsam, kit, ayli, komodorihero, blinky, fero, fera, fer.ocity
+ - Make sure banned words cannot be used in display and login names
+ - Clean log messages a bit

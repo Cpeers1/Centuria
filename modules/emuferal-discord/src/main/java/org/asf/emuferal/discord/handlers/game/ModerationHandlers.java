@@ -12,6 +12,8 @@ import org.asf.emuferal.modules.events.accounts.AccountPardonEvent;
 import com.google.gson.JsonObject;
 
 import discord4j.common.util.Snowflake;
+import discord4j.core.object.component.ActionRow;
+import discord4j.core.object.component.Button;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.MessageCreateSpec;
@@ -37,8 +39,7 @@ public class ModerationHandlers implements IEventReceiver {
 				String message = "You have been banned from our servers for unacceptable behaviour.\n";
 				message += "\n";
 				if (ev.isPermanent()) {
-//					message += "This is a permanent ban, you can attempt to appeal by pressing the button below.";
-					message += "This is a permanent ban, you can attempt to appeal by contacting the server staff.";
+					message += "This is a permanent ban, you can attempt to appeal by pressing the button below.";
 				} else
 					message += "This is a temporary ban, you cannot log on for " + ev.getDays() + " days.";
 
@@ -54,11 +55,11 @@ public class ModerationHandlers implements IEventReceiver {
 				MessageCreateSpec.Builder msg = MessageCreateSpec.builder();
 				msg.addEmbed(embed.build());
 
-//				// Appeal button (if permanent)
-//				if (ev.isPermanent()) {
-//					msg.addComponent(ActionRow.of(Button.danger(
-//							"appeal/" + userID + "/" + ev.getAccount().getAccountID(), "Appeal for pardon")));
-//				}
+				// Appeal button (if permanent)
+				if (ev.isPermanent()) {
+					msg.addComponent(ActionRow.of(Button
+							.danger("appeal/" + userID + "/" + ev.getAccount().getAccountID(), "Appeal for pardon")));
+				}
 
 				// Send response
 				DiscordBotModule.getClient().getUserById(Snowflake.of(userID)).block().getPrivateChannel().block()
@@ -73,7 +74,7 @@ public class ModerationHandlers implements IEventReceiver {
 		String message = "**EmuFeral Moderation Log**\n";
 		message += "\n";
 		message += "Action: **" + type + "**\n";
-		message += "Affected player: " + displayName + (userID != null ? " (<@!" + userID + ">)" : "");
+		message += "Affected player: `" + displayName + (userID != null ? "` (<@!" + userID + ">)" : "`");
 		if (data != null)
 			message += "\n" + data;
 		message += "\nAction was taken on: <t:" + (System.currentTimeMillis() / 1000) + ">";

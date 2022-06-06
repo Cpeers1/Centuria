@@ -46,83 +46,89 @@ public class AccountPanelHandler {
 			msg.ephemeral(true);
 			return event.reply(msg.build());
 		} else {
-			// Find account
-			EmuFeralAccount account = LinkUtils.getAccountByDiscordID(userID);
-			PlayerInventory inv = account.getPlayerInventory();
+			try {
+				// Find account
+				EmuFeralAccount account = LinkUtils.getAccountByDiscordID(userID);
+				PlayerInventory inv = account.getPlayerInventory();
 
-			// Create account panel embed
-			EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
-			embed.color(Color.VIVID_VIOLET);
-			embed.title("EmuFeral Account Panel");
-			embed.description("This is your account panel for **" + account.getDisplayName()
-					+ "**, here you can view your account information and change your account settings.\n\n_ _");
-			embed.footer(DiscordBotModule.getServerName(), gateway.getSelf().block().getAvatarUrl());
+				// Create account panel embed
+				EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
+				embed.color(Color.VIVID_VIOLET);
+				embed.title("EmuFeral Account Panel");
+				embed.description("This is your account panel for **" + account.getDisplayName()
+						+ "**, here you can view your account information and change your account settings.\n\n_ _");
+				embed.footer(DiscordBotModule.getServerName(), gateway.getSelf().block().getAvatarUrl());
 
-			// Display name
-			embed.addField("Display name", account.getDisplayName(), true);
+				// Display name
+				embed.addField("Display name", account.getDisplayName(), true);
 
-			// Level
-			if (account.getLevel().isLevelAvailable())
-				embed.addField("Level", Integer.toString(account.getLevel().getLevel()), true);
-			else
-				embed.addField("Level", "Unknown", true);
+				// Level
+				if (account.getLevel().isLevelAvailable())
+					embed.addField("Level", Integer.toString(account.getLevel().getLevel()), true);
+				else
+					embed.addField("Level", "Unknown", true);
 
-			// Online status
-			embed.addField("Is online?", account.getOnlinePlayerInstance() != null ? "Yes" : "No", true);
+				// Online status
+				embed.addField("Is online?", account.getOnlinePlayerInstance() != null ? "Yes" : "No", true);
 
-			// Avatar info
-			String species = "Kitsune";
-			// Find current species
-			String lookID = account.getActiveLook();
-			if (inv.containsItem("avatars")) {
-				// Find avatar
-				JsonArray looks = inv.getItem("avatars").getAsJsonArray();
-				for (JsonElement lookEle : looks) {
-					JsonObject look = lookEle.getAsJsonObject();
-					if (look.get("id").getAsString().equals(lookID)) {
-						// Found the avatar, lets find the species
-						String defId = look.get("defId").getAsString();
+				// Avatar info
+				String species = "Kitsune";
+				// Find current species
+				String lookID = account.getActiveLook();
+				if (inv.containsItem("avatars")) {
+					// Find avatar
+					JsonArray looks = inv.getItem("avatars").getAsJsonArray();
+					for (JsonElement lookEle : looks) {
+						JsonObject look = lookEle.getAsJsonObject();
+						if (look.get("id").getAsString().equals(lookID)) {
+							// Found the avatar, lets find the species
+							String defId = look.get("defId").getAsString();
 
-						// Load avatar helper
-						try {
-							InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-									.getResourceAsStream("defaultitems/avatarhelper.json");
-							JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8"))
-									.getAsJsonObject().get("Avatars").getAsJsonObject();
-							strm.close();
-							for (String aSpecies : helper.keySet()) {
-								String aDefID = helper.get(aSpecies).getAsJsonObject().get("defId").getAsString();
-								if (aDefID.equals(defId)) {
-									// Found the species
-									species = aSpecies;
-									break;
+							// Load avatar helper
+							try {
+								InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+										.getResourceAsStream("defaultitems/avatarhelper.json");
+								JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8"))
+										.getAsJsonObject().get("Avatars").getAsJsonObject();
+								strm.close();
+								for (String aSpecies : helper.keySet()) {
+									String aDefID = helper.get(aSpecies).getAsJsonObject().get("defId").getAsString();
+									if (aDefID.equals(defId)) {
+										// Found the species
+										species = aSpecies;
+										break;
+									}
 								}
+							} catch (IOException e) {
 							}
-						} catch (IOException e) {
+							break;
 						}
-						break;
 					}
 				}
+				embed.addField("Avatar Species", species, true);
+
+				// Last login
+				embed.addField("Last login time",
+						account.getLastLoginTime() == -1 ? "Unknown" : "<t:" + account.getLastLoginTime() + ">", true);
+
+				// Build message
+				MessageCreateSpec.Builder msg = MessageCreateSpec.builder();
+				msg.addEmbed(embed.build());
+
+				// Dropdown
+				msg.addComponent(
+						ActionRow.of(SelectMenu.of("accountoption", Option.of("Change display name", "displayname"),
+								Option.of("Enable/disable 2-factor authentication", "2fa"),
+								Option.of("Forgot password", "forgotpassword"),
+								Option.of("Forgot login name", "forgotloginname"),
+								Option.of("Download your account inventory (including avatars)", "downloaddata"))));
+
+				// DM the message
+				event.getInteraction().getUser().getPrivateChannel().block().createMessage(msg.build()).block();
+			} catch (Exception e) {
+				return event.reply("Please enable DMs for this server, the bot was unable to DM the account panel.")
+						.withEphemeral(true);
 			}
-			embed.addField("Avatar Species", species, true);
-
-			// Last login
-			embed.addField("Last login time",
-					account.getLastLoginTime() == -1 ? "Unknown" : "<t:" + account.getLastLoginTime() + ">", true);
-
-			// Build message
-			MessageCreateSpec.Builder msg = MessageCreateSpec.builder();
-			msg.addEmbed(embed.build());
-
-			// Dropdown
-			msg.addComponent(ActionRow.of(SelectMenu.of("accountoption",
-					Option.of("Change display name", "displayname"),
-					Option.of("Enable/disable 2-factor authentication", "2fa"),
-					Option.of("Forgot password", "forgotpassword"), Option.of("Forgot login name", "forgotloginname"),
-					Option.of("Download your account inventory (including avatars)", "downloaddata"))));
-
-			// DM the message
-			event.getInteraction().getUser().getPrivateChannel().block().createMessage(msg.build()).block();
 
 			// Send message
 			return event.deferEdit();

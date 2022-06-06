@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.UUID;
@@ -22,8 +24,57 @@ import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.modules.eventbus.EventBus;
 import org.asf.emuferal.modules.events.accounts.AccountRegistrationEvent;
+import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
 public class FileBasedAccountManager extends AccountManager {
+
+	private static String[] nameBlacklist = new String[] { "kit", "kitsendragn", "kitsendragon", "fera", "fero",
+			"wwadmin", "ayli", "komodorihero", "wwsam", "blinky", "fer.ocity" };
+
+	private static ArrayList<String> banWords = new ArrayList<String>();
+	private static ArrayList<String> filterWords = new ArrayList<String>();
+
+	static {
+		// Load filter
+		try {
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("textfilter/filter.txt");
+			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+			for (String line : lines.split("\n")) {
+				if (line.isEmpty() || line.startsWith("#"))
+					continue;
+
+				String data = line.trim();
+				while (data.contains("  "))
+					data = data.replace("  ", "");
+
+				for (String word : data.split(" "))
+					filterWords.add(word.toLowerCase());
+			}
+			strm.close();
+		} catch (IOException e) {
+		}
+
+		// Load ban words
+		try {
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("textfilter/instaban.txt");
+			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+			for (String line : lines.split("\n")) {
+				if (line.isEmpty() || line.startsWith("#"))
+					continue;
+
+				String data = line.trim();
+				while (data.contains("  "))
+					data = data.replace("  ", "");
+
+				for (String word : data.split(" "))
+					banWords.add(word.toLowerCase());
+			}
+			strm.close();
+		} catch (IOException e) {
+		}
+	}
 
 	private static SecureRandom rnd = new SecureRandom();
 	private static HashMap<String, Integer> passswordLock = new HashMap<String, Integer>();
@@ -203,6 +254,23 @@ public class FileBasedAccountManager extends AccountManager {
 				|| !username.matches(".*[A-Za-z0-9]+.*") || username.isBlank() || username.length() > 320)
 			return null;
 
+		// Prevent banned and filtered words
+		for (String word : username.split(" ")) {
+			if (banWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				return null;
+			}
+
+			if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				return null;
+			}
+		}
+
+		// Prevent blacklisted names from being used
+		for (String name : nameBlacklist) {
+			if (username.equalsIgnoreCase(name))
+				return null;
+		}
+
 		try {
 			// Create folder
 			if (!new File("accounts").exists())
@@ -335,6 +403,12 @@ public class FileBasedAccountManager extends AccountManager {
 	public boolean isDisplayNameInUse(String displayName) {
 		if (new File("displaynames/" + displayName).exists())
 			return true;
+
+		// Prevent blacklisted names from being used
+		for (String name : nameBlacklist) {
+			if (displayName.equalsIgnoreCase(name))
+				return true;
+		}
 
 		// Attempt to find using a case-insensitive method
 		if (new File("displaynames").exists())
