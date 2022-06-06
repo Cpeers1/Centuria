@@ -575,7 +575,7 @@ public class GameServer extends BaseSmartfoxServer {
 				// Find players who are logged in for longer than two days
 				for (Player plr : getPlayers()) {
 					long loginTimestamp = plr.account.getLastLoginTime();
-					if (System.currentTimeMillis() - (2 * 24 * 60 * 1000) >= loginTimestamp) {
+					if ((System.currentTimeMillis() / 1000) - (2 * 24 * 60 * 60) >= loginTimestamp) {
 						// Kick players that are ingame for wayyy to long
 						plr.account.kick();
 					}
