@@ -171,7 +171,7 @@ public class ChatClient {
 
 		// Disconnect connected instances
 		for (ChatClient cl : getServer().getClients())
-			if (cl.getPlayer().getAccountID().equals(getPlayer().getAccountID()))
+			if (cl.getPlayer().getAccountID().equals(getPlayer().getAccountID()) && cl != this)
 				cl.disconnect();
 
 		// Log the login attempt
