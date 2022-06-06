@@ -100,6 +100,9 @@ public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 				plr.syncTo(player);
 			}
 		}
+		
+		// Send response
+		client.sendPacket("%xt%alz%-1%true%");
 
 		return true;
 	}

@@ -1,0 +1,6 @@
+Changes in 1.0.0.A27:
+ - Fix slow avatar saving
+ - Fixed chat errors when more than one players are online
+
+Discord bot module:
+ - Fix blacklist checks breaking

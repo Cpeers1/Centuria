@@ -106,7 +106,7 @@ public class RegistrationHandler {
 
 		// Verify login name blacklist
 		for (String name : nameBlacklist) {
-			if (!accountName.equalsIgnoreCase(name)) {
+			if (accountName.equalsIgnoreCase(name)) {
 				// Reply with error
 				return event.reply("Invalid login name: this name may not be used.").withEphemeral(true);
 			}
@@ -114,7 +114,7 @@ public class RegistrationHandler {
 
 		// Verify name blacklist
 		for (String name : nameBlacklist) {
-			if (!displayName.equalsIgnoreCase(name)) {
+			if (displayName.equalsIgnoreCase(name)) {
 				// Reply with error
 				return event.reply("Invalid display name: this name may not be used.").withEphemeral(true);
 			}
