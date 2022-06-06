@@ -538,8 +538,10 @@ public class GameServer extends BaseSmartfoxServer {
 
 			// Check maintenance, exit server if noone is online during maintenance
 			if (maintenance && players.size() == 0) {
-				// Dispatch maintenance end event
-				EventBus.getInstance().dispatchEvent(new MaintenanceEndEvent());
+				if (!shutdown) {
+					// Dispatch maintenance end event
+					EventBus.getInstance().dispatchEvent(new MaintenanceEndEvent());
+				}
 
 				// Exit
 				System.exit(0);
