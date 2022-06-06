@@ -57,7 +57,7 @@ public class AnnouncementHandlers implements IEventReceiver {
 				String log = new String(strm.readAllBytes(), "UTF-8");
 				strm.close();
 				messageComplete += log + "\n";
-				messageComplete += "```\n";
+				messageComplete += "```";
 			} else
 				messageComplete = null;
 		} catch (Exception e) {
