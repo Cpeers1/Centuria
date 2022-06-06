@@ -24,6 +24,7 @@ import org.asf.emuferal.modules.events.maintenance.MaintenanceEndEvent;
 import org.asf.emuferal.modules.events.players.PlayerJoinEvent;
 import org.asf.emuferal.modules.events.players.PlayerLeaveEvent;
 import org.asf.emuferal.modules.events.servers.GameServerStartupEvent;
+import org.asf.emuferal.networking.chatserver.ChatClient;
 import org.asf.emuferal.networking.smartfox.BaseSmartfoxServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.smartfox.ISmartfoxPacket;
@@ -508,6 +509,30 @@ public class GameServer extends BaseSmartfoxServer {
 			for (Player player : getPlayers()) {
 				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
 					plr.destroyAt(player);
+				}
+			}
+
+			// Disconnect from chat server
+			for (ChatClient cl : EmuFeral.chatServer.getClients()) {
+				if (cl.getPlayer().getAccountID().equals(plr.account.getAccountID())) {
+					Thread th = new Thread(() -> {
+						int i = 0;
+						while (cl.isConnected()) {
+							if (i == 3)
+								break;
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+							}
+							i++;
+						}
+
+						if (cl.isConnected())
+							cl.disconnect();
+					}, "Chat Client Cleanup: " + cl.getPlayer().getAccountID());
+					th.setDaemon(true);
+					th.start();
+					break;
 				}
 			}
 

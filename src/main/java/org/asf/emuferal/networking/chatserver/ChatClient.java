@@ -169,6 +169,11 @@ public class ChatClient {
 				joinRoom(plr.room, false);
 		}
 
+		// Disconnect connected instances
+		for (ChatClient cl : getServer().getClients())
+			if (cl.getPlayer().getAccountID().equals(getPlayer().getAccountID()))
+				cl.disconnect();
+
 		// Log the login attempt
 		System.out.println("Chat login from IP: " + client.getRemoteSocketAddress() + ": " + acc.getLoginName());
 

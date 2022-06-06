@@ -800,6 +800,30 @@ public class SendMessage extends AbstractChatPacket {
 							}
 						}
 
+						// Find chat-only connection
+						for (ChatClient cl : client.getServer().getClients())
+							if (cl.getPlayer().getDisplayName().equals(args.get(0))) {
+								// Check rank
+								if (cl.getPlayer().getPlayerInventory().containsItem("permissions")) {
+									if ((GameServer.hasPerm(cl.getPlayer().getPlayerInventory().getItem("permissions")
+											.getAsJsonObject().get("permissionLevel").getAsString(), "developer")
+											&& !GameServer.hasPerm(permLevel, "developer"))
+											|| GameServer.hasPerm(
+													cl.getPlayer().getPlayerInventory().getItem("permissions")
+															.getAsJsonObject().get("permissionLevel").getAsString(),
+													"admin") && !GameServer.hasPerm(permLevel, "admin")) {
+										systemMessage("Unable to kick higher-ranking users.", cmd, client);
+										return true;
+									}
+								}
+
+								// Disconnect
+								cl.disconnect();
+								systemMessage("Kicked " + cl.getPlayer().getDisplayName() + " from the chat server.",
+										cmd, client);
+								return true;
+							}
+
 						// Player not found
 						systemMessage("Player is not online.", cmd, client);
 						return true;
@@ -1132,7 +1156,7 @@ public class SendMessage extends AbstractChatPacket {
 
 							// Dispatch maintenance end event
 							EventBus.getInstance().dispatchEvent(new MaintenanceEndEvent());
-							
+
 							// Cancel if maintenance is enabled
 							if (EmuFeral.gameServer.maintenance)
 								return true;

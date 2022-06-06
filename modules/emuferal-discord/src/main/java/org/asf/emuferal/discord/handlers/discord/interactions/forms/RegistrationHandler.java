@@ -138,7 +138,7 @@ public class RegistrationHandler {
 							Button.primary("dismiss", "Cancel Registration")));
 
 			// Send DM
-			event.getInteraction().getUser().getPrivateChannel().block().createMessage(msg.build()).subscribe();
+			event.getInteraction().getUser().getPrivateChannel().block().createMessage(msg.build()).block();
 		} catch (Exception e) {
 			return event
 					.reply("Unable to send confirmation DM message, please make sure to enable DMs for this server.")
