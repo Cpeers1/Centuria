@@ -106,3 +106,36 @@ createEclipseLaunches {
 	}
 }
 createEclipseLaunches.dependsOn 'eclipse'
+
+task moduledata () {
+	doLast {
+		for (ResolvedArtifact arti : project.configurations.implementation.resolvedConfiguration.getResolvedArtifacts()) {
+			if (arti.getClassifier() != null)
+				continue;
+			copy {
+			    String outFileNm = arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "")
+			    if (outFileNm.equals("EmuFeral"))
+			    	continue;
+			    
+				from arti.file
+				rename arti.file.getName(), outFileNm + "." + arti.getExtension()
+				into "build/moduledata/libs"
+			}
+		}
+		for (def task : project.tasks) {
+			if (task instanceof AbstractArchiveTask) {
+				if (!task.getArchiveClassifier().get().isEmpty())
+					continue;
+					
+				copy {
+					from task.getArchiveFile().get()
+					rename task.getArchiveFile().get().getAsFile().getName(), task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()
+					into "build/moduledata/modules"
+				}
+			}
+		}
+	}
+}
+
+moduledata.dependsOn project.tasks.build
+build.finalizedBy moduledata
