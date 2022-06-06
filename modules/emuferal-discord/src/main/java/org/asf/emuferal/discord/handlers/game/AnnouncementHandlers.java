@@ -43,10 +43,11 @@ public class AnnouncementHandlers implements IEventReceiver {
 		messageSimple += "EmuFeral has been updated, the servers "
 				+ (event.hasTimer() ? "will be restarted in __" + event.getTimeRemaining() + " minutes__"
 						: "are restarting")
-				+ "!\n";
+				+ "!";
 
 		// Add changelog to complete message if possible
 		messageComplete = messageSimple;
+		messageComplete += "\n";
 		messageComplete += "\n";
 		try {
 			if (event.hasVersionInfo()) {
