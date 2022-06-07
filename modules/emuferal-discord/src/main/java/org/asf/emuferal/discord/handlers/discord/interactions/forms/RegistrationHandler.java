@@ -136,12 +136,12 @@ public class RegistrationHandler {
 		for (String word : displayName.split(" ")) {
 			if (banWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 				// Reply with error
-				return event.reply("Invalid login name: this name may not be used.").withEphemeral(true);
+				return event.reply("Invalid display name: this name may not be used.").withEphemeral(true);
 			}
 
 			if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 				// Reply with error
-				return event.reply("Invalid login name: this name may not be used.").withEphemeral(true);
+				return event.reply("Invalid display name: this name may not be used.").withEphemeral(true);
 			}
 		}
 
