@@ -98,8 +98,7 @@ public class RegistrationHandler {
 
 		// Verify validity of the 2fa option
 		boolean enable2fa = pref2faSettings.equalsIgnoreCase("yes");
-		if (!accountName.matches("^[A-Za-z0-9@._#]+$") || accountName.contains(".cred")
-				|| !accountName.matches(".*[A-Za-z0-9]+.*") || accountName.isBlank() || accountName.length() > 320) {
+		if (!pref2faSettings.equalsIgnoreCase("yes") && !pref2faSettings.contains("no")) {
 			// Reply with error
 			return event.reply("Invalid value for `Enable 2-factor authentication`").withEphemeral(true);
 		}
@@ -147,7 +146,8 @@ public class RegistrationHandler {
 		}
 
 		// Verify login name validity
-		if (!accountName.matches("^[0-9A-Za-z\\-_. ]+") || accountName.length() > 16 || accountName.length() < 2) {
+		if (!accountName.matches("^[A-Za-z0-9@._#]+$") || accountName.contains(".cred")
+				|| !accountName.matches(".*[A-Za-z0-9]+.*") || accountName.isBlank() || accountName.length() > 320) {
 			// Reply with error
 			return event.reply("Invalid login name.").withEphemeral(true);
 		}
