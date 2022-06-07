@@ -98,7 +98,7 @@ public class RegistrationHandler {
 
 		// Verify validity of the 2fa option
 		boolean enable2fa = pref2faSettings.equalsIgnoreCase("yes");
-		if (!pref2faSettings.equalsIgnoreCase("yes") && !pref2faSettings.contains("no")) {
+		if (!pref2faSettings.equalsIgnoreCase("yes") && !pref2faSettings.equalsIgnoreCase("no")) {
 			// Reply with error
 			return event.reply("Invalid value for `Enable 2-factor authentication`").withEphemeral(true);
 		}
