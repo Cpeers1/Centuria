@@ -47,6 +47,7 @@ import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectSetRespawn;
 import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectUpdate;
 import org.asf.emuferal.packets.xt.gameserver.players.AvatarAction;
 import org.asf.emuferal.packets.xt.gameserver.players.AvatarLookGet;
+import org.asf.emuferal.packets.xt.gameserver.sanctuaries.SanctuaryJoinPacket;
 import org.asf.emuferal.packets.xt.gameserver.shops.ShopList;
 import org.asf.emuferal.packets.xt.gameserver.social.FindPlayer;
 import org.asf.emuferal.packets.xt.gameserver.social.JumpToPlayer;
@@ -122,6 +123,7 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new UserTutorialCompleted());
 		registerPacket(new AvatarEditorSelectLook());
 		registerPacket(new UserAvatarSave());
+		registerPacket(new SanctuaryJoinPacket());
 
 		// Allow modules to register packets
 		GameServerStartupEvent ev = new GameServerStartupEvent(this, t -> registerPacket(t));

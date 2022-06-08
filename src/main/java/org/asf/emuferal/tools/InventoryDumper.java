@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
@@ -259,77 +260,129 @@ public class InventoryDumper {
 
 					String currentData = "";
 					String currentFile = null;
-					for (File packet : Stream.of(outputFolder.listFiles())
-							.filter(t -> t.getName().endsWith(".bin") && t.getName().contains(" ("))
-							.sorted((t1, t2) -> {
-								String td1 = t1.getName().substring(0, t1.getName().indexOf(" ("));
-								String td2 = t2.getName().substring(0, t2.getName().indexOf(" ("));
+					ArrayList<String> inventories = new ArrayList<String>();
+					try {
+						for (File packet : Stream.of(outputFolder.listFiles())
+								.filter(t -> t.getName().endsWith(".bin") && t.getName().contains(" ("))
+								.sorted((t1, t2) -> {
+									String td1 = t1.getName().substring(0, t1.getName().indexOf(" ("));
+									String td2 = t2.getName().substring(0, t2.getName().indexOf(" ("));
 
-								return Integer.compare(Integer.valueOf(td1), Integer.valueOf(td2));
-							}).toArray(t -> new File[t])) {
+									return Integer.compare(Integer.valueOf(td1), Integer.valueOf(td2));
+								}).toArray(t -> new File[t])) {
 
+							SwingUtilities.invokeAndWait(() -> {
+								progressBar.setValue(progressBar.getValue() + 1);
+							});
+
+							if (!packet.getName().endsWith(".bin"))
+								continue;
+
+							if (currentFile != null && packet.getName().endsWith("(S to C).bin")) {
+								String payload = Files.readString(packet.toPath()).trim();
+								if (currentData.isEmpty()
+										&& (payload.startsWith("%xt%ilt%-1%") || payload.startsWith("%xt%il%-1%"))) {
+									currentData += payload;
+
+									if (!currentData.endsWith("%")) {
+										boolean unlock = false;
+										for (File packet2 : Stream.of(outputFolder.listFiles())
+												.filter(t -> t.getName().endsWith(".bin") && t.getName().contains(" ("))
+												.sorted((t1, t2) -> {
+													String td1 = t1.getName().substring(0, t1.getName().indexOf(" ("));
+													String td2 = t2.getName().substring(0, t2.getName().indexOf(" ("));
+
+													return Integer.compare(Integer.valueOf(td1), Integer.valueOf(td2));
+												}).toArray(t -> new File[t])) {
+											if (!packet2.getName().endsWith(".bin"))
+												continue;
+
+											if (packet2.getName().equals(packet.getName())) {
+												unlock = true;
+											} else if (unlock && packet2.getName().endsWith("(S to C).bin")) {
+												payload = Files.readString(packet2.toPath()).trim();
+												currentData += payload;
+												if (payload.endsWith("%")) {
+													break;
+												}
+											}
+										}
+									}
+
+									XtReader rd = new XtReader(currentData);
+									rd.read();
+									rd.read();
+									byte[] compressed = rd.readBytes();
+
+									GZIPInputStream strm = new GZIPInputStream(new ByteArrayInputStream(compressed));
+									byte[] data = strm.readAllBytes();
+									strm.close();
+
+									String json = new String(data, "UTF-8");
+									inventories.add(json);
+									currentFile = null;
+									currentData = "";
+								}
+							} else {
+								if (packet.getName().endsWith("(C to S).bin")) {
+									String payload = Files.readString(packet.toPath()).trim();
+									if (payload.startsWith("%xt%o%ilt%-1%")) {
+										currentFile = payload.substring("%xt%o%ilt%-1%".length());
+										currentFile = currentFile.substring(0, currentFile.length() - 1);
+									}
+								}
+							}
+						}
+					} catch (Exception e) {
+					}
+
+					SwingUtilities.invokeAndWait(() -> {
+						lblNewLabel.setText("Processing inventory objects...");
+						progressBar.setMaximum(inventories.size());
+						progressBar.setValue(0);
+					});
+
+					JsonArray invOutObj = new JsonArray();
+					for (String invObj : inventories) {
 						SwingUtilities.invokeAndWait(() -> {
 							progressBar.setValue(progressBar.getValue() + 1);
 						});
 
-						if (!packet.getName().endsWith(".bin"))
-							continue;
-
-						if (currentFile != null && packet.getName().endsWith("(S to C).bin")) {
-							String payload = Files.readString(packet.toPath()).trim();
-							if (currentData.isEmpty()
-									&& (payload.startsWith("%xt%ilt%-1%") || payload.startsWith("%xt%il%-1%"))) {
-								currentData += payload;
-
-								if (!currentData.endsWith("%")) {
-									boolean unlock = false;
-									for (File packet2 : Stream.of(outputFolder.listFiles())
-											.filter(t -> t.getName().endsWith(".bin") && t.getName().contains(" ("))
-											.sorted((t1, t2) -> {
-												String td1 = t1.getName().substring(0, t1.getName().indexOf(" ("));
-												String td2 = t2.getName().substring(0, t2.getName().indexOf(" ("));
-
-												return Integer.compare(Integer.valueOf(td1), Integer.valueOf(td2));
-											}).toArray(t -> new File[t])) {
-										if (!packet2.getName().endsWith(".bin"))
-											continue;
-
-										if (packet2.getName().equals(packet.getName())) {
-											unlock = true;
-										} else if (unlock && packet2.getName().endsWith("(S to C).bin")) {
-											payload = Files.readString(packet2.toPath()).trim();
-											currentData += payload;
-											if (payload.endsWith("%")) {
-												break;
-											}
-										}
-									}
-								}
-
-								XtReader rd = new XtReader(currentData);
-								rd.read();
-								rd.read();
-								byte[] compressed = rd.readBytes();
-
-								GZIPInputStream strm = new GZIPInputStream(new ByteArrayInputStream(compressed));
-								byte[] data = strm.readAllBytes();
-								strm.close();
-
-								String json = new String(data, "UTF-8");
-
-								Files.writeString(Path.of(invOut + "/" + currentFile + ".json"), json);
-								currentFile = null;
-								currentData = "";
-							}
-						} else {
-							if (packet.getName().endsWith("(C to S).bin")) {
-								String payload = Files.readString(packet.toPath()).trim();
-								if (payload.startsWith("%xt%o%ilt%-1%")) {
-									currentFile = payload.substring("%xt%o%ilt%-1%".length());
-									currentFile = currentFile.substring(0, currentFile.length() - 1);
-								}
-							}
+						JsonElement ele = JsonParser.parseString(invObj);
+						if (ele.isJsonArray()) {
+							invOutObj.addAll(ele.getAsJsonArray());
 						}
+					}
+
+					HashMap<String, JsonArray> inventoryObjects = new HashMap<String, JsonArray>();
+					SwingUtilities.invokeAndWait(() -> {
+						lblNewLabel.setText("Building inventory files...");
+						progressBar.setMaximum(invOutObj.size());
+						progressBar.setValue(0);
+					});
+
+					for (JsonElement ele : invOutObj) {
+						SwingUtilities.invokeAndWait(() -> {
+							progressBar.setValue(progressBar.getValue() + 1);
+						});
+
+						String type = ele.getAsJsonObject().get("type").getAsString();
+						if (!inventoryObjects.containsKey(type))
+							inventoryObjects.put(type, new JsonArray());
+						inventoryObjects.get(type).add(ele);
+					}
+
+					SwingUtilities.invokeAndWait(() -> {
+						lblNewLabel.setText("Saving inventory objects...");
+						progressBar.setMaximum(inventoryObjects.size());
+						progressBar.setValue(0);
+					});
+					for (String invObjNm : inventoryObjects.keySet()) {
+						SwingUtilities.invokeAndWait(() -> {
+							progressBar.setValue(progressBar.getValue() + 1);
+						});
+						Files.writeString(new File(invOut, invObjNm + ".json").toPath(),
+								inventoryObjects.get(invObjNm).toString());
 					}
 
 					SwingUtilities.invokeLater(() -> {

@@ -197,6 +197,13 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 			return true;
 		}
+		
+		// Sanctuaries
+		if (slot.equals("10")) {
+			if (!inv.containsItem("10")) {
+				// Generate sanctuary slots
+			}
+		}
 
 		// Load the item
 		JsonElement item = inv.getItem(slot.equals("200") ? "avatars" : slot);
