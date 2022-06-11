@@ -48,6 +48,8 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 
 		// Find object
 		NetworkedObject obj = NetworkedObjects.getObject(Integer.toString(plr.roomID), target);
+		if (obj == null)
+			return true;
 
 		// TODO: chests
 
