@@ -24315,6 +24315,206 @@
         "stateInfo": {}
       }
     },
+    "7791": {
+      "2e53416f-f25c-440e-978c-0618a500026c": {
+        "objectName": "NPC_Idle",
+        "localType": 0,
+        "primaryObjectInfo": {
+          "type": 1,
+          "defId": 5552
+        },
+        "subObjectInfo": {
+          "type": 0,
+          "defId": 1525
+        },
+        "locationInfo": {
+          "position": {
+            "x": -6.66499328613281,
+            "y": -1.9073486328125E-06,
+            "z": -17.5100021362305
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.203975886106491,
+            "z": 0.0,
+            "w": 0.9789759516716
+          }
+        },
+        "stateInfo": {
+          "0": [
+            {
+              "command": "3",
+              "params": [
+                "0"
+              ],
+              "actorId": "2e53416f-f25c-440e-978c-0618a500026c",
+              "branches": {}
+            }
+          ]
+        }
+      },
+      "9f5673ec-5436-4656-9f8c-4dd989c6df97": {
+        "objectName": "NPC_Idle",
+        "localType": 0,
+        "primaryObjectInfo": {
+          "type": 1,
+          "defId": 5552
+        },
+        "subObjectInfo": {
+          "type": 0,
+          "defId": 1524
+        },
+        "locationInfo": {
+          "position": {
+            "x": 5.78500556945801,
+            "y": -1.9073486328125E-06,
+            "z": 7.48999786376953
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0380472242832184,
+            "z": 0.0,
+            "w": 0.999275922775269
+          }
+        },
+        "stateInfo": {
+          "0": [
+            {
+              "command": "3",
+              "params": [
+                "0"
+              ],
+              "actorId": "9f5673ec-5436-4656-9f8c-4dd989c6df97",
+              "branches": {}
+            }
+          ]
+        }
+      },
+      "d2847fa2-50c1-4c0a-bc3e-3e1b3194dda1": {
+        "objectName": "NPC_Idle",
+        "localType": 0,
+        "primaryObjectInfo": {
+          "type": 1,
+          "defId": 5552
+        },
+        "subObjectInfo": {
+          "type": 0,
+          "defId": 1523
+        },
+        "locationInfo": {
+          "position": {
+            "x": 3.53500556945801,
+            "y": -0.0100002288818359,
+            "z": -7.40000152587891
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": -0.291049629449844,
+            "z": 0.0,
+            "w": 0.956708014011383
+          }
+        },
+        "stateInfo": {
+          "0": [
+            {
+              "command": "3",
+              "params": [
+                "0"
+              ],
+              "actorId": "d2847fa2-50c1-4c0a-bc3e-3e1b3194dda1",
+              "branches": {}
+            }
+          ]
+        }
+      },
+      "5dcab68a-61c0-404c-90c7-11c49a919a8b": {
+        "objectName": "NPC_Idle",
+        "localType": 0,
+        "primaryObjectInfo": {
+          "type": 1,
+          "defId": 5552
+        },
+        "subObjectInfo": {
+          "type": 0,
+          "defId": 1509
+        },
+        "locationInfo": {
+          "position": {
+            "x": -15.9549942016602,
+            "y": 1.8799991607666,
+            "z": -2.85000610351563
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.302699238061905,
+            "z": 0.0,
+            "w": 0.953086137771606
+          }
+        },
+        "stateInfo": {
+          "0": [
+            {
+              "command": "3",
+              "params": [
+                "0"
+              ],
+              "actorId": "5dcab68a-61c0-404c-90c7-11c49a919a8b",
+              "branches": {}
+            }
+          ]
+        }
+      },
+      "2745f3af-2795-4031-a9eb-396db8c0a368": {
+        "objectName": "TwiglaShopkeeper",
+        "localType": 0,
+        "primaryObjectInfo": {
+          "type": 1,
+          "defId": 5077
+        },
+        "subObjectInfo": {
+          "type": 0,
+          "defId": 3961
+        },
+        "locationInfo": {
+          "position": {
+            "x": -1.95100021362305,
+            "y": 0.029998779296875,
+            "z": -12.620002746582
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "w": 1.0
+          }
+        },
+        "stateInfo": {
+          "0": [
+            {
+              "command": "3",
+              "params": [
+                "0"
+              ],
+              "actorId": "2745f3af-2795-4031-a9eb-396db8c0a368",
+              "branches": {
+                "1": [
+                  {
+                    "command": "84",
+                    "params": [
+                      "1",
+                      "1",
+                      "11601"
+                    ],
+                    "actorId": "0",
+                    "branches": {}
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
     "2619": {
       "2e53416f-f25c-440e-978c-0618a500026c": {
         "objectName": "NPC_Idle",

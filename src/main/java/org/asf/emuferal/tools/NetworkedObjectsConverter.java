@@ -3,6 +3,7 @@ package org.asf.emuferal.tools;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
@@ -17,13 +18,14 @@ public class NetworkedObjectsConverter {
 
 	public static void main(String[] args) throws IOException {
 		// This tool generates a networkedobjects.json file
-		// Expected program arguments: <networkedobjects-csv-file>
-		// <level-overrides-csv-file> <level-csv-file>
+		//
+		// Expected program arguments:
+		// <networkedobjects-csv-file> <level-overrides-csv-file> <level-csv-file>
 
 		String lastName = "";
 		String lastData = null;
 		String lastID = null;
-		HashMap<String, String> overrideMapper = new HashMap<String, String>();
+		HashMap<String, ArrayList<String>> overrideMapper = new HashMap<String, ArrayList<String>>();
 		for (String line : Files.readAllLines(Path.of(args[2]))) {
 			if (line.startsWith("\"") && !line.startsWith("\"\"")) {
 				lastID = line.substring(1);
@@ -43,7 +45,9 @@ public class NetworkedObjectsConverter {
 							JsonArray overrides = data.get("levelOverrides").getAsJsonObject().get("_defIDs")
 									.getAsJsonArray();
 							for (JsonElement ele2 : overrides) {
-								overrideMapper.put(ele2.getAsString(), lastID);
+								if (!overrideMapper.containsKey(ele2.getAsString()))
+									overrideMapper.put(ele2.getAsString(), new ArrayList<String>());
+								overrideMapper.get(ele2.getAsString()).add(lastID);
 							}
 						}
 					}
@@ -57,7 +61,7 @@ public class NetworkedObjectsConverter {
 		lastData = null;
 		lastID = null;
 		lastName = null;
-		HashMap<String, String> idMapper = new HashMap<String, String>();
+		HashMap<String, ArrayList<String>> idMapper = new HashMap<String, ArrayList<String>>();
 		for (String line : Files.readAllLines(Path.of(args[1]))) {
 			if (line.startsWith("\"") && !line.startsWith("\"\"") && !line.startsWith("\"DefID")) {
 				lastID = line.substring(1);
@@ -77,7 +81,7 @@ public class NetworkedObjectsConverter {
 							for (JsonElement ele2 : data.get("networkedObjects").getAsJsonObject().get("_defIDs")
 									.getAsJsonArray()) {
 								if (overrideMapper.containsKey(lastID)) {
-									String levelID = overrideMapper.get(lastID);
+									ArrayList<String> levelID = overrideMapper.get(lastID);
 									idMapper.put(ele2.getAsString(), levelID);
 								}
 							}
@@ -159,7 +163,7 @@ public class NetworkedObjectsConverter {
 						}
 					}
 
-					objects.add(idMapper.get(lastID), worldObjects);
+					idMapper.get(lastID).forEach(t -> objects.add(t, worldObjects));
 				}
 
 				lastData = null;
