@@ -47,7 +47,10 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 		}
 
 		// Find object
-		NetworkedObject obj = NetworkedObjects.getObject(Integer.toString(plr.roomID), target);
+		int id = plr.roomID;
+		if (!plr.roomReady)
+			id = plr.pendingRoomID;
+		NetworkedObject obj = NetworkedObjects.getObject(Integer.toString(id), target);
 		if (obj == null)
 			return true;
 

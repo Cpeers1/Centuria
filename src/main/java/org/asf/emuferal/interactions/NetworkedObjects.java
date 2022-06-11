@@ -125,7 +125,7 @@ public class NetworkedObjects {
 	 */
 	public static String[] getObjectsFor(String levelID) {
 		if (!objects.containsKey(levelID))
-			return null;
+			return new String[0];
 
 		return objects.get(levelID).keySet().toArray(t -> new String[t]);
 	}
