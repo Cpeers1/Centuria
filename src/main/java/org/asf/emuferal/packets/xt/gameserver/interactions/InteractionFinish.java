@@ -1,11 +1,13 @@
 package org.asf.emuferal.packets.xt.gameserver.interactions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.interactions.NetworkedObjects;
 import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
+import org.asf.emuferal.interactions.dataobjects.StateInfo;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;
@@ -47,7 +49,36 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 		// Find object
 		NetworkedObject obj = NetworkedObjects.getObject(Integer.toString(plr.roomID), target);
 
-		// TODO
+		// Build response
+		XtWriter pk = new XtWriter();
+		pk.writeString("oaf");
+		pk.writeInt(-1); // Data prefix
+		pk.writeString(target);
+		pk.writeInt(1); // State
+		pk.writeString(""); // Data suffix
+		client.sendPacket(pk.encode());
+
+		// Send qcmd
+		if (obj.stateInfo.containsKey(Integer.toString(currentState))) {
+			// TODO: proper implementation
+			ArrayList<StateInfo> states = obj.stateInfo.get(Integer.toString(currentState));
+			StateInfo nextState = states.get(0);
+
+			// Build quest command
+			pk = new XtWriter();
+			pk.writeString("qcmd");
+			pk.writeInt(-1); // Data prefix
+			pk.writeString(nextState.command); // command
+			pk.writeInt(1); // State
+			pk.writeString(target); // Interactable
+			pk.writeInt(0); // Position
+			// Parameters
+			for (String param : nextState.params)
+				pk.writeString(param);
+			pk.writeString(""); // Data suffix
+			client.sendPacket(pk.encode());
+		}
+
 		return true;
 	}
 

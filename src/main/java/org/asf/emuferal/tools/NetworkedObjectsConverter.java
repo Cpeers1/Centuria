@@ -176,7 +176,7 @@ public class NetworkedObjectsConverter {
 
 	private static void addState(JsonObject stateInfo, JsonObject state) {
 		String name = state.get("name").getAsString();
-		JsonObject commands = new JsonObject();
+		JsonArray commands = new JsonArray();
 		for (JsonElement cmdE : state.get("cmds").getAsJsonArray()) {
 			JsonObject cmd = cmdE.getAsJsonObject();
 			JsonObject branches = new JsonObject();
@@ -186,10 +186,11 @@ public class NetworkedObjectsConverter {
 					addState(branches, branch);
 				}
 			JsonObject command = new JsonObject();
+			command.addProperty("command", cmd.get("cmd").getAsString());
 			command.add("params", cmd.get("cmdParams"));
 			command.addProperty("actorId", cmd.get("actor").getAsString());
 			command.add("branches", branches);
-			commands.add(cmd.get("cmd").getAsString(), command);
+			commands.add(command);
 		}
 		stateInfo.add(name, commands);
 	}

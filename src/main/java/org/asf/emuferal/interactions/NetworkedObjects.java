@@ -13,6 +13,7 @@ import org.asf.emuferal.interactions.dataobjects.RotationInfo;
 import org.asf.emuferal.interactions.dataobjects.StateInfo;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -91,23 +92,24 @@ public class NetworkedObjects {
 		isReady = true;
 	}
 
-	private static void genBranches(JsonObject branches, HashMap<String, HashMap<String, StateInfo>> output) {
+	private static void genBranches(JsonObject branches, HashMap<String, ArrayList<StateInfo>> output) {
 		// Parse branches
 		for (String bId : branches.keySet()) {
-			JsonObject ent = branches.get(bId).getAsJsonObject();
-			HashMap<String, StateInfo> states = new HashMap<String, StateInfo>();
+			JsonArray ent = branches.get(bId).getAsJsonArray();
+			ArrayList<StateInfo> states = new ArrayList<StateInfo>();
 			output.put(bId, states);
 
-			for (String id : ent.keySet()) {
-				JsonObject entry = ent.get(id).getAsJsonObject();
+			for (JsonElement ele2 : ent) {
+				JsonObject entry = ele2.getAsJsonObject();
 				StateInfo info = new StateInfo();
+				info.command = entry.get("command").getAsString();
 				info.actorId = entry.get("actorId").getAsString();
 				ArrayList<String> params = new ArrayList<String>();
 				for (JsonElement param : entry.get("params").getAsJsonArray()) {
 					params.add(param.getAsString());
 				}
 				info.params = params.toArray(t -> new String[t]);
-				states.put(id, info);
+				states.add(info);
 				if (entry.has("branches")) {
 					genBranches(entry.get("branches").getAsJsonObject(), info.branches);
 				}

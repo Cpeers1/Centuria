@@ -1,5 +1,6 @@
 package org.asf.emuferal.interactions.dataobjects;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class NetworkedObject {
@@ -11,6 +12,6 @@ public class NetworkedObject {
 	public ObjectInfo subObjectInfo;
 
 	public LocationInfo locationInfo;
-	public HashMap<String, HashMap<String, StateInfo>> stateInfo = new HashMap<String, HashMap<String, StateInfo>>();
+	public HashMap<String, ArrayList<StateInfo>> stateInfo = new HashMap<String, ArrayList<StateInfo>>();
 
 }

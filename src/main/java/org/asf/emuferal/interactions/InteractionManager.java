@@ -46,11 +46,11 @@ public class InteractionManager {
 		for (String id : data.keySet()) {
 			NetworkedObject ent = data.get(id);
 			if (ent.stateInfo.size() == 0) {
-				// These need qcmd packets packet = new XtWriter();
+				// Set states
 				packet = new XtWriter();
 				packet.writeString("qcmd");
 				packet.writeString("-1"); // data prefix
-				packet.writeString("1"); // unknown
+				packet.writeString("1"); // command
 				packet.writeString(id); // interaction ID
 				packet.writeString("0"); // unknown
 				packet.writeString("0"); // unknown
