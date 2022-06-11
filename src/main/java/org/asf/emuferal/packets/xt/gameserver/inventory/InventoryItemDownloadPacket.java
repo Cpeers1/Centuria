@@ -197,12 +197,13 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 			return true;
 		}
-		
+
 		// Sanctuaries
-		if (slot.equals("10")) {
-			if (!inv.containsItem("10")) {
-				// Generate sanctuary slots
-			}
+		if (slot.equals("5") || slot.equals("6") || slot.equals("102")) {
+			EmuFeral.fixSanctuaries(inv);
+		}
+		if (slot.equals("201")) {
+			// TODO
 		}
 
 		// Load the item
@@ -305,7 +306,6 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			// Save item 2 as empty item
 			inv.setItem("110", new JsonArray());
 		}
-		// TODO: clothes
 
 		// Save changes
 		for (String change : inv.getAccessor().getItemsToSave())

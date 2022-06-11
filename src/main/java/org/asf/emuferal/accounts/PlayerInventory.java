@@ -834,6 +834,480 @@ public abstract class PlayerInventory {
 		}
 
 		/**
+		 * Finds all unlocked island types
+		 * 
+		 * @return Array of island type defIDs
+		 */
+		public int[] getUnlockedIslandTypes() {
+			ArrayList<Integer> types = new ArrayList<Integer>();
+
+			// Load the inventory object
+			if (!inventory.containsItem("6"))
+				inventory.setItem("6", new JsonArray());
+			JsonArray items = inventory.getItem("6").getAsJsonArray();
+
+			// Find all IDs
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+
+				// Add ID
+				int itID = itm.get("defId").getAsInt();
+				if (!types.contains(itID))
+					types.add(itID);
+			}
+
+			// Return the type IDs
+			int[] typeIds = new int[types.size()];
+			for (int i = 0; i < typeIds.length; i++)
+				typeIds[i] = types.get(i);
+			return typeIds;
+		}
+
+		/**
+		 * Retrieves the count of items of a specific island type
+		 * 
+		 * @param defID Island type ID
+		 * @return Item count of the given island type
+		 */
+		public int getIslandTypeItemCount(int defID) {
+			// Load the inventory object
+			if (!inventory.containsItem("6"))
+				inventory.setItem("6", new JsonArray());
+			JsonArray items = inventory.getItem("6").getAsJsonArray();
+			int count = 0;
+
+			// Find island
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+
+				// Check ID
+				int itID = itm.get("defId").getAsInt();
+				if (itID == defID) {
+					count++;
+				}
+			}
+
+			// Not found
+			return count;
+		}
+
+		/**
+		 * Creates a new save for a specific island type and saves it to the inventory
+		 * 
+		 * @param defID Island type ID
+		 * @return Item ID string
+		 */
+		public String addIslandToInventory(int defID) {
+			// Load the inventory object
+			if (!inventory.containsItem("6"))
+				inventory.setItem("6", new JsonArray());
+			JsonArray items = inventory.getItem("6").getAsJsonArray();
+
+			// Generate item ID
+			String itmID = UUID.randomUUID().toString();
+			while (true) {
+				boolean found = false;
+				for (JsonElement ele : items) {
+					JsonObject itm = ele.getAsJsonObject();
+					String itID = itm.get("id").getAsString();
+					if (itID.equals(itmID)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					break;
+				itmID = UUID.randomUUID().toString();
+			}
+
+			// Create the object
+			JsonObject itm = new JsonObject();
+			JsonObject ts = new JsonObject();
+			ts.addProperty("ts", System.currentTimeMillis());
+			// Build island info object
+			JsonObject island = new JsonObject();
+			island.addProperty("gridId", 0);
+			island.addProperty("themeDefId", 0);
+			JsonObject components = new JsonObject();
+			components.add("Island", island);
+			components.add("Timestamp", ts);
+			itm.addProperty("defId", defID);
+			itm.add("components", components);
+			itm.addProperty("id", itmID);
+			itm.addProperty("type", 6);
+			items.add(itm);
+
+			// Mark what files to save
+			if (!itemsToSave.contains("6"))
+				itemsToSave.add("6");
+
+			// Return ID
+			return itmID;
+		}
+
+		/**
+		 * Finds a island info object
+		 * 
+		 * @param id Island info object ID
+		 * @return JSON object or null
+		 */
+		public JsonObject getIslandTypeObject(String id) {
+			// Load the inventory object
+			if (!inventory.containsItem("6"))
+				inventory.setItem("6", new JsonArray());
+			JsonArray items = inventory.getItem("6").getAsJsonArray();
+
+			// Find object
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				String itID = itm.get("id").getAsString();
+				if (itID.equals(id)) {
+					// Found it
+					return itm;
+				}
+			}
+
+			// Could not find it
+			return null;
+		}
+
+		/**
+		 * Checks if a island type is unlocked or not
+		 * 
+		 * @param defID Island type ID
+		 * @return True if unlocked, false otherwise
+		 */
+		public boolean isIslandTypeUnlocked(int defID) {
+			// Load the inventory object
+			if (!inventory.containsItem("6"))
+				inventory.setItem("6", new JsonArray());
+			JsonArray items = inventory.getItem("6").getAsJsonArray();
+
+			// Find island
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+
+				// Check ID
+				int itID = itm.get("defId").getAsInt();
+				if (itID == defID) {
+					return true;
+				}
+			}
+
+			// Not found
+			return false;
+		}
+
+		/**
+		 * Finds all unlocked house types
+		 * 
+		 * @return Array of house type defIDs
+		 */
+		public int[] getUnlockedHouseTypes() {
+			ArrayList<Integer> types = new ArrayList<Integer>();
+
+			// Load the inventory object
+			if (!inventory.containsItem("5"))
+				inventory.setItem("5", new JsonArray());
+			JsonArray items = inventory.getItem("5").getAsJsonArray();
+
+			// Find all IDs
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+
+				// Add ID
+				int itID = itm.get("defId").getAsInt();
+				if (!types.contains(itID))
+					types.add(itID);
+			}
+
+			// Return the type IDs
+			int[] typeIds = new int[types.size()];
+			for (int i = 0; i < typeIds.length; i++)
+				typeIds[i] = types.get(i);
+			return typeIds;
+		}
+
+		/**
+		 * Retrieves the count of items of a specific house type
+		 * 
+		 * @param defID House type ID
+		 * @return Item count of the given house type
+		 */
+		public int getHouseTypeItemCount(int defID) {
+			// Load the inventory object
+			if (!inventory.containsItem("5"))
+				inventory.setItem("5", new JsonArray());
+			JsonArray items = inventory.getItem("5").getAsJsonArray();
+			int count = 0;
+
+			// Find house
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+
+				// Check ID
+				int itID = itm.get("defId").getAsInt();
+				if (itID == defID) {
+					count++;
+				}
+			}
+
+			// Not found
+			return count;
+		}
+
+		/**
+		 * Creates a new save for a specific house type and saves it to the inventory
+		 * 
+		 * @param defID House type ID
+		 * @return Item ID string
+		 */
+		public String addHouseToInventory(int defID) {
+			// Load the inventory object
+			if (!inventory.containsItem("5"))
+				inventory.setItem("5", new JsonArray());
+			JsonArray items = inventory.getItem("5").getAsJsonArray();
+
+			// Generate item ID
+			String itmID = UUID.randomUUID().toString();
+			while (true) {
+				boolean found = false;
+				for (JsonElement ele : items) {
+					JsonObject itm = ele.getAsJsonObject();
+					String itID = itm.get("id").getAsString();
+					if (itID.equals(itmID)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					break;
+				itmID = UUID.randomUUID().toString();
+			}
+
+			// Create the object
+			JsonObject itm = new JsonObject();
+			JsonObject ts = new JsonObject();
+			ts.addProperty("ts", System.currentTimeMillis());
+			// Build house info object
+			JsonObject house = new JsonObject();
+			house.addProperty("stage", 0);
+			house.add("roomData", new JsonArray());
+			house.addProperty("x", 0);
+			house.addProperty("y", 0);
+			house.addProperty("gridId", 0);
+			house.addProperty("themeDefId", 0);
+			JsonArray enlargedAreas = new JsonArray();
+			for (int i = 0; i < 10; i++) {
+				enlargedAreas.add(0);
+			}
+			house.add("enlargedAreas", enlargedAreas);
+			JsonObject components = new JsonObject();
+			components.add("House", house);
+			components.add("Timestamp", ts);
+			itm.addProperty("defId", defID);
+			itm.add("components", components);
+			itm.addProperty("id", itmID);
+			itm.addProperty("type", 5);
+			items.add(itm);
+
+			// Mark what files to save
+			if (!itemsToSave.contains("5"))
+				itemsToSave.add("5");
+
+			// Return ID
+			return itmID;
+		}
+
+		/**
+		 * Finds a house info object
+		 * 
+		 * @param id House info object ID
+		 * @return JSON object or null
+		 */
+		public JsonObject getHouseTypeObject(String id) {
+			// Load the inventory object
+			if (!inventory.containsItem("5"))
+				inventory.setItem("5", new JsonArray());
+			JsonArray items = inventory.getItem("5").getAsJsonArray();
+
+			// Find object
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				String itID = itm.get("id").getAsString();
+				if (itID.equals(id)) {
+					// Found it
+					return itm;
+				}
+			}
+
+			// Could not find it
+			return null;
+		}
+
+		/**
+		 * Checks if a house type is unlocked or not
+		 * 
+		 * @param defID House type ID
+		 * @return True if unlocked, false otherwise
+		 */
+		public boolean isHouseTypeUnlocked(int defID) {
+			// Load the inventory object
+			if (!inventory.containsItem("5"))
+				inventory.setItem("5", new JsonArray());
+			JsonArray items = inventory.getItem("5").getAsJsonArray();
+
+			// Find house
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+
+				// Check ID
+				int itID = itm.get("defId").getAsInt();
+				if (itID == defID) {
+					return true;
+				}
+			}
+
+			// Not found
+			return false;
+		}
+
+		/**
+		 * Retrieves the sanctuary look count
+		 * 
+		 * @return The amount of sanctuary looks a player has
+		 */
+		public int getSanctuaryLookCount() {
+			// Load the inventory object
+			if (!inventory.containsItem("201"))
+				return 0;
+			return inventory.getItem("201").getAsJsonArray().size();
+		}
+
+		/**
+		 * Finds a sanctuary look
+		 * 
+		 * @param lookID Sanctuary look ID
+		 * @return Sanctuary JSON object or null
+		 */
+		public JsonObject getSanctuaryLook(String lookID) {
+			// Load the inventory object
+			if (!inventory.containsItem("201"))
+				inventory.setItem("201", new JsonArray());
+			JsonArray items = inventory.getItem("201").getAsJsonArray();
+
+			// Find sanctuary
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				String itID = itm.get("id").getAsString();
+				if (itID.equals(lookID)) {
+					// Found it
+					return itm;
+				}
+			}
+
+			// Could not find it
+			return null;
+		}
+
+		/**
+		 * Retrieves the first sanctuary look found in the inventory
+		 * 
+		 * @return Sanctuary JSON object or null
+		 */
+		public JsonObject getFirstSanctuaryLook() {
+			// Load the inventory object
+			if (!inventory.containsItem("201"))
+				inventory.setItem("201", new JsonArray());
+			JsonArray items = inventory.getItem("201").getAsJsonArray();
+
+			// Find sanctuary
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				return itm;
+			}
+
+			// Could not find one
+			return null;
+		}
+
+		/**
+		 * Adds an extra sanctuary look slot to the player inventory
+		 */
+		public String addExtraSanctuarySlot() {
+			// Load the inventory object
+			if (!inventory.containsItem("201"))
+				inventory.setItem("201", new JsonArray());
+			JsonArray items = inventory.getItem("201").getAsJsonArray();
+
+			// Generate item ID
+			String itmID = UUID.randomUUID().toString();
+			while (true) {
+				boolean found = false;
+				for (JsonElement ele : items) {
+					JsonObject itm = ele.getAsJsonObject();
+					String itID = itm.get("id").getAsString();
+					if (itID.equals(itmID)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					break;
+				itmID = UUID.randomUUID().toString();
+			}
+
+			// Build object
+			JsonObject itm = new JsonObject();
+			JsonObject ts = new JsonObject();
+			ts.addProperty("ts", System.currentTimeMillis());
+			// Build sanctuary info object
+			JsonObject sanctuary = new JsonObject();
+			JsonObject sanctuaryInfo = new JsonObject();
+			// Create the default house
+			String id = addHouseToInventory(2694);
+			sanctuaryInfo.addProperty("houseDefId", 2694);
+			sanctuaryInfo.addProperty("houseInvId", id);
+			// Create a house type for each unlocked type
+			for (int defID : this.getUnlockedHouseTypes()) {
+				if (defID != 2694) {
+					// Create a house instance
+					addHouseToInventory(defID);
+				}
+			}
+			sanctuaryInfo.add("placementInfo", new JsonObject());
+			// Create the default island
+			id = addIslandToInventory(2695);
+			sanctuaryInfo.addProperty("islandDefId", 2695);
+			sanctuaryInfo.addProperty("islandInvId", id);
+			sanctuaryInfo.addProperty("classInvId", "4eebb7c5-40ad-42c7-ae66-b9c1c996a920");
+			// Create a island type for each unlocked type
+			for (int defID : this.getUnlockedIslandTypes()) {
+				if (defID != 2695) {
+					// Create a island instance
+					addIslandToInventory(defID);
+				}
+			}
+			sanctuary.add("info", sanctuaryInfo);
+			// Build components
+			JsonObject components = new JsonObject();
+			components.add("SanctuaryLook", sanctuary);
+			components.add("Timestamp", ts);
+			itm.addProperty("defId", 9625);
+			itm.add("components", components);
+			itm.addProperty("id", itmID);
+			itm.addProperty("type", 201);
+			items.add(itm);
+
+			// Mark what files to save
+			if (!itemsToSave.contains("201"))
+				itemsToSave.add("201");
+
+			// Return ID
+			return itmID;
+		}
+
+		/**
 		 * Removes a body mod or wings
 		 * 
 		 * @param defID Item ID

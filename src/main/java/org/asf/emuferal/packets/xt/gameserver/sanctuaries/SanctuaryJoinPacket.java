@@ -2,6 +2,9 @@ package org.asf.emuferal.packets.xt.gameserver.sanctuaries;
 
 import java.io.IOException;
 
+import org.asf.emuferal.EmuFeral;
+import org.asf.emuferal.accounts.AccountManager;
+import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.networking.gameserver.GameServer;
@@ -48,15 +51,22 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 		if (!isOwner) {
 			// TODO: privacy settings
 //			// Send error
-//			client.sendPacket("%xt%rj%-1%false%1689%2%-1%" + sanctuaryOwner + "%room_sanctuary_" + sanctuaryOwner + "%");
+//			client.sendPacket("%xt%rj%-1%false%1689%2%-1%" + sanctuaryOwner + "%sanctuary_" + sanctuaryOwner + "%");
 //			return true;
+		}
+
+		// Find owner
+		EmuFeralAccount sancOwner = AccountManager.getInstance().getAccount(sanctuaryOwner);
+		if (!sancOwner.getPlayerInventory().containsItem("201")) {
+			// Fix sanctuaries
+			EmuFeral.fixSanctuaries(sancOwner.getPlayerInventory());
 		}
 
 		// Build room join
 		JoinRoom join = new JoinRoom();
 		join.roomType = 2;
 		join.roomID = 1689;
-		join.roomIdentifier = "room_sanctuary_" + sanctuaryOwner;
+		join.roomIdentifier = "sanctuary_" + sanctuaryOwner;
 		join.teleport = sanctuaryOwner;
 
 		// Sync
@@ -71,7 +81,8 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 		// Assign room
 		player.roomReady = false;
 		player.pendingRoomID = 1689;
-		player.pendingRoom = "room_sanctuary_" + sanctuaryOwner;
+		player.pendingRoom = "sanctuary_" + sanctuaryOwner;
+		player.roomType = join.roomType;
 
 		// Send packet
 		client.sendPacket(join);

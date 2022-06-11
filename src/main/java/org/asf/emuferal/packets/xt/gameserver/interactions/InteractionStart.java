@@ -45,35 +45,29 @@ public class InteractionStart implements IXtPacket<InteractionStart> {
 		// Interaction start
 		Player plr = (Player) client.container;
 		source = plr.account.getAccountID();
-	
-		//log interaction details
+
+		// log interaction details
 		if (System.getProperty("debugMode") != null) {
 			System.out.println("[INTERACTION] [START]  Client to server (target: " + target + ")");
 		}
-		
+
 		// object update...
-		
+
 		// Build Broadcast Packet
 		XtWriter pk = new XtWriter();
 		pk.writeString("oas");
-		pk.writeInt(-1); // Data prefix
 		pk.writeString(target);
 		pk.writeString(source);
 		pk.writeString("");
-		
+
 		// Broadcast interaction
 		String msg = pk.encode();
-		GameServer srv = (GameServer) client.getServer();
-		for (Player player : srv.getPlayers()) {
-			if (player.room != null && plr.room != null && player.room.equals(plr.room)) {
-				player.client.sendPacket(msg);
-			}
-		}
-		
+		client.sendPacket(msg);
+
 		if (System.getProperty("debugMode") != null) {
 			System.out.println("[INTERACTION] [START]  Server to client: " + msg);
 		}
-		
+
 		plr.beginInteraction(target);
 
 		// TODO

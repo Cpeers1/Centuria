@@ -3,14 +3,20 @@ package org.asf.emuferal.packets.xt.gameserver.world;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.asf.emuferal.accounts.AccountManager;
+import org.asf.emuferal.accounts.EmuFeralAccount;
+import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.interactions.InteractionManager;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.emuferal.players.Player;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -43,6 +49,9 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Load player
 		Player plr = (Player) client.container;
+
+		// Initialize interactions
+		InteractionManager.initInteractionsFor(client, plr.pendingRoomID);
 
 		// Send to tutorial if new
 		if (plr.account.isPlayerNew()) {
@@ -97,10 +106,65 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Set location
 		plr.lastLocation = plr.respawn;
 
+		// Sanctuary loading
+		if (plr.roomType == 2 && plr.room.startsWith("sanctuary_")) {
+			String ownerID = plr.room.substring("sanctuary_".length());
+
+			// Find account
+			EmuFeralAccount acc = AccountManager.getInstance().getAccount(ownerID);
+
+			// Find active sanctuary object
+			JsonObject sanctuaryInfo = acc.getPlayerInventory().getAccessor()
+					.getSanctuaryLook(acc.getActiveSanctuaryLook());
+			if (sanctuaryInfo == null)
+				sanctuaryInfo = acc.getPlayerInventory().getAccessor().getFirstSanctuaryLook();
+
+			// Find the ID
+			String id = sanctuaryInfo.get("id").getAsString();
+
+			// Find sanctuary info
+			JsonObject info = sanctuaryInfo.get("components").getAsJsonObject().get("SanctuaryLook").getAsJsonObject()
+					.get("info").getAsJsonObject();
+
+			// Load sanctuary
+			loadSanctuary(id, info, plr, acc, acc.getPlayerInventory(), client);
+		}
+
 		// Mark as ready (for teleports etc)
 		plr.roomReady = true;
 
 		return true;
+	}
+
+	private void loadSanctuary(String id, JsonObject info, Player player, EmuFeralAccount acc, PlayerInventory inv,
+			SmartfoxClient client) {
+		// Load furniture
+		JsonObject placementInfo = info.get("placementInfo").getAsJsonObject();
+		if (placementInfo.has("items")) {
+			JsonArray items = placementInfo.get("items").getAsJsonArray();
+			for (JsonElement ele : items) {
+				JsonObject furnitureInfo = ele.getAsJsonObject();
+				// TODO
+			}
+		}
+
+		// Load house info
+		String houseId = info.get("houseInvId").getAsString();
+		JsonObject houseJson = inv.getAccessor().getHouseTypeObject(houseId);
+
+		// Send packet
+		client.sendPacket("%xt%oi%-1%" + houseId + "%1751%" + player.room.substring("sanctuary_".length()) + "%0%"
+				+ (System.currentTimeMillis() / 1000) + "%0%0%0%0%0%0%1%0%0%0%0.0%0%0%" + houseJson.toString() + "%");
+
+		// Load island info
+		String islandId = info.get("islandInvId").getAsString();
+		JsonObject islandJson = inv.getAccessor().getIslandTypeObject(islandId);
+
+		// Send packet
+		client.sendPacket("%xt%oi%-1%" + islandId + "%1751%" + player.room.substring("sanctuary_".length()) + "%0%"
+				+ (System.currentTimeMillis() / 1000) + "%0%0%0%0%0%0%1%0%0%0%0.0%0%1%" + islandJson.toString() + "%");
+
+		info = info;
 	}
 
 	private void handleSpawn(String id, Player plr, SmartfoxClient client) throws IOException {

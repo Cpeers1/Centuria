@@ -36,6 +36,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
 import org.asf.connective.https.ConnectiveHTTPSServer;
+import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.modules.IEmuFeralModule;
 import org.asf.emuferal.modules.ModuleManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
@@ -70,6 +71,8 @@ public class EmuFeral {
 	public static boolean giveAllMods = true;
 	public static boolean giveAllClothes = true;
 	public static boolean giveAllWings = true;
+	public static boolean gvieAllFurnitureItems = true;
+	public static boolean giveAllSanctuaryTypes = true;
 	public static boolean encryptChat = false;
 	public static boolean encryptGame = false;
 	public static String discoveryAddress = "localhost";
@@ -326,8 +329,9 @@ public class EmuFeral {
 			Files.writeString(serverConf.toPath(),
 					"api-port=6\n" + "director-port=6969\n" + "game-port=6968\n" + "chat-port=6972\n"
 							+ "allow-registration=true\n" + "give-all-avatars=true\n" + "give-all-mods=true\n"
-							+ "give-all-clothes=true\n" + "give-all-wings=true\n"
-							+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
+							+ "give-all-clothes=true\n" + "give-all-wings=true\n" + "give-all-sanctuary-types=true\n"
+							+ "give-all-furniture=true\n" + "discovery-server-address=localhost\n"
+							+ "encrypt-api=false\n" + "encrypt-chat=true\n"
 							+ "encrypt-game=false\n\nvpn-user-whitelist=vpn-whitelist\n" + "vpn-ipv4-banlist=\n"
 							+ "vpn-ipv6-banlist=");
 		}
@@ -372,6 +376,8 @@ public class EmuFeral {
 		giveAllMods = properties.getOrDefault("give-all-mods", "true").equals("true");
 		giveAllClothes = properties.getOrDefault("give-all-clothes", "true").equals("true");
 		giveAllWings = properties.getOrDefault("give-all-wings", "true").equals("true");
+		giveAllSanctuaryTypes = properties.getOrDefault("give-all-sanctuary-types", "true").equals("true");
+		gvieAllFurnitureItems = properties.getOrDefault("give-all-furniture", "true").equals("true");
 		encryptChat = properties.getOrDefault("encrypt-chat", "false").equals("true")
 				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
 		encryptGame = properties.getOrDefault("encrypt-game", "false").equals("true")
@@ -658,5 +664,55 @@ public class EmuFeral {
 
 		// No update available
 		return false;
+	}
+
+	public static void fixSanctuaries(PlayerInventory inv) {
+		// Check look count and add missing look slots
+		for (int i = inv.getAccessor().getSanctuaryLookCount(); i < 9; i++) {
+			inv.getAccessor().addExtraSanctuarySlot();
+		}
+
+		if (EmuFeral.giveAllSanctuaryTypes) {
+			// Give missing house types
+			int[] houseTypes = new int[] { 2694, 8694, 12965, 9763, 25400, 21234, 26059, 12671, 12629, 23606, 24089,
+					28428 };
+			for (int id : houseTypes)
+				addHouseType(inv, id);
+
+			// Give missing island types
+			int[] islandTypes = new int[] { 2695, 16812, 17147, 17148, 25411, 21274, 26062, 17151, 17150, 23628, 24120,
+					28429 };
+			for (int id : islandTypes)
+				addHouseType(inv, id);
+		} else {
+			// Give missing house type
+			addHouseType(inv, 2694);
+
+			// Give missing island type
+			addIslandType(inv, 2695);
+		}
+
+		// Save changes
+		for (String change : inv.getAccessor().getItemsToSave())
+			inv.setItem(change, inv.getItem(change));
+		inv.getAccessor().completedSave();
+	}
+
+	private static void addHouseType(PlayerInventory inv, int id) {
+		// Adds house types to the inventory if not present
+		if (!inv.getAccessor().isHouseTypeUnlocked(id)) {
+			// Add a house type for each look slot
+			for (int i = 0; i < inv.getAccessor().getSanctuaryLookCount(); i++)
+				inv.getAccessor().addHouseToInventory(id);
+		}
+	}
+
+	private static void addIslandType(PlayerInventory inv, int id) {
+		// Adds island types to the inventory if not present
+		if (!inv.getAccessor().isIslandTypeUnlocked(id)) {
+			// Add a island type for each look slot
+			for (int i = 0; i < inv.getAccessor().getSanctuaryLookCount(); i++)
+				inv.getAccessor().addIslandToInventory(id);
+		}
 	}
 }
