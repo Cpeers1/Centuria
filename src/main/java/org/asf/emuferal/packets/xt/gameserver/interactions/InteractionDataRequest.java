@@ -4,27 +4,31 @@ import java.io.IOException;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.interactions.NetworkedObjects;
+import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;
 
-public class InteractionCancel implements IXtPacket<InteractionCancel> {
+public class InteractionDataRequest implements IXtPacket<InteractionDataRequest> {
 
 	private String target;
+	private int state;
 
 	@Override
-	public InteractionCancel instantiate() {
-		return new InteractionCancel();
+	public InteractionDataRequest instantiate() {
+		return new InteractionDataRequest();
 	}
 
 	@Override
 	public String id() {
-		return "oac";
+		return "oaskr";
 	}
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
-		target = reader.readRemaining();
+		target = reader.read();
+		state = reader.readInt();
 	}
 
 	@Override
@@ -33,13 +37,21 @@ public class InteractionCancel implements IXtPacket<InteractionCancel> {
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		// Interaction cancel
+		// Interaction data request
 		Player plr = (Player) client.container;
 
-		// log interaction details	
 		if (System.getProperty("debugMode") != null) {
-			System.out.println("[INTERACTION] [CANCELED] Client to server (target: " + target + ")");
+			System.out.println(
+					"[INTERACTION] [ASKRESPONSE] Client to server (target: " + target + ", state: " + state + ")");
 		}
+
+		// Find object
+		int id = plr.roomID;
+		if (!plr.roomReady)
+			id = plr.pendingRoomID;
+		NetworkedObject obj = NetworkedObjects.getObject(Integer.toString(id), target);
+		if (obj == null)
+			return true;
 		
 		// TODO
 		return true;

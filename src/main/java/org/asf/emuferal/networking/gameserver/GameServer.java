@@ -37,6 +37,7 @@ import org.asf.emuferal.packets.xt.gameserver.avatareditor.AvatarEditorSelectLoo
 import org.asf.emuferal.packets.xt.gameserver.avatareditor.UserAvatarSave;
 import org.asf.emuferal.packets.xt.gameserver.avatareditor.UserTutorialCompleted;
 import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionCancel;
+import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionDataRequest;
 import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionFinish;
 import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionStart;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
@@ -120,6 +121,7 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new InteractionStart());
 		registerPacket(new InteractionCancel());
 		registerPacket(new InteractionFinish());
+		registerPacket(new InteractionDataRequest());
 		registerPacket(new UserTutorialCompleted());
 		registerPacket(new AvatarEditorSelectLook());
 		registerPacket(new UserAvatarSave());

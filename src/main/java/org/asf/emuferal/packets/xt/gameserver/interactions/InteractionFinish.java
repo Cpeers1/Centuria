@@ -54,7 +54,7 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 		if (obj == null)
 			return true;
 
-		// TODO: chests
+		// TODO: resources
 
 		// Build response
 		XtWriter pk = new XtWriter();
@@ -68,23 +68,22 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 
 		// Send qcmd
 		if (obj.stateInfo.containsKey(Integer.toString(currentState))) {
-			// TODO: proper implementation
 			ArrayList<StateInfo> states = obj.stateInfo.get(Integer.toString(currentState));
-			StateInfo nextState = states.get(0);
-
-			// Build quest command
-			pk = new XtWriter();
-			pk.writeString("qcmd");
-			pk.writeInt(-1); // Data prefix
-			pk.writeString(nextState.command); // command
-			pk.writeInt(1); // State
-			pk.writeString(target); // Interactable
-			pk.writeInt(0); // Position
-			// Parameters
-			for (String param : nextState.params)
-				pk.writeString(param);
-			pk.writeString(""); // Data suffix
-			client.sendPacket(pk.encode());
+			for (StateInfo st : states) {
+				// Build quest command
+				pk = new XtWriter();
+				pk.writeString("qcmd");
+				pk.writeInt(-1); // Data prefix
+				pk.writeString(st.command); // command
+				pk.writeInt(1); // State
+				pk.writeString(target); // Interactable
+				pk.writeInt(0); // Position
+				// Parameters
+				for (String param : st.params)
+					pk.writeString(param);
+				pk.writeString(""); // Data suffix
+				client.sendPacket(pk.encode());
+			}
 		}
 
 		return true;

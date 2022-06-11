@@ -25,7 +25,7 @@ public class InteractionStart implements IXtPacket<InteractionStart> {
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
-		target = reader.readRemaining();
+		target = reader.read();
 	}
 
 	@Override
