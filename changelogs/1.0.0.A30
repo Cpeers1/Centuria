@@ -1,3 +1,4 @@
 Changes in EmuFeral 1.0.0.A30:
-- Fix tutorial crash
-- Fix crash when entering areas without interactables
+ - Fix tutorial crash
+ - Fix crash when entering areas without interactables
+ - Repair missing interactions
