@@ -42,51 +42,54 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Sanctuary join
 
-		// Load player object
-		Player player = (Player) client.container;
+		// Send error
+		client.sendPacket("%xt%rj%-1%false%1689%2%-1%" + sanctuaryOwner + "%sanctuary_" + sanctuaryOwner + "%");
 
-		// Check owner
-		boolean isOwner = player.account.getAccountID().equals(sanctuaryOwner);
-
-		if (!isOwner) {
-			// TODO: privacy settings
-//			// Send error
-//			client.sendPacket("%xt%rj%-1%false%1689%2%-1%" + sanctuaryOwner + "%sanctuary_" + sanctuaryOwner + "%");
-//			return true;
-		}
-
-		// Find owner
-		EmuFeralAccount sancOwner = AccountManager.getInstance().getAccount(sanctuaryOwner);
-		if (!sancOwner.getPlayerInventory().containsItem("201")) {
-			// Fix sanctuaries
-			EmuFeral.fixSanctuaries(sancOwner.getPlayerInventory());
-		}
-
-		// Build room join
-		JoinRoom join = new JoinRoom();
-		join.roomType = 2;
-		join.roomID = 1689;
-		join.roomIdentifier = "sanctuary_" + sanctuaryOwner;
-		join.teleport = sanctuaryOwner;
-
-		// Sync
-		GameServer srv = (GameServer) client.getServer();
-		for (Player plr2 : srv.getPlayers()) {
-			if (plr2.room != null && player.room != null && player.room != null && plr2.room.equals(player.room)
-					&& plr2 != player) {
-				player.destroyAt(plr2);
-			}
-		}
-
-		// Assign room
-		player.roomReady = false;
-		player.pendingRoomID = 1689;
-		player.pendingRoom = "sanctuary_" + sanctuaryOwner;
-		player.roomType = join.roomType;
-
-		// Send packet
-		client.sendPacket(join);
-
+//		// Load player object
+//		Player player = (Player) client.container;
+//
+//		// Check owner
+//		boolean isOwner = player.account.getAccountID().equals(sanctuaryOwner);
+//
+//		if (!isOwner) {
+//			// TODO: privacy settings
+////			// Send error
+////			client.sendPacket("%xt%rj%-1%false%1689%2%-1%" + sanctuaryOwner + "%sanctuary_" + sanctuaryOwner + "%");
+////			return true;
+//		}
+//
+//		// Find owner
+//		EmuFeralAccount sancOwner = AccountManager.getInstance().getAccount(sanctuaryOwner);
+//		if (!sancOwner.getPlayerInventory().containsItem("201")) {
+//			// Fix sanctuaries
+//			EmuFeral.fixSanctuaries(sancOwner.getPlayerInventory());
+//		}
+//
+//		// Build room join
+//		JoinRoom join = new JoinRoom();
+//		join.roomType = 2;
+//		join.roomID = 1689;
+//		join.roomIdentifier = "sanctuary_" + sanctuaryOwner;
+//		join.teleport = sanctuaryOwner;
+//
+//		// Sync
+//		GameServer srv = (GameServer) client.getServer();
+//		for (Player plr2 : srv.getPlayers()) {
+//			if (plr2.room != null && player.room != null && player.room != null && plr2.room.equals(player.room)
+//					&& plr2 != player) {
+//				player.destroyAt(plr2);
+//			}
+//		}
+//
+//		// Assign room
+//		player.roomReady = false;
+//		player.pendingRoomID = 1689;
+//		player.pendingRoom = "sanctuary_" + sanctuaryOwner;
+//		player.roomType = join.roomType;
+//
+//		// Send packet
+//		client.sendPacket(join);
+//
 		return true;
 	}
 

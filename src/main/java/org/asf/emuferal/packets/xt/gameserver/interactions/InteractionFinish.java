@@ -49,12 +49,15 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 		// Find object
 		NetworkedObject obj = NetworkedObjects.getObject(Integer.toString(plr.roomID), target);
 
+		// TODO: chests
+
 		// Build response
 		XtWriter pk = new XtWriter();
 		pk.writeString("oaf");
 		pk.writeInt(-1); // Data prefix
-		pk.writeString(target);
-		pk.writeInt(1); // State
+		pk.writeString(target); // Interactable
+		pk.writeInt(obj.primaryObjectInfo.type); // Type
+		pk.writeString("2");
 		pk.writeString(""); // Data suffix
 		client.sendPacket(pk.encode());
 

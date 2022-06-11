@@ -1,2 +1,10 @@
-Changes in EmuFeral 1.0.0.A29:
+Changes in EmuFeral 1.0.0.A29 (WIP):
  - Improved reliability of player warping
+ - Sanctuary join failure instead of black screen
+ - Interactions (partial: most npcs work, resource collection does remove the resource but wont add to inventory, chests dont work)
+ - Data fixer to fix issues with player data created from packet data
+
+This update has been brought out so interactions can be further tested, the next update will be the last alpha build, after that we will be moving to beta.
+After this update, the focus will mostly be on repairing broken interactions, resources and sanctuaries.
+Resource collection will be the final update before moving into beta, the launcher will be rewritten so you can select which server to connect to.
+ 
