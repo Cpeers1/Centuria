@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
-import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;
@@ -51,26 +50,14 @@ public class InteractionStart implements IXtPacket<InteractionStart> {
 			System.out.println("[INTERACTION] [START]  Client to server (target: " + target + ")");
 		}
 
-		// object update...
-
-		// Build Broadcast Packet
-		XtWriter pk = new XtWriter();
-		pk.writeString("oas");
-		pk.writeString(target);
-		pk.writeString(source);
-		pk.writeString("");
-
-		// Broadcast interaction
-		String msg = pk.encode();
-		client.sendPacket(msg);
+		// Send response
+		client.sendPacket(this);
 
 		if (System.getProperty("debugMode") != null) {
-			System.out.println("[INTERACTION] [START]  Server to client: " + msg);
+			System.out.println("[INTERACTION] [START]  Server to client: " + build());
 		}
 
-		plr.beginInteraction(target);
-
-		// TODO
+		// TODO?
 		return true;
 	}
 

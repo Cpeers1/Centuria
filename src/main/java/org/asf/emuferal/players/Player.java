@@ -40,11 +40,6 @@ public class Player {
 
 	public int lastAction = 0;
 
-	// Interacting with. if this is null, the player isn't interacting with an
-	// object.
-	// If this is true, the player is interacting with something.
-	public String interactingWithID = null;
-
 	public void destroyAt(Player player) {
 		// Delete character
 		XtWriter wr = new XtWriter();
@@ -105,17 +100,5 @@ public class Player {
 			wr.writeString(""); // data suffix
 			player.client.sendPacket(wr.encode());
 		}
-	}
-
-	public void beginInteraction(String source) {
-		interactingWithID = source;
-	}
-
-	public void endInteraction(String source) {
-		interactingWithID = null;
-	}
-
-	public void finishInteraction() {
-		// TODO
 	}
 }

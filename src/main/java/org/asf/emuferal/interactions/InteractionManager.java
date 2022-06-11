@@ -1,8 +1,9 @@
 package org.asf.emuferal.interactions;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 
 public class InteractionManager {
@@ -14,9 +15,16 @@ public class InteractionManager {
 	 * @param levelID Level to find interactions for
 	 */
 	public static void initInteractionsFor(SmartfoxClient client, int levelID) {
-		ArrayList<InteractionInitData> data = new ArrayList<InteractionInitData>();
+		HashMap<String, NetworkedObject> data = new HashMap<String, NetworkedObject>();
 
-		// TODO: proper implementation
+		// Load object ids
+		NetworkedObjects.init();
+		String[] ids = NetworkedObjects.getObjectsFor(Integer.toString(levelID));
+
+		// Add objecets
+		for (String id : ids) {
+			data.put(id, NetworkedObjects.getObject(Integer.toString(levelID), id));
+		}
 
 		// Send init packet
 		XtWriter packet = new XtWriter();
@@ -25,23 +33,25 @@ public class InteractionManager {
 		packet.writeString("-1036"); // unknown
 		packet.writeString("24"); // unknown
 		packet.writeInt(data.size()); // count
-		for (InteractionInitData ent : data) {
-			packet.writeString(ent.interactableID);
-			packet.writeInt(ent.interactionType);
-			packet.writeInt(ent.interactionDefID);
+		for (String id : data.keySet()) {
+			NetworkedObject ent = data.get(id);
+			packet.writeString(id);
+			packet.writeInt(ent.primaryObjectInfo.type);
+			packet.writeInt(ent.primaryObjectInfo.defId);
 		}
 		packet.writeString(""); // data suffix
 		client.sendPacket(packet.encode());
 
 		// Send qcmd packets
-		for (InteractionInitData ent : data) {
-			if (ent.interactionType == 34) {
+		for (String id : data.keySet()) {
+			NetworkedObject ent = data.get(id);
+			if (ent.stateInfo.size() == 0) {
 				// These need qcmd packets packet = new XtWriter();
 				packet = new XtWriter();
-				packet.writeString("qs");
+				packet.writeString("qcmd");
 				packet.writeString("-1"); // data prefix
 				packet.writeString("1"); // unknown
-				packet.writeString(ent.interactableID); // interaction ID
+				packet.writeString(id); // interaction ID
 				packet.writeString("0"); // unknown
 				packet.writeString("0"); // unknown
 				packet.writeString("1"); // unknown
@@ -50,9 +60,34 @@ public class InteractionManager {
 			}
 		}
 
-		// TODO: objectinfo for each entry, use defID 978 for interactable components
+		// Initialize objects
+		for (String id : data.keySet()) {
+			NetworkedObject ent = data.get(id);
 
-		levelID = levelID;
+			// Spawn object
+			XtWriter wr = new XtWriter();
+			wr.writeString("oi");
+			wr.writeInt(-1); // data prefix
+
+			// Object creation parameters
+			wr.writeString(id); // World object ID
+			wr.writeInt(978);
+			wr.writeString(""); // Owner ID
+
+			// Object info
+			wr.writeInt(0);
+			wr.writeLong(System.currentTimeMillis() / 1000);
+			wr.writeDouble(ent.locationInfo.position.x);
+			wr.writeDouble(ent.locationInfo.position.y);
+			wr.writeDouble(ent.locationInfo.position.z);
+			wr.writeDouble(ent.locationInfo.rotation.x);
+			wr.writeDouble(ent.locationInfo.rotation.y);
+			wr.writeDouble(ent.locationInfo.rotation.z);
+			wr.writeDouble(ent.locationInfo.rotation.w);
+			wr.add("0%0%0%0.0%0%0%0");
+			wr.writeString(""); // data suffix
+			client.sendPacket(wr.encode());
+		}
 	}
 
 }
