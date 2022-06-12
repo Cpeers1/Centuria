@@ -214,10 +214,87 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			fixBrokenAvatars(item.getAsJsonArray(), inv);
 		}
 
-		// quest progression items
+		// Currency
+		if (slot.equals("104")) {
+			JsonArray itm;
+			boolean changed = inv.containsItem(slot);
+			if (changed)
+				itm = inv.getItem(slot).getAsJsonArray();
+			else
+				itm = new JsonArray();
+
+			if (!inv.getAccessor().hasInventoryObject(slot, 2327)) {
+				// Likes
+
+				// Build entry
+				JsonObject obj = new JsonObject();
+				obj.addProperty("defId", 2327);
+				JsonObject components = new JsonObject();
+				JsonObject quantity = new JsonObject();
+				quantity.addProperty("quantity", 2500);
+				components.add("Quantity", quantity);
+				obj.add("components", components);
+				obj.addProperty("id", UUID.randomUUID().toString());
+				obj.addProperty("type", 104);
+
+				// Add entry
+				itm.add(obj);
+				changed = true;
+			}
+
+			if (!inv.getAccessor().hasInventoryObject(slot, 14500)) {
+				// Star fragments
+
+				// Build entry
+				JsonObject obj = new JsonObject();
+				obj.addProperty("defId", 14500);
+				JsonObject components = new JsonObject();
+				JsonObject quantity = new JsonObject();
+				quantity.addProperty("quantity", 0);
+				components.add("Quantity", quantity);
+				obj.add("components", components);
+				obj.addProperty("id", UUID.randomUUID().toString());
+				obj.addProperty("type", 104);
+
+				// Add entry
+				itm.add(obj);
+				changed = true;
+			}
+
+			if (!inv.getAccessor().hasInventoryObject(slot, 8372)) {
+				// Lockpicks
+
+				// Build entry
+				JsonObject obj = new JsonObject();
+				obj.addProperty("defId", 8372);
+				JsonObject components = new JsonObject();
+				JsonObject quantity = new JsonObject();
+				quantity.addProperty("quantity", 0);
+				components.add("Quantity", quantity);
+				obj.add("components", components);
+				obj.addProperty("id", UUID.randomUUID().toString());
+				obj.addProperty("type", 104);
+
+				// Add entry
+				itm.add(obj);
+				changed = true;
+			}
+
+			if (changed) {
+				// Save item
+				item = itm;
+				inv.setItem(slot, item);
+			}
+		}
+
+		// Quest progression items
 		if (slot.equals("311")) {
 			if (inv.getItem("311") == null || inv.getItem("311").getAsJsonArray().isEmpty()) {
-				JsonArray itm = inv.getItem("311").getAsJsonArray();
+				JsonArray itm;
+				if (inv.containsItem("311"))
+					itm = inv.getItem("311").getAsJsonArray();
+				else
+					itm = new JsonArray();
 
 				// Build entry
 				JsonObject obj = new JsonObject();

@@ -5,3 +5,5 @@ Changes in EmuFeral 1.0.0.A31:
  - Event for world join
  - Interaction module API
  - Fixed some shopkeepers freezing the game
+ - Move the highlevel inventory accessors to their own classes
+ - Implemented a currency accessor
