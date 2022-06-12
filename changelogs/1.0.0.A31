@@ -3,3 +3,5 @@ Changes in EmuFeral 1.0.0.A31:
  - Event for registering custom networked objects
  - Events for interactions
  - Event for world join
+ - Interaction module API
+ - Fixed some shopkeepers freezing the game

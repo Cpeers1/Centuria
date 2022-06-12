@@ -5,10 +5,19 @@ import java.util.HashMap;
 
 import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
+import org.asf.emuferal.interactions.modules.InteractionModule;
+import org.asf.emuferal.interactions.modules.ShopkeeperModule;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.players.Player;
 
 public class InteractionManager {
+
+	private static ArrayList<InteractionModule> modules = new ArrayList<InteractionModule>();
+
+	static {
+		// Add modules
+		modules.add(new ShopkeeperModule());
+	}
 
 	/**
 	 * Initializes the interactions for a specific level
@@ -30,6 +39,9 @@ public class InteractionManager {
 
 		// Initialize objects
 		initializeNetworkedObjects(client, ids.toArray(t -> new String[t]));
+
+		// Initialize modules
+		modules.forEach(t -> t.prepareWorld((Player) client.container));
 	}
 
 	/**
@@ -119,8 +131,14 @@ public class InteractionManager {
 	 * @param state          Interaction state
 	 */
 	public static void handleInteraction(Player player, String interactableId, NetworkedObject object, int state) {
-		// TODO Auto-generated method stub
-		state = state;
+		// Find module
+		for (InteractionModule mod : modules) {
+			if (mod.canHandle(player, interactableId, object)) {
+				// Handle interaction
+				if (mod.handleInteractionSuccess(player, interactableId, object, state))
+					return;
+			}
+		}
 	}
 
 	/**
@@ -133,8 +151,25 @@ public class InteractionManager {
 	 */
 	public static void handleInteractionDataRequest(Player player, String interactableId, NetworkedObject object,
 			int state) {
-		// TODO Auto-generated method stub
-		state = state;
+		// Find module
+		boolean warn = true;
+		for (InteractionModule mod : modules) {
+			if (mod.canHandle(player, interactableId, object)) {
+				warn = false;
+
+				// Handle interaction
+				if (mod.handleInteractionDataRequest(player, interactableId, object, state))
+					return;
+			}
+		}
+
+		// Warn
+		if (warn) {
+			if (System.getProperty("debugMode") != null) {
+				System.err.println("[INTERACTION] [UNHANDLED] Client to server (target: " + interactableId + ", state: "
+						+ state + ")");
+			}
+		}
 	}
 
 }
