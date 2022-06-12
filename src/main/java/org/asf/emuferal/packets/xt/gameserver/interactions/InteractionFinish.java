@@ -91,7 +91,7 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 			return true;
 
 		// Handle interaction
-		InteractionManager.handleInteraction(plr, target, obj);
+		InteractionManager.handleInteraction(plr, target, obj, currentState);
 
 		return true;
 	}

@@ -116,10 +116,11 @@ public class InteractionManager {
 	 * @param player         Player making the interaction
 	 * @param interactableId Interactable object ID
 	 * @param object         NetworkedObject associated with the interactable ID
+	 * @param state          Interaction state
 	 */
-	public static void handleInteraction(Player player, String interactableId, NetworkedObject object) {
+	public static void handleInteraction(Player player, String interactableId, NetworkedObject object, int state) {
 		// TODO Auto-generated method stub
-
+		state = state;
 	}
 
 	/**
@@ -133,7 +134,7 @@ public class InteractionManager {
 	public static void handleInteractionDataRequest(Player player, String interactableId, NetworkedObject object,
 			int state) {
 		// TODO Auto-generated method stub
-
+		state = state;
 	}
 
 }

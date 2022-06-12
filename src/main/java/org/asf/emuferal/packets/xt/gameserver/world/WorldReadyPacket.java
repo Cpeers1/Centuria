@@ -9,6 +9,8 @@ import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.interactions.InteractionManager;
+import org.asf.emuferal.modules.eventbus.EventBus;
+import org.asf.emuferal.modules.events.levels.LevelJoinEvent;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
@@ -52,6 +54,9 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Initialize interactions
 		InteractionManager.initInteractionsFor(client, plr.pendingRoomID);
+
+		// Dispatch event
+		EventBus.getInstance().dispatchEvent(new LevelJoinEvent(plr.pendingRoomID, plr.pendingRoom, plr));
 
 		// Send to tutorial if new
 		if (plr.account.isPlayerNew()) {
