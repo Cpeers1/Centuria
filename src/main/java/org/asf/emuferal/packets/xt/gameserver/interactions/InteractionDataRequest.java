@@ -46,13 +46,10 @@ public class InteractionDataRequest implements IXtPacket<InteractionDataRequest>
 		}
 
 		// Find object
-		int id = plr.roomID;
-		if (!plr.roomReady)
-			id = plr.pendingRoomID;
-		NetworkedObject obj = NetworkedObjects.getObject(Integer.toString(id), target);
+		NetworkedObject obj = NetworkedObjects.getObject(target);
 		if (obj == null)
 			return true;
-		
+
 		// TODO
 		return true;
 	}

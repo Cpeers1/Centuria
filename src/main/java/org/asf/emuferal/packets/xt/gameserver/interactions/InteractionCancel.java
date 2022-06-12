@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.interactions.NetworkedObjects;
+import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;
@@ -40,6 +42,9 @@ public class InteractionCancel implements IXtPacket<InteractionCancel> {
 		if (System.getProperty("debugMode") != null) {
 			System.out.println("[INTERACTION] [CANCELED] Client to server (target: " + target + ")");
 		}
+		
+		// Load object
+		NetworkedObject obj = NetworkedObjects.getObject(target);
 		
 		// TODO
 		return true;

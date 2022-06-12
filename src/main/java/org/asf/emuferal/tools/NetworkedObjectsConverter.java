@@ -25,7 +25,7 @@ public class NetworkedObjectsConverter {
 		String lastName = "";
 		String lastData = null;
 		String lastID = null;
-		HashMap<String, ArrayList<String>> overrideMapper = new HashMap<String, ArrayList<String>>();
+		HashMap<String, ArrayList<String>> levelOverrideMap = new HashMap<String, ArrayList<String>>();
 		for (String line : Files.readAllLines(Path.of(args[2]))) {
 			if (line.startsWith("\"") && !line.startsWith("\"\"")) {
 				lastID = line.substring(1);
@@ -44,11 +44,11 @@ public class NetworkedObjectsConverter {
 							data = data.get("componentJSON").getAsJsonObject();
 							JsonArray overrides = data.get("levelOverrides").getAsJsonObject().get("_defIDs")
 									.getAsJsonArray();
+							ArrayList<String> ids = new ArrayList<String>();
 							for (JsonElement ele2 : overrides) {
-								if (!overrideMapper.containsKey(ele2.getAsString()))
-									overrideMapper.put(ele2.getAsString(), new ArrayList<String>());
-								overrideMapper.get(ele2.getAsString()).add(lastID);
+								ids.add(ele2.getAsString());
 							}
+							levelOverrideMap.put(lastID, ids);
 						}
 					}
 				}
@@ -61,7 +61,7 @@ public class NetworkedObjectsConverter {
 		lastData = null;
 		lastID = null;
 		lastName = null;
-		HashMap<String, ArrayList<String>> idMapper = new HashMap<String, ArrayList<String>>();
+		HashMap<String, ArrayList<String>> overrideMap = new HashMap<String, ArrayList<String>>();
 		for (String line : Files.readAllLines(Path.of(args[1]))) {
 			if (line.startsWith("\"") && !line.startsWith("\"\"") && !line.startsWith("\"DefID")) {
 				lastID = line.substring(1);
@@ -78,18 +78,21 @@ public class NetworkedObjectsConverter {
 						JsonObject data = ele.getAsJsonObject();
 						if (data.get("componentClass").getAsString().equals("LevelOverrideDefComponent")) {
 							data = data.get("componentJSON").getAsJsonObject();
+							ArrayList<String> ids = new ArrayList<String>();
+
 							for (JsonElement ele2 : data.get("networkedObjects").getAsJsonObject().get("_defIDs")
 									.getAsJsonArray()) {
-								if (overrideMapper.containsKey(lastID)) {
-									ArrayList<String> levelID = overrideMapper.get(lastID);
-									idMapper.put(ele2.getAsString(), levelID);
-								}
+								ids.add(ele2.getAsString());
 							}
+
+							overrideMap.put(lastID, ids);
 						}
 					}
 				}
 				lastData = null;
-			} else if (lastData != null) {
+			} else if (lastData != null)
+
+			{
 				lastData += line + "\n";
 			}
 		}
@@ -98,16 +101,19 @@ public class NetworkedObjectsConverter {
 		JsonObject objects = new JsonObject();
 		lastData = null;
 		lastID = null;
+		lastName = null;
 		boolean skip = false;
 		for (String line : Files.readAllLines(Path.of(args[0]))) {
-			if (line.startsWith("\"") && !line.startsWith("\"\"")) {
+			if (line.startsWith("\"") && !line.startsWith("\"\"") && !line.startsWith("\"DefID")) {
 				String id = line.substring(1);
+				lastName = id.substring(id.indexOf(",\"\"") + 3);
+				lastName = lastName.substring(0, lastName.indexOf("\""));
 				id = id.substring(0, id.indexOf(","));
 				lastID = id;
 				lastData = "";
 			} else if (line.startsWith("\"\"")) {
-				if (!skip && idMapper.containsKey(lastID)) {
-					JsonObject worldObjects = new JsonObject();
+				if (!skip) {
+					JsonObject networkedObjects = new JsonObject();
 
 					lastData = "{\n" + lastData;
 					lastData = lastData.replace("`", "\"");
@@ -157,13 +163,16 @@ public class NetworkedObjectsConverter {
 										}
 									infoObject.add("stateInfo", stateInfo);
 
-									worldObjects.add(uuid, infoObject);
+									networkedObjects.add(uuid, infoObject);
 								}
 							}
 						}
 					}
 
-					idMapper.get(lastID).forEach(t -> objects.add(t, worldObjects));
+					JsonObject data = new JsonObject();
+					data.addProperty("name", lastName);
+					data.add("objects", networkedObjects);
+					objects.add(lastID, data);
 				}
 
 				lastData = null;
@@ -174,6 +183,29 @@ public class NetworkedObjectsConverter {
 			}
 		}
 		res.add("Objects", objects);
+
+		JsonObject levels = new JsonObject();
+		levelOverrideMap.forEach((id, objectMap) -> {
+			if (objectMap.isEmpty())
+				return;
+			JsonArray objs = new JsonArray();
+			objectMap.forEach(t -> {
+				if (overrideMap.containsKey(t) && !overrideMap.get(t).isEmpty())
+					objs.add(t);
+			});
+			levels.add(id, objs);
+		});
+		res.add("LevelOverrides", levels);
+
+		JsonObject overrides = new JsonObject();
+		overrideMap.forEach((id, objectMap) -> {
+			if (objectMap.isEmpty())
+				return;
+			JsonArray objs = new JsonArray();
+			objectMap.forEach(t -> objs.add(t));
+			overrides.add(id, objs);
+		});
+		res.add("Overrides", overrides);
 
 		System.out.println(new Gson().newBuilder().setPrettyPrinting().create().toJson(res));
 	}

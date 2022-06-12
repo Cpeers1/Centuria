@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.interactions.NetworkedObjects;
+import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;
@@ -49,6 +51,11 @@ public class InteractionStart implements IXtPacket<InteractionStart> {
 		if (System.getProperty("debugMode") != null) {
 			System.out.println("[INTERACTION] [START]  Client to server (target: " + target + ")");
 		}
+
+		// Load object
+		NetworkedObject obj = NetworkedObjects.getObject(target);
+		if (obj == null)
+			System.err.println("[INTERACTION] [START]  WARNING: Unrecognized object: " + target);
 
 		// Send response
 		client.sendPacket(this);

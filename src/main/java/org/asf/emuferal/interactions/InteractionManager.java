@@ -1,5 +1,6 @@
 package org.asf.emuferal.interactions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.asf.emuferal.data.XtWriter;
@@ -19,11 +20,17 @@ public class InteractionManager {
 
 		// Load object ids
 		NetworkedObjects.init();
-		String[] ids = NetworkedObjects.getObjectsFor(Integer.toString(levelID));
+		ArrayList<String> ids = new ArrayList<String>();
+		// Find level objects
+		for (String id : NetworkedObjects.getCollectionIdsForLevel(Integer.toString(levelID))) {
+			NetworkedObjects.getObjects(id).objects.keySet().forEach(t -> ids.add(t));
+		}
 
-		// Add objecets
+		// TODO: quest objects
+
+		// Add objects
 		for (String id : ids) {
-			data.put(id, NetworkedObjects.getObject(Integer.toString(levelID), id));
+			data.put(id, NetworkedObjects.getObject(id));
 		}
 
 		// Send init packet

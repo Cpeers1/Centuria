@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 public class NetworkedObject {
 
+	public String containerId;
+	
 	public String objectName;
 	public int localType;
 
