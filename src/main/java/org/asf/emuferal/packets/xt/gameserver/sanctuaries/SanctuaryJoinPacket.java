@@ -41,6 +41,7 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Sanctuary join
+		client.sendPacket("%xt%rj%-1%false%1689%2%-1%" + sanctuaryOwner + "%sanctuary_" + sanctuaryOwner + "%");
 
 		// Load player object
 		Player player = (Player) client.container;
