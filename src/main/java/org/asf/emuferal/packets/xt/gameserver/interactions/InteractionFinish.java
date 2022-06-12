@@ -5,9 +5,12 @@ import java.util.ArrayList;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.interactions.InteractionManager;
 import org.asf.emuferal.interactions.NetworkedObjects;
 import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
 import org.asf.emuferal.interactions.dataobjects.StateInfo;
+import org.asf.emuferal.modules.eventbus.EventBus;
+import org.asf.emuferal.modules.events.interactions.InteractionSuccessEvent;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;
@@ -51,8 +54,6 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 		if (obj == null)
 			return true;
 
-		// TODO: resources
-
 		// Build response
 		XtWriter pk = new XtWriter();
 		pk.writeString("oaf");
@@ -82,6 +83,15 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 				client.sendPacket(pk.encode());
 			}
 		}
+
+		// Dispatch event
+		InteractionSuccessEvent ev = new InteractionSuccessEvent(plr, target, obj, currentState);
+		EventBus.getInstance().dispatchEvent(ev);
+		if (ev.isHandled())
+			return true;
+
+		// Handle interaction
+		InteractionManager.handleInteraction(plr, target, obj);
 
 		return true;
 	}

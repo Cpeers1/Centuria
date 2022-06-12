@@ -216,31 +216,25 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 		// quest progression items
 		if (slot.equals("311")) {
+			if (inv.getItem("311") == null || inv.getItem("311").getAsJsonArray().isEmpty()) {
+				JsonArray itm = inv.getItem("311").getAsJsonArray();
 
-			if (inv.getItem("311") == null) {
-				// initalize the item if its null
-				inv.setItem("311", new JsonArray());
+				// Build entry
+				JsonObject obj = new JsonObject();
+				obj.addProperty("defId", 22781);
+				JsonObject components = new JsonObject();
+				JsonObject questObject = new JsonObject();
+				questObject.add("completedQuests", new JsonArray());
+				components.add("SocialExpanseLinearGenericQuestsCompletion", questObject);
+				obj.add("components", components);
+				obj.addProperty("id", UUID.randomUUID().toString());
+				obj.addProperty("type", 311);
+				itm.add(obj);
+				item = itm;
+
+				// Save item
+				inv.setItem(slot, item);
 			}
-
-			JsonArray itm = inv.getItem("311").getAsJsonArray();
-
-			// Build entry
-			JsonObject obj = new JsonObject();
-			obj.addProperty("defId", 22781);
-			JsonObject components = new JsonObject();
-			JsonObject questObject = new JsonObject();
-			questObject.add("completedQuests", new JsonArray());
-			components.add("SocialExpanseLinearGenericQuestsCompletion", questObject);
-			obj.add("components", components);
-			obj.addProperty("id", UUID.randomUUID().toString());
-			obj.addProperty("type", 311);
-			itm.add(obj);
-
-			// Send the item to the client
-			InventoryItemPacket pkt = new InventoryItemPacket();
-			pkt.item = itm;
-			client.sendPacket(pkt);
-			return true;
 		}
 
 		// Send the item to the client

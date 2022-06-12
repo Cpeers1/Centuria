@@ -51,6 +51,60 @@ public abstract class PlayerInventory {
 		}
 
 		/**
+		 * Checks if inventory objects are present
+		 * 
+		 * @param inventoryId Inventory ID
+		 * @param objectId    Object UUID
+		 * @return True if present, false otherwise
+		 */
+		public boolean hasInventoryObject(String inventoryId, String objectId) {
+			// Load the inventory object
+			if (!inventory.containsItem(inventoryId))
+				inventory.setItem(inventoryId, new JsonArray());
+			JsonArray items = inventory.getItem(inventoryId).getAsJsonArray();
+
+			// Find object
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				String itID = itm.get("id").getAsString();
+				if (itID.equals(objectId)) {
+					// Found it
+					return true;
+				}
+			}
+
+			// Could not find it
+			return false;
+		}
+
+		/**
+		 * Retrieves inventory objects by ID
+		 * 
+		 * @param inventoryId Inventory ID
+		 * @param objectId    Object UUID
+		 * @return JsonObject instance or null
+		 */
+		public JsonObject findInventoryObject(String inventoryId, String objectId) {
+			// Load the inventory object
+			if (!inventory.containsItem(inventoryId))
+				inventory.setItem(inventoryId, new JsonArray());
+			JsonArray items = inventory.getItem(inventoryId).getAsJsonArray();
+
+			// Find object
+			for (JsonElement ele : items) {
+				JsonObject itm = ele.getAsJsonObject();
+				String itID = itm.get("id").getAsString();
+				if (itID.equals(objectId)) {
+					// Found it
+					return itm;
+				}
+			}
+
+			// Could not find it
+			return null;
+		}
+
+		/**
 		 * Gives the player another look slot
 		 */
 		public void addExtraLookSlot() {
@@ -70,19 +124,7 @@ public abstract class PlayerInventory {
 
 						// Generate look ID
 						String lID = UUID.randomUUID().toString();
-						while (true) {
-							boolean found = false;
-							for (JsonElement ele : avatars) {
-								JsonObject ava = ele.getAsJsonObject();
-								String lookID = ava.get("id").getAsString();
-								if (lookID.equals(lID)) {
-									found = true;
-									break;
-								}
-							}
-							if (!found)
-								break;
-
+						while (hasInventoryObject("avatars", lID)) {
 							lID = UUID.randomUUID().toString();
 						}
 
@@ -199,19 +241,7 @@ public abstract class PlayerInventory {
 					for (int i = 0; i < slots + 1; i++) {
 						// Generate look ID
 						String lID = UUID.randomUUID().toString();
-						while (true) {
-							boolean found = false;
-							for (JsonElement ele : avatars) {
-								JsonObject ava = ele.getAsJsonObject();
-								String lookID = ava.get("id").getAsString();
-								if (lookID.equals(lID)) {
-									found = true;
-									break;
-								}
-							}
-							if (!found)
-								break;
-
+						while (hasInventoryObject("avatars", lID)) {
 							lID = UUID.randomUUID().toString();
 						}
 
@@ -274,18 +304,7 @@ public abstract class PlayerInventory {
 
 					// Generate item ID
 					String sID = UUID.randomUUID().toString();
-					while (true) {
-						found = false;
-						for (JsonElement ele : species) {
-							JsonObject sp = ele.getAsJsonObject();
-							String spID = sp.get("id").getAsString();
-							if (spID.equals(sID)) {
-								found = true;
-								break;
-							}
-						}
-						if (!found)
-							break;
+					while (hasInventoryObject("1", sID)) {
 						sID = UUID.randomUUID().toString();
 					}
 					// Timestamp
@@ -433,22 +452,7 @@ public abstract class PlayerInventory {
 		 * @return JsonObject or null
 		 */
 		public JsonObject getClothingData(String id) {
-			// Load the inventory object
-			if (!inventory.containsItem("100"))
-				inventory.setItem("100", new JsonArray());
-			JsonArray items = inventory.getItem("100").getAsJsonArray();
-
-			// Find object
-			for (JsonElement ele : items) {
-				JsonObject itm = ele.getAsJsonObject();
-				String itID = itm.get("id").getAsString();
-				if (itID.equals(id)) {
-					// Return clothing object
-					return itm;
-				}
-			}
-
-			return null;
+			return findInventoryObject("100", id);
 		}
 
 		/**
@@ -466,19 +470,7 @@ public abstract class PlayerInventory {
 
 			// Generate item ID
 			String cID = UUID.randomUUID().toString();
-			while (true) {
-				boolean found = false;
-				for (JsonElement ele : items) {
-					JsonObject itm = ele.getAsJsonObject();
-					String itmID = itm.get("id").getAsString();
-					if (itmID.equals(cID)) {
-						found = true;
-						break;
-					}
-				}
-				if (!found)
-					break;
-
+			while (hasInventoryObject("100", cID)) {
 				cID = UUID.randomUUID().toString();
 			}
 
@@ -952,23 +944,7 @@ public abstract class PlayerInventory {
 		 * @return JSON object or null
 		 */
 		public JsonObject getIslandTypeObject(String id) {
-			// Load the inventory object
-			if (!inventory.containsItem("6"))
-				inventory.setItem("6", new JsonArray());
-			JsonArray items = inventory.getItem("6").getAsJsonArray();
-
-			// Find object
-			for (JsonElement ele : items) {
-				JsonObject itm = ele.getAsJsonObject();
-				String itID = itm.get("id").getAsString();
-				if (itID.equals(id)) {
-					// Found it
-					return itm;
-				}
-			}
-
-			// Could not find it
-			return null;
+			return findInventoryObject("6", id);
 		}
 
 		/**
@@ -1126,23 +1102,7 @@ public abstract class PlayerInventory {
 		 * @return JSON object or null
 		 */
 		public JsonObject getHouseTypeObject(String id) {
-			// Load the inventory object
-			if (!inventory.containsItem("5"))
-				inventory.setItem("5", new JsonArray());
-			JsonArray items = inventory.getItem("5").getAsJsonArray();
-
-			// Find object
-			for (JsonElement ele : items) {
-				JsonObject itm = ele.getAsJsonObject();
-				String itID = itm.get("id").getAsString();
-				if (itID.equals(id)) {
-					// Found it
-					return itm;
-				}
-			}
-
-			// Could not find it
-			return null;
+			return findInventoryObject("5", id);
 		}
 
 		/**
@@ -1191,23 +1151,7 @@ public abstract class PlayerInventory {
 		 * @return Sanctuary JSON object or null
 		 */
 		public JsonObject getSanctuaryLook(String lookID) {
-			// Load the inventory object
-			if (!inventory.containsItem("201"))
-				inventory.setItem("201", new JsonArray());
-			JsonArray items = inventory.getItem("201").getAsJsonArray();
-
-			// Find sanctuary
-			for (JsonElement ele : items) {
-				JsonObject itm = ele.getAsJsonObject();
-				String itID = itm.get("id").getAsString();
-				if (itID.equals(lookID)) {
-					// Found it
-					return itm;
-				}
-			}
-
-			// Could not find it
-			return null;
+			return findInventoryObject("201", lookID);
 		}
 
 		/**

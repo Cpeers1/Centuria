@@ -1,0 +1,4 @@
+Changes in EmuFeral 1.0.0.A31:
+ - Rewrite the NetworkedObject manager so that it can be used with quests
+ - Event for registering custom networked objects
+ - Events for interactions

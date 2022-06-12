@@ -4,8 +4,11 @@ import java.io.IOException;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.interactions.InteractionManager;
 import org.asf.emuferal.interactions.NetworkedObjects;
 import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
+import org.asf.emuferal.modules.eventbus.EventBus;
+import org.asf.emuferal.modules.events.interactions.InteractionDataRequestEvent;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;
@@ -50,7 +53,14 @@ public class InteractionDataRequest implements IXtPacket<InteractionDataRequest>
 		if (obj == null)
 			return true;
 
-		// TODO
+		// Dispatch event
+		InteractionDataRequestEvent req = new InteractionDataRequestEvent(plr, target, obj, state);
+		EventBus.getInstance().dispatchEvent(req);
+		if (req.isHandled())
+			return true;
+
+		// Handle request
+		InteractionManager.handleInteractionDataRequest(plr, target, obj, state);
 		return true;
 	}
 

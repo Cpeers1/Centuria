@@ -12,6 +12,8 @@ import org.asf.emuferal.interactions.dataobjects.ObjectInfo;
 import org.asf.emuferal.interactions.dataobjects.PositionInfo;
 import org.asf.emuferal.interactions.dataobjects.RotationInfo;
 import org.asf.emuferal.interactions.dataobjects.StateInfo;
+import org.asf.emuferal.modules.eventbus.EventBus;
+import org.asf.emuferal.modules.events.objects.ObjectDefinitionInitEvent;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
 import com.google.gson.JsonArray;
@@ -119,6 +121,10 @@ public class NetworkedObjects {
 			}
 		} catch (IOException e) {
 		}
+
+		// Dispatch event
+		EventBus.getInstance()
+				.dispatchEvent(new ObjectDefinitionInitEvent(objects, levelOverrideMap, overrideMap, objectIdMap));
 
 		isReady = true;
 	}

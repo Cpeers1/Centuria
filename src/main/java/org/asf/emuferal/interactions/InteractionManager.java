@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
+import org.asf.emuferal.players.Player;
 
 public class InteractionManager {
 
@@ -16,7 +17,6 @@ public class InteractionManager {
 	 * @param levelID Level to find interactions for
 	 */
 	public static void initInteractionsFor(SmartfoxClient client, int levelID) {
-		HashMap<String, NetworkedObject> data = new HashMap<String, NetworkedObject>();
 
 		// Load object ids
 		NetworkedObjects.init();
@@ -27,6 +27,19 @@ public class InteractionManager {
 		}
 
 		// TODO: quest objects
+
+		// Initialize objects
+		initializeNetworkedObjects(client, ids.toArray(t -> new String[t]));
+	}
+
+	/**
+	 * Initializes networked objects (eg. npcs)
+	 * 
+	 * @param client Client to send the packets to
+	 * @param ids    Object UUIDs to initialize
+	 */
+	public static void initializeNetworkedObjects(SmartfoxClient client, String[] ids) {
+		HashMap<String, NetworkedObject> data = new HashMap<String, NetworkedObject>();
 
 		// Add objects
 		for (String id : ids) {
@@ -95,6 +108,32 @@ public class InteractionManager {
 			wr.writeString(""); // data suffix
 			client.sendPacket(wr.encode());
 		}
+	}
+
+	/**
+	 * Called to handle interactions
+	 * 
+	 * @param player         Player making the interaction
+	 * @param interactableId Interactable object ID
+	 * @param object         NetworkedObject associated with the interactable ID
+	 */
+	public static void handleInteraction(Player player, String interactableId, NetworkedObject object) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * Called to handle interaction data requests
+	 * 
+	 * @param player         Player making the interaction
+	 * @param interactableId Interactable object ID
+	 * @param object         NetworkedObject associated with the interactable ID
+	 * @param state          Interaction state
+	 */
+	public static void handleInteractionDataRequest(Player player, String interactableId, NetworkedObject object,
+			int state) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
