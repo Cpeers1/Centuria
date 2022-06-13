@@ -7,3 +7,4 @@ Changes in EmuFeral 1.0.0.A31:
  - Fixed some shopkeepers freezing the game
  - Move the highlevel inventory accessors to their own classes
  - Implemented a currency accessor
+ - Made it that find player ignores banned players

@@ -34,14 +34,14 @@ public class FindPlayer implements IXtPacket<FindPlayer> {
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Find avatar
-		
-		//log interaction details
+
+		// log interaction details
 		if (System.getProperty("debugMode") != null) {
 			System.out.println("[SOCIAL] [FindPlayer] Client to server ( playerName: " + name + " )");
 		}
-		
+
 		String id = AccountManager.getInstance().getUserByDisplayName(name);
-		if (id == null) {
+		if (id == null || AccountManager.getInstance().getAccount(id).isBanned()) {
 			XtWriter writer = new XtWriter();
 			writer.writeString("rffpu");
 			writer.writeInt(-1); // data prefix
@@ -49,12 +49,12 @@ public class FindPlayer implements IXtPacket<FindPlayer> {
 			writer.writeString(""); // account ID
 			writer.writeString(""); // data suffix
 			client.sendPacket(writer.encode());
-			
-			//log interaction details
+
+			// log interaction details
 			if (System.getProperty("debugMode") != null) {
-				System.out.println("[SOCIAL] [FindPlayer] Server to client ( success: false, accountId: )");
+				System.out.println("[SOCIAL] [FindPlayer] Server to client ( success: false )");
 			}
-			
+
 			return true; // Account not found
 		}
 
@@ -66,10 +66,11 @@ public class FindPlayer implements IXtPacket<FindPlayer> {
 		writer.writeString(AccountManager.getInstance().getAccount(id).getAccountID()); // account ID
 		writer.writeString(""); // data suffix
 		client.sendPacket(writer.encode());
-		
-		//log interaction details
+
+		// log interaction details
 		if (System.getProperty("debugMode") != null) {
-			System.out.println("[SOCIAL] [FindPlayer] Server to client ( success: true, accountId: " + AccountManager.getInstance().getAccount(id).getAccountID() + " )");
+			System.out.println("[SOCIAL] [FindPlayer] Server to client ( success: true, accountId: "
+					+ AccountManager.getInstance().getAccount(id).getAccountID() + " )");
 		}
 
 		return true;
