@@ -125,20 +125,29 @@ public class InteractionManager {
 	/**
 	 * Called to handle interactions
 	 * 
-	 * @param player         Player making the interaction
-	 * @param interactableId Interactable object ID
-	 * @param object         NetworkedObject associated with the interactable ID
-	 * @param state          Interaction state
+	 * @param player              Player making the interaction
+	 * @param interactableId      Interactable object ID
+	 * @param object              NetworkedObject associated with the interactable
+	 *                            ID
+	 * @param state               Interaction state
+	 * @param destroyOnCompletion Defines whether or not the resource will be
+	 *                            destroyed on interaction completion (resources
+	 *                            only)
+	 * @return New destroyOnCompletion state
 	 */
-	public static void handleInteraction(Player player, String interactableId, NetworkedObject object, int state) {
+	public static boolean handleInteraction(Player player, String interactableId, NetworkedObject object, int state,
+			boolean destroyOnCompletion) {
 		// Find module
 		for (InteractionModule mod : modules) {
 			if (mod.canHandle(player, interactableId, object)) {
 				// Handle interaction
+				destroyOnCompletion = mod.shouldDestroyResource(player, interactableId, object, state,
+						destroyOnCompletion);
 				if (mod.handleInteractionSuccess(player, interactableId, object, state))
-					return;
+					return destroyOnCompletion;
 			}
 		}
+		return destroyOnCompletion;
 	}
 
 	/**

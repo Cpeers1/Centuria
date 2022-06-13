@@ -19,6 +19,7 @@ public class InteractionSuccessEvent extends EventObject {
 	private NetworkedObject object;
 	private Player player;
 	private int state;
+	private boolean destroyResource;
 
 	public InteractionSuccessEvent(Player player, String objectId, NetworkedObject object, int state) {
 		this.player = player;
@@ -66,6 +67,27 @@ public class InteractionSuccessEvent extends EventObject {
 	 */
 	public int getState() {
 		return state;
+	}
+
+	/**
+	 * Checks if this resource will be destroyed after the interaction finishes
+	 * (resources only)
+	 * 
+	 * @return True if the resource should be destroyed after interacting, false
+	 *         otherwise
+	 */
+	public boolean shouldDestroyResource() {
+		return destroyResource;
+	}
+
+	/**
+	 * Defines whether or not the resource that was interacted with will be
+	 * destroyed (resources only)
+	 * 
+	 * @param destroyResource True to destroy the resource, false otherwise
+	 */
+	public void setDestroyResource(boolean destroyResource) {
+		this.destroyResource = destroyResource;
 	}
 
 }

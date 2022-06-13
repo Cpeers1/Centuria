@@ -8,6 +8,22 @@ import org.asf.emuferal.players.Player;
 public abstract class InteractionModule {
 
 	/**
+	 * 
+	 * @param player              Player making the interaction
+	 * @param id                  Interaction ID
+	 * @param object              Object that was interacted with
+	 * @param state               Interaction state
+	 * @param destroyOnCompletion Defines whether or not the resource will be
+	 *                            destroyed on interaction completion (resources
+	 *                            only)
+	 * @return New destroyOnCompletion state
+	 */
+	public boolean shouldDestroyResource(Player player, String id, NetworkedObject object, int state,
+			boolean destroyOnCompletion) {
+		return destroyOnCompletion;
+	}
+
+	/**
 	 * Called to prepare world objects
 	 * 
 	 * @param levelID Level ID

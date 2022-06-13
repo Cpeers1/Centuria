@@ -54,13 +54,26 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 		if (obj == null)
 			return true;
 
+		// Controls if the resource will be destroyed
+		boolean destroy = true;
+
+		// Dispatch event
+		InteractionSuccessEvent ev = new InteractionSuccessEvent(plr, target, obj, currentState);
+		ev.setDestroyResource(destroy);
+		EventBus.getInstance().dispatchEvent(ev);
+		destroy = ev.shouldDestroyResource();
+		if (!ev.isHandled()) {
+			// Handle interaction
+			destroy = InteractionManager.handleInteraction(plr, target, obj, currentState, destroy);
+		}
+
 		// Build response
 		XtWriter pk = new XtWriter();
 		pk.writeString("oaf");
 		pk.writeInt(-1); // Data prefix
 		pk.writeString(target); // Interactable
 		pk.writeInt(obj.primaryObjectInfo.type); // Type
-		pk.writeString("2");
+		pk.writeString(destroy ? "2" : "1");
 		pk.writeString(""); // Data suffix
 		client.sendPacket(pk.encode());
 
@@ -83,15 +96,6 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 				client.sendPacket(pk.encode());
 			}
 		}
-
-		// Dispatch event
-		InteractionSuccessEvent ev = new InteractionSuccessEvent(plr, target, obj, currentState);
-		EventBus.getInstance().dispatchEvent(ev);
-		if (ev.isHandled())
-			return true;
-
-		// Handle interaction
-		InteractionManager.handleInteraction(plr, target, obj, currentState);
 
 		return true;
 	}

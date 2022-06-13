@@ -20,6 +20,13 @@ public class ResourceCollectionModule extends InteractionModule {
 	}
 
 	@Override
+	public boolean shouldDestroyResource(Player player, String id, NetworkedObject object, int state,
+			boolean destroyOnCompletion) {
+		// TODO Auto-generated method stub
+		return destroyOnCompletion;
+	}
+
+	@Override
 	public boolean handleInteractionSuccess(Player player, String id, NetworkedObject object, int state) {
 		// TODO Auto-generated method stub
 		return false;
