@@ -1,5 +1,7 @@
 package org.asf.emuferal.interactions.modules;
 
+import java.util.List;
+
 import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
 import org.asf.emuferal.players.Player;
 
@@ -8,9 +10,11 @@ public abstract class InteractionModule {
 	/**
 	 * Called to prepare world objects
 	 * 
-	 * @param player Player to prepare this module for
+	 * @param levelID Level ID
+	 * @param ids     List of interactable IDs in the world
+	 * @param player  Player to prepare this module for
 	 */
-	public abstract void prepareWorld(Player player);
+	public abstract void prepareWorld(int levelID, List<String> ids, Player player);
 
 	/**
 	 * Checks if this module can handle the given interaction

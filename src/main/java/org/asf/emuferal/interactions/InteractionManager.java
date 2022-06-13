@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
 import org.asf.emuferal.interactions.modules.InteractionModule;
+import org.asf.emuferal.interactions.modules.ResourceCollectionModule;
 import org.asf.emuferal.interactions.modules.ShopkeeperModule;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.players.Player;
@@ -16,7 +17,9 @@ public class InteractionManager {
 
 	static {
 		// Add modules
+		// TODO: quest module (needs to be loaded BEFORE resource collection)
 		modules.add(new ShopkeeperModule());
+		modules.add(new ResourceCollectionModule());
 	}
 
 	/**
@@ -26,7 +29,6 @@ public class InteractionManager {
 	 * @param levelID Level to find interactions for
 	 */
 	public static void initInteractionsFor(SmartfoxClient client, int levelID) {
-
 		// Load object ids
 		NetworkedObjects.init();
 		ArrayList<String> ids = new ArrayList<String>();
@@ -35,13 +37,11 @@ public class InteractionManager {
 			NetworkedObjects.getObjects(id).objects.keySet().forEach(t -> ids.add(t));
 		}
 
-		// TODO: quest objects
-
 		// Initialize objects
 		initializeNetworkedObjects(client, ids.toArray(t -> new String[t]));
 
 		// Initialize modules
-		modules.forEach(t -> t.prepareWorld((Player) client.container));
+		modules.forEach(t -> t.prepareWorld(levelID, ids, (Player) client.container));
 	}
 
 	/**
