@@ -1,0 +1,27 @@
+{
+  "HarvestTables": {
+	 "28510": {
+      "objectName": "Pickup/Gliding/SkyJellyGlobal",
+      "rewards": [
+        {
+          "itemId": "28488",
+          "minCount": 2,
+          "maxCount": 20,
+          "chance": 65.0
+        },
+        {
+          "itemId": "28489",
+          "minCount": 2,
+          "maxCount": 20,
+          "chance": 20.0
+        },
+        {
+          "itemId": "28490",
+          "minCount": 2,
+          "maxCount": 20,
+          "chance": 15.0
+        }
+      ]
+    }
+  }
+}
