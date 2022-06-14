@@ -110,7 +110,7 @@ public class SendMessage extends AbstractChatPacket {
 		Player gameClient = client.getPlayer().getOnlinePlayerInstance();
 		if (gameClient == null) {
 			// Ok, even worse, hacker, disconnect them after banning
-			client.getPlayer().ban();
+			client.getPlayer().ban("No gameserver connection while chatting");
 			client.disconnect();
 			return true;
 		} else if (!gameClient.roomReady || gameClient.room == null) {
@@ -133,12 +133,15 @@ public class SendMessage extends AbstractChatPacket {
 			return true; // ignore chat
 		}
 
+		// Log
+		System.out.println("Chat: " + client.getPlayer().getDisplayName() + ": " + message);
+
 		// Check filter
 		String newMessage = "";
 		for (String word : message.split(" ")) {
 			if (banWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 				// Ban
-				client.getPlayer().ban();
+				client.getPlayer().ban("Illegal word in chat");
 				return true;
 			}
 
@@ -174,7 +177,7 @@ public class SendMessage extends AbstractChatPacket {
 		// Check it
 		if (client.banCounter >= 7) {
 			// Ban the hacker
-			client.getPlayer().ban();
+			client.getPlayer().ban("Spam hack");
 			return true;
 		}
 
@@ -228,9 +231,6 @@ public class SendMessage extends AbstractChatPacket {
 					}
 				}
 			}
-
-			// Log
-			System.out.println("Chat: " + client.getPlayer().getDisplayName() + ": " + message);
 		}
 
 		return true;
@@ -278,15 +278,15 @@ public class SendMessage extends AbstractChatPacket {
 		// Generate the command list
 		ArrayList<String> commandMessages = new ArrayList<String>();
 		if (GameServer.hasPerm(permLevel, "moderator")) {
-			commandMessages.add("kick \"<player>\"");
-			commandMessages.add("ipban \"<player/address>\"");
-			commandMessages.add("pardonip \"<ip>\"");
-			commandMessages.add("permban \"<player>\"");
-			commandMessages.add("tempban \"<player>\" <days>\"");
+			commandMessages.add("kick \"<player>\" [\"<reason>\"]");
+			commandMessages.add("ipban \"<player/address>\" [\"<reason>\"]");
+			commandMessages.add("pardonip \"<ip>\" [\"<reason>\"]");
+			commandMessages.add("permban \"<player>\" [\"<reason>\"]");
+			commandMessages.add("tempban \"<player>\" <days>\" [\"<reason>\"]");
 			commandMessages.add("forcenamechange \"<player>\"");
 			commandMessages.add("changeothername \"<player>\" \"<new-name>\"");
-			commandMessages.add("mute \"<player>\" <minutes> [hours] [days]");
-			commandMessages.add("pardon \"<player>\"");
+			commandMessages.add("mute \"<player>\" <minutes> [hours] [days] [\"<reason>\"]");
+			commandMessages.add("pardon \"<player>\" [\"<reason>\"]");
 			if (GameServer.hasPerm(permLevel, "developer")) {
 				commandMessages.add("makedeveloper \"<name>\"");
 			}
@@ -420,6 +420,10 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
+						String reason = null;
+						if (args.size() >= 5)
+							reason = args.get(4);
+
 						// Find player
 						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
 						if (uuid == null) {
@@ -453,7 +457,7 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						// Mute
-						acc.mute(days, hours, minutes);
+						acc.mute(days, hours, minutes, client.getPlayer().getAccountID(), reason);
 						systemMessage("Muted " + acc.getDisplayName() + ".", cmd, client);
 						return true;
 					}
@@ -473,6 +477,10 @@ public class SendMessage extends AbstractChatPacket {
 							systemMessage("Invalid value for argument: days", cmd, client);
 							return true;
 						}
+
+						String reason = null;
+						if (args.size() >= 3)
+							reason = args.get(2);
 
 						// Find player
 						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
@@ -499,7 +507,7 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						// Ban temporarily
-						acc.tempban(days);
+						acc.tempban(days, client.getPlayer().getAccountID(), reason);
 						systemMessage("Temporarily banned " + acc.getDisplayName() + ".", cmd, client);
 						return true;
 					}
@@ -519,6 +527,10 @@ public class SendMessage extends AbstractChatPacket {
 						}
 						EmuFeralAccount acc = AccountManager.getInstance().getAccount(uuid);
 
+						String reason = null;
+						if (args.size() >= 2)
+							reason = args.get(1);
+
 						// Check rank
 						if (acc.getPlayerInventory().containsItem("permissions")) {
 							if ((GameServer
@@ -535,7 +547,7 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						// Ban permanently
-						acc.ban();
+						acc.ban(client.getPlayer().getAccountID(), reason);
 						systemMessage("Permanently banned " + acc.getDisplayName() + ".", cmd, client);
 						return true;
 					}
@@ -545,6 +557,10 @@ public class SendMessage extends AbstractChatPacket {
 							systemMessage("Missing argument: player or address", cmd, client);
 							return true;
 						}
+
+						String reason = null;
+						if (args.size() >= 2)
+							reason = args.get(1);
 
 						// Find player
 						for (Player plr : EmuFeral.gameServer.getPlayers()) {
@@ -564,7 +580,7 @@ public class SendMessage extends AbstractChatPacket {
 								}
 
 								// Ban IP
-								plr.account.ipban();
+								plr.account.ipban(client.getPlayer().getAccountID(), reason);
 								systemMessage("IP-banned " + plr.account.getDisplayName() + ".", cmd, client);
 								return true;
 							}
@@ -587,7 +603,7 @@ public class SendMessage extends AbstractChatPacket {
 									String ipaddr = addr.getHostAddress();
 									if (ipaddr.equals(args.get(0))) {
 										// Ban player
-										plr.account.ban();
+										plr.account.ban(client.getPlayer().getAccountID(), reason);
 									}
 
 									return true;
@@ -670,6 +686,12 @@ public class SendMessage extends AbstractChatPacket {
 						}
 						EmuFeralAccount acc = AccountManager.getInstance().getAccount(uuid);
 
+						// Reason
+						String reason = null;
+						if (args.size() >= 2) {
+							reason = args.get(1);
+						}
+
 						// Check rank
 						if (acc.getPlayerInventory().containsItem("permissions")) {
 							if ((GameServer
@@ -686,7 +708,7 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						// Pardon player
-						acc.pardon();
+						acc.pardon(client.getPlayer().getAccountID(), reason);
 						systemMessage("Penalties removed from " + acc.getDisplayName() + ".", cmd, client);
 						return true;
 					}
@@ -768,7 +790,7 @@ public class SendMessage extends AbstractChatPacket {
 						AccountManager.getInstance().lockDisplayName(args.get(1), acc.getAccountID());
 
 						// Kick online player
-						acc.kick();
+						acc.kick("Display name changed");
 						systemMessage("Renamed " + oldName + " " + args.get(1) + ".", cmd, client);
 						return true;
 					}

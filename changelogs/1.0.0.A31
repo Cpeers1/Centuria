@@ -8,3 +8,8 @@ Changes in EmuFeral 1.0.0.A31:
  - Move the highlevel inventory accessors to their own classes
  - Implemented a currency accessor
  - Made it that find player ignores banned players
+ - Added reason arguments to all moderation commands
+ - Added a kick event
+ 
+Discord bot changes:
+ - Add a status field to the getaccountinfo command

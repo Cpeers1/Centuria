@@ -11,14 +11,14 @@ import org.asf.emuferal.modules.eventbus.EventPath;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("accounts.pardon")
-public class AccountPardonEvent extends EventObject {
+@EventPath("accounts.kick")
+public class AccountKickEvent extends EventObject {
 
 	private String reason;
 	private String issuerID;
 	private EmuFeralAccount account;
 
-	public AccountPardonEvent(EmuFeralAccount account, String issuerID, String reason) {
+	public AccountKickEvent(EmuFeralAccount account, String issuerID, String reason) {
 		this.account = account;
 		this.reason = reason;
 		this.issuerID = issuerID;
@@ -44,11 +44,11 @@ public class AccountPardonEvent extends EventObject {
 
 	@Override
 	public String eventPath() {
-		return "accounts.pardon";
+		return "accounts.kick";
 	}
 
 	/**
-	 * Retrieves the account that is being pardoned
+	 * Retrieves the account that is being kicked
 	 * 
 	 * @return EmuFeralAccount instance
 	 */

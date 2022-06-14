@@ -367,7 +367,7 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 		new File("accounts/" + loginName).delete();
 
 		// Kick online player first
-		kick();
+		kick("Account deletion");
 
 		// Delete account file
 		new File("accounts/" + userUUID).delete();
@@ -440,6 +440,9 @@ public class FileBasedAccountObject extends EmuFeralAccount {
 			}
 			getPlayerInventory().setItem("dms", dms);
 		}
+
+		// Log
+		System.out.println("Account deleted: " + getLoginName());
 
 		// Delete inventory
 		inv.delete();

@@ -8,6 +8,7 @@ import org.asf.emuferal.modules.eventbus.IEventReceiver;
 import org.asf.emuferal.modules.events.accounts.AccountBanEvent;
 import org.asf.emuferal.modules.events.accounts.AccountMuteEvent;
 import org.asf.emuferal.modules.events.accounts.AccountPardonEvent;
+import org.asf.emuferal.modules.events.accounts.AccountKickEvent;
 
 import com.google.gson.JsonObject;
 
@@ -136,6 +137,15 @@ public class ModerationHandlers implements IEventReceiver {
 			} catch (Exception e) {
 			}
 		}
+	}
+
+	@EventListener
+	public void handeKick(AccountKickEvent ev) {
+		// Find discord client (if present)
+		String userID = LinkUtils.getDiscordAccountFrom(ev.getAccount());
+
+		// Log moderation
+		moderationLog("Kick", userID, ev.getAccount().getDisplayName(), ev.getAccount().getAccountID());
 	}
 
 	@EventListener
