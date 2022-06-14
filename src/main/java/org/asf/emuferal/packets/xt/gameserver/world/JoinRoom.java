@@ -65,9 +65,9 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 
 		// Assign room
 		plr.roomReady = false;
-		plr.pendingRoomID = roomID;
+		plr.pendingLevelID = roomID;
 		plr.pendingRoom = "room_" + roomID;
-		plr.roomType = roomType;
+		plr.levelType = roomType;
 		join.roomIdentifier = plr.pendingRoom;
 
 		// Send response

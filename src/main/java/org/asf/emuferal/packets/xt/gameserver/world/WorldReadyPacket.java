@@ -53,10 +53,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		Player plr = (Player) client.container;
 
 		// Initialize interactions
-		InteractionManager.initInteractionsFor(client, plr.pendingRoomID);
+		InteractionManager.initInteractionsFor(client, plr.pendingLevelID);
 
 		// Dispatch event
-		EventBus.getInstance().dispatchEvent(new LevelJoinEvent(plr.pendingRoomID, plr.pendingRoom, plr));
+		EventBus.getInstance().dispatchEvent(new LevelJoinEvent(plr.pendingLevelID, plr.pendingRoom, plr));
 
 		// Send to tutorial if new
 		if (plr.account.isPlayerNew()) {
@@ -83,7 +83,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Assign info
 		plr.room = plr.pendingRoom;
-		plr.roomID = plr.pendingRoomID;
+		plr.levelID = plr.pendingLevelID;
 
 		// Send all other players to the current player
 		GameServer server = (GameServer) client.getServer();
@@ -112,7 +112,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		plr.lastLocation = plr.respawn;
 
 		// Sanctuary loading
-		if (plr.roomType == 2 && plr.room.startsWith("sanctuary_")) {
+		if (plr.levelType == 2 && plr.room.startsWith("sanctuary_")) {
 			String ownerID = plr.room.substring("sanctuary_".length());
 
 			// Find account
@@ -212,9 +212,9 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			strm.close();
 
 			// Check existence
-			if (helper.has(plr.pendingRoomID + "/" + id)) {
+			if (helper.has(plr.pendingLevelID + "/" + id)) {
 				// Send response
-				helper = helper.get(plr.pendingRoomID + "/" + id).getAsJsonObject();
+				helper = helper.get(plr.pendingLevelID + "/" + id).getAsJsonObject();
 				System.out.println("Player teleport: " + plr.account.getDisplayName() + ": "
 						+ helper.get("worldID").getAsString());
 				WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();

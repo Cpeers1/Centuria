@@ -363,9 +363,9 @@ public class SendMessage extends AbstractChatPacket {
 						for (ChatClient cl : client.getServer().getClients()) {
 							Player plr = cl.getPlayer().getOnlinePlayerInstance();
 							if (plr != null && !suspiciousClients.containsKey(cl)) {
-								String map = "UNKOWN: " + plr.roomID;
-								if (helper.has(Integer.toString(plr.roomID)))
-									map = helper.get(Integer.toString(plr.roomID)).getAsString();
+								String map = "UNKOWN: " + plr.levelID;
+								if (helper.has(Integer.toString(plr.levelID)))
+									map = helper.get(Integer.toString(plr.levelID)).getAsString();
 								response += "\n - " + plr.account.getDisplayName() + " (" + map + ")";
 							} else if (!suspiciousClients.containsKey(cl)) {
 								suspiciousClients.put(cl, "no gameserver connection");
@@ -623,7 +623,7 @@ public class SendMessage extends AbstractChatPacket {
 
 								// Assign room
 								plr.roomReady = false;
-								plr.pendingRoomID = 1718;
+								plr.pendingLevelID = 1718;
 								plr.pendingRoom = "room_STAFFROOM";
 								join.roomIdentifier = "room_STAFFROOM";
 

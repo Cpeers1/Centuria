@@ -81,9 +81,9 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 
 		// Assign room
 		player.roomReady = false;
-		player.pendingRoomID = 1689;
+		player.pendingLevelID = 1689;
 		player.pendingRoom = "sanctuary_" + sanctuaryOwner;
-		player.roomType = join.roomType;
+		player.levelType = join.roomType;
 
 		// Send packet
 		client.sendPacket(join);

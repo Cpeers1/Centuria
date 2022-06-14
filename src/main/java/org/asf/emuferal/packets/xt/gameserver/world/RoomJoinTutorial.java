@@ -35,14 +35,14 @@ public class RoomJoinTutorial implements IXtPacket<RoomJoinTutorial> {
 
 		// Assign room
 		plr.roomReady = false;
-		plr.pendingRoomID = 25280;
+		plr.pendingLevelID = 25280;
 		plr.pendingRoom = "room_25280";
-		plr.roomType = 4;
+		plr.levelType = 4;
 
 		// Send response
 		JoinRoom join = new JoinRoom();
-		join.roomType = plr.roomType;
-		join.roomID = plr.pendingRoomID;
+		join.roomType = plr.levelType;
+		join.roomID = plr.pendingLevelID;
 		client.sendPacket(join);
 
 		return true;
