@@ -12,6 +12,7 @@ bin/
 *.iml
 *.ipr
 *.iws
+out/
 
 # Run files
 run/*
