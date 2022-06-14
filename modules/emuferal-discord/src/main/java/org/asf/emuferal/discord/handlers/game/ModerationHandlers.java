@@ -78,8 +78,10 @@ public class ModerationHandlers implements IEventReceiver {
 		// Log moderation action to the moderation log
 		String message = "**EmuFeral Moderation Log**\n";
 		message += "\n";
-		message += "Action: **" + type + "**\n";
-		message += "Action reason: **" + (reason == null ? "Unspecified" : reason) + "**\n";
+		message += "Action: **" + type + "**";
+		if (data != null)
+			message += "\n" + data;
+		message += "\nAction reason: **" + (reason == null ? "Unspecified" : reason) + "**\n";
 		String issuerStr = "**" + issuer + "**";
 		if (!issuerStr.equals("SYSTEM")) {
 			issuerStr = "`" + issuer + "`";
@@ -93,10 +95,8 @@ public class ModerationHandlers implements IEventReceiver {
 			}
 		}
 		message += "Action issuer: " + issuerStr + "\n";
-		message += "Affected player: `" + displayName + (userID != null ? "` (<@!" + userID + ">)" : "`");
-		if (data != null)
-			message += "\n" + data;
-		message += "\nAction was taken on: <t:" + (System.currentTimeMillis() / 1000) + ">";
+		message += "Affected player: `" + displayName + (userID != null ? "` (<@!" + userID + ">)" : "`") + "\n";
+		message += "Action was taken on: <t:" + (System.currentTimeMillis() / 1000) + ">";
 
 		// Send to all guild log channels
 		for (Guild g : DiscordBotModule.getClient().getGuilds().toIterable()) {
