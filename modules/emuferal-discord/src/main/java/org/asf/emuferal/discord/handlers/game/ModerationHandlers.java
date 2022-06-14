@@ -1,5 +1,7 @@
 package org.asf.emuferal.discord.handlers.game;
 
+import org.asf.emuferal.accounts.AccountManager;
+import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.discord.DiscordBotModule;
 import org.asf.emuferal.discord.LinkUtils;
 import org.asf.emuferal.discord.ServerConfigUtils;
@@ -29,7 +31,8 @@ public class ModerationHandlers implements IEventReceiver {
 
 		// Log moderation
 		moderationLog("Ban", userID, ev.getAccount().getDisplayName(), ev.getAccount().getAccountID(),
-				ev.isPermanent() ? "Ban type: **Permanent**" : ("Ban type: **Temporary** (" + ev.getDays() + " days)"));
+				ev.isPermanent() ? "Ban type: **Permanent**" : ("Ban type: **Temporary** (" + ev.getDays() + " days)"),
+				ev.getIssuer(), ev.getReason());
 
 		if (userID != null) {
 			// DM them
@@ -70,11 +73,26 @@ public class ModerationHandlers implements IEventReceiver {
 		}
 	}
 
-	private void moderationLog(String type, String userID, String displayName, String accountID, String data) {
+	private void moderationLog(String type, String userID, String displayName, String accountID, String data,
+			String issuer, String reason) {
 		// Log moderation action to the moderation log
 		String message = "**EmuFeral Moderation Log**\n";
 		message += "\n";
 		message += "Action: **" + type + "**\n";
+		message += "Action reason: **" + (reason == null ? "Unspecified" : reason) + "**\n";
+		String issuerStr = "**" + issuer + "**";
+		if (!issuerStr.equals("SYSTEM")) {
+			issuerStr = "`" + issuer + "`";
+			EmuFeralAccount issuerAcc = AccountManager.getInstance().getAccount(issuer);
+			if (issuerAcc != null) {
+				issuer = issuerAcc.getDisplayName();
+				issuerStr = "`" + issuer + "`";
+				String isUid = LinkUtils.getDiscordAccountFrom(issuerAcc);
+				if (isUid != null)
+					issuerStr += " (<@!" + isUid + ">)";
+			}
+		}
+		message += "Action issuer: " + issuerStr + "\n";
 		message += "Affected player: `" + displayName + (userID != null ? "` (<@!" + userID + ">)" : "`");
 		if (data != null)
 			message += "\n" + data;
@@ -109,7 +127,7 @@ public class ModerationHandlers implements IEventReceiver {
 
 		// Log moderation
 		moderationLog("Mute", userID, ev.getAccount().getDisplayName(), ev.getAccount().getAccountID(),
-				"Unmute timestamp: <t:" + (ev.getUnmuteTimestamp() / 1000) + ">");
+				"Unmute timestamp: <t:" + (ev.getUnmuteTimestamp() / 1000) + ">", ev.getIssuer(), ev.getReason());
 
 		if (userID != null) {
 			// DM them
@@ -145,7 +163,8 @@ public class ModerationHandlers implements IEventReceiver {
 		String userID = LinkUtils.getDiscordAccountFrom(ev.getAccount());
 
 		// Log moderation
-		moderationLog("Kick", userID, ev.getAccount().getDisplayName(), ev.getAccount().getAccountID());
+		moderationLog("Kick", userID, ev.getAccount().getDisplayName(), ev.getAccount().getAccountID(), null,
+				ev.getIssuer(), ev.getReason());
 	}
 
 	@EventListener
@@ -154,7 +173,8 @@ public class ModerationHandlers implements IEventReceiver {
 		String userID = LinkUtils.getDiscordAccountFrom(ev.getAccount());
 
 		// Log moderation
-		moderationLog("Pardon", userID, ev.getAccount().getDisplayName(), ev.getAccount().getAccountID(), null);
+		moderationLog("Pardon", userID, ev.getAccount().getDisplayName(), ev.getAccount().getAccountID(), null,
+				ev.getIssuer(), ev.getReason());
 
 		if (userID != null) {
 			// DM them
