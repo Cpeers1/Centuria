@@ -228,6 +228,9 @@ public class SendMessage extends AbstractChatPacket {
 					}
 				}
 			}
+
+			// Log
+			System.out.println("Chat: " + client.getPlayer().getDisplayName() + ": " + message);
 		}
 
 		return true;

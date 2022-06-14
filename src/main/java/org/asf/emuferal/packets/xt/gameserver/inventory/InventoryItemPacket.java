@@ -32,6 +32,11 @@ public class InventoryItemPacket implements IXtPacket<InventoryItemPacket> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
+		// Log
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[INVENTORY] [UPDATE]  Server to client: " + item);
+		}
+
 		ByteArrayOutputStream op = new ByteArrayOutputStream();
 		GZIPOutputStream gz = new GZIPOutputStream(op);
 		gz.write(item.toString().getBytes("UTF-8"));

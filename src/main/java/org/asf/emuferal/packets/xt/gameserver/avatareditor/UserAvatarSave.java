@@ -48,6 +48,11 @@ public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 		// Avatar save
 		Player plr = (Player) client.container;
 
+		// Log
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[AVATAREDITOR] [SAVELOOK]  Client to server (look: " + lookID + ", name: " + lookName + ")");
+		}
+
 		// Parse avatar
 		JsonObject lookData = JsonParser.parseString(this.lookData).getAsJsonObject();
 

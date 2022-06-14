@@ -82,6 +82,23 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 
 		// TODO: sanctuary items
 
+		// Log
+		if (System.getProperty("debugMode") != null) {
+			String dyeInfo = "";
+			for (DyeInfo dye : dyes) {
+				if (!dyeInfo.isEmpty())
+					dyeInfo += ", ";
+				dyeInfo += dye.channel + "=" + dye.dye;
+			}
+			String undyeInfo = "";
+			for (int channel : undye) {
+				if (!undyeInfo.isEmpty())
+					undyeInfo += ", ";
+				undyeInfo += channel;
+			}
+			System.out.println("[INVENTORY] [DYE]  Client to server (item: " + itemID + ", dyes: " + dyeInfo + ", undyes: " + undyeInfo + ")");
+		}
+
 		// Update dyes object in client inventory
 		InventoryItemPacket pkt = new InventoryItemPacket();
 		pkt.item = inv.getItem("111");

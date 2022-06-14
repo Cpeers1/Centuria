@@ -47,6 +47,11 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		Player plr = (Player) client.container;
 		PlayerInventory inv = plr.account.getPlayerInventory();
 
+		// Log
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[INVENTORY] [REQUEST]  Client to server (type: " + slot + ")");
+		}
+
 		// Check if inventory is built
 		if (!inv.containsItem("1")) {
 			buildInventory(plr, inv);

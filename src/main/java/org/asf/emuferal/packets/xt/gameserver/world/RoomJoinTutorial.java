@@ -45,6 +45,11 @@ public class RoomJoinTutorial implements IXtPacket<RoomJoinTutorial> {
 		join.levelID = plr.pendingLevelID;
 		client.sendPacket(join);
 
+		// Log
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[JOINROOM]  Client to server (room: " + plr.pendingRoom + ", level: " + plr.pendingLevelID + ")");
+		}
+
 		return true;
 	}
 

@@ -46,6 +46,11 @@ public class AvatarEditorSelectLook implements IXtPacket<AvatarEditorSelectLook>
 		// Switch looks
 		Player plr = (Player) client.container;
 
+		// Log
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[AVATAREDITOR] [SELECTLOOK]  Client to server (look: " + lookID + ")");
+		}
+
 		// Save the pending look ID
 		String lastLook = plr.activeLook;
 		plr.pendingLookID = lookID;
