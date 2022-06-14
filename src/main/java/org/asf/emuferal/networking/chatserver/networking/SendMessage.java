@@ -801,6 +801,10 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
+						String reason = null;
+						if (args.size() >= 2)
+							reason = args.get(1);
+
 						// Find player
 						for (Player plr : EmuFeral.gameServer.getPlayers()) {
 							if (plr.account.getDisplayName().equals(args.get(0))) {
@@ -820,7 +824,7 @@ public class SendMessage extends AbstractChatPacket {
 
 								// Kick the player
 								systemMessage("Kicked " + plr.account.getDisplayName() + ".", cmd, client);
-								plr.account.kick();
+								plr.account.kick(client.getPlayer().getAccountID(), reason);
 								return true;
 							}
 						}
