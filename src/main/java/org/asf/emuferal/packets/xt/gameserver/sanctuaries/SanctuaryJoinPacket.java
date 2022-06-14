@@ -65,8 +65,8 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 
 		// Build room join
 		JoinRoom join = new JoinRoom();
-		join.roomType = 2;
-		join.roomID = 1689;
+		join.levelType = 2;
+		join.levelID = 1689;
 		join.roomIdentifier = "sanctuary_" + sanctuaryOwner;
 		join.teleport = sanctuaryOwner;
 
@@ -83,7 +83,7 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 		player.roomReady = false;
 		player.pendingLevelID = 1689;
 		player.pendingRoom = "sanctuary_" + sanctuaryOwner;
-		player.levelType = join.roomType;
+		player.levelType = join.levelType;
 
 		// Send packet
 		client.sendPacket(join);

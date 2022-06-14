@@ -11,9 +11,9 @@ import org.asf.emuferal.players.Player;
 
 public class JoinRoom implements IXtPacket<JoinRoom> {
 
-	public int roomID = 0;
-	public int roomType = 0; // guessing
-	public String roomIdentifier = "0";
+	public int levelID = 0;
+	public int levelType = 0;
+	public String roomIdentifier = "room_0";
 	public String teleport = "";
 
 	@Override
@@ -28,8 +28,8 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
-		roomID = reader.readInt();
-		roomType = reader.readInt();
+		levelID = reader.readInt();
+		levelType = reader.readInt();
 	}
 
 	@Override
@@ -37,8 +37,8 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 		writer.writeInt(-1); // Data prefix
 
 		writer.writeBoolean(true); // Success
-		writer.writeInt(roomID); // Room ID
-		writer.writeInt(roomType); // Room type
+		writer.writeInt(levelID); // Room ID
+		writer.writeInt(levelType); // Room type
 		writer.writeInt(-1); // Iss Room ID (unused as we dont support it)
 		writer.writeString(teleport); // Specific teleport
 		writer.writeString(roomIdentifier); // Chat room ID
@@ -52,8 +52,8 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 		Player plr = (Player) client.container;
 
 		JoinRoom join = new JoinRoom();
-		join.roomType = roomType;
-		join.roomID = roomID;
+		join.levelType = levelType;
+		join.levelID = levelID;
 
 		// Sync
 		GameServer srv = (GameServer) client.getServer();
@@ -65,9 +65,9 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 
 		// Assign room
 		plr.roomReady = false;
-		plr.pendingLevelID = roomID;
-		plr.pendingRoom = "room_" + roomID;
-		plr.levelType = roomType;
+		plr.pendingLevelID = levelID;
+		plr.pendingRoom = "room_" + levelID;
+		plr.levelType = levelType;
 		join.roomIdentifier = plr.pendingRoom;
 
 		// Send response

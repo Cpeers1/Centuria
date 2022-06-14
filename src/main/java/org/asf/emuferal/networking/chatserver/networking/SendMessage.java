@@ -609,8 +609,8 @@ public class SendMessage extends AbstractChatPacket {
 							if (plr.account.getAccountID().equals(client.getPlayer().getAccountID())) {
 								// Load the requested room
 								JoinRoom join = new JoinRoom();
-								join.roomType = 0; // World
-								join.roomID = 1718;
+								join.levelType = 0; // World
+								join.levelID = 1718;
 
 								// Sync
 								GameServer srv = (GameServer) plr.client.getServer();

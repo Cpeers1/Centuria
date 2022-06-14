@@ -61,9 +61,9 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 				if (!plr.room.equals(player.room)) {
 					// Build room join
 					JoinRoom join = new JoinRoom();
-					join.roomType = plr.levelType;
-					join.roomID = plr.levelID;
-					join.roomIdentifier = "room_" + join.roomID;
+					join.levelType = plr.levelType;
+					join.levelID = plr.levelID;
+					join.roomIdentifier = "room_" + join.levelID;
 					join.teleport = plr.account.getAccountID(); // TODO: get this to work
 
 					// Sync
