@@ -12,6 +12,7 @@ targetCompatibility = '1.17'
 def authorname = "AerialWorks Software Foundation"
 
 apply plugin: 'eclipse'
+apply plugin: 'idea'
 
 repositories {
     mavenCentral()

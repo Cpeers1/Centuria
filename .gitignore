@@ -8,6 +8,11 @@ bin/
 .classpath
 .project
 
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+
 # Run files
 run/*
 saves/
