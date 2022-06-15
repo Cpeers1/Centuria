@@ -57,7 +57,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			buildInventory(plr, inv);
 		}
 
-		if (slot.equals("400") && EmuFeral.giveAllWings) {
+		if (slot.equals("400")) {
 			// Override wings lock
 			if (!inv.containsItem("400"))
 				inv.setItem("400", new JsonArray());
