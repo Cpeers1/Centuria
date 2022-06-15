@@ -182,8 +182,8 @@ public class FileBasedAccountManager extends AccountManager {
 					return null;
 				}
 				for (int i = 0; i < hash.length; i++) {
-					passswordLock.put(id, 8);
 					if (hash[i] != cHash[i]) {
+						passswordLock.put(id, 8);
 						try {
 							Thread.sleep(8000);
 						} catch (InterruptedException e) {
