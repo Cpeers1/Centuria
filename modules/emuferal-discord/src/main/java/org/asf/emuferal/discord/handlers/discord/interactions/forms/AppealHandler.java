@@ -44,6 +44,7 @@ public class AppealHandler {
 		// Build report
 		String report = "Appeal form:\n";
 		report += "--------------------------------------------------------------------------------------------------\n";
+		report += "\n";
 		report += "What was the reason for your ban?\n";
 		report += "--------------------------------------------------------------------------------------------------\n";
 		report += shortWhy + "\n";
@@ -65,7 +66,7 @@ public class AppealHandler {
 				// Build message content
 				String srvMessage = "**Ban Appeal Received**\n";
 				srvMessage += "\n";
-				srvMessage += "Appeal issuer: `" + account.getDisplayName() + "` (<@!" + userID + ")\n";
+				srvMessage += "Appeal issuer: `" + account.getDisplayName() + "` (<@!" + userID + ">)\n";
 				srvMessage += "Appeal issued at: <t:" + (System.currentTimeMillis() / 1000) + ">\n";
 				if (config.has("moderatorRole")) {
 					// Add ping
