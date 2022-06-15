@@ -7,19 +7,19 @@
           "itemId": "28488",
           "minCount": 2,
           "maxCount": 20,
-          "chance": 65.0
+          "weight": 65
         },
         {
           "itemId": "28489",
           "minCount": 2,
           "maxCount": 20,
-          "chance": 20.0
+          "weight": 20
         },
         {
           "itemId": "28490",
           "minCount": 2,
           "maxCount": 20,
-          "chance": 15.0
+          "weight": 15
         }
       ]
     }

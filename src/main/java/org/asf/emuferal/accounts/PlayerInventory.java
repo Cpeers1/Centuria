@@ -4,11 +4,13 @@ import com.google.gson.JsonElement;
 
 import org.asf.emuferal.accounts.highlevel.CurrencyAccessor;
 import org.asf.emuferal.accounts.highlevel.InventoryAccessor;
+import org.asf.emuferal.accounts.highlevel.ItemAccessor;
 
 public abstract class PlayerInventory {
 
 	private InventoryAccessor accessor = new InventoryAccessor(this);
 	private CurrencyAccessor cAccessor = new CurrencyAccessor(this);
+	private ItemAccessor iAccessor = new ItemAccessor(this);
 
 	/**
 	 * Retrieves the high-level inventory accessor
@@ -26,6 +28,15 @@ public abstract class PlayerInventory {
 	 */
 	public CurrencyAccessor getCurrencyAccessor() {
 		return cAccessor;
+	}
+
+	/**
+	 * Retrieves the high-level item accessor
+	 * 
+	 * @return ItemAccessor instance
+	 */
+	public ItemAccessor getItemAccessor() {
+		return iAccessor;
 	}
 
 	/**

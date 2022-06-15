@@ -2,7 +2,6 @@ package org.asf.emuferal.tools;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.gson.Gson;
@@ -55,13 +54,13 @@ public class ResourceDataConverter {
 										.getAsInt();
 								int max = data.get("maximumCraftableItemsPerHarvest").getAsJsonArray().get(i)
 										.getAsInt();
-								double percentage = data.get("percentChance").getAsJsonArray().get(i).getAsDouble();
+								int percentage = data.get("percentChance").getAsJsonArray().get(i).getAsInt();
 
 								JsonObject itm = new JsonObject();
 								itm.addProperty("itemId", id);
 								itm.addProperty("minCount", min);
 								itm.addProperty("maxCount", max);
-								itm.addProperty("chance", percentage);
+								itm.addProperty("weight", percentage);
 								rewards.add(itm);
 
 								i++;
@@ -105,52 +104,26 @@ public class ResourceDataConverter {
 							if (data.get("componentClass").getAsString().equals("LootDefComponent")) {
 								data = data.get("componentJSON").getAsJsonObject();
 
-								int totalWeight = 0;
-								ArrayList<JsonObject> choices = new ArrayList<JsonObject>();
-								for (JsonElement ele2 : data.get("choices").getAsJsonArray()) {
-									totalWeight += ele2.getAsJsonObject().get("weight").getAsInt();
-									choices.add(ele2.getAsJsonObject());
-								}
-
-								ArrayList<Integer> objectRefs = new ArrayList<Integer>();
-								int ind = 0;
-								for (JsonObject choice : choices) {
-									int w = choice.get("weight").getAsInt();
-									for (int i = 0; i < w; i++)
-										objectRefs.add(ind);
-
-									ind++;
-								}
-
 								JsonArray rewards = new JsonArray();
-								if (totalWeight > 0) {
-									double step = 100d / totalWeight;
+								for (JsonElement choiceE : data.get("choices").getAsJsonArray()) {
+									JsonObject choice = choiceE.getAsJsonObject();
 
-									ind = 0;
-									for (JsonObject choice : choices) {
-										final int index = ind;
-										double percentage = ((double) objectRefs.stream().filter(t -> t == index)
-												.count() * step);
-
-										JsonObject itm = new JsonObject();
-										boolean hasItem = !choice.get("itemDefID").getAsString().isEmpty()
-												&& choice.get("itemDefID").getAsInt() != -1;
-										boolean hasTableReference = !choice.get("lootTableDefID").getAsString()
-												.isEmpty() && choice.get("lootTableDefID").getAsInt() != -1;
-										itm.addProperty("hasItem", hasItem);
-										itm.addProperty("hasTableReference", hasTableReference);
-										if (hasItem)
-											itm.addProperty("itemId", choice.get("itemDefID").getAsString());
-										if (hasTableReference)
-											itm.addProperty("referencedTableId",
-													choice.get("lootTableDefID").getAsString());
-										itm.addProperty("minCount", choice.get("minCount").getAsInt());
-										itm.addProperty("maxCount", choice.get("maxCount").getAsInt());
-										itm.addProperty("chance", percentage);
-										rewards.add(itm);
-
-										ind++;
-									}
+									JsonObject itm = new JsonObject();
+									boolean hasItem = !choice.get("itemDefID").getAsString().isEmpty()
+											&& choice.get("itemDefID").getAsInt() != -1;
+									boolean hasTableReference = !choice.get("lootTableDefID").getAsString().isEmpty()
+											&& choice.get("lootTableDefID").getAsInt() != -1;
+									itm.addProperty("hasItem", hasItem);
+									itm.addProperty("hasTableReference", hasTableReference);
+									if (hasItem)
+										itm.addProperty("itemId", choice.get("itemDefID").getAsString());
+									if (hasTableReference)
+										itm.addProperty("referencedTableId",
+												choice.get("lootTableDefID").getAsString());
+									itm.addProperty("minCount", choice.get("minCount").getAsInt());
+									itm.addProperty("maxCount", choice.get("maxCount").getAsInt());
+									itm.addProperty("weight", choice.get("weight").getAsInt());
+									rewards.add(itm);
 								}
 
 								JsonObject info = new JsonObject();

@@ -12,6 +12,7 @@ import java.awt.Font;
 import java.awt.Component;
 import javax.swing.border.BevelBorder;
 
+import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.util.TaskThread;
 
 import com.google.gson.JsonArray;
@@ -62,6 +63,11 @@ public class TestChatClient {
 
 	private String localUUID;
 	private String localToken;
+
+	private boolean entryComplete;
+	private boolean joinedRoom;
+	private String levelId;
+	private String pendingChatRoom;
 
 	private TaskThread clientOutputs = new TaskThread();
 
@@ -317,6 +323,31 @@ public class TestChatClient {
 								while (gameClient != null && gameClient.isConnected()) {
 									try {
 										String pkt = readRawPacket();
+										if (pkt.startsWith("%xt%")) {
+											XtReader rd = new XtReader(pkt);
+											String id = rd.read();
+											rd.read();
+
+											// Handle
+											switch (id) {
+											case "rj": {
+												rd.readBoolean();
+												levelId = rd.read();
+												rd.read();
+												rd.read();
+												rd.read();
+												pendingChatRoom = rd.read();
+
+												log("[system] Joining room: " + levelId);
+												joinedRoom = true;
+												break;
+											}
+											case "oial": {
+												entryComplete = true;
+												break;
+											}
+											}
+										}
 										// TODO
 									} catch (IOException e1) {
 										disconnect();
@@ -349,9 +380,18 @@ public class TestChatClient {
 							// Save UUID and log success
 							localUUID = uuid;
 							localToken = token;
-							log("[system] Login successful, connecting to the chat server...");
+							log("[system] Login successful, requesting world entry...");
+
+							// World entry
+							sendPacket("%xt%o%rj%-1%820%0%");
+
+							// Wait for success
+							while (!joinedRoom) {
+								Thread.sleep(100);
+							}
 
 							// Establish chat server connection
+							log("[system] Connecting to the chat server...");
 							chatClient = SSLSocketFactory.getDefault().createSocket(server,
 									Integer.parseInt(txtChatPort.getText()));
 
@@ -415,6 +455,32 @@ public class TestChatClient {
 
 							// Log success
 							log("[system] Chat server connection established.");
+
+							// Join chat room
+							if (pendingChatRoom != null) {
+								// Set room
+								txtRoom.setText(pendingChatRoom);
+
+								// Join room
+								pk = new JsonObject();
+								pk.addProperty("cmd", "conversations.addParticipant");
+								pk.addProperty("conversationId", txtRoom.getText());
+								pk.addProperty("participant", localUUID);
+								sendChatPacket(pk);
+
+								room = txtRoom.getText();
+							}
+
+							// Full world entry
+							log("[system] Entering world...");
+							sendPacket("%xt%o%wr%-1%3b8493d7-5077-4e90-880c-ed2974513a2f%");
+
+							// Wait for entry
+							while (!entryComplete)
+								Thread.sleep(100);
+
+							// Log completion
+							log("[system] World join complete");
 
 							btnNewButton.setEnabled(true);
 							btnNewButton_1.setEnabled(true);
