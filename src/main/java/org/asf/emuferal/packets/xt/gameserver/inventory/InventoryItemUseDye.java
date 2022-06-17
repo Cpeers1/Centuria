@@ -80,7 +80,19 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 			client.sendPacket(pkt);
 		}
 
-		// TODO: sanctuary items
+		// Find furniture item
+		if (inv.getAccessor().getFurnitureData(itemID) != null) {
+			// Apply dyes
+			dyeObject(inv.getAccessor().getFurnitureData(itemID), inv);
+
+			// Save furniture
+			inv.setItem("102", inv.getItem("102"));
+
+			// Update object in client inventory
+			InventoryItemPacket pkt = new InventoryItemPacket();
+			pkt.item = inv.getItem("102");
+			client.sendPacket(pkt);
+		}
 
 		// Log
 		if (System.getProperty("debugMode") != null) {
@@ -96,7 +108,8 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 					undyeInfo += ", ";
 				undyeInfo += channel;
 			}
-			System.out.println("[INVENTORY] [DYE]  Client to server (item: " + itemID + ", dyes: " + dyeInfo + ", undyes: " + undyeInfo + ")");
+			System.out.println("[INVENTORY] [DYE]  Client to server (item: " + itemID + ", dyes: " + dyeInfo
+					+ ", undyes: " + undyeInfo + ")");
 		}
 
 		// Update dyes object in client inventory

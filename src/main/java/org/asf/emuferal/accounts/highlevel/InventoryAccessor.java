@@ -673,7 +673,7 @@ public class InventoryAccessor {
 	 * @param id Furniture item ID
 	 * @return JsonObject or null
 	 */
-	public JsonObject getFurnituregData(String id) {
+	public JsonObject getFurnitureData(String id) {
 		return findInventoryObject("102", id);
 	}
 
