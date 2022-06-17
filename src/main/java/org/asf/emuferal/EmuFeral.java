@@ -686,12 +686,12 @@ public class EmuFeral {
 			int[] sanctuaryTypes = new int[] { 9588, 12632, 12637, 12964, 21273, 23627, 24122, 25414, 26065, 28431,
 					9760, 9764 };
 			for (int id : sanctuaryTypes)
-				if (!inv.getAccessor().isSanctuaryClassUnlocked(id))
-					inv.getAccessor().addSanctuaryClassToInventory(id);
+				if (!inv.getAccessor().isSanctuaryUnlocked(id))
+					inv.getAccessor().unlockSanctuary(id);
 		} else {
 			// Give default sanctuary if needed
-			if (!inv.getAccessor().isSanctuaryClassUnlocked(9588))
-				inv.getAccessor().addSanctuaryClassToInventory(9588);
+			if (!inv.getAccessor().isSanctuaryUnlocked(9588))
+				inv.getAccessor().unlockSanctuary(9588);
 		}
 
 		//

@@ -1358,7 +1358,7 @@ public class InventoryAccessor {
 	 * 
 	 * @return Array of sanctuary class defIDs
 	 */
-	public int[] getUnlockedSanctuaryClasses() {
+	public int[] getUnlockedSanctuaries() {
 		ArrayList<Integer> types = new ArrayList<Integer>();
 
 		// Load the inventory object
@@ -1384,13 +1384,15 @@ public class InventoryAccessor {
 	}
 
 	/**
-	 * Creates a new save for a specific sanctuary class and saves it to the
-	 * inventory
+	 * Unlocks sanctuaries
 	 * 
 	 * @param defID Sanctuary class ID
-	 * @return Item ID string
 	 */
-	public String addSanctuaryClassToInventory(int defID) {
+	public void unlockSanctuary(int defID) {
+		// Check unlocked sanctuary
+		if (isSanctuaryUnlocked(defID))
+			return;
+
 		// Load the inventory object
 		if (!inventory.containsItem("10"))
 			inventory.setItem("10", new JsonArray());
@@ -1434,12 +1436,80 @@ public class InventoryAccessor {
 		itm.addProperty("type", 10);
 		items.add(itm);
 
+		// Load helper
+		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+				.getResourceAsStream("defaultitems/sanctuaryclasseshelper.json");
+		JsonObject helper;
+		try {
+			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+					.get("SanctuaryClasses").getAsJsonObject();
+			strm.close();
+		} catch (JsonSyntaxException | IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		// Load class info
+		JsonObject classData = helper.get(Integer.toString(defID)).getAsJsonObject();
+		int islandId = classData.get("islandDefId").getAsInt();
+		int houseId = classData.get("houseDefId").getAsInt();
+		int lookDefId = classData.get("lookDefId").getAsInt();
+
+		// Create look slots
+		if (!inventory.containsItem("201"))
+			inventory.setItem("201", new JsonArray());
+		items = inventory.getItem("201").getAsJsonArray();
+		for (int i = 0; i < getSanctuaryLookCount(); i++) {
+			// Generate item ID
+			itmID = UUID.randomUUID().toString();
+			while (true) {
+				boolean found = false;
+				for (JsonElement ele : items) {
+					itm = ele.getAsJsonObject();
+					String itID = itm.get("id").getAsString();
+					if (itID.equals(itmID)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					break;
+				itmID = UUID.randomUUID().toString();
+			}
+
+			// Add slot
+			createSlot(items, islandId, houseId, lookDefId, defID, itmID);
+		}
+
+		//
+		// Create primary slot
+		//
+
+		// Generate item ID
+		itmID = UUID.randomUUID().toString();
+		while (true) {
+			boolean found = false;
+			for (JsonElement ele : items) {
+				itm = ele.getAsJsonObject();
+				String itID = itm.get("id").getAsString();
+				if (itID.equals(itmID)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				break;
+			itmID = UUID.randomUUID().toString();
+		}
+
+		// Add slot
+		createSlot(items, islandId, houseId, lookDefId, defID, itmID).get("components").getAsJsonObject()
+				.add("PrimaryLook", new JsonObject());
+
 		// Mark what files to save
 		if (!itemsToSave.contains("10"))
 			itemsToSave.add("10");
-
-		// Return ID
-		return itmID;
+		if (!itemsToSave.contains("201"))
+			itemsToSave.add("201");
 	}
 
 	/**
@@ -1458,7 +1528,7 @@ public class InventoryAccessor {
 	 * @param defID Sanctuary class ID
 	 * @return True if unlocked, false otherwise
 	 */
-	public boolean isSanctuaryClassUnlocked(int defID) {
+	public boolean isSanctuaryUnlocked(int defID) {
 		// Load the inventory object
 		if (!inventory.containsItem("10"))
 			inventory.setItem("10", new JsonArray());
@@ -1489,12 +1559,27 @@ public class InventoryAccessor {
 		if (!inventory.containsItem("201"))
 			return 0;
 
-		int count = 0;
+		// Find first primary look
 		for (JsonElement ele : inventory.getItem("201").getAsJsonArray()) {
-			if (!ele.getAsJsonObject().get("components").getAsJsonObject().has("PrimaryLook"))
-				count++;
+			if (ele.getAsJsonObject().get("components").getAsJsonObject().has("PrimaryLook")) {
+				// Count for this look
+				int count = 0;
+
+				// Loop through all looks and find matches
+				for (JsonElement ele2 : inventory.getItem("201").getAsJsonArray()) {
+					if (!ele2.getAsJsonObject().get("components").getAsJsonObject().has("PrimaryLook")
+							&& ele2.getAsJsonObject().get("defId").getAsInt() == ele.getAsJsonObject().get("defId")
+									.getAsInt()) {
+						count++;
+					}
+				}
+
+				return count;
+			}
 		}
-		return count;
+
+		// No match
+		return 0;
 	}
 
 	/**
@@ -1562,7 +1647,7 @@ public class InventoryAccessor {
 		JsonArray items = inventory.getItem("201").getAsJsonArray();
 
 		// Add for each sanctuary class
-		for (int classId : getUnlockedSanctuaryClasses()) {
+		for (int classId : getUnlockedSanctuaries()) {
 			// Load helper
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
 					.getResourceAsStream("defaultitems/sanctuaryclasseshelper.json");
@@ -1582,7 +1667,6 @@ public class InventoryAccessor {
 			int lookDefId = classData.get("lookDefId").getAsInt();
 
 			// Generate item ID
-			boolean hasPrimary = false;
 			String itmID = UUID.randomUUID().toString();
 			while (true) {
 				boolean found = false;
@@ -1590,10 +1674,6 @@ public class InventoryAccessor {
 					JsonObject itm = ele.getAsJsonObject();
 					String itID = itm.get("id").getAsString();
 					if (itID.equals(itmID)) {
-						// Check if this look is a primary look
-						if (itm.get("components").getAsJsonObject().has("PrimaryLook")) {
-							hasPrimary = true;
-						}
 						found = true;
 						break;
 					}
@@ -1605,30 +1685,6 @@ public class InventoryAccessor {
 
 			// Create slot
 			createSlot(items, islandId, houseId, lookDefId, classId, itmID);
-
-			// Add primary if needed
-			if (!hasPrimary) {
-				// Generate item ID
-				itmID = UUID.randomUUID().toString();
-				while (true) {
-					boolean found = false;
-					for (JsonElement ele : items) {
-						JsonObject itm = ele.getAsJsonObject();
-						String itID = itm.get("id").getAsString();
-						if (itID.equals(itmID)) {
-							found = true;
-							break;
-						}
-					}
-					if (!found)
-						break;
-					itmID = UUID.randomUUID().toString();
-				}
-
-				// Add slot
-				createSlot(items, islandId, houseId, lookDefId, classId, itmID).get("components").getAsJsonObject()
-						.add("PrimaryLook", new JsonObject());
-			}
 
 			// Mark what files to save
 			if (!itemsToSave.contains("201"))
@@ -1654,8 +1710,8 @@ public class InventoryAccessor {
 		id = addIslandToInventory(islandId);
 		sanctuaryInfo.addProperty("islandDefId", islandId);
 		sanctuaryInfo.addProperty("islandInvId", id);
-		// Create class
-		id = addSanctuaryClassToInventory(classId);
+		// Find class
+		id = findInventoryObject("10", classId).get("id").getAsString();
 		sanctuaryInfo.addProperty("classInvId", id);
 		sanctuary.add("info", sanctuaryInfo);
 		// Build components
