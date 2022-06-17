@@ -10,6 +10,8 @@ Changes in EmuFeral 1.0.0.A31:
  - Made it that find player ignores banned players
  - Added reason arguments to all moderation commands
  - Added a kick event
+ - Fixed lag on login (fixed the clothing checks, they now only run when clothing is being loaded)
+ - Implemented furniture item generation for creative servers
  
 Discord bot changes:
  - Add a status field to the getaccountinfo command

@@ -65,7 +65,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 			// Build entry
 			JsonObject obj = new JsonObject();
-			obj.addProperty("defId", 22442);
+			obj.addProperty("defId", 22441);
 			JsonObject components = new JsonObject();
 			JsonObject ts = new JsonObject();
 			ts.addProperty("ts", System.currentTimeMillis());
@@ -129,56 +129,88 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			}
 
 			if (EmuFeral.giveAllClothes) {
-				// Give all dyes (80 of each)
-				String[] dyes = new String[] { "6255", "6254", "6253", "6252", "6251", "435", "434", "433", "432",
-						"431", "430", "429", "428", "427", "426", "369", "368", "31306", "31304", "31303", "31302",
-						"31301", "31300", "31299", "31298", "31297", "31288", "30334", "30333", "30332", "297", "28805",
-						"28804", "28372", "28371", "28370", "28369", "28368", "28117", "28116", "28115", "28114",
-						"27828", "27827", "2704", "2702", "26397", "24149", "24148", "24147", "24146", "24145", "24144",
-						"22602", "22601", "17543", "17542", "17541", "17540", "17539", "17538", "17537", "17536",
-						"17535", "17534", "17533", "17532", "17531", "17530", "17529", "17528", "10531", "10190",
-						"10189", "10188", "10187", "10186", "10185", "10184", "10183", "10182", "10181", "10180",
-						"10179", "10178", "10177", "10176", "10175", "10174", "10173", "10172", "10171", "10170",
-						"10169", "10168", "10167", "10166", "10165", "10164", "10162", "10161", "10160", "10159",
-						"10158", "10157", "10156", "10155", "10154", "10153", "10152", "10151", "10150", "10149",
-						"10148", "10147", "10146", "10145", "10144", "10143", "10142", "10141", "10140", "10139",
-						"10138", "10137", "10136", "10135", "10134", "10133", "10132", "10131", "10130", "10129",
-						"10127" };
+				if (slot.equals("111")) {
+					// Give all dyes (80 of each)
+					String[] dyes = new String[] { "6255", "6254", "6253", "6252", "6251", "435", "434", "433", "432",
+							"431", "430", "429", "428", "427", "426", "369", "368", "31306", "31304", "31303", "31302",
+							"31301", "31300", "31299", "31298", "31297", "31288", "30334", "30333", "30332", "297",
+							"28805", "28804", "28372", "28371", "28370", "28369", "28368", "28117", "28116", "28115",
+							"28114", "27828", "27827", "2704", "2702", "26397", "24149", "24148", "24147", "24146",
+							"24145", "24144", "22602", "22601", "17543", "17542", "17541", "17540", "17539", "17538",
+							"17537", "17536", "17535", "17534", "17533", "17532", "17531", "17530", "17529", "17528",
+							"10531", "10190", "10189", "10188", "10187", "10186", "10185", "10184", "10183", "10182",
+							"10181", "10180", "10179", "10178", "10177", "10176", "10175", "10174", "10173", "10172",
+							"10171", "10170", "10169", "10168", "10167", "10166", "10165", "10164", "10162", "10161",
+							"10160", "10159", "10158", "10157", "10156", "10155", "10154", "10153", "10152", "10151",
+							"10150", "10149", "10148", "10147", "10146", "10145", "10144", "10143", "10142", "10141",
+							"10140", "10139", "10138", "10137", "10136", "10135", "10134", "10133", "10132", "10131",
+							"10130", "10129", "10127" };
 
-				for (String dye : dyes) {
-					// Add 80
-					if (!inv.getAccessor().hasDye(Integer.valueOf(dye))) {
-						for (int i = 0; i < 80; i++) {
-							inv.getAccessor().addDye(Integer.valueOf(dye));
-						}
-					}
-				}
-
-				// Scan clothinghelper and give all clothes
-				try {
-					// Load helper
-					InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-							.getResourceAsStream("defaultitems/clothinghelper.json");
-					JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8"))
-							.getAsJsonObject().get("Clothing").getAsJsonObject();
-					strm.close();
-
-					// Add all clothes (3 of each)
-					for (String id : helper.keySet()) {
-						if (inv.getAccessor().getClothingCount(Integer.valueOf(id)) < 3) {
-							for (int i = inv.getAccessor().getClothingCount(Integer.valueOf(id)); i < 3; i++) {
-								inv.getAccessor().addClothing(Integer.valueOf(id), false);
+					for (String dye : dyes) {
+						// Add 80
+						if (!inv.getAccessor().hasDye(Integer.valueOf(dye))) {
+							for (int i = 0; i < 80; i++) {
+								inv.getAccessor().addDye(Integer.valueOf(dye));
 							}
 						}
 					}
-				} catch (IOException e) {
 				}
 
-				// Save changes
-				for (String change : inv.getAccessor().getItemsToSave())
-					inv.setItem(change, inv.getItem(change));
-				inv.getAccessor().completedSave();
+				if (slot.equals("100")) {
+					// Scan clothinghelper and give all clothes
+					try {
+						// Load helper
+						InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+								.getResourceAsStream("defaultitems/clothinghelper.json");
+						JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8"))
+								.getAsJsonObject().get("Clothing").getAsJsonObject();
+						strm.close();
+
+						// Add all clothes (3 of each)
+						for (String id : helper.keySet()) {
+							if (inv.getAccessor().getClothingCount(Integer.valueOf(id)) < 3) {
+								for (int i = inv.getAccessor().getClothingCount(Integer.valueOf(id)); i < 3; i++) {
+									inv.getAccessor().addClothing(Integer.valueOf(id), false);
+								}
+							}
+						}
+					} catch (IOException e) {
+					}
+
+					// Save changes
+					for (String change : inv.getAccessor().getItemsToSave())
+						inv.setItem(change, inv.getItem(change));
+					inv.getAccessor().completedSave();
+				}
 			}
+		}
+
+		// Furniture
+		if (slot.equals("102") && EmuFeral.giveAllFurnitureItems) {
+			// Scan furniturehelper and give all clothes
+			try {
+				// Load helper
+				InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+						.getResourceAsStream("defaultitems/furniturehelper.json");
+				JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+						.get("Furniture").getAsJsonObject();
+				strm.close();
+
+				// Add all furniture (3 of each)
+				for (String id : helper.keySet()) {
+					if (inv.getAccessor().getFurnitureCount(Integer.valueOf(id)) < 3) {
+						for (int i = inv.getAccessor().getFurnitureCount(Integer.valueOf(id)); i < 3; i++) {
+							inv.getAccessor().addFurniture(Integer.valueOf(id), false);
+						}
+					}
+				}
+			} catch (IOException e) {
+			}
+
+			// Save changes
+			for (String change : inv.getAccessor().getItemsToSave())
+				inv.setItem(change, inv.getItem(change));
+			inv.getAccessor().completedSave();
 		}
 
 		// Emotes
@@ -204,11 +236,8 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		}
 
 		// Sanctuaries
-		if (slot.equals("5") || slot.equals("6") || slot.equals("102")) {
+		if (slot.equals("5") || slot.equals("6") || slot.equals("102") || slot.equals("201")) {
 			EmuFeral.fixSanctuaries(inv);
-		}
-		if (slot.equals("201")) {
-			// TODO
 		}
 
 		// Load the item

@@ -71,7 +71,7 @@ public class EmuFeral {
 	public static boolean giveAllMods = true;
 	public static boolean giveAllClothes = true;
 	public static boolean giveAllWings = true;
-	public static boolean gvieAllFurnitureItems = true;
+	public static boolean giveAllFurnitureItems = true;
 	public static boolean giveAllSanctuaryTypes = true;
 	public static boolean encryptChat = false;
 	public static boolean encryptGame = false;
@@ -377,7 +377,7 @@ public class EmuFeral {
 		giveAllClothes = properties.getOrDefault("give-all-clothes", "true").equals("true");
 		giveAllWings = properties.getOrDefault("give-all-wings", "true").equals("true");
 		giveAllSanctuaryTypes = properties.getOrDefault("give-all-sanctuary-types", "true").equals("true");
-		gvieAllFurnitureItems = properties.getOrDefault("give-all-furniture", "true").equals("true");
+		giveAllFurnitureItems = properties.getOrDefault("give-all-furniture", "true").equals("true");
 		encryptChat = properties.getOrDefault("encrypt-chat", "false").equals("true")
 				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
 		encryptGame = properties.getOrDefault("encrypt-game", "false").equals("true")

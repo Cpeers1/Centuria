@@ -2,6 +2,7 @@ package org.asf.emuferal.accounts.highlevel;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.asf.emuferal.accounts.PlayerInventory;
@@ -31,7 +32,8 @@ public class ItemAccessor {
 				ItemInfo info = new ItemInfo();
 				info.inventory = itmI.get("inventory").getAsString();
 				info.objectName = itmI.get("objectName").getAsString();
-				definitions.put(itemID, info);
+				if (!info.inventory.equals("0"))
+					definitions.put(itemID, info);
 			});
 		} catch (IOException e) {
 		}

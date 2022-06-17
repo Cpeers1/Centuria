@@ -323,47 +323,47 @@ public class InventoryAccessor {
 				// Mark what files to save
 				if (!itemsToSave.contains("avatars"))
 					itemsToSave.add("avatars");
-			}
 
-			// Update the species list
-			if (!inventory.containsItem("1"))
-				inventory.setItem("1", new JsonArray());
-			JsonArray species = inventory.getItem("1").getAsJsonArray();
+				// Update the species list
+				if (!inventory.containsItem("1"))
+					inventory.setItem("1", new JsonArray());
+				JsonArray species = inventory.getItem("1").getAsJsonArray();
 
-			// Check if the species is unlocked
-			boolean found = false;
-			for (JsonElement ele : species) {
-				JsonObject sp = ele.getAsJsonObject();
-				String spID = sp.get("defID").getAsString();
-				if (spID.equals(actorDefID)) {
-					found = true;
-					break;
+				// Check if the species is unlocked
+				boolean found = false;
+				for (JsonElement ele : species) {
+					JsonObject sp = ele.getAsJsonObject();
+					String spID = sp.get("defID").getAsString();
+					if (spID.equals(actorDefID)) {
+						found = true;
+						break;
+					}
 				}
-			}
 
-			if (!found) {
-				JsonObject spD = new JsonObject();
+				if (!found) {
+					JsonObject spD = new JsonObject();
 
-				// Generate item ID
-				String sID = UUID.randomUUID().toString();
-				while (hasInventoryObject("1", sID)) {
-					sID = UUID.randomUUID().toString();
+					// Generate item ID
+					String sID = UUID.randomUUID().toString();
+					while (hasInventoryObject("1", sID)) {
+						sID = UUID.randomUUID().toString();
+					}
+					// Timestamp
+					JsonObject ts = new JsonObject();
+					ts.addProperty("ts", System.currentTimeMillis());
+					// Build components
+					JsonObject components = new JsonObject();
+					components.add("Timestamp", ts);
+					spD.addProperty("defID", actorDefID);
+					spD.add("components", components);
+					spD.addProperty("id", sID);
+					spD.addProperty("type", 1);
+					species.add(spD);
+
+					// Mark what files to save
+					if (!itemsToSave.contains("1"))
+						itemsToSave.add("1");
 				}
-				// Timestamp
-				JsonObject ts = new JsonObject();
-				ts.addProperty("ts", System.currentTimeMillis());
-				// Build components
-				JsonObject components = new JsonObject();
-				components.add("Timestamp", ts);
-				spD.addProperty("defID", actorDefID);
-				spD.add("components", components);
-				spD.addProperty("id", sID);
-				spD.addProperty("type", 1);
-				species.add(spD);
-
-				// Mark what files to save
-				if (!itemsToSave.contains("1"))
-					itemsToSave.add("1");
 			}
 		} catch (JsonSyntaxException | IOException e) {
 		}
@@ -433,7 +433,7 @@ public class InventoryAccessor {
 	}
 
 	/**
-	 * Retrieves the amount of a specific clothing item the playe has
+	 * Retrieves the amount of a specific clothing item the player has
 	 * 
 	 * @param defID Clothing defID
 	 * @return Amount of the specific item
@@ -573,6 +573,187 @@ public class InventoryAccessor {
 					.getResourceAsStream("defaultitems/clothinghelper.json");
 			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 					.get("Clothing").getAsJsonObject();
+			strm.close();
+
+			// Check existence
+			if (helper.has(Integer.toString(defID))) {
+				// Find channel
+				JsonObject data = helper.get(Integer.toString(defID)).getAsJsonObject();
+				if (data.has("color" + channel + "HSV"))
+					return data.get("color" + channel + "HSV").getAsJsonObject().get("_hsv").getAsString();
+			}
+		} catch (IOException e) {
+		}
+		return null;
+	}
+
+	/**
+	 * Checks if the player has a specific furniture item
+	 * 
+	 * @param defID Furniture defID
+	 * @return True if the player has the furniture item, false otherwise
+	 */
+	public boolean hasFurniture(int defID) {
+		// Load the inventory object
+		if (!inventory.containsItem("102"))
+			inventory.setItem("102", new JsonArray());
+		JsonArray items = inventory.getItem("102").getAsJsonArray();
+
+		// Find object
+		for (JsonElement ele : items) {
+			JsonObject itm = ele.getAsJsonObject();
+			int itID = itm.get("defId").getAsInt();
+			if (itID == defID) {
+				return true;
+			}
+		}
+
+		// Item was not found
+		return false;
+	}
+
+	/**
+	 * Retrieves the amount of a specific furniture item the player has
+	 * 
+	 * @param defID Furniture defID
+	 * @return Amount of the specific item
+	 */
+	public int getFurnitureCount(int defID) {
+		int count = 0;
+
+		// Load the inventory object
+		if (!inventory.containsItem("102"))
+			inventory.setItem("102", new JsonArray());
+		JsonArray items = inventory.getItem("102").getAsJsonArray();
+
+		// Find object
+		for (JsonElement ele : items) {
+			JsonObject itm = ele.getAsJsonObject();
+			int itID = itm.get("defId").getAsInt();
+			if (itID == defID) {
+				count++;
+			}
+		}
+
+		return count;
+	}
+
+	/**
+	 * Removes a furniture item
+	 * 
+	 * @param id Furniture item ID
+	 */
+	public void removeFurniture(String id) {
+		// Load the inventory object
+		if (!inventory.containsItem("102"))
+			inventory.setItem("102", new JsonArray());
+		JsonArray items = inventory.getItem("102").getAsJsonArray();
+
+		// Find object
+		for (JsonElement ele : items) {
+			JsonObject itm = ele.getAsJsonObject();
+			String itID = itm.get("id").getAsString();
+			if (itID.equals(id)) {
+				// Remove item
+				items.remove(ele);
+
+				// Mark what files to save
+				if (!itemsToSave.contains("102"))
+					itemsToSave.add("102");
+
+				// End loop
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Retrieves a furniture inventory object
+	 * 
+	 * @param id Furniture item ID
+	 * @return JsonObject or null
+	 */
+	public JsonObject getFurnituregData(String id) {
+		return findInventoryObject("102", id);
+	}
+
+	/**
+	 * Adds a furniture item of a specific defID
+	 * 
+	 * @param defID         Furniture item defID
+	 * @param isInTradeList True to add this item to trade list, false otherwise
+	 * @return Item UUID
+	 */
+	public String addFurniture(int defID, boolean isInTradeList) {
+		// Load the inventory object
+		if (!inventory.containsItem("102"))
+			inventory.setItem("102", new JsonArray());
+		JsonArray items = inventory.getItem("102").getAsJsonArray();
+
+		// Generate item ID
+		String cID = UUID.randomUUID().toString();
+		while (hasInventoryObject("102", cID)) {
+			cID = UUID.randomUUID().toString();
+		}
+
+		// Generate object
+		try {
+			// Load helper
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("defaultitems/furniturehelper.json");
+			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+					.get("Furniture").getAsJsonObject();
+			strm.close();
+
+			// Check existence
+			if (helper.has(Integer.toString(defID))) {
+				// Create the item
+				JsonObject itm = new JsonObject();
+				// Timestamp
+				JsonObject ts = new JsonObject();
+				ts.addProperty("ts", System.currentTimeMillis());
+				// Trade thingy
+				JsonObject tr = new JsonObject();
+				tr.addProperty("isInTradeList", isInTradeList);
+				// Build components
+				JsonObject components = new JsonObject();
+				components.add("Tradable", tr);
+				components.add("Colorable", helper.get(Integer.toString(defID)));
+				components.add("Placeable", new JsonObject());
+				components.add("Timestamp", ts);
+				itm.addProperty("defId", defID);
+				itm.add("components", components);
+				itm.addProperty("id", cID);
+				itm.addProperty("type", 102);
+
+				// Add it
+				items.add(itm);
+
+				// Mark what files to save
+				if (!itemsToSave.contains("102"))
+					itemsToSave.add("102");
+			}
+		} catch (IOException e) {
+		}
+
+		// Return ID
+		return cID;
+	}
+
+	/**
+	 * Retrieves the default color of a furniture color channel
+	 * 
+	 * @param defID   Furniture defID
+	 * @param channel Channel number
+	 * @return HSV string or null
+	 */
+	public String getDefaultFurnitureChannelHSV(int defID, int channel) {
+		try {
+			// Load helper
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("defaultitems/furniturehelper.json");
+			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+					.get("Furniture").getAsJsonObject();
 			strm.close();
 
 			// Check existence
