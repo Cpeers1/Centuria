@@ -13,6 +13,9 @@ Changes in EmuFeral 1.0.0.A31:
  - Fixed lag on login (fixed the clothing checks, they now only run when clothing is being loaded)
  - Implemented furniture item generation for creative servers
  - Implemented dyeing of furniture
+ - Fix missing sanctuary inventory item (item 10 wasnt being made)
+ - Rewrite sanctuary system and got it working
+ - Implement sanctuary switching
  
 Discord bot changes:
  - Add a status field to the getaccountinfo command

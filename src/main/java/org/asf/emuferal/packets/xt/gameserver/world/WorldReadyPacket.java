@@ -168,8 +168,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Send packet
 		client.sendPacket("%xt%oi%-1%" + islandId + "%1751%" + player.room.substring("sanctuary_".length()) + "%0%"
 				+ (System.currentTimeMillis() / 1000) + "%0%0%0%0%0%0%1%0%0%0%0.0%0%1%" + islandJson.toString() + "%");
-
-		info = info;
 	}
 
 	private void handleSpawn(String id, Player plr, SmartfoxClient client) throws IOException {

@@ -36,6 +36,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
 import org.asf.connective.https.ConnectiveHTTPSServer;
+import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.modules.IEmuFeralModule;
 import org.asf.emuferal.modules.ModuleManager;
@@ -59,6 +60,8 @@ import org.asf.emuferal.networking.http.director.GameServerRequestHandler;
 import org.asf.emuferal.players.Player;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.ConnectiveServerFactory;
+
+import com.google.gson.JsonObject;
 
 public class EmuFeral {
 	// Update
@@ -666,53 +669,131 @@ public class EmuFeral {
 		return false;
 	}
 
-	public static void fixSanctuaries(PlayerInventory inv) {
+	public static void fixSanctuaries(PlayerInventory inv, EmuFeralAccount acc) {
+		//
+		// Looks
+		//
+
+		if (EmuFeral.giveAllSanctuaryTypes) {
+			// Give missing sanctuary types
+			int[] sanctuaryTypes = new int[] { 9588, 12632, 12637, 12964, 21273, 23627, 24122, 25414, 26065, 28431,
+					9760, 9764 };
+			for (int id : sanctuaryTypes)
+				if (!inv.getAccessor().isSanctuaryClassUnlocked(id))
+					inv.getAccessor().addSanctuaryClassToInventory(id);
+		} else {
+			// Give default sanctuary if needed
+			if (!inv.getAccessor().isSanctuaryClassUnlocked(9588))
+				inv.getAccessor().addSanctuaryClassToInventory(9588);
+		}
+
+		//
+		// Remove broken sanctuary files
+		//
+
+		for (String id : inv.getAccessor().getSanctuaryLookIDs()) {
+			// Get sanctuary object
+			JsonObject sanc = inv.getAccessor().getSanctuaryLook(id).get("components").getAsJsonObject()
+					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
+
+			// Check validity
+			String classId = sanc.get("classInvId").getAsString();
+			if (inv.getAccessor().getSanctuaryClassObject(classId) == null) {
+				// Delete the entry
+				inv.getItem("201").getAsJsonArray().remove(sanc);
+			}
+		}
+
+		//
 		// Check look count and add missing look slots
-		for (int i = inv.getAccessor().getSanctuaryLookCount(); i < 9; i++) {
+		//
+
+		for (int i = inv.getAccessor().getSanctuaryLookCount(); i < 12; i++) {
 			inv.getAccessor().addExtraSanctuarySlot();
 		}
 
-		if (EmuFeral.giveAllSanctuaryTypes) {
-			// Give missing house types
-			int[] houseTypes = new int[] { 2694, 8694, 12965, 9763, 25400, 21234, 26059, 12671, 12629, 23606, 24089,
-					28428 };
-			for (int id : houseTypes)
-				addHouseType(inv, id);
+		//
+		// Fix missing primary slot for active sanctuary if needed
+		//
 
-			// Give missing island types
-			int[] islandTypes = new int[] { 2695, 16812, 17147, 17148, 25411, 21274, 26062, 17151, 17150, 23628, 24120,
-					28429 };
-			for (int id : islandTypes)
-				addHouseType(inv, id);
-		} else {
-			// Give missing house type
-			addHouseType(inv, 2694);
+		// Find active sanctuary object
+		JsonObject sanctuaryInfo = inv.getAccessor().getSanctuaryLook(acc.getActiveSanctuaryLook());
+		if (sanctuaryInfo == null)
+			sanctuaryInfo = inv.getAccessor().getFirstSanctuaryLook();
 
-			// Give missing island type
-			addIslandType(inv, 2695);
+		// Check primary slot
+		if (!sanctuaryInfo.get("components").getAsJsonObject().has("PrimaryLook")) {
+			// Find active primary look for this house
+			int house = sanctuaryInfo.get("components").getAsJsonObject().get("SanctuaryLook").getAsJsonObject()
+					.get("info").getAsJsonObject().get("houseDefId").getAsInt();
+			for (String id : inv.getAccessor().getSanctuaryLookIDs()) {
+				// Get sanctuary object
+				JsonObject sanc = inv.getAccessor().getSanctuaryLook(id);
+
+				// Check if its a primary slot
+				if (sanc.get("components").getAsJsonObject().has("PrimaryLook")
+						&& sanc.get("components").getAsJsonObject().get("SanctuaryLook").getAsJsonObject().get("info")
+								.getAsJsonObject().get("houseDefId").getAsInt() == house) {
+					// Remove active statement
+					sanc.get("components").getAsJsonObject().remove("PrimaryLook");
+
+					// Check name
+					if (!sanc.get("components").getAsJsonObject().has("Name") || sanc.get("components")
+							.getAsJsonObject().get("Name").getAsJsonObject().get("name").getAsString().isEmpty()) {
+						if (!sanc.get("components").getAsJsonObject().has("Name"))
+							sanc.get("components").getAsJsonObject().add("Name", new JsonObject());
+						else
+							sanc.get("components").getAsJsonObject().get("Name").getAsJsonObject().remove("name");
+						sanc.get("components").getAsJsonObject().get("Name").getAsJsonObject().addProperty("name",
+								"Unknown");
+					}
+
+					break;
+				}
+			}
+
+			// Save
+			sanctuaryInfo.get("components").getAsJsonObject().add("PrimaryLook", new JsonObject());
+			inv.setItem("201", inv.getItem("201"));
+		}
+
+		//
+		// Fix missing primary slots
+		//
+
+		for (int house : inv.getAccessor().getUnlockedHouseTypes()) {
+			boolean found = false;
+
+			// Check if there is any primary look saved
+			String lastId = null;
+			for (String id : inv.getAccessor().getSanctuaryLookIDs()) {
+				// Get sanctuary object
+				JsonObject sanc = inv.getAccessor().getSanctuaryLook(id);
+
+				if (sanc.get("components").getAsJsonObject().get("SanctuaryLook").getAsJsonObject().get("info")
+						.getAsJsonObject().get("houseDefId").getAsInt() != house)
+					continue;
+
+				lastId = id;
+
+				// Check if its a primary slot
+				if (sanc.get("components").getAsJsonObject().has("PrimaryLook")) {
+					found = true;
+					break;
+				}
+			}
+
+			// Save if needed
+			if (!found) {
+				inv.getAccessor().getSanctuaryLook(lastId).get("components").getAsJsonObject().add("PrimaryLook",
+						new JsonObject());
+				inv.setItem("201", inv.getItem("201"));
+			}
 		}
 
 		// Save changes
 		for (String change : inv.getAccessor().getItemsToSave())
 			inv.setItem(change, inv.getItem(change));
 		inv.getAccessor().completedSave();
-	}
-
-	private static void addHouseType(PlayerInventory inv, int id) {
-		// Adds house types to the inventory if not present
-		if (!inv.getAccessor().isHouseTypeUnlocked(id)) {
-			// Add a house type for each look slot
-			for (int i = 0; i < inv.getAccessor().getSanctuaryLookCount(); i++)
-				inv.getAccessor().addHouseToInventory(id);
-		}
-	}
-
-	private static void addIslandType(PlayerInventory inv, int id) {
-		// Adds island types to the inventory if not present
-		if (!inv.getAccessor().isIslandTypeUnlocked(id)) {
-			// Add a island type for each look slot
-			for (int i = 0; i < inv.getAccessor().getSanctuaryLookCount(); i++)
-				inv.getAccessor().addIslandToInventory(id);
-		}
 	}
 }

@@ -38,8 +38,8 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 			if (id == null) {
 				// Check if registration is enabled, if not, prevent login
 				if (!EmuFeral.allowRegistration || EmuFeral.gameServer.maintenance) {
-					// Not sure what to send but sending this causes an error in the next request
-					// triggering the client into saying invalid password.
+					// Invalid details
+					this.setBody("{\"error\":\"invalid_credentials\"}");
 					this.setResponseCode(200);
 					return;
 				}
@@ -48,6 +48,7 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 				id = manager.register(login.get("username").getAsString());
 				if (id == null) {
 					// Invalid details
+					this.setBody("{\"error\":\"invalid_credentials\"}");
 					this.setResponseCode(200);
 					return;
 				}

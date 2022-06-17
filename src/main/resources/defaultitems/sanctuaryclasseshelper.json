@@ -1,0 +1,64 @@
+{
+  "SanctuaryClasses": {
+    "12632": {
+      "lookDefId": "12633",
+      "houseDefId": "12629",
+      "islandDefId": "17150"
+    },
+    "12637": {
+      "lookDefId": "12636",
+      "houseDefId": "12671",
+      "islandDefId": "17151"
+    },
+    "12964": {
+      "lookDefId": "12966",
+      "houseDefId": "12965",
+      "islandDefId": "17147"
+    },
+    "21273": {
+      "lookDefId": "21276",
+      "houseDefId": "21234",
+      "islandDefId": "21274"
+    },
+    "23627": {
+      "lookDefId": "23629",
+      "houseDefId": "23606",
+      "islandDefId": "23628"
+    },
+    "24122": {
+      "lookDefId": "24121",
+      "houseDefId": "24089",
+      "islandDefId": "24120"
+    },
+    "25414": {
+      "lookDefId": "25412",
+      "houseDefId": "25400",
+      "islandDefId": "25411"
+    },
+    "26065": {
+      "lookDefId": "26063",
+      "houseDefId": "26059",
+      "islandDefId": "26062"
+    },
+    "28431": {
+      "lookDefId": "28430",
+      "houseDefId": "28428",
+      "islandDefId": "28429"
+    },
+    "9588": {
+      "lookDefId": "9625",
+      "houseDefId": "2694",
+      "islandDefId": "2695"
+    },
+    "9760": {
+      "lookDefId": "9761",
+      "houseDefId": "8694",
+      "islandDefId": "16812"
+    },
+    "9764": {
+      "lookDefId": "9762",
+      "houseDefId": "9763",
+      "islandDefId": "17148"
+    }
+  }
+}
