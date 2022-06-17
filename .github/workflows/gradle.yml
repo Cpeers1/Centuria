@@ -28,6 +28,10 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+    - name: Gradle Wrapper Validation
+      # You may pin to the exact commit or the version.
+      # uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      uses: gradle/wrapper-validation-action@v1.0.4
     - name: Build with Gradle
       uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
       with:
