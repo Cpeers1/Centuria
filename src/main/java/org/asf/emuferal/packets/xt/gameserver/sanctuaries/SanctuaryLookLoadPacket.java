@@ -45,31 +45,24 @@ public class SanctuaryLookLoadPacket implements IXtPacket<SanctuaryLookLoadPacke
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Switch sanctuary look
 		Player plr = (Player) client.container;
-		
-		// TODO
 
 		// Log
 		if (System.getProperty("debugMode") != null) {
 			System.out.println("[SANCTUARYEDITOR] [SELECTLOOK]  Client to server (look: " + lookId + ")");
 		}
 
-		// Remove lock from old look
+		// Load into active look
 		JsonObject components = plr.account.getPlayerInventory().getAccessor().getSanctuaryLook(plr.activeSanctuaryLook)
 				.get("components").getAsJsonObject();
-		if (components.has("PrimaryLook"))
-			components.remove("PrimaryLook");
-
-		// Save the look ID
-		plr.activeSanctuaryLook = lookId;
-
-		// Save active look
-		plr.account.setActiveSanctuaryLook(plr.activeSanctuaryLook);
-
-		// Save lock
-		components = plr.account.getPlayerInventory().getAccessor().getSanctuaryLook(plr.activeSanctuaryLook)
-				.get("components").getAsJsonObject();
-		if (!components.has("PrimaryLook"))
-			components.add("PrimaryLook", new JsonObject());
+		if (components.has("SanctuaryLook"))
+			components.remove("SanctuaryLook");
+		if (components.has("Timestamp"))
+			components.remove("Timestamp");
+		components.add("SanctuaryLook", plr.account.getPlayerInventory().getAccessor().getSanctuaryLook(lookId)
+				.get("components").getAsJsonObject().get("SanctuaryLook"));
+		JsonObject ts = new JsonObject();
+		ts.addProperty("ts", System.currentTimeMillis());
+		components.add("Timestamp", ts);
 		plr.account.getPlayerInventory().setItem("201", plr.account.getPlayerInventory().getItem("201"));
 
 		// Respond with switch packet and rejoin
