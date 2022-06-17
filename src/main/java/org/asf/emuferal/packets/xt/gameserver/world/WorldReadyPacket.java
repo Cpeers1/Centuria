@@ -126,6 +126,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 			// Find the ID
 			String id = sanctuaryInfo.get("id").getAsString();
+			if (!plr.activeSanctuaryLook.equals(id)) {
+				plr.activeSanctuaryLook = id;
+				plr.account.setActiveSanctuaryLook(plr.activeSanctuaryLook);
+			}
 
 			// Find sanctuary info
 			JsonObject info = sanctuaryInfo.get("components").getAsJsonObject().get("SanctuaryLook").getAsJsonObject()
@@ -148,8 +152,47 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		if (placementInfo.has("items")) {
 			JsonArray items = placementInfo.get("items").getAsJsonArray();
 			for (JsonElement ele : items) {
-				JsonObject furnitureInfo = ele.getAsJsonObject();
-				// TODO
+				JsonObject furnitureInfo = ele.getAsJsonObject().get("components").getAsJsonObject().get("Placed")
+						.getAsJsonObject();
+
+				String objId = furnitureInfo.get("placeableInvId").getAsString();
+				JsonObject furnitureObject = inv.getAccessor().getFurnitureData(objId);
+				if (furnitureObject != null) {
+					// Send packet
+					XtWriter wr = new XtWriter();
+					wr.writeString("oi");
+					wr.writeInt(-1); // data prefix
+
+					// Object creation parameters
+					wr.writeString(objId); // World object ID
+					wr.writeInt(1751);
+					wr.writeString(player.room.substring("sanctuary_".length())); // Owner ID
+
+					// Object info
+					wr.writeInt(0);
+					wr.writeLong(System.currentTimeMillis() / 1000);
+					wr.writeString(furnitureInfo.get("xPos").getAsString());
+					wr.writeString(furnitureInfo.get("yPos").getAsString());
+					wr.writeString(furnitureInfo.get("zPos").getAsString());
+					wr.writeString(furnitureInfo.get("rotX").getAsString());
+					wr.writeString(furnitureInfo.get("rotY").getAsString());
+					wr.writeString(furnitureInfo.get("rotZ").getAsString());
+					wr.writeString(furnitureInfo.get("rotW").getAsString());
+					wr.writeString("0%0%0%0.0%0"); // idk tbh
+					wr.writeInt(2); // type: furniture
+					wr.writeString(furnitureObject.toString());
+					wr.writeString(furnitureInfo.get("gridId").getAsString()); // grid
+					wr.writeString(furnitureInfo.get("parentItemId").getAsString()); // parent item
+					wr.writeString(furnitureInfo.get("state").getAsString()); // state
+					wr.writeString(""); // data suffix
+					client.sendPacket(wr.encode());
+
+					// Log
+					if (System.getProperty("debugMode") != null) {
+						System.out.println("[SANCTUARY] [LOAD]  Server to client: load object (id: " + objId
+								+ ", type: furniture, defId: " + furnitureObject.get("defId").getAsString() + ")");
+					}
+				}
 			}
 		}
 
@@ -161,6 +204,12 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		client.sendPacket("%xt%oi%-1%" + houseId + "%1751%" + player.room.substring("sanctuary_".length()) + "%0%"
 				+ (System.currentTimeMillis() / 1000) + "%0%0%0%0%0%0%1%0%0%0%0.0%0%0%" + houseJson.toString() + "%");
 
+		// Log
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[SANCTUARY] [LOAD]  Server to client: load object (id: " + houseId
+					+ ", type: house, defId: " + houseJson.get("defId").getAsString() + ")");
+		}
+
 		// Load island info
 		String islandId = info.get("islandInvId").getAsString();
 		JsonObject islandJson = inv.getAccessor().getIslandTypeObject(islandId);
@@ -168,6 +217,12 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Send packet
 		client.sendPacket("%xt%oi%-1%" + islandId + "%1751%" + player.room.substring("sanctuary_".length()) + "%0%"
 				+ (System.currentTimeMillis() / 1000) + "%0%0%0%0%0%0%1%0%0%0%0.0%0%1%" + islandJson.toString() + "%");
+
+		// Log
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[SANCTUARY] [LOAD]  Server to client: load object (id: " + islandId
+					+ ", type: island, defId: " + islandJson.get("defId").getAsString() + ")");
+		}
 	}
 
 	private void handleSpawn(String id, Player plr, SmartfoxClient client) throws IOException {

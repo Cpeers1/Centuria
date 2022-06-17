@@ -60,6 +60,9 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 		if (!sancOwner.getPlayerInventory().containsItem("201")) {
 			// Fix sanctuaries
 			EmuFeral.fixSanctuaries(sancOwner.getPlayerInventory(), sancOwner);
+			Player plr = sancOwner.getOnlinePlayerInstance();
+			if (plr != null)
+				plr.activeSanctuaryLook = sancOwner.getActiveSanctuaryLook();
 		}
 
 		// Build room join

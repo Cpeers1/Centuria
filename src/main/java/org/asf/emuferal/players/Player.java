@@ -14,6 +14,7 @@ public class Player {
 
 	public String activeLook;
 	public String activeSanctuaryLook;
+	public boolean sanctuaryPreloadCompleted = false;
 
 	public int pendingLookDefID = 8254;
 	public String pendingLookID = null;

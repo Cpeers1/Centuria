@@ -237,7 +237,11 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 		// Sanctuaries
 		if (slot.equals("5") || slot.equals("6") || slot.equals("102") || slot.equals("10") || slot.equals("201")) {
-			EmuFeral.fixSanctuaries(inv, plr.account);
+			if (!plr.sanctuaryPreloadCompleted) {
+				EmuFeral.fixSanctuaries(inv, plr.account);
+				plr.activeSanctuaryLook = plr.account.getActiveSanctuaryLook();
+				plr.sanctuaryPreloadCompleted = true;
+			}
 		}
 
 		// Load the item

@@ -670,6 +670,13 @@ public class EmuFeral {
 	}
 
 	public static void fixSanctuaries(PlayerInventory inv, EmuFeralAccount acc) {
+		if (!inv.containsItem("10")) {
+			// Broken inventory, delete the sanctuary saves as it will break
+			inv.deleteItem("5");
+			inv.deleteItem("6");
+			inv.deleteItem("201");
+		}
+
 		//
 		// Looks
 		//
@@ -713,51 +720,6 @@ public class EmuFeral {
 		}
 
 		//
-		// Fix missing primary slot for active sanctuary if needed
-		//
-
-		// Find active sanctuary object
-		JsonObject sanctuaryInfo = inv.getAccessor().getSanctuaryLook(acc.getActiveSanctuaryLook());
-		if (sanctuaryInfo == null)
-			sanctuaryInfo = inv.getAccessor().getFirstSanctuaryLook();
-
-		// Check primary slot
-		if (!sanctuaryInfo.get("components").getAsJsonObject().has("PrimaryLook")) {
-			// Find active primary look for this house
-			int house = sanctuaryInfo.get("components").getAsJsonObject().get("SanctuaryLook").getAsJsonObject()
-					.get("info").getAsJsonObject().get("houseDefId").getAsInt();
-			for (String id : inv.getAccessor().getSanctuaryLookIDs()) {
-				// Get sanctuary object
-				JsonObject sanc = inv.getAccessor().getSanctuaryLook(id);
-
-				// Check if its a primary slot
-				if (sanc.get("components").getAsJsonObject().has("PrimaryLook")
-						&& sanc.get("components").getAsJsonObject().get("SanctuaryLook").getAsJsonObject().get("info")
-								.getAsJsonObject().get("houseDefId").getAsInt() == house) {
-					// Remove active statement
-					sanc.get("components").getAsJsonObject().remove("PrimaryLook");
-
-					// Check name
-					if (!sanc.get("components").getAsJsonObject().has("Name") || sanc.get("components")
-							.getAsJsonObject().get("Name").getAsJsonObject().get("name").getAsString().isEmpty()) {
-						if (!sanc.get("components").getAsJsonObject().has("Name"))
-							sanc.get("components").getAsJsonObject().add("Name", new JsonObject());
-						else
-							sanc.get("components").getAsJsonObject().get("Name").getAsJsonObject().remove("name");
-						sanc.get("components").getAsJsonObject().get("Name").getAsJsonObject().addProperty("name",
-								"Unknown");
-					}
-
-					break;
-				}
-			}
-
-			// Save
-			sanctuaryInfo.get("components").getAsJsonObject().add("PrimaryLook", new JsonObject());
-			inv.setItem("201", inv.getItem("201"));
-		}
-
-		//
 		// Fix missing primary slots
 		//
 
@@ -765,7 +727,6 @@ public class EmuFeral {
 			boolean found = false;
 
 			// Check if there is any primary look saved
-			String lastId = null;
 			for (String id : inv.getAccessor().getSanctuaryLookIDs()) {
 				// Get sanctuary object
 				JsonObject sanc = inv.getAccessor().getSanctuaryLook(id);
@@ -773,8 +734,6 @@ public class EmuFeral {
 				if (sanc.get("components").getAsJsonObject().get("SanctuaryLook").getAsJsonObject().get("info")
 						.getAsJsonObject().get("houseDefId").getAsInt() != house)
 					continue;
-
-				lastId = id;
 
 				// Check if its a primary slot
 				if (sanc.get("components").getAsJsonObject().has("PrimaryLook")) {
@@ -785,9 +744,27 @@ public class EmuFeral {
 
 			// Save if needed
 			if (!found) {
-				inv.getAccessor().getSanctuaryLook(lastId).get("components").getAsJsonObject().add("PrimaryLook",
-						new JsonObject());
-				inv.setItem("201", inv.getItem("201"));
+				inv.getAccessor().addExtraSanctuarySlot();
+			}
+		}
+
+		//
+		// Active sanctuary
+		//
+
+		JsonObject activeSanc = inv.getAccessor().getSanctuaryLook(acc.getActiveSanctuaryLook());
+		if (activeSanc == null) {
+			// Select first primary slot
+			for (String id : inv.getAccessor().getSanctuaryLookIDs()) {
+				// Get sanctuary object
+				JsonObject sanc = inv.getAccessor().getSanctuaryLook(id);
+
+				// Check if its a primary slot
+				if (sanc.get("components").getAsJsonObject().has("PrimaryLook")) {
+					// Assign active sanctuary
+					acc.setActiveSanctuaryLook(id);
+					break;
+				}
 			}
 		}
 

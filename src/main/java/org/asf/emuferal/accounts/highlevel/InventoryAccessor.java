@@ -1488,7 +1488,13 @@ public class InventoryAccessor {
 		// Load the inventory object
 		if (!inventory.containsItem("201"))
 			return 0;
-		return inventory.getItem("201").getAsJsonArray().size();
+
+		int count = 0;
+		for (JsonElement ele : inventory.getItem("201").getAsJsonArray()) {
+			if (!ele.getAsJsonObject().get("components").getAsJsonObject().has("PrimaryLook"))
+				count++;
+		}
+		return count;
 	}
 
 	/**
@@ -1576,6 +1582,7 @@ public class InventoryAccessor {
 			int lookDefId = classData.get("lookDefId").getAsInt();
 
 			// Generate item ID
+			boolean hasPrimary = false;
 			String itmID = UUID.randomUUID().toString();
 			while (true) {
 				boolean found = false;
@@ -1583,6 +1590,10 @@ public class InventoryAccessor {
 					JsonObject itm = ele.getAsJsonObject();
 					String itID = itm.get("id").getAsString();
 					if (itID.equals(itmID)) {
+						// Check if this look is a primary look
+						if (itm.get("components").getAsJsonObject().has("PrimaryLook")) {
+							hasPrimary = true;
+						}
 						found = true;
 						break;
 					}
@@ -1592,40 +1603,72 @@ public class InventoryAccessor {
 				itmID = UUID.randomUUID().toString();
 			}
 
-			// Build object
-			JsonObject itm = new JsonObject();
-			JsonObject ts = new JsonObject();
-			ts.addProperty("ts", System.currentTimeMillis());
-			// Build sanctuary info object
-			JsonObject sanctuary = new JsonObject();
-			JsonObject sanctuaryInfo = new JsonObject();
-			// Create the house
-			String id = addHouseToInventory(houseId);
-			sanctuaryInfo.addProperty("houseDefId", houseId);
-			sanctuaryInfo.addProperty("houseInvId", id);
-			sanctuaryInfo.add("placementInfo", new JsonObject());
-			// Create the island
-			id = addIslandToInventory(islandId);
-			sanctuaryInfo.addProperty("islandDefId", islandId);
-			sanctuaryInfo.addProperty("islandInvId", id);
-			// Create class
-			id = addSanctuaryClassToInventory(classId);
-			sanctuaryInfo.addProperty("classInvId", id);
-			sanctuary.add("info", sanctuaryInfo);
-			// Build components
-			JsonObject components = new JsonObject();
-			components.add("SanctuaryLook", sanctuary);
-			components.add("Timestamp", ts);
-			itm.addProperty("defId", lookDefId);
-			itm.add("components", components);
-			itm.addProperty("id", itmID);
-			itm.addProperty("type", 201);
-			items.add(itm);
+			// Create slot
+			createSlot(items, islandId, houseId, lookDefId, classId, itmID);
+
+			// Add primary if needed
+			if (!hasPrimary) {
+				// Generate item ID
+				itmID = UUID.randomUUID().toString();
+				while (true) {
+					boolean found = false;
+					for (JsonElement ele : items) {
+						JsonObject itm = ele.getAsJsonObject();
+						String itID = itm.get("id").getAsString();
+						if (itID.equals(itmID)) {
+							found = true;
+							break;
+						}
+					}
+					if (!found)
+						break;
+					itmID = UUID.randomUUID().toString();
+				}
+
+				// Add slot
+				createSlot(items, islandId, houseId, lookDefId, classId, itmID).get("components").getAsJsonObject()
+						.add("PrimaryLook", new JsonObject());
+			}
 
 			// Mark what files to save
 			if (!itemsToSave.contains("201"))
 				itemsToSave.add("201");
 		}
+	}
+
+	private JsonObject createSlot(JsonArray items, int islandId, int houseId, int lookDefId, int classId,
+			String itmID) {
+		// Build object
+		JsonObject itm = new JsonObject();
+		JsonObject ts = new JsonObject();
+		ts.addProperty("ts", System.currentTimeMillis());
+		// Build sanctuary info object
+		JsonObject sanctuary = new JsonObject();
+		JsonObject sanctuaryInfo = new JsonObject();
+		// Create the house
+		String id = addHouseToInventory(houseId);
+		sanctuaryInfo.addProperty("houseDefId", houseId);
+		sanctuaryInfo.addProperty("houseInvId", id);
+		sanctuaryInfo.add("placementInfo", new JsonObject());
+		// Create the island
+		id = addIslandToInventory(islandId);
+		sanctuaryInfo.addProperty("islandDefId", islandId);
+		sanctuaryInfo.addProperty("islandInvId", id);
+		// Create class
+		id = addSanctuaryClassToInventory(classId);
+		sanctuaryInfo.addProperty("classInvId", id);
+		sanctuary.add("info", sanctuaryInfo);
+		// Build components
+		JsonObject components = new JsonObject();
+		// Make primary if needed
+		components.add("SanctuaryLook", sanctuary);
+		components.add("Timestamp", ts);
+		itm.addProperty("defId", lookDefId);
+		itm.add("components", components);
+		itm.addProperty("id", itmID);
+		itm.addProperty("type", 201);
+		items.add(itm);
+		return itm;
 	}
 
 	/**
