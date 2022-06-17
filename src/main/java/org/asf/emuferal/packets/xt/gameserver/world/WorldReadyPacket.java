@@ -126,7 +126,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 			// Find the ID
 			String id = sanctuaryInfo.get("id").getAsString();
-			if (!plr.activeSanctuaryLook.equals(id)) {
+			if (acc.getAccountID().equals(plr.account.getAccountID()) && !plr.activeSanctuaryLook.equals(id)) {
 				plr.activeSanctuaryLook = id;
 				plr.account.setActiveSanctuaryLook(plr.activeSanctuaryLook);
 			}
@@ -171,21 +171,23 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					// Object info
 					wr.writeInt(0);
 					wr.writeLong(System.currentTimeMillis() / 1000);
-					wr.writeString(furnitureInfo.get("xPos").getAsString());
-					wr.writeString(furnitureInfo.get("yPos").getAsString());
-					wr.writeString(furnitureInfo.get("zPos").getAsString());
-					wr.writeString(furnitureInfo.get("rotX").getAsString());
-					wr.writeString(furnitureInfo.get("rotY").getAsString());
-					wr.writeString(furnitureInfo.get("rotZ").getAsString());
-					wr.writeString(furnitureInfo.get("rotW").getAsString());
-					wr.writeString("0%0%0%0.0%0"); // idk tbh
-					wr.writeInt(2); // type: furniture
-					wr.writeString(furnitureObject.toString());
+					wr.writeDouble(furnitureInfo.get("xPos").getAsDouble());
+					wr.writeDouble(furnitureInfo.get("yPos").getAsDouble());
+					wr.writeDouble(furnitureInfo.get("zPos").getAsDouble());
+					wr.writeDouble(furnitureInfo.get("rotX").getAsDouble());
+					wr.writeDouble(furnitureInfo.get("rotY").getAsDouble());
+					wr.writeDouble(furnitureInfo.get("rotZ").getAsDouble());
+					wr.writeDouble(furnitureInfo.get("rotW").getAsDouble());
+					wr.writeString("0%0%0%0.0%0%2"); // idk tbh
+					// Only send json if its not the owner
+					if (!player.account.getAccountID().equals(acc.getAccountID()))
+						wr.writeString(furnitureObject.toString());
 					wr.writeString(furnitureInfo.get("gridId").getAsString()); // grid
 					wr.writeString(furnitureInfo.get("parentItemId").getAsString()); // parent item
 					wr.writeString(furnitureInfo.get("state").getAsString()); // state
 					wr.writeString(""); // data suffix
-					client.sendPacket(wr.encode());
+					String pk = wr.encode();
+					client.sendPacket(pk);
 
 					// Log
 					if (System.getProperty("debugMode") != null) {

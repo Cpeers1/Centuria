@@ -45,6 +45,8 @@ public class SanctuaryLookLoadPacket implements IXtPacket<SanctuaryLookLoadPacke
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Switch sanctuary look
 		Player plr = (Player) client.container;
+		
+		// TODO
 
 		// Log
 		if (System.getProperty("debugMode") != null) {

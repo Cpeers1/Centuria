@@ -198,8 +198,8 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 				// Add all furniture (3 of each)
 				for (String id : helper.keySet()) {
-					if (inv.getAccessor().getFurnitureCount(Integer.valueOf(id)) < 3) {
-						for (int i = inv.getAccessor().getFurnitureCount(Integer.valueOf(id)); i < 3; i++) {
+					if (inv.getAccessor().getFurnitureCount(Integer.valueOf(id)) < 6) {
+						for (int i = inv.getAccessor().getFurnitureCount(Integer.valueOf(id)); i < 6; i++) {
 							inv.getAccessor().addFurniture(Integer.valueOf(id), false);
 						}
 					}
