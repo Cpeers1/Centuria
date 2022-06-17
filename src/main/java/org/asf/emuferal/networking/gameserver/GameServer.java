@@ -53,6 +53,7 @@ import org.asf.emuferal.packets.xt.gameserver.sanctuaries.SanctuaryJoinPacket;
 import org.asf.emuferal.packets.xt.gameserver.sanctuaries.SanctuaryLookLoadPacket;
 import org.asf.emuferal.packets.xt.gameserver.sanctuaries.SanctuaryLookSwitchPacket;
 import org.asf.emuferal.packets.xt.gameserver.sanctuaries.SanctuaryUpdatePacket;
+import org.asf.emuferal.packets.xt.gameserver.settings.UserVarSetPacket;
 import org.asf.emuferal.packets.xt.gameserver.shops.ShopList;
 import org.asf.emuferal.packets.xt.gameserver.social.FindPlayer;
 import org.asf.emuferal.packets.xt.gameserver.social.JumpToPlayer;
@@ -134,6 +135,7 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new SanctuaryLookSwitchPacket());
 		registerPacket(new SanctuaryLookLoadPacket());
 		registerPacket(new SanctuaryUpdatePacket());
+		registerPacket(new UserVarSetPacket());
 
 		// Allow modules to register packets
 		GameServerStartupEvent ev = new GameServerStartupEvent(this, t -> registerPacket(t));

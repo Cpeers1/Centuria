@@ -1,0 +1,2560 @@
+{
+  "userVars": {
+    "30220": {
+      "userVarName": "QueensEvent/Event01",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "11573": {
+      "userVarName": "UserVar/AvailabilityBypass",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9311": {
+      "userVarName": "UserVar/BuildersFolly/LevelHighScores",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": true,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "13617": {
+      "userVarName": "UserVar/BuildersFolly/LevelHighScores_expert",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": true,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7240": {
+      "userVarName": "UserVar/BuildersFollyHighScore00a",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7241": {
+      "userVarName": "UserVar/BuildersFollyHighScore00b",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7242": {
+      "userVarName": "UserVar/BuildersFollyHighScore00c",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "5682": {
+      "userVarName": "UserVar/BuildersFollyHighScore01",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "5683": {
+      "userVarName": "UserVar/BuildersFollyHighScore02",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6338": {
+      "userVarName": "UserVar/BuildersFollyHighScore03",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6339": {
+      "userVarName": "UserVar/BuildersFollyHighScore04",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6340": {
+      "userVarName": "UserVar/BuildersFollyHighScore05",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6341": {
+      "userVarName": "UserVar/BuildersFollyHighScore06",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6342": {
+      "userVarName": "UserVar/BuildersFollyHighScore07",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6343": {
+      "userVarName": "UserVar/BuildersFollyHighScore08",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6344": {
+      "userVarName": "UserVar/BuildersFollyHighScore09",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6345": {
+      "userVarName": "UserVar/BuildersFollyHighScore10",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7525": {
+      "userVarName": "UserVar/BuildersFollyHighScore100",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6346": {
+      "userVarName": "UserVar/BuildersFollyHighScore11",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6347": {
+      "userVarName": "UserVar/BuildersFollyHighScore12",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6348": {
+      "userVarName": "UserVar/BuildersFollyHighScore13",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6349": {
+      "userVarName": "UserVar/BuildersFollyHighScore14",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6350": {
+      "userVarName": "UserVar/BuildersFollyHighScore15",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6351": {
+      "userVarName": "UserVar/BuildersFollyHighScore16",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6352": {
+      "userVarName": "UserVar/BuildersFollyHighScore17",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6353": {
+      "userVarName": "UserVar/BuildersFollyHighScore18",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6354": {
+      "userVarName": "UserVar/BuildersFollyHighScore19",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6355": {
+      "userVarName": "UserVar/BuildersFollyHighScore20",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6356": {
+      "userVarName": "UserVar/BuildersFollyHighScore21",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6357": {
+      "userVarName": "UserVar/BuildersFollyHighScore22",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6358": {
+      "userVarName": "UserVar/BuildersFollyHighScore23",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6359": {
+      "userVarName": "UserVar/BuildersFollyHighScore24",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6360": {
+      "userVarName": "UserVar/BuildersFollyHighScore25",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6361": {
+      "userVarName": "UserVar/BuildersFollyHighScore26",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6362": {
+      "userVarName": "UserVar/BuildersFollyHighScore27",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6363": {
+      "userVarName": "UserVar/BuildersFollyHighScore28",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6364": {
+      "userVarName": "UserVar/BuildersFollyHighScore29",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6365": {
+      "userVarName": "UserVar/BuildersFollyHighScore30",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6366": {
+      "userVarName": "UserVar/BuildersFollyHighScore31",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6367": {
+      "userVarName": "UserVar/BuildersFollyHighScore32",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6368": {
+      "userVarName": "UserVar/BuildersFollyHighScore33",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6369": {
+      "userVarName": "UserVar/BuildersFollyHighScore34",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6370": {
+      "userVarName": "UserVar/BuildersFollyHighScore35",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6371": {
+      "userVarName": "UserVar/BuildersFollyHighScore36",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6372": {
+      "userVarName": "UserVar/BuildersFollyHighScore37",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6373": {
+      "userVarName": "UserVar/BuildersFollyHighScore38",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6374": {
+      "userVarName": "UserVar/BuildersFollyHighScore39",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6375": {
+      "userVarName": "UserVar/BuildersFollyHighScore40",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6376": {
+      "userVarName": "UserVar/BuildersFollyHighScore41",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6377": {
+      "userVarName": "UserVar/BuildersFollyHighScore42",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6378": {
+      "userVarName": "UserVar/BuildersFollyHighScore43",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6379": {
+      "userVarName": "UserVar/BuildersFollyHighScore44",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6380": {
+      "userVarName": "UserVar/BuildersFollyHighScore45",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6381": {
+      "userVarName": "UserVar/BuildersFollyHighScore46",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6382": {
+      "userVarName": "UserVar/BuildersFollyHighScore47",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6383": {
+      "userVarName": "UserVar/BuildersFollyHighScore48",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6384": {
+      "userVarName": "UserVar/BuildersFollyHighScore49",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "6385": {
+      "userVarName": "UserVar/BuildersFollyHighScore50",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7480": {
+      "userVarName": "UserVar/BuildersFollyHighScore54",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7481": {
+      "userVarName": "UserVar/BuildersFollyHighScore55",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7482": {
+      "userVarName": "UserVar/BuildersFollyHighScore56",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7483": {
+      "userVarName": "UserVar/BuildersFollyHighScore57",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7484": {
+      "userVarName": "UserVar/BuildersFollyHighScore58",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7485": {
+      "userVarName": "UserVar/BuildersFollyHighScore59",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7486": {
+      "userVarName": "UserVar/BuildersFollyHighScore60",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7487": {
+      "userVarName": "UserVar/BuildersFollyHighScore61",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7488": {
+      "userVarName": "UserVar/BuildersFollyHighScore62",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7489": {
+      "userVarName": "UserVar/BuildersFollyHighScore63",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7490": {
+      "userVarName": "UserVar/BuildersFollyHighScore64",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7491": {
+      "userVarName": "UserVar/BuildersFollyHighScore65",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7492": {
+      "userVarName": "UserVar/BuildersFollyHighScore66",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7493": {
+      "userVarName": "UserVar/BuildersFollyHighScore67",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7494": {
+      "userVarName": "UserVar/BuildersFollyHighScore68",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7495": {
+      "userVarName": "UserVar/BuildersFollyHighScore69",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7496": {
+      "userVarName": "UserVar/BuildersFollyHighScore70",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7497": {
+      "userVarName": "UserVar/BuildersFollyHighScore71",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7498": {
+      "userVarName": "UserVar/BuildersFollyHighScore72",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7499": {
+      "userVarName": "UserVar/BuildersFollyHighScore73",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7500": {
+      "userVarName": "UserVar/BuildersFollyHighScore74",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7501": {
+      "userVarName": "UserVar/BuildersFollyHighScore75",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7502": {
+      "userVarName": "UserVar/BuildersFollyHighScore76",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7503": {
+      "userVarName": "UserVar/BuildersFollyHighScore77",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7504": {
+      "userVarName": "UserVar/BuildersFollyHighScore78",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7505": {
+      "userVarName": "UserVar/BuildersFollyHighScore79",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7506": {
+      "userVarName": "UserVar/BuildersFollyHighScore80",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7507": {
+      "userVarName": "UserVar/BuildersFollyHighScore81",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7508": {
+      "userVarName": "UserVar/BuildersFollyHighScore82",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7509": {
+      "userVarName": "UserVar/BuildersFollyHighScore83",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7747": {
+      "userVarName": "UserVar/BuildersFollyHighScore84",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7510": {
+      "userVarName": "UserVar/BuildersFollyHighScore85",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7511": {
+      "userVarName": "UserVar/BuildersFollyHighScore86",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7512": {
+      "userVarName": "UserVar/BuildersFollyHighScore87",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7513": {
+      "userVarName": "UserVar/BuildersFollyHighScore88",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7514": {
+      "userVarName": "UserVar/BuildersFollyHighScore89",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7515": {
+      "userVarName": "UserVar/BuildersFollyHighScore90",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7516": {
+      "userVarName": "UserVar/BuildersFollyHighScore91",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7517": {
+      "userVarName": "UserVar/BuildersFollyHighScore92",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7518": {
+      "userVarName": "UserVar/BuildersFollyHighScore93",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7519": {
+      "userVarName": "UserVar/BuildersFollyHighScore94",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7520": {
+      "userVarName": "UserVar/BuildersFollyHighScore95",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7521": {
+      "userVarName": "UserVar/BuildersFollyHighScore96",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7522": {
+      "userVarName": "UserVar/BuildersFollyHighScore97",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7523": {
+      "userVarName": "UserVar/BuildersFollyHighScore98",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "7524": {
+      "userVarName": "UserVar/BuildersFollyHighScore99",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "32243": {
+      "userVarName": "UserVar/ClosedBetaThankYouGiftAwarded",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9101": {
+      "userVarName": "UserVar/CodeBreaker/LevelHighScores",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": false,
+              "allowMultiples": true,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9100": {
+      "userVarName": "UserVar/CodeBreaker/LevelsUnlocked",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": false,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9099": {
+      "userVarName": "UserVar/CodeBreaker/Tutorial",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9361": {
+      "userVarName": "UserVar/GameSettings/ChatBubblesOn",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 1
+            }
+          }
+        ]
+      }
+    },
+    "9362": {
+      "userVarName": "UserVar/GameSettings/ChatIsFiltered",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9368": {
+      "userVarName": "UserVar/GameSettings/ControlsCameraSensitivity",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 250
+            }
+          }
+        ]
+      }
+    },
+    "9363": {
+      "userVarName": "UserVar/GameSettings/ControlsControlMode",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9367": {
+      "userVarName": "UserVar/GameSettings/ControlsInvertCamera",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "18421": {
+      "userVarName": "UserVar/GameSettings/GraphicsMotionBlurEnabled",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9359": {
+      "userVarName": "UserVar/GameSettings/HelpOverlaysOn",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 1
+            }
+          }
+        ]
+      }
+    },
+    "9360": {
+      "userVarName": "UserVar/GameSettings/HelpTooltipsOn",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 1
+            }
+          }
+        ]
+      }
+    },
+    "17547": {
+      "userVarName": "UserVar/GameSettings/Privacy/Follows",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "17546": {
+      "userVarName": "UserVar/GameSettings/Privacy/GoToPlayer",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "17544": {
+      "userVarName": "UserVar/GameSettings/Privacy/Sanctuary",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "17545": {
+      "userVarName": "UserVar/GameSettings/Privacy/Trading",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "29555": {
+      "userVarName": "UserVar/GameSettings/Privacy/VoiceChat",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 1
+            }
+          }
+        ]
+      }
+    },
+    "9848": {
+      "userVarName": "UserVar/GeneralTutorial/Controls",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 4,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9849": {
+      "userVarName": "UserVar/GeneralTutorial/CustomizeCreatureWindow",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 4,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9855": {
+      "userVarName": "UserVar/GeneralTutorial/EnimgaObtain",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 4,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9856": {
+      "userVarName": "UserVar/GeneralTutorial/InspirationObtain",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 4,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9857": {
+      "userVarName": "UserVar/GeneralTutorial/InspirationWindow",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 4,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9854": {
+      "userVarName": "UserVar/GeneralTutorial/InventoryWindow",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 4,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9859": {
+      "userVarName": "UserVar/GeneralTutorial/LockpickObtain",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 4,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9850": {
+      "userVarName": "UserVar/GeneralTutorial/SanctuaryDecorateWindow",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 4,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9852": {
+      "userVarName": "UserVar/GeneralTutorial/SanctuaryRoomToggle",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 4,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9851": {
+      "userVarName": "UserVar/GeneralTutorial/SanctuaryUpgrade",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 4,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9858": {
+      "userVarName": "UserVar/GeneralTutorial/ShopWindow",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 4,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "9853": {
+      "userVarName": "UserVar/GeneralTutorial/SocialWindow",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 4,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "13392": {
+      "userVarName": "UserVar/Match3/PersistentAtomData",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": false,
+              "allowMultiples": true,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "13405": {
+      "userVarName": "UserVar/Match3/PuzzlePieceRedemptionStatus",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": false,
+              "allowMultiples": true,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "13404": {
+      "userVarName": "UserVar/Match3/PuzzleRedemptionStatus",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": false,
+              "allowMultiples": true,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "30613": {
+      "userVarName": "UserVar/Match3/SavedGame",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": false,
+              "allowMultiples": true,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "13624": {
+      "userVarName": "UserVar/Match3/Tutorial",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "5933": {
+      "userVarName": "UserVar/Runes/Tutorial",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "4932": {
+      "userVarName": "UserVar/RunesHighScore",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 2,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "30275": {
+      "userVarName": "UserVar/TimeTravelSecondsSinceUnixEpoch",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    },
+    "25568": {
+      "userVarName": "UserVar/TobogganRun/Tutorial",
+      "data": {
+        "templateClass": "UserVarTemplate",
+        "templateFormatHash": "c76ebc0fa054a8eaa9b7e98e1a6fa92f",
+        "components": [
+          {
+            "componentClass": "UserVarDefComponent",
+            "componentJSON": {
+              "type": 0,
+              "clientAllowedToSet": true,
+              "allowMultiples": false,
+              "defaultValue": 0
+            }
+          }
+        ]
+      }
+    }
+  }
+}

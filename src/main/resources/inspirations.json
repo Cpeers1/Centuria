@@ -1,0 +1,4842 @@
+{
+  "inspirations": {
+    "18555": {
+      "inspirationName": "Inspiration/AnimeZine",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "18540"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "18543"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "18550"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "22279": {
+      "inspirationName": "Inspiration/ArcaneSigil",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "22262"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "22260"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "22268"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10450": {
+      "inspirationName": "Inspiration/AstralOil",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10392"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10392"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9996"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "26066": {
+      "inspirationName": "Inspiration/BambooShoot",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "26306"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "26307"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "26410"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10467": {
+      "inspirationName": "Inspiration/Barrel",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10417"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30962"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10012"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10461": {
+      "inspirationName": "Inspiration/Base/BaseTable",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10402"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30961"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10003"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10458": {
+      "inspirationName": "Inspiration/BaseChair",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10401"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30957"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10002"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10441": {
+      "inspirationName": "Inspiration/BaseGlasses",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10383"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30958"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9991"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "11221": {
+      "inspirationName": "Inspiration/BaseGloves",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10381"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30959"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9990"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "5528": {
+      "inspirationName": "Inspiration/BaseHat",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "5529"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "7338"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "192"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10447": {
+      "inspirationName": "Inspiration/BaseMask",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10388"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10389"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9994"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10460": {
+      "inspirationName": "Inspiration/BaseTable",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10402"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30961"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10003"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "5533": {
+      "inspirationName": "Inspiration/BaseTail",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "5531"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "5534"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "191"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10437": {
+      "inspirationName": "Inspiration/BaseVisor",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10366"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30960"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9981"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "7313": {
+      "inspirationName": "Inspiration/Bloodstain",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "7309"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "7339"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "7295"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10422": {
+      "inspirationName": "Inspiration/Bluddy",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10016"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10018"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9953"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "26068": {
+      "inspirationName": "Inspiration/BrokenCart",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "26312"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "26313"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "26411"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "5512": {
+      "inspirationName": "Inspiration/Broom",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "7337"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "5513"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "571"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10423": {
+      "inspirationName": "Inspiration/BubbleStream",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10019"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10020"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9976"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "9095": {
+      "inspirationName": "Inspiration/CatCharm",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10407"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10408"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10007"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "9097": {
+      "inspirationName": "Inspiration/CheeseWheel",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10410"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10411"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10008"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "13534": {
+      "inspirationName": "Inspiration/CosmicPearl",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "13520"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "14630"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "13518"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "14640": {
+      "inspirationName": "Inspiration/CrystalBall",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "14631"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "14638"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "14623"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "5517": {
+      "inspirationName": "Inspiration/DarkSkull",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "5518"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "7340"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "190"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "5520": {
+      "inspirationName": "Inspiration/Egg",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "5523"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "7341"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "6266"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10457": {
+      "inspirationName": "Inspiration/Elixir",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10399"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10400"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10001"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10428": {
+      "inspirationName": "Inspiration/EmptyBottle",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10365"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30963"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9980"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "11225": {
+      "inspirationName": "Inspiration/EverlastingFlame",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10374"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10375"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "11226"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "18562": {
+      "inspirationName": "Inspiration/FancyRibbon",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "18546"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "18547"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "18553"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10465": {
+      "inspirationName": "Inspiration/Fer.Albatross",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10413"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10414"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10010"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10466": {
+      "inspirationName": "Inspiration/FertileSoil",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10415"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10416"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10011"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "26067": {
+      "inspirationName": "Inspiration/FishBowl",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "26310"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "26311"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "26412"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "27712": {
+      "inspirationName": "Inspiration/FondMemories",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "27706"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "27707"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "27702"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "22269": {
+      "inspirationName": "Inspiration/FrostBite",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "22250"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "22252"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "22265"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "28777": {
+      "inspirationName": "Inspiration/FruitHat",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "28778"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "28779"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "28734"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "30575": {
+      "inspirationName": "Inspiration/GlitchedItem",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30952"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30953"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "30567"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "7312": {
+      "inspirationName": "Inspiration/GoldenLeaf",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "7344"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "7345"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "7292"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "11222": {
+      "inspirationName": "Inspiration/Iceblock",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10376"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10377"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9988"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "25935": {
+      "inspirationName": "Inspiration/IceCream",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "26308"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "26309"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "26409"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "11240": {
+      "inspirationName": "Inspiration/KillerSoup",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10369"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10370"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9983"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "13513": {
+      "inspirationName": "Inspiration/KoboldWhiskers",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "13522"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "13523"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "13514"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10445": {
+      "inspirationName": "Inspiration/LatchkeysGear",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10386"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10387"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9993"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "14641": {
+      "inspirationName": "Inspiration/LeatherStraps",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "14635"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "14636"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "14622"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "27711": {
+      "inspirationName": "Inspiration/LostHomework",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "27704"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "27705"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "27703"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "26069": {
+      "inspirationName": "Inspiration/LostSatchel",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "26314"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "26315"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "26413"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "9096": {
+      "inspirationName": "Inspiration/MaskEngraving",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10367"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10368"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9982"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "18563": {
+      "inspirationName": "Inspiration/MoonRock",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "18548"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "18549"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "18554"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "11433": {
+      "inspirationName": "Inspiration/MossySword",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10378"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10379"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9989"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10469": {
+      "inspirationName": "Inspiration/PeeringEyes",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10420"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10421"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10014"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10344": {
+      "inspirationName": "Inspiration/PictureFrame",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10347"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30964"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9985"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "9045": {
+      "inspirationName": "Inspiration/PleasantMusic",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10405"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10406"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10006"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "18561": {
+      "inspirationName": "Inspiration/PointyEars",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "18544"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "18544"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "18552"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10473": {
+      "inspirationName": "Inspiration/Pooofy",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10371"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10373"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9986"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "9954": {
+      "inspirationName": "Inspiration/PopularMeme",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10345"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10346"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10004"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10468": {
+      "inspirationName": "Inspiration/PowerFlour",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10418"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10419"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10013"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "14644": {
+      "inspirationName": "Inspiration/QueensLetter",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "14634"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "14639"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "14628"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10425": {
+      "inspirationName": "Inspiration/RatTail",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10362"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30965"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9978"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "22270": {
+      "inspirationName": "Inspiration/RitualBones",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "22253"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "22257"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "22267"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "28776": {
+      "inspirationName": "Inspiration/RockStatue",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "28780"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "28781"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "28735"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "7308": {
+      "inspirationName": "Inspiration/Rose",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "7342"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "7343"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "7294"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10359": {
+      "inspirationName": "Inspiration/RuggedCloth",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10360"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30966"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9957"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "18560": {
+      "inspirationName": "Inspiration/SerpentScale",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "18541"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "18542"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "18551"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10463": {
+      "inspirationName": "Inspiration/ShimmeringJewel",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10412"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30967"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10009"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "19630": {
+      "inspirationName": "Inspiration/SilverAxe",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "19533"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "19534"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "19627"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10452": {
+      "inspirationName": "Inspiration/SootStone",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10395"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10396"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9998"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "7310": {
+      "inspirationName": "Inspiration/Spike",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "536"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "537"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "7293"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10424": {
+      "inspirationName": "Inspiration/Springwater",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10363"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10361"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9977"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10427": {
+      "inspirationName": "Inspiration/Stonewall",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10364"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30968"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9979"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10444": {
+      "inspirationName": "Inspiration/SucculentFruit",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10384"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10385"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9992"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "30574": {
+      "inspirationName": "Inspiration/SummerFun",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30689"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30690"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "30566"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "9043": {
+      "inspirationName": "Inspiration/Sunburn",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10017"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10372"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9984"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "27710": {
+      "inspirationName": "Inspiration/SushiPlate",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "27708"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "27709"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "27701"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "9044": {
+      "inspirationName": "Inspiration/TerribleJoke",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10393"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10394"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9997"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10448": {
+      "inspirationName": "Inspiration/ToyAutomaton",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10390"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10391"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9995"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "14642": {
+      "inspirationName": "Inspiration/TrueFriendship",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "14633"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "13521"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "14571"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10462": {
+      "inspirationName": "Inspiration/TwiggleSoul",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10403"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10404"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10005"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10454": {
+      "inspirationName": "Inspiration/UnknownTalon",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10397"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "30969"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "9999"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "10456": {
+      "inspirationName": "Inspiration/WireMesh",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "10398"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "29890"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "10000"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "14643": {
+      "inspirationName": "Inspiration/WoodenPost",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "14629"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "14637"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "14621"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "5524": {
+      "inspirationName": "Inspiration/YellowFeather",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "5527"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "5525"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "195"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "19749": {
+      "inspirationName": "Inspiration/Ysabeaux",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "19535"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "19536"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "19628"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    },
+    "5498": {
+      "inspirationName": "TestInspiration",
+      "data": {
+        "templateClass": "InspirationTemplate",
+        "templateFormatHash": "53dff66ff94199a9fc30d60eed0bbea8",
+        "components": [
+          {
+            "componentClass": "ItemDefComponent",
+            "componentJSON": {
+              "itemType": 8
+            }
+          },
+          {
+            "componentClass": "InspirationDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "LocalizedNameDefComponent",
+            "componentJSON": {
+              "localizedDefID": "5157"
+            }
+          },
+          {
+            "componentClass": "LocalizedDescriptionDefComponent",
+            "componentJSON": {
+              "localizedDefID": "5172"
+            }
+          },
+          {
+            "componentClass": "RarityDefComponent",
+            "componentJSON": {
+              "rarity": 0
+            }
+          },
+          {
+            "componentClass": "Icon2DDefComponent",
+            "componentJSON": {
+              "imageDefID": "1500"
+            }
+          },
+          {
+            "componentClass": "UniqueDefComponent",
+            "componentJSON": {}
+          },
+          {
+            "componentClass": "FilterDefComponent",
+            "componentJSON": {
+              "localizedFilterDefIds": []
+            }
+          },
+          {
+            "componentClass": "TagDefComponent",
+            "componentJSON": {
+              "localizedTagDefIds": []
+            }
+          }
+        ]
+      }
+    }
+  }
+}

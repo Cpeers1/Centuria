@@ -333,19 +333,41 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				if (inv.containsItem("311"))
 					itm = inv.getItem("311").getAsJsonArray();
 				else
+				{
+					itm = new JsonArray();		
+					
+					// Build entry
+					JsonObject obj = new JsonObject();
+					obj.addProperty("defId", 22781);
+					JsonObject components = new JsonObject();
+					JsonObject questObject = new JsonObject();
+					questObject.add("completedQuests", new JsonArray());
+					components.add("SocialExpanseLinearGenericQuestsCompletion", questObject);
+					obj.add("components", components);
+					obj.addProperty("id", UUID.randomUUID().toString());
+					obj.addProperty("type", 311);
+					itm.add(obj);
+					item = itm;
+				}
+
+
+
+
+				// Save item
+				inv.setItem(slot, item);
+			}
+		}
+		
+		// playerVars
+		if (slot.equals("303")) {
+			if (inv.getItem("303") == null || inv.getItem("303").getAsJsonArray().isEmpty()) {
+				JsonArray itm;
+				if (inv.containsItem("303"))
+					itm = inv.getItem("303").getAsJsonArray();
+				else
 					itm = new JsonArray();
 
 				// Build entry
-				JsonObject obj = new JsonObject();
-				obj.addProperty("defId", 22781);
-				JsonObject components = new JsonObject();
-				JsonObject questObject = new JsonObject();
-				questObject.add("completedQuests", new JsonArray());
-				components.add("SocialExpanseLinearGenericQuestsCompletion", questObject);
-				obj.add("components", components);
-				obj.addProperty("id", UUID.randomUUID().toString());
-				obj.addProperty("type", 311);
-				itm.add(obj);
 				item = itm;
 
 				// Save item
