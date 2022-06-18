@@ -413,12 +413,7 @@ public class GameServer extends BaseSmartfoxServer {
 			}
 		}
 
-		// Player list
-		String playerMsg = "%xt%rfl%-1%true%";
-		for (Player player : getPlayers()) {
-			playerMsg += player.account.getAccountID() + "%-1%";
-		}
-		sendPacket(client, playerMsg);
+		// Add player
 		players.put(plr.account.getAccountID(), plr);
 
 		// Dispatch join event
