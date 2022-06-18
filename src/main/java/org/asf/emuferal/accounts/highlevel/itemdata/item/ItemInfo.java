@@ -1,4 +1,4 @@
-package org.asf.emuferal.accounts.highlevel.itemdata;
+package org.asf.emuferal.accounts.highlevel.itemdata.item;
 
 public class ItemInfo {
 	

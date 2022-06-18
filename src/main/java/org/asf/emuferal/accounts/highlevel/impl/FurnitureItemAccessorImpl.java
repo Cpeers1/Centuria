@@ -4,7 +4,7 @@ import java.io.InputStream;
 
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.FurnitureItemAccessor;
-import org.asf.emuferal.accounts.highlevel.itemdata.ItemComponent;
+import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
 import com.google.gson.JsonArray;
