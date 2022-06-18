@@ -214,7 +214,7 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 
 		// Find species
 		if (defID.matches("^[0-9]+$"))
-			return inventory.getAccessor().hasInventoryObject(type, Integer.parseInt(defID));
+			return inventory.getAccessor().hasInventoryObject("avatars", Integer.parseInt(defID));
 		return false;
 	}
 
