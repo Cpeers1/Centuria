@@ -16,7 +16,7 @@ public class ResourceCollectionModule extends InteractionModule {
 	@Override
 	public boolean canHandle(Player player, String id, NetworkedObject object) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
@@ -29,6 +29,7 @@ public class ResourceCollectionModule extends InteractionModule {
 	@Override
 	public boolean handleInteractionSuccess(Player player, String id, NetworkedObject object, int state) {
 		// TODO Auto-generated method stub
+		player.account.getPlayerInventory().getItemAccessor(player).add(8372); // testing
 		return false;
 	}
 

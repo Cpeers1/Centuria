@@ -686,26 +686,26 @@ public class EmuFeral {
 			int[] sanctuaryTypes = new int[] { 9588, 12632, 12637, 12964, 21273, 23627, 24122, 25414, 26065, 28431,
 					9760, 9764 };
 			for (int id : sanctuaryTypes)
-				if (!inv.getAccessor().isSanctuaryUnlocked(id))
-					inv.getAccessor().unlockSanctuary(id);
+				if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(id))
+					inv.getSanctuaryAccessor().unlockSanctuary(id);
 		} else {
 			// Give default sanctuary if needed
-			if (!inv.getAccessor().isSanctuaryUnlocked(9588))
-				inv.getAccessor().unlockSanctuary(9588);
+			if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(9588))
+				inv.getSanctuaryAccessor().unlockSanctuary(9588);
 		}
 
 		//
 		// Remove broken sanctuary files
 		//
 
-		for (String id : inv.getAccessor().getSanctuaryLookIDs()) {
+		for (String id : inv.getSanctuaryAccessor().getSanctuaryLookIDs()) {
 			// Get sanctuary object
-			JsonObject sanc = inv.getAccessor().getSanctuaryLook(id).get("components").getAsJsonObject()
+			JsonObject sanc = inv.getSanctuaryAccessor().getSanctuaryLook(id).get("components").getAsJsonObject()
 					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
 
 			// Check validity
 			String classId = sanc.get("classInvId").getAsString();
-			if (inv.getAccessor().getSanctuaryClassObject(classId) == null) {
+			if (inv.getSanctuaryAccessor().getSanctuaryClassObject(classId) == null) {
 				// Delete the entry
 				inv.getItem("201").getAsJsonArray().remove(sanc);
 			}
@@ -715,21 +715,21 @@ public class EmuFeral {
 		// Check look count and add missing look slots
 		//
 
-		for (int i = inv.getAccessor().getSanctuaryLookCount(); i < 12; i++) {
-			inv.getAccessor().addExtraSanctuarySlot();
+		for (int i = inv.getSanctuaryAccessor().getSanctuaryLookCount(); i < 12; i++) {
+			inv.getSanctuaryAccessor().addExtraSanctuarySlot();
 		}
 
 		//
 		// Fix missing primary slots
 		//
 
-		for (int house : inv.getAccessor().getUnlockedHouseTypes()) {
+		for (int house : inv.getSanctuaryAccessor().getUnlockedHouseTypes()) {
 			boolean found = false;
 
 			// Check if there is any primary look saved
-			for (String id : inv.getAccessor().getSanctuaryLookIDs()) {
+			for (String id : inv.getSanctuaryAccessor().getSanctuaryLookIDs()) {
 				// Get sanctuary object
-				JsonObject sanc = inv.getAccessor().getSanctuaryLook(id);
+				JsonObject sanc = inv.getSanctuaryAccessor().getSanctuaryLook(id);
 
 				if (sanc.get("components").getAsJsonObject().get("SanctuaryLook").getAsJsonObject().get("info")
 						.getAsJsonObject().get("houseDefId").getAsInt() != house)
@@ -744,7 +744,7 @@ public class EmuFeral {
 
 			// Save if needed
 			if (!found) {
-				inv.getAccessor().addExtraSanctuarySlot();
+				inv.getSanctuaryAccessor().addExtraSanctuarySlot();
 			}
 		}
 
@@ -752,12 +752,12 @@ public class EmuFeral {
 		// Active sanctuary
 		//
 
-		JsonObject activeSanc = inv.getAccessor().getSanctuaryLook(acc.getActiveSanctuaryLook());
+		JsonObject activeSanc = inv.getSanctuaryAccessor().getSanctuaryLook(acc.getActiveSanctuaryLook());
 		if (activeSanc == null) {
 			// Select first primary slot
-			for (String id : inv.getAccessor().getSanctuaryLookIDs()) {
+			for (String id : inv.getSanctuaryAccessor().getSanctuaryLookIDs()) {
 				// Get sanctuary object
-				JsonObject sanc = inv.getAccessor().getSanctuaryLook(id);
+				JsonObject sanc = inv.getSanctuaryAccessor().getSanctuaryLook(id);
 
 				// Check if its a primary slot
 				if (sanc.get("components").getAsJsonObject().has("PrimaryLook")) {

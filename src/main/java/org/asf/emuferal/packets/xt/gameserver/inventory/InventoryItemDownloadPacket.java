@@ -119,7 +119,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 						"10478", "10477", "10476" };
 
 				for (String mod : mods) {
-					inv.getAccessor().unlockAvatarPart(Integer.valueOf(mod));
+					inv.getAvatarAccessor().unlockAvatarPart(Integer.valueOf(mod));
 				}
 
 				// Save changes
@@ -148,9 +148,9 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 					for (String dye : dyes) {
 						// Add 80
-						if (!inv.getAccessor().hasDye(Integer.valueOf(dye))) {
+						if (!inv.getDyeAccessor().hasDye(Integer.valueOf(dye))) {
 							for (int i = 0; i < 80; i++) {
-								inv.getAccessor().addDye(Integer.valueOf(dye));
+								inv.getDyeAccessor().addDye(Integer.valueOf(dye));
 							}
 						}
 					}
@@ -168,9 +168,10 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 						// Add all clothes (3 of each)
 						for (String id : helper.keySet()) {
-							if (inv.getAccessor().getClothingCount(Integer.valueOf(id)) < 3) {
-								for (int i = inv.getAccessor().getClothingCount(Integer.valueOf(id)); i < 3; i++) {
-									inv.getAccessor().addClothing(Integer.valueOf(id), false);
+							if (inv.getClothingAccessor().getClothingCount(Integer.valueOf(id)) < 3) {
+								for (int i = inv.getClothingAccessor()
+										.getClothingCount(Integer.valueOf(id)); i < 3; i++) {
+									inv.getClothingAccessor().addClothing(Integer.valueOf(id), false);
 								}
 							}
 						}
@@ -196,11 +197,11 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 						.get("Furniture").getAsJsonObject();
 				strm.close();
 
-				// Add all furniture (3 of each)
+				// Add all furniture (6 of each)
 				for (String id : helper.keySet()) {
-					if (inv.getAccessor().getFurnitureCount(Integer.valueOf(id)) < 6) {
-						for (int i = inv.getAccessor().getFurnitureCount(Integer.valueOf(id)); i < 6; i++) {
-							inv.getAccessor().addFurniture(Integer.valueOf(id), false);
+					if (inv.getFurnitureAccessor().getFurnitureCount(Integer.valueOf(id)) < 6) {
+						for (int i = inv.getFurnitureAccessor().getFurnitureCount(Integer.valueOf(id)); i < 6; i++) {
+							inv.getFurnitureAccessor().addFurniture(Integer.valueOf(id), false);
 						}
 					}
 				}
@@ -391,19 +392,19 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		// Build avatars
 		if (EmuFeral.giveAllAvatars) {
 			// Unlock all avatars
-			inv.getAccessor().unlockAvatarSpecies("Kitsune");
-			inv.getAccessor().unlockAvatarSpecies("Senri");
-			inv.getAccessor().unlockAvatarSpecies("Phoenix");
-			inv.getAccessor().unlockAvatarSpecies("Dragon");
-			inv.getAccessor().unlockAvatarSpecies("Kirin");
-			inv.getAccessor().unlockAvatarSpecies("Fae");
-			inv.getAccessor().unlockAvatarSpecies("Shinigami");
-			inv.getAccessor().unlockAvatarSpecies("Werewolf");
-			inv.getAccessor().unlockAvatarSpecies("Jackalope");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Kitsune");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Senri");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Phoenix");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Dragon");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Kirin");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Fae");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Shinigami");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Werewolf");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Jackalope");
 		} else {
 			// Unlock Kitsune and Senri
-			inv.getAccessor().unlockAvatarSpecies("Kitsune");
-			inv.getAccessor().unlockAvatarSpecies("Senri");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Kitsune");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Senri");
 		}
 
 		// Check if wings, mods and clothing is disabled
@@ -479,7 +480,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				for (JsonElement elem : items.deepCopy()) {
 					JsonObject clothing = elem.getAsJsonObject();
 					String id = clothing.get("itemInvID").getAsString();
-					if (id.isEmpty() || inv.getAccessor().getClothingData(id) == null) {
+					if (id.isEmpty() || inv.getClothingAccessor().getClothingData(id) == null) {
 						// Fix it
 						items.remove(clothing);
 						changed = true;

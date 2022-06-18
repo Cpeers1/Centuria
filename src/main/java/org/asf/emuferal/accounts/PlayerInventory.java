@@ -2,15 +2,25 @@ package org.asf.emuferal.accounts;
 
 import com.google.gson.JsonElement;
 
+import org.asf.emuferal.accounts.highlevel.AvatarAccessor;
+import org.asf.emuferal.accounts.highlevel.ClothingItemAccessor;
 import org.asf.emuferal.accounts.highlevel.CurrencyAccessor;
+import org.asf.emuferal.accounts.highlevel.DyeAccessor;
+import org.asf.emuferal.accounts.highlevel.FurnitureItemAccessor;
 import org.asf.emuferal.accounts.highlevel.InventoryAccessor;
 import org.asf.emuferal.accounts.highlevel.ItemAccessor;
+import org.asf.emuferal.accounts.highlevel.SanctuaryAccessor;
+import org.asf.emuferal.players.Player;
 
 public abstract class PlayerInventory {
 
 	private InventoryAccessor accessor = new InventoryAccessor(this);
+	private ClothingItemAccessor clAccessor = new ClothingItemAccessor(this);
+	private FurnitureItemAccessor fAccessor = new FurnitureItemAccessor(this);
+	private SanctuaryAccessor sAccessor = new SanctuaryAccessor(this);
 	private CurrencyAccessor cAccessor = new CurrencyAccessor(this);
-	private ItemAccessor iAccessor = new ItemAccessor(this);
+	private AvatarAccessor aAccessor = new AvatarAccessor(this);
+	private DyeAccessor dAccessor = new DyeAccessor(this);
 
 	/**
 	 * Retrieves the high-level inventory accessor
@@ -19,6 +29,51 @@ public abstract class PlayerInventory {
 	 */
 	public InventoryAccessor getAccessor() {
 		return accessor;
+	}
+
+	/**
+	 * Retrieves the high-level avatar accessor
+	 * 
+	 * @return AvatarAccessor instance
+	 */
+	public AvatarAccessor getAvatarAccessor() {
+		return aAccessor;
+	}
+
+	/**
+	 * Retrieves the high-level dye item accessor
+	 * 
+	 * @return DyeAccessor instance
+	 */
+	public DyeAccessor getDyeAccessor() {
+		return dAccessor;
+	}
+
+	/**
+	 * Retrieves the high-level sanctuary accessor
+	 * 
+	 * @return SanctuaryAccessor instance
+	 */
+	public SanctuaryAccessor getSanctuaryAccessor() {
+		return sAccessor;
+	}
+
+	/**
+	 * Retrieves the high-level clothing item accessor
+	 * 
+	 * @return ClothingItemAccessor instance
+	 */
+	public ClothingItemAccessor getClothingAccessor() {
+		return clAccessor;
+	}
+
+	/**
+	 * Retrieves the high-level furniture item accessor
+	 * 
+	 * @return FurnitureItemAccessor instance
+	 */
+	public FurnitureItemAccessor getFurnitureAccessor() {
+		return fAccessor;
 	}
 
 	/**
@@ -33,10 +88,11 @@ public abstract class PlayerInventory {
 	/**
 	 * Retrieves the high-level item accessor
 	 * 
+	 * @param player Player for which to retrieve the item accessor for
 	 * @return ItemAccessor instance
 	 */
-	public ItemAccessor getItemAccessor() {
-		return iAccessor;
+	public ItemAccessor getItemAccessor(Player player) {
+		return new ItemAccessor(this, player);
 	}
 
 	/**

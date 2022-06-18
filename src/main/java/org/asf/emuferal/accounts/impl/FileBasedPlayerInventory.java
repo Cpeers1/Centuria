@@ -10,6 +10,7 @@ import org.asf.emuferal.accounts.PlayerInventory;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class FileBasedPlayerInventory extends PlayerInventory {
@@ -37,7 +38,7 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 				// Check validity
 				if (!obj.getName().matches("^[0-9]+\\.json$"))
 					continue;
-				
+
 				// Load object
 				JsonElement ele = JsonParser.parseString(Files.readString(obj.toPath()));
 				if (ele.isJsonArray()) {
@@ -90,7 +91,20 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 		if (new File("inventories/" + id + "/" + itemID + ".json").exists()) {
 			try {
 				String json = Files.readString(Path.of("inventories/" + id + "/" + itemID + ".json"));
-				cache.put(itemID, JsonParser.parseString(json));
+				JsonElement ele = JsonParser.parseString(json);
+				cache.put(itemID, ele);
+
+				// Load into accessor cache
+				if (ele.isJsonArray()) {
+					ele.getAsJsonArray().forEach(t -> {
+						if (t.isJsonObject()) {
+							JsonObject obj = t.getAsJsonObject();
+							if (obj.has("id") && obj.has("type")) {
+								getAccessor().cacheItem(obj.get("id").getAsString(), obj.get("type").getAsString());
+							}
+						}
+					});
+				}
 				return cache.get(itemID);
 			} catch (IOException e) {
 			}
@@ -109,6 +123,18 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 				new File("inventories/" + id).mkdirs();
 			}
 			Files.writeString(Path.of("inventories/" + id + "/" + itemID + ".json"), itemData.toString());
+
+			// Load into accessor cache
+			if (itemData.isJsonArray()) {
+				itemData.getAsJsonArray().forEach(t -> {
+					if (t.isJsonObject()) {
+						JsonObject obj = t.getAsJsonObject();
+						if (obj.has("id") && obj.has("type")) {
+							getAccessor().cacheItem(obj.get("id").getAsString(), obj.get("type").getAsString());
+						}
+					}
+				});
+			}
 		} catch (IOException e) {
 		}
 	}
@@ -118,8 +144,21 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 		if (!itemID.matches("^[A-Za-z0-9]+"))
 			return;
 
-		if (cache.containsKey(itemID))
-			cache.remove(itemID);
+		if (cache.containsKey(itemID)) {
+			JsonElement itemData = cache.remove(itemID);
+
+			// Remove accessor cache
+			if (itemData.isJsonArray()) {
+				itemData.getAsJsonArray().forEach(t -> {
+					if (t.isJsonObject()) {
+						JsonObject obj = t.getAsJsonObject();
+						if (obj.has("id") && obj.has("type")) {
+							getAccessor().removeItemFromCache(obj.get("id").getAsString());
+						}
+					}
+				});
+			}
+		}
 		if (new File("inventories/" + id + "/" + itemID + ".json").exists())
 			new File("inventories/" + id + "/" + itemID + ".json").delete();
 	}

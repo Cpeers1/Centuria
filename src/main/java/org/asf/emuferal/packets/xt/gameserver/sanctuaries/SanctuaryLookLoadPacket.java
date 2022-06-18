@@ -52,13 +52,13 @@ public class SanctuaryLookLoadPacket implements IXtPacket<SanctuaryLookLoadPacke
 		}
 
 		// Load into active look
-		JsonObject components = plr.account.getPlayerInventory().getAccessor().getSanctuaryLook(plr.activeSanctuaryLook)
-				.get("components").getAsJsonObject();
+		JsonObject components = plr.account.getPlayerInventory().getSanctuaryAccessor()
+				.getSanctuaryLook(plr.activeSanctuaryLook).get("components").getAsJsonObject();
 		if (components.has("SanctuaryLook"))
 			components.remove("SanctuaryLook");
 		if (components.has("Timestamp"))
 			components.remove("Timestamp");
-		components.add("SanctuaryLook", plr.account.getPlayerInventory().getAccessor().getSanctuaryLook(lookId)
+		components.add("SanctuaryLook", plr.account.getPlayerInventory().getSanctuaryAccessor().getSanctuaryLook(lookId)
 				.get("components").getAsJsonObject().get("SanctuaryLook"));
 		JsonObject ts = new JsonObject();
 		ts.addProperty("ts", System.currentTimeMillis());

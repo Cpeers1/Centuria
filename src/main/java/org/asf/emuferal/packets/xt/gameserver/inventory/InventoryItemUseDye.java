@@ -67,9 +67,9 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 		PlayerInventory inv = plr.account.getPlayerInventory();
 
 		// Find clothing item
-		if (inv.getAccessor().getClothingData(itemID) != null) {
+		if (inv.getClothingAccessor().getClothingData(itemID) != null) {
 			// Apply dyes
-			dyeObject(inv.getAccessor().getClothingData(itemID), inv);
+			dyeObject(inv.getClothingAccessor().getClothingData(itemID), inv, false);
 
 			// Save clothes
 			inv.setItem("100", inv.getItem("100"));
@@ -81,9 +81,9 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 		}
 
 		// Find furniture item
-		if (inv.getAccessor().getFurnitureData(itemID) != null) {
+		if (inv.getFurnitureAccessor().getFurnitureData(itemID) != null) {
 			// Apply dyes
-			dyeObject(inv.getAccessor().getFurnitureData(itemID), inv);
+			dyeObject(inv.getFurnitureAccessor().getFurnitureData(itemID), inv, true);
 
 			// Save furniture
 			inv.setItem("102", inv.getItem("102"));
@@ -120,7 +120,7 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 		return true;
 	}
 
-	private void dyeObject(JsonObject item, PlayerInventory inv) {
+	private void dyeObject(JsonObject item, PlayerInventory inv, boolean isFurniture) {
 		// Find color object
 		if (item.has("components") && item.get("components").getAsJsonObject().has("Colorable")) {
 			// Apply dyes
@@ -129,7 +129,8 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 				String dye = d.dye;
 
 				// Apply dye color
-				String hsv = inv.getAccessor().getDyeHSV(inv.getAccessor().getDyeData(dye).get("defId").getAsInt());
+				String hsv = inv.getDyeAccessor()
+						.getDyeHSV(inv.getDyeAccessor().getDyeData(dye).get("defId").getAsInt());
 				String obj = "color" + d.channel + "HSV";
 				if (target.has(obj) && hsv != null) {
 					target.get(obj).getAsJsonObject().remove("_hsv");
@@ -137,12 +138,16 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 				}
 
 				// Remove dye from inventory
-				inv.getAccessor().removeDye(dye);
+				inv.getDyeAccessor().removeDye(dye);
 			}
 
 			// Apply undye
 			for (int ch : undye) {
-				String hsv = inv.getAccessor().getDefaultClothingChannelHSV(item.get("defId").getAsInt(), ch);
+				String hsv;
+				if (!isFurniture)
+					hsv = inv.getClothingAccessor().getDefaultClothingChannelHSV(item.get("defId").getAsInt(), ch);
+				else
+					hsv = inv.getFurnitureAccessor().getDefaultFurnitureChannelHSV(item.get("defId").getAsInt(), ch);
 				String obj = "color" + ch + "HSV";
 				if (target.has(obj) && hsv != null) {
 					target.get(obj).getAsJsonObject().remove("_hsv");

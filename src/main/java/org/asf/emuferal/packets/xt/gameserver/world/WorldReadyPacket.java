@@ -119,10 +119,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			EmuFeralAccount acc = AccountManager.getInstance().getAccount(ownerID);
 
 			// Find active sanctuary object
-			JsonObject sanctuaryInfo = acc.getPlayerInventory().getAccessor()
+			JsonObject sanctuaryInfo = acc.getPlayerInventory().getSanctuaryAccessor()
 					.getSanctuaryLook(acc.getActiveSanctuaryLook());
 			if (sanctuaryInfo == null)
-				sanctuaryInfo = acc.getPlayerInventory().getAccessor().getFirstSanctuaryLook();
+				sanctuaryInfo = acc.getPlayerInventory().getSanctuaryAccessor().getFirstSanctuaryLook();
 
 			// Find the ID
 			String id = sanctuaryInfo.get("id").getAsString();
@@ -156,7 +156,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 						.getAsJsonObject();
 
 				String objId = furnitureInfo.get("placeableInvId").getAsString();
-				JsonObject furnitureObject = inv.getAccessor().getFurnitureData(objId);
+				JsonObject furnitureObject = inv.getFurnitureAccessor().getFurnitureData(objId);
 				if (furnitureObject != null) {
 					// Send packet
 					XtWriter wr = new XtWriter();
@@ -200,7 +200,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Load house info
 		String houseId = info.get("houseInvId").getAsString();
-		JsonObject houseJson = inv.getAccessor().getHouseTypeObject(houseId);
+		JsonObject houseJson = inv.getSanctuaryAccessor().getHouseTypeObject(houseId);
 
 		// Send packet
 		client.sendPacket("%xt%oi%-1%" + houseId + "%1751%" + player.room.substring("sanctuary_".length()) + "%0%"
@@ -214,7 +214,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Load island info
 		String islandId = info.get("islandInvId").getAsString();
-		JsonObject islandJson = inv.getAccessor().getIslandTypeObject(islandId);
+		JsonObject islandJson = inv.getSanctuaryAccessor().getIslandTypeObject(islandId);
 
 		// Send packet
 		client.sendPacket("%xt%oi%-1%" + islandId + "%1751%" + player.room.substring("sanctuary_".length()) + "%0%"
