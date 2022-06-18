@@ -227,11 +227,12 @@ public class InventoryAccessor {
 	 * low-level!)
 	 * 
 	 * @param inventoryId   Inventory ID
+	 * @param itemType      Inventory type value
 	 * @param defId         Object defID
 	 * @param componentData Object components
 	 * @return New item ID
 	 */
-	public String createInventoryObject(String inventoryId, int defId, ItemComponent... componentData) {
+	public String createInventoryObject(String inventoryId, int itemType, int defId, ItemComponent... componentData) {
 		// Load the inventory object
 		if (!inventory.containsItem(inventoryId))
 			inventory.setItem(inventoryId, new JsonArray());
@@ -261,7 +262,7 @@ public class InventoryAccessor {
 		obj.addProperty("defId", defId);
 		obj.add("components", components);
 		obj.addProperty("id", iID);
-		obj.addProperty("type", Integer.parseInt(inventoryId));
+		obj.addProperty("type", itemType);
 
 		// Save to inventory
 		items.add(obj);
@@ -275,6 +276,19 @@ public class InventoryAccessor {
 
 		// Return item ID
 		return iID;
+	}
+
+	/**
+	 * Creates a new inventory object and saves it (<b>warning:</b> this is very
+	 * low-level!)
+	 * 
+	 * @param inventoryId   Inventory ID
+	 * @param defId         Object defID
+	 * @param componentData Object components
+	 * @return New item ID
+	 */
+	public String createInventoryObject(String inventoryId, int defId, ItemComponent... componentData) {
+		return createInventoryObject(inventoryId, Integer.parseInt(inventoryId), defId, componentData);
 	}
 
 	/**

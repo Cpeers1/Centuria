@@ -69,7 +69,7 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 				al.add("info", speciesData.get("info").getAsJsonObject());
 
 				// Add the look slot
-				inventory.getAccessor().createInventoryObject("avatars", speciesData.get("defId").getAsInt(),
+				inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsInt(),
 						new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
 			}
 		}
@@ -156,7 +156,7 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 					al.add("info", speciesData.get("info").getAsJsonObject());
 
 					// Add the look slot
-					inventory.getAccessor().createInventoryObject("avatars", speciesData.get("defId").getAsInt(),
+					inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsInt(),
 							new ItemComponent("PrimaryLook", new JsonObject()), new ItemComponent("AvatarLook", al),
 							new ItemComponent("Name", nm));
 				}
@@ -173,7 +173,7 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 					al.add("info", speciesData.get("info").getAsJsonObject());
 
 					// Add the look slot
-					inventory.getAccessor().createInventoryObject("avatars", speciesData.get("defId").getAsInt(),
+					inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsInt(),
 							new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
 				}
 			}
