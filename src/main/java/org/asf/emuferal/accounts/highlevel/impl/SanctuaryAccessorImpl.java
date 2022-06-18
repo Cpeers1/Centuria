@@ -8,6 +8,8 @@ import java.util.UUID;
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.SanctuaryAccessor;
 import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemComponent;
+import org.asf.emuferal.entities.objects.SancObjectInfo;
+import org.asf.emuferal.entities.objects.WorldObjectPositionInfo;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
 import com.google.gson.JsonArray;
@@ -442,6 +444,84 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		}
 	}
 
+	@Override
+	public void addSanctuaryObject(String objectUUID, SancObjectInfo sancObjectInfo, String activeSancLookId) {
+		//get the object def id from the funiture inv
+		int defId = inventory.getFurnitureAccessor().getDefIDFromUUID(objectUUID);
+		
+		// find sanc look
+		if (!inventory.containsItem("201"))
+			inventory.setItem("201", new JsonArray());
+		
+		var looks = inventory.getItem("201").getAsJsonArray();
+		
+		JsonElement sancLook = null;
+		
+		for(var item : looks)
+		{
+			if(item.getAsJsonObject().get("id").getAsString().equals(activeSancLookId))
+			{
+				sancLook = item;
+				break;
+			}
+		}
+		
+		if(sancLook == null) return; //cannot find
+		
+		var placementInfo = sancLook.getAsJsonObject()
+				.get("components").getAsJsonObject()
+				.get("SanctuaryLook").getAsJsonObject()
+				.get("info").getAsJsonObject()
+				.get("placementInfo").getAsJsonObject();
+		
+		//check if items array exists
+		
+		JsonArray itemsArray = new JsonArray();
+		boolean itemsExisted = false;
+		
+		if(placementInfo.has("items"))
+		{
+			itemsArray = placementInfo.get("items").getAsJsonArray();
+			itemsExisted = true;
+		}
+		
+		//construct a new item object
+		
+		JsonObject item = new JsonObject();
+		item.addProperty("defId", defId);
+		
+		JsonObject componentLevel = new JsonObject();
+		JsonObject placedLevel = new JsonObject();
+		
+		placedLevel.addProperty("xPos", sancObjectInfo.x);
+		placedLevel.addProperty("yPos", sancObjectInfo.y);
+		placedLevel.addProperty("zPos", sancObjectInfo.z);
+
+		placedLevel.addProperty("rotX", sancObjectInfo.rotX);
+		placedLevel.addProperty("rotY", sancObjectInfo.rotY);
+		placedLevel.addProperty("rotZ", sancObjectInfo.rotY);
+		placedLevel.addProperty("rotW", sancObjectInfo.rotW);
+
+		placedLevel.addProperty("parentItemId", ""); //?
+		placedLevel.addProperty("placeableInvId", objectUUID);
+		
+		placedLevel.addProperty("gridId", sancObjectInfo.gridId);
+		placedLevel.addProperty("state", sancObjectInfo.state);
+		
+		if(!itemsExisted)
+		{
+			placementInfo.add("items", itemsArray);
+		}
+		
+		inventory.setItem("201", looks);
+	}
+
+	@Override
+	public void removeSanctuaryObject(String objectUUID) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	private JsonObject createSlot(JsonArray items, int islandId, int houseId, int lookDefId, int classId,
 			String itmID) {
 		// Build object
@@ -476,4 +556,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		items.add(itm);
 		return itm;
 	}
+
+
+	
 }

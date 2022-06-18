@@ -101,4 +101,14 @@ public class FurnitureItemAccessorImpl extends FurnitureItemAccessor {
 		return null;
 	}
 
+	@Override
+	public int getDefIDFromUUID(String placeableUUID) {
+		
+		//unfortunately we have to loop through objects to find it..
+		
+		var object = inventory.getAccessor().findInventoryObject("102", placeableUUID);
+				
+		return object.get("defId").getAsInt();
+	}
+
 }

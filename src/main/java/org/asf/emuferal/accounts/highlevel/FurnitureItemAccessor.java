@@ -57,4 +57,11 @@ public abstract class FurnitureItemAccessor extends AbstractInventoryAccessor {
 	 */
 	public abstract String getDefaultFurnitureChannelHSV(int defID, int channel);
 
+	/**
+	 * Retrieves the default color of a furniture color channel
+	 * 
+	 * @param placeableUUID   Placeable UUID for the furniture.
+	 * @return The DefId for the object.
+	 */
+	public abstract int getDefIDFromUUID(String placeableUUID);
 }
