@@ -35,6 +35,17 @@ public class PlayerSettingsAccessor {
 			this.componentName = componentName;
 		}	
 	}
+	
+	public class SetPlayerVarOutput {
+		public boolean success;
+		public JsonArray changedVarInv;
+		
+		public SetPlayerVarOutput(boolean success, JsonArray changedVarInv)
+		{
+			this.success = success;
+			this.changedVarInv = changedVarInv;
+		}
+	}
 
 	private PlayerInventory inventory;
 
@@ -42,7 +53,7 @@ public class PlayerSettingsAccessor {
 		this.inventory = inventory;
 	}
 	
-	public boolean setPlayerVars(int defId, int[] values)
+	public SetPlayerVarOutput setPlayerVars(int defId, int[] values)
 	{
 		try {
 			
@@ -56,7 +67,12 @@ public class PlayerSettingsAccessor {
 				inv.getAsJsonArray().add(newVarObject);
 				
 				inventory.setItem("303", inv);
-				return true;
+				
+				var outputInv = new JsonArray();
+				outputInv.add(newVarObject);
+				var output = new SetPlayerVarOutput(true, outputInv);
+				
+				return output;
 			}
 			else
 			{
@@ -75,7 +91,12 @@ public class PlayerSettingsAccessor {
 					}
 				}
 				
-				if(element == null) return false; //cannot find
+				if(element == null)
+				{
+					var output = new SetPlayerVarOutput(false, null);
+					
+					return output; //cannot find
+				}
 				
 				//go through the levels of bullshit
 				
@@ -99,14 +120,21 @@ public class PlayerSettingsAccessor {
 			    //convert this to a string object and store it in values
 			    sortThrough.addProperty("values", varArray.toString());
 			    
+			    var outputVarInv = new JsonArray();
+			    outputVarInv.add(element);
+			    
 			    inventory.setItem("303", inv);
 				
-				return true;
+				var output = new SetPlayerVarOutput(true, outputVarInv);
+				
+				return output;
 			}
 		} 
 		catch (Exception e)
 		{
-			return false;
+			var output = new SetPlayerVarOutput(false, null);
+			
+			return output;
 		}	
 	}
 	
@@ -173,6 +201,7 @@ public class PlayerSettingsAccessor {
 		
 		return type;
 	}
+	
 	
 	
 }
