@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.asf.emuferal.accounts.PlayerInventory;
-import org.asf.emuferal.accounts.highlevel.itemdata.InventoryType;
-import org.asf.emuferal.accounts.highlevel.itemdata.ItemInfo;
+import org.asf.emuferal.accounts.highlevel.itemdata.inventory.InventoryType;
+import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemInfo;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.emuferal.players.Player;
 

@@ -10,6 +10,7 @@ import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
@@ -69,29 +70,19 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 		// Find clothing item
 		if (inv.getClothingAccessor().getClothingData(itemID) != null) {
 			// Apply dyes
-			dyeObject(inv.getClothingAccessor().getClothingData(itemID), inv, false);
+			dyeObject(client, inv.getClothingAccessor().getClothingData(itemID), inv, false);
 
 			// Save clothes
 			inv.setItem("100", inv.getItem("100"));
-
-			// Update object in client inventory
-			InventoryItemPacket pkt = new InventoryItemPacket();
-			pkt.item = inv.getItem("100");
-			client.sendPacket(pkt);
 		}
 
 		// Find furniture item
 		if (inv.getFurnitureAccessor().getFurnitureData(itemID) != null) {
 			// Apply dyes
-			dyeObject(inv.getFurnitureAccessor().getFurnitureData(itemID), inv, true);
+			dyeObject(client, inv.getFurnitureAccessor().getFurnitureData(itemID), inv, true);
 
 			// Save furniture
 			inv.setItem("102", inv.getItem("102"));
-
-			// Update object in client inventory
-			InventoryItemPacket pkt = new InventoryItemPacket();
-			pkt.item = inv.getItem("102");
-			client.sendPacket(pkt);
 		}
 
 		// Log
@@ -120,7 +111,7 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 		return true;
 	}
 
-	private void dyeObject(JsonObject item, PlayerInventory inv, boolean isFurniture) {
+	private void dyeObject(SmartfoxClient client, JsonObject item, PlayerInventory inv, boolean isFurniture) {
 		// Find color object
 		if (item.has("components") && item.get("components").getAsJsonObject().has("Colorable")) {
 			// Apply dyes
@@ -155,6 +146,13 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 				}
 			}
 		}
+
+		// Update object in client inventory
+		InventoryItemPacket pkt = new InventoryItemPacket();
+		JsonArray arr = new JsonArray();
+		arr.add(item);
+		pkt.item = arr;
+		client.sendPacket(pkt);
 
 		// Save changes
 		for (String change : inv.getAccessor().getItemsToSave())

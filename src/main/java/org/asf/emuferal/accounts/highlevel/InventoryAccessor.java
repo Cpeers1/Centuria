@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.asf.emuferal.accounts.PlayerInventory;
-import org.asf.emuferal.accounts.highlevel.itemdata.ItemComponent;
+import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemComponent;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
