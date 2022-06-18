@@ -63,9 +63,8 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 					al.add("info", speciesData.get("info").getAsJsonObject());
 
 					// Add the look slot
-					avatars.add(inventory.getAccessor().createInventoryObject("avatars",
-							speciesData.get("defId").getAsInt(), new ItemComponent("AvatarLook", al),
-							new ItemComponent("Name", nm)));
+					inventory.getAccessor().createInventoryObject("avatars", speciesData.get("defId").getAsInt(),
+							new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
 				}
 			} catch (IOException e) {
 			}
@@ -160,9 +159,9 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 						al.add("info", speciesData.get("info").getAsJsonObject());
 
 						// Add the look slot
-						avatars.add(inventory.getAccessor().createInventoryObject("avatars",
-								speciesData.get("defId").getAsInt(), new ItemComponent("PrimaryLook", new JsonObject()),
-								new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm)));
+						inventory.getAccessor().createInventoryObject("avatars", speciesData.get("defId").getAsInt(),
+								new ItemComponent("PrimaryLook", new JsonObject()), new ItemComponent("AvatarLook", al),
+								new ItemComponent("Name", nm));
 					}
 
 					// Add slots
@@ -177,9 +176,8 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 						al.add("info", speciesData.get("info").getAsJsonObject());
 
 						// Add the look slot
-						avatars.add(inventory.getAccessor().createInventoryObject("avatars",
-								speciesData.get("defId").getAsInt(), new ItemComponent("AvatarLook", al),
-								new ItemComponent("Name", nm)));
+						inventory.getAccessor().createInventoryObject("avatars", speciesData.get("defId").getAsInt(),
+								new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
 					}
 				}
 
