@@ -17,6 +17,20 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
 public class SanctuaryAccessorImpl extends SanctuaryAccessor {
+	private static JsonObject helper;
+	static {
+		// Load helper
+		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+				.getResourceAsStream("defaultitems/sanctuaryclasseshelper.json");
+		try {
+			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+					.get("SanctuaryClasses").getAsJsonObject();
+			strm.close();
+		} catch (JsonSyntaxException | IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public SanctuaryAccessorImpl(PlayerInventory inventory) {
 		super(inventory);
 	}
@@ -245,18 +259,6 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		itm.addProperty("type", 10);
 		items.add(itm);
 
-		// Load helper
-		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-				.getResourceAsStream("defaultitems/sanctuaryclasseshelper.json");
-		JsonObject helper;
-		try {
-			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-					.get("SanctuaryClasses").getAsJsonObject();
-			strm.close();
-		} catch (JsonSyntaxException | IOException e) {
-			throw new RuntimeException(e);
-		}
-
 		// Load class info
 		JsonObject classData = helper.get(Integer.toString(defID)).getAsJsonObject();
 		int islandId = classData.get("islandDefId").getAsInt();
@@ -409,18 +411,6 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 		// Add for each sanctuary class
 		for (int classId : getUnlockedSanctuaries()) {
-			// Load helper
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("defaultitems/sanctuaryclasseshelper.json");
-			JsonObject helper;
-			try {
-				helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-						.get("SanctuaryClasses").getAsJsonObject();
-				strm.close();
-			} catch (JsonSyntaxException | IOException e) {
-				throw new RuntimeException(e);
-			}
-
 			// Load ids
 			JsonObject classData = helper.get(Integer.toString(classId)).getAsJsonObject();
 			int islandId = classData.get("islandDefId").getAsInt();

@@ -16,6 +16,19 @@ import com.google.gson.JsonSyntaxException;
 
 public class AvatarAccessorImpl extends AvatarAccessor {
 
+	private static JsonObject helper;
+	static {
+		try {
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("defaultitems/avatarhelper.json");
+			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("Avatars")
+					.getAsJsonObject();
+			strm.close();
+		} catch (JsonSyntaxException | IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public AvatarAccessorImpl(PlayerInventory inventory) {
 		super(inventory);
 	}
@@ -31,28 +44,125 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 		for (JsonElement elem : avatars) {
 			JsonObject avatar = elem.getAsJsonObject();
 
-			try {
-				// Make sure to only do this for a primary look
-				if (avatar.get("components").getAsJsonObject().has("PrimaryLook")) {
-					// Create the slot
+			// Make sure to only do this for a primary look
+			if (avatar.get("components").getAsJsonObject().has("PrimaryLook")) {
+				// Create the slot
 
-					String type = avatar.get("defId").getAsString();
-					// Translate defID to a type
-					InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-							.getResourceAsStream("defaultitems/avatarhelper.json");
-					JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8"))
-							.getAsJsonObject().get("Avatars").getAsJsonObject();
-					strm.close();
+				String type = avatar.get("defId").getAsString();
+				// Translate defID to a type
+				JsonObject speciesData = helper.get(type).getAsJsonObject();
+				for (String species : helper.keySet()) {
+					JsonObject ava = helper.get(species).getAsJsonObject();
+					if (ava.get("defId").getAsString().equals(type)) {
+						type = species;
+						break;
+					}
+				}
 
-					JsonObject speciesData = helper.get(type).getAsJsonObject();
-					for (String species : helper.keySet()) {
-						JsonObject ava = helper.get(species).getAsJsonObject();
-						if (ava.get("defId").getAsString().equals(type)) {
-							type = species;
-							break;
+				// Name
+				JsonObject nm = new JsonObject();
+				nm.addProperty("name", "");
+
+				// Avatar info
+				JsonObject al = new JsonObject();
+				al.addProperty("gender", 0);
+				al.add("info", speciesData.get("info").getAsJsonObject());
+
+				// Add the look slot
+				inventory.getAccessor().createInventoryObject("avatars", speciesData.get("defId").getAsInt(),
+						new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
+			}
+		}
+
+		// Mark what files to save
+		addItemToSave("avatars");
+	}
+
+	@Override
+	public void unlockAvatarSpecies(String type) {
+		if (isAvatarSpeciesUnlocked(type))
+			return;
+
+		// Translate defID to a type
+		for (String species : helper.keySet()) {
+			JsonObject ava = helper.get(species).getAsJsonObject();
+			if (ava.get("defId").getAsString().equals(type)) {
+				type = species;
+				break;
+			}
+		}
+
+		// Add the species looks
+		JsonObject speciesData = helper.get(type).getAsJsonObject();
+		int actorDefID = speciesData.get("info").getAsJsonObject().get("actorClassDefID").getAsInt();
+		if (helper.has(type)) {
+			if (!inventory.containsItem("avatars")) {
+				inventory.setItem("avatars", new JsonArray());
+			}
+
+			// Find the save slot count
+			JsonArray avatars = inventory.getItem("avatars").getAsJsonArray();
+			int slots = 0;
+			for (JsonElement ele : avatars) {
+				JsonObject ava = ele.getAsJsonObject();
+				String dID = ava.get("defId").getAsString();
+				if (ava.get("components").getAsJsonObject().has("PrimaryLook")) {
+					// Find other looks
+					for (JsonElement ele2 : avatars) {
+						JsonObject ava2 = ele2.getAsJsonObject();
+						String dID2 = ava2.get("defId").getAsString();
+						if (!ava2.get("components").getAsJsonObject().has("PrimaryLook") && dID.equals(dID2)) {
+							slots++;
 						}
 					}
+					break;
+				}
+			}
+			if (slots == 0)
+				slots = 12;
 
+			// Find the current save slot count
+			int cSlots = 0;
+			for (JsonElement ele : avatars) {
+				JsonObject ava = ele.getAsJsonObject();
+				String dID = ava.get("defId").getAsString();
+				if (ava.get("components").getAsJsonObject().has("PrimaryLook") && dID.equals(type)) {
+					// Find other looks
+					for (JsonElement ele2 : avatars) {
+						JsonObject ava2 = ele2.getAsJsonObject();
+						String dID2 = ava2.get("defId").getAsString();
+						if (!ava2.get("components").getAsJsonObject().has("PrimaryLook") && dID.equals(dID2)) {
+							cSlots++;
+						}
+					}
+					break;
+				}
+			}
+			if (slots == 0)
+				slots = 12;
+
+			// Add the look files and scan in the ID
+			if (cSlots < slots) {
+				if (cSlots == 0) {
+					// Add primary
+
+					// Name
+					JsonObject nm = new JsonObject();
+					nm.addProperty("name", "");
+
+					// Avatar info
+					JsonObject al = new JsonObject();
+					al.addProperty("gender", 0);
+					al.add("info", speciesData.get("info").getAsJsonObject());
+
+					// Add the look slot
+					inventory.getAccessor().createInventoryObject("avatars", speciesData.get("defId").getAsInt(),
+							new ItemComponent("PrimaryLook", new JsonObject()), new ItemComponent("AvatarLook", al),
+							new ItemComponent("Name", nm));
+				}
+
+				// Add slots
+				for (int i = cSlots; i < slots; i++) {
 					// Name
 					JsonObject nm = new JsonObject();
 					nm.addProperty("name", "");
@@ -66,128 +176,13 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 					inventory.getAccessor().createInventoryObject("avatars", speciesData.get("defId").getAsInt(),
 							new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
 				}
-			} catch (IOException e) {
-			}
-		}
-
-		// Mark what files to save
-		addItemToSave("avatars");
-	}
-
-	@Override
-	public void unlockAvatarSpecies(String type) {
-		if (isAvatarSpeciesUnlocked(type))
-			return;
-
-		try {
-			// Translate defID to a type
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("defaultitems/avatarhelper.json");
-			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-					.get("Avatars").getAsJsonObject();
-			strm.close();
-
-			for (String species : helper.keySet()) {
-				JsonObject ava = helper.get(species).getAsJsonObject();
-				if (ava.get("defId").getAsString().equals(type)) {
-					type = species;
-					break;
-				}
 			}
 
-			// Add the species looks
-			JsonObject speciesData = helper.get(type).getAsJsonObject();
-			int actorDefID = speciesData.get("info").getAsJsonObject().get("actorClassDefID").getAsInt();
-			if (helper.has(type)) {
-				if (!inventory.containsItem("avatars")) {
-					inventory.setItem("avatars", new JsonArray());
-				}
-
-				// Find the save slot count
-				JsonArray avatars = inventory.getItem("avatars").getAsJsonArray();
-				int slots = 0;
-				for (JsonElement ele : avatars) {
-					JsonObject ava = ele.getAsJsonObject();
-					String dID = ava.get("defId").getAsString();
-					if (ava.get("components").getAsJsonObject().has("PrimaryLook")) {
-						// Find other looks
-						for (JsonElement ele2 : avatars) {
-							JsonObject ava2 = ele2.getAsJsonObject();
-							String dID2 = ava2.get("defId").getAsString();
-							if (!ava2.get("components").getAsJsonObject().has("PrimaryLook") && dID.equals(dID2)) {
-								slots++;
-							}
-						}
-						break;
-					}
-				}
-				if (slots == 0)
-					slots = 12;
-
-				// Find the current save slot count
-				int cSlots = 0;
-				for (JsonElement ele : avatars) {
-					JsonObject ava = ele.getAsJsonObject();
-					String dID = ava.get("defId").getAsString();
-					if (ava.get("components").getAsJsonObject().has("PrimaryLook") && dID.equals(type)) {
-						// Find other looks
-						for (JsonElement ele2 : avatars) {
-							JsonObject ava2 = ele2.getAsJsonObject();
-							String dID2 = ava2.get("defId").getAsString();
-							if (!ava2.get("components").getAsJsonObject().has("PrimaryLook") && dID.equals(dID2)) {
-								cSlots++;
-							}
-						}
-						break;
-					}
-				}
-				if (slots == 0)
-					slots = 12;
-
-				// Add the look files and scan in the ID
-				if (cSlots < slots) {
-					if (cSlots == 0) {
-						// Add primary
-
-						// Name
-						JsonObject nm = new JsonObject();
-						nm.addProperty("name", "");
-
-						// Avatar info
-						JsonObject al = new JsonObject();
-						al.addProperty("gender", 0);
-						al.add("info", speciesData.get("info").getAsJsonObject());
-
-						// Add the look slot
-						inventory.getAccessor().createInventoryObject("avatars", speciesData.get("defId").getAsInt(),
-								new ItemComponent("PrimaryLook", new JsonObject()), new ItemComponent("AvatarLook", al),
-								new ItemComponent("Name", nm));
-					}
-
-					// Add slots
-					for (int i = cSlots; i < slots; i++) {
-						// Name
-						JsonObject nm = new JsonObject();
-						nm.addProperty("name", "");
-
-						// Avatar info
-						JsonObject al = new JsonObject();
-						al.addProperty("gender", 0);
-						al.add("info", speciesData.get("info").getAsJsonObject());
-
-						// Add the look slot
-						inventory.getAccessor().createInventoryObject("avatars", speciesData.get("defId").getAsInt(),
-								new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
-					}
-				}
-
-				// Update the species list
-				if (!inventory.getAccessor().hasInventoryObject("1", actorDefID)) {
-					// Add species
-					inventory.getAccessor().createInventoryObject("1", actorDefID);
-				}
+			// Update the species list
+			if (!inventory.getAccessor().hasInventoryObject("1", actorDefID)) {
+				// Add species
+				inventory.getAccessor().createInventoryObject("1", actorDefID);
 			}
-		} catch (JsonSyntaxException | IOException e) {
 		}
 	}
 
@@ -199,17 +194,8 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 		String defID = type;
 
 		// Translate type to a defID
-		try {
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("defaultitems/avatarhelper.json");
-			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-					.get("Avatars").getAsJsonObject();
-			strm.close();
-
-			if (helper.has(defID)) {
-				defID = helper.get(defID).getAsJsonObject().get("defId").getAsString();
-			}
-		} catch (JsonSyntaxException | IOException e) {
+		if (helper.has(defID)) {
+			defID = helper.get(defID).getAsJsonObject().get("defId").getAsString();
 		}
 
 		// Find species

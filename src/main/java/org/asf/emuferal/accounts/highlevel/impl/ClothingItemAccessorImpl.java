@@ -1,6 +1,5 @@
 package org.asf.emuferal.accounts.highlevel.impl;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.asf.emuferal.accounts.PlayerInventory;
@@ -14,6 +13,20 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class ClothingItemAccessorImpl extends ClothingItemAccessor {
+	private static JsonObject helper;
+	static {
+		try {
+			// Load helper
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("defaultitems/clothinghelper.json");
+			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("Clothing")
+					.getAsJsonObject();
+			strm.close();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public ClothingItemAccessorImpl(PlayerInventory inventory) {
 		super(inventory);
 	}
@@ -59,25 +72,15 @@ public class ClothingItemAccessorImpl extends ClothingItemAccessor {
 		String cID = null;
 
 		// Generate object
-		try {
-			// Load helper
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("defaultitems/clothinghelper.json");
-			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-					.get("Clothing").getAsJsonObject();
-			strm.close();
+		// Check existence
+		if (helper.has(Integer.toString(defID))) {
+			// Trade thingy
+			JsonObject tr = new JsonObject();
+			tr.addProperty("isInTradeList", isInTradeList);
 
-			// Check existence
-			if (helper.has(Integer.toString(defID))) {
-				// Trade thingy
-				JsonObject tr = new JsonObject();
-				tr.addProperty("isInTradeList", isInTradeList);
-
-				// Add item
-				cID = inventory.getAccessor().createInventoryObject("100", defID, new ItemComponent("Tradable", tr),
-						new ItemComponent("Colorable", helper.get(Integer.toString(defID)).getAsJsonObject()));
-			}
-		} catch (IOException e) {
+			// Add item
+			cID = inventory.getAccessor().createInventoryObject("100", defID, new ItemComponent("Tradable", tr),
+					new ItemComponent("Colorable", helper.get(Integer.toString(defID)).getAsJsonObject()));
 		}
 
 		// Return ID
@@ -86,22 +89,12 @@ public class ClothingItemAccessorImpl extends ClothingItemAccessor {
 
 	@Override
 	public String getDefaultClothingChannelHSV(int defID, int channel) {
-		try {
-			// Load helper
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("defaultitems/clothinghelper.json");
-			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-					.get("Clothing").getAsJsonObject();
-			strm.close();
-
-			// Check existence
-			if (helper.has(Integer.toString(defID))) {
-				// Find channel
-				JsonObject data = helper.get(Integer.toString(defID)).getAsJsonObject();
-				if (data.has("color" + channel + "HSV"))
-					return data.get("color" + channel + "HSV").getAsJsonObject().get("_hsv").getAsString();
-			}
-		} catch (IOException e) {
+		// Check existence
+		if (helper.has(Integer.toString(defID))) {
+			// Find channel
+			JsonObject data = helper.get(Integer.toString(defID)).getAsJsonObject();
+			if (data.has("color" + channel + "HSV"))
+				return data.get("color" + channel + "HSV").getAsJsonObject().get("_hsv").getAsString();
 		}
 		return null;
 	}

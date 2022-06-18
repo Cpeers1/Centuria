@@ -1,6 +1,5 @@
 package org.asf.emuferal.accounts.highlevel.impl;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.asf.emuferal.accounts.PlayerInventory;
@@ -14,6 +13,21 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class DyeAccessorImpl extends DyeAccessor {
+	private static JsonObject helper;
+
+	static {
+		try {
+			// Load helper
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("defaultitems/dyehelper.json");
+			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("Dyes")
+					.getAsJsonObject();
+			strm.close();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public DyeAccessorImpl(PlayerInventory inventory) {
 		super(inventory);
 	}
@@ -94,18 +108,8 @@ public class DyeAccessorImpl extends DyeAccessor {
 
 	@Override
 	public String getDyeHSV(int defID) {
-		try {
-			// Load helper
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("defaultitems/dyehelper.json");
-			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-					.get("Dyes").getAsJsonObject();
-			strm.close();
-
-			if (helper.has(Integer.toString(defID)))
-				return helper.get(Integer.toString(defID)).getAsString();
-		} catch (IOException e) {
-		}
+		if (helper.has(Integer.toString(defID)))
+			return helper.get(Integer.toString(defID)).getAsString();
 
 		return null;
 	}
