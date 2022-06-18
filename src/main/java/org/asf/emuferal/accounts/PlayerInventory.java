@@ -10,17 +10,22 @@ import org.asf.emuferal.accounts.highlevel.FurnitureItemAccessor;
 import org.asf.emuferal.accounts.highlevel.InventoryAccessor;
 import org.asf.emuferal.accounts.highlevel.ItemAccessor;
 import org.asf.emuferal.accounts.highlevel.SanctuaryAccessor;
+import org.asf.emuferal.accounts.highlevel.impl.AvatarAccessorImpl;
+import org.asf.emuferal.accounts.highlevel.impl.ClothingItemAccessorImpl;
+import org.asf.emuferal.accounts.highlevel.impl.DyeAccessorImpl;
+import org.asf.emuferal.accounts.highlevel.impl.FurnitureItemAccessorImpl;
+import org.asf.emuferal.accounts.highlevel.impl.SanctuaryAccessorImpl;
 import org.asf.emuferal.players.Player;
 
 public abstract class PlayerInventory {
 
-	private InventoryAccessor accessor = new InventoryAccessor(this);
-	private ClothingItemAccessor clAccessor = new ClothingItemAccessor(this);
-	private FurnitureItemAccessor fAccessor = new FurnitureItemAccessor(this);
-	private SanctuaryAccessor sAccessor = new SanctuaryAccessor(this);
-	private CurrencyAccessor cAccessor = new CurrencyAccessor(this);
-	private AvatarAccessor aAccessor = new AvatarAccessor(this);
-	private DyeAccessor dAccessor = new DyeAccessor(this);
+	protected InventoryAccessor accessor = new InventoryAccessor(this);
+	protected ClothingItemAccessor clAccessor = new ClothingItemAccessorImpl(this);
+	protected FurnitureItemAccessor fAccessor = new FurnitureItemAccessorImpl(this);
+	protected SanctuaryAccessor sAccessor = new SanctuaryAccessorImpl(this);
+	protected CurrencyAccessor cAccessor = new CurrencyAccessor(this);
+	protected AvatarAccessor aAccessor = new AvatarAccessorImpl(this);
+	protected DyeAccessor dAccessor = new DyeAccessorImpl(this);
 
 	/**
 	 * Retrieves the high-level inventory accessor

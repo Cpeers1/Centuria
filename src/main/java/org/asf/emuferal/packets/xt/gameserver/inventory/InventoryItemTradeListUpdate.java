@@ -9,7 +9,6 @@ import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public class InventoryItemTradeListUpdate implements IXtPacket<InventoryItemTradeListUpdate> {

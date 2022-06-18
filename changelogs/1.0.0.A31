@@ -17,6 +17,7 @@ Changes in EmuFeral 1.0.0.A31:
  - Rewrite sanctuary system and got it working
  - Implement sanctuary switching
  - Implement the trade list (inventory tab)
+ - Made the inventory accessor API interface/implementation-based
  
 Discord bot changes:
  - Add a status field to the getaccountinfo command
