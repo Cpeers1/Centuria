@@ -261,7 +261,7 @@ public class InventoryAccessor {
 		obj.addProperty("defId", defId);
 		obj.add("components", components);
 		obj.addProperty("id", iID);
-		obj.addProperty("type", inventoryId);
+		obj.addProperty("type", Integer.parseInt(inventoryId));
 
 		// Save to inventory
 		items.add(obj);
