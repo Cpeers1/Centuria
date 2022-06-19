@@ -423,6 +423,16 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 	}
 
 	private void buildInventory(Player plr, PlayerInventory inv) {
+		// Check if wings, mods and clothing is disabled
+		if (!EmuFeral.giveAllMods && !EmuFeral.giveAllWings) {
+			// Save item 2 as empty item
+			inv.setItem("2", new JsonArray());
+		}
+		if (!EmuFeral.giveAllClothes) {
+			// Save item 2 as empty item
+			inv.setItem("110", new JsonArray());
+		}
+
 		// Build avatars
 		if (EmuFeral.giveAllAvatars) {
 			// Unlock all avatars
@@ -439,16 +449,6 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			// Unlock Kitsune and Senri
 			inv.getAvatarAccessor().unlockAvatarSpecies("Kitsune");
 			inv.getAvatarAccessor().unlockAvatarSpecies("Senri");
-		}
-
-		// Check if wings, mods and clothing is disabled
-		if (!EmuFeral.giveAllMods && !EmuFeral.giveAllWings) {
-			// Save item 2 as empty item
-			inv.setItem("2", new JsonArray());
-		}
-		if (!EmuFeral.giveAllClothes) {
-			// Save item 2 as empty item
-			inv.setItem("110", new JsonArray());
 		}
 
 		// Save changes

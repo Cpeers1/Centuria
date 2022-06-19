@@ -29,7 +29,7 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 			strm = InventoryItemDownloadPacket.class.getClassLoader()
 					.getResourceAsStream("defaultitems/avatardefaultshelper.json");
 			defaultsHelper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-					.get("Avatars").getAsJsonObject();
+					.get("AvatarDefaults").getAsJsonObject();
 			strm.close();
 		} catch (JsonSyntaxException | IOException e) {
 			throw new RuntimeException(e);
