@@ -130,6 +130,7 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 
 			// Find the current save slot count
 			int cSlots = 0;
+			boolean hasPrimary = false;
 			for (JsonElement ele : avatars) {
 				JsonObject ava = ele.getAsJsonObject();
 				String dID = ava.get("defId").getAsString();
@@ -138,8 +139,11 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 					for (JsonElement ele2 : avatars) {
 						JsonObject ava2 = ele2.getAsJsonObject();
 						String dID2 = ava2.get("defId").getAsString();
-						if (!ava2.get("components").getAsJsonObject().has("PrimaryLook") && dID.equals(dID2)) {
-							cSlots++;
+						if (dID.equals(dID2)) {
+							if (ava2.get("components").getAsJsonObject().has("PrimaryLook"))
+								hasPrimary = true;
+							else
+								cSlots++;
 						}
 					}
 					break;
@@ -150,7 +154,7 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 
 			// Add the look files and scan in the ID
 			if (cSlots < slots) {
-				if (cSlots == 0) {
+				if (!hasPrimary) {
 					// Add primary
 
 					// Name
