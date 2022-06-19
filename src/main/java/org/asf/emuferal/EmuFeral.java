@@ -749,6 +749,24 @@ public class EmuFeral {
 		}
 
 		//
+		// Fix missing name info
+		//
+
+		for (String id : inv.getSanctuaryAccessor().getSanctuaryLookIDs()) {
+			JsonObject look = inv.getSanctuaryAccessor().getSanctuaryLook(id);
+			JsonObject components = look.get("components").getAsJsonObject();
+
+			// Add name component if missing
+			if (!components.has("Name")) {
+				JsonObject nm = new JsonObject();
+				nm.addProperty("name", "");
+				components.add("Name", nm);
+
+				inv.setItem("201", inv.getItem("201"));
+			}
+		}
+
+		//
 		// Active sanctuary
 		//
 

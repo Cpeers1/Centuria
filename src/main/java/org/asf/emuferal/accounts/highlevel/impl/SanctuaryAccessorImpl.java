@@ -703,10 +703,14 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		id = inventory.getAccessor().findInventoryObject("10", classId).get("id").getAsString();
 		sanctuaryInfo.addProperty("classInvId", id);
 		sanctuary.add("info", sanctuaryInfo);
+		// Name object
+		JsonObject nm = new JsonObject();
+		nm.addProperty("name", "");
 		// Build components
 		JsonObject components = new JsonObject();
 		// Make primary if needed
 		components.add("SanctuaryLook", sanctuary);
+		components.add("Name", nm);
 		components.add("Timestamp", ts);
 		itm.addProperty("defId", lookDefId);
 		itm.add("components", components);
