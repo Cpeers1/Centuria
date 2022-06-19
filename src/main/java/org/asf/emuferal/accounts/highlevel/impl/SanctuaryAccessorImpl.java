@@ -682,7 +682,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 	
 	@Override
-	public void saveSanctuaryLookToSlot(String activeSancLookId, String slotId) {
+	public void saveSanctuaryLookToSlot(String activeSancLookId, String slotId, String saveName) {
 		
 		// find sanc look
 		if (!inventory.containsItem("201"))
@@ -743,7 +743,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		//timestamp NOW
 		var timeStamp = System.currentTimeMillis();
 		
-		copySancLookInv(looks, newSancSlot, oldSancSlot, timeStamp);
+		copySancLookInv(looks, newSancSlot, oldSancSlot, saveName, timeStamp);
 		copyHouseInv(oldHouseInvId, newHouseInvId, timeStamp);
 		copyIslandInv(oldIslandInvId, newIslandInvId, timeStamp);
 		copyClassInv(oldClassInvId, newClassInvId, timeStamp);
@@ -967,7 +967,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		inventory.setItem("5", houseInv);
 	}
 
-	private void copySancLookInv(JsonArray looks, JsonElement newSancSlot, JsonElement oldSancSlot, long timeStamp) {
+	private void copySancLookInv(JsonArray looks, JsonElement newSancSlot, JsonElement oldSancSlot, String saveName, long timeStamp) {
 		
 		var oldComponentLevel =
 				oldSancSlot.getAsJsonObject()
@@ -1006,7 +1006,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		//add a name component...
 		
 		JsonObject newNameLevel = new JsonObject();
-		newNameLevel.addProperty("name", "testName");
+		newNameLevel.addProperty("name", saveName);
 		
 		if(newComponentLevel.has("Name"))
 		{

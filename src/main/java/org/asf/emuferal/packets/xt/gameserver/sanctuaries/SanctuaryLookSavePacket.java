@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacket> {
 
 	public String lookSlotId = null;
+	public String lookSlotName = null;
 
 	@Override
 	public String id() {
@@ -30,18 +31,13 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 	@Override
 	public void parse(XtReader reader) throws IOException {
 		lookSlotId = reader.read();
-		
-		if (System.getProperty("debugMode") != null) {
-			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Client to server remaining: " + reader.readRemaining());
-		}
-		
+		lookSlotName = reader.read();
 	}
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		writer.writeInt(-1); // Data prefix
 
-		writer.writeBoolean(true);
 		writer.writeString(lookSlotId);
 
 		writer.writeString(""); // Data suffix
@@ -54,12 +50,12 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 
 		// Log
 		if (System.getProperty("debugMode") != null) {
-			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Client to server (lookSlotId: " + lookSlotId + ")");
+			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Client to server (lookSlotId: " + lookSlotId + ", lookSlotName: " + lookSlotName + ")");
 		}
 		
 		//save active look into that slot
 		
-		plr.account.getPlayerInventory().getSanctuaryAccessor().saveSanctuaryLookToSlot(plr.activeSanctuaryLook, lookSlotId);
+		plr.account.getPlayerInventory().getSanctuaryAccessor().saveSanctuaryLookToSlot(plr.activeSanctuaryLook, lookSlotId, lookSlotName);
 
 		//send an il response
 		

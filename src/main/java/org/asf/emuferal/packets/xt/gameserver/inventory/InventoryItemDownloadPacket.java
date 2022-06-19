@@ -386,6 +386,35 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				inv.setItem(slot, item);
 			}
 		}
+		
+		//inspirations
+		if(slot.equals("8"))
+		{
+			if (inv.getItem("8") == null || inv.getItem("8").getAsJsonArray().isEmpty()) {
+				JsonArray itm;
+				
+				if (inv.containsItem("8"))
+					itm = inv.getItem("8").getAsJsonArray();
+				else
+					itm = new JsonArray();			
+
+				// Build entry
+
+				item = itm;
+
+				// Save item
+				inv.setItem(slot, item);
+
+				// set default inspirations
+				
+				inv.getInspirationAccessor().giveDefaultInspirations();
+				
+				//reload inv
+				itm = inv.getItem("8").getAsJsonArray();
+				
+				item = itm;
+			}
+		}
 
 		// Send the item to the client
 		if (item == null)

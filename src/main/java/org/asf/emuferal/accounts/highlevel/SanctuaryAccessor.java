@@ -171,6 +171,6 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	/**
 	 * Saves the currently active sanctuary look to a new slot with the ID provided.
 	 */
-	public abstract void saveSanctuaryLookToSlot(String activeSancLookId, String slotId);
+	public abstract void saveSanctuaryLookToSlot(String activeSancLookId, String slotId, String saveName);
 	
 }

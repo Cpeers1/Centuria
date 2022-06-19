@@ -52,18 +52,8 @@ public class SanctuaryLookLoadPacket implements IXtPacket<SanctuaryLookLoadPacke
 		}
 
 		// Load into active look
-		JsonObject components = plr.account.getPlayerInventory().getSanctuaryAccessor()
-				.getSanctuaryLook(plr.activeSanctuaryLook).get("components").getAsJsonObject();
-		if (components.has("SanctuaryLook"))
-			components.remove("SanctuaryLook");
-		if (components.has("Timestamp"))
-			components.remove("Timestamp");
-		components.add("SanctuaryLook", plr.account.getPlayerInventory().getSanctuaryAccessor().getSanctuaryLook(lookId)
-				.get("components").getAsJsonObject().get("SanctuaryLook"));
-		JsonObject ts = new JsonObject();
-		ts.addProperty("ts", System.currentTimeMillis());
-		components.add("Timestamp", ts);
-		plr.account.getPlayerInventory().setItem("201", plr.account.getPlayerInventory().getItem("201"));
+		// retooling the save function here to just target the active look slot
+		plr.account.getPlayerInventory().getSanctuaryAccessor().saveSanctuaryLookToSlot(lookId, plr.activeSanctuaryLook, "");
 
 		// Respond with switch packet and rejoin
 		plr.client.sendPacket(this);

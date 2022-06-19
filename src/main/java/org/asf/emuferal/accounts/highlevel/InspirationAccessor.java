@@ -41,5 +41,9 @@ public abstract class InspirationAccessor extends AbstractInventoryAccessor {
 	 */
 	public abstract String addInspiration(int defID);
 
-	
+	/**
+	 * Adds all default inspirations to the inventory, if they don't already exist.
+	 */
+	public abstract void giveDefaultInspirations();
+
 }

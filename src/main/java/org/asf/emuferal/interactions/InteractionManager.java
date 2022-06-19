@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
+import org.asf.emuferal.interactions.modules.InspirationCollectionModule;
 import org.asf.emuferal.interactions.modules.InteractionModule;
 import org.asf.emuferal.interactions.modules.ResourceCollectionModule;
 import org.asf.emuferal.interactions.modules.ShopkeeperModule;
@@ -19,6 +20,7 @@ public class InteractionManager {
 		// Add modules
 		// TODO: quest module (needs to be loaded BEFORE resource collection)
 		modules.add(new ShopkeeperModule());
+		modules.add(new InspirationCollectionModule());
 		modules.add(new ResourceCollectionModule());
 	}
 
