@@ -5,20 +5,43 @@
       "rewards": [
         {
           "itemId": "28488",
-          "minCount": 2,
-          "maxCount": 20,
+          "minCount": 3,
+          "maxCount": 10,
           "weight": 65
         },
         {
           "itemId": "28489",
           "minCount": 2,
-          "maxCount": 20,
+          "maxCount": 8,
           "weight": 20
         },
         {
           "itemId": "28490",
+          "minCount": 1,
+          "maxCount": 5,
+          "weight": 15
+        }
+      ]
+    },
+    "28497": {
+      "objectName": "Pickup/Gliding/SkyJellyBloom",
+      "rewards": [
+        {
+          "itemId": "28488",
+          "minCount": 3,
+          "maxCount": 10,
+          "weight": 65
+        },
+        {
+          "itemId": "28489",
           "minCount": 2,
-          "maxCount": 20,
+          "maxCount": 8,
+          "weight": 20
+        },
+        {
+          "itemId": "28490",
+          "minCount": 1,
+          "maxCount": 5,
           "weight": 15
         }
       ]

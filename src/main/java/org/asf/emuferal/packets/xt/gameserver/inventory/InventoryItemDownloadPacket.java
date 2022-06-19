@@ -57,6 +57,14 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			buildInventory(plr, inv);
 		}
 
+		if (slot.equals("304")) {
+			// Interaction memory
+			if (!inv.containsItem("304")) {
+				// Create new object
+				inv.setItem(slot, new JsonArray());
+			}
+		}
+
 		if (slot.equals("400")) {
 			// Override wings lock
 			if (!inv.containsItem("400"))
@@ -332,10 +340,9 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				JsonArray itm;
 				if (inv.containsItem("311"))
 					itm = inv.getItem("311").getAsJsonArray();
-				else
-				{
-					itm = new JsonArray();		
-					
+				else {
+					itm = new JsonArray();
+
 					// Build entry
 					JsonObject obj = new JsonObject();
 					obj.addProperty("defId", 22781);
@@ -350,14 +357,11 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 					item = itm;
 				}
 
-
-
-
 				// Save item
 				inv.setItem(slot, item);
 			}
 		}
-		
+
 		// playerVars
 		if (slot.equals("303")) {
 			if (inv.getItem("303") == null || inv.getItem("303").getAsJsonArray().isEmpty()) {

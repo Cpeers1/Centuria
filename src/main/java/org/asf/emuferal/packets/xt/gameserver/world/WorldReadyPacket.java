@@ -52,8 +52,14 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Load player
 		Player plr = (Player) client.container;
 
+		// Initialize interaction memory
+		plr.account.getPlayerInventory().getInteractionMemory().prepareLevel(plr.pendingLevelID);
+
 		// Initialize interactions
 		InteractionManager.initInteractionsFor(client, plr.pendingLevelID);
+		
+		// Save changes
+		plr.account.getPlayerInventory().getInteractionMemory().saveTo(client);
 
 		// Dispatch event
 		EventBus.getInstance().dispatchEvent(new LevelJoinEvent(plr.pendingLevelID, plr.pendingRoom, plr));

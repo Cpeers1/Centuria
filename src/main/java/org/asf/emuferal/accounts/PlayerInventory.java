@@ -7,6 +7,7 @@ import org.asf.emuferal.accounts.highlevel.ClothingItemAccessor;
 import org.asf.emuferal.accounts.highlevel.CurrencyAccessor;
 import org.asf.emuferal.accounts.highlevel.DyeAccessor;
 import org.asf.emuferal.accounts.highlevel.FurnitureItemAccessor;
+import org.asf.emuferal.accounts.highlevel.InteractionMemoryAccessor;
 import org.asf.emuferal.accounts.highlevel.InventoryAccessor;
 import org.asf.emuferal.accounts.highlevel.ItemAccessor;
 import org.asf.emuferal.accounts.highlevel.SanctuaryAccessor;
@@ -14,12 +15,14 @@ import org.asf.emuferal.accounts.highlevel.impl.AvatarAccessorImpl;
 import org.asf.emuferal.accounts.highlevel.impl.ClothingItemAccessorImpl;
 import org.asf.emuferal.accounts.highlevel.impl.DyeAccessorImpl;
 import org.asf.emuferal.accounts.highlevel.impl.FurnitureItemAccessorImpl;
+import org.asf.emuferal.accounts.highlevel.impl.InteractionMemoryAccessorImpl;
 import org.asf.emuferal.accounts.highlevel.impl.SanctuaryAccessorImpl;
 import org.asf.emuferal.players.Player;
 
 public abstract class PlayerInventory {
 
 	protected InventoryAccessor accessor = new InventoryAccessor(this);
+	protected InteractionMemoryAccessor iAccessor = new InteractionMemoryAccessorImpl(this);
 	protected ClothingItemAccessor clAccessor = new ClothingItemAccessorImpl(this);
 	protected FurnitureItemAccessor fAccessor = new FurnitureItemAccessorImpl(this);
 	protected SanctuaryAccessor sAccessor = new SanctuaryAccessorImpl(this);
@@ -34,6 +37,15 @@ public abstract class PlayerInventory {
 	 */
 	public InventoryAccessor getAccessor() {
 		return accessor;
+	}
+
+	/**
+	 * Retrieves the high-level interaction memory accessor
+	 * 
+	 * @return InteractionMemoryAccessor instance
+	 */
+	public InteractionMemoryAccessor getInteractionMemory() {
+		return iAccessor;
 	}
 
 	/**

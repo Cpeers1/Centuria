@@ -73,7 +73,7 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 		pk.writeInt(-1); // Data prefix
 		pk.writeString(target); // Interactable
 		pk.writeInt(obj.primaryObjectInfo.type); // Type
-		pk.writeString(destroy ? "2" : "1");
+		pk.writeString(destroy ? "2" : "0");
 		pk.writeString(""); // Data suffix
 		client.sendPacket(pk.encode());
 
