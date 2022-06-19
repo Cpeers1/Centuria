@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.SanctuaryAccessor;
 import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemComponent;
-import org.asf.emuferal.entities.objects.WorldObjectPositionInfo;
 import org.asf.emuferal.entities.objects.sanctuaries.RoomInfoObject;
 import org.asf.emuferal.entities.objects.sanctuaries.SancObjectInfo;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
@@ -480,27 +479,23 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			itemsArray = placementInfo.get("items").getAsJsonArray();
 			itemsExisted = true;
 		}
-		
-		//check if item exists
-		
+
+		// check if item exists
+
 		JsonObject item = null;
 		int index = 0;
-		
-		for(var itemEle : itemsArray)
-		{
-			if(itemEle.getAsJsonObject().get("id").getAsString().equals(objectUUID))
-			{
+
+		for (var itemEle : itemsArray) {
+			if (itemEle.getAsJsonObject().get("id").getAsString().equals(objectUUID)) {
 				item = itemEle.getAsJsonObject();
 				break;
 			}
 			index++;
 		}
-		
-		
-		if(item != null)
-		{
-			//just remove the object first, before adding an element for it back in
-			//this is probably faster then trying to change it
+
+		if (item != null) {
+			// just remove the object first, before adding an element for it back in
+			// this is probably faster then trying to change it
 			itemsArray.remove(index);
 		}
 
@@ -532,8 +527,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		item.addProperty("id", objectUUID);
 		item.addProperty("type", 102);
 
-		itemsArray.add(item);			
-
+		itemsArray.add(item);
 
 		if (!itemsExisted) {
 			placementInfo.add("items", itemsArray);
@@ -545,162 +539,145 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	@Override
 	public void removeSanctuaryObject(String objectUUID, String activeSancLookId) {
 		// TODO Auto-generated method stub
-		
+
 		// find sanc look
 		if (!inventory.containsItem("201"))
 			inventory.setItem("201", new JsonArray());
-		
+
 		var looks = inventory.getItem("201").getAsJsonArray();
 
 		JsonElement sancLook = null;
-		
-		for(var item : looks)
-		{
-			if(item.getAsJsonObject().get("id").getAsString().equals(activeSancLookId))
-			{
+
+		for (var item : looks) {
+			if (item.getAsJsonObject().get("id").getAsString().equals(activeSancLookId)) {
 				sancLook = item;
 				break;
 			}
 		}
-		
-		if(sancLook == null) return; //cannot find
-		
-		var placementInfo = sancLook.getAsJsonObject()
-				.get("components").getAsJsonObject()
-				.get("SanctuaryLook").getAsJsonObject()
-				.get("info").getAsJsonObject()
-				.get("placementInfo").getAsJsonObject();
-		
-		//check if items array exists
-		if(!placementInfo.has("items"))
-		{
-			//yeah.. I can't do jack
+
+		if (sancLook == null)
+			return; // cannot find
+
+		var placementInfo = sancLook.getAsJsonObject().get("components").getAsJsonObject().get("SanctuaryLook")
+				.getAsJsonObject().get("info").getAsJsonObject().get("placementInfo").getAsJsonObject();
+
+		// check if items array exists
+		if (!placementInfo.has("items")) {
+			// yeah.. I can't do jack
 			return;
 		}
-		
+
 		var itemsArray = placementInfo.get("items").getAsJsonArray();
-		
-		//now to find the element with the uuid
-		
+
+		// now to find the element with the uuid
+
 		JsonElement foundObject = null;
 		int index = 0;
-		
-		for (var item : itemsArray)
-		{
-			if(item.getAsJsonObject().get("id").getAsString().equals(objectUUID))
-			{
+
+		for (var item : itemsArray) {
+			if (item.getAsJsonObject().get("id").getAsString().equals(objectUUID)) {
 				foundObject = item;
 				break;
 			}
-			
+
 			index++;
 		}
-		
-		if(foundObject == null) return;
-		
+
+		if (foundObject == null)
+			return;
+
 		itemsArray.remove(index);
-		
-		//removed from the items array
+
+		// removed from the items array
 		inventory.setItem("201", looks);
 	}
-	
+
 	@Override
 	public void updateSanctuaryRoomData(String activeSancLookId, RoomInfoObject[] roomInfos) {
 		// TODO Auto-generated method stub
-		
+
 		// find sanc look
 		if (!inventory.containsItem("201"))
 			inventory.setItem("201", new JsonArray());
-		
+
 		var looks = inventory.getItem("201").getAsJsonArray();
 
 		JsonElement sancLook = null;
-		
-		for(var item : looks)
-		{
-			if(item.getAsJsonObject().get("id").getAsString().equals(activeSancLookId))
-			{
+
+		for (var item : looks) {
+			if (item.getAsJsonObject().get("id").getAsString().equals(activeSancLookId)) {
 				sancLook = item;
 				break;
 			}
 		}
-		
-		if(sancLook == null) return; //cannot find
-		
-		
-		var info = sancLook.getAsJsonObject()
-				.get("components").getAsJsonObject()
-				.get("SanctuaryLook").getAsJsonObject()
+
+		if (sancLook == null)
+			return; // cannot find
+
+		var info = sancLook.getAsJsonObject().get("components").getAsJsonObject().get("SanctuaryLook").getAsJsonObject()
 				.get("info").getAsJsonObject();
-		
-		//from here, we can get the house inv ID
-		
+
+		// from here, we can get the house inv ID
+
 		var houseInvId = info.get("houseInvId").getAsString();
-		
-		//then, we can use that to find the house inv ID in inv 5
-		
+
+		// then, we can use that to find the house inv ID in inv 5
+
 		if (!inventory.containsItem("5"))
 			inventory.setItem("5", new JsonArray());
-		
+
 		var houseInvs = inventory.getItem("5").getAsJsonArray();
 
 		JsonElement houseInv = null;
-		
-		for(var item : houseInvs)
-		{
-			if(item.getAsJsonObject().get("id").getAsString().equals(houseInvId))
-			{
+
+		for (var item : houseInvs) {
+			if (item.getAsJsonObject().get("id").getAsString().equals(houseInvId)) {
 				houseInv = item;
 				break;
 			}
 		}
-		
-		if(houseInv == null) return; //cannot find
-		
-		//okay, we got the house inventory object
-		//the next part is updating the room data
-		//for every roomInfo passed in..
-		
-		JsonArray roomInfoLevel = houseInv.getAsJsonObject()
-				.get("components").getAsJsonObject()
-				.get("House").getAsJsonObject()
-				.get("roomData").getAsJsonArray();
-		
-		//its actually an array of strings that have json objects in them.. WW why
-			
-		for(var roomInfo : roomInfos)
-		{
-			//check if roomInfoLevel has an entry with this room index already.
-			
+
+		if (houseInv == null)
+			return; // cannot find
+
+		// okay, we got the house inventory object
+		// the next part is updating the room data
+		// for every roomInfo passed in..
+
+		JsonArray roomInfoLevel = houseInv.getAsJsonObject().get("components").getAsJsonObject().get("House")
+				.getAsJsonObject().get("roomData").getAsJsonArray();
+
+		// its actually an array of strings that have json objects in them.. WW why
+
+		for (var roomInfo : roomInfos) {
+			// check if roomInfoLevel has an entry with this room index already.
+
 			int index = 0;
 			boolean found = false;
-			
-			for(var item2 : roomInfoLevel)
-			{		
+
+			for (var item2 : roomInfoLevel) {
 				var object = JsonParser.parseString(item2.getAsString());
-				
-				if(object.getAsJsonObject().get("roomIndex").getAsInt() == roomInfo.roomIndex)
-				{
+
+				if (object.getAsJsonObject().get("roomIndex").getAsInt() == roomInfo.roomIndex) {
 					found = true;
 					break;
 				}
-				
+
 				index++;
 			}
-			
-			if(found)
-			{
-				//remove the old room data, we will repopulate it
+
+			if (found) {
+				// remove the old room data, we will repopulate it
 				roomInfoLevel.remove(index);
 			}
-			
-			//create a new room info object
-			//add the json object to the array		
+
+			// create a new room info object
+			// add the json object to the array
 			var room = roomInfo.toJson().toString();
 			roomInfoLevel.add(room);
 		}
-		
-		//set house inventory again
+
+		// set house inventory again
 		inventory.setItem("5", houseInvs);
 	}
 
@@ -738,7 +715,5 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		items.add(itm);
 		return itm;
 	}
-
-
 
 }
