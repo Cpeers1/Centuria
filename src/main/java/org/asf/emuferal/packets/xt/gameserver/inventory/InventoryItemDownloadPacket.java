@@ -468,9 +468,10 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			inv.getAvatarAccessor().unlockAvatarSpecies("Werewolf");
 			inv.getAvatarAccessor().unlockAvatarSpecies("Jackalope");
 		} else {
-			// Unlock Kitsune and Senri
+			// Unlock Kitsune, Senri and Phoenix
 			inv.getAvatarAccessor().unlockAvatarSpecies("Kitsune");
 			inv.getAvatarAccessor().unlockAvatarSpecies("Senri");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Phoenix");
 		}
 
 		// Save changes
