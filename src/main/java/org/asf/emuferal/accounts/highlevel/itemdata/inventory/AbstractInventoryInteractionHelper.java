@@ -33,4 +33,13 @@ public abstract class AbstractInventoryInteractionHelper {
 	 */
 	public abstract boolean removeOne(PlayerInventory inventory, int defID);
 
+	/**
+	 * Removes a single item from the inventory
+	 * 
+	 * @param inventory Inventory to remove the item from
+	 * @param object    Item json to remove
+	 * @return True if successful, false otherwise
+	 */
+	public abstract boolean removeOne(PlayerInventory inventory, JsonObject object);
+
 }

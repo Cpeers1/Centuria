@@ -7,7 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.asf.emuferal.accounts.PlayerInventory;
+import org.asf.emuferal.accounts.highlevel.itemdata.inventory.InventoryDefinitionContainer;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.InventoryType;
+import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.AvatarSpeciesHelper;
+import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.BodyModHelper;
+import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.ClothingHelper;
+import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.SanctuaryClassHelper;
+import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.SanctuaryHouseHelper;
+import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.SanctuaryIslandHelper;
 import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemInfo;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.emuferal.players.Player;
@@ -22,25 +29,25 @@ public class ItemAccessor {
 	private static HashMap<String, ItemInfo> definitions = new HashMap<String, ItemInfo>();
 
 	@SuppressWarnings("serial")
-	private static final Map<String, InventoryType> inventoryTypeMap = new HashMap<String, InventoryType>() {
+	private static final Map<String, InventoryDefinitionContainer> inventoryTypeMap = new HashMap<String, InventoryDefinitionContainer>() {
 		{
 			// Avatar species
-			put("1", InventoryType.SINGLE_ITEM);
+			put("1", new InventoryDefinitionContainer(InventoryType.SINGLE_ITEM, new AvatarSpeciesHelper()));
 
 			// Body mods
-			put("2", InventoryType.SINGLE_ITEM);
+			put("2", new InventoryDefinitionContainer(InventoryType.SINGLE_ITEM, new BodyModHelper()));
 
 			// Clothing
-			put("100", InventoryType.OBJECT_BASED);
+			put("100", new InventoryDefinitionContainer(InventoryType.OBJECT_BASED, new ClothingHelper()));
 
 			// Sanctuary classes
-			put("10", InventoryType.SINGLE_ITEM);
+			put("10", new InventoryDefinitionContainer(InventoryType.SINGLE_ITEM, new SanctuaryClassHelper()));
 
 			// Sanctuary houses
-			put("5", InventoryType.OBJECT_BASED);
+			put("5", new InventoryDefinitionContainer(InventoryType.OBJECT_BASED, new SanctuaryHouseHelper()));
 
 			// Sanctuary islands
-			put("6", InventoryType.OBJECT_BASED);
+			put("6", new InventoryDefinitionContainer(InventoryType.OBJECT_BASED, new SanctuaryIslandHelper()));
 
 			// Furniture
 			put("102", InventoryType.OBJECT_BASED);

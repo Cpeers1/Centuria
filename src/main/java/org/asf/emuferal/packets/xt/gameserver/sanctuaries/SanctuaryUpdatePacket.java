@@ -115,22 +115,19 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-
-		// test this..
-
 		writer.writeInt(-1); // Data prefix
 
+		// Success
 		writer.writeBoolean(true);
-		writer.writeInt(additions.size()); // number of item additions
 
+		writer.writeInt(additions.size()); // number of item additions
 		if (additions.size() != 0) {
 			for (var item : additions) {
 				writer.writeString(item.objectId);
 			}
 		}
 
-		writer.writeInt(removals.size());
-
+		writer.writeInt(removals.size()); // number of removals
 		if (removals.size() != 0) {
 			for (var item : removals) {
 				writer.writeString(item);
@@ -256,7 +253,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		for (var removedItemId : removals) {
 			var owner = (Player) client.container;
 
-			// now do an OI packet
+			// now do an OD packet
 			for (Player player : ((GameServer) client.getServer()).getPlayers()) {
 				if (player.room.equals("sanctuary_" + owner.account.getAccountID())) {
 					// Send packet
