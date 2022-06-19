@@ -25,6 +25,3 @@ Changes in EmuFeral 1.0.0.A31:
 Discord bot changes:
  - Add a status field to the getaccountinfo command
  - Add the reason and action issuer to the moderation log
-
-Important notice:
-If you are migrating from a earlier version, login will be VERY SLOW, as the system will be generating new player data, please be patient during login.
