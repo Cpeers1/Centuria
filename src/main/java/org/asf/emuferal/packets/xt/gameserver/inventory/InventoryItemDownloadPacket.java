@@ -429,8 +429,30 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			inv.setItem("2", new JsonArray());
 		}
 		if (!EmuFeral.giveAllClothes) {
-			// Save item 2 as empty item
-			inv.setItem("110", new JsonArray());
+			// Save item 100 as empty item
+			inv.setItem("100", new JsonArray());
+
+			// Add the forager's set
+			inv.getClothingAccessor().addClothing(10876, false);
+			inv.getClothingAccessor().addClothing(3863, false);
+			inv.getClothingAccessor().addClothing(3862, false);
+			inv.getClothingAccessor().addClothing(3861, false);
+			inv.getClothingAccessor().addClothing(3860, false);
+		}
+		if (!EmuFeral.giveAllFurnitureItems) {
+			// Save item 102 as empty item
+			inv.setItem("102", new JsonArray());
+
+			// Add the basic set
+			inv.getFurnitureAccessor().addFurniture(4152, false);
+			inv.getFurnitureAccessor().addFurniture(4150, false);
+			inv.getFurnitureAccessor().addFurniture(4119, false);
+			inv.getFurnitureAccessor().addFurniture(4118, false);
+			inv.getFurnitureAccessor().addFurniture(4117, false);
+			inv.getFurnitureAccessor().addFurniture(4116, false);
+			inv.getFurnitureAccessor().addFurniture(4115, false);
+			inv.getFurnitureAccessor().addFurniture(4114, false);
+			inv.getFurnitureAccessor().addFurniture(4113, false);
 		}
 
 		// Build avatars
