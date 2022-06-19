@@ -275,7 +275,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 			}
 		}
 
-		// TODO: What do I send for room changes to the client?
+
 
 		for (var roomUpdate : this.roomChanges) {
 			var owner = (Player) client.container;
@@ -283,7 +283,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 			// now do an OI packet
 			for (Player player : ((GameServer) client.getServer()).getPlayers()) {
 				if (player.room.equals("sanctuary_" + owner.account.getAccountID())) {
-
+					// TODO: What do I send for room changes to the client?
 				}
 			}
 		}
