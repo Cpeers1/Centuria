@@ -1,7 +1,8 @@
 package org.asf.emuferal.accounts.highlevel;
 
 import org.asf.emuferal.accounts.PlayerInventory;
-import org.asf.emuferal.entities.objects.SancObjectInfo;
+import org.asf.emuferal.entities.objects.sanctuaries.RoomInfoObject;
+import org.asf.emuferal.entities.objects.sanctuaries.SancObjectInfo;
 
 import com.google.gson.JsonObject;
 
@@ -160,7 +161,11 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	/**
 	 * Removes a object from the player's sanctuary.
 	 */
-	public abstract void removeSanctuaryObject(String objectUUID);
+	public abstract void removeSanctuaryObject(String objectUUID, String activeSancLookId);
 	
+	/**
+	 * Updates room info for the player's sanctuary.
+	 */
+	public abstract void updateSanctuaryRoomData(String activeSancLookId, RoomInfoObject[] roomInfos);
 	
 }

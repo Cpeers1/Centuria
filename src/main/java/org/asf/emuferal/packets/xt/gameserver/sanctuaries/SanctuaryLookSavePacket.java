@@ -14,7 +14,7 @@ import com.google.gson.JsonObject;
 
 public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacket> {
 
-	public String lookId = null;
+	public String lookSlotId = null;
 
 	@Override
 	public String id() {
@@ -28,7 +28,7 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
-		lookId = reader.read();
+		lookSlotId = reader.read();
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 		writer.writeInt(-1); // Data prefix
 
 		writer.writeBoolean(true);
-		writer.writeString(lookId);
+		writer.writeString(lookSlotId);
 
 		writer.writeString(""); // Data suffix
 	}
@@ -48,8 +48,12 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 
 		// Log
 		if (System.getProperty("debugMode") != null) {
-			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Client to server (look: " + lookId + ")");
+			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Client to server (lookSlotId: " + lookSlotId + ")");
 		}
+		
+		//save active look into that slot
+		
+		
 
 
 		return true;

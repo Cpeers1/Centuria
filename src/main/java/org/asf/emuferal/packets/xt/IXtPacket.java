@@ -23,6 +23,11 @@ public interface IXtPacket<T extends IXtPacket<T>> extends ISmartfoxPacket {
 		if (!content.startsWith("%xt%"))
 			return false;
 		
+		//if (System.getProperty("debugMode") != null) {
+			//System.out.println("client to server: " + content);
+		//}
+				
+		
 		XtReader rd = new XtReader(content);
 		String packetID = rd.read();
 		if (!packetID.equals(id()))
