@@ -62,6 +62,14 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			if (!inv.containsItem("304")) {
 				// Create new object
 				inv.setItem(slot, new JsonArray());
+
+				// Add levels
+				inv.getInteractionMemory().prepareLevel(820); // City Fera
+				inv.getInteractionMemory().prepareLevel(2364); // Blood Tundra
+				inv.getInteractionMemory().prepareLevel(9687); // Lakeroot
+				inv.getInteractionMemory().prepareLevel(3273); // Sunken Thicket
+				inv.getInteractionMemory().prepareLevel(2147); // Mugmyre
+				inv.getInteractionMemory().prepareLevel(1825); // Shattered Bay
 			}
 		}
 
