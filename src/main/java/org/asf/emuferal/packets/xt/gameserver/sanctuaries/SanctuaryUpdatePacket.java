@@ -12,10 +12,8 @@ import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemPacket;
-import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
 import org.asf.emuferal.players.Player;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -27,13 +25,10 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		public JsonObject furnitureObject;
 	}
 
-	public int numOfAdditions;
-	public int numOfRemovals;
-	public int numOfRoomChanges;
 	public boolean success;
 	public List<UpdateSancObjectItem> additions = new ArrayList<UpdateSancObjectItem>();
-	public List<String> removals = new ArrayList<String>();
 	public List<RoomInfoObject> roomChanges = new ArrayList<RoomInfoObject>();
+	public List<String> removals = new ArrayList<String>();
 
 	@Override
 	public String id() {
@@ -49,8 +44,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 	public void parse(XtReader reader) throws IOException {
 
 		// first number is how many ssu's there really are
-		numOfAdditions = reader.readInt();
-
+		int numOfAdditions = reader.readInt();
 		for (int i = 0; i < numOfAdditions; i++) {
 			UpdateSancObjectItem item = new UpdateSancObjectItem();
 
@@ -86,13 +80,12 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		// Log
 		if (System.getProperty("debugMode") != null) {
 			if (numOfAdditions > 0) {
-				System.out
-						.println("[SANCTUARY] [UPDATE] Client to server: " + numOfAdditions + " furniture additions...");
+				System.out.println(
+						"[SANCTUARY] [UPDATE] Client to server: " + numOfAdditions + " furniture additions...");
 			}
 		}
 
-		numOfRemovals = reader.readInt();
-
+		int numOfRemovals = reader.readInt();
 		for (int i = 0; i < numOfRemovals; i++) {
 			// removals
 			removals.add(reader.read());
@@ -101,12 +94,12 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		// Log
 		if (System.getProperty("debugMode") != null) {
 			if (numOfRemovals > 0) {
-				System.out.println("[SANCTUARY] [UPDATE] Client to server: " + numOfRemovals + " furniture removals...");
+				System.out
+						.println("[SANCTUARY] [UPDATE] Client to server: " + numOfRemovals + " furniture removals...");
 			}
 		}
 
-		numOfRoomChanges = reader.readInt();
-
+		int numOfRoomChanges = reader.readInt();
 		for (int i = 0; i < numOfRoomChanges; i++) {
 			// room changes
 			roomChanges.add(new RoomInfoObject(JsonParser.parseString(reader.read()).getAsJsonObject()));
@@ -286,16 +279,14 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		}
 
 		// TODO: What do I send for room changes to the client?
-		
-		for(var roomUpdate : this.roomChanges)
-		{
+
+		for (var roomUpdate : this.roomChanges) {
 			var owner = (Player) client.container;
 
 			// now do an OI packet
 			for (Player player : ((GameServer) client.getServer()).getPlayers()) {
 				if (player.room.equals("sanctuary_" + owner.account.getAccountID())) {
-					
-					
+
 				}
 			}
 		}
