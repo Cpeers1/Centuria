@@ -29,7 +29,7 @@ public class ResourceCollectionModule extends InteractionModule {
 	@Override
 	public boolean handleInteractionSuccess(Player player, String id, NetworkedObject object, int state) {
 		// TODO Auto-generated method stub
-		player.account.getPlayerInventory().getItemAccessor(player).add(8372); // testing
+		player.account.getPlayerInventory().getItemAccessor(player).add(8372, 5); // testing
 		return false;
 	}
 

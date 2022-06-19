@@ -2,9 +2,9 @@ package org.asf.emuferal.accounts.highlevel;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.InventoryDefinitionContainer;
@@ -12,13 +12,20 @@ import org.asf.emuferal.accounts.highlevel.itemdata.inventory.InventoryType;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.AvatarSpeciesHelper;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.BodyModHelper;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.ClothingHelper;
+import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.CurrencyHelper;
+import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.FurnitureHelper;
+import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.GenericHelper;
+import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.GenericHelperWithQuantity;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.SanctuaryClassHelper;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.SanctuaryHouseHelper;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.SanctuaryIslandHelper;
+import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemInfo;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.emuferal.players.Player;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -27,6 +34,20 @@ public class ItemAccessor {
 	private Player player;
 	private PlayerInventory inventory;
 	private static HashMap<String, ItemInfo> definitions = new HashMap<String, ItemInfo>();
+
+	private static ItemComponent tradelisComponent() {
+		JsonObject tr = new JsonObject();
+		tr.addProperty("isInTradeList", false);
+
+		return new ItemComponent("Tradable", tr);
+	}
+
+	private static ItemComponent enigmaComonent() {
+		JsonObject e = new JsonObject();
+		e.addProperty("activated", false);
+
+		return new ItemComponent("Enigma", e);
+	}
 
 	@SuppressWarnings("serial")
 	private static final Map<String, InventoryDefinitionContainer> inventoryTypeMap = new HashMap<String, InventoryDefinitionContainer>() {
@@ -50,21 +71,26 @@ public class ItemAccessor {
 			put("6", new InventoryDefinitionContainer(InventoryType.OBJECT_BASED, new SanctuaryIslandHelper()));
 
 			// Furniture
-			put("102", InventoryType.OBJECT_BASED);
+			put("102", new InventoryDefinitionContainer(InventoryType.OBJECT_BASED, new FurnitureHelper()));
 
 			// Currency
-			put("104", InventoryType.QUANTITY_BASED);
+			put("104", new InventoryDefinitionContainer(InventoryType.QUANTITY_BASED, new CurrencyHelper()));
 
 			// Resources
-			put("103", InventoryType.QUANTITY_BASED);
+			put("103", new InventoryDefinitionContainer(InventoryType.QUANTITY_BASED,
+					new GenericHelperWithQuantity("103", tradelisComponent())));
+
 			// Dyes
-			put("111", InventoryType.QUANTITY_BASED);
+			put("111", new InventoryDefinitionContainer(InventoryType.QUANTITY_BASED,
+					new GenericHelperWithQuantity("111", tradelisComponent())));
 
 			// Enigmas (ty to Mewt/Uzukara for pointing this out)
-			put("7", InventoryType.OBJECT_BASED);
+			put("7", new InventoryDefinitionContainer(InventoryType.OBJECT_BASED,
+					new GenericHelper("7", enigmaComonent())));
 
 			// Inspirations
-			put("8", InventoryType.SINGLE_ITEM);
+			put("8", new InventoryDefinitionContainer(InventoryType.SINGLE_ITEM,
+					new GenericHelper("8", new ItemComponent("Inspiration", new JsonObject()))));
 		}
 	};
 
@@ -96,12 +122,95 @@ public class ItemAccessor {
 	}
 
 	/**
+	 * Adds items by object
+	 * 
+	 * @param object Inventory item object
+	 * @return New item ID string or null if invalid
+	 */
+	public String add(JsonObject object) {
+		JsonObject obj = null;
+
+		// Find definition
+		ItemInfo info = definitions.get(Integer.toString(object.get("defId").getAsInt()));
+		if (info == null)
+			return null;
+
+		// Find inventory
+		if (!inventoryTypeMap.containsKey(info.inventory))
+			return null;
+		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
+
+		// Find type handler
+		switch (container.inventoryType) {
+
+		// Single-item
+		case SINGLE_ITEM: {
+			// Check if the item is present
+			if (inventory.getAccessor().hasInventoryObject(info.inventory, object.get("defId").getAsInt()))
+				return null; // invalid
+
+			// Add item directly
+			obj = container.inventoryInteraction.addOne(inventory, object);
+			break;
+		}
+
+		// Object-based item
+		case OBJECT_BASED: {
+			// Add item directly
+			obj = container.inventoryInteraction.addOne(inventory, object);
+			break;
+		}
+
+		// Quantity-based item
+		case QUANTITY_BASED: {
+			// Check quantity field
+			if (object.has("components") && object.get("components").getAsJsonObject().has("Quantity")) {
+				int q = object.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().get("quantity")
+						.getAsInt();
+
+				// Add items
+				if (q >= 0) {
+					if (!inventory.getAccessor().hasInventoryObject(info.inventory, object.get("defId").getAsInt())) {
+						// Add item directly
+						obj = container.inventoryInteraction.addOne(inventory, object);
+					} else {
+						// Add to existing
+						container.inventoryInteraction.addMultiple(inventory, object.get("defId").getAsInt(), q);
+						obj = inventory.getAccessor().findInventoryObject(info.inventory,
+								object.get("defId").getAsInt());
+					}
+				}
+			} else {
+				// Add item directly
+				obj = container.inventoryInteraction.addOne(inventory, object);
+			}
+			break;
+		}
+
+		}
+
+		if (obj != null && player != null) {
+			// Send packet if successful
+			InventoryItemPacket pk = new InventoryItemPacket();
+			JsonArray arr = new JsonArray();
+			arr.add(obj);
+			pk.item = arr;
+			player.client.sendPacket(pk);
+		}
+
+		// Return id
+		return (obj != null ? obj.get("id").getAsString() : null);
+	}
+
+	/**
 	 * Adds items by DefID
 	 * 
 	 * @param defID Item defID
 	 * @return Item ID string or null if invalid
 	 */
 	public String add(int defID) {
+		JsonObject obj = null;
+
 		// Find definition
 		ItemInfo info = definitions.get(Integer.toString(defID));
 		if (info == null)
@@ -110,10 +219,10 @@ public class ItemAccessor {
 		// Find inventory
 		if (!inventoryTypeMap.containsKey(info.inventory))
 			return null;
-		InventoryType invType = inventoryTypeMap.get(info.inventory);
+		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
 
 		// Find type handler
-		switch (invType) {
+		switch (container.inventoryType) {
 
 		// Single-item
 		case SINGLE_ITEM: {
@@ -121,14 +230,278 @@ public class ItemAccessor {
 			if (inventory.getAccessor().hasInventoryObject(info.inventory, defID))
 				return null; // invalid
 
+			// Fall through to the quantity-based handler as the rest is the same
+		}
+
+		// Object-based and quantity-based items
+		case OBJECT_BASED:
+		case QUANTITY_BASED: {
 			// Add item
-//			inventory.getAccessor().createObjectFromType;
+			obj = container.inventoryInteraction.addOne(inventory, defID);
 			break;
 		}
 
 		}
 
-		return null;
+		if (obj != null && player != null) {
+			// Send packet if successful
+			InventoryItemPacket pk = new InventoryItemPacket();
+			JsonArray arr = new JsonArray();
+			arr.add(obj);
+			pk.item = arr;
+			player.client.sendPacket(pk);
+		}
+
+		// Return id
+		return (obj != null ? obj.get("id").getAsString() : null);
 	}
 
+	/**
+	 * Adds items by DefID
+	 * 
+	 * @param defID Item defID
+	 * @param count Amount of the item to add
+	 * @return Array of item IDs that were added
+	 */
+	public String[] add(int defID, int count) {
+		// Check validity
+		if (count <= 0)
+			return new String[0]; // Nonsense count so lets return an empty array
+
+		JsonObject[] objs = null;
+
+		// Find definition
+		ItemInfo info = definitions.get(Integer.toString(defID));
+		if (info == null)
+			return null;
+
+		// Find inventory
+		if (!inventoryTypeMap.containsKey(info.inventory))
+			return null;
+		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
+
+		// Find type handler
+		switch (container.inventoryType) {
+
+		// Single-item
+		case SINGLE_ITEM: {
+			// Check if the item is present
+			if (count > 1 || inventory.getAccessor().hasInventoryObject(info.inventory, defID))
+				return null; // invalid
+
+			// Fall through to the quantity-based handler as the rest is the same
+		}
+
+		// Object-based and quantity-based items
+		case OBJECT_BASED:
+		case QUANTITY_BASED: {
+			// Add item
+			objs = container.inventoryInteraction.addMultiple(inventory, defID, count);
+			break;
+		}
+
+		}
+
+		if (objs != null && player != null) {
+			// Send packet if successful
+			InventoryItemPacket pk = new InventoryItemPacket();
+			JsonArray arr = new JsonArray();
+			for (JsonObject obj : objs)
+				arr.add(obj);
+			pk.item = arr;
+			player.client.sendPacket(pk);
+		}
+
+		// Return ids
+		return (objs != null ? Stream.of(objs).map(t -> t.get("id").getAsString()).toArray(t -> new String[t])
+				: new String[0]);
+	}
+
+	/**
+	 * Removes items by DefID
+	 * 
+	 * @param defID Item defID
+	 * @return True if successful, false otherwise
+	 */
+	public boolean remove(int defID) {
+		// Find definition
+		ItemInfo info = definitions.get(Integer.toString(defID));
+		if (info == null)
+			return false;
+
+		// Find inventory
+		if (!inventoryTypeMap.containsKey(info.inventory))
+			return false;
+		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
+
+		// Find type handler
+		switch (container.inventoryType) {
+
+		// Single-item
+		case SINGLE_ITEM: {
+			// Check if the item is present
+			if (!inventory.getAccessor().hasInventoryObject(info.inventory, defID))
+				return false; // invalid
+
+			// Fall through to the quantity-based handler as the rest is the same
+		}
+
+		// Object-based and quantity-based items
+		case OBJECT_BASED:
+		case QUANTITY_BASED: {
+			// Remove item
+			if (!container.inventoryInteraction.removeOne(inventory, defID))
+				return false;
+			break;
+		}
+
+		}
+
+		if (player != null) {
+			// Send packet if successful
+			InventoryItemPacket pk = new InventoryItemPacket();
+			pk.item = inventory.getItem(info.inventory);
+			player.client.sendPacket(pk);
+		}
+
+		// Return success
+		return true;
+	}
+
+	/**
+	 * Remove items by DefID
+	 * 
+	 * @param defID Item defID
+	 * @param count Amount of the item to remove
+	 * @return True if successful, false otherwise
+	 */
+	public boolean remove(int defID, int count) {
+		// Check validity
+		if (count <= 0)
+			return false;
+
+		// Find definition
+		ItemInfo info = definitions.get(Integer.toString(defID));
+		if (info == null)
+			return false;
+
+		// Find inventory
+		if (!inventoryTypeMap.containsKey(info.inventory))
+			return false;
+		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
+
+		// Find type handler
+		switch (container.inventoryType) {
+
+		// Single-item
+		case SINGLE_ITEM: {
+			// Check if the item is present
+			if (count > 1 || !inventory.getAccessor().hasInventoryObject(info.inventory, defID))
+				return false; // invalid
+
+			// Fall through to the quantity-based handler as the rest is the same
+		}
+
+		// Object-based and quantity-based items
+		case OBJECT_BASED:
+		case QUANTITY_BASED: {
+			// Remove item
+			if (!container.inventoryInteraction.removeMultiple(inventory, defID, count))
+				return false;
+			break;
+		}
+
+		}
+
+		if (player != null) {
+			// Send packet if successful
+			InventoryItemPacket pk = new InventoryItemPacket();
+			pk.item = inventory.getItem(info.inventory);
+			player.client.sendPacket(pk);
+		}
+
+		// Return success
+		return true;
+	}
+
+	/**
+	 * Removes items by object
+	 * 
+	 * @param object Inventory item object
+	 * @return True if successful, false otherwise
+	 */
+	public boolean remove(JsonObject object) {
+		// Find definition
+		ItemInfo info = definitions.get(Integer.toString(object.get("defId").getAsInt()));
+		if (info == null)
+			return false;
+
+		// Find inventory
+		if (!inventoryTypeMap.containsKey(info.inventory))
+			return false;
+		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
+
+		// Find type handler
+		switch (container.inventoryType) {
+
+		// Single-item
+		case SINGLE_ITEM: {
+			// Check if the item is present
+			if (!inventory.getAccessor().hasInventoryObject(info.inventory, object.get("defId").getAsInt()))
+				return false; // invalid
+
+			// Remove item directly
+			if (!container.inventoryInteraction.removeOne(inventory, object))
+				return false;
+			break;
+		}
+
+		// Object-based item
+		case OBJECT_BASED: {
+			// Remove item directly
+			if (!container.inventoryInteraction.removeOne(inventory, object))
+				return false;
+			break;
+		}
+
+		// Quantity-based item
+		case QUANTITY_BASED: {
+			// Check quantity field
+			if (object.has("components") && object.get("components").getAsJsonObject().has("Quantity")) {
+				int q = object.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().get("quantity")
+						.getAsInt();
+
+				// Remove items
+				if (q >= 0) {
+					if (!inventory.getAccessor().hasInventoryObject(info.inventory, object.get("defId").getAsInt())) {
+						// Invalid
+						return false;
+					} else {
+						// Remove existing
+						if (!container.inventoryInteraction.removeMultiple(inventory, object.get("defId").getAsInt(),
+								q))
+							return false;
+					}
+				}
+			} else {
+				// Remove item directly
+				if (!container.inventoryInteraction.removeOne(inventory, object))
+					return false;
+				break;
+			}
+			break;
+		}
+
+		}
+
+		if (player != null) {
+			// Send packet if successful
+			InventoryItemPacket pk = new InventoryItemPacket();
+			pk.item = inventory.getItem(info.inventory);
+			player.client.sendPacket(pk);
+		}
+
+		// Return success
+		return true;
+	}
 }
