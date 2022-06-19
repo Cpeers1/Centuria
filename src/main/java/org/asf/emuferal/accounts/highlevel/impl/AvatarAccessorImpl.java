@@ -17,12 +17,19 @@ import com.google.gson.JsonSyntaxException;
 public class AvatarAccessorImpl extends AvatarAccessor {
 
 	private static JsonObject helper;
+	private static JsonObject defaultsHelper;
 	static {
 		try {
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
 					.getResourceAsStream("defaultitems/avatarhelper.json");
 			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("Avatars")
 					.getAsJsonObject();
+			strm.close();
+
+			strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("defaultitems/avatardefaultshelper.json");
+			defaultsHelper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+					.get("Avatars").getAsJsonObject();
 			strm.close();
 		} catch (JsonSyntaxException | IOException e) {
 			throw new RuntimeException(e);
@@ -176,6 +183,15 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 					inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsInt(),
 							new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
 				}
+			}
+
+			// Unlock all mods for this species
+			if (defaultsHelper.has(Integer.toString(actorDefID))) {
+				defaultsHelper.get(Integer.toString(actorDefID)).getAsJsonArray().forEach(item -> {
+					int id = item.getAsInt();
+					if (!isAvatarPartUnlocked(id))
+						unlockAvatarPart(id);
+				});
 			}
 
 			// Update the species list
