@@ -118,7 +118,7 @@ public class EmuFeral {
 
 		// Update configuration
 		String updateChannel = "alpha";
-		boolean disableUpdater = false;
+		boolean disableUpdater = true;
 		if (new File("updater.conf").exists()) {
 			// Parse properties
 			HashMap<String, String> properties = new HashMap<String, String>();
@@ -136,7 +136,7 @@ public class EmuFeral {
 			updateChannel = properties.getOrDefault("channel", updateChannel);
 
 			// Check if disabled
-			disableUpdater = Boolean.parseBoolean(properties.getOrDefault("disable", "false"));
+			disableUpdater = Boolean.parseBoolean(properties.getOrDefault("disable", "true"));
 
 			// Check if automatic updating is enabled
 			if (Boolean.parseBoolean(properties.getOrDefault("runtime-auto-update", "false"))) {
