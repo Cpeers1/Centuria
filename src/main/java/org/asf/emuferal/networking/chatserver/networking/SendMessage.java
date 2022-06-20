@@ -289,6 +289,7 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("pardon \"<player>\" [\"<reason>\"]");
 			if (GameServer.hasPerm(permLevel, "developer")) {
 				commandMessages.add("makedeveloper \"<name>\"");
+				commandMessages.add("tpm <levelDefID> [<levelType>]");
 			}
 			if (GameServer.hasPerm(permLevel, "admin")) {
 				commandMessages.add("makeadmin \"<player>\"");
@@ -1249,25 +1250,27 @@ public class SendMessage extends AbstractChatPacket {
 					case "tpm": {
 						// Teleports a player to a map.
 						if (GameServer.hasPerm(permLevel, "developer")) {
+							String defID = "";
 							if (args.size() < 1) {
-								systemMessage("Missing argument: teleport UUID", cmd, client);
+								systemMessage("Missing argument: teleport defID", cmd, client);
 								return true;
 							}
 
-							WorldReadyPacket wrp = new WorldReadyPacket();
-							wrp.teleportUUID = args.get(0);
+							// Parse arguments
+							defID = args.get(0);
+							String type = "0";
+							if (args.size() > 1) {
+								type = args.get(1);
+							}
 
-							// Find online player
-							for (Player plr : EmuFeral.gameServer.getPlayers()) {
-								if (plr.account.getAccountID().equals(client.getPlayer().getAccountID())) {
-									try {
-										wrp.handle(plr.client);
-									} catch (IOException e) {
-										// TODO Auto-generated catch block
-										systemMessage("Error: " + e.getMessage(), cmd, client);
-									}
-									break;
-								}
+							// Teleport
+							try {
+								JoinRoom roomJ = new JoinRoom();
+								roomJ.levelID = Integer.valueOf(defID);
+								roomJ.levelType = Integer.valueOf(type);
+								roomJ.handle(client.getPlayer().getOnlinePlayerInstance().client);
+							} catch (IOException e) {
+								systemMessage("Error: " + e, cmd, client);
 							}
 
 							return true;
