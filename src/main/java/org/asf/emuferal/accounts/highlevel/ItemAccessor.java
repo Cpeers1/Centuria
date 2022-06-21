@@ -273,11 +273,11 @@ public class ItemAccessor {
 		// Find definition
 		ItemInfo info = definitions.get(Integer.toString(defID));
 		if (info == null)
-			return null;
+			return new String[0];
 
 		// Find inventory
 		if (!inventoryTypeMap.containsKey(info.inventory))
-			return null;
+			return new String[0];
 		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
 
 		// Find type handler
@@ -287,7 +287,7 @@ public class ItemAccessor {
 		case SINGLE_ITEM: {
 			// Check if the item is present
 			if (count > 1 || inventory.getAccessor().hasInventoryObject(info.inventory, defID))
-				return null; // invalid
+				return new String[0]; // invalid
 
 			// Fall through to the quantity-based handler as the rest is the same
 		}
