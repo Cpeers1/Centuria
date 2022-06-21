@@ -14,7 +14,7 @@ public class ItemDefinitionConverter {
 		// This tool generates a itemdefinitions.json file
 		//
 		// Expected program arguments:
-		// <interactables-csv-file>
+		// <craftableitemchart-csv-file>
 
 		String lastName = "";
 		String lastData = null;

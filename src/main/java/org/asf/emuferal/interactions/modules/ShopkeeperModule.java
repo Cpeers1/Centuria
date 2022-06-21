@@ -6,6 +6,7 @@ import java.util.List;
 import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
 import org.asf.emuferal.interactions.dataobjects.StateInfo;
 import org.asf.emuferal.players.Player;
+import org.asf.emuferal.shops.ShopManager;
 
 public class ShopkeeperModule extends InteractionModule {
 
@@ -21,7 +22,7 @@ public class ShopkeeperModule extends InteractionModule {
 				if (!state.branches.isEmpty()) {
 					for (ArrayList<StateInfo> branches : state.branches.values()) {
 						for (StateInfo branch : branches)
-							if (branch.command.equals("84"))
+							if (branch.command.equals("84") && branch.params.length == 3 && ShopManager.isShop(branch.params[2]))
 								return true;
 					}
 				}

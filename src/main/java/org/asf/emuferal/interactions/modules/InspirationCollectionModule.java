@@ -6,6 +6,7 @@ import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
 import org.asf.emuferal.interactions.dataobjects.StateInfo;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.emuferal.players.Player;
+import org.asf.emuferal.shops.ShopManager;
 
 public class InspirationCollectionModule extends InteractionModule {
 
@@ -30,7 +31,7 @@ public class InspirationCollectionModule extends InteractionModule {
 					if (!stateInfo.branches.isEmpty()) {
 						for (ArrayList<StateInfo> branches : stateInfo.branches.values()) {
 							for (StateInfo branch : branches) {
-								if (branch.command.equals("84") && stateInfo.params.length == 3) {
+								if (branch.command.equals("84") && stateInfo.params.length == 3 && !ShopManager.isShop(branch.params[2])) {
 									// Its a inspiration
 									return true;
 								}
