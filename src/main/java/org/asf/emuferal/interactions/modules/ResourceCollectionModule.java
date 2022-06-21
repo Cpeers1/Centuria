@@ -291,7 +291,7 @@ public class ResourceCollectionModule extends InteractionModule {
 	}
 
 	@Override
-	public boolean shouldDestroyResource(Player player, String id, NetworkedObject obj, int state,
+	public boolean shouldDestroyResource(Player player, String id, NetworkedObject obj, int stateN,
 			boolean destroyOnCompletion) {
 		// Check if the object is a resource
 		if (obj.primaryObjectInfo != null && resources.containsKey(Integer.toString(obj.primaryObjectInfo.defId))) {
@@ -311,6 +311,7 @@ public class ResourceCollectionModule extends InteractionModule {
 				}
 			}
 		}
+
 		return destroyOnCompletion;
 	}
 
@@ -417,9 +418,10 @@ public class ResourceCollectionModule extends InteractionModule {
 				while (count < reward.minCount)
 					count = rnd.nextInt(reward.maxCount + 1);
 
-				if (reward.itemId != null)
+				if (reward.itemId != null) {
 					player.account.getPlayerInventory().getItemAccessor(player).add(Integer.parseInt(reward.itemId),
 							count);
+				}
 				if (reward.referencedTableId != null) {
 					// Give table
 					giveLootReward(player, id, reward.referencedTableId);

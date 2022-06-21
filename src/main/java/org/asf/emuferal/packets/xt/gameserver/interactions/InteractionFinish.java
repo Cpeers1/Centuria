@@ -67,26 +67,16 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 			destroy = InteractionManager.handleInteraction(plr, target, obj, currentState, destroy);
 		}
 
-		// Build response
-		XtWriter pk = new XtWriter();
-		pk.writeString("oaf");
-		pk.writeInt(-1); // Data prefix
-		pk.writeString(target); // Interactable
-		pk.writeInt(obj.primaryObjectInfo.type); // Type
-		pk.writeString(destroy ? "2" : "0");
-		pk.writeString(""); // Data suffix
-		client.sendPacket(pk.encode());
-
 		// Send qcmd
 		if (obj.stateInfo.containsKey(Integer.toString(currentState))) {
 			ArrayList<StateInfo> states = obj.stateInfo.get(Integer.toString(currentState));
 			for (StateInfo st : states) {
 				// Build quest command
-				pk = new XtWriter();
+				XtWriter pk = new XtWriter();
 				pk.writeString("qcmd");
 				pk.writeInt(-1); // Data prefix
 				pk.writeString(st.command); // command
-				pk.writeInt(1); // State
+				pk.writeInt(0); // State
 				pk.writeString(target); // Interactable
 				pk.writeInt(0); // Position
 				// Parameters
@@ -96,6 +86,16 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 				client.sendPacket(pk.encode());
 			}
 		}
+
+		// Build response
+		XtWriter pk = new XtWriter();
+		pk.writeString("oaf");
+		pk.writeInt(-1); // Data prefix
+		pk.writeString(target); // Interactable
+		pk.writeInt(obj.primaryObjectInfo.type); // Type
+		pk.writeString(destroy ? "2" : "0");
+		pk.writeString(""); // Data suffix
+		client.sendPacket(pk.encode());
 
 		return true;
 	}
