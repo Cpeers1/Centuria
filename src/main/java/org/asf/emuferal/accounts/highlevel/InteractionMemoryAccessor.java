@@ -57,6 +57,13 @@ public abstract class InteractionMemoryAccessor extends AbstractInventoryAccesso
 	 * @return Last harvest count
 	 */
 	public abstract int getLastHarvestCount(int levelID, String itemID);
+	
+	/**
+	 * Resets the harvest count for the object.
+	 * @param levelID Level ID
+	 * @param itemID  Harvestable interactable UUID
+	 */
+	public abstract void resetHarvestCount(int levelID, String itemID);
 
 	/**
 	 * Retrieves the last treasure unlock timestamp
