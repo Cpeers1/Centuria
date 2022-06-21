@@ -249,6 +249,7 @@ public class ResourceCollectionModule extends InteractionModule {
 
 				// Check reset
 				if (def.respawnSeconds > -1 && lastHarvest + (def.respawnSeconds * 1000) < System.currentTimeMillis()) {
+					player.account.getPlayerInventory().getInteractionMemory().resetHarvestCount(player.levelID, id); //reset harvest counter
 					return true; // Valid as it had reseted
 				}
 
