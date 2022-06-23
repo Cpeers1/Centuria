@@ -4,10 +4,14 @@ using BepInEx.IL2CPP;
 using BepInEx.Logging;
 using HarmonyLib;
 using HarmonyLib.Tools;
+using System;
+using System.IO;
 
 namespace org.asf.emuferal.client.plugin
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInProcess("Fer.al.exe")]
+    [BepInProcess("Feral.exe")]
     public class Plugin : BasePlugin
     {
         internal static ConfigFile configuration;
@@ -25,16 +29,10 @@ namespace org.asf.emuferal.client.plugin
             configuration = Config;
 
             //harmony patch all..
-
             Log.LogInfo($"{PluginInfo.PLUGIN_GUID}: Patching methods using harmony...");
             Harmony harmonyInstance = new Harmony(PluginInfo.PLUGIN_GUID);
             HarmonyFileLog.Enabled = true;
             harmonyInstance.PatchAll();
-        }
-
-        private void Awake()
-        {
-
         }
     }
 }

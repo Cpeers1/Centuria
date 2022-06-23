@@ -9,7 +9,7 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 
-namespace org.asf.emuferal.client.plugin.patches
+namespace org.asf.emuferal.client.plugin.Patches.AssemblyCSharp
 {
     [HarmonyPatch(typeof(GlobalSettingsManager))]
     public class GlobalSettingsManagerPatches
@@ -61,8 +61,8 @@ namespace org.asf.emuferal.client.plugin.patches
                 "SharedBaseURL").Value;
 
             var debugStr = config.Bind("Developer",
-                "Debug",
-                "False",
+                "DebugPluginLogging",
+                "false",
                 "Enables debugging output to the bepinex console.").Value;
 
             debug = bool.Parse(debugStr);
