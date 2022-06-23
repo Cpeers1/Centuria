@@ -301,6 +301,7 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("updateshutdown");
 				commandMessages.add("update <60|30|15|10|5|3|1>");
 				commandMessages.add("cancelupdate");
+				commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
 			}
 			commandMessages.add("staffroom");
 			commandMessages.add("listplayers");
@@ -1278,6 +1279,108 @@ public class SendMessage extends AbstractChatPacket {
 							break;
 						}
 					}
+					case "giveitem":
+						
+						if(GameServer.hasPerm(permLevel, "admin"))
+						{
+							try {
+								int defID = 0;
+								int quantity = 1;
+								String player = "";
+								String uuid = "";
+								
+								if (args.size() < 1) {
+									systemMessage("Missing argument: itemDefId", cmd, client);
+									return true;
+								}
+								
+								defID = Integer.valueOf(args.get(0));
+								
+								if(args.size() == 2)
+								{
+									quantity = Integer.valueOf(args.get(1));
+								}
+								
+								if(args.size() >= 3)
+								{
+									player = args.get(2);
+									
+									//check existence of player
+									
+									uuid = AccountManager.getInstance().getUserByDisplayName(player);
+									if (uuid == null) {
+										// Player not found
+										systemMessage("Specified account could not be located.", cmd, client);
+										return true;
+									}
+								}
+								
+								//funny stuff check
+								if(quantity <= 0 || defID <= 0)
+								{
+									systemMessage("You cannot give 0 or less quantity of/or an item ID of 0 or below.", cmd, client);
+									return true;
+								}
+								
+								//player case..
+								
+								if(uuid.equals(""))
+								{
+									//give item to the command sender..
+									
+									var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
+									
+									if(onlinePlayer != null)
+									{
+										var result = client.getPlayer().getPlayerInventory()
+												.getItemAccessor(client.getPlayer().getOnlinePlayerInstance())
+												.add(defID, quantity);
+										
+										//TODO: Check result
+										systemMessage("Gave " + client.getPlayer().getDisplayName() + " " + quantity + " of item " + defID + ".", cmd, client);
+										return true;
+									}
+									else 
+									{
+										//TODO: support for giving offline players items.. somehow
+										systemMessage("Specified account does not appear to be online.", cmd, client);
+									}
+									
+								}
+								else
+								{
+									var onlinePlayer = AccountManager.getInstance().getAccount(uuid).getOnlinePlayerInstance();
+									
+									if(onlinePlayer != null)
+									{
+										var result = onlinePlayer.account.getPlayerInventory()
+												.getItemAccessor(onlinePlayer)
+												.add(defID, quantity);
+										
+										//TODO: Check result
+										systemMessage("Gave " + onlinePlayer.account.getDisplayName() + " " + quantity + " of item " + uuid + ".", cmd, client);
+										return true;
+									}
+									else
+									{
+										//TODO: support for giving offline players items.. somehow
+										systemMessage("Specified account does not appear to be online.", cmd, client);
+									}
+
+								}
+								
+								return true;
+							} 
+							catch (Exception e)
+							{
+								systemMessage("Error: " + e, cmd, client);
+								return true;
+							}		
+						}
+						else
+						{
+							break;
+						}
 					}
 				}
 

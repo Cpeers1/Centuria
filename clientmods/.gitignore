@@ -1,0 +1,6 @@
+obj
+bin
+/.vs
+/packages
+/org.asf.emuferal.client.plugin/lib/feral/Assembly-CSharp.dll
+
