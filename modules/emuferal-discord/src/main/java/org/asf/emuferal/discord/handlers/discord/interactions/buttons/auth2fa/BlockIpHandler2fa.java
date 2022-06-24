@@ -31,7 +31,7 @@ public class BlockIpHandler2fa {
 					MessageReferenceData ref = event.getMessage().get().getData().messageReference().get();
 					Message oMsg = gateway.getMessageById(Snowflake.of(ref.channelId().get().asString()),
 							Snowflake.of(ref.messageId().get())).block();
-					oMsg.edit().withComponents().subscribe();
+					oMsg.delete().subscribe();
 				} catch (Exception e) {
 				}
 			}

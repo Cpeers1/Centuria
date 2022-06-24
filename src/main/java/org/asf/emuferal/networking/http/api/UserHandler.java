@@ -21,12 +21,17 @@ public class UserHandler extends HttpUploadProcessor {
 
 			// Parse JWT payload
 			String token = this.getHeader("Authorization").substring("Bearer ".length());
+			if (token.isBlank()) {
+				this.setResponseCode(403);
+				this.setResponseMessage("Access denied");
+				return;
+			}
 
 			// Verify signature
 			String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
 			String sig = token.split("\\.")[2];
 			if (!EmuFeral.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-				this.setResponseCode(401);
+				this.setResponseCode(403);
 				this.setResponseMessage("Access denied");
 				return;
 			}
@@ -36,7 +41,7 @@ public class UserHandler extends HttpUploadProcessor {
 					.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
 					.getAsJsonObject();
 			if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
-				this.setResponseCode(401);
+				this.setResponseCode(403);
 				this.setResponseMessage("Access denied");
 				return;
 			}

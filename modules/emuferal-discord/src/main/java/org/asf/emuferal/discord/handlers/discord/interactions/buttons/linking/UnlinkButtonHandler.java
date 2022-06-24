@@ -33,15 +33,22 @@ public class UnlinkButtonHandler {
 				if (acc.getPlayerInventory().containsItem("pairedaccount")) {
 					// Unlink account
 					LinkUtils.unpairAccount(acc, null, false);
-					return event.reply("Account has been unlinked.");
+					event.getMessage().get().getChannel().block().createMessage("Account has been unlinked.")
+							.subscribe();
+					return event.getMessage().get().delete();
 				}
 
 				// Error
-				return event.reply("The account you are attempting to unlink is not connected to a Discord account.");
+				event.getMessage().get().getChannel().block()
+						.createMessage(
+								"The account you are attempting to unlink is not connected to a Discord account.")
+						.subscribe();
+				return event.getMessage().get().delete();
 			} else {
 				// Reply error
-				event.getMessage().get().edit().withComponents().subscribe();
-				return event.reply("The account you are attempting unlink does not exist anymore.");
+				event.getMessage().get().getChannel().block()
+						.createMessage("The account you are attempting unlink does not exist anymore.").subscribe();
+				return event.getMessage().get().delete();
 			}
 		}
 
