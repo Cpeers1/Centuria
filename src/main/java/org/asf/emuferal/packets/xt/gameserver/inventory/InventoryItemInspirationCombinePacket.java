@@ -42,7 +42,7 @@ public class InventoryItemInspirationCombinePacket implements IXtPacket<Inventor
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		writer.writeInt(-1); // Data prefix
-		writer.writeString(result.combineStatus.name);
+		writer.writeInt(result.combineStatus.value);
 		writer.writeInt(result.enigmaDefId);			
 
 		writer.writeString(""); // Empty suffix

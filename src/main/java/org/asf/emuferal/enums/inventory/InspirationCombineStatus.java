@@ -1,14 +1,14 @@
 package org.asf.emuferal.enums.inventory;
 
 public enum InspirationCombineStatus {
-	Successful("success"),
-	AlreadyOwned("already_owned"),
-	InvalidCombo("invalid_combo");
+	Successful(0),
+	AlreadyOwned(1),
+	InvalidCombo(2);
 	
-	public String name;
+	public int value;
 	
-	InspirationCombineStatus(String name)
+	InspirationCombineStatus(int value)
 	{
-		this.name = name;
+		this.value = value;
 	}	
 }
