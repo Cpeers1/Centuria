@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.asf.emuferal.accounts.EmuFeralAccount;
+import org.asf.emuferal.accounts.highlevel.ItemAccessor;
 import org.asf.emuferal.modules.IEmuFeralModule;
 import org.asf.emuferal.modules.ModuleManager;
 import org.asf.emuferal.shops.info.ShopInfo;
@@ -61,12 +62,21 @@ public class ShopManager {
 					ShopItem itm = new ShopItem();
 					itm.objectName = item.get("object").getAsString();
 
+					// Load level lock info (if present)
+					itm.requiredLevel = item.get("requiredLevel").getAsInt();
+
 					// Load stock info
 					itm.stock = item.get("stock").getAsInt();
 
 					// Load costs
 					JsonObject costs = item.get("cost").getAsJsonObject();
 					costs.keySet().forEach((id) -> itm.cost.put(id, costs.get(id).getAsInt()));
+
+					// Load eureka items (if present)
+					if (item.has("eurekaItems")) {
+						JsonObject items = item.get("eurekaItems").getAsJsonObject();
+						items.keySet().forEach((id) -> itm.eurekaItems.put(id, items.get(id).getAsInt()));
+					}
 
 					// Load items
 					JsonObject items = item.get("items").getAsJsonObject();
@@ -214,6 +224,31 @@ public class ShopManager {
 		ArrayList<String> items = new ArrayList<String>();
 		shop.contents.forEach((id, item) -> {
 			if (item.stock != -1) {
+				// Check mode
+				if (item.stock == 1 && shop.restockTime == -1) {
+					// Only add if not in the player inventory
+
+					boolean hasItems = true;
+					for (String itm : item.items.keySet()) {
+						String inv = ItemAccessor.getInventoryTypeOf(Integer.parseInt(itm));
+						if (!player.getPlayerInventory().getAccessor().hasInventoryObject(inv, Integer.parseInt(itm))) {
+							hasItems = false;
+						}
+					}
+
+					if (hasItems) {
+						// The items are already in the player inventory, so no need to add it to the
+						// shop
+						return;
+					}
+				}
+
+				// Check level lock
+				if (item.requiredLevel != -1 && (!player.getLevel().isLevelAvailable()
+						|| player.getLevel().getLevel() < item.requiredLevel)) {
+					return;
+				}
+
 				// Check stock
 				int purchaseCount = getPurchaseCount(player, shopId, id);
 				if (purchaseCount > item.stock) {
@@ -227,6 +262,121 @@ public class ShopManager {
 		});
 
 		return items.toArray(t -> new String[t]);
+	}
+
+	/**
+	 * Retrieves information about a given shop item ID
+	 * 
+	 * @param player Player accessing the shop
+	 * @param shopId Shop ID
+	 * @param itemId Shop item ID
+	 * @return ShopItem or null if unavailable
+	 */
+	public static ShopItem getShopItemInfo(EmuFeralAccount player, String shopId, String itemId) {
+		return getShopItemInfo(player, shopId, itemId, -1);
+	}
+
+	/**
+	 * Retrieves information about a given shop item ID
+	 * 
+	 * @param player Player accessing the shop
+	 * @param shopId Shop ID
+	 * @param itemId Shop item ID
+	 * @param count  How much of this item the player intends to buy
+	 * @return ShopItem or null if unavailable
+	 */
+	public static ShopItem getShopItemInfo(EmuFeralAccount player, String shopId, String itemId, int count) {
+		if (!shops.containsKey(shopId))
+			return null;
+
+		// Store in memory for easy access
+		ShopInfo shop = shops.get(shopId);
+
+		// Check if the item is present
+		if (!shop.contents.containsKey(itemId))
+			return null; // Item not recognized
+		ShopItem item = shop.contents.get(itemId);
+
+		// Check stock
+		if (item.stock != -1) {
+			// Check mode
+			if (item.stock == 1 && shop.restockTime == -1) {
+				// Only add if not in the player inventory
+
+				boolean hasItems = true;
+				for (String itm : item.items.keySet()) {
+					String inv = ItemAccessor.getInventoryTypeOf(Integer.parseInt(itm));
+					if (!player.getPlayerInventory().getAccessor().hasInventoryObject(inv, Integer.parseInt(itm))) {
+						hasItems = false;
+					}
+				}
+
+				if (hasItems) {
+					// Out of stock
+					return null;
+				}
+			}
+
+			// Check stock
+			int purchaseCount = getPurchaseCount(player, shopId, itemId) + (count < 0 ? 0 : count - 1);
+			if (purchaseCount > item.stock) {
+				// Out of stock
+				return null;
+			}
+		}
+
+		// In stock, return info
+		return item;
+	}
+
+	/**
+	 * Adds a item to the purchase log
+	 * 
+	 * @param player Player accessing the shop
+	 * @param shopId Shop ID
+	 * @param itemId Shop item ID
+	 * @param count  How much of this item the player bought
+	 */
+	public static void purchaseCompleted(EmuFeralAccount player, String shopId, String itemId, int count) {
+		if (!shops.containsKey(shopId))
+			return;
+
+		// Store in memory for easy access
+		ShopInfo shop = shops.get(shopId);
+
+		// Check if the item is present
+		if (!shop.contents.containsKey(itemId))
+			return; // Item not recognized
+
+		// Find log item
+		JsonObject log;
+		if (!player.getPlayerInventory().containsItem("purchaselog"))
+			log = new JsonObject();
+		else
+			log = player.getPlayerInventory().getItem("purchaselog").getAsJsonObject();
+
+		JsonObject shopLog;
+		if (!log.has(shopId)) {
+			// Add shop
+			shopLog = new JsonObject();
+			shopLog.addProperty("activationTime", System.currentTimeMillis());
+			shopLog.add("items", new JsonObject());
+		} else {
+			shopLog = log.get(shopId).getAsJsonObject();
+		}
+
+		// Find purchased item in log or create it
+		if (!shopLog.has(itemId))
+			shopLog.addProperty(itemId, count);
+		else {
+			// Append
+			int currentCount = shopLog.get(itemId).getAsInt();
+			shopLog.remove(itemId);
+			shopLog.addProperty(itemId, currentCount + count);
+		}
+
+		// Save log
+		player.getPlayerInventory().setItem("purchaselog", log);
 	}
 
 	/**

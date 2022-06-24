@@ -11,8 +11,8 @@ import org.asf.emuferal.shops.ShopManager;
 
 public class ShopList implements IXtPacket<ShopList> {
 
-	private String shopType;
-	private String[] items;
+	public String shopType;
+	public String[] items;
 
 	@Override
 	public ShopList instantiate() {
