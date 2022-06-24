@@ -102,7 +102,7 @@ public class ForgotPasswordHandler extends HttpUploadProcessor implements IEvent
 						Button.danger("confirmblockip/" + userID + "/" + account.getAccountID() + "/"
 								+ ((InetSocketAddress) client.getRemoteSocketAddress()).getAddress().getHostAddress(),
 								"Block IP and Dismiss"),
-						Button.primary("dismiss", "Dismiss")));
+						Button.primary("dismissDelete", "Dismiss")));
 
 				// Send response
 				DiscordBotModule.getClient().getUserById(Snowflake.of(userID)).block().getPrivateChannel().block()

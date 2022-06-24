@@ -36,8 +36,10 @@ public class RelinkButtonHandler {
 							.getAsString();
 					if (userID.equals(uid)) {
 						// Return error
-						event.getMessage().get().edit().withComponents().subscribe();
-						return event.reply("The account has already been re-linked with your current account.");
+						event.getMessage().get().getChannel().block()
+								.createMessage("The account has already been re-linked with your current account.")
+								.subscribe();
+						return event.getMessage().get().delete();
 					}
 
 					// Unlink account
@@ -47,12 +49,16 @@ public class RelinkButtonHandler {
 				// Re-link the account
 				LinkUtils.pairAccount(acc, uid, null, false, false);
 
-				event.getMessage().get().edit().withComponents().subscribe();
-				return event.reply("Your account has now been re-linked with your current discord account.");
+				event.getMessage().get().getChannel().block()
+						.createMessage("Your account has now been re-linked with your current discord account.")
+						.subscribe();
+				return event.getMessage().get().delete();
 			} else {
 				// Reply error
-				event.getMessage().get().edit().withComponents().subscribe();
-				return event.reply("The account you are attempting to re-connect does not exist anymore.");
+				event.getMessage().get().getChannel().block()
+						.createMessage("The account you are attempting to re-connect does not exist anymore.")
+						.subscribe();
+				return event.getMessage().get().delete();
 			}
 		}
 

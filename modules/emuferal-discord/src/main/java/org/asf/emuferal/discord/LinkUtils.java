@@ -260,7 +260,7 @@ public class LinkUtils {
 				if (!isTransfer)
 					msg.addComponent(ActionRow.of(
 							Button.danger("unlink/" + userID + "/" + account.getAccountID(), "Remove link"),
-							Button.primary("dismiss", "Dismiss")));
+							Button.primary("dismissDelete", "Dismiss")));
 				else
 					msg.addComponent(ActionRow.of(Button.primary("dismiss", "Dismiss")));
 
@@ -311,7 +311,7 @@ public class LinkUtils {
 				// Re-connect and dismiss button
 				msg.addComponent(ActionRow.of(
 						Button.danger("relink/" + userID + "/" + account.getAccountID(), "Re-connect account"),
-						Button.primary("dismiss", "Dismiss")));
+						Button.primary("dismissDelete", "Dismiss")));
 
 				// Send response
 				DiscordBotModule.getClient().getUserById(Snowflake.of(userID)).block().getPrivateChannel().block()
