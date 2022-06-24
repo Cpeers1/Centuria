@@ -1,0 +1,785 @@
+{
+  "EnigmaRecipes": [
+    {
+      "itemName": "BeetleEnigma_Glurple",
+      "recipe": {
+        "_defIDs": [
+          "10428",
+          "7312",
+          "9954"
+        ]
+      },
+      "resultItemId": "11243"
+    },
+    {
+      "itemName": "StagEnigma/Anarchist/PunkGown",
+      "recipe": {
+        "_defIDs": [
+          "7310",
+          "10359",
+          "13534"
+        ]
+      },
+      "resultItemId": "13538"
+    },
+    {
+      "itemName": "StagEnigma/Beastly/PonyTailBeastHat",
+      "recipe": {
+        "_defIDs": [
+          "5528",
+          "9096",
+          "19749"
+        ]
+      },
+      "resultItemId": "19834"
+    },
+    {
+      "itemName": "StagEnigma/Beats/NEKOSpeakers",
+      "recipe": {
+        "_defIDs": [
+          "9095",
+          "9045",
+          "18561"
+        ]
+      },
+      "resultItemId": "18716"
+    },
+    {
+      "itemName": "StagEnigma/BelovedHat/SpecialIchimegasa",
+      "recipe": {
+        "_defIDs": [
+          "5528",
+          "14642",
+          "18562"
+        ]
+      },
+      "resultItemId": "15943"
+    },
+    {
+      "itemName": "StagEnigma/BestFriend/PuppyBuddy",
+      "recipe": {
+        "_defIDs": [
+          "27712",
+          "14642",
+          "5533"
+        ]
+      },
+      "resultItemId": "27715"
+    },
+    {
+      "itemName": "StagEnigma/Bloody/ShardTiara",
+      "recipe": {
+        "_defIDs": [
+          "7313",
+          "5528",
+          "7310"
+        ]
+      },
+      "resultItemId": "5593"
+    },
+    {
+      "itemName": "StagEnigma/Blush/RosyCheeks",
+      "recipe": {
+        "_defIDs": [
+          "27712",
+          "7308",
+          "9043"
+        ]
+      },
+      "resultItemId": "27714"
+    },
+    {
+      "itemName": "StagEnigma/Booty/PirateTreasure",
+      "recipe": {
+        "_defIDs": [
+          "10463",
+          "5517",
+          "13534"
+        ]
+      },
+      "resultItemId": "13535"
+    },
+    {
+      "itemName": "StagEnigma/Clucky/SongBird",
+      "recipe": {
+        "_defIDs": [
+          "5533",
+          "5520",
+          "5524"
+        ]
+      },
+      "resultItemId": "5555"
+    },
+    {
+      "itemName": "StagEnigma/Coldshot/FrozenBowandArrows",
+      "recipe": {
+        "_defIDs": [
+          "14641",
+          "7310",
+          "22269"
+        ]
+      },
+      "resultItemId": "22283"
+    },
+    {
+      "itemName": "StagEnigma/Cosmic/AstralTail",
+      "recipe": {
+        "_defIDs": [
+          "10450",
+          "10463",
+          "13534"
+        ]
+      },
+      "resultItemId": "13540"
+    },
+    {
+      "itemName": "StagEnigma/Craftwork/RicePaddyHat",
+      "recipe": {
+        "_defIDs": [
+          "18562",
+          "5528",
+          "26066"
+        ]
+      },
+      "resultItemId": "26283"
+    },
+    {
+      "itemName": "StagEnigma/Cybernetic/HackerSword",
+      "recipe": {
+        "_defIDs": [
+          "30575",
+          "11433",
+          "7313"
+        ]
+      },
+      "resultItemId": "30572"
+    },
+    {
+      "itemName": "StagEnigma/Eyesight/GeekyGlasses",
+      "recipe": {
+        "_defIDs": [
+          "27711",
+          "10469",
+          "9954"
+        ]
+      },
+      "resultItemId": "27713"
+    },
+    {
+      "itemName": "StagEnigma/Flaming/FlameScarf",
+      "recipe": {
+        "_defIDs": [
+          "11225",
+          "10359",
+          "9043"
+        ]
+      },
+      "resultItemId": "11224"
+    },
+    {
+      "itemName": "StagEnigma/Floral/SeaRoseTail",
+      "recipe": {
+        "_defIDs": [
+          "7308",
+          "7312",
+          "5533"
+        ]
+      },
+      "resultItemId": "11255"
+    },
+    {
+      "itemName": "StagEnigma/FrostyLid/UnusualHat",
+      "recipe": {
+        "_defIDs": [
+          "5528",
+          "11222",
+          "22269"
+        ]
+      },
+      "resultItemId": "22248"
+    },
+    {
+      "itemName": "StagEnigma/Grunge/PunkNosePiercings",
+      "recipe": {
+        "_defIDs": [
+          "28776",
+          "13513",
+          "9096"
+        ]
+      },
+      "resultItemId": "29101"
+    },
+    {
+      "itemName": "StagEnigma/Hardware/HackerShield",
+      "recipe": {
+        "_defIDs": [
+          "30575",
+          "14641",
+          "7310"
+        ]
+      },
+      "resultItemId": "30573"
+    },
+    {
+      "itemName": "StagEnigma/Iverrific/VexratBackBuddy",
+      "recipe": {
+        "_defIDs": [
+          "14642",
+          "10425",
+          "18561"
+        ]
+      },
+      "resultItemId": "18717"
+    },
+    {
+      "itemName": "StagEnigma/Lettered/CourierLetters",
+      "recipe": {
+        "_defIDs": [
+          "14644",
+          "10423",
+          "5533"
+        ]
+      },
+      "resultItemId": "14655"
+    },
+    {
+      "itemName": "StagEnigma/Merfolk/EarFins",
+      "recipe": {
+        "_defIDs": [
+          "10423",
+          "10424",
+          "18560"
+        ]
+      },
+      "resultItemId": "18715"
+    },
+    {
+      "itemName": "StagEnigma/Messenger/MessengerBag",
+      "recipe": {
+        "_defIDs": [
+          "14644",
+          "14641",
+          "7312"
+        ]
+      },
+      "resultItemId": "14653"
+    },
+    {
+      "itemName": "StagEnigma/Mythic/BloodlakeSword",
+      "recipe": {
+        "_defIDs": [
+          "27712",
+          "11433",
+          "7313"
+        ]
+      },
+      "resultItemId": "27716"
+    },
+    {
+      "itemName": "StagEnigma/Otaku/SakurasHelmet",
+      "recipe": {
+        "_defIDs": [
+          "14640",
+          "18563",
+          "18555"
+        ]
+      },
+      "resultItemId": "18714"
+    },
+    {
+      "itemName": "StagEnigma/Peeking/CreatureHat",
+      "recipe": {
+        "_defIDs": [
+          "10469",
+          "5528",
+          "13513"
+        ]
+      },
+      "resultItemId": "13519"
+    },
+    {
+      "itemName": "StagEnigma/Picky/PickenHat",
+      "recipe": {
+        "_defIDs": [
+          "5520",
+          "5524",
+          "13513"
+        ]
+      },
+      "resultItemId": "13539"
+    },
+    {
+      "itemName": "StagEnigma/Poofy/Bunbuns",
+      "recipe": {
+        "_defIDs": [
+          "18561",
+          "10473",
+          "22270"
+        ]
+      },
+      "resultItemId": "22280"
+    },
+    {
+      "itemName": "StagEnigma/Postal/CourierCap",
+      "recipe": {
+        "_defIDs": [
+          "14644",
+          "5528",
+          "7312"
+        ]
+      },
+      "resultItemId": "14652"
+    },
+    {
+      "itemName": "StagEnigma/Rebel/PunkFacePiercings",
+      "recipe": {
+        "_defIDs": [
+          "28776",
+          "10447",
+          "7310"
+        ]
+      },
+      "resultItemId": "29100"
+    },
+    {
+      "itemName": "StagEnigma/Refresh/MetalBottle",
+      "recipe": {
+        "_defIDs": [
+          "10424",
+          "10423",
+          "10428"
+        ]
+      },
+      "resultItemId": "11223"
+    },
+    {
+      "itemName": "StagEnigma/Riffing/BloodTundraGuitar",
+      "recipe": {
+        "_defIDs": [
+          "11225",
+          "7313",
+          "19630"
+        ]
+      },
+      "resultItemId": "19837"
+    },
+    {
+      "itemName": "StagEnigma/Scroll/BambooSatchel",
+      "recipe": {
+        "_defIDs": [
+          "26069",
+          "10359",
+          "26066"
+        ]
+      },
+      "resultItemId": "26284"
+    },
+    {
+      "itemName": "StagEnigma/Scrolling/CourierScrolls",
+      "recipe": {
+        "_defIDs": [
+          "14644",
+          "14641",
+          "9096"
+        ]
+      },
+      "resultItemId": "15041"
+    },
+    {
+      "itemName": "StagEnigma/Snowy/Snowyclaws",
+      "recipe": {
+        "_defIDs": [
+          "10454",
+          "11221",
+          "11222"
+        ]
+      },
+      "resultItemId": "11220"
+    },
+    {
+      "itemName": "StagEnigma/Soul/GhostShackles",
+      "recipe": {
+        "_defIDs": [
+          "10462",
+          "10469",
+          "13534"
+        ]
+      },
+      "resultItemId": "13541"
+    },
+    {
+      "itemName": "StagEnigma/Squeeky/RatWhiskers",
+      "recipe": {
+        "_defIDs": [
+          "10425",
+          "9097",
+          "13513"
+        ]
+      },
+      "resultItemId": "13536"
+    },
+    {
+      "itemName": "StagEnigma/Stoney/HeadSerpents",
+      "recipe": {
+        "_defIDs": [
+          "10469",
+          "5528",
+          "10452"
+        ]
+      },
+      "resultItemId": "11219"
+    },
+    {
+      "itemName": "StagEnigma/Vacation/SunHat",
+      "recipe": {
+        "_defIDs": [
+          "5528",
+          "9043",
+          "13513"
+        ]
+      },
+      "resultItemId": "13537"
+    },
+    {
+      "itemName": "StagEnigma/Wailing/WoodlandGuitar",
+      "recipe": {
+        "_defIDs": [
+          "9045",
+          "14643",
+          "19630"
+        ]
+      },
+      "resultItemId": "19836"
+    },
+    {
+      "itemName": "StagEnigma/Wicked/WitchesBroom",
+      "recipe": {
+        "_defIDs": [
+          "14640",
+          "5512",
+          "19749"
+        ]
+      },
+      "resultItemId": "19835"
+    },
+    {
+      "itemName": "StagEnigma/WitchHat/DarkArtsHat",
+      "recipe": {
+        "_defIDs": [
+          "5528",
+          "5517",
+          "5512"
+        ]
+      },
+      "resultItemId": "5133"
+    },
+    {
+      "itemName": "StagEnigma/Wyvern/DragonPauldrons",
+      "recipe": {
+        "_defIDs": [
+          "5520",
+          "11225",
+          "13513"
+        ]
+      },
+      "resultItemId": "13533"
+    },
+    {
+      "itemName": "TwiggleEnigma/Anjou/FigpearTree",
+      "recipe": {
+        "_defIDs": [
+          "28777",
+          "10444",
+          "10466"
+        ]
+      },
+      "resultItemId": "29106"
+    },
+    {
+      "itemName": "TwiggleEnigma/Arcane/SigilsRug",
+      "recipe": {
+        "_defIDs": [
+          "18562",
+          "10359",
+          "22279"
+        ]
+      },
+      "resultItemId": "22284"
+    },
+    {
+      "itemName": "TwiggleEnigma/Arrowpeak/ArrowpeakKoboldFlag",
+      "recipe": {
+        "_defIDs": [
+          "11225",
+          "10359",
+          "14643"
+        ]
+      },
+      "resultItemId": "15034"
+    },
+    {
+      "itemName": "TwiggleEnigma/Biotope/SpringKoiPond",
+      "recipe": {
+        "_defIDs": [
+          "26067",
+          "10424",
+          "10444"
+        ]
+      },
+      "resultItemId": "26288"
+    },
+    {
+      "itemName": "TwiggleEnigma/Brothy/RamenBowl",
+      "recipe": {
+        "_defIDs": [
+          "11240",
+          "11225",
+          "9043"
+        ]
+      },
+      "resultItemId": "11239"
+    },
+    {
+      "itemName": "TwiggleEnigma/Bubble/FishBowl",
+      "recipe": {
+        "_defIDs": [
+          "27712",
+          "26067",
+          "10424"
+        ]
+      },
+      "resultItemId": "27717"
+    },
+    {
+      "itemName": "TwiggleEnigma/Clanking/ShiShiOdashi",
+      "recipe": {
+        "_defIDs": [
+          "26066",
+          "10424",
+          "10423"
+        ]
+      },
+      "resultItemId": "26290"
+    },
+    {
+      "itemName": "TwiggleEnigma/Cleanly/Clawfoottub",
+      "recipe": {
+        "_defIDs": [
+          "10467",
+          "10454",
+          "10423"
+        ]
+      },
+      "resultItemId": "11227"
+    },
+    {
+      "itemName": "TwiggleEnigma/Delicious/AppleseedTree",
+      "recipe": {
+        "_defIDs": [
+          "28777",
+          "10466",
+          "26068"
+        ]
+      },
+      "resultItemId": "29104"
+    },
+    {
+      "itemName": "TwiggleEnigma/Dessert/IceCreamTrolley",
+      "recipe": {
+        "_defIDs": [
+          "25935",
+          "26068",
+          "14642"
+        ]
+      },
+      "resultItemId": "26289"
+    },
+    {
+      "itemName": "TwiggleEnigma/Drift/SnowPatch",
+      "recipe": {
+        "_defIDs": [
+          "10424",
+          "11222",
+          "10466"
+        ]
+      },
+      "resultItemId": "11232"
+    },
+    {
+      "itemName": "TwiggleEnigma/Flakey/BTSnowglobe",
+      "recipe": {
+        "_defIDs": [
+          "14640",
+          "11222",
+          "10452"
+        ]
+      },
+      "resultItemId": "15036"
+    },
+    {
+      "itemName": "TwiggleEnigma/Hadopelagic/DeepSeaAquarium",
+      "recipe": {
+        "_defIDs": [
+          "27710",
+          "26067",
+          "10423"
+        ]
+      },
+      "resultItemId": "27718"
+    },
+    {
+      "itemName": "TwiggleEnigma/Inflatable/BeachBall",
+      "recipe": {
+        "_defIDs": [
+          "30574",
+          "9043",
+          "14642"
+        ]
+      },
+      "resultItemId": "30569"
+    },
+    {
+      "itemName": "TwiggleEnigma/Mixologist/TropDrink",
+      "recipe": {
+        "_defIDs": [
+          "10457",
+          "10450",
+          "10444"
+        ]
+      },
+      "resultItemId": "11236"
+    },
+    {
+      "itemName": "TwiggleEnigma/Navel/CitrusburstTree",
+      "recipe": {
+        "_defIDs": [
+          "28777",
+          "14643",
+          "19630"
+        ]
+      },
+      "resultItemId": "29105"
+    },
+    {
+      "itemName": "TwiggleEnigma/Ogasa/OgasaKoboldFlag",
+      "recipe": {
+        "_defIDs": [
+          "14643",
+          "7308",
+          "10359"
+        ]
+      },
+      "resultItemId": "15035"
+    },
+    {
+      "itemName": "TwiggleEnigma/Percuss/Drum",
+      "recipe": {
+        "_defIDs": [
+          "9045",
+          "10467",
+          "10462"
+        ]
+      },
+      "resultItemId": "11241"
+    },
+    {
+      "itemName": "TwiggleEnigma/Porcelain/ClassyToilet",
+      "recipe": {
+        "_defIDs": [
+          "10467",
+          "10458",
+          "9044"
+        ]
+      },
+      "resultItemId": "11237"
+    },
+    {
+      "itemName": "TwiggleEnigma/Ratty/RatWall",
+      "recipe": {
+        "_defIDs": [
+          "10425",
+          "10427",
+          "9954"
+        ]
+      },
+      "resultItemId": "11229"
+    },
+    {
+      "itemName": "TwiggleEnigma/Sandbox/ShovelBucket",
+      "recipe": {
+        "_defIDs": [
+          "9043",
+          "30574",
+          "25935"
+        ]
+      },
+      "resultItemId": "30571"
+    },
+    {
+      "itemName": "TwiggleEnigma/Soaking/ClotTub",
+      "recipe": {
+        "_defIDs": [
+          "10467",
+          "10423",
+          "10422"
+        ]
+      },
+      "resultItemId": "11231"
+    },
+    {
+      "itemName": "TwiggleEnigma/Splash/KiddiePool",
+      "recipe": {
+        "_defIDs": [
+          "10424",
+          "10423",
+          "30574"
+        ]
+      },
+      "resultItemId": "30568"
+    },
+    {
+      "itemName": "TwiggleEnigma/StreetFood/HotDogStand",
+      "recipe": {
+        "_defIDs": [
+          "30574",
+          "11225",
+          "26068"
+        ]
+      },
+      "resultItemId": "30570"
+    },
+    {
+      "itemName": "TwiggleEnigma/Sugary/TwiggleOs",
+      "recipe": {
+        "_defIDs": [
+          "14642",
+          "10462",
+          "10444"
+        ]
+      },
+      "resultItemId": "15039"
+    },
+    {
+      "itemName": "TwiggleEnigma/Swole/Brodypic",
+      "recipe": {
+        "_defIDs": [
+          "9044",
+          "9954",
+          "10344"
+        ]
+      },
+      "resultItemId": "11230"
+    },
+    {
+      "itemName": "TwiggleEnigma/Za/Pizza",
+      "recipe": {
+        "_defIDs": [
+          "9097",
+          "10468",
+          "11225"
+        ]
+      },
+      "resultItemId": "11235"
+    }
+  ]
+}

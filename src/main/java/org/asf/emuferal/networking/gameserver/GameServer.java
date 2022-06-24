@@ -41,6 +41,7 @@ import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionDataReques
 import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionFinish;
 import org.asf.emuferal.packets.xt.gameserver.interactions.InteractionStart;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemInspirationCombinePacket;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemTradeListUpdate;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemUseDye;
 import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectGlide;
@@ -138,6 +139,7 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new SanctuaryUpdatePacket());
 		registerPacket(new SanctuaryLookSavePacket());
 		registerPacket(new UserVarSetPacket());
+		registerPacket(new InventoryItemInspirationCombinePacket());
 
 		// Allow modules to register packets
 		GameServerStartupEvent ev = new GameServerStartupEvent(this, t -> registerPacket(t));

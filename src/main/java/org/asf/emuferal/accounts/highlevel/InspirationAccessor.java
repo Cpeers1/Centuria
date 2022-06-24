@@ -1,6 +1,8 @@
 package org.asf.emuferal.accounts.highlevel;
 
 import org.asf.emuferal.accounts.PlayerInventory;
+import org.asf.emuferal.entities.inventory.InspirationCombineResult;
+import org.asf.emuferal.players.Player;
 
 import com.google.gson.JsonObject;
 
@@ -45,5 +47,10 @@ public abstract class InspirationAccessor extends AbstractInventoryAccessor {
 	 * Adds all default inspirations to the inventory, if they don't already exist.
 	 */
 	public abstract void giveDefaultInspirations();
+	
+	/**
+	 * Attempts to combine inspirations in the player's inventory.
+	 */
+	public abstract InspirationCombineResult combineInspirations(int[] inspirations, Player player);
 
 }
