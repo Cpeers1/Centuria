@@ -58,6 +58,7 @@ public class ShopConverter {
 		}
 
 		HashMap<String, HashMap<String, Integer>> costs = new HashMap<String, HashMap<String, Integer>>();
+		HashMap<String, HashMap<String, Integer>> eurekaItems = new HashMap<String, HashMap<String, Integer>>();
 
 		lastName = "";
 		lastData = null;
@@ -88,6 +89,20 @@ public class ShopConverter {
 							cost.put(itm, count);
 						}
 						costs.put(lastID, cost);
+					} else if (data.get("componentClass").getAsString().equals("PurchaseRareChanceDefComponent")) {
+						data = data.get("componentJSON").getAsJsonObject();
+						if (!data.get("itemDefID").getAsString().isEmpty()) {
+							HashMap<String, Integer> itemChances;
+							if (!eurekaItems.containsKey(lastID)) {
+								itemChances = new HashMap<String, Integer>();
+								eurekaItems.put(lastID, itemChances);
+							} else
+								itemChances = eurekaItems.get(lastID);
+
+							String id = data.get("itemDefID").getAsString();
+							int chance = data.get("rareChance").getAsInt();
+							itemChances.put(id, chance);
+						}
 					}
 				}
 
@@ -182,10 +197,7 @@ public class ShopConverter {
 										});
 
 										JsonObject itms = new JsonObject();
-										if (!bundles.containsKey(id))
-											itms.addProperty(id, 1);
-										else
-											bundles.get(id).forEach((itm, c) -> itms.addProperty(itm, c));
+										addItems(itms, id, bundles, 1);
 
 										JsonObject entry = new JsonObject();
 										entry.addProperty("object", objectNames.get(id));
@@ -200,8 +212,19 @@ public class ShopConverter {
 											entry.addProperty("stock", -1);
 										}
 
+										entry.addProperty("requiredLevel", -1);
 										entry.add("items", itms);
 										entry.add("cost", costObj);
+
+										if (eurekaItems.containsKey(id) && !eurekaItems.get(id).isEmpty()) {
+											HashMap<String, Integer> itemChances = eurekaItems.get(id);
+											JsonObject chanceObj = new JsonObject();
+											itemChances.forEach((itmId, chance) -> {
+												chanceObj.addProperty(itmId, chance);
+											});
+											entry.add("eurekaItems", chanceObj);
+										}
+
 										items.add(id, entry);
 									}
 								}
@@ -295,6 +318,14 @@ public class ShopConverter {
 		res.add("Shops", shops);
 
 		System.out.println(new Gson().newBuilder().setPrettyPrinting().create().toJson(res));
+	}
+
+	private static void addItems(JsonObject itms, String id, HashMap<String, HashMap<String, Integer>> bundles,
+			int count) {
+		if (!bundles.containsKey(id))
+			itms.addProperty(id, count);
+		else
+			bundles.get(id).forEach((itm, c) -> addItems(itms, itm, bundles, c));
 	}
 
 }

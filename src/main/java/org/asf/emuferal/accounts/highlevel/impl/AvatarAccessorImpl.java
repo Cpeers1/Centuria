@@ -2,6 +2,7 @@ package org.asf.emuferal.accounts.highlevel.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.AvatarAccessor;
@@ -48,7 +49,9 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 
 		// Add a new look slot for each creature
 		JsonArray avatars = inventory.getItem("avatars").getAsJsonArray();
-		for (JsonElement elem : avatars) {
+		ArrayList<JsonElement> avatarLst = new ArrayList<JsonElement>();
+		avatars.forEach(t -> avatarLst.add(t));
+		for (JsonElement elem : avatarLst) {
 			JsonObject avatar = elem.getAsJsonObject();
 
 			// Make sure to only do this for a primary look
@@ -56,8 +59,8 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 				// Create the slot
 
 				String type = avatar.get("defId").getAsString();
+
 				// Translate defID to a type
-				JsonObject speciesData = helper.get(type).getAsJsonObject();
 				for (String species : helper.keySet()) {
 					JsonObject ava = helper.get(species).getAsJsonObject();
 					if (ava.get("defId").getAsString().equals(type)) {
@@ -65,6 +68,9 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 						break;
 					}
 				}
+
+				// Retrieve species data
+				JsonObject speciesData = helper.get(type).getAsJsonObject();
 
 				// Name
 				JsonObject nm = new JsonObject();
@@ -94,6 +100,9 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 		for (String species : helper.keySet()) {
 			JsonObject ava = helper.get(species).getAsJsonObject();
 			if (ava.get("defId").getAsString().equals(type)) {
+				type = species;
+				break;
+			} else if (ava.get("info").getAsJsonObject().get("actorClassDefID").getAsString().equals(type)) {
 				type = species;
 				break;
 			}
