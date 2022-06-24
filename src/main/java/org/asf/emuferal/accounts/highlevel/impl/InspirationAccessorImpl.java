@@ -11,13 +11,12 @@ import org.asf.emuferal.enums.inventory.InspirationCombineStatus;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.emuferal.players.Player;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class InspirationAccessorImpl extends InspirationAccessor {
 	private static JsonObject helper;
-	private static JsonArray enigmaRecipes;
+	private static JsonObject enigmaRecipes;
 
 	static {
 		try {
@@ -31,7 +30,7 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 			strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("recipes/enigmarecipes.json");
 
 			enigmaRecipes = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-					.get("EnigmaRecipes").getAsJsonArray();
+					.get("EnigmaRecipes").getAsJsonObject();
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -116,8 +115,12 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 		// given
 
 		JsonObject result = null;
-		for (var recipe : enigmaRecipes) {
-			var recipeDefIds = recipe.getAsJsonObject().get("recipe").getAsJsonObject().get("_defIDs").getAsJsonArray();
+		int resultID = -1;
+
+		for (String enigmaID : enigmaRecipes.keySet()) {
+			// enigma info
+			JsonObject enigmaData = enigmaRecipes.get(enigmaID).getAsJsonObject();
+			var recipeDefIds = enigmaData.get("recipe").getAsJsonObject().get("_defIDs").getAsJsonArray();
 
 			// need matches == inspirations length
 			// TODO: refactor this is an ugly af solution
@@ -133,7 +136,8 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 			}
 
 			if (matches >= inspirations.length) {
-				result = recipe.getAsJsonObject();
+				result = enigmaData;
+				resultID = Integer.parseInt(enigmaID);
 			}
 		}
 
@@ -142,9 +146,6 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 			return new InspirationCombineResult(InspirationCombineStatus.InvalidCombo, 0);
 		}
 
-		// get resulting item
-		int resultID = Integer.parseInt(result.get("resultItemId").getAsString());
-
 		// Give item if not owned
 		if (!inventory.getAccessor().hasInventoryObject(ItemAccessor.getInventoryTypeOf(resultID), resultID))
 			inventory.getItemAccessor(player).add(resultID);
@@ -152,6 +153,20 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 			return new InspirationCombineResult(InspirationCombineStatus.AlreadyOwned, resultID);
 
 		return new InspirationCombineResult(InspirationCombineStatus.Successful, resultID);
+	}
+
+	@Override
+	public int getEnigmaResult(int enigma) {
+		// Find enigma
+		for (String enigmaID : enigmaRecipes.keySet()) {
+			JsonObject enigmaData = enigmaRecipes.get(enigmaID).getAsJsonObject();
+			if (enigmaID.equals(Integer.toString(enigma))) {
+				// Return result
+				return enigmaData.get("resultItemId").getAsInt();
+			}
+		}
+
+		return -1;
 	}
 
 }

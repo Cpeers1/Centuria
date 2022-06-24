@@ -44,6 +44,10 @@ public class ShopManager {
 					shop.contents.clear();
 			}
 
+			// Load enigmas
+			JsonArray enigmas = shopObject.get("enigmas").getAsJsonArray();
+			enigmas.forEach((id) -> shop.enigmas.add(id.getAsString()));
+
 			// Load object name if present
 			if (shopObject.has("object"))
 				shop.object = shopObject.get("object").getAsString();
@@ -259,6 +263,32 @@ public class ShopManager {
 
 			// Add item
 			items.add(id);
+		});
+
+		return items.toArray(t -> new String[t]);
+	}
+
+	/**
+	 * Retrieves the enigma items a player can get for a specific shop
+	 * 
+	 * @param player Player to create the list for
+	 * @param shopId Shop content defID
+	 * @return Array of items in the shop
+	 */
+	public static String[] getEnigmaItems(EmuFeralAccount player, String shopId) {
+		if (!shops.containsKey(shopId))
+			return new String[0];
+
+		// Store in memory for easy access
+		ShopInfo shop = shops.get(shopId);
+
+		// Create list of items
+		ArrayList<String> items = new ArrayList<String>();
+		shop.enigmas.forEach(enigma -> {
+			// Add enigma if present in the inventory
+			if (player.getPlayerInventory().getAccessor().hasInventoryObject("7", Integer.parseInt(enigma)))
+				items.add(Integer.toString(player.getPlayerInventory().getInspirationAccessor()
+						.getEnigmaResult(Integer.parseInt(enigma))));
 		});
 
 		return items.toArray(t -> new String[t]);

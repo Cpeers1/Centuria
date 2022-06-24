@@ -7,11 +7,11 @@ import org.asf.emuferal.players.Player;
 import com.google.gson.JsonObject;
 
 public abstract class InspirationAccessor extends AbstractInventoryAccessor {
-	
+
 	public InspirationAccessor(PlayerInventory inventory) {
 		super(inventory);
 	}
-	
+
 	/**
 	 * Checks if the player has a specific furniture item
 	 * 
@@ -38,7 +38,7 @@ public abstract class InspirationAccessor extends AbstractInventoryAccessor {
 	/**
 	 * Adds a furniture item of a specific defID
 	 * 
-	 * @param defID         Furniture item defID
+	 * @param defID Furniture item defID
 	 * @return Item UUID
 	 */
 	public abstract String addInspiration(int defID);
@@ -47,10 +47,17 @@ public abstract class InspirationAccessor extends AbstractInventoryAccessor {
 	 * Adds all default inspirations to the inventory, if they don't already exist.
 	 */
 	public abstract void giveDefaultInspirations();
-	
+
 	/**
 	 * Attempts to combine inspirations in the player's inventory.
 	 */
 	public abstract InspirationCombineResult combineInspirations(int[] inspirations, Player player);
 
+	/**
+	 * Retrieves the result item ID of a enigma item
+	 * 
+	 * @param enigma Enigma defID
+	 * @return Result item ID or -1
+	 */
+	public abstract int getEnigmaResult(int enigma);
 }
