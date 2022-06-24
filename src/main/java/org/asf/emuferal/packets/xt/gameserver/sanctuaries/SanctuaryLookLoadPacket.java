@@ -10,8 +10,6 @@ import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
 import org.asf.emuferal.players.Player;
 
-import com.google.gson.JsonObject;
-
 public class SanctuaryLookLoadPacket implements IXtPacket<SanctuaryLookLoadPacket> {
 
 	public String lookId = null;
@@ -53,7 +51,8 @@ public class SanctuaryLookLoadPacket implements IXtPacket<SanctuaryLookLoadPacke
 
 		// Load into active look
 		// retooling the save function here to just target the active look slot
-		plr.account.getPlayerInventory().getSanctuaryAccessor().saveSanctuaryLookToSlot(lookId, plr.activeSanctuaryLook, "");
+		plr.account.getPlayerInventory().getSanctuaryAccessor().saveSanctuaryLookToSlot(lookId, plr.activeSanctuaryLook,
+				"");
 
 		// Respond with switch packet and rejoin
 		plr.client.sendPacket(this);

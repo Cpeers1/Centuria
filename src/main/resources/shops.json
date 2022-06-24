@@ -1415,72 +1415,6 @@
       "object": "AstralShop_v2",
       "restockTime": -1,
       "contents": {
-        "14946": {
-          "object": "AstralShop/ALL/SeasonPass/01",
-          "stock": 1,
-          "requiredLevel": -1,
-          "items": {
-            "16616": 1
-          },
-          "cost": {
-            "14500": 500
-          }
-        },
-        "20429": {
-          "object": "AstralShop/ALL/SeasonPass/02",
-          "stock": 1,
-          "requiredLevel": -1,
-          "items": {
-            "20321": 1
-          },
-          "cost": {
-            "14500": 500
-          }
-        },
-        "23371": {
-          "object": "AstralShop/ALL/SeasonPass/03",
-          "stock": 1,
-          "requiredLevel": -1,
-          "items": {
-            "23370": 1
-          },
-          "cost": {
-            "14500": 500
-          }
-        },
-        "25239": {
-          "object": "AstralShop/ALL/SeasonPass/04",
-          "stock": 1,
-          "requiredLevel": -1,
-          "items": {
-            "25238": 1
-          },
-          "cost": {
-            "14500": 500
-          }
-        },
-        "27284": {
-          "object": "AstralShop/ALL/SeasonPass/05",
-          "stock": 1,
-          "requiredLevel": -1,
-          "items": {
-            "27283": 1
-          },
-          "cost": {
-            "14500": 500
-          }
-        },
-        "29318": {
-          "object": "AstralShop/ALL/SeasonPass/06",
-          "stock": 1,
-          "requiredLevel": -1,
-          "items": {
-            "29737": 1
-          },
-          "cost": {
-            "14500": 500
-          }
-        },
         "30198": {
           "object": "AstralShop/ALL/Avatar/ExtraLookSlot",
           "stock": 1,
@@ -14952,17 +14886,6 @@
       "object": "AstralShop",
       "restockTime": -1,
       "contents": {
-        "29318": {
-          "object": "AstralShop/ALL/SeasonPass/06",
-          "stock": -1,
-          "requiredLevel": -1,
-          "items": {
-            "29737": 1
-          },
-          "cost": {
-            "14500": 500
-          }
-        },
         "30184": {
           "object": "AstralShop/ALL/Avatar/Phoenix",
           "stock": -1,

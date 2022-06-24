@@ -190,7 +190,8 @@ public class ShopConverter {
 								for (JsonElement lI : data.get("list").getAsJsonObject().get("_defIDs")
 										.getAsJsonArray()) {
 									String id = lI.getAsString();
-									if (costs.containsKey(id)) {
+									if (costs.containsKey(id)
+											&& !objectNames.get(id).startsWith("AstralShop/ALL/SeasonPass/")) {
 										JsonObject costObj = new JsonObject();
 										costs.get(id).forEach((costId, amount) -> {
 											costObj.addProperty(costId, amount);

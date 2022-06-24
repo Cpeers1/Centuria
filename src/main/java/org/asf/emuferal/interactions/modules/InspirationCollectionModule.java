@@ -6,7 +6,6 @@ import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
 import org.asf.emuferal.interactions.dataobjects.StateInfo;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.emuferal.players.Player;
-import org.asf.emuferal.shops.ShopManager;
 
 public class InspirationCollectionModule extends InteractionModule {
 
@@ -23,26 +22,22 @@ public class InspirationCollectionModule extends InteractionModule {
 
 				// check if stateInfo has a command of 84
 				if (stateInfo.command.equals("84") && stateInfo.params.length == 3) {
-					
 					// if param 1 is 1 and param 2 is 4, it means 'give inspiration'
 					// I think...
-					if(stateInfo.params[0].equals("1") && stateInfo.params[1].equals("4"))
-					{
+					if (stateInfo.params[0].equals("1") && stateInfo.params[1].equals("4")) {
 						return true;
 					}
-					
+
 				} else {
 					// check if any branches do
-
 					if (!stateInfo.branches.isEmpty()) {
 						for (ArrayList<StateInfo> branches : stateInfo.branches.values()) {
 							for (StateInfo branch : branches) {
 								if (branch.command.equals("84") && stateInfo.params.length == 3) {
-									
+
 									// if param 1 is 1 and param 2 is 4, it means 'give inspiration'
 									// I think...
-									if(stateInfo.params[0].equals("1") && stateInfo.params[1].equals("4"))
-									{
+									if (stateInfo.params[0].equals("1") && stateInfo.params[1].equals("4")) {
 										return true;
 									}
 								}
@@ -58,7 +53,6 @@ public class InspirationCollectionModule extends InteractionModule {
 
 	@Override
 	public boolean handleInteractionSuccess(Player player, String id, NetworkedObject object, int state) {
-		// ??
 		return true;
 	}
 
