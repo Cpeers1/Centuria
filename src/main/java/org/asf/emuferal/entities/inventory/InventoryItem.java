@@ -18,10 +18,10 @@ import com.google.gson.JsonObject;
 public class InventoryItem 
 {
 	//json constants
-	protected static String defIdPropertyName = "defId";
-	protected static String uuidPropertyName = "id";
-	protected static String invTypePropertyName = "type";
-	protected static String componentsPropertyName = "components";
+	public final static String defIdPropertyName = "defId";
+	public final static String uuidPropertyName = "id";
+	public final static String invTypePropertyName = "type";
+	public final static String componentsPropertyName = "components";
 	
 	//object variables
 	public int defId;

@@ -77,7 +77,7 @@ public abstract class UserVarAccessor extends AbstractInventoryAccessor {
 	 * @param index The index to delete the value at.
 	 * @return The result of the deletion.
 	 */
-	public abstract SetUserVarResult deletePlayerVarValueAtIndex(int defID, int index);
+	public abstract boolean deletePlayerVarValueAtIndex(int defID, int index);
 	
 	
 }

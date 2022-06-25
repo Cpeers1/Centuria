@@ -23,6 +23,8 @@ import com.google.gson.JsonObject;
  */
 public final class UserVarItem extends InventoryItem {
 
+	public final static int InvType = 303;
+	
 	private UserVarType type;
 
 	public UserVarItem(int defId, String uuid, int invType) {
@@ -30,7 +32,13 @@ public final class UserVarItem extends InventoryItem {
 	}
 
 	public UserVarItem(UserVarType type) {
-		super(0, "", 0);
+		super(0, "", InvType);
+		this.type = type;
+	}
+	
+	public UserVarItem(int defId, String uuid, UserVarType type)
+	{
+		super(defId, uuid, InvType);
 		this.type = type;
 	}
 
@@ -48,6 +56,9 @@ public final class UserVarItem extends InventoryItem {
 		this.AddComponent(component);
 	}
 
+	/**
+	 * Populates this item with properties from a json object of the same type.
+	 */
 	public void fromJsonObject(JsonObject object) throws InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 

@@ -16,6 +16,7 @@ import org.asf.emuferal.enums.inventory.uservars.UserVarType;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
 import org.asf.emuferal.entities.inventory.uservars.*;
+import org.asf.emuferal.entities.inventory.InventoryItem;
 import org.asf.emuferal.entities.inventory.components.InventoryItemComponent;
 import org.asf.emuferal.entities.inventory.components.uservars.*;
 
@@ -41,26 +42,26 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 		UserVarComponent userVarComponent = null;
 
 		switch (type) {
-		case Any:
-			userVarComponent = new UserVarCustomComponent();
-			break;
-		case Bit:
-			userVarComponent = new UserVarBitComponent();
-			break;
-		case BitOnOnly:
-			userVarComponent = new UserVarBitOnOnlyComponent();
-			break;
-		case Counter:
-			userVarComponent = new UserVarCounterComponent();
-			break;
-		case Highest:
-			userVarComponent = new UserVarHighestComponent();
-			break;
-		case Lowest:
-			userVarComponent = new UserVarLowestComponent();
-			break;
-		default:
-			break;
+			case Any:
+				userVarComponent = new UserVarCustomComponent();
+				break;
+			case Bit:
+				userVarComponent = new UserVarBitComponent();
+				break;
+			case BitOnOnly:
+				userVarComponent = new UserVarBitOnOnlyComponent();
+				break;
+			case Counter:
+				userVarComponent = new UserVarCounterComponent();
+				break;
+			case Highest:
+				userVarComponent = new UserVarHighestComponent();
+				break;
+			case Lowest:
+				userVarComponent = new UserVarLowestComponent();
+				break;
+			default:
+				break;
 		}
 
 		for (var value : values) {
@@ -75,37 +76,44 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 		return userVarItem;
 	}
 
-	private UserVarType getVarType(int defId) throws JsonSyntaxException, UnsupportedEncodingException, IOException {
-		// Load helper
-		InputStream strm = UserVarAccessorImpl.class.getClassLoader().getResourceAsStream("userVars.json");
-		JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-				.get("userVars").getAsJsonObject();
-		strm.close();
+	private UserVarType getVarType(int defId) {
+		try {
+			// Load helper
+			InputStream strm = UserVarAccessorImpl.class.getClassLoader().getResourceAsStream("userVars.json");
+			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+					.get("userVars").getAsJsonObject();
+			strm.close();
 
-		// find var by def id
+			// find var by def id
 
-		var varDef = helper.get(String.valueOf(defId));
-		var componentArray = varDef.getAsJsonObject().get("data").getAsJsonObject().get("components").getAsJsonArray();
-		var component = componentArray.get(0);
-		var typeVal = component.getAsJsonObject().get("componentJSON").getAsJsonObject().get("type").getAsInt();
+			var varDef = helper.get(String.valueOf(defId));
+			var componentArray = varDef.getAsJsonObject().get("data").getAsJsonObject().get(InventoryItem.componentsPropertyName).getAsJsonArray();
+			var component = componentArray.get(0);
+			var typeVal = component.getAsJsonObject().get("componentJSON").getAsJsonObject().get("type").getAsInt();
 
-		UserVarType type = null;
+			UserVarType type = null;
 
-		for (var member : UserVarType.values()) {
-			if (member.val == typeVal) {
-				type = member;
-				break;
+			for (var member : UserVarType.values()) {
+				if (member.val == typeVal) {
+					type = member;
+					break;
+				}
 			}
+
+			return type;
+		}
+		catch(Exception exception)
+		{
+			throw new RuntimeException(exception);
 		}
 
-		return type;
 	}
 
 	@Override
 	public SetUserVarResult setPlayerVarValue(int defID, int[] values) {
 		try {
 
-			if (!inventory.getAccessor().hasInventoryObject("303", defID)) {
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) {
 				// create the inventory object
 
 				UserVarValue[] userVarValues = new UserVarValue[values.length];
@@ -118,17 +126,17 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 				var newVarObject = createNewUserVar(defID, userVarValues);
 
-				var inv = inventory.getItem("303");
+				var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
 				// UHH
 				inv.getAsJsonArray().add(newVarObject.toJsonObject());
 
-				inventory.setItem("303", inv);
+				inventory.setItem(Integer.toString(UserVarItem.InvType), inv);
 
 				var output = new SetUserVarResult(true, new UserVarItem[] { newVarObject });
 
 				return output;
 			} else {
-				var inv = inventory.getItem("303");
+				var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
 
 				// find the item
 
@@ -136,7 +144,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				int index = 0;
 
 				for (var item : inv.getAsJsonArray()) {
-					if (item.getAsJsonObject().get("defId").getAsInt() == defID) {
+					if (item.getAsJsonObject().get(InventoryItem.defIdPropertyName).getAsInt() == defID) {
 						element = item;
 						break;
 					}
@@ -151,42 +159,10 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 				var type = getVarType(defID);
 
-				var sortThrough = element.getAsJsonObject().get("components").getAsJsonObject().get(type.componentName)
-						.getAsJsonObject();
-
 				UserVarItem userVarItem = new UserVarItem(type);
-				userVarItem.defId = defID;
-				userVarItem.invType = 303;
-				userVarItem.uuid = element.getAsJsonObject().get("id").getAsString();
+				userVarItem.fromJsonObject(element.getAsJsonObject());
 
-				UserVarComponent userVarComponent = null;
-				switch (type) {
-				case Any:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarCustomComponent.class,
-							sortThrough);
-					break;
-				case Bit:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarBitComponent.class,
-							sortThrough);
-					break;
-				case BitOnOnly:
-					userVarComponent = (UserVarComponent) InventoryItemComponent
-							.fromJson(UserVarBitOnOnlyComponent.class, sortThrough);
-					break;
-				case Counter:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarCounterComponent.class,
-							sortThrough);
-					break;
-				case Highest:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarHighestComponent.class,
-							sortThrough);
-					break;
-				case Lowest:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarLowestComponent.class,
-							sortThrough);
-					break;
-				}
-
+				UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 				for (int i = 0; i < values.length; i++) {
 					var userVarValue = new UserVarValue();
 					userVarValue.index = i;
@@ -203,14 +179,12 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				var outputVarInv = new JsonArray();
 				outputVarInv.add(object);
 
-				inventory.setItem("303", inv);
+				inventory.setItem(Integer.toString(UserVarItem.InvType), inv);
 
 				return null;
 			}
 		} catch (Exception e) {
-			var output = new SetUserVarResult(false, null);
-
-			return output;
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -218,7 +192,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	public SetUserVarResult setPlayerVarValue(int defID, int index, int value) {
 		try {
 
-			if (!inventory.getAccessor().hasInventoryObject("303", defID)) {
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) {
 				// create the inventory object
 
 				UserVarValue[] userVarValues = new UserVarValue[1];
@@ -229,17 +203,17 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 				var newVarObject = createNewUserVar(defID, userVarValues);
 
-				var inv = inventory.getItem("303");
+				var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
 				// UHH
 				inv.getAsJsonArray().add(newVarObject.toJsonObject());
 
-				inventory.setItem("303", inv);
+				inventory.setItem(Integer.toString(UserVarItem.InvType), inv);
 
 				var output = new SetUserVarResult(true, new UserVarItem[] { newVarObject });
 
 				return output;
 			} else {
-				var inv = inventory.getItem("303");
+				var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
 
 				// find the item
 
@@ -247,7 +221,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				int elementIndex = 0;
 
 				for (var item : inv.getAsJsonArray()) {
-					if (item.getAsJsonObject().get("defId").getAsInt() == defID) {
+					if (item.getAsJsonObject().get(InventoryItem.defIdPropertyName).getAsInt() == defID) {
 						element = item;
 						break;
 					}
@@ -262,41 +236,10 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 				var type = getVarType(defID);
 
-				var sortThrough = element.getAsJsonObject().get("components").getAsJsonObject().get(type.componentName)
-						.getAsJsonObject();
-
 				UserVarItem userVarItem = new UserVarItem(type);
-				userVarItem.defId = defID;
-				userVarItem.invType = 303;
-				userVarItem.uuid = element.getAsJsonObject().get("id").getAsString();
+				userVarItem.fromJsonObject(element.getAsJsonObject());
 
-				UserVarComponent userVarComponent = null;
-				switch (type) {
-				case Any:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarCustomComponent.class,
-							sortThrough);
-					break;
-				case Bit:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarBitComponent.class,
-							sortThrough);
-					break;
-				case BitOnOnly:
-					userVarComponent = (UserVarComponent) InventoryItemComponent
-							.fromJson(UserVarBitOnOnlyComponent.class, sortThrough);
-					break;
-				case Counter:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarCounterComponent.class,
-							sortThrough);
-					break;
-				case Highest:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarHighestComponent.class,
-							sortThrough);
-					break;
-				case Lowest:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarLowestComponent.class,
-							sortThrough);
-					break;
-				}
+				UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 
 				var userVarValue = new UserVarValue();
 				userVarValue.index = index;
@@ -309,14 +252,12 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				var object = userVarItem.toJsonObject();
 				inv.getAsJsonArray().set(elementIndex, object);
 
-				inventory.setItem("303", inv);
+				inventory.setItem(Integer.toString(UserVarItem.InvType), inv);
 
 				return new SetUserVarResult(true, new UserVarItem[] { userVarItem });
 			}
 		} catch (Exception e) {
-			var output = new SetUserVarResult(false, null);
-
-			return output;
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -324,7 +265,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	public SetUserVarResult setPlayerVarValue(int defID, HashMap<Integer, Integer> indexToValueUpdateMap) {
 		try {
 
-			if (!inventory.getAccessor().hasInventoryObject("303", defID)) {
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) {
 				// create the inventory object
 
 				UserVarValue[] userVarValues = new UserVarValue[indexToValueUpdateMap.size()];
@@ -341,17 +282,17 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 				var newVarObject = createNewUserVar(defID, userVarValues);
 
-				var inv = inventory.getItem("303");
+				var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
 				// UHH
 				inv.getAsJsonArray().add(newVarObject.toJsonObject());
 
-				inventory.setItem("303", inv);
+				inventory.setItem(Integer.toString(UserVarItem.InvType), inv);
 
 				var output = new SetUserVarResult(true, new UserVarItem[] { newVarObject });
 
 				return output;
 			} else {
-				var inv = inventory.getItem("303");
+				var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
 
 				// find the item
 
@@ -359,7 +300,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				int elementIndex = 0;
 
 				for (var item : inv.getAsJsonArray()) {
-					if (item.getAsJsonObject().get("defId").getAsInt() == defID) {
+					if (item.getAsJsonObject().get(InventoryItem.defIdPropertyName).getAsInt() == defID) {
 						element = item;
 						break;
 					}
@@ -374,41 +315,10 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 				var type = getVarType(defID);
 
-				var sortThrough = element.getAsJsonObject().get("components").getAsJsonObject().get(type.componentName)
-						.getAsJsonObject();
-
 				UserVarItem userVarItem = new UserVarItem(type);
-				userVarItem.defId = defID;
-				userVarItem.invType = 303;
-				userVarItem.uuid = element.getAsJsonObject().get("id").getAsString();
+				userVarItem.fromJsonObject(element.getAsJsonObject());
 
-				UserVarComponent userVarComponent = null;
-				switch (type) {
-				case Any:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarCustomComponent.class,
-							sortThrough);
-					break;
-				case Bit:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarBitComponent.class,
-							sortThrough);
-					break;
-				case BitOnOnly:
-					userVarComponent = (UserVarComponent) InventoryItemComponent
-							.fromJson(UserVarBitOnOnlyComponent.class, sortThrough);
-					break;
-				case Counter:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarCounterComponent.class,
-							sortThrough);
-					break;
-				case Highest:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarHighestComponent.class,
-							sortThrough);
-					break;
-				case Lowest:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarLowestComponent.class,
-							sortThrough);
-					break;
-				}
+				UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 
 				for(var indexToValueUpdate : indexToValueUpdateMap.entrySet())
 				{
@@ -424,14 +334,12 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				var object = userVarItem.toJsonObject();
 				inv.getAsJsonArray().set(elementIndex, object);
 
-				inventory.setItem("303", inv);
+				inventory.setItem(Integer.toString(UserVarItem.InvType), inv);
 
 				return new SetUserVarResult(true, new UserVarItem[] { userVarItem });
 			}
 		} catch (Exception e) {
-			var output = new SetUserVarResult(false, null);
-
-			return output;
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -439,21 +347,19 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	public UserVarValue[] getPlayerVarValue(int defID) {
 		try {
 			//Can't access anything if the inventory is null.
-			if (!inventory.getAccessor().hasInventoryObject("303", defID)) return null;
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) return null;
 
-			var inv = inventory.getItem("303");
+			var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
 
 			// find the item
 
 			JsonElement element = null;
-			int elementIndex = 0;
 
 			for (var item : inv.getAsJsonArray()) {
-				if (item.getAsJsonObject().get("defId").getAsInt() == defID) {
+				if (item.getAsJsonObject().get(InventoryItem.defIdPropertyName).getAsInt() == defID) {
 					element = item;
 					break;
 				}
-				elementIndex++;
 			}
 			
 			if (element == null) {
@@ -462,41 +368,10 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 			
 			var type = getVarType(defID);
 
-			var sortThrough = element.getAsJsonObject().get("components").getAsJsonObject().get(type.componentName)
-					.getAsJsonObject();
-
 			UserVarItem userVarItem = new UserVarItem(type);
-			userVarItem.defId = defID;
-			userVarItem.invType = 303;
-			userVarItem.uuid = element.getAsJsonObject().get("id").getAsString();
+			userVarItem.fromJsonObject(element.getAsJsonObject());
 
-			UserVarComponent userVarComponent = null;
-			switch (type) {
-				case Any:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarCustomComponent.class,
-							sortThrough);
-					break;
-				case Bit:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarBitComponent.class,
-							sortThrough);
-					break;
-				case BitOnOnly:
-					userVarComponent = (UserVarComponent) InventoryItemComponent
-							.fromJson(UserVarBitOnOnlyComponent.class, sortThrough);
-					break;
-				case Counter:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarCounterComponent.class,
-							sortThrough);
-					break;
-				case Highest:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarHighestComponent.class,
-							sortThrough);
-					break;
-				case Lowest:
-					userVarComponent = (UserVarComponent) InventoryItemComponent.fromJson(UserVarLowestComponent.class,
-							sortThrough);
-					break;
-			}
+			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 			
 			return userVarComponent.getAllUserVarValues();
 		}
@@ -508,26 +383,138 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 	@Override
 	public UserVarValue getPlayerVarValue(int defID, int index) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			//Can't access anything if the inventory is null.
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) return null;
+
+			var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
+
+			// find the item
+
+			JsonElement element = null;
+
+			for (var item : inv.getAsJsonArray()) {
+				if (item.getAsJsonObject().get(InventoryItem.defIdPropertyName).getAsInt() == defID) {
+					element = item;
+					break;
+				}
+			}
+			
+			if (element == null) {
+				return null; // cannot find
+			}
+			
+			var type = getVarType(defID);
+
+			UserVarItem userVarItem = new UserVarItem(defID, element.getAsJsonObject().get(InventoryItem.uuidPropertyName).getAsString(), type);
+
+			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
+
+			return userVarComponent.getUserVarValue(index);
+		}
+		catch(Exception exception)
+		{
+			throw new RuntimeException(exception);
+		}
 	}
 
 	@Override
 	public UserVarValue[] getPlayerVarValue(int defID, int[] indexes) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			//Can't access anything if the inventory is null.
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) return null;
+
+			var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
+
+			// find the item
+
+			JsonElement element = null;
+
+			for (var item : inv.getAsJsonArray()) {
+				if (item.getAsJsonObject().get(InventoryItem.defIdPropertyName).getAsInt() == defID) {
+					element = item;
+					break;
+				}
+			}
+			
+			if (element == null) {
+				return null; // cannot find
+			}
+			
+			var type = getVarType(defID);
+
+			UserVarItem userVarItem = new UserVarItem(defID, element.getAsJsonObject().get(InventoryItem.uuidPropertyName).getAsString(), type);
+
+			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
+			
+			var userVarValues = new ArrayList<UserVarValue>();
+			
+			for(int index : indexes)
+			{
+				userVarValues.add(userVarComponent.getUserVarValue(index));
+			}
+			
+			return (UserVarValue[])userVarValues.toArray();
+		}
+		catch(Exception exception)
+		{
+			throw new RuntimeException(exception);
+		}
 	}
 
 	@Override
 	public boolean deletePlayerVar(int defID) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			//Can't access anything if the inventory is null.
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) return false;
+
+			inventory.getAccessor().removeInventoryObject(Integer.toString(UserVarItem.InvType), defID);
+			
+			return true;
+		}
+		catch(Exception exception)
+		{
+			throw new RuntimeException(exception);
+		}
 	}
 
 	@Override
-	public SetUserVarResult deletePlayerVarValueAtIndex(int defID, int index) {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean deletePlayerVarValueAtIndex(int defID, int index) {
+		try {
+			//Can't access anything if the inventory is null.
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) return false;
+
+			var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
+
+			// find the item
+
+			JsonElement element = null;
+
+			for (var item : inv.getAsJsonArray()) {
+				if (item.getAsJsonObject().get(InventoryItem.defIdPropertyName).getAsInt() == defID) {
+					element = item;
+					break;
+				}
+			}
+			
+			if (element == null) {
+				return false; // cannot find
+			}
+			
+			var type = getVarType(defID);
+
+			UserVarItem userVarItem = new UserVarItem(defID, element.getAsJsonObject().get(InventoryItem.uuidPropertyName).getAsString(), type);
+
+			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
+			
+			userVarComponent.deleteUserVarValue(index);
+
+			return true;
+		}
+		catch(Exception exception)
+		{
+			throw new RuntimeException(exception);
+		}
 	}
 
 }
