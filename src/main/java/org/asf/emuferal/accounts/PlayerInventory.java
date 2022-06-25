@@ -12,6 +12,7 @@ import org.asf.emuferal.accounts.highlevel.InteractionMemoryAccessor;
 import org.asf.emuferal.accounts.highlevel.InventoryAccessor;
 import org.asf.emuferal.accounts.highlevel.ItemAccessor;
 import org.asf.emuferal.accounts.highlevel.SanctuaryAccessor;
+import org.asf.emuferal.accounts.highlevel.UserVarAccessor;
 import org.asf.emuferal.accounts.highlevel.impl.AvatarAccessorImpl;
 import org.asf.emuferal.accounts.highlevel.impl.ClothingItemAccessorImpl;
 import org.asf.emuferal.accounts.highlevel.impl.DyeAccessorImpl;
@@ -19,6 +20,7 @@ import org.asf.emuferal.accounts.highlevel.impl.FurnitureItemAccessorImpl;
 import org.asf.emuferal.accounts.highlevel.impl.InspirationAccessorImpl;
 import org.asf.emuferal.accounts.highlevel.impl.InteractionMemoryAccessorImpl;
 import org.asf.emuferal.accounts.highlevel.impl.SanctuaryAccessorImpl;
+import org.asf.emuferal.accounts.highlevel.impl.UserVarAccessorImpl;
 import org.asf.emuferal.players.Player;
 
 public abstract class PlayerInventory {
@@ -32,6 +34,7 @@ public abstract class PlayerInventory {
 	protected AvatarAccessor aAccessor = new AvatarAccessorImpl(this);
 	protected DyeAccessor dAccessor = new DyeAccessorImpl(this);
 	protected InspirationAccessor inAccessor = new InspirationAccessorImpl(this);
+	protected UserVarAccessor uAccessor = new UserVarAccessorImpl(this);
 
 	/**
 	 * Retrieves the high-level inventory accessor
@@ -112,6 +115,15 @@ public abstract class PlayerInventory {
 	 */
 	public InspirationAccessor getInspirationAccessor() {
 		return inAccessor;
+	}
+	
+	/**
+	 * Retrieves the high-level user var accessor
+	 * 
+	 * @return CurrencyAccessor instance
+	 */
+	public UserVarAccessor getUserVarAccesor() {
+		return uAccessor;
 	}
 
 	/**

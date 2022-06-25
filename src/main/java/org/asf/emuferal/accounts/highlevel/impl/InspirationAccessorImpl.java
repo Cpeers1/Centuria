@@ -23,8 +23,10 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 			// Load helper
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
 					.getResourceAsStream("inspirations.json");
-			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-					.get("inspirations").getAsJsonObject();
+			
+			var partial = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
+			
+			helper = partial.get("inspirations").getAsJsonObject();
 			strm.close();
 
 			strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("recipes/enigmarecipes.json");

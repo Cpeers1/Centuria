@@ -65,13 +65,6 @@ public abstract class UserVarComponent extends InventoryItemComponent {
 		}
 	}
 
-	/**
-	 * Gets the value from a userVar, given its index. Low level method to be used
-	 * by an accessor.
-	 * 
-	 * @param index The index of the value you want to get.
-	 * @return The user var's value item.
-	 */
 	public UserVarValue getUserVarValue(int index) {
 		var value = new UserVarValue();
 		value.index = index;
@@ -80,23 +73,10 @@ public abstract class UserVarComponent extends InventoryItemComponent {
 		return value;
 	}
 
-	/**
-	 * Sets a value from a userVar, given its index. Low level method to be used by
-	 * an accessor.
-	 * 
-	 * @param index The index of the value you want to set.
-	 * @return The result item, containing
-	 */
 	public void setUserVarValue(UserVarValue valueToSet) {
 		values.put(valueToSet.index, valueToSet.value);
 	}
 
-	/**
-	 * Deletes a value from a userVar, given its index. Low level method to be used
-	 * by an accessor.
-	 * 
-	 * @param index The index of the value you want to delete.
-	 */
 	public void deleteUserVarValue(int index) {
 		values.remove(index);
 	}

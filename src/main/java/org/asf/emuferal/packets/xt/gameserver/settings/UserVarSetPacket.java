@@ -14,12 +14,13 @@ import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.emuferal.players.Player;
 
+import com.google.gson.JsonArray;
+
 public class UserVarSetPacket implements IXtPacket<UserVarSetPacket> {
 
 	private int varDefId;
 	private int value;
-	private int value2; //TODO: what is this really?
-	private int value3; //TODO: what is this really?
+	private int index; // TODO: what is this really?
 	private boolean success;
 
 	@Override
@@ -36,8 +37,7 @@ public class UserVarSetPacket implements IXtPacket<UserVarSetPacket> {
 	public void parse(XtReader reader) throws IOException {
 		varDefId = reader.readInt();
 		value = reader.readInt();
-		value2 = reader.readInt();
-		value3 = reader.readInt();
+		index = reader.readInt();
 	}
 
 	@Override
@@ -45,58 +45,55 @@ public class UserVarSetPacket implements IXtPacket<UserVarSetPacket> {
 		// TODO: verify this
 		wr.writeInt(-1); // Data prefix
 
-		wr.writeBoolean(success);
+		wr.writeBoolean(true);
 		wr.writeInt(varDefId);
 		wr.writeInt(value);
-		wr.writeInt(0); //TODO: multiindex user vars
-		
+		wr.writeInt(index); // TODO: multiindex user vars
+
 		wr.writeString(""); // data suffix
 	}
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		
+
 		// log interaction details
 		if (System.getProperty("debugMode") != null) {
-			System.out.println("[SETTINGS] [USERVARSET]  Client to server (varDefId: " + varDefId + ", value1: " + value + ", value2: " + value2 + ", value3: " + value3 + " )");
+			System.out.println("[SETTINGS] [USERVARSET]  Client to server (varDefId: " + varDefId + ", value: " + value
+					+ ", index: " + index + ")");
 		}
-		
+
 		var player = (Player) client.container;
-		
-		//var varAccessor = new UserVarAccessorImpl(player.account.getPlayerInventory());
-		//var output = varAccessor.setPlayerVars(varDefId, new int[] { value });
-		
-		//success = output.success;
-		//var outputInv = output.changedVarInv;	
-		
-		if (System.getProperty("debugMode") != null) {
-			//System.out.println("[SETTINGS] [USERVARSET] output inv: " + outputInv.toString());
+
+		var varAccessor = new UserVarAccessorImpl(player.account.getPlayerInventory());
+		var output = varAccessor.setPlayerVarValue(varDefId, index, value);
+
+		success = output.success;
+		var outputInv = new JsonArray();
+
+		for (var item : output.changedUserVars) {
+			outputInv.add(item.toJsonObject());
 		}
-		
-		//send changed var inventory...	
-		var itemPacket = new InventoryItemPacket();
-		//itemPacket.item = outputInv;
-		
-		XtWriter wr = new XtWriter();
-		itemPacket.build(wr);
-		
-		//send packet..
-		client.sendPacket(wr.encode());
-		
-		if (System.getProperty("debugMode") != null) {
-			System.out.println("[SETTINGS] [USERVARSET]  Sending Response: " + wr.encode() + " ... ");
-		}			
-		
-		//build a response		
-		wr = new XtWriter();
-		build(wr);
 
 		if (System.getProperty("debugMode") != null) {
-			System.out.println("[SETTINGS] [USERVARSET]  Sending Response: " + wr.encode() + " ... ");
+			System.out.println("[SETTINGS] [USERVARSET] output inv: " + outputInv.toString());
 		}
-				
-		client.sendPacket(wr.encode());
-		
+
+		// send changed var inventory...
+		var itemPacket = new InventoryItemPacket();
+		itemPacket.item = outputInv;
+
+		// send packet..
+		client.sendPacket(itemPacket);
+
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[SETTINGS] [USERVARSET]  Sending Response: " + itemPacket.build() + " ... ");
+		}
+
+		client.sendPacket(this);
+
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[SETTINGS] [USERVARSET]  Sending Response: " + this.build() + " ... ");
+		}
 
 		return true;
 	}

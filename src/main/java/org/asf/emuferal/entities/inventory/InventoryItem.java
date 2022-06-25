@@ -18,10 +18,10 @@ import com.google.gson.JsonObject;
 public class InventoryItem 
 {
 	//json constants
-	private static String defIdPropertyName = "defId";
-	private static String uuidPropertyName = "id";
-	private static String invTypePropertyName = "type";
-	private static String componentsPropertyName = "components";
+	protected static String defIdPropertyName = "defId";
+	protected static String uuidPropertyName = "id";
+	protected static String invTypePropertyName = "type";
+	protected static String componentsPropertyName = "components";
 	
 	//object variables
 	public int defId;
@@ -34,7 +34,6 @@ public class InventoryItem
 	 * This method is meant to be used by a extending class.
 	 * Call the super method to populate default properties.
 	 * @param object The jsonObject to retrieve properties from.
-	 * @return The inventory item after populating the default values.
 	 * @throws SecurityException 
 	 * @throws NoSuchMethodException 
 	 * @throws InvocationTargetException 
@@ -42,14 +41,13 @@ public class InventoryItem
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	protected static InventoryItem fromJsonObject(JsonObject object) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
+	protected void fromJsonObject(JsonObject object) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
 	{
 		//this continues adding the fields from the object.
 		
-		var defId = object.get(defIdPropertyName).getAsInt();
-		var uuid = object.get(uuidPropertyName).getAsString();
-		var invType = object.get(invTypePropertyName).getAsInt();
-		InventoryItem item = new InventoryItem(defId, uuid, invType);
+		defId = object.get(defIdPropertyName).getAsInt();
+		uuid = object.get(uuidPropertyName).getAsString();
+		invType = object.get(invTypePropertyName).getAsInt();
 		
 		//get components
 		
@@ -58,11 +56,8 @@ public class InventoryItem
 		for(var componentJson : componentLevel.entrySet())
 		{
 			var type = ComponentManager.getComponentTypeFromComponentName(componentJson.getKey());
-			item.components.add(InventoryItemComponent.fromJson(type, componentJson.getValue().getAsJsonObject()));
+			components.add(InventoryItemComponent.fromJson(type, componentJson.getValue().getAsJsonObject()));
 		}
-	
-		//return new item.
-		return item;
 	}
 	
 	/**
@@ -109,8 +104,8 @@ public class InventoryItem
 	/**
 	 * This method is used to add components to the item.
 	 * This is meant for INTERNAL USE!
-	 * Write your own item wrapper and use this method to add components to it.
-	 * @param component
+	 * Write your own item wrapper and use this method in it.
+	 * @param component The component to add.
 	 */
 	protected void AddComponent(InventoryItemComponent component)
 	{
@@ -119,9 +114,32 @@ public class InventoryItem
 	}
 	
 	/**
-	 * Gets a component give its component name.
+	 * Checks if the components have any components with its name.
+	 * @param component The component to look for.
+	 * @return Whether the component was found or not.
+	 */
+	protected boolean HasComponent(InventoryItemComponent component)
+	{
+		boolean result = false;
+		
+		for(var comp : components)
+		{
+			if(comp.getComponentName() == component.getComponentName())
+			{
+				result = true;
+				break;
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Gets a component given its component name.
+	 * This is meant for INTERNAL USE!
+	 * Write your own item wrapper and use this method in it.
 	 * @param componentName The name of the component.
-	 * @return
+	 * @return The inventory item component.
 	 */
 	protected InventoryItemComponent GetComponent(String componentName)
 	{
@@ -138,5 +156,6 @@ public class InventoryItem
 		
 		return result;
 	}
+	
 
 }
