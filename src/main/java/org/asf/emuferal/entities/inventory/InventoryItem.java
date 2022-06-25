@@ -82,7 +82,6 @@ public class InventoryItem
 	 * Converts this instance of the inventory object to a json object.
 	 * This method is meant to be used by a extending class.
 	 * Call the super method to populate default properties.
-	 * @param refObject The object to continue adding properties to.
 	 * @return The jsonObject after populating the default values.
 	 */
 	public JsonObject toJsonObject()
@@ -116,6 +115,28 @@ public class InventoryItem
 	protected void AddComponent(InventoryItemComponent component)
 	{
 		//adds the component..
+		components.add(component);
+	}
+	
+	/**
+	 * Gets a component give its component name.
+	 * @param componentName The name of the component.
+	 * @return
+	 */
+	protected InventoryItemComponent GetComponent(String componentName)
+	{
+		InventoryItemComponent result = null;
+		
+		for(var component : components)
+		{
+			if(component.getComponentName() == componentName)
+			{
+				result = component;
+				break;
+			}
+		}
+		
+		return result;
 	}
 
 }

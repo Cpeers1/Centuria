@@ -31,7 +31,6 @@ public abstract class InventoryItemComponent {
 	
 	/**
 	 * Populates the component with values from the jsonObject.
-	 * @return A new component populated with values from the JsonObject.
 	 */
 	protected abstract void getPropertiesFromJson(JsonObject object);
 	
