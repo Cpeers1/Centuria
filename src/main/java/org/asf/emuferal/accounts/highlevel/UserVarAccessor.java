@@ -15,7 +15,7 @@ public abstract class UserVarAccessor extends AbstractInventoryAccessor {
 	 * Sets a player variable using the passed defID for the variable, 
 	 * and the values for that variable.
 	 * This method overrides all set values using the index number from the array.
-	 * @param defId The ID for the variable to set values for.
+	 * @param defID The ID for the variable to set values for.
 	 * @param values The values to set for the variable.
 	 * @return The result for setting the variable.
 	 */
@@ -23,7 +23,7 @@ public abstract class UserVarAccessor extends AbstractInventoryAccessor {
 	
 	/**
 	 * Sets a player variable using the passed defID for the variable, at the specific index.
-	 * @param defId The ID for the variable to set values for.
+	 * @param defID The ID for the variable to set values for.
 	 * @param index The index to update in the variable.
 	 * @param value The value to put at that index.
 	 * @return The result for setting the variable.
