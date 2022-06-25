@@ -2,7 +2,7 @@ package org.asf.emuferal.packets.xt.gameserver.settings;
 
 import java.io.IOException;
 
-import org.asf.emuferal.accounts.highlevel.PlayerSettingsAccessor;
+import org.asf.emuferal.accounts.highlevel.impl.UserVarAccessorImpl;
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.interactions.NetworkedObjects;
@@ -63,19 +63,19 @@ public class UserVarSetPacket implements IXtPacket<UserVarSetPacket> {
 		
 		var player = (Player) client.container;
 		
-		var varAccessor = new PlayerSettingsAccessor(player.account.getPlayerInventory());
-		var output = varAccessor.setPlayerVars(varDefId, new int[] { value });
+		//var varAccessor = new UserVarAccessorImpl(player.account.getPlayerInventory());
+		//var output = varAccessor.setPlayerVars(varDefId, new int[] { value });
 		
-		success = output.success;
-		var outputInv = output.changedVarInv;	
+		//success = output.success;
+		//var outputInv = output.changedVarInv;	
 		
 		if (System.getProperty("debugMode") != null) {
-			System.out.println("[SETTINGS] [USERVARSET] output inv: " + outputInv.toString());
+			//System.out.println("[SETTINGS] [USERVARSET] output inv: " + outputInv.toString());
 		}
 		
 		//send changed var inventory...	
 		var itemPacket = new InventoryItemPacket();
-		itemPacket.item = outputInv;
+		//itemPacket.item = outputInv;
 		
 		XtWriter wr = new XtWriter();
 		itemPacket.build(wr);

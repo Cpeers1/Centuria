@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
-import org.asf.emuferal.entities.inventory.InspirationCombineResult;
+import org.asf.emuferal.entities.systems.inspiration.InspirationCombineResult;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;

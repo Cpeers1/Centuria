@@ -6,8 +6,8 @@ import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.InspirationAccessor;
 import org.asf.emuferal.accounts.highlevel.ItemAccessor;
 import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemComponent;
-import org.asf.emuferal.entities.inventory.InspirationCombineResult;
-import org.asf.emuferal.enums.inventory.InspirationCombineStatus;
+import org.asf.emuferal.entities.systems.inspiration.InspirationCombineResult;
+import org.asf.emuferal.enums.systems.inspiration.InspirationCombineStatus;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.emuferal.players.Player;
 
@@ -22,7 +22,7 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 		try {
 			// Load helper
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("defaultitems/inspirationHelper.json");
+					.getResourceAsStream("inspirations.json");
 			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 					.get("inspirations").getAsJsonObject();
 			strm.close();

@@ -1,4 +1,4 @@
-package org.asf.emuferal.enums.inventory;
+package org.asf.emuferal.enums.systems.inspiration;
 
 public enum InspirationCombineStatus {
 	Successful(0),

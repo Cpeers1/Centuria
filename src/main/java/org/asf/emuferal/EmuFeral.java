@@ -38,6 +38,7 @@ import javax.net.ssl.SSLContext;
 import org.asf.connective.https.ConnectiveHTTPSServer;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.accounts.PlayerInventory;
+import org.asf.emuferal.entities.inventory.components.ComponentManager;
 import org.asf.emuferal.modules.IEmuFeralModule;
 import org.asf.emuferal.modules.ModuleManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
@@ -97,8 +98,13 @@ public class EmuFeral {
 
 	/**
 	 * Main method used to start the servers
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
+	 * @throws IllegalArgumentException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
-	public static void main(String[] args) throws InvocationTargetException, IOException, NoSuchAlgorithmException {
+	public static void main(String[] args) throws InvocationTargetException, IOException, NoSuchAlgorithmException, InstantiationException, IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException {
 		// Splash message
 		System.out.println("--------------------------------------------------------------------");
 		System.out.println("                                                                    ");
@@ -179,6 +185,10 @@ public class EmuFeral {
 				System.exit(0);
 			}
 		}
+		
+		//Managers
+		
+		ComponentManager.RegisterAllComponents();
 
 		// Start the servers
 		startServer();

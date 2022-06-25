@@ -1,0 +1,332 @@
+{
+  "inspirationHelper": {
+    "18555": {
+      "inspirationName": "Inspiration/AnimeZine",
+      "inventory": 8
+    },
+    "22279": {
+      "inspirationName": "Inspiration/ArcaneSigil",
+      "inventory": 8
+    },
+    "10450": {
+      "inspirationName": "Inspiration/AstralOil",
+      "inventory": 8
+    },
+    "26066": {
+      "inspirationName": "Inspiration/BambooShoot",
+      "inventory": 8
+    },
+    "10467": {
+      "inspirationName": "Inspiration/Barrel",
+      "inventory": 8
+    },
+    "10461": {
+      "inspirationName": "Inspiration/Base/BaseTable",
+      "inventory": 8
+    },
+    "10458": {
+      "inspirationName": "Inspiration/BaseChair",
+      "inventory": 8
+    },
+    "10441": {
+      "inspirationName": "Inspiration/BaseGlasses",
+      "inventory": 8
+    },
+    "11221": {
+      "inspirationName": "Inspiration/BaseGloves",
+      "inventory": 8
+    },
+    "5528": {
+      "inspirationName": "Inspiration/BaseHat",
+      "inventory": 8
+    },
+    "10447": {
+      "inspirationName": "Inspiration/BaseMask",
+      "inventory": 8
+    },
+    "10460": {
+      "inspirationName": "Inspiration/BaseTable",
+      "inventory": 8
+    },
+    "5533": {
+      "inspirationName": "Inspiration/BaseTail",
+      "inventory": 8
+    },
+    "10437": {
+      "inspirationName": "Inspiration/BaseVisor",
+      "inventory": 8
+    },
+    "7313": {
+      "inspirationName": "Inspiration/Bloodstain",
+      "inventory": 8
+    },
+    "10422": {
+      "inspirationName": "Inspiration/Bluddy",
+      "inventory": 8
+    },
+    "26068": {
+      "inspirationName": "Inspiration/BrokenCart",
+      "inventory": 8
+    },
+    "5512": {
+      "inspirationName": "Inspiration/Broom",
+      "inventory": 8
+    },
+    "10423": {
+      "inspirationName": "Inspiration/BubbleStream",
+      "inventory": 8
+    },
+    "9095": {
+      "inspirationName": "Inspiration/CatCharm",
+      "inventory": 8
+    },
+    "9097": {
+      "inspirationName": "Inspiration/CheeseWheel",
+      "inventory": 8
+    },
+    "13534": {
+      "inspirationName": "Inspiration/CosmicPearl",
+      "inventory": 8
+    },
+    "14640": {
+      "inspirationName": "Inspiration/CrystalBall",
+      "inventory": 8
+    },
+    "5517": {
+      "inspirationName": "Inspiration/DarkSkull",
+      "inventory": 8
+    },
+    "5520": {
+      "inspirationName": "Inspiration/Egg",
+      "inventory": 8
+    },
+    "10457": {
+      "inspirationName": "Inspiration/Elixir",
+      "inventory": 8
+    },
+    "10428": {
+      "inspirationName": "Inspiration/EmptyBottle",
+      "inventory": 8
+    },
+    "11225": {
+      "inspirationName": "Inspiration/EverlastingFlame",
+      "inventory": 8
+    },
+    "18562": {
+      "inspirationName": "Inspiration/FancyRibbon",
+      "inventory": 8
+    },
+    "10465": {
+      "inspirationName": "Inspiration/Fer.Albatross",
+      "inventory": 8
+    },
+    "10466": {
+      "inspirationName": "Inspiration/FertileSoil",
+      "inventory": 8
+    },
+    "26067": {
+      "inspirationName": "Inspiration/FishBowl",
+      "inventory": 8
+    },
+    "27712": {
+      "inspirationName": "Inspiration/FondMemories",
+      "inventory": 8
+    },
+    "22269": {
+      "inspirationName": "Inspiration/FrostBite",
+      "inventory": 8
+    },
+    "28777": {
+      "inspirationName": "Inspiration/FruitHat",
+      "inventory": 8
+    },
+    "30575": {
+      "inspirationName": "Inspiration/GlitchedItem",
+      "inventory": 8
+    },
+    "7312": {
+      "inspirationName": "Inspiration/GoldenLeaf",
+      "inventory": 8
+    },
+    "11222": {
+      "inspirationName": "Inspiration/Iceblock",
+      "inventory": 8
+    },
+    "25935": {
+      "inspirationName": "Inspiration/IceCream",
+      "inventory": 8
+    },
+    "11240": {
+      "inspirationName": "Inspiration/KillerSoup",
+      "inventory": 8
+    },
+    "13513": {
+      "inspirationName": "Inspiration/KoboldWhiskers",
+      "inventory": 8
+    },
+    "10445": {
+      "inspirationName": "Inspiration/LatchkeysGear",
+      "inventory": 8
+    },
+    "14641": {
+      "inspirationName": "Inspiration/LeatherStraps",
+      "inventory": 8
+    },
+    "27711": {
+      "inspirationName": "Inspiration/LostHomework",
+      "inventory": 8
+    },
+    "26069": {
+      "inspirationName": "Inspiration/LostSatchel",
+      "inventory": 8
+    },
+    "9096": {
+      "inspirationName": "Inspiration/MaskEngraving",
+      "inventory": 8
+    },
+    "18563": {
+      "inspirationName": "Inspiration/MoonRock",
+      "inventory": 8
+    },
+    "11433": {
+      "inspirationName": "Inspiration/MossySword",
+      "inventory": 8
+    },
+    "10469": {
+      "inspirationName": "Inspiration/PeeringEyes",
+      "inventory": 8
+    },
+    "10344": {
+      "inspirationName": "Inspiration/PictureFrame",
+      "inventory": 8
+    },
+    "9045": {
+      "inspirationName": "Inspiration/PleasantMusic",
+      "inventory": 8
+    },
+    "18561": {
+      "inspirationName": "Inspiration/PointyEars",
+      "inventory": 8
+    },
+    "10473": {
+      "inspirationName": "Inspiration/Pooofy",
+      "inventory": 8
+    },
+    "9954": {
+      "inspirationName": "Inspiration/PopularMeme",
+      "inventory": 8
+    },
+    "10468": {
+      "inspirationName": "Inspiration/PowerFlour",
+      "inventory": 8
+    },
+    "14644": {
+      "inspirationName": "Inspiration/QueensLetter",
+      "inventory": 8
+    },
+    "10425": {
+      "inspirationName": "Inspiration/RatTail",
+      "inventory": 8
+    },
+    "22270": {
+      "inspirationName": "Inspiration/RitualBones",
+      "inventory": 8
+    },
+    "28776": {
+      "inspirationName": "Inspiration/RockStatue",
+      "inventory": 8
+    },
+    "7308": {
+      "inspirationName": "Inspiration/Rose",
+      "inventory": 8
+    },
+    "10359": {
+      "inspirationName": "Inspiration/RuggedCloth",
+      "inventory": 8
+    },
+    "18560": {
+      "inspirationName": "Inspiration/SerpentScale",
+      "inventory": 8
+    },
+    "10463": {
+      "inspirationName": "Inspiration/ShimmeringJewel",
+      "inventory": 8
+    },
+    "19630": {
+      "inspirationName": "Inspiration/SilverAxe",
+      "inventory": 8
+    },
+    "10452": {
+      "inspirationName": "Inspiration/SootStone",
+      "inventory": 8
+    },
+    "7310": {
+      "inspirationName": "Inspiration/Spike",
+      "inventory": 8
+    },
+    "10424": {
+      "inspirationName": "Inspiration/Springwater",
+      "inventory": 8
+    },
+    "10427": {
+      "inspirationName": "Inspiration/Stonewall",
+      "inventory": 8
+    },
+    "10444": {
+      "inspirationName": "Inspiration/SucculentFruit",
+      "inventory": 8
+    },
+    "30574": {
+      "inspirationName": "Inspiration/SummerFun",
+      "inventory": 8
+    },
+    "9043": {
+      "inspirationName": "Inspiration/Sunburn",
+      "inventory": 8
+    },
+    "27710": {
+      "inspirationName": "Inspiration/SushiPlate",
+      "inventory": 8
+    },
+    "9044": {
+      "inspirationName": "Inspiration/TerribleJoke",
+      "inventory": 8
+    },
+    "10448": {
+      "inspirationName": "Inspiration/ToyAutomaton",
+      "inventory": 8
+    },
+    "14642": {
+      "inspirationName": "Inspiration/TrueFriendship",
+      "inventory": 8
+    },
+    "10462": {
+      "inspirationName": "Inspiration/TwiggleSoul",
+      "inventory": 8
+    },
+    "10454": {
+      "inspirationName": "Inspiration/UnknownTalon",
+      "inventory": 8
+    },
+    "10456": {
+      "inspirationName": "Inspiration/WireMesh",
+      "inventory": 8
+    },
+    "14643": {
+      "inspirationName": "Inspiration/WoodenPost",
+      "inventory": 8
+    },
+    "5524": {
+      "inspirationName": "Inspiration/YellowFeather",
+      "inventory": 8
+    },
+    "19749": {
+      "inspirationName": "Inspiration/Ysabeaux",
+      "inventory": 8
+    },
+    "5498": {
+      "inspirationName": "TestInspiration",
+      "inventory": 8
+    }
+  }
+}

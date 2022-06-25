@@ -1,6 +1,6 @@
-package org.asf.emuferal.entities.inventory;
+package org.asf.emuferal.entities.systems.inspiration;
 
-import org.asf.emuferal.enums.inventory.InspirationCombineStatus;
+import org.asf.emuferal.enums.systems.inspiration.InspirationCombineStatus;
 
 public class InspirationCombineResult {
 

@@ -85,6 +85,9 @@ dependencies {
 	implementation group: 'org.apache.commons', name: 'commons-compress', version: '1.21'	
 	implementation group: 'org.tukaani', name: 'xz', version: '1.9'
 	implementation group: 'org.joml', name: 'joml', version: '1.10.4'
+	
+	implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
+	testImplementation group: 'org.slf4j', name: 'slf4j-nop', version: '1.7.36'
 }
 
 project.configurations.implementation.canBeResolved = true

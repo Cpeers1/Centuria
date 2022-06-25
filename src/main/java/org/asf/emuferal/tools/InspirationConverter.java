@@ -21,7 +21,7 @@ public class InspirationConverter {
 		String lastData = null;
 		String id = "";
 		
-		JsonObject userVarDefinition = new JsonObject();
+		JsonObject inspirationDefinition = new JsonObject();
 		boolean skip = false;
 		for (String line : Files.readAllLines(Path.of(args[0]))) {
 			
@@ -30,7 +30,7 @@ public class InspirationConverter {
 					skip = true;
 				
 				//start a new uservar definition
-				userVarDefinition = new JsonObject();
+				inspirationDefinition = new JsonObject();
 				
 				//split up the line based on ','
 				String[] lineParts = line.split(",");
@@ -39,32 +39,29 @@ public class InspirationConverter {
 				id = lineParts[0].substring(1);
 				
 				//1 - DefName (Change this to userVarName, nicer)
-				userVarDefinition.addProperty("inspirationName", lineParts[1].replace("\"", ""));
+				inspirationDefinition.addProperty("inspirationName", lineParts[1].replace("\"", ""));
+				
+				inspirationDefinition.addProperty("inventory", 8);
 				
 				lastData = "";
 			} else if (line.startsWith("\"\"")) {
 				if(!skip)
 				{
 					System.out.println("Parsing inspiration ID: " + id);
-					
-					lastData = "{\n" + lastData;
-					lastData = lastData.replace("`", "\"");
-					JsonObject jsonObject = JsonParser.parseString(lastData).getAsJsonObject();
-					userVarDefinition.add("data", jsonObject);
-					
+
 					//add the uservar to the uservar list
-					inspirations.add(id, userVarDefinition);				
+					inspirations.add(id, inspirationDefinition);				
 				}
 				
 				//start a fresh userVar definition
-				userVarDefinition = new JsonObject();	
+				inspirationDefinition = new JsonObject();	
 				lastData = null;
 				skip = false;
 			} else if (lastData != null) {
 				lastData += line + "\n";
 			}
 		}
-		res.add("inspirations", inspirations);
+		res.add("inspirationHelper", inspirations);
 		
 		//blegh hard coded path 
         String path = "inspirations.json";
