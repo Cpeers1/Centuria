@@ -2,16 +2,16 @@ package org.asf.emuferal.entities.inventory.uservars;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.asf.emuferal.entities.components.InventoryItemComponent;
+import org.asf.emuferal.entities.components.uservars.UserVarBitComponent;
+import org.asf.emuferal.entities.components.uservars.UserVarBitOnOnlyComponent;
+import org.asf.emuferal.entities.components.uservars.UserVarComponent;
+import org.asf.emuferal.entities.components.uservars.UserVarCounterComponent;
+import org.asf.emuferal.entities.components.uservars.UserVarCustomComponent;
+import org.asf.emuferal.entities.components.uservars.UserVarHighestComponent;
+import org.asf.emuferal.entities.components.uservars.UserVarLowestComponent;
 import org.asf.emuferal.entities.inventory.InventoryItem;
-import org.asf.emuferal.entities.inventory.components.InventoryItemComponent;
-import org.asf.emuferal.entities.inventory.components.uservars.UserVarBitComponent;
-import org.asf.emuferal.entities.inventory.components.uservars.UserVarBitOnOnlyComponent;
-import org.asf.emuferal.entities.inventory.components.uservars.UserVarComponent;
-import org.asf.emuferal.entities.inventory.components.uservars.UserVarCounterComponent;
-import org.asf.emuferal.entities.inventory.components.uservars.UserVarCustomComponent;
-import org.asf.emuferal.entities.inventory.components.uservars.UserVarHighestComponent;
-import org.asf.emuferal.entities.inventory.components.uservars.UserVarLowestComponent;
-import org.asf.emuferal.enums.inventory.uservars.UserVarType;
+import org.asf.emuferal.enums.uservars.UserVarType;
 
 import com.google.gson.JsonObject;
 
@@ -48,12 +48,12 @@ public final class UserVarItem extends InventoryItem {
 	
 	public UserVarComponent getUserVarComponent()
 	{
-		return (UserVarComponent)this.GetComponent(type.componentName);
+		return (UserVarComponent)this.getComponent(type.componentName);
 	}
 	
 	public void setUserVarComponent(UserVarComponent component)
 	{
-		this.AddComponent(component);
+		this.addComponent(component);
 	}
 
 	/**
@@ -69,26 +69,27 @@ public final class UserVarItem extends InventoryItem {
 		switch(type)
 		{
 			case Any:
-				this.AddComponent(InventoryItemComponent.fromJson(UserVarCustomComponent.class, item));
+				this.addComponent(InventoryItemComponent.fromJson(UserVarCustomComponent.class, item));
 				break;
 			case Bit:
-				this.AddComponent(InventoryItemComponent.fromJson(UserVarBitComponent.class, item));
+				this.addComponent(InventoryItemComponent.fromJson(UserVarBitComponent.class, item));
 				break;
 			case BitOnOnly:
-				this.AddComponent(InventoryItemComponent.fromJson(UserVarBitOnOnlyComponent.class, item));
+				this.addComponent(InventoryItemComponent.fromJson(UserVarBitOnOnlyComponent.class, item));
 				break;
 			case Counter:
-				this.AddComponent(InventoryItemComponent.fromJson(UserVarCounterComponent.class, item));
+				this.addComponent(InventoryItemComponent.fromJson(UserVarCounterComponent.class, item));
 				break;
 			case Highest:
-				this.AddComponent(InventoryItemComponent.fromJson(UserVarHighestComponent.class, item));
+				this.addComponent(InventoryItemComponent.fromJson(UserVarHighestComponent.class, item));
 				break;
 			case Lowest:
-				this.AddComponent(InventoryItemComponent.fromJson(UserVarLowestComponent.class, item));
+				this.addComponent(InventoryItemComponent.fromJson(UserVarLowestComponent.class, item));
 				break;
 		}
 
 		super.fromJsonObject(object);
 	}
+
 
 }

@@ -6,8 +6,8 @@ import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.InspirationAccessor;
 import org.asf.emuferal.accounts.highlevel.ItemAccessor;
 import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemComponent;
-import org.asf.emuferal.entities.systems.inspiration.InspirationCombineResult;
-import org.asf.emuferal.enums.systems.inspiration.InspirationCombineStatus;
+import org.asf.emuferal.entities.inspiration.InspirationCombineResult;
+import org.asf.emuferal.enums.inspiration.InspirationCombineStatus;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.emuferal.players.Player;
 

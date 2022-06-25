@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
-import org.asf.emuferal.entities.objects.sanctuaries.RoomInfoObject;
-import org.asf.emuferal.entities.objects.sanctuaries.SancObjectInfo;
+import org.asf.emuferal.entities.sanctuaries.RoomInfoObject;
+import org.asf.emuferal.entities.sanctuaries.SancObjectInfo;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;

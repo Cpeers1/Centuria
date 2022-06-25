@@ -1,7 +1,7 @@
 package org.asf.emuferal.accounts.highlevel;
 
 import org.asf.emuferal.accounts.PlayerInventory;
-import org.asf.emuferal.entities.systems.inspiration.InspirationCombineResult;
+import org.asf.emuferal.entities.inspiration.InspirationCombineResult;
 import org.asf.emuferal.players.Player;
 
 import com.google.gson.JsonObject;

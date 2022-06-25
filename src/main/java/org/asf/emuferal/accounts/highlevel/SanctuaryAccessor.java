@@ -1,8 +1,8 @@
 package org.asf.emuferal.accounts.highlevel;
 
 import org.asf.emuferal.accounts.PlayerInventory;
-import org.asf.emuferal.entities.objects.sanctuaries.RoomInfoObject;
-import org.asf.emuferal.entities.objects.sanctuaries.SancObjectInfo;
+import org.asf.emuferal.entities.sanctuaries.RoomInfoObject;
+import org.asf.emuferal.entities.sanctuaries.SancObjectInfo;
 
 import com.google.gson.JsonObject;
 

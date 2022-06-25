@@ -10,15 +10,15 @@ import java.util.UUID;
 
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.UserVarAccessor;
-import org.asf.emuferal.entities.inventory.uservars.UserVarValue;
-import org.asf.emuferal.entities.systems.uservars.SetUserVarResult;
-import org.asf.emuferal.enums.inventory.uservars.UserVarType;
+import org.asf.emuferal.entities.uservars.SetUserVarResult;
+import org.asf.emuferal.entities.uservars.UserVarValue;
+import org.asf.emuferal.enums.uservars.UserVarType;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
 import org.asf.emuferal.entities.inventory.uservars.*;
+import org.asf.emuferal.entities.components.InventoryItemComponent;
+import org.asf.emuferal.entities.components.uservars.*;
 import org.asf.emuferal.entities.inventory.InventoryItem;
-import org.asf.emuferal.entities.inventory.components.InventoryItemComponent;
-import org.asf.emuferal.entities.inventory.components.uservars.*;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

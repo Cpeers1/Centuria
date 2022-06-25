@@ -8,8 +8,8 @@ import java.util.UUID;
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.SanctuaryAccessor;
 import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemComponent;
-import org.asf.emuferal.entities.objects.sanctuaries.RoomInfoObject;
-import org.asf.emuferal.entities.objects.sanctuaries.SancObjectInfo;
+import org.asf.emuferal.entities.sanctuaries.RoomInfoObject;
+import org.asf.emuferal.entities.sanctuaries.SancObjectInfo;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
 import com.google.gson.JsonArray;

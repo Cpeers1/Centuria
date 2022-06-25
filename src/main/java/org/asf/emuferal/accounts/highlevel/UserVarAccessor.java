@@ -1,7 +1,7 @@
 package org.asf.emuferal.accounts.highlevel;
 import org.asf.emuferal.accounts.PlayerInventory;
-import org.asf.emuferal.entities.inventory.uservars.UserVarValue;
-import org.asf.emuferal.entities.systems.uservars.SetUserVarResult;
+import org.asf.emuferal.entities.uservars.SetUserVarResult;
+import org.asf.emuferal.entities.uservars.UserVarValue;
 
 import java.util.HashMap;
 

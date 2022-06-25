@@ -4,8 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.asf.emuferal.entities.inventory.components.ComponentManager;
-import org.asf.emuferal.entities.inventory.components.InventoryItemComponent;
+import org.asf.emuferal.entities.components.ComponentManager;
+import org.asf.emuferal.entities.components.InventoryItemComponent;
 
 import com.google.gson.JsonObject;
 
@@ -15,7 +15,7 @@ import com.google.gson.JsonObject;
  * This class takes care of converting back and forth from JsonObjects.
  * @author Owenvii
  */
-public class InventoryItem 
+public abstract class InventoryItem 
 {
 	//json constants
 	public final static String defIdPropertyName = "defId";
@@ -28,6 +28,21 @@ public class InventoryItem
 	public String uuid;
 	public int invType;
 	private List<InventoryItemComponent> components = new ArrayList<InventoryItemComponent>();
+	
+	
+	/**
+	 * Base constructor for all inventory items.
+	 * @param defId The defId of the inventory item.
+	 * @param uuid The unique identifier of the item.
+	 * @param invType The inventory number/type this item belongs in.
+	 */
+	public InventoryItem(int defId, String uuid, int invType)
+	{
+		this.defId = defId;
+		this.uuid = uuid;
+		this.invType = invType;
+	}
+
 	
 	/**
 	 * Converts a jsonObject to an inventory item.
@@ -58,19 +73,6 @@ public class InventoryItem
 			var type = ComponentManager.getComponentTypeFromComponentName(componentJson.getKey());
 			components.add(InventoryItemComponent.fromJson(type, componentJson.getValue().getAsJsonObject()));
 		}
-	}
-	
-	/**
-	 * Base constructor for all inventory items.
-	 * @param defId The defId of the inventory item.
-	 * @param uuid The unique identifier of the item.
-	 * @param invType The inventory number/type this item belongs in.
-	 */
-	public InventoryItem(int defId, String uuid, int invType)
-	{
-		this.defId = defId;
-		this.uuid = uuid;
-		this.invType = invType;
 	}
 
 	/**
@@ -103,11 +105,9 @@ public class InventoryItem
 	
 	/**
 	 * This method is used to add components to the item.
-	 * This is meant for INTERNAL USE!
-	 * Write your own item wrapper and use this method in it.
 	 * @param component The component to add.
 	 */
-	protected void AddComponent(InventoryItemComponent component)
+	protected void addComponent(InventoryItemComponent component)
 	{
 		//adds the component..
 		components.add(component);
@@ -118,7 +118,7 @@ public class InventoryItem
 	 * @param component The component to look for.
 	 * @return Whether the component was found or not.
 	 */
-	protected boolean HasComponent(InventoryItemComponent component)
+	protected boolean hasComponent(InventoryItemComponent component)
 	{
 		boolean result = false;
 		
@@ -136,12 +136,10 @@ public class InventoryItem
 	
 	/**
 	 * Gets a component given its component name.
-	 * This is meant for INTERNAL USE!
-	 * Write your own item wrapper and use this method in it.
 	 * @param componentName The name of the component.
 	 * @return The inventory item component.
 	 */
-	protected InventoryItemComponent GetComponent(String componentName)
+	protected InventoryItemComponent getComponent(String componentName)
 	{
 		InventoryItemComponent result = null;
 		
@@ -155,6 +153,15 @@ public class InventoryItem
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Sets a component. That means it will replace a component if it detects it as a duplicate.
+	 * @param component
+	 */
+	protected void SetComponent(InventoryItemComponent component)
+	{
+
 	}
 	
 
