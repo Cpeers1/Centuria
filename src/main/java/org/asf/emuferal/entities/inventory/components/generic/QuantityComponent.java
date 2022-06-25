@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 @Component
 public class QuantityComponent extends InventoryItemComponent {
 
-	private static String componentName = "Quantity";
+	public static String componentName = "Quantity";
 	
 	private static String quantityPropertyName = "quantity";
 	

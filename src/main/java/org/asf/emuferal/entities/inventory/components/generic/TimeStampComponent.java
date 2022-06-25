@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 @Component
 public class TimeStampComponent extends InventoryItemComponent {
 
-	private static String componentName = "Timestamp";
+	public static String componentName = "Timestamp";
 	
 	private static String timeStampPropertyName = "ts";
 	

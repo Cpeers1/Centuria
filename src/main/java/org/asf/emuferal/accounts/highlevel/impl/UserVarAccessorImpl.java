@@ -9,9 +9,9 @@ import java.util.UUID;
 
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.UserVarAccessor;
-import org.asf.emuferal.entities.inventory.playervars.PlayerVarValue;
-import org.asf.emuferal.entities.systems.playervars.SetPlayerVarResult;
-import org.asf.emuferal.enums.inventory.UserVarType;
+import org.asf.emuferal.entities.inventory.uservars.UserVarValue;
+import org.asf.emuferal.entities.systems.uservars.SetUserVarResult;
+import org.asf.emuferal.enums.inventory.uservars.UserVarType;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
 import com.google.gson.JsonArray;
@@ -119,7 +119,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	}
 
 	@Override
-	public SetPlayerVarResult setPlayerVarValue(int defID, int[] values) {
+	public SetUserVarResult setPlayerVarValue(int defID, int[] values) {
 		try {
 
 			if (!inventory.getAccessor().hasInventoryObject("303", defID)) {
@@ -134,9 +134,9 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 				var outputInv = new JsonArray();
 				outputInv.add(newVarObject);
-				var output = new SetPlayerVarResult(true, outputInv);
+				//var output = new SetUserVarResult(true, outputInv);
 
-				return output;
+				return null;
 			} else {
 				var inv = inventory.getItem("303");
 
@@ -152,7 +152,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				}
 
 				if (element == null) {
-					var output = new SetPlayerVarResult(false, null);
+					var output = new SetUserVarResult(false, null);
 
 					return output; // cannot find
 				}
@@ -182,43 +182,43 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 				inventory.setItem("303", inv);
 
-				var output = new SetPlayerVarResult(true, outputVarInv);
+				//var output = new SetUserVarResult(true, outputVarInv);
 
-				return output;
+				return null;
 			}
 		} catch (Exception e) {
-			var output = new SetPlayerVarResult(false, null);
+			var output = new SetUserVarResult(false, null);
 
 			return output;
 		}
 	}
 
 	@Override
-	public SetPlayerVarResult setPlayerVarValue(int defID, int index, int value) {
+	public SetUserVarResult setPlayerVarValue(int defID, int index, int value) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public SetPlayerVarResult setPlayerVarValue(int defID, HashMap<Integer, Integer> indexToValueUpdateMap) {
+	public SetUserVarResult setPlayerVarValue(int defID, HashMap<Integer, Integer> indexToValueUpdateMap) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public PlayerVarValue[] getPlayerVarValue(int defID) {
+	public UserVarValue[] getPlayerVarValue(int defID) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public PlayerVarValue getPlayerVarValue(int defID, int index) {
+	public UserVarValue getPlayerVarValue(int defID, int index) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public PlayerVarValue[] getPlayerVarValue(int defID, int[] indexes) {
+	public UserVarValue[] getPlayerVarValue(int defID, int[] indexes) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -230,7 +230,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	}
 
 	@Override
-	public SetPlayerVarResult deletePlayerVarValueAtIndex(int defID, int index) {
+	public SetUserVarResult deletePlayerVarValueAtIndex(int defID, int index) {
 		// TODO Auto-generated method stub
 		return null;
 	}

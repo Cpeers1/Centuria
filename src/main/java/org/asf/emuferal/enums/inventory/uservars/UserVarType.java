@@ -1,4 +1,4 @@
-package org.asf.emuferal.enums.inventory;
+package org.asf.emuferal.enums.inventory.uservars;
 
 public enum UserVarType
 {

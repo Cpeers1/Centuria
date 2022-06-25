@@ -1,0 +1,14 @@
+package org.asf.emuferal.entities.inventory.components.uservars;
+
+import org.asf.emuferal.entities.inventory.components.Component;
+import org.asf.emuferal.enums.inventory.uservars.UserVarType;
+
+@Component
+public class UserVarBitOnOnlyComponent extends UserVarComponent {
+
+	public static String componentName = UserVarType.BitOnOnly.componentName;
+
+	public String getComponentName() {
+		return componentName;
+	}
+}

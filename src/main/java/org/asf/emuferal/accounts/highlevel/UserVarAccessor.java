@@ -1,7 +1,7 @@
 package org.asf.emuferal.accounts.highlevel;
 import org.asf.emuferal.accounts.PlayerInventory;
-import org.asf.emuferal.entities.inventory.playervars.PlayerVarValue;
-import org.asf.emuferal.entities.systems.playervars.SetPlayerVarResult;
+import org.asf.emuferal.entities.inventory.uservars.UserVarValue;
+import org.asf.emuferal.entities.systems.uservars.SetUserVarResult;
 
 import java.util.HashMap;
 
@@ -19,7 +19,7 @@ public abstract class UserVarAccessor extends AbstractInventoryAccessor {
 	 * @param values The values to set for the variable.
 	 * @return The result for setting the variable.
 	 */
-	public abstract SetPlayerVarResult setPlayerVarValue(int defID, int[] values);
+	public abstract SetUserVarResult setPlayerVarValue(int defID, int[] values);
 	
 	/**
 	 * Sets a player variable using the passed defID for the variable, at the specific index.
@@ -28,7 +28,7 @@ public abstract class UserVarAccessor extends AbstractInventoryAccessor {
 	 * @param value The value to put at that index.
 	 * @return The result for setting the variable.
 	 */
-	public abstract SetPlayerVarResult setPlayerVarValue(int defID, int index, int value);
+	public abstract SetUserVarResult setPlayerVarValue(int defID, int index, int value);
 
 	/**
 	 * Sets a player variable using the passed DefID for the variable,
@@ -37,14 +37,14 @@ public abstract class UserVarAccessor extends AbstractInventoryAccessor {
 	 * @param indexToValueUpdateMap A map of indexes and values to set for the index in the variable.
 	 * @return The result for setting the variable.
 	 */
-	public abstract SetPlayerVarResult setPlayerVarValue(int defID, HashMap<Integer, Integer> indexToValueUpdateMap);
+	public abstract SetUserVarResult setPlayerVarValue(int defID, HashMap<Integer, Integer> indexToValueUpdateMap);
 	
 	/**
 	 * Gets all the values for the player variable.
 	 * @param defID The ID for the variable to get values from.
 	 * @return A map of index --> values for all the values in the player variable.
 	 */
-	public abstract PlayerVarValue[] getPlayerVarValue(int defID);
+	public abstract UserVarValue[] getPlayerVarValue(int defID);
 	
 	/**
 	 * Gets the value for the player variable for the specified index.
@@ -52,7 +52,7 @@ public abstract class UserVarAccessor extends AbstractInventoryAccessor {
 	 * @param index The player variable index to get the value at.
 	 * @return The value at that index in the player variable.
 	 */
-	public abstract PlayerVarValue getPlayerVarValue(int defID, int index);
+	public abstract UserVarValue getPlayerVarValue(int defID, int index);
 	
 	/**
 	 * Gets the values for the player variable for all the specified indexes.
@@ -60,7 +60,7 @@ public abstract class UserVarAccessor extends AbstractInventoryAccessor {
 	 * @param indexes The indexes to retrieve values from.
 	 * @return A map of index --> values of the retrieved values.
 	 */
-	public abstract PlayerVarValue[] getPlayerVarValue(int defID, int[] indexes);
+	public abstract UserVarValue[] getPlayerVarValue(int defID, int[] indexes);
 	
 	/**
 	 * Deletes a player variable from the player's inventory, along with all its values.
@@ -77,7 +77,7 @@ public abstract class UserVarAccessor extends AbstractInventoryAccessor {
 	 * @param index The index to delete the value at.
 	 * @return The result of the deletion.
 	 */
-	public abstract SetPlayerVarResult deletePlayerVarValueAtIndex(int defID, int index);
+	public abstract SetUserVarResult deletePlayerVarValueAtIndex(int defID, int index);
 	
 	
 }

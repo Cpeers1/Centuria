@@ -1,25 +1,25 @@
-package org.asf.emuferal.entities.inventory.playervars;
+package org.asf.emuferal.entities.inventory.uservars;
 
 import org.asf.emuferal.entities.inventory.InventoryItem;
-import org.asf.emuferal.enums.inventory.UserVarType;
+import org.asf.emuferal.enums.inventory.uservars.UserVarType;
 
 import com.google.gson.JsonObject;
 
-public class PlayerVarItem extends InventoryItem {
+public class UserVarItem extends InventoryItem {
 	
 	public static int InvType = 303;
 	
-	public PlayerVarValue[] values;
+	public UserVarValue[] values;
 	public UserVarType userVarType;
 	
-	public PlayerVarItem(PlayerVarValue[] values, UserVarType userVarType, int defId, String uuid)
+	public UserVarItem(UserVarValue[] values, UserVarType userVarType, int defId, String uuid)
 	{
 		super(defId, uuid, InvType);
 		this.values = values;
 		this.userVarType = userVarType;
 	}
 	
-	public PlayerVarItem(int defId, String uuid, int invType)
+	public UserVarItem(int defId, String uuid, int invType)
 	{
 		super(defId, uuid, InvType);
 	}	

@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 @Component
 public class TradeableComponent extends InventoryItemComponent {
 	
-	private static String componentName = "Tradable";
+	public static String componentName = "Tradable";
 
 	private static String isInTradeListPropertyName = "isInTradeList";
 
