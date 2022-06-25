@@ -13,6 +13,7 @@ import org.asf.emuferal.modules.IEmuFeralModule;
 import org.asf.emuferal.modules.ModuleManager;
 import org.asf.emuferal.shops.info.ShopInfo;
 import org.asf.emuferal.shops.info.ShopItem;
+import org.asf.emuferal.shops.info.UncraftingInfo;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -22,8 +23,11 @@ import com.google.gson.JsonParser;
 public class ShopManager {
 
 	private static HashMap<String, ShopInfo> shops = new HashMap<String, ShopInfo>();
+	private static HashMap<String, ArrayList<String>> itemShops = new HashMap<String, ArrayList<String>>();
+	private static HashMap<String, UncraftingInfo> uncrafting = new HashMap<String, UncraftingInfo>();
 
-	private static void loadShopData(JsonObject shopsJson) {
+	private static void loadShopData(JsonObject helper) {
+		JsonObject shopsJson = helper.get("Shops").getAsJsonObject();
 		shopsJson.keySet().forEach((shopId) -> {
 			JsonObject shopObject = shopsJson.get(shopId).getAsJsonObject();
 
@@ -45,8 +49,10 @@ public class ShopManager {
 			}
 
 			// Load enigmas
-			JsonArray enigmas = shopObject.get("enigmas").getAsJsonArray();
-			enigmas.forEach((id) -> shop.enigmas.add(id.getAsString()));
+			if (shopObject.has("enigmas")) {
+				JsonArray enigmas = shopObject.get("enigmas").getAsJsonArray();
+				enigmas.forEach((id) -> shop.enigmas.add(id.getAsString()));
+			}
 
 			// Load object name if present
 			if (shopObject.has("object"))
@@ -91,14 +97,46 @@ public class ShopManager {
 				});
 			}
 		});
+
+		// Uncrafting
+		JsonObject uncraftingJson = helper.get("Uncrafting").getAsJsonObject();
+		uncraftingJson.keySet().forEach((item) -> {
+			JsonObject info = uncraftingJson.get(item).getAsJsonObject();
+
+			// Load into object
+			UncraftingInfo ucInfo;
+			if (!uncrafting.containsKey(item)) {
+				// Create
+				ucInfo = new UncraftingInfo();
+
+				// Save in memory
+				uncrafting.put(item, ucInfo);
+			} else {
+				// Transform
+				ucInfo = uncrafting.get(item);
+
+				// Clear old content list if needed
+				if (info.has("result"))
+					ucInfo.result.clear();
+			}
+
+			// Load object name if present
+			if (info.has("object"))
+				ucInfo.object = info.get("object").getAsString();
+
+			// Load results
+			if (info.has("result")) {
+				JsonObject result = info.get("result").getAsJsonObject();
+				result.keySet().forEach((id) -> ucInfo.result.put(id, result.get(id).getAsInt()));
+			}
+		});
 	}
 
 	static {
 		try {
 			// Load the helper
 			InputStream strm = ShopManager.class.getClassLoader().getResourceAsStream("shops.json");
-			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-					.get("Shops").getAsJsonObject();
+			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
 			strm.close();
 
 			// Load the shops into memory
@@ -157,6 +195,17 @@ public class ShopManager {
 					e.printStackTrace();
 				}
 			}
+
+			// Scan into memory
+			shops.forEach((id, shop) -> {
+				// Scan contents
+				shop.contents.forEach((itmId, itm) -> {
+					if (!itemShops.containsKey(itmId))
+						itemShops.put(itmId, new ArrayList<String>());
+					if (!itemShops.get(itmId).contains(id))
+						itemShops.get(itmId).add(id);
+				});
+			});
 		} catch (Exception e) {
 		}
 	}
@@ -417,6 +466,29 @@ public class ShopManager {
 	 */
 	public static boolean isShop(String id) {
 		return shops.containsKey(id);
+	}
+
+	/**
+	 * Retrieves the IDs of the shops this item can be bought from
+	 * 
+	 * @param id Item defID
+	 * @return Array of shop defIDs
+	 */
+	public static String[] getShopsForItem(String id) {
+		// Check existence
+		if (!itemShops.containsKey(id))
+			return new String[0];
+		return itemShops.get(id).toArray(t -> new String[t]);
+	}
+
+	/**
+	 * Retrieves uncrafting information
+	 * 
+	 * @param itemDefId Item defID
+	 * @return UncraftingInfo object instance or null
+	 */
+	public static UncraftingInfo getUncraft(String itemDefId) {
+		return uncrafting.get(itemDefId);
 	}
 
 }

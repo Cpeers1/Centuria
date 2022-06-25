@@ -1,10 +1,7 @@
 package org.asf.emuferal.entities.components.uservars;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.asf.emuferal.entities.components.InventoryItemComponent;
 import org.asf.emuferal.entities.uservars.UserVarValue;
 import org.asf.emuferal.enums.uservars.UserVarType;
@@ -40,8 +37,6 @@ public abstract class UserVarComponent extends InventoryItemComponent {
 
 	@Override
 	public JsonObject toJson() {
-		// TODO Auto-generated method stub
-
 		JsonObject newComponent = new JsonObject();
 		JsonObject newValueObject = new JsonObject();
 
@@ -61,7 +56,6 @@ public abstract class UserVarComponent extends InventoryItemComponent {
 		String valuesJsonString = object.get(VALUES_PROPERTY_NAME).getAsString();
 
 		// Parse the values json string
-
 		var valuesObject = JsonParser.parseString(valuesJsonString).getAsJsonObject();
 
 		for (var valueObject : valuesObject.entrySet()) {
@@ -76,21 +70,19 @@ public abstract class UserVarComponent extends InventoryItemComponent {
 
 		return value;
 	}
-	
-	public UserVarValue[] getAllUserVarValues()
-	{
+
+	public UserVarValue[] getAllUserVarValues() {
 		UserVarValue[] userVarValues = new UserVarValue[values.size()];
-		
+
 		int index = 0;
-		for(var entry : values)
-		{
+		for (var entry : values) {
 			var newUserVarValue = new UserVarValue();
 			newUserVarValue.index = index;
 			newUserVarValue.value = entry;
 			userVarValues[index] = newUserVarValue;
 			index++;
 		}
-		
+
 		return userVarValues;
 	}
 

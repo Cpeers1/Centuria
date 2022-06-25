@@ -275,8 +275,6 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 			}
 		}
 
-
-
 		for (var roomUpdate : this.roomChanges) {
 			var owner = (Player) client.container;
 

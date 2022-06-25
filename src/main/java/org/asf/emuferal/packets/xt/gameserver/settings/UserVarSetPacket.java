@@ -5,10 +5,6 @@ import java.io.IOException;
 import org.asf.emuferal.accounts.highlevel.impl.UserVarAccessorImpl;
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
-import org.asf.emuferal.interactions.NetworkedObjects;
-import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
-import org.asf.emuferal.modules.eventbus.EventBus;
-import org.asf.emuferal.modules.events.interactions.InteractionStartEvent;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemPacket;
@@ -20,8 +16,7 @@ public class UserVarSetPacket implements IXtPacket<UserVarSetPacket> {
 
 	private int varDefId;
 	private int value;
-	private int index; // TODO: what is this really?
-	private boolean success;
+	private int index;
 
 	@Override
 	public UserVarSetPacket instantiate() {
@@ -42,20 +37,18 @@ public class UserVarSetPacket implements IXtPacket<UserVarSetPacket> {
 
 	@Override
 	public void build(XtWriter wr) throws IOException {
-		// TODO: verify this
 		wr.writeInt(-1); // Data prefix
 
 		wr.writeBoolean(true);
 		wr.writeInt(varDefId);
 		wr.writeInt(value);
-		wr.writeInt(index); // TODO: multiindex user vars
+		wr.writeInt(index);
 
 		wr.writeString(""); // data suffix
 	}
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-
 		// log interaction details
 		if (System.getProperty("debugMode") != null) {
 			System.out.println("[SETTINGS] [USERVARSET]  Client to server (varDefId: " + varDefId + ", value: " + value
@@ -67,7 +60,6 @@ public class UserVarSetPacket implements IXtPacket<UserVarSetPacket> {
 		var varAccessor = new UserVarAccessorImpl(player.account.getPlayerInventory());
 		var output = varAccessor.setPlayerVarValue(varDefId, index, value);
 
-		success = output.success;
 		var outputInv = new JsonArray();
 
 		for (var item : output.changedUserVars) {

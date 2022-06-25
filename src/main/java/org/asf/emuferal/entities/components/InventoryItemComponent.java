@@ -1,8 +1,6 @@
 package org.asf.emuferal.entities.components;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.google.gson.JsonObject;
 

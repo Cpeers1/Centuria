@@ -57,6 +57,7 @@ public class ShopConverter {
 			}
 		}
 
+		JsonObject uncrafting = new JsonObject();
 		HashMap<String, HashMap<String, Integer>> costs = new HashMap<String, HashMap<String, Integer>>();
 		HashMap<String, HashMap<String, Integer>> eurekaItems = new HashMap<String, HashMap<String, Integer>>();
 
@@ -75,12 +76,16 @@ public class ShopConverter {
 			} else if (line.startsWith("\"\"")) {
 				lastData = "{\n" + lastData;
 				lastData = lastData.replace("`", "\"");
+
+				boolean uncraftable = false;
 				JsonObject obj = JsonParser.parseString(lastData).getAsJsonObject();
+				JsonObject purchaseable = null;
 
 				for (JsonElement ele : obj.get("components").getAsJsonArray()) {
 					JsonObject data = ele.getAsJsonObject();
 					if (data.get("componentClass").getAsString().equals("PurchaseableDefComponent")) {
 						data = data.get("componentJSON").getAsJsonObject();
+						purchaseable = data;
 						HashMap<String, Integer> cost = new HashMap<String, Integer>();
 						for (JsonElement elem : data.get("_cost").getAsJsonArray()) {
 							JsonObject costObj = elem.getAsJsonObject();
@@ -103,7 +108,24 @@ public class ShopConverter {
 							int chance = data.get("rareChance").getAsInt();
 							itemChances.put(id, chance);
 						}
+					} else if (data.get("componentClass").getAsString().equals("RecyclableDefComponent")) {
+						uncraftable = true;
 					}
+				}
+
+				if (uncraftable && purchaseable != null) {
+					JsonObject uncraftInfo = new JsonObject();
+					uncraftInfo.addProperty("object", lastName);
+					JsonObject results = new JsonObject();
+					uncraftInfo.add("result", results);
+					for (JsonElement elem : purchaseable.get("_cost").getAsJsonArray()) {
+						JsonObject costObj = elem.getAsJsonObject();
+						String itm = costObj.get("itemDefID").getAsString();
+						int count = costObj.get("count").getAsInt();
+						results.addProperty(itm, (int) (count * 0.3f));
+					}
+					if (results.size() != 0)
+						uncrafting.add(lastID, uncraftInfo);
 				}
 
 				lastData = null;
@@ -317,6 +339,7 @@ public class ShopConverter {
 			}
 		}
 		res.add("Shops", shops);
+		res.add("Uncrafting", uncrafting);
 
 		System.out.println(new Gson().newBuilder().setPrettyPrinting().create().toJson(res));
 	}

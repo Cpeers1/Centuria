@@ -24,6 +24,7 @@ import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemInfo;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemPacket;
+import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemRemovedPacket;
 import org.asf.emuferal.players.Player;
 
 import com.google.gson.JsonArray;
@@ -394,6 +395,7 @@ public class ItemAccessor {
 		if (!inventoryTypeMap.containsKey(info.inventory))
 			return false;
 		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
+		String oldId = inventory.getAccessor().findInventoryObject(info.inventory, defID).get("id").getAsString();
 
 		// Find type handler
 		switch (container.inventoryType) {
@@ -420,9 +422,15 @@ public class ItemAccessor {
 
 		if (player != null) {
 			// Send packet if successful
-			InventoryItemPacket pk = new InventoryItemPacket();
-			pk.item = inventory.getItem(info.inventory);
-			player.client.sendPacket(pk);
+			if (inventory.getAccessor().hasInventoryObject(info.inventory, defID)) {
+				InventoryItemPacket pk = new InventoryItemPacket();
+				pk.item = inventory.getAccessor().findInventoryObject(info.inventory, defID);
+				player.client.sendPacket(pk);
+			} else {
+				InventoryItemRemovedPacket pk = new InventoryItemRemovedPacket();
+				pk.items = new String[] { oldId };
+				player.client.sendPacket(pk);
+			}
 
 			// Save items
 			for (String itm : inventory.getAccessor().itemsToSave) {
@@ -430,7 +438,7 @@ public class ItemAccessor {
 
 				if (!info.inventory.equals(itm)) {
 					// Sync unsaved inventories
-					pk = new InventoryItemPacket();
+					InventoryItemPacket pk = new InventoryItemPacket();
 					pk.item = inventory.getItem(itm);
 					player.client.sendPacket(pk);
 				}
@@ -463,6 +471,7 @@ public class ItemAccessor {
 		if (!inventoryTypeMap.containsKey(info.inventory))
 			return false;
 		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
+		String oldId = inventory.getAccessor().findInventoryObject(info.inventory, defID).get("id").getAsString();
 
 		// Find type handler
 		switch (container.inventoryType) {
@@ -489,9 +498,15 @@ public class ItemAccessor {
 
 		if (player != null) {
 			// Send packet if successful
-			InventoryItemPacket pk = new InventoryItemPacket();
-			pk.item = inventory.getItem(info.inventory);
-			player.client.sendPacket(pk);
+			if (inventory.getAccessor().hasInventoryObject(info.inventory, defID)) {
+				InventoryItemPacket pk = new InventoryItemPacket();
+				pk.item = inventory.getAccessor().findInventoryObject(info.inventory, defID);
+				player.client.sendPacket(pk);
+			} else {
+				InventoryItemRemovedPacket pk = new InventoryItemRemovedPacket();
+				pk.items = new String[] { oldId };
+				player.client.sendPacket(pk);
+			}
 
 			// Save items
 			for (String itm : inventory.getAccessor().itemsToSave) {
@@ -499,7 +514,7 @@ public class ItemAccessor {
 
 				if (!info.inventory.equals(itm)) {
 					// Sync unsaved inventories
-					pk = new InventoryItemPacket();
+					InventoryItemPacket pk = new InventoryItemPacket();
 					pk.item = inventory.getItem(itm);
 					player.client.sendPacket(pk);
 				}
@@ -583,8 +598,8 @@ public class ItemAccessor {
 
 		if (player != null) {
 			// Send packet if successful
-			InventoryItemPacket pk = new InventoryItemPacket();
-			pk.item = inventory.getItem(info.inventory);
+			InventoryItemRemovedPacket pk = new InventoryItemRemovedPacket();
+			pk.items = new String[] { object.get("id").getAsString() };
 			player.client.sendPacket(pk);
 
 			// Save items
@@ -593,9 +608,9 @@ public class ItemAccessor {
 
 				if (!info.inventory.equals(itm)) {
 					// Sync unsaved inventories
-					pk = new InventoryItemPacket();
-					pk.item = inventory.getItem(itm);
-					player.client.sendPacket(pk);
+					InventoryItemPacket pkt = new InventoryItemPacket();
+					pkt.item = inventory.getItem(itm);
+					player.client.sendPacket(pkt);
 				}
 			}
 			inventory.getAccessor().completedSave();
