@@ -5,6 +5,11 @@ import org.asf.emuferal.entities.inventory.components.InventoryItemComponent;
 
 import com.google.gson.JsonObject;
 
+/**
+ * Generic component for declaring the amount of a stackable item.
+ * @author Owenvii
+ *
+ */
 @Component
 public class QuantityComponent extends InventoryItemComponent {
 

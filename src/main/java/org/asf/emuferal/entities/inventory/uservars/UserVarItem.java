@@ -18,7 +18,7 @@ import com.google.gson.JsonObject;
 /**
  * Friendly interface for making a userVarItem.
  * 
- * @author owen9
+ * @author Owenvii
  *
  */
 public final class UserVarItem extends InventoryItem {

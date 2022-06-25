@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 /**
  * Base class for all inventory item components.
  * 
- * @author owen9
+ * @author Owenvii
  *
  */
 public abstract class InventoryItemComponent {

@@ -5,6 +5,11 @@ import org.asf.emuferal.entities.inventory.components.InventoryItemComponent;
 
 import com.google.gson.JsonObject;
 
+/**
+ * Generic component for time stamping items.
+ * @author Owenvii
+ *
+ */
 @Component
 public class TimeStampComponent extends InventoryItemComponent {
 

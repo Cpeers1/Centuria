@@ -5,6 +5,11 @@ import org.asf.emuferal.entities.inventory.components.InventoryItemComponent;
 
 import com.google.gson.JsonObject;
 
+/**
+ * Generic component for declaring an item as tradeable, and its tradeable status.
+ * @author Owenvii
+ *
+ */
 @Component
 public class TradeableComponent extends InventoryItemComponent {
 	

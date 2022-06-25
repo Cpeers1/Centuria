@@ -9,7 +9,7 @@ import org.reflections.Reflections;
 /**
  * This class is responsible for holding a type register of all components.
  * It retrieves the component's class type from its component json name. 
- * @author owen9
+ * @author Owenvii
  *
  */
 public final class ComponentManager {

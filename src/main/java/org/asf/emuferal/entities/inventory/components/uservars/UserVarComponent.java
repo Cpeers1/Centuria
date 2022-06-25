@@ -1,6 +1,8 @@
 package org.asf.emuferal.entities.inventory.components.uservars;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.asf.emuferal.entities.inventory.components.InventoryItemComponent;
@@ -19,7 +21,7 @@ public abstract class UserVarComponent extends InventoryItemComponent {
 
 	private static String valuePropertyName = "values";
 
-	private Map<Integer, Integer> values = new HashMap<Integer, Integer>();
+	private List<Integer> values = new ArrayList<Integer>();
 
 	/**
 	 * Returns the type of the user var, based on its component name.
@@ -43,8 +45,10 @@ public abstract class UserVarComponent extends InventoryItemComponent {
 		JsonObject newComponent = new JsonObject();
 		JsonObject newValueObject = new JsonObject();
 
-		for (var entry : values.entrySet()) {
-			newValueObject.addProperty(entry.getKey().toString(), entry.getValue());
+		int index = 0;
+		for (var entry : values) {
+			newValueObject.addProperty(Integer.toString(index), entry);
+			index++;
 		}
 
 		newComponent.addProperty(valuePropertyName, newValueObject.toString());
@@ -61,7 +65,7 @@ public abstract class UserVarComponent extends InventoryItemComponent {
 		var valuesObject = JsonParser.parseString(valuesJsonString).getAsJsonObject();
 
 		for (var valueObject : valuesObject.entrySet()) {
-			values.put(Integer.parseInt(valueObject.getKey()), valueObject.getValue().getAsInt());
+			values.set(Integer.parseInt(valueObject.getKey()), valueObject.getValue().getAsInt());
 		}
 	}
 
@@ -72,9 +76,26 @@ public abstract class UserVarComponent extends InventoryItemComponent {
 
 		return value;
 	}
+	
+	public UserVarValue[] getAllUserVarValues()
+	{
+		UserVarValue[] userVarValues = new UserVarValue[values.size()];
+		
+		int index = 0;
+		for(var entry : values)
+		{
+			var newUserVarValue = new UserVarValue();
+			newUserVarValue.index = index;
+			newUserVarValue.value = entry;
+			userVarValues[index] = newUserVarValue;
+			index++;
+		}
+		
+		return userVarValues;
+	}
 
 	public void setUserVarValue(UserVarValue valueToSet) {
-		values.put(valueToSet.index, valueToSet.value);
+		values.set(valueToSet.index, valueToSet.value);
 	}
 
 	public void deleteUserVarValue(int index) {
