@@ -22,6 +22,7 @@ Changes in EmuFeral 1.0.0.A31:
  - Basic chests
  - Large portions of default player data for the standard server
  - Fix incorrect error messages being shown
+ - Item uncrafting
  - Shops
  
 Discord bot changes:
