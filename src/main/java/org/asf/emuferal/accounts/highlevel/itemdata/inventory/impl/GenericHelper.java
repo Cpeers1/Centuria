@@ -3,11 +3,12 @@ package org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl;
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.AbstractInventoryInteractionHelper;
 import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemComponent;
+import org.asf.emuferal.entities.inventory.InventoryItem;
 
 import com.google.gson.JsonObject;
 
 public class GenericHelper extends AbstractInventoryInteractionHelper {
-
+	
 	private String inventoryId;
 	private ItemComponent[] components;
 
@@ -36,21 +37,26 @@ public class GenericHelper extends AbstractInventoryInteractionHelper {
 	}
 
 	@Override
-	public boolean removeOne(PlayerInventory inventory, int defID) {
+	public String removeOne(PlayerInventory inventory, int defID) {
 		if (inventory.getAccessor().hasInventoryObject(inventoryId, defID)) {
+			String uuid = inventory.getAccessor().findInventoryObject(inventoryId, defID)
+					.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
 			inventory.getAccessor().removeInventoryObject(inventoryId, defID);
-			return true;
+			return uuid;
 		}
-		return false;
+		
+		return null;
 	}
 
 	@Override
-	public boolean removeOne(PlayerInventory inventory, JsonObject object) {
-		if (inventory.getAccessor().hasInventoryObject(inventoryId, object.get("id").getAsString())) {
+	public String removeOne(PlayerInventory inventory, JsonObject object) {
+		if (inventory.getAccessor().hasInventoryObject(inventoryId, object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString())) {
 			// Remove the item directly
+			String uuid = inventory.getAccessor().findInventoryObject(inventoryId, InventoryItem.UUID_PROPERTY_NAME)
+					.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
 			inventory.getItem(inventoryId).getAsJsonArray().remove(object);
 			inventory.setItem(inventoryId, inventory.getItem(inventoryId));
-			return true;
+			return uuid;
 		}
 		return removeOne(inventory, object.get("defId").getAsInt());
 	}

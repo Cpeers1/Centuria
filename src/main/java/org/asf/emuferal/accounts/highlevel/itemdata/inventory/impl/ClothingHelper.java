@@ -2,25 +2,30 @@ package org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl;
 
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.AbstractInventoryInteractionHelper;
+import org.asf.emuferal.entities.inventory.InventoryItem;
 
 import com.google.gson.JsonObject;
 
 public class ClothingHelper extends AbstractInventoryInteractionHelper {
 
+	private static final String INV_TYPE = "100";
+
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, int defID) {
 		String id = inventory.getClothingAccessor().addClothing(defID, false);
-		return inventory.getAccessor().findInventoryObject("100", id);
+		return inventory.getAccessor().findInventoryObject(INV_TYPE, id);
 	}
 
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, JsonObject object) {
-		if (inventory.getAccessor().hasInventoryObject("100", object.get("id").getAsString())) {
+		if (inventory.getAccessor().hasInventoryObject(INV_TYPE,
+				object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString())) {
 			// Remove existing
-			inventory.getAccessor().removeInventoryObject("100", object.get("id").getAsString());
+			inventory.getAccessor().removeInventoryObject(INV_TYPE,
+					object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString());
 
 			// Add to inventory
-			inventory.getItem("100").getAsJsonArray().add(object);
+			inventory.getItem(INV_TYPE).getAsJsonArray().add(object);
 
 			// Return object
 			return object;
@@ -29,21 +34,31 @@ public class ClothingHelper extends AbstractInventoryInteractionHelper {
 	}
 
 	@Override
-	public boolean removeOne(PlayerInventory inventory, int defID) {
+	public String removeOne(PlayerInventory inventory, int defID) {
 		if (inventory.getClothingAccessor().hasClothing(defID)) {
-			inventory.getAccessor().removeInventoryObject("100", defID);
-			return true;
+			String uuid = inventory.getAccessor().findInventoryObject(INV_TYPE, defID)
+					.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
+			inventory.getAccessor().removeInventoryObject(INV_TYPE, defID);
+
+			return uuid;
 		}
-		return false;
+
+		return null;
 	}
 
 	@Override
-	public boolean removeOne(PlayerInventory inventory, JsonObject object) {
-		if (inventory.getClothingAccessor().hasClothing(object.get("defId").getAsInt())) {
-			inventory.getClothingAccessor().removeClothing(object.get("id").getAsString());
-			return true;
+	public String removeOne(PlayerInventory inventory, JsonObject object) {
+		if (inventory.getClothingAccessor().hasClothing(object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt())) {
+			String uuid = inventory.getAccessor()
+					.findInventoryObject(INV_TYPE, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt())
+					.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
+			inventory.getClothingAccessor()
+					.removeClothing(object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsString());
+
+			return uuid;
 		}
-		return false;
+
+		return null;
 	}
 
 }

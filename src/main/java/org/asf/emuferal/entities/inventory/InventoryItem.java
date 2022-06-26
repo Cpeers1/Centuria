@@ -18,10 +18,10 @@ import com.google.gson.JsonObject;
 public abstract class InventoryItem 
 {
 	//json constants
-	public final static String defIdPropertyName = "defId";
-	public final static String uuidPropertyName = "id";
-	public final static String invTypePropertyName = "type";
-	public final static String componentsPropertyName = "components";
+	public final static String DEF_ID_PROPERTY_NAME = "defId";
+	public final static String UUID_PROPERTY_NAME = "id";
+	public final static String INV_TYPE_PROPERTY_NAME = "type";
+	public final static String COMPONENTS_PROPERTY_NAME = "components";
 	
 	//object variables
 	public int defId;
@@ -60,9 +60,9 @@ public abstract class InventoryItem
 	{
 		//this continues adding the fields from the object.
 		
-		defId = object.get(defIdPropertyName).getAsInt();
-		uuid = object.get(uuidPropertyName).getAsString();
-		invType = object.get(invTypePropertyName).getAsInt();
+		defId = object.get(DEF_ID_PROPERTY_NAME).getAsInt();
+		uuid = object.get(UUID_PROPERTY_NAME).getAsString();
+		invType = object.get(INV_TYPE_PROPERTY_NAME).getAsInt();
 		
 		//get components
 		
@@ -85,9 +85,9 @@ public abstract class InventoryItem
 	{
 		//this continues adding the fields to the object.
 		var newObject = new JsonObject();
-		newObject.addProperty(defIdPropertyName, defId);
-		newObject.addProperty(uuidPropertyName, uuid);
-		newObject.addProperty(invTypePropertyName, invType);
+		newObject.addProperty(DEF_ID_PROPERTY_NAME, defId);
+		newObject.addProperty(UUID_PROPERTY_NAME, uuid);
+		newObject.addProperty(INV_TYPE_PROPERTY_NAME, invType);
 		
 		var componentObject = new JsonObject();
 		
@@ -98,7 +98,7 @@ public abstract class InventoryItem
 		}
 		
 		//add component object
-		newObject.add(componentsPropertyName, componentObject);
+		newObject.add(COMPONENTS_PROPERTY_NAME, componentObject);
 		
 		return newObject;
 	}

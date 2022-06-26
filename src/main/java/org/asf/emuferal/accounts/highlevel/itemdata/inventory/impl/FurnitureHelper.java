@@ -2,48 +2,55 @@ package org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl;
 
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.AbstractInventoryInteractionHelper;
+import org.asf.emuferal.entities.inventory.InventoryItem;
 
 import com.google.gson.JsonObject;
 
 public class FurnitureHelper extends AbstractInventoryInteractionHelper {
 
+	private static final String INV_TYPE = "102";
+	
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, int defID) {
 		String id = inventory.getFurnitureAccessor().addFurniture(defID, false);
-		return inventory.getAccessor().findInventoryObject("102", id);
+		return inventory.getAccessor().findInventoryObject(INV_TYPE, id);
 	}
 
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, JsonObject object) {
-		if (inventory.getAccessor().hasInventoryObject("102", object.get("id").getAsString())) {
+		if (inventory.getAccessor().hasInventoryObject(INV_TYPE, object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString())) {
 			// Remove existing
-			inventory.getAccessor().removeInventoryObject("102", object.get("id").getAsString());
+			inventory.getAccessor().removeInventoryObject(INV_TYPE, object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString());
 
 			// Add to inventory
-			inventory.getItem("102").getAsJsonArray().add(object);
+			inventory.getItem(INV_TYPE).getAsJsonArray().add(object);
 
 			// Return object
 			return object;
 		}
-		return addOne(inventory, object.get("defId").getAsInt());
+		return addOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt());
 	}
 
 	@Override
-	public boolean removeOne(PlayerInventory inventory, int defID) {
+	public String removeOne(PlayerInventory inventory, int defID) {
 		if (inventory.getFurnitureAccessor().hasFurniture(defID)) {
-			inventory.getAccessor().removeInventoryObject("102", defID);
-			return true;
+			String uuid = inventory.getAccessor().findInventoryObject(INV_TYPE, defID)
+					.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
+			inventory.getAccessor().removeInventoryObject(INV_TYPE, defID);
+			return uuid;
 		}
-		return false;
+		return null;
 	}
 
 	@Override
-	public boolean removeOne(PlayerInventory inventory, JsonObject object) {
-		if (inventory.getFurnitureAccessor().hasFurniture(object.get("defId").getAsInt())) {
-			inventory.getFurnitureAccessor().removeFurniture(object.get("id").getAsString());
-			return true;
+	public String removeOne(PlayerInventory inventory, JsonObject object) {
+		if (inventory.getFurnitureAccessor().hasFurniture(object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt())) {
+			String uuid = inventory.getAccessor().findInventoryObject(INV_TYPE, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt())
+					.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
+			inventory.getFurnitureAccessor().removeFurniture(object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString());
+			return uuid;
 		}
-		return false;
+		return null;
 	}
 
 }

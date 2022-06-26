@@ -395,8 +395,9 @@ public class ItemAccessor {
 		if (!inventoryTypeMap.containsKey(info.inventory))
 			return false;
 		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
-		String oldId = inventory.getAccessor().findInventoryObject(info.inventory, defID).get("id").getAsString();
 
+		String removedItemUUID = null;
+		
 		// Find type handler
 		switch (container.inventoryType) {
 
@@ -413,7 +414,8 @@ public class ItemAccessor {
 		case OBJECT_BASED:
 		case QUANTITY_BASED: {
 			// Remove item
-			if (!container.inventoryInteraction.removeOne(inventory, defID))
+			removedItemUUID = container.inventoryInteraction.removeOne(inventory, defID);
+			if (removedItemUUID == null)
 				return false;
 			break;
 		}
@@ -428,7 +430,7 @@ public class ItemAccessor {
 				player.client.sendPacket(pk);
 			} else {
 				InventoryItemRemovedPacket pk = new InventoryItemRemovedPacket();
-				pk.items = new String[] { oldId };
+				pk.items = new String[] { removedItemUUID };
 				player.client.sendPacket(pk);
 			}
 
@@ -471,7 +473,8 @@ public class ItemAccessor {
 		if (!inventoryTypeMap.containsKey(info.inventory))
 			return false;
 		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
-		String oldId = inventory.getAccessor().findInventoryObject(info.inventory, defID).get("id").getAsString();
+
+		String[] removedItemUUIDs = null;
 
 		// Find type handler
 		switch (container.inventoryType) {
@@ -489,7 +492,8 @@ public class ItemAccessor {
 		case OBJECT_BASED:
 		case QUANTITY_BASED: {
 			// Remove item
-			if (!container.inventoryInteraction.removeMultiple(inventory, defID, count))
+			removedItemUUIDs = container.inventoryInteraction.removeMultiple(inventory, defID, count);
+			if (removedItemUUIDs == null)
 				return false;
 			break;
 		}
@@ -504,7 +508,7 @@ public class ItemAccessor {
 				player.client.sendPacket(pk);
 			} else {
 				InventoryItemRemovedPacket pk = new InventoryItemRemovedPacket();
-				pk.items = new String[] { oldId };
+				pk.items = removedItemUUIDs;
 				player.client.sendPacket(pk);
 			}
 
@@ -543,6 +547,8 @@ public class ItemAccessor {
 			return false;
 		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
 
+		String[] removedItemUUIDs = null;
+
 		// Find type handler
 		switch (container.inventoryType) {
 
@@ -552,17 +558,28 @@ public class ItemAccessor {
 			if (!inventory.getAccessor().hasInventoryObject(info.inventory, object.get("defId").getAsInt()))
 				return false; // invalid
 
+			String removedItemUUID = container.inventoryInteraction.removeOne(inventory, object);
+
 			// Remove item directly
-			if (!container.inventoryInteraction.removeOne(inventory, object))
+			if (removedItemUUID == null)
 				return false;
+
+			removedItemUUIDs = new String[] { removedItemUUID };
 			break;
 		}
 
 		// Object-based item
 		case OBJECT_BASED: {
 			// Remove item directly
-			if (!container.inventoryInteraction.removeOne(inventory, object))
+
+			String removedItemUUID = container.inventoryInteraction.removeOne(inventory, object);
+
+			// Remove item directly
+			if (removedItemUUID == null)
 				return false;
+
+			removedItemUUIDs = new String[] { removedItemUUID };
+
 			break;
 		}
 
@@ -580,15 +597,22 @@ public class ItemAccessor {
 						return false;
 					} else {
 						// Remove existing
-						if (!container.inventoryInteraction.removeMultiple(inventory, object.get("defId").getAsInt(),
-								q))
+						removedItemUUIDs = container.inventoryInteraction.removeMultiple(inventory,
+								object.get("defId").getAsInt(), q);
+						if (removedItemUUIDs == null) {
 							return false;
+						}
 					}
 				}
 			} else {
 				// Remove item directly
-				if (!container.inventoryInteraction.removeOne(inventory, object))
+				String removedItemUUID = container.inventoryInteraction.removeOne(inventory, object);
+
+				// Remove item directly
+				if (removedItemUUID == null)
 					return false;
+
+				removedItemUUIDs = new String[] { removedItemUUID };
 				break;
 			}
 			break;
@@ -599,7 +623,7 @@ public class ItemAccessor {
 		if (player != null) {
 			// Send packet if successful
 			InventoryItemRemovedPacket pk = new InventoryItemRemovedPacket();
-			pk.items = new String[] { object.get("id").getAsString() };
+			pk.items = removedItemUUIDs;
 			player.client.sendPacket(pk);
 
 			// Save items

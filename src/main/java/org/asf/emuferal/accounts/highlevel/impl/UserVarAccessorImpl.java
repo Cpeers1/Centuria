@@ -87,7 +87,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 			// find var by def id
 
 			var varDef = helper.get(String.valueOf(defId));
-			var componentArray = varDef.getAsJsonObject().get("data").getAsJsonObject().get(InventoryItem.componentsPropertyName).getAsJsonArray();
+			var componentArray = varDef.getAsJsonObject().get("data").getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonArray();
 			var component = componentArray.get(0);
 			var typeVal = component.getAsJsonObject().get("componentJSON").getAsJsonObject().get("type").getAsInt();
 
@@ -144,7 +144,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				int index = 0;
 
 				for (var item : inv.getAsJsonArray()) {
-					if (item.getAsJsonObject().get(InventoryItem.defIdPropertyName).getAsInt() == defID) {
+					if (item.getAsJsonObject().get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt() == defID) {
 						element = item;
 						break;
 					}
@@ -221,7 +221,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				int elementIndex = 0;
 
 				for (var item : inv.getAsJsonArray()) {
-					if (item.getAsJsonObject().get(InventoryItem.defIdPropertyName).getAsInt() == defID) {
+					if (item.getAsJsonObject().get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt() == defID) {
 						element = item;
 						break;
 					}
@@ -300,7 +300,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				int elementIndex = 0;
 
 				for (var item : inv.getAsJsonArray()) {
-					if (item.getAsJsonObject().get(InventoryItem.defIdPropertyName).getAsInt() == defID) {
+					if (item.getAsJsonObject().get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt() == defID) {
 						element = item;
 						break;
 					}
@@ -356,7 +356,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 			JsonElement element = null;
 
 			for (var item : inv.getAsJsonArray()) {
-				if (item.getAsJsonObject().get(InventoryItem.defIdPropertyName).getAsInt() == defID) {
+				if (item.getAsJsonObject().get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt() == defID) {
 					element = item;
 					break;
 				}
@@ -394,7 +394,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 			JsonElement element = null;
 
 			for (var item : inv.getAsJsonArray()) {
-				if (item.getAsJsonObject().get(InventoryItem.defIdPropertyName).getAsInt() == defID) {
+				if (item.getAsJsonObject().get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt() == defID) {
 					element = item;
 					break;
 				}
@@ -406,7 +406,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 			
 			var type = getVarType(defID);
 
-			UserVarItem userVarItem = new UserVarItem(defID, element.getAsJsonObject().get(InventoryItem.uuidPropertyName).getAsString(), type);
+			UserVarItem userVarItem = new UserVarItem(defID, element.getAsJsonObject().get(InventoryItem.UUID_PROPERTY_NAME).getAsString(), type);
 
 			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 
@@ -431,7 +431,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 			JsonElement element = null;
 
 			for (var item : inv.getAsJsonArray()) {
-				if (item.getAsJsonObject().get(InventoryItem.defIdPropertyName).getAsInt() == defID) {
+				if (item.getAsJsonObject().get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt() == defID) {
 					element = item;
 					break;
 				}
@@ -443,7 +443,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 			
 			var type = getVarType(defID);
 
-			UserVarItem userVarItem = new UserVarItem(defID, element.getAsJsonObject().get(InventoryItem.uuidPropertyName).getAsString(), type);
+			UserVarItem userVarItem = new UserVarItem(defID, element.getAsJsonObject().get(InventoryItem.UUID_PROPERTY_NAME).getAsString(), type);
 
 			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 			
@@ -491,7 +491,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 			JsonElement element = null;
 
 			for (var item : inv.getAsJsonArray()) {
-				if (item.getAsJsonObject().get(InventoryItem.defIdPropertyName).getAsInt() == defID) {
+				if (item.getAsJsonObject().get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt() == defID) {
 					element = item;
 					break;
 				}
@@ -503,7 +503,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 			
 			var type = getVarType(defID);
 
-			UserVarItem userVarItem = new UserVarItem(defID, element.getAsJsonObject().get(InventoryItem.uuidPropertyName).getAsString(), type);
+			UserVarItem userVarItem = new UserVarItem(defID, element.getAsJsonObject().get(InventoryItem.UUID_PROPERTY_NAME).getAsString(), type);
 
 			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 			

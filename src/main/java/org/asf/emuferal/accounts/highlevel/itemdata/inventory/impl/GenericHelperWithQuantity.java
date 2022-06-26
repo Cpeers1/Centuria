@@ -3,6 +3,7 @@ package org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl;
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.AbstractInventoryInteractionHelper;
 import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemComponent;
+import org.asf.emuferal.entities.inventory.InventoryItem;
 
 import com.google.gson.JsonObject;
 
@@ -49,7 +50,7 @@ public class GenericHelperWithQuantity extends AbstractInventoryInteractionHelpe
 		}
 
 		// Add to the quantity
-		JsonObject qt = old.get("components").getAsJsonObject().get("Quantity").getAsJsonObject();
+		JsonObject qt = old.get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject().get("Quantity").getAsJsonObject();
 		int oldQuantity = qt.get("quantity").getAsInt();
 		qt.remove("quantity");
 		qt.addProperty("quantity", oldQuantity + count);
@@ -58,23 +59,27 @@ public class GenericHelperWithQuantity extends AbstractInventoryInteractionHelpe
 		return old;
 	}
 
-	private boolean remove(PlayerInventory inventory, int defID, int count) {
+	private String remove(PlayerInventory inventory, int defID, int count) {
 		// Find object
 		JsonObject old = inventory.getAccessor().findInventoryObject(inventoryId, defID);
+		
 		if (old == null) {
 			// Not found
-			return false;
+			return null;
 		}
+		
+		String uuid = inventory.getAccessor().findInventoryObject(inventoryId, defID)
+				.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
 
 		// Load quantity
-		JsonObject qt = old.get("components").getAsJsonObject().get("Quantity").getAsJsonObject();
+		JsonObject qt = old.get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject().get("Quantity").getAsJsonObject();
 		int oldQuantity = qt.get("quantity").getAsInt();
 
 		// Check validity
 		if ((oldQuantity - count) <= 0) {
 			// Remove object
 			inventory.getAccessor().removeInventoryObject(inventoryId, defID);
-			return true;
+			return uuid;
 		}
 
 		// Remove from quantity
@@ -82,7 +87,7 @@ public class GenericHelperWithQuantity extends AbstractInventoryInteractionHelpe
 		qt.addProperty("quantity", oldQuantity - count);
 
 		// Success
-		return true;
+		return uuid;
 	}
 
 	@Override
@@ -91,17 +96,17 @@ public class GenericHelperWithQuantity extends AbstractInventoryInteractionHelpe
 	}
 
 	@Override
-	public boolean removeMultiple(PlayerInventory inventory, int defID, int count) {
-		return remove(inventory, defID, count);
+	public String[] removeMultiple(PlayerInventory inventory, int defID, int count) {
+		return new String[] { remove(inventory, defID, count) };
 	}
 
 	@Override
-	public boolean removeOne(PlayerInventory inventory, int defID) {
+	public String removeOne(PlayerInventory inventory, int defID) {
 		return remove(inventory, defID, 1);
 	}
 
 	@Override
-	public boolean removeOne(PlayerInventory inventory, JsonObject object) {
+	public String removeOne(PlayerInventory inventory, JsonObject object) {
 		return removeOne(inventory, object.get("defId").getAsInt());
 	}
 

@@ -2,10 +2,17 @@ package org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl;
 
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.AbstractInventoryInteractionHelper;
+import org.asf.emuferal.entities.inventory.InventoryItem;
 
 import com.google.gson.JsonObject;
 
 public class CurrencyHelper extends AbstractInventoryInteractionHelper {
+
+	private static final String INV_TYPE = "104";
+
+	private static final int LIKES_DEF_ID = 2327;
+	private static final int STAR_FRAGMENTS_DEF_ID = 14500;
+	private static final int LOCKPICKS_DEF_ID = 8372;
 
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, int defID) {
@@ -25,19 +32,19 @@ public class CurrencyHelper extends AbstractInventoryInteractionHelper {
 		switch (defID) {
 
 		// Likes
-		case 2327:
+		case LIKES_DEF_ID:
 			inventory.getCurrencyAccessor().addLikesDirectly(count);
-			return inventory.getAccessor().findInventoryObject("104", defID);
+			return inventory.getAccessor().findInventoryObject(INV_TYPE, defID);
 
 		// Star fragments
-		case 14500:
+		case STAR_FRAGMENTS_DEF_ID:
 			inventory.getCurrencyAccessor().addStarFragmentsDirectly(count);
-			return inventory.getAccessor().findInventoryObject("104", defID);
+			return inventory.getAccessor().findInventoryObject(INV_TYPE, defID);
 
 		// Lockpicks
-		case 8372:
+		case LOCKPICKS_DEF_ID:
 			inventory.getCurrencyAccessor().addLockpicksDirectly(count);
-			return inventory.getAccessor().findInventoryObject("104", defID);
+			return inventory.getAccessor().findInventoryObject(INV_TYPE, defID);
 
 		}
 
@@ -45,46 +52,53 @@ public class CurrencyHelper extends AbstractInventoryInteractionHelper {
 		return null;
 	}
 
-	private boolean remove(PlayerInventory inventory, int defID, int count) {
+	private String remove(PlayerInventory inventory, int defID, int count) {
+
+		var uuid = inventory.getAccessor().findInventoryObject(INV_TYPE, defID).get(InventoryItem.UUID_PROPERTY_NAME)
+				.getAsString();
+		
 		// Find type
 		switch (defID) {
 
 		// Likes
-		case 2327:
-			return inventory.getCurrencyAccessor().removeLikesDirectly(count);
+		case LIKES_DEF_ID:
+			inventory.getCurrencyAccessor().removeLikesDirectly(count);
+			return uuid;
 
 		// Star fragments
-		case 14500:
-			return inventory.getCurrencyAccessor().removeStarFragmentsDirectly(count);
+		case STAR_FRAGMENTS_DEF_ID:
+			inventory.getCurrencyAccessor().removeStarFragmentsDirectly(count);
+			return uuid;
 
 		// Lockpicks
-		case 8372:
-			return inventory.getCurrencyAccessor().removeLockpicksDirectly(count);
+		case LOCKPICKS_DEF_ID:
+			inventory.getCurrencyAccessor().removeLockpicksDirectly(count);
+			return uuid;
 
 		}
 
 		// Not found
-		return false;
+		return null;
 	}
 
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, JsonObject object) {
-		return addOne(inventory, object.get("defId").getAsInt());
+		return addOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt());
 	}
 
 	@Override
-	public boolean removeMultiple(PlayerInventory inventory, int defID, int count) {
-		return remove(inventory, defID, count);
+	public String[] removeMultiple(PlayerInventory inventory, int defID, int count) {		
+		return new String[] { remove(inventory, defID, count) };
 	}
 
 	@Override
-	public boolean removeOne(PlayerInventory inventory, int defID) {
+	public String removeOne(PlayerInventory inventory, int defID) {
 		return remove(inventory, defID, 1);
 	}
 
 	@Override
-	public boolean removeOne(PlayerInventory inventory, JsonObject object) {
-		return removeOne(inventory, object.get("defId").getAsInt());
+	public String removeOne(PlayerInventory inventory, JsonObject object) {
+		return removeOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt());
 	}
 
 }

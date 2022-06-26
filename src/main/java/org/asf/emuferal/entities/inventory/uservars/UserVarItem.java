@@ -64,7 +64,7 @@ public final class UserVarItem extends InventoryItem {
 
 		// Wait! first get the userVarComponent...
 
-		var item = object.get(componentsPropertyName).getAsJsonObject().get(type.componentName).getAsJsonObject();
+		var item = object.get(COMPONENTS_PROPERTY_NAME).getAsJsonObject().get(type.componentName).getAsJsonObject();
 
 		switch(type)
 		{

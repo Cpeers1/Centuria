@@ -47,18 +47,18 @@ public abstract class AbstractInventoryInteractionHelper {
 	 * 
 	 * @param inventory Inventory to remove the item from
 	 * @param defID     Item defID
-	 * @return True if successful, false otherwise
+	 * @return The uuid of the item removed.
 	 */
-	public abstract boolean removeOne(PlayerInventory inventory, int defID);
+	public abstract String removeOne(PlayerInventory inventory, int defID);
 
 	/**
 	 * Removes a single item from the inventory
 	 * 
 	 * @param inventory Inventory to remove the item from
 	 * @param object    Object to remove
-	 * @return True if successful, false otherwise
+	 * @return The uuid of the item removed.
 	 */
-	public abstract boolean removeOne(PlayerInventory inventory, JsonObject object);
+	public abstract String removeOne(PlayerInventory inventory, JsonObject object);
 
 	/**
 	 * Removes a amount of a item from the inventory
@@ -66,14 +66,16 @@ public abstract class AbstractInventoryInteractionHelper {
 	 * @param inventory Inventory to remove the item from
 	 * @param defID     Item defID
 	 * @param count     Item count
-	 * @return True if successful, false otherwise
+	 * @return An array of uuids that represent the items that were removed.
 	 */
-	public boolean removeMultiple(PlayerInventory inventory, int defID, int count) {
+	public String[] removeMultiple(PlayerInventory inventory, int defID, int count) {
+		String[] uuids = new String[count];
+		
 		for (int i = 0; i < count; i++) {
-			if (!removeOne(inventory, defID))
-				return false;
+			uuids[i] = this.removeOne(inventory, defID);
 		}
-		return true;
+		
+		return uuids;
 	}
 
 }
