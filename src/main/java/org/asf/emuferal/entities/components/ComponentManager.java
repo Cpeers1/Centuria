@@ -14,7 +14,7 @@ import org.reflections.Reflections;
  */
 public final class ComponentManager {
 	
-	private static final String COMPONENT_PACKAGE_NAME = "org.asf.emuferal.entities.inventory.components";
+	private static final String COMPONENT_PACKAGE_NAME = "org.asf.emuferal.entities.components";
 	
 	private static Map<String, Class<InventoryItemComponent>> componentRegister = new HashMap<String, Class<InventoryItemComponent>>();
 	
