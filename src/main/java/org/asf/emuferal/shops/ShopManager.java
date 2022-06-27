@@ -221,8 +221,11 @@ public class ShopManager {
 	 */
 	public static int getPurchaseCount(EmuFeralAccount player, String shopId, String itemId) {
 		// Check inventory object
-		if (!player.getPlayerInventory().containsItem("purchaselog") || !shops.containsKey(shopId))
+		if (!player.getPlayerInventory().containsItem("purchaselog") || !shops.containsKey(shopId)) {
+			// Add item so it caches and stops freezing up
+			player.getPlayerInventory().setItem("purchaselog", new JsonObject());
 			return 0;
+		}
 
 		// Find item
 		JsonObject log = player.getPlayerInventory().getItem("purchaselog").getAsJsonObject();
