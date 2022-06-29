@@ -3,6 +3,7 @@ package org.asf.emuferal.interactions.modules;
 import java.util.List;
 
 import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
+import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.players.Player;
 
 public abstract class InteractionModule {
@@ -64,5 +65,17 @@ public abstract class InteractionModule {
 	 * @return True if the given interaction request was handled, false otherwise
 	 */
 	public abstract boolean handleInteractionDataRequest(Player player, String id, NetworkedObject object, int state);
+
+	/**
+	 * Initializes world objects
+	 * 
+	 * @param client Client to send the packets to
+	 * @param id     World object ID
+	 * @param obj    World object
+	 * @return True if handled, false otherwise
+	 */
+	public boolean initializeWorldObjects(SmartfoxClient client, String id, NetworkedObject obj) {
+		return false;
+	}
 
 }

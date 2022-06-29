@@ -20,6 +20,7 @@ import org.asf.emuferal.interactions.modules.resourcecollection.tables.HarvestTa
 import org.asf.emuferal.interactions.modules.resourcecollection.tables.LootTable;
 import org.asf.emuferal.modules.IEmuFeralModule;
 import org.asf.emuferal.modules.ModuleManager;
+import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.emuferal.players.Player;
 import org.asf.emuferal.util.WeightedSelectorUtil;
@@ -249,7 +250,9 @@ public class ResourceCollectionModule extends InteractionModule {
 
 				// Check reset
 				if (def.respawnSeconds > -1 && lastHarvest + (def.respawnSeconds * 1000) < System.currentTimeMillis()) {
-					player.account.getPlayerInventory().getInteractionMemory().resetHarvestCount(player.levelID, id); //reset harvest counter
+					player.account.getPlayerInventory().getInteractionMemory().resetHarvestCount(player.levelID, id); // reset
+																														// harvest
+																														// counter
 					return true; // Valid as it had reseted
 				}
 
@@ -281,8 +284,10 @@ public class ResourceCollectionModule extends InteractionModule {
 				if (!state.branches.isEmpty()) {
 					for (ArrayList<StateInfo> branches : state.branches.values()) {
 						for (StateInfo branch : branches)
-							if (branch.command.equals("41"))
+							if (branch.command.equals("41")) {
+
 								return true;
+							}
 					}
 				}
 			}
@@ -429,6 +434,98 @@ public class ResourceCollectionModule extends InteractionModule {
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean initializeWorldObjects(SmartfoxClient client, String id, NetworkedObject obj) {
+		Player player = (Player) client.container;
+
+		// Prepare state field
+		int pState = -1;
+
+		// Check if the object is a resource
+		if (obj.primaryObjectInfo != null && resources.containsKey(Integer.toString(obj.primaryObjectInfo.defId))) {
+			ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+
+			// Check harvest
+			if (def.lootType == ResourceType.HARVEST) {
+				// Harvest
+
+				// Retrieve harvest info
+				long lastHarvest = player.account.getPlayerInventory().getInteractionMemory()
+						.getLastHarvestTime(player.levelID, id);
+				int harvested = player.account.getPlayerInventory().getInteractionMemory()
+						.getLastHarvestCount(player.levelID, id);
+
+				pState = 0;
+
+				// Check reset
+				if (def.respawnSeconds > -1 && lastHarvest + (def.respawnSeconds * 1000) < System.currentTimeMillis()) {
+					// Reset harvest count
+					player.account.getPlayerInventory().getInteractionMemory().resetHarvestCount(player.levelID, id);
+				} else {
+					// Check harvest count
+					if (harvested >= def.interactionsBeforeDespawn) {
+						pState = 2;
+					}
+				}
+			}
+		}
+
+		// Check if the object is a resource
+		if (obj.primaryObjectInfo != null && resources.containsKey(Integer.toString(obj.primaryObjectInfo.defId))) {
+			ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+
+			// Check harvest
+			if (def.lootType == ResourceType.LOOT) {
+				// Treasure
+
+				pState = 0;
+
+				// Retrieve info
+				long lasUnlock = player.account.getPlayerInventory().getInteractionMemory()
+						.getLastTreasureUnlockTime(player.levelID, id);
+
+				// Check reset and last unlock
+				if (def.respawnSeconds == -1 || lasUnlock + (def.respawnSeconds * 1000) > System.currentTimeMillis()
+						|| player.account.getPlayerInventory().getInteractionMemory()
+								.hasTreasureBeenUnlocked(player.levelID, id)) {
+					pState = 2;
+				}
+			}
+		}
+
+		// Check if its treasure
+		for (ArrayList<StateInfo> states : obj.stateInfo.values()) {
+			for (StateInfo state : states) {
+				if (!state.branches.isEmpty()) {
+					for (ArrayList<StateInfo> branches : state.branches.values()) {
+						for (StateInfo branch : branches) {
+							if (branch.command.equals("41") && branch.params.length > 0) {
+								// Treasure
+
+								pState = 0;
+								ResourceDefinition def = resources.get(Integer.toString(obj.subObjectInfo.defId));
+
+								// Retrieve info
+								long lasUnlock = player.account.getPlayerInventory().getInteractionMemory()
+										.getLastTreasureUnlockTime(player.levelID, id);
+
+								// Check reset and last unlock
+								if (def.respawnSeconds == -1
+										|| lasUnlock + (def.respawnSeconds * 1000) > System.currentTimeMillis()
+										|| player.account.getPlayerInventory().getInteractionMemory()
+												.hasTreasureBeenUnlocked(player.levelID, id)) {
+									pState = 2;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return pState != -1;
 	}
 
 }

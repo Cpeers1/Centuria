@@ -97,7 +97,17 @@ public class InteractionManager {
 		// Initialize objects
 		for (String id : data.keySet()) {
 			NetworkedObject ent = data.get(id);
+			boolean handled = false;
+			for (InteractionModule mod : modules) {
+				if (mod.initializeWorldObjects(client, id, ent)) {
+					handled = true;
+					break;
+				}
+			}
+			if (!handled)
+				continue;
 
+			// Fallback handler
 			// Spawn object
 			XtWriter wr = new XtWriter();
 			wr.writeString("oi");
