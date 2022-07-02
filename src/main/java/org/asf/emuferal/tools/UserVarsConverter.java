@@ -11,7 +11,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class UserVarsConverter {
-	
+
 	public static void main(String[] args) throws IOException {
 		// This tool generates a userVars.json file
 		// Expected program arguments: <csv-file>
@@ -45,12 +45,20 @@ public class UserVarsConverter {
 			} else if (line.startsWith("\"\"")) {
 				if(!skip)
 				{
-					System.out.println("Parsing npc ID: " + id);
+					System.out.println("Parsing user var ID: " + id);
 					
 					lastData = "{\n" + lastData;
 					lastData = lastData.replace("`", "\"");
 					JsonObject jsonObject = JsonParser.parseString(lastData).getAsJsonObject();
-					userVarDefinition.add("data", jsonObject);
+					
+					var component = jsonObject.get("components").getAsJsonArray()
+							.get(0).getAsJsonObject()
+							.get("componentJSON").getAsJsonObject();
+					
+					userVarDefinition.addProperty("type", component.get("type").getAsInt());
+					userVarDefinition.addProperty("clientAllowedToSet", component.get("clientAllowedToSet").getAsBoolean());
+					userVarDefinition.addProperty("allowMultiples", component.get("allowMultiples").getAsBoolean());
+					userVarDefinition.addProperty("defaultValue", component.get("defaultValue").getAsInt());
 					
 					//add the uservar to the uservar list
 					userVars.add(id, userVarDefinition);				

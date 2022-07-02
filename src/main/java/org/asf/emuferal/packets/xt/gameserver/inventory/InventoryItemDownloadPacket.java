@@ -378,13 +378,16 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 					itm = inv.getItem("303").getAsJsonArray();
 				else
 					itm = new JsonArray();
-
+								
 				// Build entry
 				item = itm;
 
 				// Save item
 				inv.setItem(slot, item);
 			}
+			
+			//set defaults
+			//inv.getUserVarAccesor().setDefaultPlayerVarValues();
 		}
 		
 		//inspirations

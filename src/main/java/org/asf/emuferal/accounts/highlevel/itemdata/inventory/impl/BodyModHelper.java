@@ -2,7 +2,7 @@ package org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl;
 
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.AbstractInventoryInteractionHelper;
-import org.asf.emuferal.entities.inventory.InventoryItem;
+import org.asf.emuferal.entities.inventoryitems.InventoryItem;
 
 import com.google.gson.JsonObject;
 

@@ -1,4 +1,4 @@
-package org.asf.emuferal.entities.inventory.sanctuary;
+package org.asf.emuferal.entities.inventoryitems.sanctuaries;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -6,7 +6,7 @@ import org.asf.emuferal.entities.components.generic.NameComponent;
 import org.asf.emuferal.entities.components.generic.TimeStampComponent;
 import org.asf.emuferal.entities.components.sanctuaries.PrimaryLookComponent;
 import org.asf.emuferal.entities.components.sanctuaries.SanctuaryLookComponent;
-import org.asf.emuferal.entities.inventory.InventoryItem;
+import org.asf.emuferal.entities.inventoryitems.InventoryItem;
 
 import com.google.gson.JsonObject;
 

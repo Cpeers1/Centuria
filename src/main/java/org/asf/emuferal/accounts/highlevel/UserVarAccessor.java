@@ -79,6 +79,11 @@ public abstract class UserVarAccessor extends AbstractInventoryAccessor {
 	 */
 	public abstract boolean deletePlayerVarValueAtIndex(int defID, int index);
 	
+	/**
+	 * Sets/Checks that the player has all the default values for all default player vars.
+	 */
+	public abstract void setDefaultPlayerVarValues();
+	
 	
 }
 

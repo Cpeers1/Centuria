@@ -507,16 +507,19 @@ public class ResourceCollectionModule extends InteractionModule {
 								pState = 0;
 								ResourceDefinition def = resources.get(Integer.toString(obj.subObjectInfo.defId));
 
-								// Retrieve info
-								long lasUnlock = player.account.getPlayerInventory().getInteractionMemory()
-										.getLastTreasureUnlockTime(player.levelID, id);
+								if(def != null)
+								{
+									// Retrieve info
+									long lasUnlock = player.account.getPlayerInventory().getInteractionMemory()
+											.getLastTreasureUnlockTime(player.levelID, id);
 
-								// Check reset and last unlock
-								if (def.respawnSeconds == -1
-										|| lasUnlock + (def.respawnSeconds * 1000) > System.currentTimeMillis()
-										|| player.account.getPlayerInventory().getInteractionMemory()
-												.hasTreasureBeenUnlocked(player.levelID, id)) {
-									pState = 2;
+									// Check reset and last unlock
+									if (def.respawnSeconds == -1
+											|| lasUnlock + (def.respawnSeconds * 1000) > System.currentTimeMillis()
+											|| player.account.getPlayerInventory().getInteractionMemory()
+													.hasTreasureBeenUnlocked(player.levelID, id)) {
+										pState = 2;
+									}
 								}
 							}
 						}

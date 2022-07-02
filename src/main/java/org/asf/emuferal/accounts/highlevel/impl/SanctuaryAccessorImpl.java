@@ -9,7 +9,7 @@ import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.SanctuaryAccessor;
 import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.emuferal.entities.sanctuaries.RoomInfoObject;
-import org.asf.emuferal.entities.sanctuaries.SancObjectInfo;
+import org.asf.emuferal.entities.sanctuaries.SanctuaryObjectData;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
 import com.google.gson.JsonArray;
@@ -445,7 +445,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 
 	@Override
-	public void addSanctuaryObject(String objectUUID, SancObjectInfo sancObjectInfo, String activeSancLookId) {
+	public void addSanctuaryObject(String objectUUID, SanctuaryObjectData sancObjectInfo, String activeSancLookId) {
 		// get the object def id from the funiture inv
 		int defId = inventory.getFurnitureAccessor().getDefIDFromUUID(objectUUID);
 
@@ -507,14 +507,14 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		JsonObject componentLevel = new JsonObject();
 		JsonObject placedLevel = new JsonObject();
 
-		placedLevel.addProperty("xPos", sancObjectInfo.x);
-		placedLevel.addProperty("yPos", sancObjectInfo.y);
-		placedLevel.addProperty("zPos", sancObjectInfo.z);
+		placedLevel.addProperty("xPos", sancObjectInfo.positionInfo.position.x);
+		placedLevel.addProperty("yPos", sancObjectInfo.positionInfo.position.y);
+		placedLevel.addProperty("zPos", sancObjectInfo.positionInfo.position.z);
 
-		placedLevel.addProperty("rotX", sancObjectInfo.rotX);
-		placedLevel.addProperty("rotY", sancObjectInfo.rotY);
-		placedLevel.addProperty("rotZ", sancObjectInfo.rotY);
-		placedLevel.addProperty("rotW", sancObjectInfo.rotW);
+		placedLevel.addProperty("rotX", sancObjectInfo.positionInfo.rotation.x);
+		placedLevel.addProperty("rotY", sancObjectInfo.positionInfo.rotation.y);
+		placedLevel.addProperty("rotZ", sancObjectInfo.positionInfo.rotation.z);
+		placedLevel.addProperty("rotW", sancObjectInfo.positionInfo.rotation.w);
 
 		placedLevel.addProperty("parentItemId", ""); // ?
 		placedLevel.addProperty("placeableInvId", objectUUID);
@@ -593,7 +593,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 
 	@Override
-	public void updateSanctuaryRoomData(String activeSancLookId, RoomInfoObject[] roomInfos) {
+	public JsonObject updateSanctuaryRoomData(String activeSancLookId, RoomInfoObject[] roomInfos) {
 		// TODO Auto-generated method stub
 
 		// find sanc look
@@ -612,7 +612,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		}
 
 		if (sancLook == null)
-			return; // cannot find
+			return null; // cannot find
 
 		var info = sancLook.getAsJsonObject().get("components").getAsJsonObject().get("SanctuaryLook").getAsJsonObject()
 				.get("info").getAsJsonObject();
@@ -638,7 +638,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		}
 
 		if (houseInv == null)
-			return; // cannot find
+			return null; // cannot find
 
 		// okay, we got the house inventory object
 		// the next part is updating the room data
@@ -679,6 +679,8 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 		// set house inventory again
 		inventory.setItem("5", houseInvs);
+		
+		return houseInv.getAsJsonObject();
 	}
 	
 	@Override

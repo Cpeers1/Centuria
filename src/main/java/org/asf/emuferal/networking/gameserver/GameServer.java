@@ -458,8 +458,6 @@ public class GameServer extends BaseSmartfoxServer {
 
 	// VPN check
 	private static boolean isEndpointVPN(Socket socket, ArrayList<String> vpnIpsV4, ArrayList<String> vpnIpsV6) {
-		// TODO Auto-generated method stub
-
 		// get client's remote socket address
 		String address = socket.getRemoteSocketAddress().toString().substring(1).split(":")[0];
 		// String address = "185.62.206.20";

@@ -207,6 +207,7 @@ public class ShopManager {
 				});
 			});
 		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 

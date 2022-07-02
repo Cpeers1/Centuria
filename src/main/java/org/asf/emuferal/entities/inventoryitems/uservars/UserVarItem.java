@@ -1,4 +1,4 @@
-package org.asf.emuferal.entities.inventory.uservars;
+package org.asf.emuferal.entities.inventoryitems.uservars;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -10,7 +10,7 @@ import org.asf.emuferal.entities.components.uservars.UserVarCounterComponent;
 import org.asf.emuferal.entities.components.uservars.UserVarCustomComponent;
 import org.asf.emuferal.entities.components.uservars.UserVarHighestComponent;
 import org.asf.emuferal.entities.components.uservars.UserVarLowestComponent;
-import org.asf.emuferal.entities.inventory.InventoryItem;
+import org.asf.emuferal.entities.inventoryitems.InventoryItem;
 import org.asf.emuferal.enums.uservars.UserVarType;
 
 import com.google.gson.JsonObject;

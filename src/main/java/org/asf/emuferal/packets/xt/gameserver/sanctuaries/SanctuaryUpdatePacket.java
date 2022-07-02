@@ -6,12 +6,23 @@ import java.util.List;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.entities.generic.Quaternion;
+import org.asf.emuferal.entities.generic.Vector3;
+import org.asf.emuferal.entities.generic.Velocity;
+import org.asf.emuferal.entities.inventoryitems.InventoryItem;
+import org.asf.emuferal.entities.objects.WorldObjectMoveNodeData;
+import org.asf.emuferal.entities.objects.WorldObjectPositionInfo;
 import org.asf.emuferal.entities.sanctuaries.RoomInfoObject;
-import org.asf.emuferal.entities.sanctuaries.SancObjectInfo;
+import org.asf.emuferal.entities.sanctuaries.SanctuaryObjectData;
+import org.asf.emuferal.entities.sanctuaries.UpdateSancObjectItem;
+import org.asf.emuferal.enums.actors.ActorActionType;
+import org.asf.emuferal.enums.objects.WorldObjectMoverNodeType;
+import org.asf.emuferal.enums.sanctuaries.SanctuaryObjectType;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemPacket;
+import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectInfo;
 import org.asf.emuferal.players.Player;
 
 import com.google.gson.JsonObject;
@@ -19,16 +30,11 @@ import com.google.gson.JsonParser;
 
 public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
-	public class UpdateSancObjectItem {
-		public String objectId;
-		public SancObjectInfo objectInfo;
-		public JsonObject furnitureObject;
-	}
-
-	public boolean success;
-	public List<UpdateSancObjectItem> additions = new ArrayList<UpdateSancObjectItem>();
-	public List<RoomInfoObject> roomChanges = new ArrayList<RoomInfoObject>();
-	public List<String> removals = new ArrayList<String>();
+	private boolean success;
+	private List<UpdateSancObjectItem> additions = new ArrayList<UpdateSancObjectItem>();
+	private List<RoomInfoObject> roomChanges = new ArrayList<RoomInfoObject>();
+	private List<String> removals = new ArrayList<String>();
+	private JsonObject houseInv;
 
 	@Override
 	public String id() {
@@ -52,26 +58,16 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 			item.objectId = reader.read();
 
 			// then its x y z
-			SancObjectInfo info = new SancObjectInfo();
-			info.x = reader.readDouble();
-			info.y = reader.readDouble();
-			info.z = reader.readDouble();
-
+			Vector3 position = new Vector3(reader.readDouble(), reader.readDouble(), reader.readDouble());
 			// then rot x y z w
-			info.rotX = reader.readDouble();
-			info.rotY = reader.readDouble();
-			info.rotZ = reader.readDouble();
-			info.rotW = reader.readDouble();
+			Quaternion rotation = new Quaternion(reader.readDouble(), reader.readDouble(), reader.readDouble(),
+					reader.readDouble());
 
 			// then it's uhm.. state
-			info.gridId = reader.readInt();
-
-			// OH
 			// THIS AFTERWARDS IS PARENT ID LIKELY
-			info.parentId = reader.read(); // PARENT ID (probably important)
-
 			// THEN AFTER IS GRID ID
-			info.state = reader.readInt();
+			SanctuaryObjectData info = new SanctuaryObjectData(new WorldObjectPositionInfo(position, rotation), reader.readInt(),
+					reader.read(), reader.readInt());
 
 			item.objectInfo = info;
 			additions.add(item);
@@ -202,88 +198,118 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 	public void sendObjectUpdatePackets(SmartfoxClient client) {
 
-		for (var update : additions) {
-			var owner = (Player) client.container;
-			var furnItem = owner.account.getPlayerInventory().getFurnitureAccessor().getFurnitureData(update.objectId);
+		try {
+			for (var update : additions) {
+				var owner = (Player) client.container;
+				var furnItem = owner.account.getPlayerInventory().getFurnitureAccessor().getFurnitureData(update.objectId);
 
-			// now do an OI packet
-			for (Player player : ((GameServer) client.getServer()).getPlayers()) {
-				if (player.room.equals("sanctuary_" + owner.account.getAccountID())) {
-					// Send packet
-					XtWriter wr = new XtWriter();
-					wr.writeString("oi");
-					wr.writeInt(-1); // data prefix
+				// now do an OI packet
+				for (Player player : ((GameServer) client.getServer()).getPlayers()) {
+					if (player.room.equals("sanctuary_" + owner.account.getAccountID())) {
+						// Send packet
+						SanctuaryWorldObjectInfo packet = new SanctuaryWorldObjectInfo();
 
-					// Object creation parameters
-					wr.writeString(update.objectId); // World object ID
-					wr.writeInt(1751);
-					wr.writeString(player.room.substring("sanctuary_".length())); // Owner ID
+						// Object creation parameters
+						packet.id = update.objectId; // World object ID
+						packet.defId = 1751; // Sanctuary Actor Def Id.
+						packet.ownerId = player.room.substring("sanctuary_".length()); // Owner ID
 
-					// Object info
-					wr.writeInt(0);
-					wr.writeLong(System.currentTimeMillis() / 1000);
-					wr.writeDouble(update.objectInfo.x);
-					wr.writeDouble(update.objectInfo.y);
-					wr.writeDouble(update.objectInfo.z);
-					wr.writeDouble(update.objectInfo.rotX);
-					wr.writeDouble(update.objectInfo.rotY);
-					wr.writeDouble(update.objectInfo.rotZ);
-					wr.writeDouble(update.objectInfo.rotW);
-					wr.writeString("0%0%0%0.0%0%2"); // idk tbh
+						// Object info
+						packet.lastMove = new WorldObjectMoveNodeData();
+						packet.lastMove.positionInfo = new WorldObjectPositionInfo(update.objectInfo.positionInfo.position.x,
+								update.objectInfo.positionInfo.position.y, update.objectInfo.positionInfo.position.z,
+								update.objectInfo.positionInfo.rotation.x, update.objectInfo.positionInfo.rotation.y,
+								update.objectInfo.positionInfo.rotation.z, update.objectInfo.positionInfo.rotation.w);
+						packet.lastMove.velocity = new Velocity();
+						packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
+						packet.lastMove.actorActionType = ActorActionType.None;
+						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition; //TODO: is this the right packet?
 
-					// Only send json if its not the owner
+						packet.objectType = SanctuaryObjectType.Furniture;
+						// Only send json if its not the owner
+						packet.writeFurnitureInfo = !player.account.getAccountID().equals(owner.account.getAccountID());
+						packet.funitureObject = furnItem;
+						packet.sancObjectInfo = update.objectInfo;
 
-					if (!player.account.getAccountID().equals(owner.account.getAccountID()))
-						wr.writeString(furnItem.toString());
-					wr.writeString(String.valueOf(update.objectInfo.gridId)); // grid
-					wr.writeString(update.objectInfo.parentId); // parent item ??
-					wr.writeInt(update.objectInfo.state); // state
-					wr.writeString(""); // data suffix
-					String pk = wr.encode();
-					player.client.sendPacket(pk);
+						player.client.sendPacket(packet);
 
-					// Log
-					if (System.getProperty("debugMode") != null) {
-						System.out.println("[SANCTUARY] [UPDATE] Server to client: load object (" + pk + ")");
+						// Log
+						if (System.getProperty("debugMode") != null) {
+							System.out.println("[SANCTUARY] [UPDATE] Server to client: load object (" + packet.build() + ")");
+						}
+					}
+				}
+			}
+			
+			for (var removedItemId : removals) {
+				var owner = (Player) client.container;
+
+				// now do an OD packet
+				for (Player player : ((GameServer) client.getServer()).getPlayers()) {
+					if (player.room.equals("sanctuary_" + owner.account.getAccountID())) {
+						// Send packet
+						XtWriter wr = new XtWriter();
+						wr.writeString("od");
+						wr.writeInt(-1); // data prefix
+
+						// Object creation parameters
+						wr.writeString(removedItemId); // World object ID
+						wr.writeString(""); // data suffix
+						String pk = wr.encode();
+						player.client.sendPacket(pk);
+
+						// Log
+						if (System.getProperty("debugMode") != null) {
+							System.out.println("[SANCTUARY] [UPDATE] Server to client: Delete object (" + pk + ")");
+						}
+					}
+				}
+			}
+
+			if(!this.roomChanges.isEmpty()) {
+				var owner = (Player) client.container;
+
+				// now do an OI packet
+				for (Player player : ((GameServer) client.getServer()).getPlayers()) {
+					if (player.room.equals("sanctuary_" + owner.account.getAccountID())) {
+						// TODO: What do I send for room changes to the client?
+						
+						// Send packet
+						SanctuaryWorldObjectInfo packet = new SanctuaryWorldObjectInfo();
+
+						// Object creation parameters
+						packet.id = houseInv.get(InventoryItem.UUID_PROPERTY_NAME).getAsString(); // World object ID
+						packet.defId = 1751; // Sanctuary Actor Def Id.
+						packet.ownerId = player.room.substring("sanctuary_".length()); // Owner ID
+
+						// Object info
+						packet.lastMove = new WorldObjectMoveNodeData();
+						packet.lastMove.positionInfo = new WorldObjectPositionInfo(0, 0, 0, 0, 0, 0, 0);
+						packet.lastMove.velocity = new Velocity();
+						packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
+						packet.lastMove.actorActionType = ActorActionType.None;
+						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition; //TODO: is this the right packet?
+
+						packet.objectType = SanctuaryObjectType.House;
+						// Only send json if its not the owner
+						packet.writeFurnitureInfo = !player.account.getAccountID().equals(owner.account.getAccountID());
+						packet.funitureObject = houseInv;
+						packet.sancObjectInfo = new SanctuaryObjectData(packet.lastMove.positionInfo, houseInv.get("gridId").getAsInt(), "", 0);
+						
+						player.client.sendPacket(packet);
+
+						// Log
+						if (System.getProperty("debugMode") != null) {
+							System.out.println("[SANCTUARY] [UPDATE] Server to client: update house (" + packet.build() + ")");
+						}
+						
 					}
 				}
 			}
 		}
-
-		for (var removedItemId : removals) {
-			var owner = (Player) client.container;
-
-			// now do an OD packet
-			for (Player player : ((GameServer) client.getServer()).getPlayers()) {
-				if (player.room.equals("sanctuary_" + owner.account.getAccountID())) {
-					// Send packet
-					XtWriter wr = new XtWriter();
-					wr.writeString("od");
-					wr.writeInt(-1); // data prefix
-
-					// Object creation parameters
-					wr.writeString(removedItemId); // World object ID
-					wr.writeString(""); // data suffix
-					String pk = wr.encode();
-					player.client.sendPacket(pk);
-
-					// Log
-					if (System.getProperty("debugMode") != null) {
-						System.out.println("[SANCTUARY] [UPDATE] Server to client: Delete object (" + pk + ")");
-					}
-				}
-			}
-		}
-
-		for (var roomUpdate : this.roomChanges) {
-			var owner = (Player) client.container;
-
-			// now do an OI packet
-			for (Player player : ((GameServer) client.getServer()).getPlayers()) {
-				if (player.room.equals("sanctuary_" + owner.account.getAccountID())) {
-					// TODO: What do I send for room changes to the client?
-				}
-			}
+		catch(Exception e)
+		{
+			throw new RuntimeException(e);
 		}
 	}
 

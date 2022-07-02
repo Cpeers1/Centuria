@@ -1,0 +1,998 @@
+{
+  "UserVars": {
+    "30220": {
+      "userVarName": "QueensEvent/Event01",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "11573": {
+      "userVarName": "UserVar/AvailabilityBypass",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "9311": {
+      "userVarName": "UserVar/BuildersFolly/LevelHighScores",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": true,
+      "defaultValue": 0
+    },
+    "13617": {
+      "userVarName": "UserVar/BuildersFolly/LevelHighScores_expert",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": true,
+      "defaultValue": 0
+    },
+    "7240": {
+      "userVarName": "UserVar/BuildersFollyHighScore00a",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7241": {
+      "userVarName": "UserVar/BuildersFollyHighScore00b",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7242": {
+      "userVarName": "UserVar/BuildersFollyHighScore00c",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "5682": {
+      "userVarName": "UserVar/BuildersFollyHighScore01",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "5683": {
+      "userVarName": "UserVar/BuildersFollyHighScore02",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6338": {
+      "userVarName": "UserVar/BuildersFollyHighScore03",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6339": {
+      "userVarName": "UserVar/BuildersFollyHighScore04",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6340": {
+      "userVarName": "UserVar/BuildersFollyHighScore05",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6341": {
+      "userVarName": "UserVar/BuildersFollyHighScore06",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6342": {
+      "userVarName": "UserVar/BuildersFollyHighScore07",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6343": {
+      "userVarName": "UserVar/BuildersFollyHighScore08",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6344": {
+      "userVarName": "UserVar/BuildersFollyHighScore09",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6345": {
+      "userVarName": "UserVar/BuildersFollyHighScore10",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7525": {
+      "userVarName": "UserVar/BuildersFollyHighScore100",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6346": {
+      "userVarName": "UserVar/BuildersFollyHighScore11",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6347": {
+      "userVarName": "UserVar/BuildersFollyHighScore12",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6348": {
+      "userVarName": "UserVar/BuildersFollyHighScore13",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6349": {
+      "userVarName": "UserVar/BuildersFollyHighScore14",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6350": {
+      "userVarName": "UserVar/BuildersFollyHighScore15",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6351": {
+      "userVarName": "UserVar/BuildersFollyHighScore16",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6352": {
+      "userVarName": "UserVar/BuildersFollyHighScore17",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6353": {
+      "userVarName": "UserVar/BuildersFollyHighScore18",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6354": {
+      "userVarName": "UserVar/BuildersFollyHighScore19",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6355": {
+      "userVarName": "UserVar/BuildersFollyHighScore20",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6356": {
+      "userVarName": "UserVar/BuildersFollyHighScore21",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6357": {
+      "userVarName": "UserVar/BuildersFollyHighScore22",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6358": {
+      "userVarName": "UserVar/BuildersFollyHighScore23",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6359": {
+      "userVarName": "UserVar/BuildersFollyHighScore24",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6360": {
+      "userVarName": "UserVar/BuildersFollyHighScore25",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6361": {
+      "userVarName": "UserVar/BuildersFollyHighScore26",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6362": {
+      "userVarName": "UserVar/BuildersFollyHighScore27",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6363": {
+      "userVarName": "UserVar/BuildersFollyHighScore28",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6364": {
+      "userVarName": "UserVar/BuildersFollyHighScore29",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6365": {
+      "userVarName": "UserVar/BuildersFollyHighScore30",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6366": {
+      "userVarName": "UserVar/BuildersFollyHighScore31",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6367": {
+      "userVarName": "UserVar/BuildersFollyHighScore32",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6368": {
+      "userVarName": "UserVar/BuildersFollyHighScore33",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6369": {
+      "userVarName": "UserVar/BuildersFollyHighScore34",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6370": {
+      "userVarName": "UserVar/BuildersFollyHighScore35",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6371": {
+      "userVarName": "UserVar/BuildersFollyHighScore36",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6372": {
+      "userVarName": "UserVar/BuildersFollyHighScore37",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6373": {
+      "userVarName": "UserVar/BuildersFollyHighScore38",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6374": {
+      "userVarName": "UserVar/BuildersFollyHighScore39",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6375": {
+      "userVarName": "UserVar/BuildersFollyHighScore40",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6376": {
+      "userVarName": "UserVar/BuildersFollyHighScore41",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6377": {
+      "userVarName": "UserVar/BuildersFollyHighScore42",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6378": {
+      "userVarName": "UserVar/BuildersFollyHighScore43",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6379": {
+      "userVarName": "UserVar/BuildersFollyHighScore44",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6380": {
+      "userVarName": "UserVar/BuildersFollyHighScore45",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6381": {
+      "userVarName": "UserVar/BuildersFollyHighScore46",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6382": {
+      "userVarName": "UserVar/BuildersFollyHighScore47",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6383": {
+      "userVarName": "UserVar/BuildersFollyHighScore48",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6384": {
+      "userVarName": "UserVar/BuildersFollyHighScore49",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "6385": {
+      "userVarName": "UserVar/BuildersFollyHighScore50",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7480": {
+      "userVarName": "UserVar/BuildersFollyHighScore54",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7481": {
+      "userVarName": "UserVar/BuildersFollyHighScore55",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7482": {
+      "userVarName": "UserVar/BuildersFollyHighScore56",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7483": {
+      "userVarName": "UserVar/BuildersFollyHighScore57",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7484": {
+      "userVarName": "UserVar/BuildersFollyHighScore58",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7485": {
+      "userVarName": "UserVar/BuildersFollyHighScore59",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7486": {
+      "userVarName": "UserVar/BuildersFollyHighScore60",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7487": {
+      "userVarName": "UserVar/BuildersFollyHighScore61",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7488": {
+      "userVarName": "UserVar/BuildersFollyHighScore62",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7489": {
+      "userVarName": "UserVar/BuildersFollyHighScore63",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7490": {
+      "userVarName": "UserVar/BuildersFollyHighScore64",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7491": {
+      "userVarName": "UserVar/BuildersFollyHighScore65",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7492": {
+      "userVarName": "UserVar/BuildersFollyHighScore66",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7493": {
+      "userVarName": "UserVar/BuildersFollyHighScore67",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7494": {
+      "userVarName": "UserVar/BuildersFollyHighScore68",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7495": {
+      "userVarName": "UserVar/BuildersFollyHighScore69",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7496": {
+      "userVarName": "UserVar/BuildersFollyHighScore70",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7497": {
+      "userVarName": "UserVar/BuildersFollyHighScore71",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7498": {
+      "userVarName": "UserVar/BuildersFollyHighScore72",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7499": {
+      "userVarName": "UserVar/BuildersFollyHighScore73",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7500": {
+      "userVarName": "UserVar/BuildersFollyHighScore74",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7501": {
+      "userVarName": "UserVar/BuildersFollyHighScore75",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7502": {
+      "userVarName": "UserVar/BuildersFollyHighScore76",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7503": {
+      "userVarName": "UserVar/BuildersFollyHighScore77",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7504": {
+      "userVarName": "UserVar/BuildersFollyHighScore78",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7505": {
+      "userVarName": "UserVar/BuildersFollyHighScore79",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7506": {
+      "userVarName": "UserVar/BuildersFollyHighScore80",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7507": {
+      "userVarName": "UserVar/BuildersFollyHighScore81",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7508": {
+      "userVarName": "UserVar/BuildersFollyHighScore82",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7509": {
+      "userVarName": "UserVar/BuildersFollyHighScore83",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7747": {
+      "userVarName": "UserVar/BuildersFollyHighScore84",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7510": {
+      "userVarName": "UserVar/BuildersFollyHighScore85",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7511": {
+      "userVarName": "UserVar/BuildersFollyHighScore86",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7512": {
+      "userVarName": "UserVar/BuildersFollyHighScore87",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7513": {
+      "userVarName": "UserVar/BuildersFollyHighScore88",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7514": {
+      "userVarName": "UserVar/BuildersFollyHighScore89",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7515": {
+      "userVarName": "UserVar/BuildersFollyHighScore90",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7516": {
+      "userVarName": "UserVar/BuildersFollyHighScore91",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7517": {
+      "userVarName": "UserVar/BuildersFollyHighScore92",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7518": {
+      "userVarName": "UserVar/BuildersFollyHighScore93",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7519": {
+      "userVarName": "UserVar/BuildersFollyHighScore94",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7520": {
+      "userVarName": "UserVar/BuildersFollyHighScore95",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7521": {
+      "userVarName": "UserVar/BuildersFollyHighScore96",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7522": {
+      "userVarName": "UserVar/BuildersFollyHighScore97",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7523": {
+      "userVarName": "UserVar/BuildersFollyHighScore98",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "7524": {
+      "userVarName": "UserVar/BuildersFollyHighScore99",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "32243": {
+      "userVarName": "UserVar/ClosedBetaThankYouGiftAwarded",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "9101": {
+      "userVarName": "UserVar/CodeBreaker/LevelHighScores",
+      "type": 2,
+      "clientAllowedToSet": false,
+      "allowMultiples": true,
+      "defaultValue": 0
+    },
+    "9100": {
+      "userVarName": "UserVar/CodeBreaker/LevelsUnlocked",
+      "type": 0,
+      "clientAllowedToSet": false,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "9099": {
+      "userVarName": "UserVar/CodeBreaker/Tutorial",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "9361": {
+      "userVarName": "UserVar/GameSettings/ChatBubblesOn",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "9362": {
+      "userVarName": "UserVar/GameSettings/ChatIsFiltered",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "9368": {
+      "userVarName": "UserVar/GameSettings/ControlsCameraSensitivity",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 250
+    },
+    "9363": {
+      "userVarName": "UserVar/GameSettings/ControlsControlMode",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "9367": {
+      "userVarName": "UserVar/GameSettings/ControlsInvertCamera",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "18421": {
+      "userVarName": "UserVar/GameSettings/GraphicsMotionBlurEnabled",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "9359": {
+      "userVarName": "UserVar/GameSettings/HelpOverlaysOn",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "9360": {
+      "userVarName": "UserVar/GameSettings/HelpTooltipsOn",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "17547": {
+      "userVarName": "UserVar/GameSettings/Privacy/Follows",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "17546": {
+      "userVarName": "UserVar/GameSettings/Privacy/GoToPlayer",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "17544": {
+      "userVarName": "UserVar/GameSettings/Privacy/Sanctuary",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "17545": {
+      "userVarName": "UserVar/GameSettings/Privacy/Trading",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "29555": {
+      "userVarName": "UserVar/GameSettings/Privacy/VoiceChat",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "9848": {
+      "userVarName": "UserVar/GeneralTutorial/Controls",
+      "type": 4,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "9849": {
+      "userVarName": "UserVar/GeneralTutorial/CustomizeCreatureWindow",
+      "type": 4,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "9855": {
+      "userVarName": "UserVar/GeneralTutorial/EnimgaObtain",
+      "type": 4,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "9856": {
+      "userVarName": "UserVar/GeneralTutorial/InspirationObtain",
+      "type": 4,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "9857": {
+      "userVarName": "UserVar/GeneralTutorial/InspirationWindow",
+      "type": 4,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "9854": {
+      "userVarName": "UserVar/GeneralTutorial/InventoryWindow",
+      "type": 4,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "9859": {
+      "userVarName": "UserVar/GeneralTutorial/LockpickObtain",
+      "type": 4,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "9850": {
+      "userVarName": "UserVar/GeneralTutorial/SanctuaryDecorateWindow",
+      "type": 4,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "9852": {
+      "userVarName": "UserVar/GeneralTutorial/SanctuaryRoomToggle",
+      "type": 4,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "9851": {
+      "userVarName": "UserVar/GeneralTutorial/SanctuaryUpgrade",
+      "type": 4,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "9858": {
+      "userVarName": "UserVar/GeneralTutorial/ShopWindow",
+      "type": 4,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "9853": {
+      "userVarName": "UserVar/GeneralTutorial/SocialWindow",
+      "type": 4,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 1
+    },
+    "13392": {
+      "userVarName": "UserVar/Match3/PersistentAtomData",
+      "type": 0,
+      "clientAllowedToSet": false,
+      "allowMultiples": true,
+      "defaultValue": 0
+    },
+    "13405": {
+      "userVarName": "UserVar/Match3/PuzzlePieceRedemptionStatus",
+      "type": 0,
+      "clientAllowedToSet": false,
+      "allowMultiples": true,
+      "defaultValue": 0
+    },
+    "13404": {
+      "userVarName": "UserVar/Match3/PuzzleRedemptionStatus",
+      "type": 0,
+      "clientAllowedToSet": false,
+      "allowMultiples": true,
+      "defaultValue": 0
+    },
+    "30613": {
+      "userVarName": "UserVar/Match3/SavedGame",
+      "type": 0,
+      "clientAllowedToSet": false,
+      "allowMultiples": true,
+      "defaultValue": 0
+    },
+    "13624": {
+      "userVarName": "UserVar/Match3/Tutorial",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "5933": {
+      "userVarName": "UserVar/Runes/Tutorial",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "4932": {
+      "userVarName": "UserVar/RunesHighScore",
+      "type": 2,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "30275": {
+      "userVarName": "UserVar/TimeTravelSecondsSinceUnixEpoch",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    },
+    "25568": {
+      "userVarName": "UserVar/TobogganRun/Tutorial",
+      "type": 0,
+      "clientAllowedToSet": true,
+      "allowMultiples": false,
+      "defaultValue": 0
+    }
+  }
+}

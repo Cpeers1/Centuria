@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import org.asf.emuferal.accounts.PlayerInventory;
@@ -13,12 +12,9 @@ import org.asf.emuferal.accounts.highlevel.UserVarAccessor;
 import org.asf.emuferal.entities.uservars.SetUserVarResult;
 import org.asf.emuferal.entities.uservars.UserVarValue;
 import org.asf.emuferal.enums.uservars.UserVarType;
-import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-
-import org.asf.emuferal.entities.inventory.uservars.*;
-import org.asf.emuferal.entities.components.InventoryItemComponent;
 import org.asf.emuferal.entities.components.uservars.*;
-import org.asf.emuferal.entities.inventory.InventoryItem;
+import org.asf.emuferal.entities.inventoryitems.InventoryItem;
+import org.asf.emuferal.entities.inventoryitems.uservars.UserVarItem;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -28,8 +24,24 @@ import com.google.gson.JsonSyntaxException;
 
 public class UserVarAccessorImpl extends UserVarAccessor {
 
+	private static JsonObject helper = null;
+
 	public UserVarAccessorImpl(PlayerInventory inventory) {
 		super(inventory);
+
+		if (helper != null)
+			return;
+
+		try {
+
+			InputStream strm = UserVarAccessorImpl.class.getClassLoader()
+					.getResourceAsStream("itemlists/uservars.json");
+			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("UserVars")
+					.getAsJsonObject();
+			strm.close();
+		} catch (Exception exception) {
+			throw new RuntimeException(exception);
+		}
 	}
 
 	private UserVarItem createNewUserVar(int defId, UserVarValue[] values)
@@ -37,31 +49,31 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 		// create a new player var with the value specified
 
 		var type = getVarType(defId);
-		var userVarItem = new UserVarItem(type);
+		var userVarItem = new UserVarItem(defId, UUID.randomUUID().toString(), type);
 
 		UserVarComponent userVarComponent = null;
 
 		switch (type) {
-			case Any:
-				userVarComponent = new UserVarCustomComponent();
-				break;
-			case Bit:
-				userVarComponent = new UserVarBitComponent();
-				break;
-			case BitOnOnly:
-				userVarComponent = new UserVarBitOnOnlyComponent();
-				break;
-			case Counter:
-				userVarComponent = new UserVarCounterComponent();
-				break;
-			case Highest:
-				userVarComponent = new UserVarHighestComponent();
-				break;
-			case Lowest:
-				userVarComponent = new UserVarLowestComponent();
-				break;
-			default:
-				break;
+		case Any:
+			userVarComponent = new UserVarCustomComponent();
+			break;
+		case Bit:
+			userVarComponent = new UserVarBitComponent();
+			break;
+		case BitOnOnly:
+			userVarComponent = new UserVarBitOnOnlyComponent();
+			break;
+		case Counter:
+			userVarComponent = new UserVarCounterComponent();
+			break;
+		case Highest:
+			userVarComponent = new UserVarHighestComponent();
+			break;
+		case Lowest:
+			userVarComponent = new UserVarLowestComponent();
+			break;
+		default:
+			break;
 		}
 
 		for (var value : values) {
@@ -69,27 +81,15 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 		}
 
 		userVarItem.setUserVarComponent(userVarComponent);
-		userVarItem.defId = defId;
-		userVarItem.invType = 303;
-		userVarItem.uuid = UUID.randomUUID().toString();
 
 		return userVarItem;
 	}
 
 	private UserVarType getVarType(int defId) {
 		try {
-			// Load helper
-			InputStream strm = UserVarAccessorImpl.class.getClassLoader().getResourceAsStream("userVars.json");
-			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-					.get("userVars").getAsJsonObject();
-			strm.close();
-
 			// find var by def id
-
-			var varDef = helper.get(String.valueOf(defId));
-			var componentArray = varDef.getAsJsonObject().get("data").getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonArray();
-			var component = componentArray.get(0);
-			var typeVal = component.getAsJsonObject().get("componentJSON").getAsJsonObject().get("type").getAsInt();
+			var varDef = helper.get(String.valueOf(defId)).getAsJsonObject();
+			var typeVal = varDef.get("type").getAsInt();
 
 			UserVarType type = null;
 
@@ -101,9 +101,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 			}
 
 			return type;
-		}
-		catch(Exception exception)
-		{
+		} catch (Exception exception) {
 			throw new RuntimeException(exception);
 		}
 
@@ -271,12 +269,11 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				UserVarValue[] userVarValues = new UserVarValue[indexToValueUpdateMap.size()];
 
 				int index = 0;
-				for(var indexToValueUpdate : indexToValueUpdateMap.entrySet())
-				{
+				for (var indexToValueUpdate : indexToValueUpdateMap.entrySet()) {
 					userVarValues[index] = new UserVarValue();
 					userVarValues[index].index = indexToValueUpdate.getKey();
 					userVarValues[index].value = indexToValueUpdate.getValue();
-					
+
 					index++;
 				}
 
@@ -320,12 +317,11 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 				UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 
-				for(var indexToValueUpdate : indexToValueUpdateMap.entrySet())
-				{
+				for (var indexToValueUpdate : indexToValueUpdateMap.entrySet()) {
 					var userVarValue = new UserVarValue();
 					userVarValue.index = indexToValueUpdate.getKey();
-					userVarValue.value = indexToValueUpdate.getValue();		
-					
+					userVarValue.value = indexToValueUpdate.getValue();
+
 					userVarComponent.setUserVarValue(userVarValue);
 				}
 
@@ -346,8 +342,9 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	@Override
 	public UserVarValue[] getPlayerVarValue(int defID) {
 		try {
-			//Can't access anything if the inventory is null.
-			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) return null;
+			// Can't access anything if the inventory is null.
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID))
+				return null;
 
 			var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
 
@@ -361,22 +358,20 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 					break;
 				}
 			}
-			
+
 			if (element == null) {
 				return null; // cannot find
 			}
-			
+
 			var type = getVarType(defID);
 
 			UserVarItem userVarItem = new UserVarItem(type);
 			userVarItem.fromJsonObject(element.getAsJsonObject());
 
 			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
-			
+
 			return userVarComponent.getAllUserVarValues();
-		}
-		catch(Exception exception)
-		{
+		} catch (Exception exception) {
 			throw new RuntimeException(exception);
 		}
 	}
@@ -384,8 +379,9 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	@Override
 	public UserVarValue getPlayerVarValue(int defID, int index) {
 		try {
-			//Can't access anything if the inventory is null.
-			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) return null;
+			// Can't access anything if the inventory is null.
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID))
+				return null;
 
 			var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
 
@@ -399,21 +395,20 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 					break;
 				}
 			}
-			
+
 			if (element == null) {
 				return null; // cannot find
 			}
-			
+
 			var type = getVarType(defID);
 
-			UserVarItem userVarItem = new UserVarItem(defID, element.getAsJsonObject().get(InventoryItem.UUID_PROPERTY_NAME).getAsString(), type);
+			UserVarItem userVarItem = new UserVarItem(defID,
+					element.getAsJsonObject().get(InventoryItem.UUID_PROPERTY_NAME).getAsString(), type);
 
 			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 
 			return userVarComponent.getUserVarValue(index);
-		}
-		catch(Exception exception)
-		{
+		} catch (Exception exception) {
 			throw new RuntimeException(exception);
 		}
 	}
@@ -421,8 +416,9 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	@Override
 	public UserVarValue[] getPlayerVarValue(int defID, int[] indexes) {
 		try {
-			//Can't access anything if the inventory is null.
-			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) return null;
+			// Can't access anything if the inventory is null.
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID))
+				return null;
 
 			var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
 
@@ -436,28 +432,26 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 					break;
 				}
 			}
-			
+
 			if (element == null) {
 				return null; // cannot find
 			}
-			
+
 			var type = getVarType(defID);
 
-			UserVarItem userVarItem = new UserVarItem(defID, element.getAsJsonObject().get(InventoryItem.UUID_PROPERTY_NAME).getAsString(), type);
+			UserVarItem userVarItem = new UserVarItem(defID,
+					element.getAsJsonObject().get(InventoryItem.UUID_PROPERTY_NAME).getAsString(), type);
 
 			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
-			
+
 			var userVarValues = new ArrayList<UserVarValue>();
-			
-			for(int index : indexes)
-			{
+
+			for (int index : indexes) {
 				userVarValues.add(userVarComponent.getUserVarValue(index));
 			}
-			
-			return (UserVarValue[])userVarValues.toArray();
-		}
-		catch(Exception exception)
-		{
+
+			return (UserVarValue[]) userVarValues.toArray();
+		} catch (Exception exception) {
 			throw new RuntimeException(exception);
 		}
 	}
@@ -465,15 +459,14 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	@Override
 	public boolean deletePlayerVar(int defID) {
 		try {
-			//Can't access anything if the inventory is null.
-			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) return false;
+			// Can't access anything if the inventory is null.
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID))
+				return false;
 
 			inventory.getAccessor().removeInventoryObject(Integer.toString(UserVarItem.InvType), defID);
-			
+
 			return true;
-		}
-		catch(Exception exception)
-		{
+		} catch (Exception exception) {
 			throw new RuntimeException(exception);
 		}
 	}
@@ -481,8 +474,9 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	@Override
 	public boolean deletePlayerVarValueAtIndex(int defID, int index) {
 		try {
-			//Can't access anything if the inventory is null.
-			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) return false;
+			// Can't access anything if the inventory is null.
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID))
+				return false;
 
 			var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
 
@@ -496,25 +490,49 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 					break;
 				}
 			}
-			
+
 			if (element == null) {
 				return false; // cannot find
 			}
-			
+
 			var type = getVarType(defID);
 
-			UserVarItem userVarItem = new UserVarItem(defID, element.getAsJsonObject().get(InventoryItem.UUID_PROPERTY_NAME).getAsString(), type);
+			UserVarItem userVarItem = new UserVarItem(defID,
+					element.getAsJsonObject().get(InventoryItem.UUID_PROPERTY_NAME).getAsString(), type);
 
 			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
-			
+
 			userVarComponent.deleteUserVarValue(index);
 
 			return true;
-		}
-		catch(Exception exception)
-		{
+		} catch (Exception exception) {
 			throw new RuntimeException(exception);
 		}
+	}
+
+	@Override
+	public void setDefaultPlayerVarValues() {
+
+		// set all 'bit' type player variables with default index 0 set to value
+		// default.
+
+		for (var entry : helper.entrySet()) {
+			var entryObj = entry.getValue().getAsJsonObject();
+			if (entryObj.get("type").getAsInt() == UserVarType.Bit.val) {
+				var defId = Integer.parseInt(entry.getKey());
+
+				if (this.getPlayerVarValue(defId, 0) == null) {
+					var defaultVal = entryObj.get("defaultValue").getAsInt();
+					this.setPlayerVarValue(defId, 0, defaultVal);
+
+					if (System.getProperty("debugMode") != null) {
+						System.out.println("[USERVARS] Setting uservar " + entryObj.get("userVarName").getAsString()
+								+ " (DefId: " + defId + ") to default value of " + defaultVal + ".");
+					}
+				}
+			}
+		}
+
 	}
 
 }
