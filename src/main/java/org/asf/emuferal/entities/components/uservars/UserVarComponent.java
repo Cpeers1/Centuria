@@ -87,13 +87,10 @@ public abstract class UserVarComponent extends InventoryItemComponent {
 	}
 
 	public void setUserVarValue(UserVarValue valueToSet) {
-		if(values.size() <= valueToSet.index)
-		{
+		if (values.size() <= valueToSet.index) {
 			values.add(valueToSet.value);
-		}
-		else
-		{
-			values.set(valueToSet.index, valueToSet.value);			
+		} else {
+			values.set(valueToSet.index, valueToSet.value);
 		}
 
 	}

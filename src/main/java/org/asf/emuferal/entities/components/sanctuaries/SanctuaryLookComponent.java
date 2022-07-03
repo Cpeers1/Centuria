@@ -7,8 +7,9 @@ import org.asf.emuferal.entities.sanctuaries.SanctuaryInfo;
 import com.google.gson.JsonObject;
 
 /**
- * Sanctuary Look Component.
- * Mostly a wrapper for the {@link SanctuaryInfo} object.
+ * Sanctuary Look Component. Mostly a wrapper for the {@link SanctuaryInfo}
+ * object.
+ * 
  * @author owen9
  *
  */
@@ -16,7 +17,7 @@ import com.google.gson.JsonObject;
 public class SanctuaryLookComponent extends InventoryItemComponent {
 
 	public static final String COMPONENT_NAME = "SanctuaryLook";
-			
+
 	@Override
 	public String getComponentName() {
 		return COMPONENT_NAME;
@@ -31,7 +32,7 @@ public class SanctuaryLookComponent extends InventoryItemComponent {
 	@Override
 	protected void getPropertiesFromJson(JsonObject object) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

@@ -32,6 +32,9 @@ public class JoinRoomPacket extends AbstractChatPacket {
 
 	@Override
 	public boolean handle(ChatClient cCl) {
+		
+
+
 		// Find client
 		ChatClient client = null;
 		for (ChatClient cl : cCl.getServer().getClients()) {

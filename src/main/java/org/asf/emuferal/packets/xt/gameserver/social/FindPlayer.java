@@ -11,6 +11,8 @@ import org.asf.emuferal.packets.xt.IXtPacket;
 public class FindPlayer implements IXtPacket<FindPlayer> {
 
 	private String name;
+	private String accountId = "";
+	private boolean success = false;
 
 	@Override
 	public FindPlayer instantiate() {
@@ -29,48 +31,42 @@ public class FindPlayer implements IXtPacket<FindPlayer> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
+		writer.writeInt(-1); // data prefix
+
+		writer.writeBoolean(success); // success
+		writer.writeString(accountId); // account ID
+
+		writer.writeString(""); // data suffix
 	}
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Find avatar
 
-		// log interaction details
 		if (System.getProperty("debugMode") != null) {
 			System.out.println("[SOCIAL] [FindPlayer] Client to server ( playerName: " + name + " )");
 		}
 
 		String id = AccountManager.getInstance().getUserByDisplayName(name);
 		if (id == null || AccountManager.getInstance().getAccount(id).isBanned()) {
-			XtWriter writer = new XtWriter();
-			writer.writeString("rffpu");
-			writer.writeInt(-1); // data prefix
-			writer.writeBoolean(false); // success
-			writer.writeString(""); // account ID
-			writer.writeString(""); // data suffix
-			client.sendPacket(writer.encode());
+			client.sendPacket(this);
 
 			// log interaction details
 			if (System.getProperty("debugMode") != null) {
-				System.out.println("[SOCIAL] [FindPlayer] Server to client ( success: false )");
+				System.out.println("[SOCIAL] [FindPlayer] Server to client ( " + this.build() + " )");
 			}
 
 			return true; // Account not found
 		}
 
 		// Send response
-		XtWriter writer = new XtWriter();
-		writer.writeString("rffpu");
-		writer.writeInt(-1); // data prefix
-		writer.writeBoolean(true); // success
-		writer.writeString(AccountManager.getInstance().getAccount(id).getAccountID()); // account ID
-		writer.writeString(""); // data suffix
-		client.sendPacket(writer.encode());
 
-		// log interaction details
+		this.accountId = id;
+		this.success = true;
+		client.sendPacket(this);
+
 		if (System.getProperty("debugMode") != null) {
-			System.out.println("[SOCIAL] [FindPlayer] Server to client ( success: true, accountId: "
-					+ AccountManager.getInstance().getAccount(id).getAccountID() + " )");
+			System.out.println("[SOCIAL] [FindPlayer] Server to client ( " + this.build() + " )");
 		}
 
 		return true;

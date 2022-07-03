@@ -66,8 +66,8 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 			// then it's uhm.. state
 			// THIS AFTERWARDS IS PARENT ID LIKELY
 			// THEN AFTER IS GRID ID
-			SanctuaryObjectData info = new SanctuaryObjectData(new WorldObjectPositionInfo(position, rotation), reader.readInt(),
-					reader.read(), reader.readInt());
+			SanctuaryObjectData info = new SanctuaryObjectData(new WorldObjectPositionInfo(position, rotation),
+					reader.readInt(), reader.read(), reader.readInt());
 
 			item.objectInfo = info;
 			additions.add(item);
@@ -152,8 +152,8 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 		// room updates
 
-		plr.account.getPlayerInventory().getSanctuaryAccessor().updateSanctuaryRoomData(plr.activeSanctuaryLook,
-				roomChanges.toArray(new RoomInfoObject[0]));
+		houseInv = plr.account.getPlayerInventory().getSanctuaryAccessor()
+				.updateSanctuaryRoomData(plr.activeSanctuaryLook, roomChanges.toArray(new RoomInfoObject[0]));
 
 		// uhh yeah ok
 		// send il and sanctuaryUpdatePacket response for the main player
@@ -201,7 +201,8 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		try {
 			for (var update : additions) {
 				var owner = (Player) client.container;
-				var furnItem = owner.account.getPlayerInventory().getFurnitureAccessor().getFurnitureData(update.objectId);
+				var furnItem = owner.account.getPlayerInventory().getFurnitureAccessor()
+						.getFurnitureData(update.objectId);
 
 				// now do an OI packet
 				for (Player player : ((GameServer) client.getServer()).getPlayers()) {
@@ -216,14 +217,15 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 						// Object info
 						packet.lastMove = new WorldObjectMoveNodeData();
-						packet.lastMove.positionInfo = new WorldObjectPositionInfo(update.objectInfo.positionInfo.position.x,
-								update.objectInfo.positionInfo.position.y, update.objectInfo.positionInfo.position.z,
-								update.objectInfo.positionInfo.rotation.x, update.objectInfo.positionInfo.rotation.y,
-								update.objectInfo.positionInfo.rotation.z, update.objectInfo.positionInfo.rotation.w);
+						packet.lastMove.positionInfo = new WorldObjectPositionInfo(
+								update.objectInfo.positionInfo.position.x, update.objectInfo.positionInfo.position.y,
+								update.objectInfo.positionInfo.position.z, update.objectInfo.positionInfo.rotation.x,
+								update.objectInfo.positionInfo.rotation.y, update.objectInfo.positionInfo.rotation.z,
+								update.objectInfo.positionInfo.rotation.w);
 						packet.lastMove.velocity = new Velocity();
 						packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
 						packet.lastMove.actorActionType = ActorActionType.None;
-						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition; //TODO: is this the right packet?
+						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition; // TODO: is this the right type?
 
 						packet.objectType = SanctuaryObjectType.Furniture;
 						// Only send json if its not the owner
@@ -235,12 +237,13 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 						// Log
 						if (System.getProperty("debugMode") != null) {
-							System.out.println("[SANCTUARY] [UPDATE] Server to client: load object (" + packet.build() + ")");
+							System.out.println(
+									"[SANCTUARY] [UPDATE] Server to client: load object (" + packet.build() + ")");
 						}
 					}
 				}
 			}
-			
+
 			for (var removedItemId : removals) {
 				var owner = (Player) client.container;
 
@@ -266,14 +269,14 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 				}
 			}
 
-			if(!this.roomChanges.isEmpty()) {
+			if (!this.roomChanges.isEmpty()) {
 				var owner = (Player) client.container;
 
 				// now do an OI packet
 				for (Player player : ((GameServer) client.getServer()).getPlayers()) {
 					if (player.room.equals("sanctuary_" + owner.account.getAccountID())) {
 						// TODO: What do I send for room changes to the client?
-						
+
 						// Send packet
 						SanctuaryWorldObjectInfo packet = new SanctuaryWorldObjectInfo();
 
@@ -288,27 +291,29 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 						packet.lastMove.velocity = new Velocity();
 						packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
 						packet.lastMove.actorActionType = ActorActionType.None;
-						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition; //TODO: is this the right packet?
+						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition; // TODO: is this the right type?
 
 						packet.objectType = SanctuaryObjectType.House;
 						// Only send json if its not the owner
 						packet.writeFurnitureInfo = !player.account.getAccountID().equals(owner.account.getAccountID());
 						packet.funitureObject = houseInv;
-						packet.sancObjectInfo = new SanctuaryObjectData(packet.lastMove.positionInfo, houseInv.get("gridId").getAsInt(), "", 0);
-						
+						packet.sancObjectInfo = new SanctuaryObjectData(
+								packet.lastMove.positionInfo, houseInv.get(InventoryItem.COMPONENTS_PROPERTY_NAME)
+										.getAsJsonObject().get("House").getAsJsonObject().get("gridId").getAsInt(),
+								"", 0);
+
 						player.client.sendPacket(packet);
 
 						// Log
 						if (System.getProperty("debugMode") != null) {
-							System.out.println("[SANCTUARY] [UPDATE] Server to client: update house (" + packet.build() + ")");
+							System.out.println(
+									"[SANCTUARY] [UPDATE] Server to client: update house (" + packet.build() + ")");
 						}
-						
+
 					}
 				}
 			}
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}

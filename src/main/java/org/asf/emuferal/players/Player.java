@@ -2,6 +2,7 @@ package org.asf.emuferal.players;
 
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.enums.players.OnlineStatus;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -100,6 +101,7 @@ public class Player {
 			wr.writeString(account.getDisplayName());
 			wr.writeInt(0);
 			wr.writeString(""); // data suffix
+
 			player.client.sendPacket(wr.encode());
 		}
 	}

@@ -48,6 +48,7 @@ public class ClientToServerAuthPacket implements ISmartfoxPacket {
 			pword = msg.body.login.pword;
 			return true;
 		} catch (Exception e) {
+
 		}
 		return false;
 	}

@@ -7,7 +7,7 @@ import org.asf.emuferal.enums.uservars.UserVarType;
 public class UserVarCounterComponent extends UserVarComponent {
 
 	public static final String COMPONENT_NAME = UserVarType.Counter.componentName;
-	
+
 	@Override
 	public String getComponentName() {
 		return COMPONENT_NAME;

@@ -39,6 +39,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 	@Override
 	public void parse(XtReader reader) throws IOException {
 		teleportUUID = reader.read();
+		
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[WorldReadyPacket] recieved...");
+		}
 	}
 
 	@Override
@@ -96,6 +100,11 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		for (Player player : server.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
 				player.syncTo(plr);
+				
+				if (System.getProperty("debugMode") != null) {
+					System.out.println("[WorldReadyPacket] Syncing player " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
+				}
+				
 			}
 		}
 
@@ -111,6 +120,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		for (Player player : server.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
 				plr.syncTo(player);
+				
+				if (System.getProperty("debugMode") != null) {
+					System.out.println("[WorldReadyPacket] Syncing spawn " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
+				}
 			}
 		}
 

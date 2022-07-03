@@ -32,6 +32,7 @@ public class SanctuaryWorldObjectInfo extends WorldObjectInfo {
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		//TODO: I can't call super because super will finalize everything
+		writer.writeInt(-1);
 		
 		writer.writeString(id); // World object ID
 		writer.writeInt(defId); // Def Id 
@@ -70,6 +71,7 @@ public class SanctuaryWorldObjectInfo extends WorldObjectInfo {
 		writer.writeString(String.valueOf(sancObjectInfo.gridId)); // grid
 		writer.writeString(sancObjectInfo.parentId); // parent item ??
 		writer.writeInt(sancObjectInfo.state); // state
+		
 		writer.writeString(""); // data suffix
 	}
 
