@@ -69,10 +69,12 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 		plr.pendingRoom = "room_" + levelID;
 		plr.levelType = levelType;
 		join.roomIdentifier = plr.pendingRoom;
+		plr.respawnItems.clear();
 
 		// Log
 		if (System.getProperty("debugMode") != null) {
-			System.out.println("[JOINROOM]  Client to server (room: " + plr.pendingRoom + ", level: " + plr.pendingLevelID + ")");
+			System.out.println(
+					"[JOINROOM]  Client to server (room: " + plr.pendingRoom + ", level: " + plr.pendingLevelID + ")");
 		}
 
 		// Send response

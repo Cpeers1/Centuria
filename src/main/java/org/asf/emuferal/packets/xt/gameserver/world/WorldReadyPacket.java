@@ -39,7 +39,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 	@Override
 	public void parse(XtReader reader) throws IOException {
 		teleportUUID = reader.read();
-		
+
 		if (System.getProperty("debugMode") != null) {
 			System.out.println("[WorldReadyPacket] recieved...");
 		}
@@ -55,13 +55,14 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Load player
 		Player plr = (Player) client.container;
+		plr.respawnItems.clear();
 
 		// Initialize interaction memory
 		plr.account.getPlayerInventory().getInteractionMemory().prepareLevel(plr.pendingLevelID);
 
 		// Initialize interactions
 		InteractionManager.initInteractionsFor(client, plr.pendingLevelID);
-		
+
 		// Save changes
 		plr.account.getPlayerInventory().getInteractionMemory().saveTo(client);
 
@@ -100,11 +101,12 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		for (Player player : server.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
 				player.syncTo(plr);
-				
+
 				if (System.getProperty("debugMode") != null) {
-					System.out.println("[WorldReadyPacket] Syncing player " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
+					System.out.println("[WorldReadyPacket] Syncing player " + player.account.getDisplayName() + " to "
+							+ plr.account.getDisplayName());
 				}
-				
+
 			}
 		}
 
@@ -120,9 +122,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		for (Player player : server.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
 				plr.syncTo(player);
-				
+
 				if (System.getProperty("debugMode") != null) {
-					System.out.println("[WorldReadyPacket] Syncing spawn " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
+					System.out.println("[WorldReadyPacket] Syncing spawn " + player.account.getDisplayName() + " to "
+							+ plr.account.getDisplayName());
 				}
 			}
 		}

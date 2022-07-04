@@ -379,6 +379,7 @@ public class ResourceCollectionModule extends InteractionModule {
 						// Set harvest count and timestamp
 						player.account.getPlayerInventory().getInteractionMemory().harvested(player.levelID, id);
 						player.account.getPlayerInventory().getInteractionMemory().saveTo(player.client);
+						player.respawnItems.put(id, (long) (System.currentTimeMillis() + (def.respawnSeconds * 1000)));
 						return true;
 					}
 				}
@@ -404,6 +405,7 @@ public class ResourceCollectionModule extends InteractionModule {
 				// Set unlocked and timestamp
 				player.account.getPlayerInventory().getInteractionMemory().unlocked(player.levelID, id);
 				player.account.getPlayerInventory().getInteractionMemory().saveTo(player.client);
+				player.respawnItems.put(id, (long) (System.currentTimeMillis() + (def.respawnSeconds * 1000)));
 				return true;
 			}
 		}
@@ -423,6 +425,22 @@ public class ResourceCollectionModule extends InteractionModule {
 								// Set unlocked and timestamp
 								player.account.getPlayerInventory().getInteractionMemory().unlocked(player.levelID, id);
 								player.account.getPlayerInventory().getInteractionMemory().saveTo(player.client);
+
+								// Find respawn timestamp
+								ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+								double respawnSeconds = 600; // 10 minutes fallback
+								if (def != null) {
+									respawnSeconds = def.respawnSeconds;
+								} else {
+									// Check table presence
+									if (!lootTables.containsKey(branch.params[0])) {
+										continue;
+									}
+								}
+
+								// Make sure the resource will be respawned
+								player.respawnItems.put(id,
+										(long) (System.currentTimeMillis() + (respawnSeconds * 1000)));
 								return true;
 							}
 						}
@@ -493,6 +511,7 @@ public class ResourceCollectionModule extends InteractionModule {
 					// Check harvest count
 					if (harvested >= def.interactionsBeforeDespawn) {
 						pState = 2;
+						player.respawnItems.put(id, (long) (lastHarvest + (def.respawnSeconds * 1000)));
 					}
 				}
 			}
@@ -517,6 +536,7 @@ public class ResourceCollectionModule extends InteractionModule {
 						|| player.account.getPlayerInventory().getInteractionMemory()
 								.hasTreasureBeenUnlocked(player.pendingLevelID, id)) {
 					pState = 2;
+					player.respawnItems.put(id, (long) (lasUnlock + (def.respawnSeconds * 1000)));
 				}
 			}
 		}
@@ -553,6 +573,7 @@ public class ResourceCollectionModule extends InteractionModule {
 										&& player.account.getPlayerInventory().getInteractionMemory()
 												.hasTreasureBeenUnlocked(player.pendingLevelID, id)) {
 									pState = 2;
+									player.respawnItems.put(id, (long) (lasUnlock + (respawnSeconds * 1000)));
 								}
 							}
 						}

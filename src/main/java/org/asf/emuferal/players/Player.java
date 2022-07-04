@@ -1,8 +1,9 @@
 package org.asf.emuferal.players;
 
+import java.util.HashMap;
+
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.data.XtWriter;
-import org.asf.emuferal.enums.players.OnlineStatus;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -16,6 +17,8 @@ public class Player {
 	public String activeLook;
 	public String activeSanctuaryLook;
 	public boolean sanctuaryPreloadCompleted = false;
+
+	public HashMap<String, Long> respawnItems = new HashMap<String, Long>();
 
 	public int pendingLookDefID = 8254;
 	public String pendingLookID = null;

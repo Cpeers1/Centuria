@@ -17,6 +17,8 @@ import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.interactions.NetworkedObjects;
+import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
 import org.asf.emuferal.ipbans.IpBanManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
 import org.asf.emuferal.modules.events.accounts.AccountLoginEvent;
@@ -520,6 +522,9 @@ public class GameServer extends BaseSmartfoxServer {
 				EventBus.getInstance().dispatchEvent(new PlayerLeaveEvent(this, plr, plr.account, client));
 			}
 
+			// Clear objects
+			plr.respawnItems.clear();
+
 			// Remove player character from all clients
 			for (Player player : getPlayers()) {
 				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
@@ -601,6 +606,74 @@ public class GameServer extends BaseSmartfoxServer {
 				}
 			}
 		}, "Player API Access Watchdog");
+		th.setDaemon(true);
+		th.start();
+
+		// Resource respawn
+		th = new Thread(() -> {
+			while (EmuFeral.directorServer.isActive()) {
+				// Loop through all players
+				for (Player plr : getPlayers()) {
+					if (!plr.roomReady)
+						continue;
+
+					// Loop through the resources
+					String[] itms;
+					while (true) {
+						try {
+							itms = plr.respawnItems.keySet().toArray(t -> new String[t]);
+							break;
+						} catch (ConcurrentModificationException e) {
+						}
+					}
+					for (String id : itms) {
+						if (!plr.respawnItems.containsKey(id))
+							continue;
+
+						long respawn = plr.respawnItems.get(id);
+						if (!plr.roomReady)
+							break;
+
+						if (System.currentTimeMillis() >= respawn) {
+							plr.respawnItems.remove(id);
+
+							// Find object
+							NetworkedObject ent = NetworkedObjects.getObject(id);
+
+							// Respawn
+							XtWriter wr = new XtWriter();
+							wr.writeString("oi");
+							wr.writeInt(-1); // data prefix
+
+							// Object creation parameters
+							wr.writeString(id); // World object ID
+							wr.writeInt(978);
+							wr.writeString(""); // Owner ID
+
+							// Object info
+							wr.writeInt(0);
+							wr.writeLong(System.currentTimeMillis() / 1000);
+							wr.writeDouble(ent.locationInfo.position.x);
+							wr.writeDouble(ent.locationInfo.position.y);
+							wr.writeDouble(ent.locationInfo.position.z);
+							wr.writeDouble(ent.locationInfo.rotation.x);
+							wr.writeDouble(ent.locationInfo.rotation.y);
+							wr.writeDouble(ent.locationInfo.rotation.z);
+							wr.writeDouble(ent.locationInfo.rotation.w);
+							wr.add("0%0%0%0.0%0%0%0");
+							wr.writeString(""); // data suffix
+
+							if (plr.client != null && plr.client.isConnected())
+								plr.client.sendPacket(wr.encode());
+						}
+					}
+				}
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
+			}
+		}, "Resource respawn thread");
 		th.setDaemon(true);
 		th.start();
 	}
