@@ -50,7 +50,8 @@ public class GenericHelperWithQuantity extends AbstractInventoryInteractionHelpe
 		}
 
 		// Add to the quantity
-		JsonObject qt = old.get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject().get("Quantity").getAsJsonObject();
+		JsonObject qt = old.get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject().get("Quantity")
+				.getAsJsonObject();
 		int oldQuantity = qt.get("quantity").getAsInt();
 		qt.remove("quantity");
 		qt.addProperty("quantity", oldQuantity + count);
@@ -62,17 +63,18 @@ public class GenericHelperWithQuantity extends AbstractInventoryInteractionHelpe
 	private String remove(PlayerInventory inventory, int defID, int count) {
 		// Find object
 		JsonObject old = inventory.getAccessor().findInventoryObject(inventoryId, defID);
-		
+
 		if (old == null) {
 			// Not found
 			return null;
 		}
-		
+
 		String uuid = inventory.getAccessor().findInventoryObject(inventoryId, defID)
 				.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
 
 		// Load quantity
-		JsonObject qt = old.get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject().get("Quantity").getAsJsonObject();
+		JsonObject qt = old.get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject().get("Quantity")
+				.getAsJsonObject();
 		int oldQuantity = qt.get("quantity").getAsInt();
 
 		// Check validity
@@ -97,7 +99,10 @@ public class GenericHelperWithQuantity extends AbstractInventoryInteractionHelpe
 
 	@Override
 	public String[] removeMultiple(PlayerInventory inventory, int defID, int count) {
-		return new String[] { remove(inventory, defID, count) };
+		String id = remove(inventory, defID, count);
+		if (id != null)
+			return new String[] { id };
+		return new String[0];
 	}
 
 	@Override
