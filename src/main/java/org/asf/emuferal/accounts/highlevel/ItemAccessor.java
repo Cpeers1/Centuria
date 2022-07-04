@@ -425,8 +425,10 @@ public class ItemAccessor {
 		if (player != null) {
 			// Send packet if successful
 			if (inventory.getAccessor().hasInventoryObject(info.inventory, defID)) {
+				JsonArray arr = new JsonArray();
+				arr.add(inventory.getAccessor().findInventoryObject(info.inventory, defID));
 				InventoryItemPacket pk = new InventoryItemPacket();
-				pk.item = inventory.getAccessor().findInventoryObject(info.inventory, defID);
+				pk.item = arr;
 				player.client.sendPacket(pk);
 			} else {
 				InventoryItemRemovedPacket pk = new InventoryItemRemovedPacket();
@@ -503,8 +505,10 @@ public class ItemAccessor {
 		if (player != null) {
 			// Send packet if successful
 			if (inventory.getAccessor().hasInventoryObject(info.inventory, defID)) {
+				JsonArray arr = new JsonArray();
+				arr.add(inventory.getAccessor().findInventoryObject(info.inventory, defID));
 				InventoryItemPacket pk = new InventoryItemPacket();
-				pk.item = inventory.getAccessor().findInventoryObject(info.inventory, defID);
+				pk.item = arr;
 				player.client.sendPacket(pk);
 			} else {
 				InventoryItemRemovedPacket pk = new InventoryItemRemovedPacket();
