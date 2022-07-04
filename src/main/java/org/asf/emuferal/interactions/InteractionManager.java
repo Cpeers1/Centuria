@@ -104,7 +104,7 @@ public class InteractionManager {
 					break;
 				}
 			}
-			if (!handled)
+			if (handled)
 				continue;
 
 			// Fallback handler

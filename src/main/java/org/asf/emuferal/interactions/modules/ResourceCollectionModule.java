@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.interactions.NetworkedObjects;
 import org.asf.emuferal.interactions.dataobjects.NetworkedObject;
 import org.asf.emuferal.interactions.dataobjects.StateInfo;
@@ -284,9 +285,30 @@ public class ResourceCollectionModule extends InteractionModule {
 				if (!state.branches.isEmpty()) {
 					for (ArrayList<StateInfo> branches : state.branches.values()) {
 						for (StateInfo branch : branches)
-							if (branch.command.equals("41")) {
+							if (branch.command.equals("41") && branch.params.length > 0
+									&& obj.primaryObjectInfo.type == 13 && branch.params[1].equals("0")) {
+								ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+								double respawnSeconds = 600; // 10 minutes fallback
+								if (def != null) {
+									respawnSeconds = def.respawnSeconds;
+								} else {
+									// Check table presence
+									if (!lootTables.containsKey(branch.params[0])) {
+										continue;
+									}
+								}
 
-								return true;
+								// Retrieve info
+								long lasUnlock = player.account.getPlayerInventory().getInteractionMemory()
+										.getLastTreasureUnlockTime(player.levelID, id);
+
+								// Check reset and last unlock
+								if ((respawnSeconds == -1
+										|| lasUnlock + (respawnSeconds * 1000) > System.currentTimeMillis())
+										&& player.account.getPlayerInventory().getInteractionMemory()
+												.hasTreasureBeenUnlocked(player.levelID, id)) {
+									return true;
+								}
 							}
 					}
 				}
@@ -356,6 +378,7 @@ public class ResourceCollectionModule extends InteractionModule {
 
 						// Set harvest count and timestamp
 						player.account.getPlayerInventory().getInteractionMemory().harvested(player.levelID, id);
+						player.account.getPlayerInventory().getInteractionMemory().saveTo(player.client);
 						return true;
 					}
 				}
@@ -380,6 +403,7 @@ public class ResourceCollectionModule extends InteractionModule {
 
 				// Set unlocked and timestamp
 				player.account.getPlayerInventory().getInteractionMemory().unlocked(player.levelID, id);
+				player.account.getPlayerInventory().getInteractionMemory().saveTo(player.client);
 				return true;
 			}
 		}
@@ -398,6 +422,7 @@ public class ResourceCollectionModule extends InteractionModule {
 
 								// Set unlocked and timestamp
 								player.account.getPlayerInventory().getInteractionMemory().unlocked(player.levelID, id);
+								player.account.getPlayerInventory().getInteractionMemory().saveTo(player.client);
 								return true;
 							}
 						}
@@ -453,16 +478,17 @@ public class ResourceCollectionModule extends InteractionModule {
 
 				// Retrieve harvest info
 				long lastHarvest = player.account.getPlayerInventory().getInteractionMemory()
-						.getLastHarvestTime(player.levelID, id);
+						.getLastHarvestTime(player.pendingLevelID, id);
 				int harvested = player.account.getPlayerInventory().getInteractionMemory()
-						.getLastHarvestCount(player.levelID, id);
+						.getLastHarvestCount(player.pendingLevelID, id);
 
 				pState = 0;
 
 				// Check reset
 				if (def.respawnSeconds > -1 && lastHarvest + (def.respawnSeconds * 1000) < System.currentTimeMillis()) {
 					// Reset harvest count
-					player.account.getPlayerInventory().getInteractionMemory().resetHarvestCount(player.levelID, id);
+					player.account.getPlayerInventory().getInteractionMemory().resetHarvestCount(player.pendingLevelID,
+							id);
 				} else {
 					// Check harvest count
 					if (harvested >= def.interactionsBeforeDespawn) {
@@ -484,12 +510,12 @@ public class ResourceCollectionModule extends InteractionModule {
 
 				// Retrieve info
 				long lasUnlock = player.account.getPlayerInventory().getInteractionMemory()
-						.getLastTreasureUnlockTime(player.levelID, id);
+						.getLastTreasureUnlockTime(player.pendingLevelID, id);
 
 				// Check reset and last unlock
 				if (def.respawnSeconds == -1 || lasUnlock + (def.respawnSeconds * 1000) > System.currentTimeMillis()
 						|| player.account.getPlayerInventory().getInteractionMemory()
-								.hasTreasureBeenUnlocked(player.levelID, id)) {
+								.hasTreasureBeenUnlocked(player.pendingLevelID, id)) {
 					pState = 2;
 				}
 			}
@@ -501,31 +527,64 @@ public class ResourceCollectionModule extends InteractionModule {
 				if (!state.branches.isEmpty()) {
 					for (ArrayList<StateInfo> branches : state.branches.values()) {
 						for (StateInfo branch : branches) {
-							if (branch.command.equals("41") && branch.params.length > 0) {
+							if (branch.command.equals("41") && branch.params.length > 0
+									&& obj.primaryObjectInfo.type == 13 && branch.params[1].equals("0")) {
 								// Treasure
 
 								pState = 0;
-								ResourceDefinition def = resources.get(Integer.toString(obj.subObjectInfo.defId));
-
-								if(def != null)
-								{
-									// Retrieve info
-									long lasUnlock = player.account.getPlayerInventory().getInteractionMemory()
-											.getLastTreasureUnlockTime(player.levelID, id);
-
-									// Check reset and last unlock
-									if (def.respawnSeconds == -1
-											|| lasUnlock + (def.respawnSeconds * 1000) > System.currentTimeMillis()
-											|| player.account.getPlayerInventory().getInteractionMemory()
-													.hasTreasureBeenUnlocked(player.levelID, id)) {
-										pState = 2;
+								ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+								double respawnSeconds = 600; // 10 minutes fallback
+								if (def != null) {
+									respawnSeconds = def.respawnSeconds;
+								} else {
+									// Check table presence
+									if (!lootTables.containsKey(branch.params[0])) {
+										continue;
 									}
+								}
+
+								// Retrieve info
+								long lasUnlock = player.account.getPlayerInventory().getInteractionMemory()
+										.getLastTreasureUnlockTime(player.pendingLevelID, id);
+
+								// Check reset and last unlock
+								if ((respawnSeconds == -1
+										|| lasUnlock + (respawnSeconds * 1000) > System.currentTimeMillis())
+										&& player.account.getPlayerInventory().getInteractionMemory()
+												.hasTreasureBeenUnlocked(player.pendingLevelID, id)) {
+									pState = 2;
 								}
 							}
 						}
 					}
 				}
 			}
+		}
+
+		if (pState != -1) {
+			// Spawn object
+			XtWriter wr = new XtWriter();
+			wr.writeString("oi");
+			wr.writeInt(-1); // data prefix
+
+			// Object creation parameters
+			wr.writeString(id); // World object ID
+			wr.writeInt(978);
+			wr.writeString(""); // Owner ID
+
+			// Object info
+			wr.writeInt(0);
+			wr.writeLong(System.currentTimeMillis() / 1000);
+			wr.writeDouble(obj.locationInfo.position.x);
+			wr.writeDouble(obj.locationInfo.position.y);
+			wr.writeDouble(obj.locationInfo.position.z);
+			wr.writeDouble(obj.locationInfo.rotation.x);
+			wr.writeDouble(obj.locationInfo.rotation.y);
+			wr.writeDouble(obj.locationInfo.rotation.z);
+			wr.writeDouble(obj.locationInfo.rotation.w);
+			wr.add("0%0%0%0.0%0%0%" + pState);
+			wr.writeString(""); // data suffix
+			client.sendPacket(wr.encode());
 		}
 
 		return pState != -1;
