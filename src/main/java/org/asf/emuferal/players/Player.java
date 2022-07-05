@@ -45,6 +45,7 @@ public class Player {
 	public double lastRotZ = 0;
 
 	public int lastAction = 0;
+	public String teleportDestination;
 
 	public void destroyAt(Player player) {
 		// Delete character

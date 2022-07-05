@@ -1,26 +1,12 @@
 main todo:
-- warping
 - overhaul account storage
 - fix settings not being saved
 - make sure that warping uses privacy settings
 - make sure that private chat uses privacy settings
-- sanctuaries
-- feedback
-- reporting
 
 interaction update:
-- general interactions
-- item collection
-- city fera NPCs
 - questgivers
-- purchases
-- sketchbook
-
-shop update:
-- implement the shops
-- currency
-- 10k star fragments on join (can be disabled)
-- avatar purchases
+- enigmas
 
 trade system update:
 - trading

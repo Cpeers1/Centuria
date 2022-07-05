@@ -46,15 +46,8 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 				XtWriter writer = new XtWriter();
 				writer.writeString("rfjtr");
 				writer.writeInt(-1); // data prefix
-
-				// Check world
-				if (plr.room.equals(player.room)) {
-					writer.writeInt(1); // current world
-					writer.writeString("");
-				} else {
-					writer.writeInt(1); // other world
-					writer.writeString(plr.account.getAccountID());
-				}
+				writer.writeInt(1); // other world
+				writer.writeString("");
 				writer.writeString(""); // data suffix
 				client.sendPacket(writer.encode());
 
@@ -64,7 +57,7 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 					join.levelType = plr.levelType;
 					join.levelID = plr.levelID;
 					join.roomIdentifier = "room_" + join.levelID;
-					join.teleport = plr.account.getAccountID(); // TODO: get this to work
+					player.teleportDestination = plr.account.getAccountID();
 
 					// Sync
 					GameServer srv = (GameServer) client.getServer();

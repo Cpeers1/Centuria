@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = "1.0.0.A33"
+version = "1.0.0.B1"
 group = "org.asf.emuferal"
 
 sourceCompatibility = '1.17'

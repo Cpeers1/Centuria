@@ -57,6 +57,12 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		Player plr = (Player) client.container;
 		plr.respawnItems.clear();
 
+		// Override teleport
+		if (plr.teleportDestination != null) {
+			teleportUUID = plr.teleportDestination;
+			plr.teleportDestination = null;
+		}
+
 		// Initialize interaction memory
 		plr.account.getPlayerInventory().getInteractionMemory().prepareLevel(plr.pendingLevelID);
 
@@ -260,7 +266,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 						"Player teleport: " + plr.account.getDisplayName() + ": " + player.account.getDisplayName());
 				WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
 				res.x = player.lastPosX;
-				res.y = player.lastPosX;
+				res.y = player.lastPosY;
 				res.z = player.lastPosZ;
 				res.rw = player.lastRotW;
 				res.rx = player.lastRotX;
