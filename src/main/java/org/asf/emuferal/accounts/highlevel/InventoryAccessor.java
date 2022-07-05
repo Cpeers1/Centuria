@@ -52,6 +52,8 @@ public class InventoryAccessor {
 		// Find object
 		for (JsonElement ele : items) {
 			JsonObject itm = ele.getAsJsonObject();
+			if (!itm.has("id"))
+				continue;
 			String itID = itm.get("id").getAsString();
 			if (itID.equals(objectId)) {
 				// Found it
@@ -79,6 +81,8 @@ public class InventoryAccessor {
 		// Find object
 		for (JsonElement ele : items) {
 			JsonObject itm = ele.getAsJsonObject();
+			if (!itm.has("id"))
+				continue;
 			String itID = itm.get("id").getAsString();
 			if (itID.equals(objectId)) {
 				// Found it
@@ -106,6 +110,8 @@ public class InventoryAccessor {
 		// Find object
 		for (JsonElement ele : items) {
 			JsonObject itm = ele.getAsJsonObject();
+			if (!itm.has("defId"))
+				continue;
 			int itID = itm.get("defId").getAsInt();
 			if (itID == defId) {
 				// Found it
@@ -133,6 +139,8 @@ public class InventoryAccessor {
 		// Find object
 		for (JsonElement ele : items) {
 			JsonObject itm = ele.getAsJsonObject();
+			if (!itm.has("defId"))
+				continue;
 			int itID = itm.get("defId").getAsInt();
 			if (itID == defId) {
 				// Found it
@@ -160,6 +168,8 @@ public class InventoryAccessor {
 		// Find object
 		for (JsonElement ele : items) {
 			JsonObject itm = ele.getAsJsonObject();
+			if (!itm.has("id"))
+				continue;
 			String itID = itm.get("id").getAsString();
 			if (itID.equals(objectId)) {
 				// Found it
@@ -199,6 +209,8 @@ public class InventoryAccessor {
 		// Find object
 		for (JsonElement ele : items) {
 			JsonObject itm = ele.getAsJsonObject();
+			if (!itm.has("defId"))
+				continue;
 			int itID = itm.get("defId").getAsInt();
 			if (itID == defId) {
 				// Found it

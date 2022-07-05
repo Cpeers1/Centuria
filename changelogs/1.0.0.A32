@@ -1,0 +1,3 @@
+Changes in 1.0.0.A32:
+ - Fix rare crash with the sanctuary editor
+ - Fix crash with shops

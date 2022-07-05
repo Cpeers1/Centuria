@@ -66,7 +66,7 @@ import com.google.gson.JsonObject;
 
 public class EmuFeral {
 	// Update
-	public static final String SERVER_UPDATE_VERSION = "1.0.0.A31";
+	public static final String SERVER_UPDATE_VERSION = "1.0.0.A32";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/emuferal";
 
 	// Configuration
@@ -111,7 +111,7 @@ public class EmuFeral {
 		System.out.println("                              EmuFeral                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                         Version: 1.0.0.A31                         "); // not doing this
+		System.out.println("                         Version: 1.0.0.A32                         "); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain

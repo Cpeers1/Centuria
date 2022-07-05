@@ -206,7 +206,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 				// now do an OI packet
 				for (Player player : ((GameServer) client.getServer()).getPlayers()) {
-					if (player.room.equals("sanctuary_" + owner.account.getAccountID())) {
+					if (player.room != null && player.room.equals("sanctuary_" + owner.account.getAccountID())) {
 						// Send packet
 						SanctuaryWorldObjectInfo packet = new SanctuaryWorldObjectInfo();
 
@@ -225,7 +225,8 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 						packet.lastMove.velocity = new Velocity();
 						packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
 						packet.lastMove.actorActionType = ActorActionType.None;
-						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition; // TODO: is this the right type?
+						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition; // TODO: is this the right
+																							// type?
 
 						packet.objectType = SanctuaryObjectType.Furniture;
 						// Only send json if its not the owner
@@ -291,7 +292,8 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 						packet.lastMove.velocity = new Velocity();
 						packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
 						packet.lastMove.actorActionType = ActorActionType.None;
-						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition; // TODO: is this the right type?
+						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition; // TODO: is this the right
+																							// type?
 
 						packet.objectType = SanctuaryObjectType.House;
 						// Only send json if its not the owner

@@ -46,7 +46,10 @@ public class TaskThread extends Thread {
 							+ (e.getMessage() != null ? ": " + e.getMessage() : ""));
 					e.printStackTrace();
 				}
-				this.tasks.remove(task);
+				try {
+					this.tasks.remove(task);
+				} catch (Exception e) {
+				}
 			}
 		}
 	}
