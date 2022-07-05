@@ -59,7 +59,7 @@ public class SanctuaryLookLoadPacket implements IXtPacket<SanctuaryLookLoadPacke
 
 		// Sync
 		for (Player player : ((GameServer) client.getServer()).getPlayers()) {
-			if (player.room.equals("sanctuary_" + plr.account.getAccountID())) {
+			if (player.room != null && player.room.equals("sanctuary_" + plr.account.getAccountID())) {
 				// Build room join
 				JoinRoom join = new JoinRoom();
 				join.levelType = 2;

@@ -22,7 +22,6 @@ import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemPacket;
-import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectInfo;
 import org.asf.emuferal.players.Player;
 
 import com.google.gson.JsonObject;
@@ -30,7 +29,6 @@ import com.google.gson.JsonParser;
 
 public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
-	private boolean success;
 	private List<UpdateSancObjectItem> additions = new ArrayList<UpdateSancObjectItem>();
 	private List<RoomInfoObject> roomChanges = new ArrayList<RoomInfoObject>();
 	private List<String> removals = new ArrayList<String>();
@@ -225,8 +223,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 						packet.lastMove.velocity = new Velocity();
 						packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
 						packet.lastMove.actorActionType = ActorActionType.None;
-						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition; // TODO: is this the right
-																							// type?
+						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition;
 
 						packet.objectType = SanctuaryObjectType.Furniture;
 						// Only send json if its not the owner
@@ -250,7 +247,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 				// now do an OD packet
 				for (Player player : ((GameServer) client.getServer()).getPlayers()) {
-					if (player.room.equals("sanctuary_" + owner.account.getAccountID())) {
+					if (player.room != null && player.room.equals("sanctuary_" + owner.account.getAccountID())) {
 						// Send packet
 						XtWriter wr = new XtWriter();
 						wr.writeString("od");
@@ -275,9 +272,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 				// now do an OI packet
 				for (Player player : ((GameServer) client.getServer()).getPlayers()) {
-					if (player.room.equals("sanctuary_" + owner.account.getAccountID())) {
-						// TODO: What do I send for room changes to the client?
-
+					if (player.room != null && player.room.equals("sanctuary_" + owner.account.getAccountID())) {
 						// Send packet
 						SanctuaryWorldObjectInfo packet = new SanctuaryWorldObjectInfo();
 
@@ -292,8 +287,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 						packet.lastMove.velocity = new Velocity();
 						packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
 						packet.lastMove.actorActionType = ActorActionType.None;
-						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition; // TODO: is this the right
-																							// type?
+						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition;
 
 						packet.objectType = SanctuaryObjectType.House;
 						// Only send json if its not the owner
