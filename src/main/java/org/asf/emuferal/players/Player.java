@@ -3,8 +3,6 @@ package org.asf.emuferal.players;
 import java.util.HashMap;
 
 import org.asf.emuferal.accounts.EmuFeralAccount;
-import org.asf.emuferal.data.XtWriter;
-import org.asf.emuferal.entities.generic.Vector3;
 import org.asf.emuferal.entities.generic.Velocity;
 import org.asf.emuferal.entities.objects.WorldObjectMoveNodeData;
 import org.asf.emuferal.entities.objects.WorldObjectPositionInfo;
