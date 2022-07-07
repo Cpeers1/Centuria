@@ -43,7 +43,6 @@ public class PlayerOnlineStatus implements IXtPacket<PlayerOnlineStatus> {
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		//TODO: Implement handling for the player loading in
 		
 		// Find online player
 		playerOnlineStatus = OnlineStatus.Offline;
@@ -54,7 +53,17 @@ public class PlayerOnlineStatus implements IXtPacket<PlayerOnlineStatus> {
 				|| !socialManager.getPlayerIsBlocked(playerID, ((Player) client.container).account.getAccountID())) {
 			for (Player plr : ((GameServer) client.getServer()).getPlayers()) {
 				if (plr.account.getAccountID().equals(playerID)) {
-					playerOnlineStatus = OnlineStatus.LoggedInToRoom;
+
+					//TODO: Is this correct implementation for when the player is loading in?
+					if(plr.roomReady)
+					{
+						playerOnlineStatus = OnlineStatus.LoggedInToRoom;
+					}
+					else
+					{
+						playerOnlineStatus = OnlineStatus.LoggingIn;
+					}
+
 					break;
 				}
 			}

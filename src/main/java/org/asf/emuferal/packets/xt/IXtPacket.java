@@ -8,6 +8,9 @@ import org.asf.emuferal.packets.smartfox.ISmartfoxPacket;
 
 public interface IXtPacket<T extends IXtPacket<T>> extends ISmartfoxPacket {
 
+	public static final int DATA_PREFIX = -1;
+	public static final String DATA_SUFFIX = "";
+
 	public default boolean canParse(String content) {
 		if (!content.startsWith("%xt%"))
 			return false;

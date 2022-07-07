@@ -687,6 +687,8 @@ public class EmuFeral {
 	}
 
 	public static void fixSanctuaries(PlayerInventory inv, EmuFeralAccount acc) {
+		//TODO: This all should probably have its own, personal methods in a sanctuary-related class.
+
 		if (!inv.containsItem("10")) {
 			// Broken inventory, delete the sanctuary saves as it will break
 			inv.deleteItem("5");

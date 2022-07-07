@@ -8,6 +8,12 @@ import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.entities.generic.Velocity;
+import org.asf.emuferal.entities.objects.WorldObjectMoveNodeData;
+import org.asf.emuferal.entities.objects.WorldObjectPositionInfo;
+import org.asf.emuferal.entities.sanctuaries.SanctuaryObjectData;
+import org.asf.emuferal.enums.actors.ActorActionType;
+import org.asf.emuferal.enums.sanctuaries.SanctuaryObjectType;
 import org.asf.emuferal.interactions.InteractionManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
 import org.asf.emuferal.modules.events.levels.LevelJoinEvent;
@@ -15,6 +21,7 @@ import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.emuferal.packets.xt.gameserver.sanctuaries.SanctuaryWorldObjectInfo;
 import org.asf.emuferal.players.Player;
 
 import com.google.gson.JsonArray;
@@ -187,35 +194,37 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				JsonObject furnitureObject = inv.getFurnitureAccessor().getFurnitureData(objId);
 				if (furnitureObject != null) {
 					// Send packet
-					XtWriter wr = new XtWriter();
-					wr.writeString("oi");
-					wr.writeInt(-1); // data prefix
 
-					// Object creation parameters
-					wr.writeString(objId); // World object ID
-					wr.writeInt(1751);
-					wr.writeString(player.room.substring("sanctuary_".length())); // Owner ID
+					SanctuaryWorldObjectInfo sanctuaryWorldObjectInfo = new SanctuaryWorldObjectInfo();
+					sanctuaryWorldObjectInfo.id = objId; // World object ID
+					sanctuaryWorldObjectInfo.defId = 1751;
+					sanctuaryWorldObjectInfo.ownerId = player.room.substring("sanctuary_".length());
 
+					var positionInfo = new WorldObjectPositionInfo(
+						furnitureInfo.get("xPos").getAsDouble(), furnitureInfo.get("yPos").getAsDouble(),
+						furnitureInfo.get("zPos").getAsDouble(), furnitureInfo.get("rotX").getAsDouble(),
+						furnitureInfo.get("rotY").getAsDouble(), furnitureInfo.get("rotZ").getAsDouble(),
+						furnitureInfo.get("rotW").getAsDouble()
+					);
+					
 					// Object info
-					wr.writeInt(0);
-					wr.writeLong(System.currentTimeMillis() / 1000);
-					wr.writeDouble(furnitureInfo.get("xPos").getAsDouble());
-					wr.writeDouble(furnitureInfo.get("yPos").getAsDouble());
-					wr.writeDouble(furnitureInfo.get("zPos").getAsDouble());
-					wr.writeDouble(furnitureInfo.get("rotX").getAsDouble());
-					wr.writeDouble(furnitureInfo.get("rotY").getAsDouble());
-					wr.writeDouble(furnitureInfo.get("rotZ").getAsDouble());
-					wr.writeDouble(furnitureInfo.get("rotW").getAsDouble());
-					wr.writeString("0%0%0%0.0%0%2"); // idk tbh
+					sanctuaryWorldObjectInfo.lastMove = new WorldObjectMoveNodeData();
+					sanctuaryWorldObjectInfo.lastMove.actorActionType = ActorActionType.None;
+					sanctuaryWorldObjectInfo.lastMove.serverTime = System.currentTimeMillis() / 1000;
+					sanctuaryWorldObjectInfo.lastMove.positionInfo = positionInfo;
+					sanctuaryWorldObjectInfo.lastMove.velocity = new Velocity();
+					
+					//Sanc Object Info
+					sanctuaryWorldObjectInfo.objectType = SanctuaryObjectType.Furniture;
+					sanctuaryWorldObjectInfo.funitureObject = furnitureObject;
+
 					// Only send json if its not the owner
 					if (!player.account.getAccountID().equals(acc.getAccountID()))
-						wr.writeString(furnitureObject.toString());
-					wr.writeString(furnitureInfo.get("gridId").getAsString()); // grid
-					wr.writeString(furnitureInfo.get("parentItemId").getAsString()); // parent item
-					wr.writeString(furnitureInfo.get("state").getAsString()); // state
-					wr.writeString(""); // data suffix
-					String pk = wr.encode();
-					client.sendPacket(pk);
+						sanctuaryWorldObjectInfo.writeFurnitureInfo = true;
+
+					sanctuaryWorldObjectInfo.sancObjectInfo = new SanctuaryObjectData(positionInfo, furnitureInfo.get("gridId").getAsInt(), furnitureInfo.get("parentItemId").getAsString(), furnitureInfo.get("state").getAsInt())
+						
+					client.sendPacket(sanctuaryWorldObjectInfo);
 
 					// Log
 					if (System.getProperty("debugMode") != null) {

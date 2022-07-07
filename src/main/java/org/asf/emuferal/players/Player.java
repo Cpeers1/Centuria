@@ -4,7 +4,16 @@ import java.util.HashMap;
 
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.entities.generic.Vector3;
+import org.asf.emuferal.entities.generic.Velocity;
+import org.asf.emuferal.entities.objects.WorldObjectMoveNodeData;
+import org.asf.emuferal.entities.objects.WorldObjectPositionInfo;
+import org.asf.emuferal.enums.actors.ActorActionType;
+import org.asf.emuferal.enums.objects.WorldObjectMoverNodeType;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
+import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectDelete;
+import org.asf.emuferal.packets.xt.gameserver.players.PlayerWorldObjectInfo;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -35,10 +44,12 @@ public class Player {
 	public String respawn = null;
 	public String lastLocation = null;
 
+	//TODO: Clean up into vector3 type.
 	public double lastPosX = 0;
 	public double lastPosY = -1000;
 	public double lastPosZ = 0;
 
+	//TODO: Clean up into quaternion type.
 	public double lastRotW = 0;
 	public double lastRotX = 0;
 	public double lastRotY = 0;
@@ -49,13 +60,9 @@ public class Player {
 
 	public void destroyAt(Player player) {
 		// Delete character
-		XtWriter wr = new XtWriter();
-		wr.writeString("od");
-		wr.writeInt(-1);
-		wr.writeString(account.getAccountID());
-		wr.writeString("");
+		WorldObjectDelete packet = new WorldObjectDelete(account.getAccountID());
+		player.client.sendPacket(packet);
 		lastAction = 0;
-		player.client.sendPacket(wr.encode());
 	}
 
 	public void syncTo(Player player) {
@@ -73,40 +80,28 @@ public class Player {
 		}
 
 		if (lookObj != null) {
+
 			// Spawn player
-			XtWriter wr = new XtWriter();
-			wr.writeString("oi");
-			wr.writeInt(-1); // data prefix
+			PlayerWorldObjectInfo packet = new PlayerWorldObjectInfo();
 
 			// Object creation parameters
-			wr.writeString(account.getAccountID()); // World object ID
-			wr.writeInt(852);
-			wr.writeString(account.getAccountID()); // Owner ID
+			packet.id = account.getAccountID();
+			packet.defId = 852; //TODO: Move to static final (const)
+			packet.ownerId = account.getAccountID();
 
-			// Object info
-			wr.writeInt(0);
-			wr.writeLong(System.currentTimeMillis() / 1000);
-			wr.writeDouble(lastPosX);
-			wr.writeDouble(lastPosY);
-			wr.writeDouble(lastPosZ);
-			wr.writeInt(0);
-			wr.writeDouble(lastRotX);
-			wr.writeDouble(lastRotY);
-			wr.writeDouble(lastRotZ);
-			wr.writeInt(0);
-			wr.writeInt(0);
-			wr.writeInt(0);
-			wr.writeDouble(lastRotW);
-			wr.writeInt(lastAction);
+			packet.lastMove = new WorldObjectMoveNodeData();
+			packet.lastMove.actorActionType = ActorActionType.Respawn; //TODO: Is this the right actor action type for a player that's spawning in?
+			packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
+			packet.lastMove.positionInfo = new WorldObjectPositionInfo(lastPosX, lastPosY, lastPosZ, lastRotX, lastRotY, lastRotZ, lastRotW);
+			packet.lastMove.velocity = new Velocity();
+			packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition;
 
 			// Look and name
-			wr.writeString(lookObj.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject().get("info")
-					.toString());
-			wr.writeString(account.getDisplayName());
-			wr.writeInt(0);
-			wr.writeString(""); // data suffix
+			packet.look = lookObj.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject().get("info").getAsJsonObject();
+			packet.displayName = account.getDisplayName();
+			packet.unknownValue = 0; //TODO: What is this??
 
-			player.client.sendPacket(wr.encode());
+			player.client.sendPacket(packet);
 		}
 	}
 }

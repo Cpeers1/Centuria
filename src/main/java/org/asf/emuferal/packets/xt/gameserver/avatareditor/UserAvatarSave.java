@@ -20,6 +20,7 @@ public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 	private String lookID;
 	private String lookName;
 	private String lookData;
+	private boolean success; 
 
 	@Override
 	public UserAvatarSave instantiate() {
@@ -41,75 +42,93 @@ public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
+
+		writer.writeInt(DATA_PREFIX);
+
+		writer.writeBoolean(success);
+
+		writer.writeString(DATA_SUFFIX);
 	}
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Avatar save
-		Player plr = (Player) client.container;
+		try
+		{
+			Player plr = (Player) client.container;
 
-		// Log
-		if (System.getProperty("debugMode") != null) {
-			System.out.println("[AVATAREDITOR] [SAVELOOK]  Client to server (look: " + lookID + ", name: " + lookName + ")");
-		}
-
-		// Parse avatar
-		JsonObject lookData = JsonParser.parseString(this.lookData).getAsJsonObject();
-
-		// Save look file to look database
-		plr.activeLook = lookID;
-
-		// Save avatar to inventory
-		JsonArray items = plr.account.getPlayerInventory().getItem("avatars").getAsJsonArray();
-		JsonObject lookObj = null;
-		for (JsonElement itm : items) {
-			if (itm.isJsonObject()) {
-				JsonObject obj = itm.getAsJsonObject();
-				if (obj.get("id").getAsString().equals(lookID)) {
-					lookObj = obj;
-					break;
+			// Log
+			if (System.getProperty("debugMode") != null) {
+				System.out.println("[AVATAREDITOR] [SAVELOOK]  Client to server (look: " + lookID + ", name: " + lookName + ")");
+			}
+	
+			// Parse avatar
+			JsonObject lookData = JsonParser.parseString(this.lookData).getAsJsonObject();
+	
+			// Save look file to look database
+			plr.activeLook = lookID;
+	
+			// Save avatar to inventory
+			JsonArray items = plr.account.getPlayerInventory().getItem("avatars").getAsJsonArray();
+			JsonObject lookObj = null;
+			for (JsonElement itm : items) {
+				if (itm.isJsonObject()) {
+					JsonObject obj = itm.getAsJsonObject();
+					if (obj.get("id").getAsString().equals(lookID)) {
+						lookObj = obj;
+						break;
+					}
 				}
 			}
-		}
-		if (lookObj != null) {
-			JsonObject ts = new JsonObject();
-			ts.addProperty("ts", System.currentTimeMillis());
-			JsonObject nm = new JsonObject();
-			nm.addProperty("name", lookName);
-			JsonObject al = new JsonObject();
-			al.addProperty("gender", 0);
-			al.add("info", lookData);
-			JsonObject components = lookObj.get("components").getAsJsonObject();
-			components.remove("Timestamp");
-			components.remove("AvatarLook");
-			components.remove("Name");
-			components.add("Timestamp", ts);
-			components.add("AvatarLook", al);
-			components.add("Name", nm);
-		}
-		plr.account.getPlayerInventory().setItem("avatars", items);
-
-		// Prevent double save
-		plr.pendingLookID = null;
-		plr.pendingLookDefID = 8254;
-
-		// Update avatar object in client inventory
-		InventoryItemPacket pkt = new InventoryItemPacket();
-		pkt.item = items;
-		client.sendPacket(pkt);
-
-		// Sync
-		GameServer srv = (GameServer) client.getServer();
-		for (Player player : srv.getPlayers()) {
-			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				plr.syncTo(player);
+			if (lookObj != null) {
+				JsonObject ts = new JsonObject();
+				ts.addProperty("ts", System.currentTimeMillis());
+				JsonObject nm = new JsonObject();
+				nm.addProperty("name", lookName);
+				JsonObject al = new JsonObject();
+				al.addProperty("gender", 0);
+				al.add("info", lookData);
+				JsonObject components = lookObj.get("components").getAsJsonObject();
+				components.remove("Timestamp");
+				components.remove("AvatarLook");
+				components.remove("Name");
+				components.add("Timestamp", ts);
+				components.add("AvatarLook", al);
+				components.add("Name", nm);
 			}
-		}
-		
-		// Send response
-		client.sendPacket("%xt%alz%-1%true%");
+			plr.account.getPlayerInventory().setItem("avatars", items);
+	
+			// Prevent double save
+			plr.pendingLookID = null;
+			plr.pendingLookDefID = 8254;
+	
+			// Update avatar object in client inventory
+			InventoryItemPacket pkt = new InventoryItemPacket();
+			pkt.item = items;
+			client.sendPacket(pkt);
+	
+			// Sync
+			GameServer srv = (GameServer) client.getServer();
+			for (Player player : srv.getPlayers()) {
+				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+					plr.syncTo(player);
+				}
+			}
+			
+			// Send response
+			success = true;
+			client.sendPacket(this);
+		} 
+		catch(Exception exception)
+		{
+			System.out.println("[AVATAREDITOR] [SAVELOOK] Exception Caught: ");
+			exception.printStackTrace();
 
-		return true;
+			success = false;
+			client.sendPacket(this);
+		}
+
+		return true; //TODO: is this the correct return?
 	}
 
 }

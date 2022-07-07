@@ -1,37 +1,20 @@
-package org.asf.emuferal.packets.xt.gameserver.objects;
+package org.asf.emuferal.packets.xt.gameserver.players;
 
 import java.io.IOException;
 
-import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
-import org.asf.emuferal.entities.objects.WorldObjectMoveNodeData;
-import org.asf.emuferal.networking.smartfox.SmartfoxClient;
-import org.asf.emuferal.packets.xt.IXtPacket;
+import org.asf.emuferal.packets.xt.gameserver.objects.WorldObjectInfo;
 
-public class WorldObjectInfo implements IXtPacket<WorldObjectInfo> {
+import com.google.gson.JsonObject;
 
-	public String id;
-	public int defId;
-	public String ownerId;
-	public WorldObjectMoveNodeData lastMove;
+public class PlayerWorldObjectInfo extends WorldObjectInfo {
+    public JsonObject look; //TODO: make into a component (eventually)
+    public String displayName;
+    public int unknownValue; //TODO: what is this??
 
-	@Override
-	public WorldObjectInfo instantiate() {
-		return new WorldObjectInfo();
-	}
-
-	@Override
-	public String id() {
-		return "oi";
-	}
-
-	@Override
-	public void parse(XtReader reader) throws IOException {
-		// There is no inbound for this packet type.
-	}
-
-	@Override
+    @Override
 	public void build(XtWriter writer) throws IOException {
+		//I can't call super because super will finalize everything
 		writer.writeInt(-1);
 		
 		writer.writeString(id); // World object ID
@@ -63,13 +46,11 @@ public class WorldObjectInfo implements IXtPacket<WorldObjectInfo> {
 		//Action Type
 		writer.writeInt(lastMove.actorActionType.value);
 		
-		writer.writeString("");
+        // Look and name
+        writer.writeString(look.toString());
+        writer.writeString(displayName);
+        writer.writeInt(unknownValue);
+        
+        writer.writeString(""); // data suffix
 	}
-
-	@Override
-	public boolean handle(SmartfoxClient client) throws IOException {
-		// There is no inbound for this packet type.
-		return true;
-	}
-
 }
