@@ -24,7 +24,7 @@ import com.google.gson.JsonObject;
 public final class UserVarItem extends InventoryItem {
 
 	public final static int InvType = 303;
-	
+
 	private UserVarType type;
 
 	public UserVarItem(int defId, String uuid, int invType) {
@@ -35,9 +35,8 @@ public final class UserVarItem extends InventoryItem {
 		super(0, "", InvType);
 		this.type = type;
 	}
-	
-	public UserVarItem(int defId, String uuid, UserVarType type)
-	{
+
+	public UserVarItem(int defId, String uuid, UserVarType type) {
 		super(defId, uuid, InvType);
 		this.type = type;
 	}
@@ -45,14 +44,12 @@ public final class UserVarItem extends InventoryItem {
 	public JsonObject toJsonObject() {
 		return super.toJsonObject();
 	}
-	
-	public UserVarComponent getUserVarComponent()
-	{
-		return (UserVarComponent)this.getComponent(type.componentName);
+
+	public UserVarComponent getUserVarComponent() {
+		return (UserVarComponent) this.getComponent(type.componentName);
 	}
-	
-	public void setUserVarComponent(UserVarComponent component)
-	{
+
+	public void setUserVarComponent(UserVarComponent component) {
 		this.addComponent(component);
 	}
 
@@ -66,30 +63,28 @@ public final class UserVarItem extends InventoryItem {
 
 		var item = object.get(COMPONENTS_PROPERTY_NAME).getAsJsonObject().get(type.componentName).getAsJsonObject();
 
-		switch(type)
-		{
-			case Any:
-				this.addComponent(InventoryItemComponent.fromJson(UserVarCustomComponent.class, item));
-				break;
-			case Bit:
-				this.addComponent(InventoryItemComponent.fromJson(UserVarBitComponent.class, item));
-				break;
-			case BitOnOnly:
-				this.addComponent(InventoryItemComponent.fromJson(UserVarBitOnOnlyComponent.class, item));
-				break;
-			case Counter:
-				this.addComponent(InventoryItemComponent.fromJson(UserVarCounterComponent.class, item));
-				break;
-			case Highest:
-				this.addComponent(InventoryItemComponent.fromJson(UserVarHighestComponent.class, item));
-				break;
-			case Lowest:
-				this.addComponent(InventoryItemComponent.fromJson(UserVarLowestComponent.class, item));
-				break;
+		switch (type) {
+		case Any:
+			this.addComponent(InventoryItemComponent.fromJson(UserVarCustomComponent.class, item));
+			break;
+		case Bit:
+			this.addComponent(InventoryItemComponent.fromJson(UserVarBitComponent.class, item));
+			break;
+		case BitOnOnly:
+			this.addComponent(InventoryItemComponent.fromJson(UserVarBitOnOnlyComponent.class, item));
+			break;
+		case Counter:
+			this.addComponent(InventoryItemComponent.fromJson(UserVarCounterComponent.class, item));
+			break;
+		case Highest:
+			this.addComponent(InventoryItemComponent.fromJson(UserVarHighestComponent.class, item));
+			break;
+		case Lowest:
+			this.addComponent(InventoryItemComponent.fromJson(UserVarLowestComponent.class, item));
+			break;
 		}
 
 		super.fromJsonObject(object);
 	}
-
 
 }

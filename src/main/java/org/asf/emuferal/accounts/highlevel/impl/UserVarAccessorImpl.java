@@ -402,6 +402,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 			UserVarItem userVarItem = new UserVarItem(defID,
 					element.getAsJsonObject().get(InventoryItem.UUID_PROPERTY_NAME).getAsString(), type);
+			userVarItem.fromJsonObject(element.getAsJsonObject());
 
 			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 
@@ -439,6 +440,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 			UserVarItem userVarItem = new UserVarItem(defID,
 					element.getAsJsonObject().get(InventoryItem.UUID_PROPERTY_NAME).getAsString(), type);
+			userVarItem.fromJsonObject(element.getAsJsonObject());
 
 			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 
@@ -497,6 +499,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 			UserVarItem userVarItem = new UserVarItem(defID,
 					element.getAsJsonObject().get(InventoryItem.UUID_PROPERTY_NAME).getAsString(), type);
+			userVarItem.fromJsonObject(element.getAsJsonObject());
 
 			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 
