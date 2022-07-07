@@ -303,9 +303,9 @@ public class ResourceCollectionModule extends InteractionModule {
 										.getLastTreasureUnlockTime(player.levelID, id);
 
 								// Check reset and last unlock
-								if ((respawnSeconds == -1
-										|| lasUnlock + (respawnSeconds * 1000) > System.currentTimeMillis())
-										&& player.account.getPlayerInventory().getInteractionMemory()
+								if ((respawnSeconds != -1
+										|| lasUnlock + (respawnSeconds * 1000) < System.currentTimeMillis())
+										&& !player.account.getPlayerInventory().getInteractionMemory()
 												.hasTreasureBeenUnlocked(player.levelID, id)) {
 									return true;
 								}

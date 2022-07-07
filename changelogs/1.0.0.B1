@@ -2,3 +2,4 @@ Changes in 1.0.0.B1:
  - Made it that pushes to eg. beta also pushes to alpha
  - Implement cross-world player warp
  - Fix the kick event being fired even if the player is not online
+ - Fixed basic chests

@@ -1,6 +1,7 @@
 package org.asf.emuferal.accounts.highlevel;
 
 import org.asf.emuferal.accounts.PlayerInventory;
+import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemPacket;
 
@@ -95,6 +96,12 @@ public class CurrencyAccessor {
 			inventory.getAccessor().removeInventoryObject("104", 2327);
 			return;
 		}
+		if (!inventory.getAccessor().hasInventoryObject("104", 2327)) {
+			// Create object
+			JsonObject dq = new JsonObject();
+			dq.addProperty("quantity", 0);
+			inventory.getAccessor().createInventoryObject("104", 2327, new ItemComponent("Quantity", dq));
+		}
 		JsonObject q = inventory.getAccessor().findInventoryObject("104", 2327).get("components").getAsJsonObject()
 				.get("Quantity").getAsJsonObject();
 		q.remove("quantity");
@@ -112,6 +119,12 @@ public class CurrencyAccessor {
 			inventory.getAccessor().removeInventoryObject("104", 14500);
 			return;
 		}
+		if (!inventory.getAccessor().hasInventoryObject("104", 14500)) {
+			// Create object
+			JsonObject dq = new JsonObject();
+			dq.addProperty("quantity", 0);
+			inventory.getAccessor().createInventoryObject("104", 14500, new ItemComponent("Quantity", dq));
+		}
 		JsonObject q = inventory.getAccessor().findInventoryObject("104", 14500).get("components").getAsJsonObject()
 				.get("Quantity").getAsJsonObject();
 		q.remove("quantity");
@@ -128,6 +141,12 @@ public class CurrencyAccessor {
 		if (lockpicks <= 0) {
 			inventory.getAccessor().removeInventoryObject("104", 8372);
 			return;
+		}
+		if (!inventory.getAccessor().hasInventoryObject("104", 8372)) {
+			// Create object
+			JsonObject dq = new JsonObject();
+			dq.addProperty("quantity", 0);
+			inventory.getAccessor().createInventoryObject("104", 8372, new ItemComponent("Quantity", dq));
 		}
 		JsonObject q = inventory.getAccessor().findInventoryObject("104", 8372).get("components").getAsJsonObject()
 				.get("Quantity").getAsJsonObject();
