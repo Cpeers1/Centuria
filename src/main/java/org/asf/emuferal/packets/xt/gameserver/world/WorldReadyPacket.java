@@ -224,7 +224,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					if (!player.account.getAccountID().equals(acc.getAccountID()))
 						sanctuaryWorldObjectInfo.writeFurnitureInfo = true;
 
-					sanctuaryWorldObjectInfo.sancObjectInfo = new SanctuaryObjectData(positionInfo, furnitureInfo.get("gridId").getAsInt(), furnitureInfo.get("parentItemId").getAsString(), furnitureInfo.get("state").getAsInt())
+					sanctuaryWorldObjectInfo.sancObjectInfo = new SanctuaryObjectData(positionInfo, furnitureInfo.get("gridId").getAsInt(), furnitureInfo.get("parentItemId").getAsString(), furnitureInfo.get("state").getAsInt());
 						
 					client.sendPacket(sanctuaryWorldObjectInfo);
 
