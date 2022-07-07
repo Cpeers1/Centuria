@@ -717,14 +717,23 @@ public class EmuFeral {
 
 		for (String id : inv.getSanctuaryAccessor().getSanctuaryLookIDs()) {
 			// Get sanctuary object
-			JsonObject sanc = inv.getSanctuaryAccessor().getSanctuaryLook(id).get("components").getAsJsonObject()
-					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
+			JsonObject sancD = inv.getSanctuaryAccessor().getSanctuaryLook(id).get("components").getAsJsonObject();
+
+			// Check data
+			if (!sancD.has("SanctuaryLook")) {
+				// Delete the entry
+				inv.getItem("201").getAsJsonArray().remove(inv.getSanctuaryAccessor().getSanctuaryLook(id));
+				continue;
+			}
+
+			// Load sanc look info
+			JsonObject sanc = sancD.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
 
 			// Check validity
 			String classId = sanc.get("classInvId").getAsString();
 			if (inv.getSanctuaryAccessor().getSanctuaryClassObject(classId) == null) {
 				// Delete the entry
-				inv.getItem("201").getAsJsonArray().remove(sanc);
+				inv.getItem("201").getAsJsonArray().remove(inv.getSanctuaryAccessor().getSanctuaryLook(id));
 			}
 		}
 

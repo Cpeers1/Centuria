@@ -1,7 +1,5 @@
 package org.asf.emuferal.accounts.highlevel;
 
-import java.util.List;
-
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.entities.sanctuaries.RoomInfoObject;
 import org.asf.emuferal.entities.sanctuaries.SanctuaryObjectData;
@@ -154,26 +152,27 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	 * Adds an extra sanctuary look slot to the player inventory
 	 */
 	public abstract void addExtraSanctuarySlot();
-	
+
 	/**
 	 * Adds a object to the player's sanctuary.
 	 */
-	public abstract void addSanctuaryObject(String objectUUID, SanctuaryObjectData positionalInfo, String activeSancLookId);
-	
+	public abstract void addSanctuaryObject(String objectUUID, SanctuaryObjectData positionalInfo,
+			String activeSancLookId);
+
 	/**
 	 * Removes a object from the player's sanctuary.
 	 */
 	public abstract void removeSanctuaryObject(String objectUUID, String activeSancLookId);
-	
+
 	/**
 	 * Updates room info for the player's sanctuary.
 	 * 
 	 */
 	public abstract JsonObject updateSanctuaryRoomData(String activeSancLookId, RoomInfoObject[] roomInfos);
-	
+
 	/**
 	 * Saves the currently active sanctuary look to a new slot with the ID provided.
 	 */
 	public abstract void saveSanctuaryLookToSlot(String activeSancLookId, String slotId, String saveName);
-	
+
 }

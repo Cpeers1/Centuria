@@ -59,6 +59,8 @@ public abstract class UserVarComponent extends InventoryItemComponent {
 		var valuesObject = JsonParser.parseString(valuesJsonString).getAsJsonObject();
 
 		for (var valueObject : valuesObject.entrySet()) {
+			while (values.size() <= Integer.parseInt(valueObject.getKey()))
+				values.add(0);
 			values.set(Integer.parseInt(valueObject.getKey()), valueObject.getValue().getAsInt());
 		}
 	}

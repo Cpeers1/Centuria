@@ -189,7 +189,6 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	@Override
 	public SetUserVarResult setPlayerVarValue(int defID, int index, int value) {
 		try {
-
 			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) {
 				// create the inventory object
 
@@ -262,7 +261,6 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	@Override
 	public SetUserVarResult setPlayerVarValue(int defID, HashMap<Integer, Integer> indexToValueUpdateMap) {
 		try {
-
 			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) {
 				// create the inventory object
 
