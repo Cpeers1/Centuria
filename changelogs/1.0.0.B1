@@ -3,3 +3,5 @@ Changes in 1.0.0.B1:
  - Implement cross-world player warp
  - Fix the kick event being fired even if the player is not online
  - Fixed basic chests
+ - Fix the item accessor targeting the first item and not the selected item (fixes latchkey)
+ - Fix the currency accessor breaking when the currency object is not present
