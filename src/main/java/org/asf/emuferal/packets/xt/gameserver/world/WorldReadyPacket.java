@@ -202,12 +202,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					sanctuaryWorldObjectInfo.defId = 1751;
 					sanctuaryWorldObjectInfo.ownerId = player.room.substring("sanctuary_".length());
 
-					var positionInfo = new WorldObjectPositionInfo(
-						furnitureInfo.get("xPos").getAsDouble(), furnitureInfo.get("yPos").getAsDouble(),
-						furnitureInfo.get("zPos").getAsDouble(), furnitureInfo.get("rotX").getAsDouble(),
-						furnitureInfo.get("rotY").getAsDouble(), furnitureInfo.get("rotZ").getAsDouble(),
-						furnitureInfo.get("rotW").getAsDouble()
-					);
+					var positionInfo = new WorldObjectPositionInfo(furnitureInfo.get("xPos").getAsDouble(),
+					furnitureInfo.get("yPos").getAsDouble(), furnitureInfo.get("zPos").getAsDouble(),
+					furnitureInfo.get("rotX").getAsDouble(), furnitureInfo.get("rotY").getAsDouble(),
+					furnitureInfo.get("rotZ").getAsDouble(), furnitureInfo.get("rotW").getAsDouble());
 					
 					// Object info
 					sanctuaryWorldObjectInfo.lastMove = new WorldObjectMoveNodeData();
@@ -216,7 +214,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					sanctuaryWorldObjectInfo.lastMove.positionInfo = positionInfo;
 					sanctuaryWorldObjectInfo.lastMove.velocity = new Velocity();
 					
-					//Sanc Object Info
+					// Sanc Object Info
 					sanctuaryWorldObjectInfo.objectType = SanctuaryObjectType.Furniture;
 					sanctuaryWorldObjectInfo.funitureObject = furnitureObject;
 
@@ -224,7 +222,9 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					if (!player.account.getAccountID().equals(acc.getAccountID()))
 						sanctuaryWorldObjectInfo.writeFurnitureInfo = true;
 
-					sanctuaryWorldObjectInfo.sancObjectInfo = new SanctuaryObjectData(positionInfo, furnitureInfo.get("gridId").getAsInt(), furnitureInfo.get("parentItemId").getAsString(), furnitureInfo.get("state").getAsInt());
+					sanctuaryWorldObjectInfo.sancObjectInfo = new SanctuaryObjectData(positionInfo,
+						furnitureInfo.get("gridId").getAsInt(), furnitureInfo.get("parentItemId").getAsString(),
+						furnitureInfo.get("state").getAsInt());
 						
 					client.sendPacket(sanctuaryWorldObjectInfo);
 
