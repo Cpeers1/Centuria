@@ -31,6 +31,8 @@ import com.google.gson.JsonParser;
 
 public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
+	private static final String PACKET_ID = "wr";
+
 	public String teleportUUID = "";
 
 	@Override
@@ -40,7 +42,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 	@Override
 	public String id() {
-		return "wr";
+		return PACKET_ID;
 	}
 
 	@Override
@@ -200,19 +202,21 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					sanctuaryWorldObjectInfo.defId = 1751;
 					sanctuaryWorldObjectInfo.ownerId = player.room.substring("sanctuary_".length());
 
-					var positionInfo = new WorldObjectPositionInfo(furnitureInfo.get("xPos").getAsDouble(),
-							furnitureInfo.get("yPos").getAsDouble(), furnitureInfo.get("zPos").getAsDouble(),
-							furnitureInfo.get("rotX").getAsDouble(), furnitureInfo.get("rotY").getAsDouble(),
-							furnitureInfo.get("rotZ").getAsDouble(), furnitureInfo.get("rotW").getAsDouble());
-
+					var positionInfo = new WorldObjectPositionInfo(
+						furnitureInfo.get("xPos").getAsDouble(), furnitureInfo.get("yPos").getAsDouble(),
+						furnitureInfo.get("zPos").getAsDouble(), furnitureInfo.get("rotX").getAsDouble(),
+						furnitureInfo.get("rotY").getAsDouble(), furnitureInfo.get("rotZ").getAsDouble(),
+						furnitureInfo.get("rotW").getAsDouble()
+					);
+					
 					// Object info
 					sanctuaryWorldObjectInfo.lastMove = new WorldObjectMoveNodeData();
 					sanctuaryWorldObjectInfo.lastMove.actorActionType = ActorActionType.None;
 					sanctuaryWorldObjectInfo.lastMove.serverTime = System.currentTimeMillis() / 1000;
 					sanctuaryWorldObjectInfo.lastMove.positionInfo = positionInfo;
 					sanctuaryWorldObjectInfo.lastMove.velocity = new Velocity();
-
-					// Sanc Object Info
+					
+					//Sanc Object Info
 					sanctuaryWorldObjectInfo.objectType = SanctuaryObjectType.Furniture;
 					sanctuaryWorldObjectInfo.funitureObject = furnitureObject;
 
@@ -220,10 +224,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					if (!player.account.getAccountID().equals(acc.getAccountID()))
 						sanctuaryWorldObjectInfo.writeFurnitureInfo = true;
 
-					sanctuaryWorldObjectInfo.sancObjectInfo = new SanctuaryObjectData(positionInfo,
-							furnitureInfo.get("gridId").getAsInt(), furnitureInfo.get("parentItemId").getAsString(),
-							furnitureInfo.get("state").getAsInt());
-
+					sanctuaryWorldObjectInfo.sancObjectInfo = new SanctuaryObjectData(positionInfo, furnitureInfo.get("gridId").getAsInt(), furnitureInfo.get("parentItemId").getAsString(), furnitureInfo.get("state").getAsInt())
+						
 					client.sendPacket(sanctuaryWorldObjectInfo);
 
 					// Log

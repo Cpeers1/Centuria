@@ -17,12 +17,14 @@ import org.asf.emuferal.social.SocialManager;
 
 public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 
+	private static final String PACKET_ID = "sj";
+	
 	public String sanctuaryOwner = null;
 	public int mode = 0;
 
 	@Override
 	public String id() {
-		return "sj";
+		return PACKET_ID;
 	}
 
 	@Override

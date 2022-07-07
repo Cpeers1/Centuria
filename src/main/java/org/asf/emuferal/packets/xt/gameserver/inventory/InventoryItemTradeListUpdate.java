@@ -13,6 +13,8 @@ import com.google.gson.JsonObject;
 
 public class InventoryItemTradeListUpdate implements IXtPacket<InventoryItemTradeListUpdate> {
 
+	private static final String PACKET_ID = "tlu";
+
 	public String itemID;
 	public boolean add = true;
 
@@ -23,7 +25,7 @@ public class InventoryItemTradeListUpdate implements IXtPacket<InventoryItemTrad
 
 	@Override
 	public String id() {
-		return "tlu";
+		return PACKET_ID;
 	}
 
 	@Override

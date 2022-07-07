@@ -16,6 +16,8 @@ import com.google.gson.JsonParser;
 
 public class UserTutorialCompleted implements IXtPacket<UserTutorialCompleted> {
 
+	private static final String PACKET_ID = "utc";
+
 	private String lookName;
 	private String lookData;
 
@@ -26,7 +28,7 @@ public class UserTutorialCompleted implements IXtPacket<UserTutorialCompleted> {
 
 	@Override
 	public String id() {
-		return "utc";
+		return PACKET_ID;
 	}
 
 	@Override

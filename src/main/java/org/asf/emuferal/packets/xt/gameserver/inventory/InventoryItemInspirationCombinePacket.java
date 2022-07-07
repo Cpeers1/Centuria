@@ -11,6 +11,8 @@ import org.asf.emuferal.players.Player;
 
 public class InventoryItemInspirationCombinePacket implements IXtPacket<InventoryItemInspirationCombinePacket> {
 
+	private static final String PACKET_ID = "iic";
+
 	public int[] inspirationIds;
 	public InspirationCombineResult result;
 
@@ -21,7 +23,7 @@ public class InventoryItemInspirationCombinePacket implements IXtPacket<Inventor
 
 	@Override
 	public String id() {
-		return "iic";
+		return PACKET_ID;
 	}
 
 	@Override

@@ -10,6 +10,8 @@ import org.asf.emuferal.packets.xt.IXtPacket;
 
 public class WorldObjectInfo implements IXtPacket<WorldObjectInfo> {
 
+	private static final String PACKET_ID = "oi";
+
 	public String id;
 	public int defId;
 	public String ownerId;
@@ -22,7 +24,7 @@ public class WorldObjectInfo implements IXtPacket<WorldObjectInfo> {
 
 	@Override
 	public String id() {
-		return "oi";
+		return PACKET_ID;
 	}
 
 	@Override

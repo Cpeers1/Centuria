@@ -11,6 +11,8 @@ import org.asf.emuferal.players.Player;
 
 public class WorldObjectGlide implements IXtPacket<WorldObjectGlide> {
 
+	private static final String PACKET_ID = "og";
+
 	private String playerUUID;
 
 	@Override
@@ -20,7 +22,7 @@ public class WorldObjectGlide implements IXtPacket<WorldObjectGlide> {
 
 	@Override
 	public String id() {
-		return "og";
+		return PACKET_ID;
 	}
 
 	@Override

@@ -21,6 +21,8 @@ import com.google.gson.JsonParser;
 
 public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownloadPacket> {
 
+	private static final String PACKET_ID = "ilt";
+
 	private String slot = "";
 
 	@Override
@@ -30,7 +32,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 	@Override
 	public String id() {
-		return "ilt";
+		return PACKET_ID;
 	}
 
 	@Override

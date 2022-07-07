@@ -9,6 +9,8 @@ import org.asf.emuferal.packets.xt.IXtPacket;
 
 public class WorldObjectInfoAvatarLocal implements IXtPacket<WorldObjectInfoAvatarLocal> {
 	
+	private static final String PACKET_ID = "oial";
+
 	public double x;
 	public double y;
 	public double z;
@@ -25,7 +27,7 @@ public class WorldObjectInfoAvatarLocal implements IXtPacket<WorldObjectInfoAvat
 
 	@Override
 	public String id() {
-		return "oial";
+		return PACKET_ID;
 	}
 
 	@Override

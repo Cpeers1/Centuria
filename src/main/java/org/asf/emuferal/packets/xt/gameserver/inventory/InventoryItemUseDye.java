@@ -15,6 +15,8 @@ import com.google.gson.JsonObject;
 
 public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 
+	private static final String PACKET_ID = "iud";
+
 	public String itemID;
 	public ArrayList<DyeInfo> dyes = new ArrayList<DyeInfo>();
 	public ArrayList<Integer> undye = new ArrayList<Integer>();
@@ -32,7 +34,7 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 
 	@Override
 	public String id() {
-		return "iud";
+		return PACKET_ID;
 	}
 
 	@Override

@@ -9,6 +9,8 @@ import org.asf.emuferal.packets.xt.IXtPacket;
 
 public class InventoryItemRemovedPacket implements IXtPacket<InventoryItemRemovedPacket> {
 
+	private static final String PACKET_ID = "ilr";
+
 	public String[] items;
 
 	@Override
@@ -18,7 +20,7 @@ public class InventoryItemRemovedPacket implements IXtPacket<InventoryItemRemove
 
 	@Override
 	public String id() {
-		return "ilr";
+		return PACKET_ID;
 	}
 
 	@Override

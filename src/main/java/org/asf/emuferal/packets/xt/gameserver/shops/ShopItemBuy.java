@@ -7,10 +7,11 @@ import java.util.UUID;
 import org.asf.emuferal.accounts.highlevel.ItemAccessor;
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.entities.shops.BoughtItemInfo;
+import org.asf.emuferal.enums.shops.ItemBuyStatus;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemPacket;
-import org.asf.emuferal.packets.xt.gameserver.shops.ItemBuyResponse.BoughtItemInfo;
 import org.asf.emuferal.players.Player;
 import org.asf.emuferal.shops.ShopManager;
 import org.asf.emuferal.shops.info.ShopItem;
@@ -21,6 +22,8 @@ import com.google.gson.JsonObject;
 
 public class ShopItemBuy implements IXtPacket<ShopItemBuy> {
 
+	private static final String PACKET_ID = "$b";
+	
 	private String item;
 	private String shopType;
 	private int count;
@@ -32,7 +35,7 @@ public class ShopItemBuy implements IXtPacket<ShopItemBuy> {
 
 	@Override
 	public String id() {
-		return "$b";
+		return PACKET_ID;
 	}
 
 	@Override
@@ -57,7 +60,7 @@ public class ShopItemBuy implements IXtPacket<ShopItemBuy> {
 		if (itm == null) {
 			// Item unavailable
 			ItemBuyResponse pkt = new ItemBuyResponse();
-			pkt.status = ItemBuyResponse.ItemBuyStatus.UNAVAILABLE;
+			pkt.status = ItemBuyStatus.UNAVAILABLE;
 			client.sendPacket(pkt);
 			return true;
 		}
@@ -68,7 +71,7 @@ public class ShopItemBuy implements IXtPacket<ShopItemBuy> {
 			if (acc.getCountOfItem(Integer.parseInt(itemId)) < cost) {
 				// Item unaffordable
 				ItemBuyResponse pkt = new ItemBuyResponse();
-				pkt.status = ItemBuyResponse.ItemBuyStatus.UNAFFORDABLE;
+				pkt.status = ItemBuyStatus.UNAFFORDABLE;
 				client.sendPacket(pkt);
 				return true;
 			}
@@ -78,14 +81,14 @@ public class ShopItemBuy implements IXtPacket<ShopItemBuy> {
 		if (itm.requiredLevel != -1 && (!plr.account.getLevel().isLevelAvailable()
 				|| plr.account.getLevel().getLevel() < itm.requiredLevel)) {
 			ItemBuyResponse pkt = new ItemBuyResponse();
-			pkt.status = ItemBuyResponse.ItemBuyStatus.LEVEL_LOCKED;
+			pkt.status = ItemBuyStatus.LEVEL_LOCKED;
 			client.sendPacket(pkt);
 			return true;
 		}
 
 		// Buy item
 		ItemBuyResponse res = new ItemBuyResponse();
-		res.status = ItemBuyResponse.ItemBuyStatus.SUCCESS;
+		res.status = ItemBuyStatus.SUCCESS;
 		for (String itemId : itm.cost.keySet()) {
 			int cost = itm.cost.get(itemId) * count;
 

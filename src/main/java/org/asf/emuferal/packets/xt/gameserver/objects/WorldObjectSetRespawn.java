@@ -10,6 +10,8 @@ import org.asf.emuferal.players.Player;
 
 public class WorldObjectSetRespawn implements IXtPacket<WorldObjectSetRespawn> {
 
+	private static final String PACKET_ID = "ors";
+
 	public double x;
 	public double y;
 	public double z;
@@ -26,7 +28,7 @@ public class WorldObjectSetRespawn implements IXtPacket<WorldObjectSetRespawn> {
 
 	@Override
 	public String id() {
-		return "ors";
+		return PACKET_ID;
 	}
 
 	@Override

@@ -14,6 +14,8 @@ import com.google.gson.JsonElement;
 
 public class InventoryItemPacket implements IXtPacket<InventoryItemPacket> {
 
+	private static final String PACKET_ID = "il";
+
 	public JsonElement item;
 
 	@Override
@@ -23,7 +25,7 @@ public class InventoryItemPacket implements IXtPacket<InventoryItemPacket> {
 
 	@Override
 	public String id() {
-		return "il";
+		return PACKET_ID;
 	}
 
 	@Override

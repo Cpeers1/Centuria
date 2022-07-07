@@ -11,12 +11,14 @@ import org.asf.emuferal.players.Player;
 
 public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacket> {
 
+	private static final String PACKET_ID = "sls";
+
 	public String lookSlotId = null;
 	public String lookSlotName = null;
 
 	@Override
 	public String id() {
-		return "sls";
+		return PACKET_ID;
 	}
 
 	@Override

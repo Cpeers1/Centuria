@@ -14,6 +14,8 @@ import org.asf.emuferal.players.Player;
 
 public class InteractionStart implements IXtPacket<InteractionStart> {
 
+	private static final String PACKET_ID = "oas";
+
 	private String source;
 	private String target;
 
@@ -24,7 +26,7 @@ public class InteractionStart implements IXtPacket<InteractionStart> {
 
 	@Override
 	public String id() {
-		return "oas";
+		return PACKET_ID;
 	}
 
 	@Override

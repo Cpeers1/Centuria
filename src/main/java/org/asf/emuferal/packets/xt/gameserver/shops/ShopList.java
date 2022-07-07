@@ -11,6 +11,8 @@ import org.asf.emuferal.shops.ShopManager;
 
 public class ShopList implements IXtPacket<ShopList> {
 
+	private static final String PACKET_ID = "$l";
+
 	public String shopType;
 	public String[] items;
 
@@ -21,7 +23,7 @@ public class ShopList implements IXtPacket<ShopList> {
 
 	@Override
 	public String id() {
-		return "$l";
+		return PACKET_ID;
 	}
 
 	@Override

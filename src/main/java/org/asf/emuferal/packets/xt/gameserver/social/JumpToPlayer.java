@@ -14,6 +14,8 @@ import org.asf.emuferal.social.SocialManager;
 
 public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 
+	private static final String PACKET_ID = "rfjtr";
+
 	private String accountID;
 
 	@Override
@@ -23,7 +25,7 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 
 	@Override
 	public String id() {
-		return "rfjtr";
+		return PACKET_ID;
 	}
 
 	@Override

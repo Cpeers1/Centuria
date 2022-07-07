@@ -10,6 +10,8 @@ import org.asf.emuferal.players.Player;
 
 public class RoomJoinTutorial implements IXtPacket<RoomJoinTutorial> {
 
+	private static final String PACKET_ID = "rjt";
+	
 	@Override
 	public RoomJoinTutorial instantiate() {
 		return new RoomJoinTutorial();
@@ -17,7 +19,7 @@ public class RoomJoinTutorial implements IXtPacket<RoomJoinTutorial> {
 
 	@Override
 	public String id() {
-		return "rjt";
+		return PACKET_ID;
 	}
 
 	@Override

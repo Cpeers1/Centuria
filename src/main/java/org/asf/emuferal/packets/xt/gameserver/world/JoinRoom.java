@@ -11,6 +11,8 @@ import org.asf.emuferal.players.Player;
 
 public class JoinRoom implements IXtPacket<JoinRoom> {
 
+	private static final String PACKET_ID = "rj";
+
 	public int levelID = 0;
 	public int levelType = 0;
 	public String roomIdentifier = "room_0";
@@ -23,7 +25,7 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 
 	@Override
 	public String id() {
-		return "rj";
+		return PACKET_ID;
 	}
 
 	@Override

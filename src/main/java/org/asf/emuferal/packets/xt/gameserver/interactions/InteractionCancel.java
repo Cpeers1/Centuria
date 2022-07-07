@@ -14,6 +14,8 @@ import org.asf.emuferal.players.Player;
 
 public class InteractionCancel implements IXtPacket<InteractionCancel> {
 
+	private static final String PACKET_ID = "oac";
+
 	private String target;
 
 	@Override
@@ -23,7 +25,7 @@ public class InteractionCancel implements IXtPacket<InteractionCancel> {
 
 	@Override
 	public String id() {
-		return "oac";
+		return PACKET_ID;
 	}
 
 	@Override

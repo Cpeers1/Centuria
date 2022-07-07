@@ -9,6 +9,8 @@ import org.asf.emuferal.packets.xt.IXtPacket;
 
 public class WorldObjectDelete implements IXtPacket<WorldObjectDelete> {
 
+	private static final String PACKET_ID = "od";
+
 	public String objectId;
 
 	@Override
@@ -18,7 +20,7 @@ public class WorldObjectDelete implements IXtPacket<WorldObjectDelete> {
 
 	@Override
 	public String id() {
-		return "od";
+		return PACKET_ID;
 	}
 
 	@Override

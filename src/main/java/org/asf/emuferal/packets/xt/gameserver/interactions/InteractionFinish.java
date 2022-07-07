@@ -17,6 +17,8 @@ import org.asf.emuferal.players.Player;
 
 public class InteractionFinish implements IXtPacket<InteractionFinish> {
 
+	private static final String PACKET_ID = "oaf";
+
 	private String target;
 	private int currentState;
 
@@ -27,7 +29,7 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 
 	@Override
 	public String id() {
-		return "oaf";
+		return PACKET_ID;
 	}
 
 	@Override

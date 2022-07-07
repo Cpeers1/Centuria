@@ -8,6 +8,8 @@ import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 
 public class KeepAlive implements IXtPacket<KeepAlive> {
 
+	private static final String PACKET_ID = "ka";
+
 	@Override
 	public KeepAlive instantiate() {
 		return new KeepAlive();
@@ -15,7 +17,7 @@ public class KeepAlive implements IXtPacket<KeepAlive> {
 
 	@Override
 	public String id() {
-		return "ka";
+		return PACKET_ID;
 	}
 
 	@Override

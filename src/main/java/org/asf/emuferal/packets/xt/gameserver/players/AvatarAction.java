@@ -11,6 +11,8 @@ import org.asf.emuferal.players.Player;
 
 public class AvatarAction implements IXtPacket<AvatarAction> {
 
+	private static final String PACKET_ID = "aa";
+
 	private String action;
 
 	@Override
@@ -20,7 +22,7 @@ public class AvatarAction implements IXtPacket<AvatarAction> {
 
 	@Override
 	public String id() {
-		return "aa";
+		return PACKET_ID;
 	}
 
 	@Override

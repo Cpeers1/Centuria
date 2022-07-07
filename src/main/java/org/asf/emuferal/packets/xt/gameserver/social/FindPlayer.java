@@ -10,6 +10,8 @@ import org.asf.emuferal.packets.xt.IXtPacket;
 
 public class FindPlayer implements IXtPacket<FindPlayer> {
 
+	private static final String PACKET_ID = "rffpu";
+	
 	private String name;
 	private String accountId = "";
 	private boolean success = false;
@@ -21,7 +23,7 @@ public class FindPlayer implements IXtPacket<FindPlayer> {
 
 	@Override
 	public String id() {
-		return "rffpu";
+		return PACKET_ID;
 	}
 
 	@Override

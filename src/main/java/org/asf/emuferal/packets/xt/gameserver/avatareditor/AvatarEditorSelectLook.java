@@ -14,6 +14,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class AvatarEditorSelectLook implements IXtPacket<AvatarEditorSelectLook> {
+	
+	private static final String PACKET_ID = "als";
 
 	private String lookID;
 
@@ -24,7 +26,7 @@ public class AvatarEditorSelectLook implements IXtPacket<AvatarEditorSelectLook>
 
 	@Override
 	public String id() {
-		return "als";
+		return PACKET_ID;
 	}
 
 	@Override

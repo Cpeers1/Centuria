@@ -18,6 +18,8 @@ import com.google.gson.JsonObject;
 
 public class AvatarLookGet implements IXtPacket<AvatarLookGet> {
 
+	private static final String PACKET_ID = "alg";
+
 	private String accountID;
 
 	@Override
@@ -27,7 +29,7 @@ public class AvatarLookGet implements IXtPacket<AvatarLookGet> {
 
 	@Override
 	public String id() {
-		return "alg";
+		return PACKET_ID;
 	}
 
 	@Override

@@ -17,6 +17,8 @@ import com.google.gson.JsonParser;
 
 public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 
+	private static final String PACKET_ID = "alz";
+
 	private String lookID;
 	private String lookName;
 	private String lookData;
@@ -29,7 +31,7 @@ public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 
 	@Override
 	public String id() {
-		return "alz";
+		return PACKET_ID;
 	}
 
 	@Override

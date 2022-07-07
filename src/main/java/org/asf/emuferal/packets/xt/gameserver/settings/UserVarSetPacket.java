@@ -14,6 +14,8 @@ import com.google.gson.JsonArray;
 
 public class UserVarSetPacket implements IXtPacket<UserVarSetPacket> {
 
+	private static final String PACKET_ID = "zs";
+
 	private int varDefId;
 	private int value;
 	private int index;
@@ -25,7 +27,7 @@ public class UserVarSetPacket implements IXtPacket<UserVarSetPacket> {
 
 	@Override
 	public String id() {
-		return "zs";
+		return PACKET_ID;
 	}
 
 	@Override

@@ -15,6 +15,8 @@ import org.asf.emuferal.players.Player;
 
 public class InteractionDataRequest implements IXtPacket<InteractionDataRequest> {
 
+	private static final String PACKET_ID = "oaskr";
+
 	private String target;
 	private int state;
 
@@ -25,7 +27,7 @@ public class InteractionDataRequest implements IXtPacket<InteractionDataRequest>
 
 	@Override
 	public String id() {
-		return "oaskr";
+		return PACKET_ID;
 	}
 
 	@Override

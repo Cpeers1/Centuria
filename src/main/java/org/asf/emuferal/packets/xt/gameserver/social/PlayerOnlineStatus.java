@@ -13,6 +13,8 @@ import org.asf.emuferal.social.SocialManager;
 
 public class PlayerOnlineStatus implements IXtPacket<PlayerOnlineStatus> {
 
+	private static final String PACKET_ID = "rfo";
+
 	private String playerID = "";
 	private OnlineStatus playerOnlineStatus;
 
@@ -23,7 +25,7 @@ public class PlayerOnlineStatus implements IXtPacket<PlayerOnlineStatus> {
 
 	@Override
 	public String id() {
-		return "rfo";
+		return PACKET_ID;
 	}
 
 	@Override

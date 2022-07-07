@@ -29,6 +29,8 @@ import com.google.gson.JsonParser;
 
 public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
+	private static final String PACKET_ID = "ssu";
+
 	private List<UpdateSancObjectItem> additions = new ArrayList<UpdateSancObjectItem>();
 	private List<RoomInfoObject> roomChanges = new ArrayList<RoomInfoObject>();
 	private List<String> removals = new ArrayList<String>();
@@ -36,7 +38,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 	@Override
 	public String id() {
-		return "ssu";
+		return PACKET_ID;
 	}
 
 	@Override

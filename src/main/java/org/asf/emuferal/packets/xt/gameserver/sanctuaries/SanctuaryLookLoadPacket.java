@@ -12,11 +12,13 @@ import org.asf.emuferal.players.Player;
 
 public class SanctuaryLookLoadPacket implements IXtPacket<SanctuaryLookLoadPacket> {
 
+	private static final String PACKET_ID = "sll";
+
 	public String lookId = null;
 
 	@Override
 	public String id() {
-		return "sll";
+		return PACKET_ID;
 	}
 
 	@Override

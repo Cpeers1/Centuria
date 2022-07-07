@@ -11,6 +11,8 @@ import org.asf.emuferal.players.Player;
 
 public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 
+	private static final String PACKET_ID = "ou";
+
 	private int mode;
 	private String data;
 
@@ -21,7 +23,7 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 
 	@Override
 	public String id() {
-		return "ou";
+		return PACKET_ID;
 	}
 
 	@Override
