@@ -10,3 +10,4 @@ Changes in 1.0.0.B1:
  - Creative mode: 10 of each resource on login
  - Only in Debug Mode: exceptions will be handled by Java, meaning debugging will be easier
  - Fix player settings crashing the connection
+ - Privacy settings

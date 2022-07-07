@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.entities.uservars.UserVarValue;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
@@ -42,7 +43,20 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 		for (Player plr : ((GameServer) client.getServer()).getPlayers()) {
 			if (plr.account.getAccountID().equals(accountID) && plr.roomReady && !plr.room.equals("room_STAFFROOM")
 					&& (!SocialManager.getInstance().socialListExists(accountID) || !SocialManager.getInstance()
-							.getPlayerIsBlocked(accountID, player.account.getAccountID()))) { // TODO: privacy settings
+							.getPlayerIsBlocked(accountID, player.account.getAccountID()))) {
+				// Load privacy settings
+				int privSetting = 0;
+				UserVarValue val = plr.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17546, 0);
+				if (val != null)
+					privSetting = val.value;
+
+				// Verify privacy settings
+				if (privSetting == 1 && !SocialManager.getInstance().getPlayerIsFollowing(plr.account.getAccountID(),
+						player.account.getAccountID()))
+					break;
+				else if (privSetting == 2)
+					break;
+
 				XtWriter writer = new XtWriter();
 				writer.writeString("rfjtr");
 				writer.writeInt(-1); // data prefix
@@ -87,7 +101,7 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 		writer.writeInt(0); // failure
 		writer.writeString(""); // data suffix
 		client.sendPacket(writer.encode());
-		return true; // Account not found or loading
+		return true; // Account not found, blocked or still loading
 	}
 
 }
