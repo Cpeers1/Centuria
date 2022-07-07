@@ -125,6 +125,17 @@ public class ItemAccessor {
 	}
 
 	/**
+	 * Retrieves an array of defIDs for a specific inventory type
+	 * 
+	 * @param inventory Inventory type string
+	 * @return Array of defIDs
+	 */
+	public static String[] getItemDefinitionsIn(String inventory) {
+		return definitions.keySet().stream().filter(t -> definitions.get(t).inventory.equals(inventory))
+				.toArray(t -> new String[t]);
+	}
+
+	/**
 	 * Retrieves the inventory type of a item by defID
 	 * 
 	 * @param defID Item defID

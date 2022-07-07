@@ -6,3 +6,5 @@ Changes in 1.0.0.B1:
  - Fix the item accessor targeting the first item and not the selected item (fixes latchkey)
  - Fix the currency accessor breaking when the currency object is not present
  - Fix duplicate pardons, also prevented muting if banned as it overrides the penalty
+ - Creative mode: 10k of each currency on login
+ - Creative mode: 10 of each resource on login

@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.asf.emuferal.EmuFeral;
 import org.asf.emuferal.accounts.PlayerInventory;
+import org.asf.emuferal.accounts.highlevel.ItemAccessor;
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
@@ -202,6 +203,18 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			}
 		}
 
+		// Resources
+		if (slot.equals("103") && EmuFeral.giveAllResources) {
+			// Give all resources
+			String[] ids = ItemAccessor.getItemDefinitionsIn(slot);
+			for (String id : ids) {
+				int c = inv.getItemAccessor(plr).getCountOfItem(Integer.valueOf(id));
+				if (c < 10) {
+					inv.getItemAccessor(plr).add(Integer.valueOf(id), 10 - c);
+				}
+			}
+		}
+
 		// Furniture
 		if (slot.equals("102") && EmuFeral.giveAllFurnitureItems) {
 			// Scan furniturehelper and give all clothes
@@ -286,7 +299,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				obj.addProperty("defId", 2327);
 				JsonObject components = new JsonObject();
 				JsonObject quantity = new JsonObject();
-				quantity.addProperty("quantity", 2500);
+				quantity.addProperty("quantity", (EmuFeral.giveAllCurrency ? 10000 : 2500));
 				components.add("Quantity", quantity);
 				obj.add("components", components);
 				obj.addProperty("id", UUID.randomUUID().toString());
@@ -305,7 +318,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				obj.addProperty("defId", 14500);
 				JsonObject components = new JsonObject();
 				JsonObject quantity = new JsonObject();
-				quantity.addProperty("quantity", 0);
+				quantity.addProperty("quantity", (EmuFeral.giveAllCurrency ? 10000 : 0));
 				components.add("Quantity", quantity);
 				obj.add("components", components);
 				obj.addProperty("id", UUID.randomUUID().toString());
@@ -324,7 +337,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				obj.addProperty("defId", 8372);
 				JsonObject components = new JsonObject();
 				JsonObject quantity = new JsonObject();
-				quantity.addProperty("quantity", 0);
+				quantity.addProperty("quantity", (EmuFeral.giveAllCurrency ? 10000 : 0));
 				components.add("Quantity", quantity);
 				obj.add("components", components);
 				obj.addProperty("id", UUID.randomUUID().toString());
@@ -333,6 +346,20 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				// Add entry
 				itm.add(obj);
 				changed = true;
+			}
+
+			// Creative mode
+			if (EmuFeral.giveAllCurrency) {
+				// Add 10k if 0
+				if (inv.getCurrencyAccessor().getLikes() <= 0) {
+					inv.getCurrencyAccessor().setLikesDirectly(10000);
+				}
+				if (inv.getCurrencyAccessor().getStarFragments() <= 0) {
+					inv.getCurrencyAccessor().setStarFragmentsDirectly(10000);
+				}
+				if (inv.getCurrencyAccessor().getLockpicks() <= 0) {
+					inv.getCurrencyAccessor().setLockpicksDirectly(10000);
+				}
 			}
 
 			if (changed) {
@@ -370,7 +397,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			}
 		}
 
-		// playerVars
+		// PlayerVars
 		if (slot.equals("303")) {
 			if (inv.getItem("303") == null || inv.getItem("303").getAsJsonArray().isEmpty()) {
 				JsonArray itm;
@@ -378,28 +405,27 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 					itm = inv.getItem("303").getAsJsonArray();
 				else
 					itm = new JsonArray();
-								
+
 				// Build entry
 				item = itm;
 
 				// Save item
 				inv.setItem(slot, item);
 			}
-			
-			//set defaults
-			//inv.getUserVarAccesor().setDefaultPlayerVarValues();
+
+			// Set defaults
+			// inv.getUserVarAccesor().setDefaultPlayerVarValues();
 		}
-		
-		//inspirations
-		if(slot.equals("8"))
-		{
+
+		// Inspirations
+		if (slot.equals("8")) {
 			if (inv.getItem("8") == null || inv.getItem("8").getAsJsonArray().isEmpty()) {
 				JsonArray itm;
-				
+
 				if (inv.containsItem("8"))
 					itm = inv.getItem("8").getAsJsonArray();
 				else
-					itm = new JsonArray();			
+					itm = new JsonArray();
 
 				// Build entry
 
@@ -408,13 +434,13 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				// Save item
 				inv.setItem(slot, item);
 
-				// set default inspirations
-				
+				// Set default inspirations
+
 				inv.getInspirationAccessor().giveDefaultInspirations();
-				
-				//reload inv
+
+				// Reload inv
 				itm = inv.getItem("8").getAsJsonArray();
-				
+
 				item = itm;
 			}
 		}

@@ -77,6 +77,8 @@ public class EmuFeral {
 	public static boolean giveAllWings = true;
 	public static boolean giveAllFurnitureItems = true;
 	public static boolean giveAllSanctuaryTypes = true;
+	public static boolean giveAllCurrency = true;
+	public static boolean giveAllResources = true;
 	public static boolean encryptChat = false;
 	public static boolean encryptGame = false;
 	public static String discoveryAddress = "localhost";
@@ -346,8 +348,8 @@ public class EmuFeral {
 					"api-port=6\n" + "director-port=6969\n" + "game-port=6968\n" + "chat-port=6972\n"
 							+ "allow-registration=true\n" + "give-all-avatars=true\n" + "give-all-mods=true\n"
 							+ "give-all-clothes=true\n" + "give-all-wings=true\n" + "give-all-sanctuary-types=true\n"
-							+ "give-all-furniture=true\n" + "discovery-server-address=localhost\n"
-							+ "encrypt-api=false\n" + "encrypt-chat=true\n"
+							+ "give-all-furniture=true\n" + "give-all-currency=true\n" + "give-all-resources=true\n"
+							+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
 							+ "encrypt-game=false\n\nvpn-user-whitelist=vpn-whitelist\n" + "vpn-ipv4-banlist=\n"
 							+ "vpn-ipv6-banlist=");
 		}
@@ -394,6 +396,8 @@ public class EmuFeral {
 		giveAllWings = properties.getOrDefault("give-all-wings", "true").equals("true");
 		giveAllSanctuaryTypes = properties.getOrDefault("give-all-sanctuary-types", "true").equals("true");
 		giveAllFurnitureItems = properties.getOrDefault("give-all-furniture", "true").equals("true");
+		giveAllResources = properties.getOrDefault("give-all-resources", "true").equals("true");
+		giveAllCurrency = properties.getOrDefault("give-all-currency", "true").equals("true");
 		encryptChat = properties.getOrDefault("encrypt-chat", "false").equals("true")
 				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
 		encryptGame = properties.getOrDefault("encrypt-game", "false").equals("true")
