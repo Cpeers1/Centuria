@@ -8,7 +8,7 @@ import org.asf.emuferal.entities.inventoryitems.InventoryItem;
 import com.google.gson.JsonObject;
 
 public class GenericHelper extends AbstractInventoryInteractionHelper {
-	
+
 	private String inventoryId;
 	private ItemComponent[] components;
 
@@ -44,16 +44,16 @@ public class GenericHelper extends AbstractInventoryInteractionHelper {
 			inventory.getAccessor().removeInventoryObject(inventoryId, defID);
 			return uuid;
 		}
-		
+
 		return null;
 	}
 
 	@Override
 	public String removeOne(PlayerInventory inventory, JsonObject object) {
-		if (inventory.getAccessor().hasInventoryObject(inventoryId, object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString())) {
+		if (inventory.getAccessor().hasInventoryObject(inventoryId,
+				object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString())) {
 			// Remove the item directly
-			String uuid = inventory.getAccessor().findInventoryObject(inventoryId, InventoryItem.UUID_PROPERTY_NAME)
-					.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
+			String uuid = object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
 			inventory.getItem(inventoryId).getAsJsonArray().remove(object);
 			inventory.setItem(inventoryId, inventory.getItem(inventoryId));
 			return uuid;

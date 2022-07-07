@@ -49,12 +49,8 @@ public class ClothingHelper extends AbstractInventoryInteractionHelper {
 	@Override
 	public String removeOne(PlayerInventory inventory, JsonObject object) {
 		if (inventory.getClothingAccessor().hasClothing(object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt())) {
-			String uuid = inventory.getAccessor()
-					.findInventoryObject(INV_TYPE, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt())
-					.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
-			inventory.getClothingAccessor()
-					.removeClothing(object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsString());
-
+			String uuid = object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
+			inventory.getClothingAccessor().removeClothing(uuid);
 			return uuid;
 		}
 

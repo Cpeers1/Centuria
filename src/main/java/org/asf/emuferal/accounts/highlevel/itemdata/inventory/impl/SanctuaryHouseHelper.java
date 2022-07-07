@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 public class SanctuaryHouseHelper extends AbstractInventoryInteractionHelper {
 
 	private static final String INV_TYPE = "5";
-	
+
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, int defID) {
 		String id = inventory.getSanctuaryAccessor().addHouseToInventory(defID);
@@ -18,9 +18,11 @@ public class SanctuaryHouseHelper extends AbstractInventoryInteractionHelper {
 
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, JsonObject object) {
-		if (inventory.getAccessor().hasInventoryObject(INV_TYPE, object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString())) {
+		if (inventory.getAccessor().hasInventoryObject(INV_TYPE,
+				object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString())) {
 			// Remove existing
-			inventory.getAccessor().removeInventoryObject(INV_TYPE, object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString());
+			inventory.getAccessor().removeInventoryObject(INV_TYPE,
+					object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString());
 
 			// Add to inventory
 			inventory.getItem(INV_TYPE).getAsJsonArray().add(object);
@@ -44,10 +46,10 @@ public class SanctuaryHouseHelper extends AbstractInventoryInteractionHelper {
 
 	@Override
 	public String removeOne(PlayerInventory inventory, JsonObject object) {
-		if (inventory.getSanctuaryAccessor().isHouseTypeUnlocked(object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt())) {
-			String uuid = inventory.getAccessor().findInventoryObject(INV_TYPE, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt())
-					.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
-			inventory.getAccessor().removeInventoryObject(INV_TYPE, object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString());
+		if (inventory.getSanctuaryAccessor()
+				.isHouseTypeUnlocked(object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt())) {
+			String uuid = object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
+			inventory.getAccessor().removeInventoryObject(INV_TYPE, uuid);
 			return uuid;
 		}
 		return null;

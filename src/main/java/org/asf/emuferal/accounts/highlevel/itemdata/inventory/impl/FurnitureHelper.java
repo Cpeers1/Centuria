@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 public class FurnitureHelper extends AbstractInventoryInteractionHelper {
 
 	private static final String INV_TYPE = "102";
-	
+
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, int defID) {
 		String id = inventory.getFurnitureAccessor().addFurniture(defID, false);
@@ -18,9 +18,11 @@ public class FurnitureHelper extends AbstractInventoryInteractionHelper {
 
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, JsonObject object) {
-		if (inventory.getAccessor().hasInventoryObject(INV_TYPE, object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString())) {
+		if (inventory.getAccessor().hasInventoryObject(INV_TYPE,
+				object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString())) {
 			// Remove existing
-			inventory.getAccessor().removeInventoryObject(INV_TYPE, object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString());
+			inventory.getAccessor().removeInventoryObject(INV_TYPE,
+					object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString());
 
 			// Add to inventory
 			inventory.getItem(INV_TYPE).getAsJsonArray().add(object);
@@ -45,9 +47,8 @@ public class FurnitureHelper extends AbstractInventoryInteractionHelper {
 	@Override
 	public String removeOne(PlayerInventory inventory, JsonObject object) {
 		if (inventory.getFurnitureAccessor().hasFurniture(object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt())) {
-			String uuid = inventory.getAccessor().findInventoryObject(INV_TYPE, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt())
-					.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
-			inventory.getFurnitureAccessor().removeFurniture(object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString());
+			String uuid = object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
+			inventory.getFurnitureAccessor().removeFurniture(uuid);
 			return uuid;
 		}
 		return null;

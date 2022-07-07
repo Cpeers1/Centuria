@@ -397,7 +397,7 @@ public class ItemAccessor {
 		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
 
 		String removedItemUUID = null;
-		
+
 		// Find type handler
 		switch (container.inventoryType) {
 
@@ -625,21 +625,31 @@ public class ItemAccessor {
 		}
 
 		if (player != null) {
-			// Send packet if successful
-			InventoryItemRemovedPacket pk = new InventoryItemRemovedPacket();
-			pk.items = removedItemUUIDs;
-			player.client.sendPacket(pk);
+			String objId = object.get("id").getAsString();
+			if (!inventory.getAccessor().hasInventoryObject(info.inventory, objId)) {
+				// Send packet if successful
+				InventoryItemRemovedPacket pk = new InventoryItemRemovedPacket();
+				pk.items = removedItemUUIDs;
+				player.client.sendPacket(pk);
+			} else {
+				JsonArray arr = new JsonArray();
+				arr.add(inventory.getAccessor().findInventoryObject(info.inventory, objId));
+
+				// Send packet if successful
+				InventoryItemPacket pk = new InventoryItemPacket();
+				pk.item = arr;
+				player.client.sendPacket(pk);
+
+			}
 
 			// Save items
 			for (String itm : inventory.getAccessor().itemsToSave) {
 				inventory.setItem(itm, inventory.getItem(itm));
 
-				if (!info.inventory.equals(itm)) {
-					// Sync unsaved inventories
-					InventoryItemPacket pkt = new InventoryItemPacket();
-					pkt.item = inventory.getItem(itm);
-					player.client.sendPacket(pkt);
-				}
+				// Sync unsaved inventories
+				InventoryItemPacket pkt = new InventoryItemPacket();
+				pkt.item = inventory.getItem(itm);
+				player.client.sendPacket(pkt);
 			}
 			inventory.getAccessor().completedSave();
 		}
@@ -689,7 +699,7 @@ public class ItemAccessor {
 			JsonArray items = inventory.getItem(info.inventory).getAsJsonArray();
 			for (JsonElement ele : items) {
 				JsonObject itm = ele.getAsJsonObject();
-				if (itm.get("defID").getAsInt() == defID) {
+				if (itm.get("defId").getAsInt() == defID) {
 					count++;
 				}
 			}

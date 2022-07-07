@@ -426,6 +426,10 @@ public abstract class EmuFeralAccount {
 	 * @param reason  Mute reason
 	 */
 	public void mute(int days, int hours, int minutes, String issuer, String reason) {
+		// Check ban
+		if (isBanned())
+			return;
+
 		// Apply mute
 		JsonObject muteInfo = new JsonObject();
 		muteInfo.addProperty("type", "mute");
@@ -479,6 +483,11 @@ public abstract class EmuFeralAccount {
 	 * @param reason Pardon reason
 	 */
 	public void pardon(String issuer, String reason) {
+		// Check penalty
+		boolean wasPardoned = false;
+		if (!isBanned() && !isMuted())
+			wasPardoned = true;
+
 		// Remove penalties
 		if (getPlayerInventory().containsItem("penalty"))
 			getPlayerInventory().deleteItem("penalty");
@@ -489,6 +498,10 @@ public abstract class EmuFeralAccount {
 			plr.account.pardon(issuer, reason);
 			return;
 		}
+
+		// Ignore if already pardoned
+		if (wasPardoned)
+			return;
 
 		// Dispatch event
 		EventBus.getInstance().dispatchEvent(new AccountPardonEvent(this, issuer, reason));

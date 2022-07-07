@@ -67,21 +67,30 @@ public class ItemUncraftPacket implements IXtPacket<ItemUncraftPacket> {
 				return true;
 			}
 
-			// Uncraft
-			if (count == 1 && !inv.getItemAccessor(plr).remove(obj))
-				success = false;
-			else if (count != 1 && !inv.getItemAccessor(plr).remove(Integer.parseInt(defId), count))
-				success = false;
-			if (!success) {
-				// Return failure
+			// Check count
+			if (inv.getItemAccessor(plr).getCountOfItem(Integer.parseInt(defId)) >= count) {
 				client.sendPacket(this);
+
+				// Uncraft
+				if (count == 1 && !inv.getItemAccessor(plr).remove(obj))
+					success = false;
+				else if (count != 1 && !inv.getItemAccessor(plr).remove(Integer.parseInt(defId), count))
+					success = false;
+				if (!success) {
+					// Return failure
+					client.sendPacket(this);
+					return true;
+				}
+
+				// Add items
+				info.result.forEach((item, count) -> {
+					inv.getItemAccessor(plr).add(Integer.parseInt(item), count * this.count);
+				});
 				return true;
 			}
 
-			// Add items
-			info.result.forEach((item, count) -> {
-				inv.getItemAccessor(plr).add(Integer.parseInt(item), count * this.count);
-			});
+			// Return failure
+			success = false;
 		} else {
 			// Return failure
 			success = false;
