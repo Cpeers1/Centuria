@@ -538,8 +538,6 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 	@Override
 	public void removeSanctuaryObject(String objectUUID, String activeSancLookId) {
-		// TODO Auto-generated method stub
-
 		// find sanc look
 		if (!inventory.containsItem("201"))
 			inventory.setItem("201", new JsonArray());
@@ -594,8 +592,6 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 	@Override
 	public JsonObject updateSanctuaryRoomData(String activeSancLookId, RoomInfoObject[] roomInfos) {
-		// TODO Auto-generated method stub
-
 		// find sanc look
 		if (!inventory.containsItem("201"))
 			inventory.setItem("201", new JsonArray());

@@ -348,7 +348,6 @@ public class TestChatClient {
 											}
 											}
 										}
-										// TODO
 									} catch (IOException e1) {
 										disconnect();
 										break;

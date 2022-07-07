@@ -1,8 +1,5 @@
 main todo:
 - overhaul account storage
-- fix settings not being saved
-- make sure that warping uses privacy settings
-- make sure that private chat uses privacy settings
 
 interaction update:
 - questgivers

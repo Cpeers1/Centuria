@@ -56,9 +56,8 @@ public class CreateConversationPacket extends AbstractChatPacket {
 		// Participant list
 		ArrayList<EmuFeralAccount> members = new ArrayList<EmuFeralAccount>();
 
-		// Find participants and check privacy
+		// Find participants and check block
 		for (JsonElement participant : participants) {
-			// TODO: privacy
 			String id = participant.getAsString();
 
 			// Block check
