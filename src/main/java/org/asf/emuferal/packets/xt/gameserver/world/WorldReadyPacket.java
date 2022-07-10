@@ -133,6 +133,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Find spawn
 		handleSpawn(teleportUUID, plr, client);
 
+		// Reset target
+		plr.targetPos = null;
+		plr.targetRot = null;
+
 		// Sync spawn
 		for (Player player : server.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
@@ -203,17 +207,17 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					sanctuaryWorldObjectInfo.ownerId = player.room.substring("sanctuary_".length());
 
 					var positionInfo = new WorldObjectPositionInfo(furnitureInfo.get("xPos").getAsDouble(),
-					furnitureInfo.get("yPos").getAsDouble(), furnitureInfo.get("zPos").getAsDouble(),
-					furnitureInfo.get("rotX").getAsDouble(), furnitureInfo.get("rotY").getAsDouble(),
-					furnitureInfo.get("rotZ").getAsDouble(), furnitureInfo.get("rotW").getAsDouble());
-					
+							furnitureInfo.get("yPos").getAsDouble(), furnitureInfo.get("zPos").getAsDouble(),
+							furnitureInfo.get("rotX").getAsDouble(), furnitureInfo.get("rotY").getAsDouble(),
+							furnitureInfo.get("rotZ").getAsDouble(), furnitureInfo.get("rotW").getAsDouble());
+
 					// Object info
 					sanctuaryWorldObjectInfo.lastMove = new WorldObjectMoveNodeData();
 					sanctuaryWorldObjectInfo.lastMove.actorActionType = ActorActionType.None;
 					sanctuaryWorldObjectInfo.lastMove.serverTime = System.currentTimeMillis() / 1000;
 					sanctuaryWorldObjectInfo.lastMove.positionInfo = positionInfo;
 					sanctuaryWorldObjectInfo.lastMove.velocity = new Velocity();
-					
+
 					// Sanc Object Info
 					sanctuaryWorldObjectInfo.objectType = SanctuaryObjectType.Furniture;
 					sanctuaryWorldObjectInfo.funitureObject = furnitureObject;
@@ -223,9 +227,9 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 						sanctuaryWorldObjectInfo.writeFurnitureInfo = true;
 
 					sanctuaryWorldObjectInfo.sancObjectInfo = new SanctuaryObjectData(positionInfo,
-						furnitureInfo.get("gridId").getAsInt(), furnitureInfo.get("parentItemId").getAsString(),
-						furnitureInfo.get("state").getAsInt());
-						
+							furnitureInfo.get("gridId").getAsInt(), furnitureInfo.get("parentItemId").getAsString(),
+							furnitureInfo.get("state").getAsInt());
+
 					client.sendPacket(sanctuaryWorldObjectInfo);
 
 					// Log
@@ -275,6 +279,12 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				// Send response
 				System.out.println(
 						"Player teleport: " + plr.account.getDisplayName() + ": " + player.account.getDisplayName());
+
+				// Check room
+				if (player.levelID != plr.pendingLevelID) {
+					continue;
+				}
+
 				WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
 				res.x = player.lastPosX;
 				res.y = player.lastPosY;
@@ -297,6 +307,28 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			}
 		}
 
+		// Spawn at target if present
+		if (plr.targetPos != null && plr.targetRot != null) {
+			WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
+			res.x = plr.targetPos.x;
+			res.y = plr.targetPos.y;
+			res.z = plr.targetPos.z;
+			res.rw = plr.targetRot.w;
+			res.rx = plr.targetRot.x;
+			res.ry = plr.targetRot.y;
+			res.rz = plr.targetRot.z;
+			plr.lastPosX = res.x;
+			plr.lastPosY = res.y;
+			plr.lastPosZ = res.z;
+			plr.lastRotW = res.rx;
+			plr.lastRotX = res.ry;
+			plr.lastRotY = res.rz;
+			plr.lastRotZ = res.rw;
+			client.sendPacket(res);
+			plr.respawn = res.x + "%" + res.y + "%" + res.z + "%" + res.rx + "%" + res.ry + "%" + res.rz + "%" + res.rw;
+			return;
+		}
+
 		// Load spawn helper
 		try {
 			// Load helper
@@ -311,6 +343,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				helper = helper.get(plr.pendingLevelID + "/" + id).getAsJsonObject();
 				System.out.println("Player teleport: " + plr.account.getDisplayName() + ": "
 						+ helper.get("worldID").getAsString());
+
 				WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
 				res.x = helper.get("spawnX").getAsDouble();
 				res.y = helper.get("spawnY").getAsDouble();
