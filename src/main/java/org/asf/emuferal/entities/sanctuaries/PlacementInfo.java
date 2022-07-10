@@ -1,7 +1,11 @@
 package org.asf.emuferal.entities.sanctuaries;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.asf.emuferal.entities.JsonableObject;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 /**
@@ -11,17 +15,35 @@ import com.google.gson.JsonObject;
  */
 public class PlacementInfo extends JsonableObject {
 
+	public static final String ITEMS_PROPERTY_NAME = "items";
+	public List<PlacedItemInfo> items = new ArrayList<PlacedItemInfo>();
+	
 	@Override
 	public JsonObject toJson() {
-		// TODO Auto-generated method stub
-		return null;
+		JsonObject jsonObject = new JsonObject();
+		JsonArray itemsArray = new JsonArray();
+		
+		for(var item : items)
+			itemsArray.add(item.toJson());
+			
+		jsonObject.add(ITEMS_PROPERTY_NAME, itemsArray);
+		
+		return jsonObject;
 	}
 
 	@Override
-	protected JsonObject propagatePropertiesFromJson(JsonObject jsonObject) {
-		// TODO Auto-generated method stub
-		return null;
+	protected void propagatePropertiesFromJson(JsonObject jsonObject) {
+		JsonArray itemsArray = jsonObject.get(ITEMS_PROPERTY_NAME).getAsJsonArray();
+		
+		for(var item : itemsArray)
+		{
+			try {
+				items.add((PlacedItemInfo)new PlacedItemInfo().CreateObjectFromJson(item.getAsJsonObject()));
+			}
+			catch(Exception e)
+			{
+				throw new RuntimeException(e);
+			}
+		}
 	}
-	
-	//TODO 
 }

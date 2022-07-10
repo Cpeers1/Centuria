@@ -9,7 +9,7 @@ public abstract class JsonableObject
 
 	public abstract JsonObject toJson();
 	
-	protected abstract JsonObject propagatePropertiesFromJson(JsonObject jsonObject);
+	protected abstract void propagatePropertiesFromJson(JsonObject jsonObject);
 	
 	public JsonableObject CreateObjectFromJson(JsonObject jsonObject) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
 	{

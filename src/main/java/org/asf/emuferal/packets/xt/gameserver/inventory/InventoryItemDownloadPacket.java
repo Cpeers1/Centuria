@@ -10,6 +10,7 @@ import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.ItemAccessor;
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.enums.inventory.InventoryType;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;
@@ -417,6 +418,26 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 			// Set defaults
 			// inv.getUserVarAccesor().setDefaultPlayerVarValues();
+		}
+		
+		// PlayerVars
+		if (slot.equals("110")) {
+			if (inv.getItem("110") == null || inv.getItem("110").getAsJsonArray().isEmpty()) {
+				JsonArray itm;
+				if (inv.containsItem("110"))
+					itm = inv.getItem("110").getAsJsonArray();
+				else
+					itm = new JsonArray();
+
+				// Build entry
+				item = itm;
+
+				// Save item
+				inv.setItem(slot, item);
+			}
+
+			// Set defaults
+			inv.getTwiggleAccesor().giveDefaultTwiggles();
 		}
 
 		// Inspirations

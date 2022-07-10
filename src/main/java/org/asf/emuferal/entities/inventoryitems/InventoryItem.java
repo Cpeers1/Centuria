@@ -2,10 +2,13 @@ package org.asf.emuferal.entities.inventoryitems;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.asf.emuferal.entities.components.ComponentManager;
 import org.asf.emuferal.entities.components.InventoryItemComponent;
+import org.asf.emuferal.enums.inventory.InventoryType;
 
 import com.google.gson.JsonObject;
 
@@ -26,9 +29,16 @@ public abstract class InventoryItem {
 	// object variables
 	public int defId;
 	public String uuid;
-	public int invType;
-	private List<InventoryItemComponent> components = new ArrayList<InventoryItemComponent>();
+	public InventoryType invType;
+	private Map<String, InventoryItemComponent> components = new HashMap<String, InventoryItemComponent>();
 
+	public InventoryItem()
+	{
+		this.defId = 0;
+		this.uuid = "";
+		this.invType = null;
+	}
+	
 	/**
 	 * Base constructor for all inventory items.
 	 * 
@@ -36,7 +46,7 @@ public abstract class InventoryItem {
 	 * @param uuid    The unique identifier of the item.
 	 * @param invType The inventory number/type this item belongs in.
 	 */
-	public InventoryItem(int defId, String uuid, int invType) {
+	public InventoryItem(int defId, String uuid, InventoryType invType) {
 		this.defId = defId;
 		this.uuid = uuid;
 		this.invType = invType;
@@ -60,7 +70,7 @@ public abstract class InventoryItem {
 
 		defId = object.get(DEF_ID_PROPERTY_NAME).getAsInt();
 		uuid = object.get(UUID_PROPERTY_NAME).getAsString();
-		invType = object.get(INV_TYPE_PROPERTY_NAME).getAsInt();
+		invType = InventoryType.get(object.get(INV_TYPE_PROPERTY_NAME).getAsInt());
 
 		// get components
 
@@ -68,7 +78,8 @@ public abstract class InventoryItem {
 
 		for (var componentJson : componentLevel.entrySet()) {
 			var type = ComponentManager.getComponentTypeFromComponentName(componentJson.getKey());
-			components.add(InventoryItemComponent.fromJson(type, componentJson.getValue().getAsJsonObject()));
+			var item = InventoryItemComponent.fromJson(type, componentJson.getValue().getAsJsonObject());
+			components.put(item.getComponentName(), item);
 		}
 	}
 
@@ -84,13 +95,13 @@ public abstract class InventoryItem {
 		var newObject = new JsonObject();
 		newObject.addProperty(DEF_ID_PROPERTY_NAME, defId);
 		newObject.addProperty(UUID_PROPERTY_NAME, uuid);
-		newObject.addProperty(INV_TYPE_PROPERTY_NAME, invType);
+		newObject.addProperty(INV_TYPE_PROPERTY_NAME, invType.invTypeId);
 
 		var componentObject = new JsonObject();
 
-		for (var component : components) {
-			var componentChildObject = component.toJson();
-			componentObject.add(component.getComponentName(), componentChildObject);
+		for (var set : components.entrySet()) {
+			var componentChildObject = set.getValue().toJson();
+			componentObject.add(set.getKey(), componentChildObject);
 		}
 
 		// add component object
@@ -106,7 +117,7 @@ public abstract class InventoryItem {
 	 */
 	protected void addComponent(InventoryItemComponent component) {
 		// adds the component..
-		components.add(component);
+		components.put(component.getComponentName(), component);
 	}
 
 	/**
@@ -118,8 +129,8 @@ public abstract class InventoryItem {
 	protected boolean hasComponent(InventoryItemComponent component) {
 		boolean result = false;
 
-		for (var comp : components) {
-			if (comp.getComponentName() == component.getComponentName()) {
+		for (var set : components.entrySet()) {
+			if (set.getKey() == component.getComponentName()) {
 				result = true;
 				break;
 			}
@@ -137,9 +148,9 @@ public abstract class InventoryItem {
 	protected InventoryItemComponent getComponent(String componentName) {
 		InventoryItemComponent result = null;
 
-		for (var component : components) {
-			if (component.getComponentName() == componentName) {
-				result = component;
+		for (var set : components.entrySet()) {
+			if (set.getKey() == componentName) {
+				result = set.getValue();
 				break;
 			}
 		}
@@ -154,7 +165,21 @@ public abstract class InventoryItem {
 	 * @param component
 	 */
 	protected void SetComponent(InventoryItemComponent component) {
-
+		
+		//TODO: Is the behaviour of replace acceptable for me not to need this check?
+		if(components.containsKey(component.getComponentName()))
+		{
+			components.replace(component.getComponentName(), component);
+		}
+		else
+		{
+			components.put(component.getComponentName(), component);
+		}
 	}
+	
+	/**
+	 * Gets the inv type for the item.
+	 */
+	public abstract InventoryType getInventoryType();
 
 }

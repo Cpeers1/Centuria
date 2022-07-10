@@ -39,6 +39,7 @@ import org.asf.connective.https.ConnectiveHTTPSServer;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.entities.components.ComponentManager;
+import org.asf.emuferal.entities.inventoryitems.InventoryItemManager;
 import org.asf.emuferal.modules.IEmuFeralModule;
 import org.asf.emuferal.modules.ModuleManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
@@ -193,7 +194,8 @@ public class EmuFeral {
 
 		// Managers
 
-		ComponentManager.RegisterAllComponents();
+		ComponentManager.registerAllComponents();
+		InventoryItemManager.registerAllItems();
 
 		// Start the servers
 		startServer();

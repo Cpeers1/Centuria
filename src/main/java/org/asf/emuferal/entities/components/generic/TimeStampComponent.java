@@ -18,7 +18,7 @@ public class TimeStampComponent extends InventoryItemComponent {
 
 	private static final String TIME_STAMP_PROPERTY_NAME = "ts";
 
-	public String timeStamp;
+	public long timeStamp;
 
 	@Override
 	public String getComponentName() {
@@ -37,14 +37,14 @@ public class TimeStampComponent extends InventoryItemComponent {
 	@Override
 	protected void getPropertiesFromJson(JsonObject object) {
 		// TODO Auto-generated method stub
-		this.timeStamp = object.get(TIME_STAMP_PROPERTY_NAME).getAsString();
+		this.timeStamp = object.get(TIME_STAMP_PROPERTY_NAME).getAsLong();
 	}
 
 	public TimeStampComponent() {
 		super();
 	}
 
-	public TimeStampComponent(String timeStamp) {
+	public TimeStampComponent(long timeStamp) {
 		this.timeStamp = timeStamp;
 	}
 

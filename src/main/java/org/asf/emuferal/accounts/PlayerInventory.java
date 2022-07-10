@@ -12,6 +12,7 @@ import org.asf.emuferal.accounts.highlevel.InteractionMemoryAccessor;
 import org.asf.emuferal.accounts.highlevel.InventoryAccessor;
 import org.asf.emuferal.accounts.highlevel.ItemAccessor;
 import org.asf.emuferal.accounts.highlevel.SanctuaryAccessor;
+import org.asf.emuferal.accounts.highlevel.TwiggleAccessor;
 import org.asf.emuferal.accounts.highlevel.UserVarAccessor;
 import org.asf.emuferal.accounts.highlevel.impl.AvatarAccessorImpl;
 import org.asf.emuferal.accounts.highlevel.impl.ClothingItemAccessorImpl;
@@ -20,6 +21,7 @@ import org.asf.emuferal.accounts.highlevel.impl.FurnitureItemAccessorImpl;
 import org.asf.emuferal.accounts.highlevel.impl.InspirationAccessorImpl;
 import org.asf.emuferal.accounts.highlevel.impl.InteractionMemoryAccessorImpl;
 import org.asf.emuferal.accounts.highlevel.impl.SanctuaryAccessorImpl;
+import org.asf.emuferal.accounts.highlevel.impl.TwiggleAccessorImpl;
 import org.asf.emuferal.accounts.highlevel.impl.UserVarAccessorImpl;
 import org.asf.emuferal.players.Player;
 
@@ -35,6 +37,7 @@ public abstract class PlayerInventory {
 	protected DyeAccessor dAccessor = new DyeAccessorImpl(this);
 	protected InspirationAccessor inAccessor = new InspirationAccessorImpl(this);
 	protected UserVarAccessor uAccessor = new UserVarAccessorImpl(this);
+	protected TwiggleAccessor tAccessor = new TwiggleAccessorImpl(this);
 
 	/**
 	 * Retrieves the high-level inventory accessor
@@ -124,6 +127,15 @@ public abstract class PlayerInventory {
 	 */
 	public UserVarAccessor getUserVarAccesor() {
 		return uAccessor;
+	}
+	
+	/**
+	 * Retrieves the high-level twiggle accessor
+	 * 
+	 * @return CurrencyAccessor instance
+	 */
+	public TwiggleAccessor getTwiggleAccesor() {
+		return tAccessor;
 	}
 
 	/**
