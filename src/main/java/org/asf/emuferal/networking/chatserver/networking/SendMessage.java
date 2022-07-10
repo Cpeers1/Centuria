@@ -17,6 +17,7 @@ import org.asf.emuferal.accounts.AccountManager;
 import org.asf.emuferal.accounts.EmuFeralAccount;
 import org.asf.emuferal.dms.DMManager;
 import org.asf.emuferal.dms.PrivateChatMessage;
+import org.asf.emuferal.entities.uservars.UserVarValue;
 import org.asf.emuferal.ipbans.IpBanManager;
 import org.asf.emuferal.modules.eventbus.EventBus;
 import org.asf.emuferal.modules.events.chatcommands.ChatCommandEvent;
@@ -27,7 +28,6 @@ import org.asf.emuferal.networking.chatserver.ChatClient;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
-import org.asf.emuferal.packets.xt.gameserver.world.WorldReadyPacket;
 import org.asf.emuferal.players.Player;
 import org.asf.emuferal.social.SocialManager;
 
@@ -145,25 +145,6 @@ public class SendMessage extends AbstractChatPacket {
 				return true;
 			}
 
-			if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-				// TODO
-				if (true)
-					continue;
-
-				// Filter it
-				for (String filter : filterWords) {
-					while (word.toLowerCase().contains(filter.toLowerCase())) {
-						String start = word.substring(0, word.toLowerCase().indexOf(filter.toLowerCase()));
-						String rest = word.substring(word.toLowerCase().indexOf(filter.toLowerCase()) + 1);
-						String tag = "";
-						for (int i = 0; i < filter.length(); i++) {
-							tag += "#";
-						}
-						word = start + tag + rest;
-					}
-				}
-			}
-
 			if (!newMessage.isEmpty())
 				newMessage += " " + word;
 			else
@@ -193,17 +174,9 @@ public class SendMessage extends AbstractChatPacket {
 		}
 
 		if (client.isInRoom(room)) {
-			// Send response
-			JsonObject res = new JsonObject();
-			res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
-			res.addProperty("conversationId", room);
-			res.addProperty("message", message);
-			res.addProperty("source", client.getPlayer().getAccountID());
+			// Time format
 			SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");
 			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-			res.addProperty("sentAt", fmt.format(new Date()));
-			res.addProperty("eventId", "chat.postMessage");
-			res.addProperty("success", true);
 
 			// If it is a DM, save message
 			DMManager manager = DMManager.getInstance();
@@ -225,6 +198,55 @@ public class SendMessage extends AbstractChatPacket {
 						gameClient = cl.getPlayer().getOnlinePlayerInstance();
 						if (gameClient == null || !gameClient.roomReady || gameClient.room == null)
 							continue;
+
+						// Filter
+						String filteredMessage = "";
+
+						// Load filter settings
+						int filterSetting = 0;
+						UserVarValue val = cl.getPlayer().getPlayerInventory().getUserVarAccesor()
+								.getPlayerVarValue(9362, 0);
+						if (val != null)
+							filterSetting = val.value;
+
+						// Check filter
+						if (filterSetting != 0) {
+							for (String word : message.split(" ")) {
+								if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+									// Filter it
+									for (String filter : filterWords) {
+										while (word.toLowerCase().contains(filter.toLowerCase())) {
+											String start = word.substring(0,
+													word.toLowerCase().indexOf(filter.toLowerCase()));
+											String rest = word.substring(
+													word.toLowerCase().indexOf(filter.toLowerCase()) + filter.length());
+											String tag = "";
+											for (int i = 0; i < filter.length(); i++) {
+												tag += "#";
+											}
+											word = start + tag + rest;
+										}
+									}
+								}
+
+								if (!filteredMessage.isEmpty())
+									filteredMessage += " " + word;
+								else
+									filteredMessage = word;
+							}
+						} else {
+							filteredMessage = message;
+						}
+
+						// Send response
+						JsonObject res = new JsonObject();
+						res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
+						res.addProperty("conversationId", room);
+						res.addProperty("message", filteredMessage);
+						res.addProperty("source", client.getPlayer().getAccountID());
+						res.addProperty("sentAt", fmt.format(new Date()));
+						res.addProperty("eventId", "chat.postMessage");
+						res.addProperty("success", true);
 
 						// Send message
 						cl.sendPacket(res);
@@ -1280,33 +1302,30 @@ public class SendMessage extends AbstractChatPacket {
 						}
 					}
 					case "giveitem":
-						
-						if(GameServer.hasPerm(permLevel, "admin"))
-						{
+
+						if (GameServer.hasPerm(permLevel, "admin")) {
 							try {
 								int defID = 0;
 								int quantity = 1;
 								String player = "";
 								String uuid = "";
-								
+
 								if (args.size() < 1) {
 									systemMessage("Missing argument: itemDefId", cmd, client);
 									return true;
 								}
-								
+
 								defID = Integer.valueOf(args.get(0));
-								
-								if(args.size() == 2)
-								{
+
+								if (args.size() == 2) {
 									quantity = Integer.valueOf(args.get(1));
 								}
-								
-								if(args.size() >= 3)
-								{
+
+								if (args.size() >= 3) {
 									player = args.get(2);
-									
-									//check existence of player
-									
+
+									// check existence of player
+
 									uuid = AccountManager.getInstance().getUserByDisplayName(player);
 									if (uuid == null) {
 										// Player not found
@@ -1314,71 +1333,60 @@ public class SendMessage extends AbstractChatPacket {
 										return true;
 									}
 								}
-								
-								//funny stuff check
-								if(quantity <= 0 || defID <= 0)
-								{
-									systemMessage("You cannot give 0 or less quantity of/or an item ID of 0 or below.", cmd, client);
+
+								// funny stuff check
+								if (quantity <= 0 || defID <= 0) {
+									systemMessage("You cannot give 0 or less quantity of/or an item ID of 0 or below.",
+											cmd, client);
 									return true;
 								}
-								
-								//player case..
-								
-								if(uuid.equals(""))
-								{
-									//give item to the command sender..
-									
+
+								// player case..
+
+								if (uuid.equals("")) {
+									// give item to the command sender..
+
 									var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
-									
-									if(onlinePlayer != null)
-									{
+
+									if (onlinePlayer != null) {
 										var result = client.getPlayer().getPlayerInventory()
 												.getItemAccessor(client.getPlayer().getOnlinePlayerInstance())
 												.add(defID, quantity);
-										
-										//TODO: Check result
-										systemMessage("Gave " + client.getPlayer().getDisplayName() + " " + quantity + " of item " + defID + ".", cmd, client);
+
+										// TODO: Check result
+										systemMessage("Gave " + client.getPlayer().getDisplayName() + " " + quantity
+												+ " of item " + defID + ".", cmd, client);
 										return true;
-									}
-									else 
-									{
-										//TODO: support for giving offline players items.. somehow
+									} else {
+										// TODO: support for giving offline players items.. somehow
 										systemMessage("Specified account does not appear to be online.", cmd, client);
 									}
-									
-								}
-								else
-								{
-									var onlinePlayer = AccountManager.getInstance().getAccount(uuid).getOnlinePlayerInstance();
-									
-									if(onlinePlayer != null)
-									{
+
+								} else {
+									var onlinePlayer = AccountManager.getInstance().getAccount(uuid)
+											.getOnlinePlayerInstance();
+
+									if (onlinePlayer != null) {
 										var result = onlinePlayer.account.getPlayerInventory()
-												.getItemAccessor(onlinePlayer)
-												.add(defID, quantity);
-										
-										//TODO: Check result
-										systemMessage("Gave " + onlinePlayer.account.getDisplayName() + " " + quantity + " of item " + uuid + ".", cmd, client);
+												.getItemAccessor(onlinePlayer).add(defID, quantity);
+
+										// TODO: Check result
+										systemMessage("Gave " + onlinePlayer.account.getDisplayName() + " " + quantity
+												+ " of item " + uuid + ".", cmd, client);
 										return true;
-									}
-									else
-									{
-										//TODO: support for giving offline players items.. somehow
+									} else {
+										// TODO: support for giving offline players items.. somehow
 										systemMessage("Specified account does not appear to be online.", cmd, client);
 									}
 
 								}
-								
+
 								return true;
-							} 
-							catch (Exception e)
-							{
+							} catch (Exception e) {
 								systemMessage("Error: " + e, cmd, client);
 								return true;
-							}		
-						}
-						else
-						{
+							}
+						} else {
 							break;
 						}
 					}
