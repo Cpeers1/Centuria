@@ -11,3 +11,4 @@ Changes in 1.0.0.B1:
  - Only in Debug Mode: exceptions will be handled by Java, meaning debugging will be easier
  - Fix player settings crashing the connection
  - Privacy settings
+ - Fix typo in session expiry kick
