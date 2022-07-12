@@ -12,3 +12,4 @@ Changes in 1.0.0.B1:
  - Fix player settings crashing the connection
  - Privacy settings
  - Fix typo in session expiry kick
+ - Developers: added a command to directly send raw packets from chat

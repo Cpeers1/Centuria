@@ -312,6 +312,7 @@ public class SendMessage extends AbstractChatPacket {
 			if (GameServer.hasPerm(permLevel, "developer")) {
 				commandMessages.add("makedeveloper \"<name>\"");
 				commandMessages.add("tpm <levelDefID> [<levelType>]");
+				commandMessages.add("srp \"<raw-packet>\" [<player>]");
 			}
 			if (GameServer.hasPerm(permLevel, "admin")) {
 				commandMessages.add("makeadmin \"<player>\"");
@@ -1297,12 +1298,45 @@ public class SendMessage extends AbstractChatPacket {
 							}
 
 							return true;
-						} else {
-							break;
+						}
+					}
+					case "srp": {
+						// Sends a raw packet
+						if (GameServer.hasPerm(permLevel, "developer")) {
+							String packet = "";
+							if (args.size() < 1) {
+								systemMessage("Missing argument: raw-packet", cmd, client);
+								return true;
+							}
+
+							// Parse arguments
+							packet = args.get(0);
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() > 1) {
+								player = args.get(1);
+							}
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+							EmuFeralAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// Send packet
+							try {
+								if (acc.getOnlinePlayerInstance() == null)
+									systemMessage("Error: player not online", cmd, client);
+								acc.getOnlinePlayerInstance().client.sendPacket(packet);
+								systemMessage("Packet has been sent.", cmd, client);
+							} catch (Exception e) {
+								systemMessage("Error: " + e, cmd, client);
+							}
+
+							return true;
 						}
 					}
 					case "giveitem":
-
 						if (GameServer.hasPerm(permLevel, "admin")) {
 							try {
 								int defID = 0;
