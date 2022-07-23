@@ -18,7 +18,7 @@ import org.asf.emuferal.social.SocialManager;
 public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 
 	private static final String PACKET_ID = "sj";
-	
+
 	public String sanctuaryOwner = null;
 	public int mode = 0;
 	private boolean isAllowed;
@@ -74,7 +74,6 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 			if (privSetting == 2) {
 				// Nobody
 				isAllowed = false;
-
 			} else if (privSetting == 1) {
 				// Followers
 				// Check if the owner follows the current player
@@ -82,10 +81,8 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 					isAllowed = false;
 				}
 			}
-		}
-		else {
+		} else
 			isAllowed = true;
-		}
 
 		// Build room join
 		JoinRoom join = new JoinRoom();
@@ -95,7 +92,7 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 		join.roomIdentifier = "sanctuary_" + sanctuaryOwner;
 		join.teleport = sanctuaryOwner;
 
-		if (isAllowed == true){
+		if (isAllowed == true) {
 			// Sync
 			GameServer srv = (GameServer) client.getServer();
 			for (Player plr2 : srv.getPlayers()) {
