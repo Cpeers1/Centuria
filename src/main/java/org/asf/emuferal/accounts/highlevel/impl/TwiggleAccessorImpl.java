@@ -2,6 +2,7 @@ package org.asf.emuferal.accounts.highlevel.impl;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import org.asf.emuferal.entities.twiggles.TwiggleWorkParameters;
 import org.asf.emuferal.enums.inventory.InventoryType;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 
 public class TwiggleAccessorImpl extends TwiggleAccessor {
@@ -26,19 +28,13 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 	@Override
 	public TwiggleItem addNewTwiggle() {
 		try {
-			String invId = Integer.toString(InventoryType.Twiggles.invTypeId);
-
-			// find Twiggle Inv
-			if (!inventory.containsItem(invId))
-				inventory.setItem(invId, new JsonArray());
-
-			var twiggleInv = inventory.getItem(invId).getAsJsonArray();
+			var twiggleInv = getTwiggleInv();
 
 			var newTwiggleItem = createNewTwiggle();
 
 			twiggleInv.add(newTwiggleItem.toJsonObject());
 
-			inventory.setItem(invId, twiggleInv);
+			inventory.setItem(Integer.toString(InventoryType.Twiggles.invTypeId), twiggleInv);
 
 			return newTwiggleItem;
 		} catch (Exception exception) {
@@ -47,51 +43,212 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 	}
 
 	@Override
-	public void removeTwiggle() {
-		// TODO Auto-generated method stub
+	public boolean removeTwiggle() {
+		var twiggleInv = getTwiggleInv();
+		
+		//find a twiggle that isn't working
+		try {
+			
+			TwiggleItem selectedTwiggle = null;
+			for(var twiggle : twiggleInv)
+			{
+				TwiggleItem twiggleItem = new TwiggleItem();
+				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
+	
+				if(twiggleItem.getTwiggleItem().workType == 0)
+				{
+					selectedTwiggle = twiggleItem;
+					break;
+				}
+			}
+			
+			if(selectedTwiggle == null)
+				return false;
+			
+			//remove it 
+			//TODO: BLAH bad bad 
+			return removeTwiggle(selectedTwiggle.uuid);
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
 
 	}
+	
+	@Override
+	public boolean removeTwiggle(String twiggleInvId) {
+		var twiggleInv = getTwiggleInv();
+		
+		try {
+			
+			JsonElement selectedTwiggleElement = null;
+			for(var twiggle : twiggleInv)
+			{
+				TwiggleItem twiggleItem = new TwiggleItem();
+				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
+	
+				if(twiggleItem.getTwiggleItem().workType == 0 && twiggleItem.uuid == twiggleInvId)
+				{
+					selectedTwiggleElement = twiggle;
+					break;
+				}
+			}
+			
+			if(selectedTwiggleElement == null)
+				return false;
+			
+			//remove it 
+			twiggleInv.remove(selectedTwiggleElement);
+			inventory.setItem(Integer.toString(InventoryType.Twiggles.invTypeId), twiggleInv);
+			
+			return true;
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 
 	@Override
 	public TwiggleItem setTwiggleWork(int workType, long workEndTime) {
-		// TODO Auto-generated method stub
-		return null;
+		var twiggleInv = getTwiggleInv();
+		
+		try {
+			
+			//Get the first nonworking twiggle
+			TwiggleItem selectedTwiggle = null;
+			int index = 0;
+			for(var twiggle : twiggleInv)
+			{
+				TwiggleItem twiggleItem = new TwiggleItem();
+				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
+	
+				if(twiggleItem.getTwiggleItem().workType == 0)
+				{
+					selectedTwiggle = twiggleItem;
+					break;
+				}
+				
+				index++;
+			}
+			
+			if(selectedTwiggle == null) return null;
+			
+			//Set it to work
+			selectedTwiggle.getTwiggleItem().workType = workType;
+			selectedTwiggle.getTwiggleItem().workEndTime = workEndTime;
+			
+			selectedTwiggle.getTimeStampComponent().stamp();
+			
+			//remove old twiggle item
+			twiggleInv.remove(index);
+			
+			//add new twiggle item
+			twiggleInv.add(selectedTwiggle.toJsonObject());
+			
+			return selectedTwiggle;
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	@Override
 	public TwiggleItem setTwiggleWork(int workType, long workEndTime, TwiggleWorkParameters twiggleWorkParameters) {
-		// TODO Auto-generated method stub
-		return null;
+		var twiggleInv = getTwiggleInv();
+		
+		try {
+			
+			//Get the first nonworking twiggle
+			TwiggleItem selectedTwiggle = null;
+			int index = 0;
+			for(var twiggle : twiggleInv)
+			{
+				TwiggleItem twiggleItem = new TwiggleItem();
+				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
+	
+				if(twiggleItem.getTwiggleItem().workType == 0)
+				{
+					selectedTwiggle = twiggleItem;
+					break;
+				}
+				
+				index++;
+			}
+			
+			if(selectedTwiggle == null) return null;
+			
+			//Set it to work
+			selectedTwiggle.getTwiggleItem().workType = workType;
+			selectedTwiggle.getTwiggleItem().workEndTime = workEndTime;
+			selectedTwiggle.getTwiggleItem().twiggleWorkParams = twiggleWorkParameters;
+			
+			selectedTwiggle.getTimeStampComponent().stamp();
+			
+			//remove old twiggle item
+			twiggleInv.remove(index);
+			
+			//add new twiggle item
+			twiggleInv.add(selectedTwiggle.toJsonObject());
+			
+			return selectedTwiggle;
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	@Override
 	public TwiggleItem[] getAllTwiggles() {
-		// TODO Auto-generated method stub
-		return null;
+		List<TwiggleItem> twiggles = new ArrayList<TwiggleItem>();
+		var twiggleInv = getTwiggleInv();
+		
+		try
+		{			
+			for(var twiggle : twiggleInv)
+			{
+				TwiggleItem twiggleItem = new TwiggleItem();
+				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
+				twiggles.add(twiggleItem);
+			}
+			
+			return (TwiggleItem[]) twiggles.toArray();
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
 	public TwiggleItem getTwiggle(String twiggleInvId) {
-		// TODO Auto-generated method stub
-		return null;
+		var twiggleJsonObject = inventory.getAccessor().findInventoryObject(Integer.toString(InventoryType.Twiggles.invTypeId), twiggleInvId);
+		if(twiggleJsonObject == null) return null;
+		
+		try {		
+			
+			TwiggleItem twiggleItem = new TwiggleItem();
+			twiggleItem.fromJsonObject(twiggleJsonObject);
+			
+			return twiggleItem;
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
 	public TwiggleItem clearTwiggleWork(String twiggleInvId) {
-		// TODO Auto-generated method stub
+		//TODO
 		return null;
 	}
 
 	@Override
 	public void giveDefaultTwiggles() {
 
-		String invId = Integer.toString(InventoryType.Twiggles.invTypeId);
-
-		// find Twiggle Inv
-		if (!inventory.containsItem(invId))
-			inventory.setItem(invId, new JsonArray());
-
-		var twiggleInv = inventory.getItem(invId).getAsJsonArray();
+		var twiggleInv = getTwiggleInv();
 
 		var twigglesToAdd = DEFAULT_TWIGGLE_AMOUNT - twiggleInv.size();
 
@@ -115,5 +272,17 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 
 		return twiggleItem;
 	}
+	
+	private JsonArray getTwiggleInv()
+	{
+		String invId = Integer.toString(InventoryType.Twiggles.invTypeId);
+
+		// find Twiggle Inv
+		if (!inventory.containsItem(invId))
+			inventory.setItem(invId, new JsonArray());
+
+		return inventory.getItem(invId).getAsJsonArray();
+	}
+
 
 }

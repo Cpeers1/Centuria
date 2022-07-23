@@ -47,5 +47,10 @@ public class TimeStampComponent extends InventoryItemComponent {
 	public TimeStampComponent(long timeStamp) {
 		this.timeStamp = timeStamp;
 	}
+	
+	public void stamp()
+	{
+		this.timeStamp = System.currentTimeMillis();
+	}
 
 }
