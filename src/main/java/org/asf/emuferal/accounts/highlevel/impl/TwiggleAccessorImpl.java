@@ -14,6 +14,7 @@ import org.asf.emuferal.entities.components.twiggles.TwiggleComponent;
 import org.asf.emuferal.entities.inventoryitems.twiggles.TwiggleItem;
 import org.asf.emuferal.entities.twiggles.TwiggleWorkParameters;
 import org.asf.emuferal.enums.inventory.InventoryType;
+import org.asf.emuferal.enums.twiggles.TwiggleState;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -55,7 +56,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 				TwiggleItem twiggleItem = new TwiggleItem();
 				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
 	
-				if(twiggleItem.getTwiggleItem().workType == 0)
+				if(twiggleItem.getTwiggleItem().workType == TwiggleState.None)
 				{
 					selectedTwiggle = twiggleItem;
 					break;
@@ -88,7 +89,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 				TwiggleItem twiggleItem = new TwiggleItem();
 				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
 	
-				if(twiggleItem.getTwiggleItem().workType == 0 && twiggleItem.uuid == twiggleInvId)
+				if(twiggleItem.getTwiggleItem().workType == TwiggleState.None && twiggleItem.uuid == twiggleInvId)
 				{
 					selectedTwiggleElement = twiggle;
 					break;
@@ -111,7 +112,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 
 
 	@Override
-	public TwiggleItem setTwiggleWork(int workType, long workEndTime) {
+	public TwiggleItem setTwiggleWork(TwiggleState workType, long workEndTime) {
 		var twiggleInv = getTwiggleInv();
 		
 		try {
@@ -124,7 +125,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 				TwiggleItem twiggleItem = new TwiggleItem();
 				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
 	
-				if(twiggleItem.getTwiggleItem().workType == 0)
+				if(twiggleItem.getTwiggleItem().workType == TwiggleState.None)
 				{
 					selectedTwiggle = twiggleItem;
 					break;
@@ -156,7 +157,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 	}
 
 	@Override
-	public TwiggleItem setTwiggleWork(int workType, long workEndTime, TwiggleWorkParameters twiggleWorkParameters) {
+	public TwiggleItem setTwiggleWork(TwiggleState workType, long workEndTime, TwiggleWorkParameters twiggleWorkParameters) {
 		var twiggleInv = getTwiggleInv();
 		
 		try {
@@ -169,7 +170,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 				TwiggleItem twiggleItem = new TwiggleItem();
 				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
 	
-				if(twiggleItem.getTwiggleItem().workType == 0)
+				if(twiggleItem.getTwiggleItem().workType == TwiggleState.None)
 				{
 					selectedTwiggle = twiggleItem;
 					break;

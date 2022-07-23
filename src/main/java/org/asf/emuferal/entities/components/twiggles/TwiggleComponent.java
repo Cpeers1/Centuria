@@ -3,6 +3,7 @@ package org.asf.emuferal.entities.components.twiggles;
 import org.asf.emuferal.entities.components.Component;
 import org.asf.emuferal.entities.components.InventoryItemComponent;
 import org.asf.emuferal.entities.twiggles.TwiggleWorkParameters;
+import org.asf.emuferal.enums.twiggles.TwiggleState;
 
 import com.google.gson.JsonObject;
 
@@ -20,7 +21,7 @@ public class TwiggleComponent extends InventoryItemComponent {
 	public static final String END_WORK_TIME_PROPERTY_NAME = "endWorkTime";
 	public static final String WORK_PARAMS_PROPERTY_NAME = "workParams";
 	
-	public int workType = 0; //TODO: Make a enum for this (I don't think even WW did)
+	public TwiggleState workType = TwiggleState.None; //TODO: Make a enum for this (I don't think even WW did)
 	public long workEndTime = 0;
 	public TwiggleWorkParameters twiggleWorkParams = null;
 	
@@ -32,7 +33,7 @@ public class TwiggleComponent extends InventoryItemComponent {
 	@Override
 	public JsonObject toJson() {
 		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty(WORK_TYPE_PROPERTY_NAME, workType);
+		jsonObject.addProperty(WORK_TYPE_PROPERTY_NAME, workType.value);
 		jsonObject.addProperty(END_WORK_TIME_PROPERTY_NAME, workEndTime);
 		
 		if(twiggleWorkParams != null)
@@ -43,7 +44,7 @@ public class TwiggleComponent extends InventoryItemComponent {
 
 	@Override
 	protected void getPropertiesFromJson(JsonObject object) {
-		this.workType = object.get(WORK_TYPE_PROPERTY_NAME).getAsInt();
+		this.workType = TwiggleState.get(object.get(WORK_TYPE_PROPERTY_NAME).getAsInt());
 		this.workEndTime = object.get(END_WORK_TIME_PROPERTY_NAME).getAsLong();
 		
 		if(object.has(WORK_PARAMS_PROPERTY_NAME))

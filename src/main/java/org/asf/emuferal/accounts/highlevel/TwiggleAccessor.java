@@ -3,6 +3,7 @@ package org.asf.emuferal.accounts.highlevel;
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.entities.inventoryitems.twiggles.TwiggleItem;
 import org.asf.emuferal.entities.twiggles.TwiggleWorkParameters;
+import org.asf.emuferal.enums.twiggles.TwiggleState;
 
 public abstract class TwiggleAccessor extends AbstractInventoryAccessor {
 
@@ -43,7 +44,7 @@ public abstract class TwiggleAccessor extends AbstractInventoryAccessor {
 	 * @param workEndTime The end time of the work being done.
 	 * @return The updated twiggle item, or null if there was no twiggle to give work to.
 	 */
-	public abstract TwiggleItem setTwiggleWork(int workType, long workEndTime);
+	public abstract TwiggleItem setTwiggleWork(TwiggleState workType, long workEndTime);
 
 	/**
 	 * Gives a non-working twiggle a new work item.
@@ -52,7 +53,7 @@ public abstract class TwiggleAccessor extends AbstractInventoryAccessor {
 	 * @param TwiggleWorkParameters additional work parameters for the twiggle.
 	 * @return The updated twiggle item, or null if there was no twiggle to give work to.
 	 */
-	public abstract TwiggleItem setTwiggleWork(int workType, long workEndTime,
+	public abstract TwiggleItem setTwiggleWork(TwiggleState workType, long workEndTime,
 			TwiggleWorkParameters twiggleWorkParameters);
 
 	/**
