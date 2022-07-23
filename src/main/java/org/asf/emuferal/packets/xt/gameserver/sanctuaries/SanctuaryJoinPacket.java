@@ -83,6 +83,9 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 				}
 			}
 		}
+		else {
+			isAllowed = true;
+		}
 
 		// Build room join
 		JoinRoom join = new JoinRoom();
