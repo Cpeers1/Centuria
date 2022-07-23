@@ -35,8 +35,10 @@ public class Player {
 	public boolean roomReady = false;
 	public boolean wasInChat = false;
 	public int levelType = 0;
+	public int previousLevelType = 0;
 	public int levelID = 0;
 	public int pendingLevelID = 0;
+	public int previousLevelID = 0;
 
 	public String pendingRoom = "0";
 	public String room = null;

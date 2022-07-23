@@ -21,6 +21,7 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 	
 	public String sanctuaryOwner = null;
 	public int mode = 0;
+	private boolean isAllowed;
 
 	@Override
 	public String id() {
@@ -72,45 +73,41 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 			// Verify access
 			if (privSetting == 2) {
 				// Nobody
+				isAllowed = false;
 
-				// Send error
-				client.sendPacket("%xt%rj%-1%false%1689%2%-1%" + sanctuaryOwner + "%sanctuary_" + sanctuaryOwner + "%");
-				return true;
 			} else if (privSetting == 1) {
 				// Followers
-
 				// Check if the owner follows the current player
 				if (!SocialManager.getInstance().getPlayerIsFollowing(sanctuaryOwner, player.account.getAccountID())) {
-					// Send error
-					client.sendPacket(
-							"%xt%rj%-1%false%1689%2%-1%" + sanctuaryOwner + "%sanctuary_" + sanctuaryOwner + "%");
-					return true;
+					isAllowed = false;
 				}
 			}
 		}
 
 		// Build room join
 		JoinRoom join = new JoinRoom();
+		join.success = isAllowed;
 		join.levelType = 2;
 		join.levelID = 1689;
 		join.roomIdentifier = "sanctuary_" + sanctuaryOwner;
 		join.teleport = sanctuaryOwner;
 
-		// Sync
-		GameServer srv = (GameServer) client.getServer();
-		for (Player plr2 : srv.getPlayers()) {
-			if (plr2.room != null && player.room != null && player.room != null && plr2.room.equals(player.room)
-					&& plr2 != player) {
-				player.destroyAt(plr2);
+		if (isAllowed == true){
+			// Sync
+			GameServer srv = (GameServer) client.getServer();
+			for (Player plr2 : srv.getPlayers()) {
+				if (plr2.room != null && player.room != null && player.room != null && plr2.room.equals(player.room)
+						&& plr2 != player) {
+					player.destroyAt(plr2);
+				}
 			}
+
+			// Assign room
+			player.roomReady = false;
+			player.pendingLevelID = 1689;
+			player.pendingRoom = "sanctuary_" + sanctuaryOwner;
+			player.levelType = join.levelType;
 		}
-
-		// Assign room
-		player.roomReady = false;
-		player.pendingLevelID = 1689;
-		player.pendingRoom = "sanctuary_" + sanctuaryOwner;
-		player.levelType = join.levelType;
-
 		// Send packet
 		client.sendPacket(join);
 
