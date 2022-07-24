@@ -80,7 +80,9 @@ public class SanctuaryJoinPacket implements IXtPacket<SanctuaryJoinPacket> {
 				if (!SocialManager.getInstance().getPlayerIsFollowing(sanctuaryOwner, player.account.getAccountID())) {
 					isAllowed = false;
 				}
-			}
+			} else
+				//Everyone
+				isAllowed = true;
 		} else
 			isAllowed = true;
 
