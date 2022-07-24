@@ -56,7 +56,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 				TwiggleItem twiggleItem = new TwiggleItem();
 				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
 	
-				if(twiggleItem.getTwiggleItem().workType == TwiggleState.None)
+				if(twiggleItem.getTwiggleComponent().workType == TwiggleState.None)
 				{
 					selectedTwiggle = twiggleItem;
 					break;
@@ -89,7 +89,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 				TwiggleItem twiggleItem = new TwiggleItem();
 				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
 	
-				if(twiggleItem.getTwiggleItem().workType == TwiggleState.None && twiggleItem.uuid == twiggleInvId)
+				if(twiggleItem.getTwiggleComponent().workType == TwiggleState.None && twiggleItem.uuid == twiggleInvId)
 				{
 					selectedTwiggleElement = twiggle;
 					break;
@@ -125,7 +125,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 				TwiggleItem twiggleItem = new TwiggleItem();
 				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
 	
-				if(twiggleItem.getTwiggleItem().workType == TwiggleState.None)
+				if(twiggleItem.getTwiggleComponent().workType == TwiggleState.None)
 				{
 					selectedTwiggle = twiggleItem;
 					break;
@@ -137,8 +137,8 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 			if(selectedTwiggle == null) return null;
 			
 			//Set it to work
-			selectedTwiggle.getTwiggleItem().workType = workType;
-			selectedTwiggle.getTwiggleItem().workEndTime = workEndTime;
+			selectedTwiggle.getTwiggleComponent().workType = workType;
+			selectedTwiggle.getTwiggleComponent().workEndTime = workEndTime;
 			
 			selectedTwiggle.getTimeStampComponent().stamp();
 			
@@ -170,7 +170,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 				TwiggleItem twiggleItem = new TwiggleItem();
 				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
 	
-				if(twiggleItem.getTwiggleItem().workType == TwiggleState.None)
+				if(twiggleItem.getTwiggleComponent().workType == TwiggleState.None)
 				{
 					selectedTwiggle = twiggleItem;
 					break;
@@ -182,9 +182,9 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 			if(selectedTwiggle == null) return null;
 			
 			//Set it to work
-			selectedTwiggle.getTwiggleItem().workType = workType;
-			selectedTwiggle.getTwiggleItem().workEndTime = workEndTime;
-			selectedTwiggle.getTwiggleItem().twiggleWorkParams = twiggleWorkParameters;
+			selectedTwiggle.getTwiggleComponent().workType = workType;
+			selectedTwiggle.getTwiggleComponent().workEndTime = workEndTime;
+			selectedTwiggle.getTwiggleComponent().twiggleWorkParams = twiggleWorkParameters;
 			
 			selectedTwiggle.getTimeStampComponent().stamp();
 			

@@ -23,7 +23,7 @@ import org.asf.emuferal.util.SanctuaryWorkCalculator;
 
 import com.google.gson.JsonArray;
 
-public class SanctuaryUpgradeStart implements IXtPacket<SanctuaryUpgradeStart> {
+public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeStartPacket> {
 
 	private static final String PACKET_ID = "sus";
 	
@@ -38,8 +38,8 @@ public class SanctuaryUpgradeStart implements IXtPacket<SanctuaryUpgradeStart> {
 	}
 
 	@Override
-	public SanctuaryUpgradeStart instantiate() {
-		return new SanctuaryUpgradeStart();
+	public SanctuaryUpgradeStartPacket instantiate() {
+		return new SanctuaryUpgradeStartPacket();
 	}
 
 	@Override

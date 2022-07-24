@@ -174,5 +174,12 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	 * Saves the currently active sanctuary look to a new slot with the ID provided.
 	 */
 	public abstract void saveSanctuaryLookToSlot(String activeSancLookId, String slotId, String saveName);
+	
+	/**
+	 * Upgrades the class of sanctuary to the specific stage.
+	 * @param sancClassInvId The inv id of the sanctuary class to upgrade. 
+	 * @param stage The stage of the sanctuary to upgrade to.
+	 */
+	public abstract boolean upgradeSanctuaryToStage(String sancClassInvId, int stage);
 
 }

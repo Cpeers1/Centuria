@@ -47,7 +47,7 @@ public class TwiggleItem extends InventoryItem {
 		super.fromJsonObject(object);
 	}
 	
-	public TwiggleComponent getTwiggleItem()
+	public TwiggleComponent getTwiggleComponent()
 	{
 		return (TwiggleComponent)this.getComponent(TwiggleComponent.COMPONENT_NAME);
 	}

@@ -5,18 +5,24 @@ import org.asf.emuferal.entities.components.InventoryItemComponent;
 
 import com.google.gson.JsonObject;
 
-/**
- * Primary look component. Seems to mostly be a dud, but needs to be present on
- * sanctuary invs.
- * 
+/***
+ * Sanctuary house component.
+ * Used to store data about the house object.
  * @author Owenvii
  *
  */
 @Component
-public class PrimaryLookComponent extends InventoryItemComponent {
+public class HouseComponent extends InventoryItemComponent {
 
-	public static final String COMPONENT_NAME = "PrimaryLook";
+	public static final String COMPONENT_NAME = "House";
 
+	public static final String STAGE_PROPERTY_NAME = "stage";
+	public static final String ENLARGED_AREAS_PROPERTY_NAME = "enlargedAreas";
+
+	public int stage;
+	public int[] enlargedAreas = new int[10];
+
+	
 	@Override
 	public String getComponentName() {
 		return COMPONENT_NAME;

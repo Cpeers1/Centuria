@@ -5,6 +5,11 @@ import org.asf.emuferal.entities.objects.WorldObjectPositionInfo;
 
 import com.google.gson.JsonObject;
 
+/**
+ * This class is used by {@link PlacementInfo} to define the properties of placed objects in a sanctuary.
+ * @author Owenvii
+ *
+ */
 public class PlacedItemInfo extends JsonableObject {
 
 	public static final String POS_X_PROPERTY_NAME = "xPos";

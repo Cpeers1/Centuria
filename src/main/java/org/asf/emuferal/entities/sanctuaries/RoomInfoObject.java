@@ -1,8 +1,15 @@
 package org.asf.emuferal.entities.sanctuaries;
 
+import org.asf.emuferal.entities.JsonableObject;
+
 import com.google.gson.JsonObject;
 
-public class RoomInfoObject {
+/**
+ * Contains data about a house's room.
+ * @author Owenvii
+ *
+ */
+public class RoomInfoObject extends JsonableObject {
 
 	public int roomIndex;
 	public double brightness;
@@ -29,5 +36,14 @@ public class RoomInfoObject {
 		this.color = originalObject.get("color").getAsString();
 		this.rotation = originalObject.get("rotation").getAsDouble();
 		this.roomName = originalObject.get("roomName").getAsString();
+	}
+
+	@Override
+	protected void propagatePropertiesFromJson(JsonObject jsonObject) {
+		this.roomIndex = jsonObject.get("roomIndex").getAsInt();
+		this.brightness = jsonObject.get("brightness").getAsDouble();
+		this.color = jsonObject.get("color").getAsString();
+		this.rotation = jsonObject.get("rotation").getAsDouble();
+		this.roomName = jsonObject.get("roomName").getAsString();
 	}
 }

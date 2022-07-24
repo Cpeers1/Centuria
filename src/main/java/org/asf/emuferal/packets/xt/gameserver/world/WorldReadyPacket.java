@@ -21,7 +21,7 @@ import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.emuferal.packets.xt.gameserver.sanctuaries.SanctuaryWorldObjectInfo;
+import org.asf.emuferal.packets.xt.gameserver.sanctuaries.SanctuaryWorldObjectInfoPacket;
 import org.asf.emuferal.players.Player;
 
 import com.google.gson.JsonArray;
@@ -201,7 +201,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				if (furnitureObject != null) {
 					// Send packet
 
-					SanctuaryWorldObjectInfo sanctuaryWorldObjectInfo = new SanctuaryWorldObjectInfo();
+					SanctuaryWorldObjectInfoPacket sanctuaryWorldObjectInfo = new SanctuaryWorldObjectInfoPacket();
 					sanctuaryWorldObjectInfo.id = objId; // World object ID
 					sanctuaryWorldObjectInfo.defId = 1751;
 					sanctuaryWorldObjectInfo.ownerId = player.room.substring("sanctuary_".length());

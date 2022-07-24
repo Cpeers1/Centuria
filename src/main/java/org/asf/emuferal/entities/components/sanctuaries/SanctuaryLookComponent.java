@@ -10,13 +10,17 @@ import com.google.gson.JsonObject;
  * Sanctuary Look Component. Mostly a wrapper for the {@link SanctuaryInfo}
  * object.
  * 
- * @author owen9
+ * @author Owenvii
  *
  */
 @Component
 public class SanctuaryLookComponent extends InventoryItemComponent {
 
 	public static final String COMPONENT_NAME = "SanctuaryLook";
+
+	public static final String INFO_PROPERTY_NAME = "info";
+
+	public SanctuaryInfo info;
 
 	@Override
 	public String getComponentName() {
@@ -25,14 +29,18 @@ public class SanctuaryLookComponent extends InventoryItemComponent {
 
 	@Override
 	public JsonObject toJson() {
-		// TODO Auto-generated method stub
-		return null;
+		JsonObject object = new JsonObject();
+		object.add(INFO_PROPERTY_NAME, info.toJson());
+		return object;
 	}
 
 	@Override
 	protected void getPropertiesFromJson(JsonObject object) {
-		// TODO Auto-generated method stub
-
+		try {
+			this.info = (SanctuaryInfo) new SanctuaryInfo().CreateObjectFromJson(object.get("info").getAsJsonObject());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }
