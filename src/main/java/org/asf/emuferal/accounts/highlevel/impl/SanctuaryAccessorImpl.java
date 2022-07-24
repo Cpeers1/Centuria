@@ -19,6 +19,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
 
 public class SanctuaryAccessorImpl extends SanctuaryAccessor {
@@ -1091,7 +1092,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			var infoLevel = item.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
 					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
 
-			var houseInvId = infoLevel.get("houseInvId");
+			var houseInvId = infoLevel.get("houseInvId").getAsString();
 
 			JsonElement matchedHouseItem = null;
 
@@ -1134,6 +1135,170 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		inventory.setItem("201", looks);
 
 		return true;
+	}
+
+	@Override
+	public boolean enlargenSanctuaryRooms(String sancClassInvId, int roomIndex) {
+		
+		// Need to upgrade sanctuary..
+		if (!inventory.containsItem("10"))
+			inventory.setItem("10", new JsonArray());
+
+		var classInv = inventory.getItem("10").getAsJsonArray();
+
+		JsonElement classObject = null;
+
+		for (var item : classInv) {
+			if (item.getAsJsonObject().get("id").getAsString().equals(sancClassInvId)) {
+				classObject = item;
+				break;
+			}
+		}
+
+		if (classObject == null)
+			return false;
+
+		// ok..
+		// we can update the room enlarge array on this
+		var sancClass = classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+				.get("SanctuaryClass").getAsJsonObject();
+
+		var roomEnlargeArray = sancClass.get("enlargedAreas").getAsJsonArray();
+		roomEnlargeArray.set(roomIndex, new JsonPrimitive(1));
+		
+		JsonObject ts = new JsonObject();
+		ts.addProperty("ts", System.currentTimeMillis());
+
+		classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+				.remove(TimeStampComponent.COMPONENT_NAME);
+
+		classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+				.add(TimeStampComponent.COMPONENT_NAME, ts);
+
+		// we also need to update the house and island invs of any looks using this
+		// class
+
+		List<JsonObject> lookObjectsToUpdate = new ArrayList<JsonObject>();
+
+		if (!inventory.containsItem("201"))
+			inventory.setItem("201", new JsonArray());
+
+		var looks = inventory.getItem("201").getAsJsonArray();
+
+		for (var item : looks) {
+			var infoLevel = item.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
+
+			if (infoLevel.get("classInvId").getAsString().equals(sancClassInvId)) {
+				lookObjectsToUpdate.add(item.getAsJsonObject());
+			}
+		}
+
+		// now that we found all the looks to update, we need to update their house
+		// inventories..
+
+		if (!inventory.containsItem("5"))
+			inventory.setItem("5", new JsonArray());
+
+		var houseInv = inventory.getItem("5").getAsJsonArray();
+
+		for (var item : lookObjectsToUpdate) {
+			var infoLevel = item.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
+
+			var houseInvId = infoLevel.get("houseInvId").getAsString();
+
+			JsonElement matchedHouseItem = null;
+
+			for (var houseItem : houseInv) {
+				if (houseItem.getAsJsonObject().get("id").getAsString().equals(houseInvId)) {
+					matchedHouseItem = houseItem;
+					break;
+				}
+			}
+
+			if (matchedHouseItem != null) {
+				var houseLevel = matchedHouseItem.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME)
+						.getAsJsonObject().get("House").getAsJsonObject();
+
+				// update room enlarge array
+				roomEnlargeArray = houseLevel.get("enlargedAreas").getAsJsonArray();
+				roomEnlargeArray.set(roomIndex, new JsonPrimitive(1));
+				
+				// stamp
+				matchedHouseItem.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+						.remove("ts");
+				matchedHouseItem.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+						.add("ts", ts);
+			} else {
+				return false;
+			}
+
+			// stamp
+			item.remove("ts");
+			item.add("ts", ts);
+		}
+
+		// save the 10
+		inventory.setItem("10", classInv);
+
+		// save the 5
+		inventory.setItem("5", houseInv);
+
+		// save the 201
+		inventory.setItem("201", looks);
+
+		return true;
+	}
+
+	@Override
+	public int getCurrentSanctuaryStage(String sancClassInvId) {
+		
+		if (!inventory.containsItem("10"))
+			inventory.setItem("10", new JsonArray());
+
+		var classInv = inventory.getItem("10").getAsJsonArray();
+
+		JsonElement classObject = null;
+
+		for (var item : classInv) {
+			if (item.getAsJsonObject().get("id").getAsString().equals(sancClassInvId)) {
+				classObject = item;
+				break;
+			}
+		}
+
+		if (classObject == null)
+			return 0;
+		
+		
+		return classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+				.get("SanctuaryClass").getAsJsonObject().get("stage").getAsInt();
+	}
+	
+	@Override
+	public JsonArray getExpandedRooms(String sancClassInvId) {
+		
+		if (!inventory.containsItem("10"))
+			inventory.setItem("10", new JsonArray());
+
+		var classInv = inventory.getItem("10").getAsJsonArray();
+
+		JsonElement classObject = null;
+
+		for (var item : classInv) {
+			if (item.getAsJsonObject().get("id").getAsString().equals(sancClassInvId)) {
+				classObject = item;
+				break;
+			}
+		}
+
+		if (classObject == null)
+			return null;
+		
+		
+		return classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+				.get("SanctuaryClass").getAsJsonObject().get("enlargedAreas").getAsJsonArray();
 	}
 
 }

@@ -10,6 +10,7 @@ public class SanctuaryWorkCalculator {
 	
 	//Loading from charts is slow, im just going to hardcode this, it won't ever change
 	private static Map<Integer, Map<Integer, Integer>> stageToItemCostsMap = new HashMap<Integer, Map<Integer, Integer>>();
+	private static Map<Integer, Map<Integer, Integer>> enlargenIndexToItemCostsMap = new HashMap<Integer, Map<Integer, Integer>>();
 	
 	static {	
 		Map<Integer, Integer> costs;
@@ -112,7 +113,113 @@ public class SanctuaryWorkCalculator {
 		
 		stageToItemCostsMap.put(9, costs);
 		
-		enlargenIndexToTimeAmountMap.put(0, 2l * 60000l); //first room enlargen = 2 minutes
+		// ----------------------------- EnLargens ------------------------- //
+		
+		//first room enlargen = 2 minutes
+		enlargenIndexToTimeAmountMap.put(0, 2l * 60000l);
+		
+		costs = new HashMap<Integer, Integer>();
+		costs.put(6698, 60);
+		costs.put(6705, 400);
+		
+		enlargenIndexToItemCostsMap.put(0, costs);
+		
+		//second room enlargen = 600 seconds
+		enlargenIndexToTimeAmountMap.put(1, 600l * 1000l); 
+		
+		costs = new HashMap<Integer, Integer>();
+		costs.put(8193, 600);
+		costs.put(6698, 10);
+		costs.put(6705, 10);
+		
+		enlargenIndexToItemCostsMap.put(1, costs);
+		
+		//third room enlargen = 1800 seconds
+		enlargenIndexToTimeAmountMap.put(2, 1800l * 1000l); 
+		
+		costs = new HashMap<Integer, Integer>();
+		costs.put(8193, 1800);
+		costs.put(6698, 20);
+		costs.put(6705, 20);
+		
+		enlargenIndexToItemCostsMap.put(2, costs);
+		
+		//fourth room enlargen = 3600 seconds
+		enlargenIndexToTimeAmountMap.put(3, 3600l * 1000l); 
+		
+		costs = new HashMap<Integer, Integer>();
+		costs.put(8193, 3600);
+		costs.put(6704, 10);
+		costs.put(6698, 30);
+		costs.put(6705, 40);
+		
+		enlargenIndexToItemCostsMap.put(3, costs);
+
+		//fifth room enlargen = 10800 seconds
+		enlargenIndexToTimeAmountMap.put(4, 10800l * 1000l);
+		
+		costs = new HashMap<Integer, Integer>();
+		costs.put(8193, 10800);
+		costs.put(6701, 5);
+		costs.put(6698, 40);
+		costs.put(6695, 40);
+		
+		enlargenIndexToItemCostsMap.put(4, costs);
+
+		//sixth room enlargen = 21600 seconds
+		enlargenIndexToTimeAmountMap.put(5, 10800l * 1000l);
+		
+		costs = new HashMap<Integer, Integer>();
+		costs.put(8193, 21600);
+		costs.put(6704, 20);
+		costs.put(6698, 60);
+		costs.put(6705, 65);
+		
+		enlargenIndexToItemCostsMap.put(5, costs);
+		
+		//seventh room enlargen = 43200 seconds
+		enlargenIndexToTimeAmountMap.put(6, 43200l * 1000l);
+		
+		costs = new HashMap<Integer, Integer>();
+		costs.put(8193, 43200);
+		costs.put(6701, 15);
+		costs.put(6698, 75);
+		costs.put(6695, 55);
+		
+		enlargenIndexToItemCostsMap.put(6, costs);
+		
+		//eighth room enlargen = 86400 seconds
+		enlargenIndexToTimeAmountMap.put(7, 86400l * 1000l);
+		
+		costs = new HashMap<Integer, Integer>();
+		costs.put(8193, 86400);
+		costs.put(6704, 50);
+		costs.put(6698, 100);
+		costs.put(6705, 100);
+		
+		enlargenIndexToItemCostsMap.put(7, costs);
+		
+		//Ninth room enlargen = 172800 seconds
+		enlargenIndexToTimeAmountMap.put(8, 172800l * 1000l);
+		
+		costs = new HashMap<Integer, Integer>();
+		costs.put(8193, 172800);
+		costs.put(6702, 25);
+		costs.put(6698, 150);
+		costs.put(6699, 50);
+		
+		enlargenIndexToItemCostsMap.put(8, costs);
+		
+		//Tenth room enlargen = 259200 seconds
+		enlargenIndexToTimeAmountMap.put(8, 172800l * 1000l);
+		
+		costs = new HashMap<Integer, Integer>();
+		costs.put(8193, 172800);
+		costs.put(6702, 50);
+		costs.put(6698, 150);
+		costs.put(6699, 75);
+		
+		enlargenIndexToItemCostsMap.put(8, costs);
 	}
 	
 	public static long getTimeForStageUp(int stage)
@@ -134,6 +241,11 @@ public class SanctuaryWorkCalculator {
 	public static Map<Integer, Integer> getCostForStageUp(int stage)
 	{
 		return stageToItemCostsMap.get(stage);
+	}
+	
+	public static Map<Integer, Integer> getCostForEnlargen(int enlargenIndex)
+	{
+		return enlargenIndexToItemCostsMap.get(enlargenIndex);
 	}
 
 }

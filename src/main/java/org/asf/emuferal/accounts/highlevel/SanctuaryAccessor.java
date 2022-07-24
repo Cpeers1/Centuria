@@ -4,6 +4,7 @@ import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.entities.sanctuaries.RoomInfoObject;
 import org.asf.emuferal.entities.sanctuaries.SanctuaryObjectData;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
@@ -181,5 +182,26 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	 * @param stage The stage of the sanctuary to upgrade to.
 	 */
 	public abstract boolean upgradeSanctuaryToStage(String sancClassInvId, int stage);
+	
+	/**
+	 * Enlargens the room of a specific sanctuary type..
+	 * @param sancClassInvId The inv id of the sanctuary class to upgrade. 
+	 * @param roomIndex The room index to set to 1 
+	 */
+	public abstract boolean enlargenSanctuaryRooms(String sancClassInvId, int roomIndex);
+	
+	/**
+	 * Gets the current sanctuary stage.
+	 * @param sancClassInvId The inv id of the sanctuary class.
+	 * @return The sanctuary stage.
+	 */
+	public abstract int getCurrentSanctuaryStage(String sancClassInvId);
+	
+	/**
+	 * Gets the current sanctuary expansion array
+	 * @param sancClassInvId The inv id of the sanctuary class.
+	 * @return The sanctuary expansion Array.
+	 */
+	public abstract JsonArray getExpandedRooms(String sancClassInvId);
 
 }

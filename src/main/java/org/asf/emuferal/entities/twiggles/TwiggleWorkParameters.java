@@ -31,9 +31,17 @@ public class TwiggleWorkParameters extends JsonableObject {
 
 	@Override
 	protected void propagatePropertiesFromJson(JsonObject jsonObject) {
-		//will return null if the member doesn't exist anyway, no need for checks
-		this.classItemInvId = jsonObject.get(CLASS_ITEM_INV_ID_PROPERTY_KEY).getAsString();
-		this.enlargedAreaIndex = jsonObject.get(ENLARGED_AREA_INDEX_PROPERTY_KEY).getAsInt();
-		this.stage = jsonObject.get(STAGE_PROPERTY_KEY).getAsInt();
+		if(jsonObject.get(CLASS_ITEM_INV_ID_PROPERTY_KEY) != null)
+		{
+			this.classItemInvId = jsonObject.get(CLASS_ITEM_INV_ID_PROPERTY_KEY).getAsString();			
+		}
+		if(jsonObject.get(ENLARGED_AREA_INDEX_PROPERTY_KEY) != null)
+		{
+			this.enlargedAreaIndex = jsonObject.get(ENLARGED_AREA_INDEX_PROPERTY_KEY).getAsInt();
+		}
+		if(jsonObject.get(STAGE_PROPERTY_KEY) != null)
+		{
+			this.stage = jsonObject.get(STAGE_PROPERTY_KEY).getAsInt();
+		}
 	}
 }

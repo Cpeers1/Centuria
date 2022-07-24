@@ -29,6 +29,7 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 	
 	public int stage;
 	public List<Integer> enlargedAreaIndexes;
+	private int expansionIndex;
 	
 	public boolean success;
 
@@ -46,11 +47,12 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 	public void parse(XtReader reader) throws IOException {
 		stage = reader.readInt();
 		
-		enlargedAreaIndexes = new ArrayList<Integer>(reader.readInt());
+		int arraySize = reader.readInt();
+		enlargedAreaIndexes = new ArrayList<Integer>();
 		
-		for(int i = 0; i < enlargedAreaIndexes.size(); i++)
+		for(int i = 0; i < arraySize; i++)
 		{
-			enlargedAreaIndexes.set(i, reader.readInt());
+			enlargedAreaIndexes.add(reader.readInt());
 		}
 	}
 
@@ -75,35 +77,49 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 			boolean isStageUpgrade = false;
 			
 			TwiggleItem updatedTwiggle = null;
+			var classItemInvId = player.account.getPlayerInventory().getSanctuaryAccessor().getSanctuaryLook(player.account.getActiveSanctuaryLook())
+					.get("components").getAsJsonObject()
+					.get("SanctuaryLook").getAsJsonObject()
+					.get("info").getAsJsonObject()
+					.get("classInvId").getAsString();
 			
-			// If the stage isn't 0, its a stage upgrade
-			if(stage != 0)
+			// If the stage has gone up, its a stage upgrade
+			if(stage > player.account.getPlayerInventory().getSanctuaryAccessor().getCurrentSanctuaryStage(classItemInvId))
 			{
 				TwiggleWorkParameters workParams = new TwiggleWorkParameters();
-				workParams.classItemInvId = player.account.getPlayerInventory().getSanctuaryAccessor().getSanctuaryLook(player.account.getActiveSanctuaryLook())
-						.get("components").getAsJsonObject()
-						.get("SanctuaryLook").getAsJsonObject()
-						.get("info").getAsJsonObject()
-						.get("classInvId").getAsString();
+				workParams.classItemInvId = classItemInvId;
 				workParams.stage = stage;
 				updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary, System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForStageUp(stage), workParams);		
 				
 				isStageUpgrade = true;
 			}		
-			//if the enlarged array has any elements that arn't 0
-			else if(enlargedAreaIndexes.contains(1))
+			//if the enlarged array has any elements that don't match the og elements
+			else
 			{
-				//its a room expand upgrade
-				var expansionIndex = enlargedAreaIndexes.indexOf(1);
+				boolean nonMatchingElement = false;
+				int nonMatchingElementIndex = 0;
+				JsonArray expansionArray = player.account.getPlayerInventory().getSanctuaryAccessor().getExpandedRooms(classItemInvId);
 				
-				TwiggleWorkParameters workParams = new TwiggleWorkParameters();
-				workParams.classItemInvId = player.account.getPlayerInventory().getSanctuaryAccessor().getSanctuaryLook(player.account.getActiveLook())
-						.get("components").getAsJsonObject()
-						.get("SanctuaryLook").getAsJsonObject()
-						.get("info").getAsJsonObject()
-						.get("classInvId").getAsString();
-				workParams.enlargedAreaIndex = expansionIndex;
-				updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary, System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForExpand(expansionIndex), workParams);		
+				for(int i = 0; i < enlargedAreaIndexes.size() && i < expansionArray.size(); i++)
+				{
+					if(enlargedAreaIndexes.get(i) != expansionArray.get(i).getAsInt())
+					{
+						nonMatchingElement = true;
+						nonMatchingElementIndex = i;
+						break;
+					}
+				}
+				
+				if(nonMatchingElement)
+				{
+					//its a room expand upgrade
+					expansionIndex = nonMatchingElementIndex;
+					
+					TwiggleWorkParameters workParams = new TwiggleWorkParameters();
+					workParams.classItemInvId = classItemInvId;
+					workParams.enlargedAreaIndex = expansionIndex;
+					updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary, System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForExpand(expansionIndex), workParams);		
+				}
 			}
 			
 			if(updatedTwiggle == null)
@@ -125,6 +141,14 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 						player.account.getPlayerInventory().getItemAccessor(player).remove(item.getKey(), item.getValue());	
 					}
 				}
+				else {
+					var map = SanctuaryWorkCalculator.getCostForEnlargen(expansionIndex);
+					
+					for(var item : map.entrySet())
+					{
+						player.account.getPlayerInventory().getItemAccessor(player).remove(item.getKey(), item.getValue());	
+					}
+				}				
 				
 				InventoryItemPacket packet = new InventoryItemPacket();
 				var array = new JsonArray();
