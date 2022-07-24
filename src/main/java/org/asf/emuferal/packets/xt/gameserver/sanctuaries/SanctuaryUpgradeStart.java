@@ -16,9 +16,10 @@ import org.asf.emuferal.enums.twiggles.TwiggleState;
 import org.asf.emuferal.networking.gameserver.GameServer;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
+import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
 import org.asf.emuferal.players.Player;
-import org.asf.emuferal.util.SanctuaryWorkTimeCalculator;
+import org.asf.emuferal.util.SanctuaryWorkCalculator;
 
 public class SanctuaryUpgradeStart implements IXtPacket<SanctuaryUpgradeStart> {
 
@@ -69,6 +70,7 @@ public class SanctuaryUpgradeStart implements IXtPacket<SanctuaryUpgradeStart> {
 			
 			var player = (Player) client.container;
 			var twiggleAccessor = player.account.getPlayerInventory().getTwiggleAccesor();
+			boolean isStageUpgrade = false;
 			
 			TwiggleItem updatedTwiggle = null;
 			
@@ -78,7 +80,9 @@ public class SanctuaryUpgradeStart implements IXtPacket<SanctuaryUpgradeStart> {
 				TwiggleWorkParameters workParams = new TwiggleWorkParameters();
 				workParams.classItemInvId = player.account.getPlayerInventory().getSanctuaryAccessor().getSanctuaryClassObject(player.account.getActiveSanctuaryLook()).get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
 				workParams.stage = stage;
-				updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary, System.currentTimeMillis() + SanctuaryWorkTimeCalculator.getTimeForStageUp(stage), workParams);			
+				updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary, System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForStageUp(stage), workParams);		
+				
+				isStageUpgrade = true;
 			}		
 			//if the enlarged array has any elements that arn't 0
 			else if(enlargedAreaIndexes.contains(1))
@@ -89,7 +93,7 @@ public class SanctuaryUpgradeStart implements IXtPacket<SanctuaryUpgradeStart> {
 				TwiggleWorkParameters workParams = new TwiggleWorkParameters();
 				workParams.classItemInvId = player.account.getPlayerInventory().getSanctuaryAccessor().getSanctuaryClassObject(player.account.getActiveSanctuaryLook()).get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
 				workParams.enlargedAreaIndex = expansionIndex;
-				updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary, System.currentTimeMillis() + SanctuaryWorkTimeCalculator.getTimeForExpand(expansionIndex), workParams);		
+				updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary, System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForExpand(expansionIndex), workParams);		
 			}
 			
 			if(updatedTwiggle == null)
@@ -100,7 +104,24 @@ public class SanctuaryUpgradeStart implements IXtPacket<SanctuaryUpgradeStart> {
 			}
 			else
 			{
+				//remove resources from player
 				
+				if(isStageUpgrade)
+				{
+					var map = SanctuaryWorkCalculator.getCostForStageUp(stage);
+					
+					for(var item : map.entrySet())
+					{
+						player.account.getPlayerInventory().getItemAccessor(player).remove(item.getKey(), item.getValue());	
+					}
+				}
+				
+				InventoryItemPacket packet = new InventoryItemPacket();
+				packet.item = updatedTwiggle.toJsonObject();
+				client.sendPacket(packet);
+				
+				this.success = true;
+				client.sendPacket(this);
 			}
 			
 		}
