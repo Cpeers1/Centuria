@@ -21,6 +21,8 @@ import org.asf.emuferal.packets.xt.gameserver.world.JoinRoom;
 import org.asf.emuferal.players.Player;
 import org.asf.emuferal.util.SanctuaryWorkCalculator;
 
+import com.google.gson.JsonArray;
+
 public class SanctuaryUpgradeStart implements IXtPacket<SanctuaryUpgradeStart> {
 
 	private static final String PACKET_ID = "sus";
@@ -78,7 +80,11 @@ public class SanctuaryUpgradeStart implements IXtPacket<SanctuaryUpgradeStart> {
 			if(stage != 0)
 			{
 				TwiggleWorkParameters workParams = new TwiggleWorkParameters();
-				workParams.classItemInvId = player.account.getPlayerInventory().getSanctuaryAccessor().getSanctuaryClassObject(player.account.getActiveSanctuaryLook()).get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
+				workParams.classItemInvId = player.account.getPlayerInventory().getSanctuaryAccessor().getSanctuaryLook(player.account.getActiveSanctuaryLook())
+						.get("components").getAsJsonObject()
+						.get("SanctuaryLook").getAsJsonObject()
+						.get("info").getAsJsonObject()
+						.get("classInvId").getAsString();
 				workParams.stage = stage;
 				updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary, System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForStageUp(stage), workParams);		
 				
@@ -91,7 +97,11 @@ public class SanctuaryUpgradeStart implements IXtPacket<SanctuaryUpgradeStart> {
 				var expansionIndex = enlargedAreaIndexes.indexOf(1);
 				
 				TwiggleWorkParameters workParams = new TwiggleWorkParameters();
-				workParams.classItemInvId = player.account.getPlayerInventory().getSanctuaryAccessor().getSanctuaryClassObject(player.account.getActiveSanctuaryLook()).get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
+				workParams.classItemInvId = player.account.getPlayerInventory().getSanctuaryAccessor().getSanctuaryLook(player.account.getActiveLook())
+						.get("components").getAsJsonObject()
+						.get("SanctuaryLook").getAsJsonObject()
+						.get("info").getAsJsonObject()
+						.get("classInvId").getAsString();
 				workParams.enlargedAreaIndex = expansionIndex;
 				updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary, System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForExpand(expansionIndex), workParams);		
 			}
@@ -117,7 +127,9 @@ public class SanctuaryUpgradeStart implements IXtPacket<SanctuaryUpgradeStart> {
 				}
 				
 				InventoryItemPacket packet = new InventoryItemPacket();
-				packet.item = updatedTwiggle.toJsonObject();
+				var array = new JsonArray();
+				array.add(updatedTwiggle.toJsonObject());
+				packet.item = array;
 				client.sendPacket(packet);
 				
 				this.success = true;
