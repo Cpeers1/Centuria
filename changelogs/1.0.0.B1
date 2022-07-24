@@ -13,3 +13,4 @@ Changes in 1.0.0.B1:
  - Privacy settings
  - Fix typo in session expiry kick
  - Developers: added a command to directly send raw packets from chat
+ - Twiggle Builders! (credits go to Joey)

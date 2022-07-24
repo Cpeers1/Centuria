@@ -2,34 +2,12 @@
 
 server="https://aerialworks.ddns.net/extra/emuferal"
 
-function upload() {
+function uploadToServers() {
 	version="$1"
 	channel="$2"
 	
 	base="$server/$channel"
 	
-	rm -rf build/Update
-	read -rp "Server username: " username
-	read -rsp "Server upload password: " password
-	echo
-	echo
-	echo
-	echo EmuFeral Uploader
-	echo Version: $version
-	echo Version type: $channel
-	echo
-	echo
-	read -p "Are you sure you want to upload this version to the server? [Y/n] " prompt
-	
-	if [ "$prompt" != "y" ] && [ "$prompt" != "Y" ]; then
-		exit
-	fi
-	
-	echo Building emuferal...
-	./gradlew build updateData || exit $?
-	echo
-	
-	echo Uploading data...
 	function upload() {
 		for file in $1/* ; do
 			pref=$2
@@ -49,26 +27,48 @@ function upload() {
 	upload build/update build/update/
 	echo curl -X PUT "$base/update.info" -u "REDACTED" --data-binary "$version"
 	curl -X PUT "$base/update.info" -u "$username:$password" --data-binary "$version"
-	
+
 	source version.info
 }
 
-# Current channel	
+# Current channel
 source version.info
-upload "$version" "$channel"
+rm -rf build/Update
+read -rp "Server username: " username
+read -rsp "Server upload password: " password
+echo
+echo
+echo
+echo EmuFeral Uploader
+echo Version: $version
+echo Version type: $channel
+echo
+echo
+read -p "Are you sure you want to upload this version to the server? [Y/n] " prompt
+
+if [ "$prompt" != "y" ] && [ "$prompt" != "Y" ]; then
+	exit
+fi
+
+echo Building emuferal...
+./gradlew build updateData || exit $?
+echo
+
+echo Uploading data...
+uploadToServers "$version" "$channel"
 
 # Other channels
 if [ "$channel" == "beta" ]; then
-	upload "$version" alpha
+	uploadToServers "$version" alpha
 fi
 if [ "$channel" == "prerelease" ]; then
-	upload "$version" alpha
-	upload "$version" beta
+	uploadToServers "$version" alpha
+	uploadToServers "$version" beta
 fi
 if [ "$channel" == "release" ]; then
-	upload "$version" alpha
-	upload "$version" beta
-	upload "$version" prerelease
+	uploadToServers "$version" alpha
+	uploadToServers "$version" beta
+	uploadToServers "$version" prerelease
 fi
 
 echo
