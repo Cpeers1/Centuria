@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = "1.0.0.B1"
+version = "1.0.0.B1-HF-1"
 group = "org.asf.emuferal"
 
 sourceCompatibility = '1.17'
@@ -28,7 +28,7 @@ jar {
 			"Main-Class": "org.asf.emuferal.launcher.LauncherMain",
 			"Specification-Title": "EmuFeral",
 			"Specification-Vendor": "${authorname}",
-			"Specification-Version": "1.0.0.A6", // ConnectiveHTTP specification
+                        "Specification-Version": project.version,
 			"Implementation-Title": project.name,
 			"Implementation-Version": project.version,
 			"Implementation-Vendor" :"${authorname}",
