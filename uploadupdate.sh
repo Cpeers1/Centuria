@@ -12,8 +12,10 @@ function uploadToServers() {
 		for file in $1/* ; do
 			pref=$2
 			target="${file:${#pref}}"
-			echo curl -X PUT "$base/$version/$target" -u "REDACTED" --data-binary @"$file"
-			curl -X PUT "$base/$version/$target" -u "$username:$password" --data-binary @"$file"
+                        if [ -f "$file" ]; then
+			    echo curl -X PUT "$base/$version/$target" -u "REDACTED" --data-binary @"$file"
+			    curl -X PUT "$base/$version/$target" -u "$username:$password" --data-binary @"$file"
+                        fi
 			if [ "$?" != "0" ]; then
 				echo Upload failure!
 				exit 1
