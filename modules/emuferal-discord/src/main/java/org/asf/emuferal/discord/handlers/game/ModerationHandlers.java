@@ -40,7 +40,9 @@ public class ModerationHandlers implements IEventReceiver {
 				EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
 
 				// Description content
-				String message = "You have been banned from our servers for unacceptable behaviour.\n";
+				String message = "You have been banned from our servers for unacceptable behavior.\n";
+				if (ev.getReason() != null)
+					message = "You have been banned from our servers:\n`" + ev.getReason() + "`\n";
 				message += "\n";
 				if (ev.isPermanent()) {
 					message += "This is a permanent ban, you can attempt to appeal by pressing the button below.";
