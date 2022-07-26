@@ -1,0 +1,4 @@
+Hotfix 2 for 1.0.0.B1:
+- Temporily disable announcement pinging (maintenance etc) until we have a ping role for that
+- Fix ban DM stating no reason
+
