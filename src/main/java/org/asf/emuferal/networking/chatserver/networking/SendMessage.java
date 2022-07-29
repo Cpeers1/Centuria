@@ -299,6 +299,12 @@ public class SendMessage extends AbstractChatPacket {
 
 		// Generate the command list
 		ArrayList<String> commandMessages = new ArrayList<String>();
+		
+		if (EmuFeral.giveAllResources)
+		{
+			commandMessages.add("addbasicmaterials");
+		}
+
 		if (GameServer.hasPerm(permLevel, "moderator")) {
 			commandMessages.add("kick \"<player>\" [\"<reason>\"]");
 			commandMessages.add("ipban \"<player/address>\" [\"<reason>\"]");
@@ -311,7 +317,6 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("pardon \"<player>\" [\"<reason>\"]");
 			if (GameServer.hasPerm(permLevel, "developer")) {
 				commandMessages.add("makedeveloper \"<name>\"");
-				commandMessages.add("tpm <levelDefID> [<levelType>]");
 				commandMessages.add("srp \"<raw-packet>\" [<player>]");
 			}
 			if (GameServer.hasPerm(permLevel, "admin")) {
@@ -324,10 +329,11 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("updateshutdown");
 				commandMessages.add("update <60|30|15|10|5|3|1>");
 				commandMessages.add("cancelupdate");
-				commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
 			}
 			commandMessages.add("staffroom");
 			commandMessages.add("listplayers");
+			commandMessages.add("tpm <levelDefID> [<levelType>]");
+			commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
 		}
 
 		// Add module commands
@@ -357,6 +363,43 @@ public class SendMessage extends AbstractChatPacket {
 				if (ev.isHandled())
 					return true;
 
+				
+				if(cmdId.equals("givebasicmaterials"))
+				{
+					if (EmuFeral.giveAllResources)
+					{
+						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
+
+						if (onlinePlayer != null) {
+							var accessor = client.getPlayer().getPlayerInventory()
+									.getItemAccessor(client.getPlayer().getOnlinePlayerInstance());
+							
+							accessor.add(6691, 1000);
+							accessor.add(6692, 1000);
+							accessor.add(6693, 1000);
+							accessor.add(6694, 1000);
+							accessor.add(6695, 1000);
+							accessor.add(6696, 1000);
+							accessor.add(6697, 1000);
+							accessor.add(6698, 1000);
+							accessor.add(6699, 1000);
+							accessor.add(6700, 1000);
+							accessor.add(6701, 1000);
+							accessor.add(6702, 1000);
+							accessor.add(6703, 1000);
+							accessor.add(6704, 1000);
+							accessor.add(6705, 1000);
+
+							// TODO: Check result
+							systemMessage("You have been given 1000 of every basic material. Have fun!", cmd, client);
+							return true;
+						} else {
+							// TODO: support for giving offline players items.. somehow
+							systemMessage("Specified account does not appear to be online.", cmd, client);
+						}
+					}
+				}
+				
 				// Run system command
 				if (GameServer.hasPerm(permLevel, "moderator")) {
 					switch (cmdId) {
