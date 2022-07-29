@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.asf.emuferal.data.XtReader;
 import org.asf.emuferal.data.XtWriter;
+import org.asf.emuferal.minigames.TwiggleBuilders;
 import org.asf.emuferal.networking.smartfox.SmartfoxClient;
 import org.asf.emuferal.packets.xt.IXtPacket;
 import org.asf.emuferal.players.Player;
@@ -14,7 +15,7 @@ public class MinigameJoin implements IXtPacket<MinigameJoin> {
 	private static final String PACKET_ID = "mj";
 	
     public int MinigameID;
-	private boolean isMinigameSupported = false;
+	private boolean isMinigameSupported;
 	
 	@Override
 	public MinigameJoin instantiate() {
@@ -38,21 +39,34 @@ public class MinigameJoin implements IXtPacket<MinigameJoin> {
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		
+		// Log
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[MINIGAME] [JOIN]  Client to server (MinigameID: " + MinigameID + ")");
+		}
+
 		Player plr = (Player) client.container;
 		
-		//This would be better done with an enum or array
-		if (MinigameID == 4111) //Twiggle Builders
-		{isMinigameSupported = true;}
+		switch (MinigameID){
+			case 4111: {
+				isMinigameSupported = true;
+				TwiggleBuilders.OnJoin(plr);
+				break;
+			}
+			default: {
+				isMinigameSupported = false;
+				break;
+			}
+		}
 		
-		if (isMinigameSupported == true){		
+		if (isMinigameSupported == true){
 			//Set previous
 			plr.previousLevelID = plr.levelID;
 			plr.previousLevelType = plr.levelType;
 			
 			// Assign room
-			plr.roomReady = false;
-			plr.pendingLevelID = MinigameID;
-			plr.pendingRoom = "room_" + MinigameID;
+			plr.roomReady = true;
+			plr.levelID = MinigameID;
+			plr.room = "room_" + MinigameID;
 			plr.levelType = 1;
 		}
 		
@@ -60,14 +74,12 @@ public class MinigameJoin implements IXtPacket<MinigameJoin> {
 		// Send response
 		JoinRoom join = new JoinRoom();
 		join.success = isMinigameSupported;
-		join.levelType = plr.levelType;
-		join.levelID = plr.pendingLevelID;
+		join.levelType = 1;
+		join.levelID = MinigameID;
 		client.sendPacket(join);
 
-		// Log
-		if (System.getProperty("debugMode") != null) {
-			System.out.println("[MINIGAME] [JOIN]  Client to server (MinigameID: " + MinigameID + ")");
-		}
+		MinigameStart start = new MinigameStart();
+		client.sendPacket(start);
 
 		return true;
 	}
