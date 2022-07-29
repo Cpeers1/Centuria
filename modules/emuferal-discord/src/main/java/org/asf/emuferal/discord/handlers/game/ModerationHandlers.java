@@ -138,6 +138,8 @@ public class ModerationHandlers implements IEventReceiver {
 
 				// Description content
 				String message = "You have been muted for violating the server rules.\n";
+				if (ev.getReason() != null)
+					message = "You have been muted, reason: `" + ev.getReason() + "`\n";
 				message += "You are not allowed to use public chat until <t:" + (ev.getUnmuteTimestamp() / 1000) + ">";
 
 				// Embed
@@ -184,8 +186,10 @@ public class ModerationHandlers implements IEventReceiver {
 				EmbedCreateSpec.Builder embed = EmbedCreateSpec.builder();
 
 				// Description content
-				String message = "Your account has been pardoned and all penalties have been removed.\n";
-				message += "We are sorry about the inconvenience.";
+				String message = "Your account has been pardoned and all penalties have been removed.";
+				if (ev.getReason() != null) {
+					message += "\nReason: " + ev.getReason();
+				}
 
 				// Embed
 				embed.title("Pardoned in " + DiscordBotModule.getServerName());
