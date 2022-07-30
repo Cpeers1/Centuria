@@ -38,6 +38,7 @@ public class SendMessage extends AbstractChatPacket {
 
 	private static ArrayList<String> banWords = new ArrayList<String>();
 	private static ArrayList<String> filterWords = new ArrayList<String>();
+	private static ArrayList<String> alwaysfilterWords = new ArrayList<String>();
 
 	static {
 		// Load filter
@@ -53,11 +54,12 @@ public class SendMessage extends AbstractChatPacket {
 				while (data.contains("  "))
 					data = data.replace("  ", "");
 
-				for (String word : data.split(" "))
+				for (String word : data.split(";"))
 					filterWords.add(word.toLowerCase());
 			}
 			strm.close();
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		// Load ban words
@@ -73,11 +75,33 @@ public class SendMessage extends AbstractChatPacket {
 				while (data.contains("  "))
 					data = data.replace("  ", "");
 
-				for (String word : data.split(" "))
+				for (String word : data.split(";"))
 					banWords.add(word.toLowerCase());
 			}
 			strm.close();
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		// Load always filtered words
+		try {
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("textfilter/alwaysfilter.txt");
+			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+			for (String line : lines.split("\n")) {
+				if (line.isEmpty() || line.startsWith("#"))
+					continue;
+
+				String data = line.trim();
+				while (data.contains("  "))
+					data = data.replace("  ", "");
+
+				for (String word : data.split(";"))
+					alwaysfilterWords.add(word.toLowerCase());
+			}
+			strm.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -208,10 +232,11 @@ public class SendMessage extends AbstractChatPacket {
 								.getPlayerVarValue(9362, 0);
 						if (val != null)
 							filterSetting = val.value;
-
+						
 						// Check filter
-						if (filterSetting != 0) {
-							for (String word : message.split(" ")) {
+						for (String word : message.split(" ")) {
+							if(filterSetting != 0)
+							{
 								if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 									// Filter it
 									for (String filter : filterWords) {
@@ -228,14 +253,30 @@ public class SendMessage extends AbstractChatPacket {
 										}
 									}
 								}
-
-								if (!filteredMessage.isEmpty())
-									filteredMessage += " " + word;
-								else
-									filteredMessage = word;
 							}
-						} else {
-							filteredMessage = message;
+							
+							//check always filtered
+							if (alwaysfilterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+								// Filter it
+								for (String filter : alwaysfilterWords) {
+									while (word.toLowerCase().contains(filter.toLowerCase())) {
+										String start = word.substring(0,
+												word.toLowerCase().indexOf(filter.toLowerCase()));
+										String rest = word.substring(
+												word.toLowerCase().indexOf(filter.toLowerCase()) + filter.length());
+										String tag = "";
+										for (int i = 0; i < filter.length(); i++) {
+											tag += "#";
+										}
+										word = start + tag + rest;
+									}
+								}
+							}
+
+							if (!filteredMessage.isEmpty())
+								filteredMessage += " " + word;
+							else
+								filteredMessage = word;
 						}
 
 						// Send response

@@ -1,0 +1,8 @@
+Changes in 1.0.1.B1:
+  - Sanctuary Expansion System (Bugged)
+    - Partial implementation. You will need to relog after making any sanctuary expands to further expand your sanctuary, due to a bug with the system.
+  - New Chat Command: > GiveBasicMaterials
+    - Gives you 1000 of each basic material. Any player can use this, so feel free to use this to give yourself as much basic materials as you need for your sanc expands!
+  - A basic implementation of a chat filter - most swear-type can be seen or hidden if you have chat filter off or on, but some words (espically NSFW related ones) are always filtered.
+  - Minigame System Improvements
+  - Other General Improvements
