@@ -50,7 +50,7 @@ public abstract class TwiggleAccessor extends AbstractInventoryAccessor {
 	 * Gives a non-working twiggle a new work item.
 	 * @param workType The type of work being done. 
 	 * @param workEndTime The end time of the work being done.
-	 * @param TwiggleWorkParameters additional work parameters for the twiggle.
+	 * @param twiggleWorkParameters additional work parameters for the twiggle.
 	 * @return The updated twiggle item, or null if there was no twiggle to give work to.
 	 */
 	public abstract TwiggleItem setTwiggleWork(TwiggleState workType, long workEndTime,
@@ -77,7 +77,7 @@ public abstract class TwiggleAccessor extends AbstractInventoryAccessor {
 	public abstract TwiggleItem clearTwiggleWork(String twiggleInvId);
 
 	/**
-	 * Gives default twiggle items, based on the {@link TwiggleAccessor.DEFAULT_TWIGGLE_AMOUNT}.
+	 * Gives default twiggle items.
 	 */
 	public abstract void giveDefaultTwiggles();
 }
