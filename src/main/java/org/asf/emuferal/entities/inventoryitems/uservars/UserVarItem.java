@@ -11,6 +11,8 @@ import org.asf.emuferal.entities.components.uservars.UserVarCustomComponent;
 import org.asf.emuferal.entities.components.uservars.UserVarHighestComponent;
 import org.asf.emuferal.entities.components.uservars.UserVarLowestComponent;
 import org.asf.emuferal.entities.inventoryitems.InventoryItem;
+import org.asf.emuferal.entities.inventoryitems.Item;
+import org.asf.emuferal.enums.inventory.InventoryType;
 import org.asf.emuferal.enums.uservars.UserVarType;
 
 import com.google.gson.JsonObject;
@@ -21,24 +23,36 @@ import com.google.gson.JsonObject;
  * @author Owenvii
  *
  */
+@Item
 public final class UserVarItem extends InventoryItem {
 
-	public final static int InvType = 303;
+	public final static InventoryType INV_TYPE = InventoryType.Settings;
 
 	private UserVarType type;
+		
+	public UserVarItem()
+	{
+		super(0, "", INV_TYPE);
+	}
 
-	public UserVarItem(int defId, String uuid, int invType) {
+	
+	public UserVarItem(int defId, String uuid, InventoryType invType) {
 		super(defId, uuid, invType);
 	}
 
 	public UserVarItem(UserVarType type) {
-		super(0, "", InvType);
+		super(0, "", INV_TYPE);
 		this.type = type;
 	}
 
 	public UserVarItem(int defId, String uuid, UserVarType type) {
-		super(defId, uuid, InvType);
+		super(defId, uuid, INV_TYPE);
 		this.type = type;
+	}
+	
+	@Override
+	public InventoryType getInventoryType() {
+		return INV_TYPE;
 	}
 
 	public JsonObject toJsonObject() {
@@ -86,5 +100,8 @@ public final class UserVarItem extends InventoryItem {
 
 		super.fromJsonObject(object);
 	}
+
+
+
 
 }

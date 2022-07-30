@@ -57,6 +57,8 @@ import org.asf.emuferal.packets.xt.gameserver.sanctuaries.SanctuaryLookLoadPacke
 import org.asf.emuferal.packets.xt.gameserver.sanctuaries.SanctuaryLookSavePacket;
 import org.asf.emuferal.packets.xt.gameserver.sanctuaries.SanctuaryLookSwitchPacket;
 import org.asf.emuferal.packets.xt.gameserver.sanctuaries.SanctuaryUpdatePacket;
+import org.asf.emuferal.packets.xt.gameserver.sanctuaries.SanctuaryUpgradeCompletePacket;
+import org.asf.emuferal.packets.xt.gameserver.sanctuaries.SanctuaryUpgradeStartPacket;
 import org.asf.emuferal.packets.xt.gameserver.settings.UserVarSetPacket;
 import org.asf.emuferal.packets.xt.gameserver.shops.ItemUncraftPacket;
 import org.asf.emuferal.packets.xt.gameserver.shops.ShopItemBuy;
@@ -150,6 +152,8 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new SanctuaryLookLoadPacket());
 		registerPacket(new SanctuaryUpdatePacket());
 		registerPacket(new SanctuaryLookSavePacket());
+		registerPacket(new SanctuaryUpgradeStartPacket());
+		registerPacket(new SanctuaryUpgradeCompletePacket());
 		registerPacket(new UserVarSetPacket());
 		registerPacket(new InventoryItemInspirationCombinePacket());
 

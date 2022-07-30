@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 
 import org.asf.emuferal.accounts.PlayerInventory;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.InventoryDefinitionContainer;
-import org.asf.emuferal.accounts.highlevel.itemdata.inventory.InventoryType;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.AvatarSpeciesHelper;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.BodyModHelper;
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.ClothingHelper;
@@ -22,6 +21,7 @@ import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.SanctuaryHous
 import org.asf.emuferal.accounts.highlevel.itemdata.inventory.impl.SanctuaryIslandHelper;
 import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.emuferal.accounts.highlevel.itemdata.item.ItemInfo;
+import org.asf.emuferal.enums.inventory.InventoryStorageType;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.emuferal.packets.xt.gameserver.inventory.InventoryItemRemovedPacket;
@@ -56,43 +56,43 @@ public class ItemAccessor {
 	private static final Map<String, InventoryDefinitionContainer> inventoryTypeMap = new HashMap<String, InventoryDefinitionContainer>() {
 		{
 			// Avatar species
-			put("1", new InventoryDefinitionContainer(InventoryType.SINGLE_ITEM, new AvatarSpeciesHelper()));
+			put("1", new InventoryDefinitionContainer(InventoryStorageType.SINGLE_ITEM, new AvatarSpeciesHelper()));
 
 			// Body mods
-			put("2", new InventoryDefinitionContainer(InventoryType.SINGLE_ITEM, new BodyModHelper()));
+			put("2", new InventoryDefinitionContainer(InventoryStorageType.SINGLE_ITEM, new BodyModHelper()));
 
 			// Clothing
-			put("100", new InventoryDefinitionContainer(InventoryType.OBJECT_BASED, new ClothingHelper()));
+			put("100", new InventoryDefinitionContainer(InventoryStorageType.OBJECT_BASED, new ClothingHelper()));
 
 			// Sanctuary classes
-			put("10", new InventoryDefinitionContainer(InventoryType.SINGLE_ITEM, new SanctuaryClassHelper()));
+			put("10", new InventoryDefinitionContainer(InventoryStorageType.SINGLE_ITEM, new SanctuaryClassHelper()));
 
 			// Sanctuary houses
-			put("5", new InventoryDefinitionContainer(InventoryType.OBJECT_BASED, new SanctuaryHouseHelper()));
+			put("5", new InventoryDefinitionContainer(InventoryStorageType.OBJECT_BASED, new SanctuaryHouseHelper()));
 
 			// Sanctuary islands
-			put("6", new InventoryDefinitionContainer(InventoryType.OBJECT_BASED, new SanctuaryIslandHelper()));
+			put("6", new InventoryDefinitionContainer(InventoryStorageType.OBJECT_BASED, new SanctuaryIslandHelper()));
 
 			// Furniture
-			put("102", new InventoryDefinitionContainer(InventoryType.OBJECT_BASED, new FurnitureHelper()));
+			put("102", new InventoryDefinitionContainer(InventoryStorageType.OBJECT_BASED, new FurnitureHelper()));
 
 			// Currency
-			put("104", new InventoryDefinitionContainer(InventoryType.QUANTITY_BASED, new CurrencyHelper()));
+			put("104", new InventoryDefinitionContainer(InventoryStorageType.QUANTITY_BASED, new CurrencyHelper()));
 
 			// Resources
-			put("103", new InventoryDefinitionContainer(InventoryType.QUANTITY_BASED,
+			put("103", new InventoryDefinitionContainer(InventoryStorageType.QUANTITY_BASED,
 					new GenericHelperWithQuantity("103", tradelisComponent())));
 
 			// Dyes
-			put("111", new InventoryDefinitionContainer(InventoryType.QUANTITY_BASED,
+			put("111", new InventoryDefinitionContainer(InventoryStorageType.QUANTITY_BASED,
 					new GenericHelperWithQuantity("111", tradelisComponent())));
 
 			// Enigmas (ty to Mewt/Uzukara for pointing this out)
-			put("7", new InventoryDefinitionContainer(InventoryType.OBJECT_BASED,
+			put("7", new InventoryDefinitionContainer(InventoryStorageType.OBJECT_BASED,
 					new GenericHelper("7", enigmaComonent())));
 
 			// Inspirations
-			put("8", new InventoryDefinitionContainer(InventoryType.SINGLE_ITEM,
+			put("8", new InventoryDefinitionContainer(InventoryStorageType.SINGLE_ITEM,
 					new GenericHelper("8", new ItemComponent("Inspiration", new JsonObject()))));
 		}
 	};

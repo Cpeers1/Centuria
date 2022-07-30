@@ -208,7 +208,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 				for (Player player : ((GameServer) client.getServer()).getPlayers()) {
 					if (player.room != null && player.room.equals("sanctuary_" + owner.account.getAccountID())) {
 						// Send packet
-						SanctuaryWorldObjectInfo packet = new SanctuaryWorldObjectInfo();
+						SanctuaryWorldObjectInfoPacket packet = new SanctuaryWorldObjectInfoPacket();
 
 						// Object creation parameters
 						packet.id = update.objectId; // World object ID
@@ -276,7 +276,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 				for (Player player : ((GameServer) client.getServer()).getPlayers()) {
 					if (player.room != null && player.room.equals("sanctuary_" + owner.account.getAccountID())) {
 						// Send packet
-						SanctuaryWorldObjectInfo packet = new SanctuaryWorldObjectInfo();
+						SanctuaryWorldObjectInfoPacket packet = new SanctuaryWorldObjectInfoPacket();
 
 						// Object creation parameters
 						packet.id = houseInv.get(InventoryItem.UUID_PROPERTY_NAME).getAsString(); // World object ID

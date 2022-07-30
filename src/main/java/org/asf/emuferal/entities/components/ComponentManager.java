@@ -27,7 +27,7 @@ public final class ComponentManager {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
-	public static void RegisterAllComponents() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
+	public static void registerAllComponents() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
 	{
 		var classes = new Reflections(COMPONENT_PACKAGE_NAME).getTypesAnnotatedWith(Component.class);
 		

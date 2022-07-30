@@ -111,7 +111,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	public SetUserVarResult setPlayerVarValue(int defID, int[] values) {
 		try {
 
-			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) {
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.INV_TYPE.invTypeId), defID)) {
 				// create the inventory object
 
 				UserVarValue[] userVarValues = new UserVarValue[values.length];
@@ -124,17 +124,17 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 				var newVarObject = createNewUserVar(defID, userVarValues);
 
-				var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
+				var inv = inventory.getItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId));
 				// UHH
 				inv.getAsJsonArray().add(newVarObject.toJsonObject());
 
-				inventory.setItem(Integer.toString(UserVarItem.InvType), inv);
+				inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
 
 				var output = new SetUserVarResult(true, new UserVarItem[] { newVarObject });
 
 				return output;
 			} else {
-				var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
+				var inv = inventory.getItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId));
 
 				// find the item
 
@@ -177,7 +177,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				var outputVarInv = new JsonArray();
 				outputVarInv.add(object);
 
-				inventory.setItem(Integer.toString(UserVarItem.InvType), inv);
+				inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
 
 				return null;
 			}
@@ -189,7 +189,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	@Override
 	public SetUserVarResult setPlayerVarValue(int defID, int index, int value) {
 		try {
-			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) {
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.INV_TYPE.invTypeId), defID)) {
 				// create the inventory object
 
 				UserVarValue[] userVarValues = new UserVarValue[1];
@@ -200,17 +200,17 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 				var newVarObject = createNewUserVar(defID, userVarValues);
 
-				var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
+				var inv = inventory.getItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId));
 				// UHH
 				inv.getAsJsonArray().add(newVarObject.toJsonObject());
 
-				inventory.setItem(Integer.toString(UserVarItem.InvType), inv);
+				inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
 
 				var output = new SetUserVarResult(true, new UserVarItem[] { newVarObject });
 
 				return output;
 			} else {
-				var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
+				var inv = inventory.getItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId));
 
 				// find the item
 
@@ -249,7 +249,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				var object = userVarItem.toJsonObject();
 				inv.getAsJsonArray().set(elementIndex, object);
 
-				inventory.setItem(Integer.toString(UserVarItem.InvType), inv);
+				inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
 
 				return new SetUserVarResult(true, new UserVarItem[] { userVarItem });
 			}
@@ -261,7 +261,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	@Override
 	public SetUserVarResult setPlayerVarValue(int defID, HashMap<Integer, Integer> indexToValueUpdateMap) {
 		try {
-			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID)) {
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.INV_TYPE.invTypeId), defID)) {
 				// create the inventory object
 
 				UserVarValue[] userVarValues = new UserVarValue[indexToValueUpdateMap.size()];
@@ -277,17 +277,17 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 				var newVarObject = createNewUserVar(defID, userVarValues);
 
-				var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
+				var inv = inventory.getItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId));
 				// UHH
 				inv.getAsJsonArray().add(newVarObject.toJsonObject());
 
-				inventory.setItem(Integer.toString(UserVarItem.InvType), inv);
+				inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
 
 				var output = new SetUserVarResult(true, new UserVarItem[] { newVarObject });
 
 				return output;
 			} else {
-				var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
+				var inv = inventory.getItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId));
 
 				// find the item
 
@@ -328,7 +328,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				var object = userVarItem.toJsonObject();
 				inv.getAsJsonArray().set(elementIndex, object);
 
-				inventory.setItem(Integer.toString(UserVarItem.InvType), inv);
+				inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
 
 				return new SetUserVarResult(true, new UserVarItem[] { userVarItem });
 			}
@@ -341,10 +341,10 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	public UserVarValue[] getPlayerVarValue(int defID) {
 		try {
 			// Can't access anything if the inventory is null.
-			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID))
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.INV_TYPE.invTypeId), defID))
 				return null;
 
-			var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
+			var inv = inventory.getItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId));
 
 			// find the item
 
@@ -378,10 +378,10 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	public UserVarValue getPlayerVarValue(int defID, int index) {
 		try {
 			// Can't access anything if the inventory is null.
-			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID))
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.INV_TYPE.invTypeId), defID))
 				return null;
 
-			var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
+			var inv = inventory.getItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId));
 
 			// find the item
 
@@ -416,10 +416,10 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	public UserVarValue[] getPlayerVarValue(int defID, int[] indexes) {
 		try {
 			// Can't access anything if the inventory is null.
-			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID))
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.INV_TYPE.invTypeId), defID))
 				return null;
 
-			var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
+			var inv = inventory.getItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId));
 
 			// find the item
 
@@ -460,10 +460,10 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	public boolean deletePlayerVar(int defID) {
 		try {
 			// Can't access anything if the inventory is null.
-			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID))
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.INV_TYPE.invTypeId), defID))
 				return false;
 
-			inventory.getAccessor().removeInventoryObject(Integer.toString(UserVarItem.InvType), defID);
+			inventory.getAccessor().removeInventoryObject(Integer.toString(UserVarItem.INV_TYPE.invTypeId), defID);
 
 			return true;
 		} catch (Exception exception) {
@@ -475,10 +475,10 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	public boolean deletePlayerVarValueAtIndex(int defID, int index) {
 		try {
 			// Can't access anything if the inventory is null.
-			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.InvType), defID))
+			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.INV_TYPE.invTypeId), defID))
 				return false;
 
-			var inv = inventory.getItem(Integer.toString(UserVarItem.InvType));
+			var inv = inventory.getItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId));
 
 			// find the item
 

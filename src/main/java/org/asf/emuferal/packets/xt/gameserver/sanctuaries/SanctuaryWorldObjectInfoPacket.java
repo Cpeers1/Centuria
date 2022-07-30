@@ -15,7 +15,7 @@ import com.google.gson.JsonObject;
  * @author owen9
  *
  */
-public class SanctuaryWorldObjectInfo extends WorldObjectInfo {
+public class SanctuaryWorldObjectInfoPacket extends WorldObjectInfo {
 
 	public SanctuaryObjectData sancObjectInfo;
 	public boolean writeFurnitureInfo;

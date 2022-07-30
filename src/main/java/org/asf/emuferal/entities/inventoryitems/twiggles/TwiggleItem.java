@@ -1,4 +1,4 @@
-package org.asf.emuferal.entities.inventoryitems.sanctuaries;
+package org.asf.emuferal.entities.inventoryitems.twiggles;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -6,17 +6,30 @@ import org.asf.emuferal.entities.components.generic.NameComponent;
 import org.asf.emuferal.entities.components.generic.TimeStampComponent;
 import org.asf.emuferal.entities.components.sanctuaries.PrimaryLookComponent;
 import org.asf.emuferal.entities.components.sanctuaries.SanctuaryLookComponent;
+import org.asf.emuferal.entities.components.twiggles.TwiggleComponent;
 import org.asf.emuferal.entities.inventoryitems.InventoryItem;
+import org.asf.emuferal.entities.inventoryitems.Item;
+import org.asf.emuferal.enums.inventory.InventoryType;
 
 import com.google.gson.JsonObject;
 
-public class MasterSanctuaryItem extends InventoryItem {
+@Item
+public class TwiggleItem extends InventoryItem {
 
-	public final static int InvType = 201;
+	public final static InventoryType INV_TYPE = InventoryType.Twiggles;
 	
-	public MasterSanctuaryItem(int defId, String uuid) {
-		super(defId, uuid, InvType);
-		// TODO Auto-generated constructor stub
+	public TwiggleItem(int defId, String uuid) {
+		super(defId, uuid, INV_TYPE);
+	}
+	
+	public TwiggleItem()
+	{
+		super(0, "", INV_TYPE);
+	}
+
+	@Override
+	public InventoryType getInventoryType() {
+		return INV_TYPE;
 	}
 	
 	/**
@@ -34,46 +47,24 @@ public class MasterSanctuaryItem extends InventoryItem {
 		super.fromJsonObject(object);
 	}
 	
-	public PrimaryLookComponent getPrimaryLookComponent()
+	public TwiggleComponent getTwiggleComponent()
 	{
-		return (PrimaryLookComponent)this.getComponent(PrimaryLookComponent.COMPONENT_NAME);
+		return (TwiggleComponent)this.getComponent(TwiggleComponent.COMPONENT_NAME);
 	}
 	
-	public SanctuaryLookComponent getSanctuaryLookComponent()
+	public void setTwiggleComponent(TwiggleComponent component)
 	{
-		return (SanctuaryLookComponent)this.getComponent(SanctuaryLookComponent.COMPONENT_NAME);
+		this.SetComponent(component);
 	}
 	
 	public TimeStampComponent getTimeStampComponent()
 	{
 		return (TimeStampComponent)this.getComponent(TimeStampComponent.COMPONENT_NAME);
 	}
-
-	public NameComponent getNameComponent()
-	{
-		return (NameComponent)this.getComponent(NameComponent.COMPONENT_NAME);
-	}
-	
-	public void setPrimaryLookComponent(PrimaryLookComponent component)
-	{
-		this.SetComponent(component);
-	}
-	
-	public void setNameComponentComponent(NameComponent component)
-	{
-		this.SetComponent(component);
-	}
 	
 	public void setTimeStampComponent(TimeStampComponent component)
 	{
 		this.SetComponent(component);
 	}
-	
-	public void setNameComponent(NameComponent component)
-	{
-		this.SetComponent(component);
-	}
 
-	
-	
 }

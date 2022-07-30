@@ -1,6 +1,6 @@
-package org.asf.emuferal.accounts.highlevel.itemdata.inventory;
+package org.asf.emuferal.enums.inventory;
 
-public enum InventoryType {
+public enum InventoryStorageType {
 
 	/**
 	 * Object-based, but only accepts one item

@@ -21,3 +21,7 @@ saves/
 # Research (due to copyright we cant share this, shoutout to rawaho/kiwido for helping with this)
 research/
 /clientmods/org.asf.emuferal.client.plugin/lib/feral/UnityEngine.CoreModule.dll
+EmuFeral.jar
+
+update.list
+updater.jar
