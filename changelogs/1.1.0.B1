@@ -1,4 +1,4 @@
-Changes in 1.0.1.B1:
+Changes in 1.1.0.B1:
   - Sanctuary Expansion System (Bugged)
     - Partial implementation. You will need to relog after making any sanctuary expands to further expand your sanctuary, due to a bug with the system.
   - New Chat Command: > GiveBasicMaterials
