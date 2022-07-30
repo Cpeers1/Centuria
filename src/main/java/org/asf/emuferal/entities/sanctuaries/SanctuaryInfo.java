@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 /**
  * Sanctuary Info Object.
  * Used to store info about the sanctuary.
- * Gets populated into a {@link SanctuaryLookComponent} component.
  * @author Owenvii
  *
  */
