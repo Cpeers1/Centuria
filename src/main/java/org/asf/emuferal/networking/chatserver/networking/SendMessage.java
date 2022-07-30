@@ -343,7 +343,7 @@ public class SendMessage extends AbstractChatPacket {
 		
 		if (EmuFeral.giveAllResources)
 		{
-			commandMessages.add("addbasicmaterials");
+			commandMessages.add("giveBasicMaterials");
 		}
 
 		if (GameServer.hasPerm(permLevel, "moderator")) {
