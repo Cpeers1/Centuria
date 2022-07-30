@@ -1357,32 +1357,30 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "tpm": {
 						// Teleports a player to a map.
-						if (GameServer.hasPerm(permLevel, "developer")) {
-							String defID = "";
-							if (args.size() < 1) {
-								systemMessage("Missing argument: teleport defID", cmd, client);
-								return true;
-							}
-
-							// Parse arguments
-							defID = args.get(0);
-							String type = "0";
-							if (args.size() > 1) {
-								type = args.get(1);
-							}
-
-							// Teleport
-							try {
-								JoinRoom roomJ = new JoinRoom();
-								roomJ.levelID = Integer.valueOf(defID);
-								roomJ.levelType = Integer.valueOf(type);
-								roomJ.handle(client.getPlayer().getOnlinePlayerInstance().client);
-							} catch (IOException e) {
-								systemMessage("Error: " + e, cmd, client);
-							}
-
+						String defID = "";
+						if (args.size() < 1) {
+							systemMessage("Missing argument: teleport defID", cmd, client);
 							return true;
 						}
+
+						// Parse arguments
+						defID = args.get(0);
+						String type = "0";
+						if (args.size() > 1) {
+							type = args.get(1);
+						}
+
+						// Teleport
+						try {
+							JoinRoom roomJ = new JoinRoom();
+							roomJ.levelID = Integer.valueOf(defID);
+							roomJ.levelType = Integer.valueOf(type);
+							roomJ.handle(client.getPlayer().getOnlinePlayerInstance().client);
+						} catch (IOException e) {
+							systemMessage("Error: " + e, cmd, client);
+						}
+
+						return true;
 					}
 					case "srp": {
 						// Sends a raw packet
