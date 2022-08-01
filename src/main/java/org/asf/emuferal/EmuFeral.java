@@ -67,7 +67,7 @@ import com.google.gson.JsonObject;
 
 public class EmuFeral {
 	// Update
-	public static final String SERVER_UPDATE_VERSION = "1.1.1.B1";
+	public static final String SERVER_UPDATE_VERSION = "1.1.2.B1";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/emuferal";
 
 	// Configuration

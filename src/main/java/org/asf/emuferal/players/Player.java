@@ -421,9 +421,8 @@ public class Player {
 	}
 
 	/**
-	 * Attempts to teleport to the player with the specific targetPlayerAccountId
+	 * Attempts to teleport to the previous room.
 	 * 
-	 * @param targetPlayerAccountId The ID of the player to teleport to.
 	 * @return If the join was a success or not.
 	 */
 	public boolean teleportToPreviousRoom() {
@@ -456,6 +455,12 @@ public class Player {
 
 	}
 
+	/**
+	 * Attempts to teleport to the specified player.
+	 * 
+	 * @param targetPlayerAccountId the player id to teleport to.
+	 * @return If the join was a success or not.
+	 */
 	public boolean teleportToPlayer(String targetPlayerAccountId) {
 		try {
 			Player player = this;
@@ -489,17 +494,16 @@ public class Player {
 							String ownerId = plr.room.substring(plr.room.indexOf('_') + 1);
 							success = player.teleportToSanctuary(ownerId, plr);
 						} else {
-							success = player.teleportToRoom(plr.levelID, plr.levelType, -1, "room_" + plr.levelID, "", plr);
+							success = player.teleportToRoom(plr.levelID, plr.levelType, -1, "room_" + plr.levelID, "",
+									plr);
 						}
-						
+
 						var jumpToPlayerResponse = new JumpToPlayer();
 						jumpToPlayerResponse.success = success;
 						client.sendPacket(jumpToPlayerResponse);
 						return true;
-					}
-					else
-					{
-						//TODO: This is weird.
+					} else {
+						// TODO: This is weird.
 						XtWriter writer = new XtWriter();
 						writer.writeString("rfjtr");
 						writer.writeInt(-1); // data prefix
