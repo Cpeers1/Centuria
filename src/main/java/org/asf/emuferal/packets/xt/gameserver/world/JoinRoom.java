@@ -52,39 +52,20 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		// Load the requested room
 		Player plr = (Player) client.container;
-
-		JoinRoom join = new JoinRoom();
-		join.levelType = levelType;
-		join.levelID = levelID;
-
-		// Sync
-		GameServer srv = (GameServer) client.getServer();
-		for (Player player : srv.getPlayers()) {
-			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				plr.destroyAt(player);
-			}
-		}
-
-		// Assign room
-		plr.roomReady = false;
-		plr.pendingLevelID = levelID;
-		plr.pendingRoom = "room_" + levelID;
-		plr.levelType = levelType;
-		join.roomIdentifier = plr.pendingRoom;
-		plr.respawnItems.clear();
-
-		// Log
-		if (System.getProperty("debugMode") != null) {
-			System.out.println(
-					"[JOINROOM]  Client to server (room: " + plr.pendingRoom + ", level: " + plr.pendingLevelID + ")");
-		}
-
-		// Send response
-		client.sendPacket(join);
-
+		plr.teleportToRoom(levelID, levelType, issRoomID, roomIdentifier, teleport);
 		return true;
+	}
+	
+	public JoinRoom markAsFailed()
+	{
+		this.success = false;
+		this.roomIdentifier = "";
+		this.levelID = 0;
+		this.levelType = 0;
+		this.teleport = "";
+		this.issRoomID = -1;
+		return this;
 	}
 
 }

@@ -34,24 +34,7 @@ public class RoomJoinPrevious implements IXtPacket<RoomJoinPrevious> {
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Make the client load the tutorial
 		Player plr = (Player) client.container;
-        
-        // Assign room
-		plr.roomReady = false;
-		plr.pendingLevelID = plr.previousLevelID;
-		plr.pendingRoom = "room_" + plr.previousLevelID;
-		plr.levelType = plr.previousLevelType;
-
-		// Send response
-		JoinRoom join = new JoinRoom();
-		join.levelType = plr.levelType;
-		join.levelID = plr.pendingLevelID;
-		client.sendPacket(join);
-
-		// Log
-		if (System.getProperty("debugMode") != null) {
-			System.out.println("[JOINROOM]  Client to server (room: " + plr.pendingRoom + ", level: " + plr.pendingLevelID + ")");
-		}
-
+        plr.teleportToPreviousRoom();
 		return true;
 	}
 

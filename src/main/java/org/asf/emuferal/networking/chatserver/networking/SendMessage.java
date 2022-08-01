@@ -82,7 +82,7 @@ public class SendMessage extends AbstractChatPacket {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		// Load always filtered words
 		try {
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
@@ -232,11 +232,10 @@ public class SendMessage extends AbstractChatPacket {
 								.getPlayerVarValue(9362, 0);
 						if (val != null)
 							filterSetting = val.value;
-						
+
 						// Check filter
 						for (String word : message.split(" ")) {
-							if(filterSetting != 0)
-							{
+							if (filterSetting != 0) {
 								if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 									// Filter it
 									for (String filter : filterWords) {
@@ -254,8 +253,8 @@ public class SendMessage extends AbstractChatPacket {
 									}
 								}
 							}
-							
-							//check always filtered
+
+							// check always filtered
 							if (alwaysfilterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 								// Filter it
 								for (String filter : alwaysfilterWords) {
@@ -340,9 +339,8 @@ public class SendMessage extends AbstractChatPacket {
 
 		// Generate the command list
 		ArrayList<String> commandMessages = new ArrayList<String>();
-		
-		if (EmuFeral.giveAllResources)
-		{
+
+		if (EmuFeral.giveAllResources) {
 			commandMessages.add("giveBasicMaterials");
 		}
 
@@ -404,17 +402,14 @@ public class SendMessage extends AbstractChatPacket {
 				if (ev.isHandled())
 					return true;
 
-				
-				if(cmdId.equals("givebasicmaterials"))
-				{
-					if (EmuFeral.giveAllResources)
-					{
+				if (cmdId.equals("givebasicmaterials")) {
+					if (EmuFeral.giveAllResources) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
 
 						if (onlinePlayer != null) {
 							var accessor = client.getPlayer().getPlayerInventory()
 									.getItemAccessor(client.getPlayer().getOnlinePlayerInstance());
-							
+
 							accessor.add(6691, 1000);
 							accessor.add(6692, 1000);
 							accessor.add(6693, 1000);
@@ -440,7 +435,7 @@ public class SendMessage extends AbstractChatPacket {
 						}
 					}
 				}
-				
+
 				// Run system command
 				if (GameServer.hasPerm(permLevel, "moderator")) {
 					switch (cmdId) {
@@ -1356,27 +1351,26 @@ public class SendMessage extends AbstractChatPacket {
 						}
 					}
 					case "tpm": {
-						// Teleports a player to a map.
-						String defID = "";
-						if (args.size() < 1) {
-							systemMessage("Missing argument: teleport defID", cmd, client);
-							return true;
-						}
-
-						// Parse arguments
-						defID = args.get(0);
-						String type = "0";
-						if (args.size() > 1) {
-							type = args.get(1);
-						}
-
-						// Teleport
 						try {
-							JoinRoom roomJ = new JoinRoom();
-							roomJ.levelID = Integer.valueOf(defID);
-							roomJ.levelType = Integer.valueOf(type);
-							roomJ.handle(client.getPlayer().getOnlinePlayerInstance().client);
-						} catch (IOException e) {
+							// Teleports a player to a map.
+							String defID = "";
+							if (args.size() < 1) {
+								systemMessage("Missing argument: teleport defID", cmd, client);
+								return true;
+							}
+
+							// Parse arguments
+							defID = args.get(0);
+							String type = "0";
+							if (args.size() > 1) {
+								type = args.get(1);
+							}
+
+							// Teleport
+							client.getPlayer().getOnlinePlayerInstance().teleportToRoom(Integer.valueOf(defID),
+									Integer.valueOf(type), -1, "room_" + defID, "");
+						} catch (Exception e) {
+							e.printStackTrace();
 							systemMessage("Error: " + e, cmd, client);
 						}
 
