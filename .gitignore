@@ -8,6 +8,9 @@ bin/
 .classpath
 .project
 
+#VSCode
+.vscode/
+
 # IntelliJ
 *.iml
 *.ipr
@@ -21,7 +24,6 @@ saves/
 # Research (due to copyright we cant share this, shoutout to rawaho/kiwido for helping with this)
 research/
 /clientmods/org.asf.centuria.client.plugin/lib/feral/UnityEngine.CoreModule.dll
-Centuria.jar
 
 update.list
 updater.jar
