@@ -1,10 +1,10 @@
 package org.example.examplemodule;
 
-import org.asf.emuferal.modules.IEmuFeralModule;
-import org.asf.emuferal.modules.eventbus.EventListener;
-import org.asf.emuferal.modules.events.servers.GameServerStartupEvent;
+import org.asf.centuria.modules.ICenturiaModule;
+import org.asf.centuria.modules.eventbus.EventListener;
+import org.asf.centuria.modules.events.servers.GameServerStartupEvent;
 
-public class ExampleModule implements IEmuFeralModule {
+public class ExampleModule implements ICenturiaModule {
 
 	@Override
 	public String id() {
