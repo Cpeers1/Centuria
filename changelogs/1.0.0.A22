@@ -1,4 +1,4 @@
-Changes in EmuFeral 1.0.0.A22:
+Changes in Centuria 1.0.0.A22:
  - Implemented online status change for follower login/logoff (with popup for favorites)
  - Fix chat server randomly disconnecting players (didnt fully fix it but the server can restore the connection now)
  - Implemented event for API, Director, Chat and Game server startup (with the ability to register packets and handlers)

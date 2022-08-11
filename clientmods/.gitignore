@@ -2,5 +2,5 @@ obj
 bin
 /.vs
 /packages
-/org.asf.emuferal.client.plugin/lib/feral/Assembly-CSharp.dll
+/org.asf.centuria.client.plugin/lib/feral/Assembly-CSharp.dll
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-server="https://aerialworks.ddns.net/extra/emuferal"
+server="https://aerialworks.ddns.net/extra/centuria"
 
 function uploadToServers() {
 	version="$1"
@@ -41,7 +41,7 @@ read -rsp "Server upload password: " password
 echo
 echo
 echo
-echo EmuFeral Uploader
+echo Centuria Uploader
 echo Version: $version
 echo Version type: $channel
 echo
@@ -52,7 +52,7 @@ if [ "$prompt" != "y" ] && [ "$prompt" != "Y" ]; then
 	exit
 fi
 
-echo Building emuferal...
+echo Building centuria...
 ./gradlew build updateData || exit $?
 echo
 
