@@ -24,6 +24,9 @@ import com.google.gson.JsonSyntaxException;
 
 public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	private static JsonObject helper;
+	
+	private static final int ITEM_LIMIT = 250;
+	
 	static {
 		// Load helper
 		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
@@ -449,7 +452,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 
 	@Override
-	public void addSanctuaryObject(String objectUUID, SanctuaryObjectData sancObjectInfo, String activeSancLookId) {
+	public boolean addSanctuaryObject(String objectUUID, SanctuaryObjectData sancObjectInfo, String activeSancLookId) {
 		// get the object def id from the funiture inv
 		int defId = inventory.getFurnitureAccessor().getDefIDFromUUID(objectUUID);
 
@@ -469,7 +472,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		}
 
 		if (sancLook == null)
-			return; // cannot find
+			return false; // cannot find
 
 		var placementInfo = sancLook.getAsJsonObject().get("components").getAsJsonObject().get("SanctuaryLook")
 				.getAsJsonObject().get("info").getAsJsonObject().get("placementInfo").getAsJsonObject();
@@ -501,6 +504,16 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			// just remove the object first, before adding an element for it back in
 			// this is probably faster then trying to change it
 			itemsArray.remove(index);
+		}
+		else
+		{
+			//adding a new item
+			//check if we hit item limit
+			if(itemsArray.size() + 1 > ITEM_LIMIT)
+			{
+				//can't add this object
+				return false;
+			}	
 		}
 
 		// construct a new item object
@@ -538,6 +551,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		}
 
 		inventory.setItem("201", looks);
+		return true;
 	}
 
 	@Override

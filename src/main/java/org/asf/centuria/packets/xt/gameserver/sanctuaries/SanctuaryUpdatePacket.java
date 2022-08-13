@@ -2,7 +2,9 @@ package org.asf.centuria.packets.xt.gameserver.sanctuaries;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
@@ -31,10 +33,12 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 	private static final String PACKET_ID = "ssu";
 
-	private List<UpdateSancObjectItem> additions = new ArrayList<UpdateSancObjectItem>();
+	private Map<UpdateSancObjectItem, Boolean> additions = new HashMap<UpdateSancObjectItem, Boolean>();
 	private List<RoomInfoObject> roomChanges = new ArrayList<RoomInfoObject>();
 	private List<String> removals = new ArrayList<String>();
 	private JsonObject houseInv;
+	
+	private int ITEM_LIMIT = 250;
 
 	@Override
 	public String id() {
@@ -70,7 +74,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 					reader.readInt(), reader.read(), reader.readInt());
 
 			item.objectInfo = info;
-			additions.add(item);
+			additions.put(item, true);
 		}
 
 		// Log
@@ -118,7 +122,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 		writer.writeInt(additions.size()); // number of item additions
 		if (additions.size() != 0) {
-			for (var item : additions) {
+			for (var item : additions.keySet()) {
 				writer.writeString(item.objectId);
 			}
 		}
@@ -139,9 +143,9 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		Player plr = (Player) client.container;
 
 		// updates
-		for (var item : additions) {
-			plr.account.getPlayerInventory().getSanctuaryAccessor().addSanctuaryObject(item.objectId, item.objectInfo,
-					plr.activeSanctuaryLook);
+		for (var item : additions.keySet()) {
+			additions.replace(item, plr.account.getPlayerInventory().getSanctuaryAccessor().addSanctuaryObject(item.objectId, item.objectInfo,
+					plr.activeSanctuaryLook));
 		}
 
 		// removals
@@ -199,49 +203,62 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 	public void sendObjectUpdatePackets(SmartfoxClient client) {
 
 		try {
-			for (var update : additions) {
-				var owner = (Player) client.container;
-				var furnItem = owner.account.getPlayerInventory().getFurnitureAccessor()
-						.getFurnitureData(update.objectId);
+			for (var updateSet : additions.entrySet()) {
+				
+				if(updateSet.getValue())
+				{
+					var update = updateSet.getKey();
+					var owner = (Player) client.container;
+					var furnItem = owner.account.getPlayerInventory().getFurnitureAccessor()
+							.getFurnitureData(update.objectId);
+					
+					
 
-				// now do an OI packet
-				for (Player player : ((GameServer) client.getServer()).getPlayers()) {
-					if (player.room != null && player.room.equals("sanctuary_" + owner.account.getAccountID())) {
-						// Send packet
-						SanctuaryWorldObjectInfoPacket packet = new SanctuaryWorldObjectInfoPacket();
+					// now do an OI packet
+					for (Player player : ((GameServer) client.getServer()).getPlayers()) {
+						if (player.room != null && player.room.equals("sanctuary_" + owner.account.getAccountID())) {
+							
+							// Send packet
+							SanctuaryWorldObjectInfoPacket packet = new SanctuaryWorldObjectInfoPacket();
 
-						// Object creation parameters
-						packet.id = update.objectId; // World object ID
-						packet.defId = 1751; // Sanctuary Actor Def Id.
-						packet.ownerId = player.room.substring("sanctuary_".length()); // Owner ID
+							// Object creation parameters
+							packet.id = update.objectId; // World object ID
+							packet.defId = 1751; // Sanctuary Actor Def Id.
+							packet.ownerId = player.room.substring("sanctuary_".length()); // Owner ID
 
-						// Object info
-						packet.lastMove = new WorldObjectMoveNodeData();
-						packet.lastMove.positionInfo = new WorldObjectPositionInfo(
-								update.objectInfo.positionInfo.position.x, update.objectInfo.positionInfo.position.y,
-								update.objectInfo.positionInfo.position.z, update.objectInfo.positionInfo.rotation.x,
-								update.objectInfo.positionInfo.rotation.y, update.objectInfo.positionInfo.rotation.z,
-								update.objectInfo.positionInfo.rotation.w);
-						packet.lastMove.velocity = new Velocity();
-						packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
-						packet.lastMove.actorActionType = ActorActionType.None;
-						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition;
+							// Object info
+							packet.lastMove = new WorldObjectMoveNodeData();
+							packet.lastMove.positionInfo = new WorldObjectPositionInfo(
+									update.objectInfo.positionInfo.position.x, update.objectInfo.positionInfo.position.y,
+									update.objectInfo.positionInfo.position.z, update.objectInfo.positionInfo.rotation.x,
+									update.objectInfo.positionInfo.rotation.y, update.objectInfo.positionInfo.rotation.z,
+									update.objectInfo.positionInfo.rotation.w);
+							packet.lastMove.velocity = new Velocity();
+							packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
+							packet.lastMove.actorActionType = ActorActionType.None;
+							packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition;
 
-						packet.objectType = SanctuaryObjectType.Furniture;
-						// Only send json if its not the owner
-						packet.writeFurnitureInfo = !player.account.getAccountID().equals(owner.account.getAccountID());
-						packet.funitureObject = furnItem;
-						packet.sancObjectInfo = update.objectInfo;
+							packet.objectType = SanctuaryObjectType.Furniture;
+							// Only send json if its not the owner
+							packet.writeFurnitureInfo = !player.account.getAccountID().equals(owner.account.getAccountID());
+							packet.funitureObject = furnItem;
+							packet.sancObjectInfo = update.objectInfo;
 
-						player.client.sendPacket(packet);
+							player.client.sendPacket(packet);
 
-						// Log
-						if (System.getProperty("debugMode") != null) {
-							System.out.println(
-									"[SANCTUARY] [UPDATE] Server to client: load object (" + packet.build() + ")");
+							// Log
+							if (System.getProperty("debugMode") != null) {
+								System.out.println(
+										"[SANCTUARY] [UPDATE] Server to client: load object (" + packet.build() + ")");
+							}
 						}
-					}
+					}					
 				}
+				else
+				{
+					//item limit, don't spawn the item.
+				}
+
 			}
 
 			for (var removedItemId : removals) {

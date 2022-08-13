@@ -157,7 +157,7 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	/**
 	 * Adds a object to the player's sanctuary.
 	 */
-	public abstract void addSanctuaryObject(String objectUUID, SanctuaryObjectData positionalInfo,
+	public abstract boolean addSanctuaryObject(String objectUUID, SanctuaryObjectData positionalInfo,
 			String activeSancLookId);
 
 	/**
@@ -167,7 +167,6 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 
 	/**
 	 * Updates room info for the player's sanctuary.
-	 * 
 	 */
 	public abstract JsonObject updateSanctuaryRoomData(String activeSancLookId, RoomInfoObject[] roomInfos);
 
