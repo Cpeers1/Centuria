@@ -894,7 +894,7 @@ public class SendMessage extends AbstractChatPacket {
 						AccountManager.getInstance().lockDisplayName(args.get(1), acc.getAccountID());
 
 						// Kick online player
-						acc.kick("Display name changed");
+						acc.kickDirect("SYSTEM", "Display name changed");
 						systemMessage("Renamed " + oldName + " " + args.get(1) + ".", cmd, client);
 						return true;
 					}

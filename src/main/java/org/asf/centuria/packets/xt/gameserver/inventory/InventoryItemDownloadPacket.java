@@ -10,7 +10,6 @@ import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.accounts.highlevel.ItemAccessor;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
-import org.asf.centuria.enums.inventory.InventoryType;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.players.Player;
@@ -271,7 +270,6 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		// Sanctuaries
 		if (slot.equals("5") || slot.equals("6") || slot.equals("102") || slot.equals("10") || slot.equals("201")) {
 			if (!plr.sanctuaryPreloadCompleted) {
-				Centuria.fixSanctuaries(inv, plr.account);
 				plr.activeSanctuaryLook = plr.account.getActiveSanctuaryLook();
 				plr.sanctuaryPreloadCompleted = true;
 			}
