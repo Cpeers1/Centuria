@@ -205,8 +205,6 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 		// Find owner
 		CenturiaAccount sancOwner = AccountManager.getInstance().getAccount(sanctuaryOwner);
 		if (!sancOwner.getPlayerInventory().containsItem("201")) {
-			// Fix sanctuaries
-			Centuria.fixSanctuaries(sancOwner.getPlayerInventory(), sancOwner);
 			Player plr = sancOwner.getOnlinePlayerInstance();
 			if (plr != null)
 				plr.activeSanctuaryLook = sancOwner.getActiveSanctuaryLook();

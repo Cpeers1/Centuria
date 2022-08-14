@@ -607,7 +607,7 @@ public class GameServer extends BaseSmartfoxServer {
 					long loginTimestamp = plr.account.getLastLoginTime();
 					if ((System.currentTimeMillis() / 1000) - (2 * 24 * 60 * 60) >= loginTimestamp) {
 						// Kick players that are ingame for wayyy to long
-						plr.account.kick("Session expired");
+						plr.account.kickDirect("SYSTEM", "Session expired");
 					}
 				}
 				try {

@@ -191,6 +191,27 @@ public abstract class CenturiaAccount {
 			// Dispatch event
 			EventBus.getInstance().dispatchEvent(new AccountKickEvent(this, issuer, reason));
 
+			// Kick
+			kickDirect(issuer, reason);
+
+			// Return success
+			return true;
+		}
+
+		// Return failure
+		return false;
+	}
+
+	/**
+	 * Kicks the player without sending a event
+	 * @param issuer Kick issuer
+	 * @param reason Kick reason
+	 */
+	public void kickDirect(String issuer, String reason) {
+		// Locate online player
+		Player plr = getOnlinePlayerInstance();
+
+		if (plr != null) {
 			// Log
 			String issuerNm = issuer;
 			if (!issuerNm.equals("SYSTEM")) {
@@ -208,13 +229,7 @@ public abstract class CenturiaAccount {
 			} catch (InterruptedException e) {
 			}
 			plr.client.disconnect();
-
-			// Return success
-			return true;
 		}
-
-		// Return failure
-		return false;
 	}
 
 	/**
