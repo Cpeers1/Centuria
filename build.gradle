@@ -4,7 +4,7 @@ plugins {
 }
 
 version = "1.1.2.B1"
-group = "org.asf.emuferal"
+group = "org.asf.centuria"
 
 sourceCompatibility = '1.17'
 targetCompatibility = '1.17'
@@ -25,8 +25,8 @@ repositories {
 jar {
 	manifest {
 		attributes([
-			"Main-Class": "org.asf.emuferal.launcher.LauncherMain",
-			"Specification-Title": "EmuFeral",
+			"Main-Class": "org.asf.centuria.launcher.LauncherMain",
+			"Specification-Title": "Centuria",
 			"Specification-Vendor": "${authorname}",
                         "Specification-Version": project.version,
 			"Implementation-Title": project.name,
@@ -95,8 +95,8 @@ project.configurations.implementation.canBeResolved = true
 task installation () {
 	doLast {
 		copy {
-			from "emuferal"
-			from "emuferal.bat"
+			from "centuria"
+			from "centuria.bat"
 			into "build/Installations"
 		}
 		for (ResolvedArtifact arti : project.configurations.implementation.resolvedConfiguration.getResolvedArtifacts()) {
@@ -130,8 +130,8 @@ import java.nio.file.*
 task updateData () {
 	doLast {
 		copy {
-			from "emuferal"
-			from "emuferal.bat"
+			from "centuria"
+			from "centuria.bat"
 			into "build/update"
 		}
 		String data = ""

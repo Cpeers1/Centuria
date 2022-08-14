@@ -1,4 +1,4 @@
-Changes in EmuFeral 1.0.0.A29 (WIP):
+Changes in Centuria 1.0.0.A29 (WIP):
  - Improved reliability of player warping
  - Sanctuary join failure instead of black screen
  - Interactions (partial: most npcs work, resource collection does remove the resource but wont add to inventory, chests dont work)
