@@ -1,0 +1,5 @@
+Changes in 1.1.2.1.B1:
+  - Fixes to hopefully address sanctuary corruption issues.
+  - Implemented a Sanctuary Item Placement Limit (hopefully)
+  - Rebranding (the EmuFeral server software is now called Centuria!)
+  
