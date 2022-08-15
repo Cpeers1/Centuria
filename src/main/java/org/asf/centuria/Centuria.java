@@ -117,7 +117,7 @@ public class Centuria {
 		System.out.println("                              Centuria                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                        Version 1.0.0.B1-HF2                        "); // not doing this
+		System.out.println("                        Version 1.1.2.1.B1                        	"); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain
