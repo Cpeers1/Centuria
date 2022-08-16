@@ -24,9 +24,9 @@ import com.google.gson.JsonSyntaxException;
 
 public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	private static JsonObject helper;
-	
+
 	private static final int ITEM_LIMIT = 250;
-	
+
 	static {
 		// Load helper
 		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
@@ -384,7 +384,8 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		// Find sanctuary
 		for (JsonElement ele : items) {
 			JsonObject itm = ele.getAsJsonObject();
-			return itm;
+			if (itm.get("components").getAsJsonObject().has("PrimaryLooks"))
+				return itm;
 		}
 
 		// Could not find one
@@ -504,16 +505,13 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			// just remove the object first, before adding an element for it back in
 			// this is probably faster then trying to change it
 			itemsArray.remove(index);
-		}
-		else
-		{
-			//adding a new item
-			//check if we hit item limit
-			if(itemsArray.size() + 1 > ITEM_LIMIT)
-			{
-				//can't add this object
+		} else {
+			// adding a new item
+			// check if we hit item limit
+			if (itemsArray.size() + 1 > ITEM_LIMIT) {
+				// can't add this object
 				return false;
-			}	
+			}
 		}
 
 		// construct a new item object
@@ -1153,7 +1151,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 	@Override
 	public boolean enlargenSanctuaryRooms(String sancClassInvId, int roomIndex) {
-		
+
 		// Need to upgrade sanctuary..
 		if (!inventory.containsItem("10"))
 			inventory.setItem("10", new JsonArray());
@@ -1179,7 +1177,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 		var roomEnlargeArray = sancClass.get("enlargedAreas").getAsJsonArray();
 		roomEnlargeArray.set(roomIndex, new JsonPrimitive(1));
-		
+
 		JsonObject ts = new JsonObject();
 		ts.addProperty("ts", System.currentTimeMillis());
 
@@ -1238,7 +1236,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 				// update room enlarge array
 				roomEnlargeArray = houseLevel.get("enlargedAreas").getAsJsonArray();
 				roomEnlargeArray.set(roomIndex, new JsonPrimitive(1));
-				
+
 				// stamp
 				matchedHouseItem.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
 						.remove("ts");
@@ -1267,7 +1265,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 	@Override
 	public int getCurrentSanctuaryStage(String sancClassInvId) {
-		
+
 		if (!inventory.containsItem("10"))
 			inventory.setItem("10", new JsonArray());
 
@@ -1284,15 +1282,14 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 		if (classObject == null)
 			return 0;
-		
-		
+
 		return classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
 				.get("SanctuaryClass").getAsJsonObject().get("stage").getAsInt();
 	}
-	
+
 	@Override
 	public JsonArray getExpandedRooms(String sancClassInvId) {
-		
+
 		if (!inventory.containsItem("10"))
 			inventory.setItem("10", new JsonArray());
 
@@ -1309,8 +1306,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 		if (classObject == null)
 			return null;
-		
-		
+
 		return classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
 				.get("SanctuaryClass").getAsJsonObject().get("enlargedAreas").getAsJsonArray();
 	}
