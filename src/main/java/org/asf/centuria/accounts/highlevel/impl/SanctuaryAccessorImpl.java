@@ -384,7 +384,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		// Find sanctuary
 		for (JsonElement ele : items) {
 			JsonObject itm = ele.getAsJsonObject();
-			if (itm.get("components").getAsJsonObject().has("PrimaryLooks"))
+			if (itm.get("components").getAsJsonObject().has("PrimaryLook"))
 				return itm;
 		}
 
