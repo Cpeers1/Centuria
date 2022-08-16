@@ -36,8 +36,6 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
 import org.asf.connective.https.ConnectiveHTTPSServer;
-import org.asf.centuria.accounts.CenturiaAccount;
-import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.entities.components.ComponentManager;
 import org.asf.centuria.entities.inventoryitems.InventoryItemManager;
 import org.asf.centuria.modules.ICenturiaModule;
@@ -62,8 +60,6 @@ import org.asf.centuria.networking.http.director.GameServerRequestHandler;
 import org.asf.centuria.players.Player;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.ConnectiveServerFactory;
-
-import com.google.gson.JsonObject;
 
 public class Centuria {
 	// Update

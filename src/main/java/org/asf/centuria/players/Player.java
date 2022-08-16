@@ -2,7 +2,6 @@ package org.asf.centuria.players;
 
 import java.util.HashMap;
 
-import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.data.XtWriter;
