@@ -4,18 +4,16 @@ import java.io.IOException;
 
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
-import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.players.Player;
 
 public class MinigameCurrency implements IXtPacket<MinigameCurrency> {
 
 	private static final String PACKET_ID = "mg";
 
-    public int Currency;
-    public int UNK1 = 1;
-    public String UNK2 = "null";
+	public int Currency;
+	public int UNK1 = 1;
+	public String UNK2 = "null";
 
 	@Override
 	public MinigameCurrency instantiate() {
@@ -33,11 +31,11 @@ public class MinigameCurrency implements IXtPacket<MinigameCurrency> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-            writer.writeInt(-1); //padding
-            writer.writeInt(Currency);
-            writer.writeInt(UNK1);
-            writer.writeString(UNK2);
-            writer.writeString(""); // Data suffix
+		writer.writeInt(-1); // padding
+		writer.writeInt(Currency);
+		writer.writeInt(UNK1);
+		writer.writeString(UNK2);
+		writer.writeString(""); // Data suffix
 	}
 
 	@Override

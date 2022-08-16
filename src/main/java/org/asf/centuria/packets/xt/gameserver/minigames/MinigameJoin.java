@@ -15,7 +15,7 @@ public class MinigameJoin implements IXtPacket<MinigameJoin> {
 	private static final String PACKET_ID = "mj";
 	
     public int MinigameID;
-	private boolean isMinigameSupported;
+	private boolean isMinigameSupported = false;
 	
 	@Override
 	public MinigameJoin instantiate() {
@@ -47,18 +47,13 @@ public class MinigameJoin implements IXtPacket<MinigameJoin> {
 		Player plr = (Player) client.container;
 		
 		switch (MinigameID){
-			case 4111: {
+			case 4111:
 				isMinigameSupported = true;
 				TwiggleBuilders.OnJoin(plr);
-				break;
-			}
-			default: {
-				isMinigameSupported = false;
-				break;
-			}
+				break;			
 		}
 		
-		if (isMinigameSupported == true){
+		if (isMinigameSupported){
 			//Set previous
 			plr.previousLevelID = plr.levelID;
 			plr.previousLevelType = plr.levelType;
