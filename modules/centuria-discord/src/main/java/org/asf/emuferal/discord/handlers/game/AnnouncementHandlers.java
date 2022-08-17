@@ -53,7 +53,7 @@ public class AnnouncementHandlers implements IEventReceiver {
 			if (event.hasVersionInfo()) {
 				messageComplete += "Changelog:\n";
 				messageComplete += "```\n";
-				InputStream strm = new URL("https://raw.githubusercontent.com/SkySwimmer/Centuria/main/changelogs/"
+				InputStream strm = new URL("https://raw.githubusercontent.com/Cpeers1/Centuria/main/changelogs/"
 						+ event.getUpdateVersion()).openStream();
 				String log = new String(strm.readAllBytes(), "UTF-8");
 				strm.close();
