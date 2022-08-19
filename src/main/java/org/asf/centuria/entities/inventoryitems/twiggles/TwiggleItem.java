@@ -16,7 +16,7 @@ import com.google.gson.JsonObject;
 @Item
 public class TwiggleItem extends InventoryItem {
 
-	public final static InventoryType INV_TYPE = InventoryType.Twiggles;
+	public final static InventoryType INV_TYPE = InventoryType.Twiggle;
 	
 	public TwiggleItem(int defId, String uuid) {
 		super(defId, uuid, INV_TYPE);

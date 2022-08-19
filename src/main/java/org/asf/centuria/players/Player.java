@@ -65,7 +65,7 @@ public class Player {
 	public double lastRotY = 0;
 	public double lastRotZ = 0;
 
-	public int lastAction = 0;
+	public ActorActionType lastAction;
 
 	// Teleports
 	public String teleportDestination;
@@ -76,7 +76,7 @@ public class Player {
 		// Delete character
 		WorldObjectDelete packet = new WorldObjectDelete(account.getAccountID());
 		player.client.sendPacket(packet);
-		lastAction = 0;
+		lastAction = ActorActionType.None;
 	}
 
 	public void syncTo(Player player) {

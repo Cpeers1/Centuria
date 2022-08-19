@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
+import org.asf.centuria.enums.actors.ActorActionType;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
@@ -71,7 +72,7 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 			plr.lastPosX = x;
 			plr.lastPosY = y;
 			plr.lastPosZ = z;
-			plr.lastAction = 0;
+			plr.lastAction = ActorActionType.None;
 
 			pk.writeDouble(x);
 			pk.writeDouble(y);
@@ -108,7 +109,7 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 			plr.lastPosX = x;
 			plr.lastPosY = y;
 			plr.lastPosZ = z;
-			plr.lastAction = dd;
+			plr.lastAction.value = dd;
 
 			pk.writeDouble(x);
 			pk.writeDouble(y);
@@ -164,7 +165,7 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 			plr.lastPosX = x;
 			plr.lastPosY = y;
 			plr.lastPosZ = z;
-			plr.lastAction = dd;
+			plr.lastAction.value = dd;
 
 			pk.writeDouble(x);
 			pk.writeDouble(y);
