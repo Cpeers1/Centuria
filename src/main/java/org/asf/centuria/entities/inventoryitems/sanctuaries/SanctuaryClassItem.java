@@ -23,7 +23,7 @@ import com.google.gson.JsonObject;
 @Item
 public class SanctuaryClassItem extends InventoryItem {
 
-	public final static InventoryType INV_TYPE = InventoryType.SanctuaryClasses;
+	public final static InventoryType INV_TYPE = InventoryType.SanctuaryClass;
 
 	public SanctuaryClassItem(int defId, String uuid) {
 		super(defId, uuid, INV_TYPE);

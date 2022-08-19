@@ -26,7 +26,7 @@ import com.google.gson.JsonObject;
 @Item
 public final class UserVarItem extends InventoryItem {
 
-	public final static InventoryType INV_TYPE = InventoryType.Settings;
+	public final static InventoryType INV_TYPE = InventoryType.UserVar;
 
 	private UserVarType type;
 		

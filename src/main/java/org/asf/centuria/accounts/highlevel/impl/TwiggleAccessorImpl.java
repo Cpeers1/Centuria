@@ -35,7 +35,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 
 			twiggleInv.add(newTwiggleItem.toJsonObject());
 
-			inventory.setItem(Integer.toString(InventoryType.Twiggles.invTypeId), twiggleInv);
+			inventory.setItem(Integer.toString(InventoryType.Twiggle.invTypeId), twiggleInv);
 
 			return newTwiggleItem;
 		} catch (Exception exception) {
@@ -101,7 +101,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 			
 			//remove it 
 			twiggleInv.remove(selectedTwiggleElement);
-			inventory.setItem(Integer.toString(InventoryType.Twiggles.invTypeId), twiggleInv);
+			inventory.setItem(Integer.toString(InventoryType.Twiggle.invTypeId), twiggleInv);
 			
 			return true;
 			
@@ -225,7 +225,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 
 	@Override
 	public TwiggleItem getTwiggle(String twiggleInvId) {
-		var twiggleJsonObject = inventory.getAccessor().findInventoryObject(Integer.toString(InventoryType.Twiggles.invTypeId), twiggleInvId);
+		var twiggleJsonObject = inventory.getAccessor().findInventoryObject(Integer.toString(InventoryType.Twiggle.invTypeId), twiggleInvId);
 		if(twiggleJsonObject == null) return null;
 		
 		try {		
@@ -276,7 +276,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 	
 	private JsonArray getTwiggleInv()
 	{
-		String invId = Integer.toString(InventoryType.Twiggles.invTypeId);
+		String invId = Integer.toString(InventoryType.Twiggle.invTypeId);
 
 		// find Twiggle Inv
 		if (!inventory.containsItem(invId))
