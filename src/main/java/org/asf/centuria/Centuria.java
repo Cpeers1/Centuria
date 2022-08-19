@@ -36,8 +36,6 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
 import org.asf.connective.https.ConnectiveHTTPSServer;
-import org.asf.centuria.accounts.CenturiaAccount;
-import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.entities.components.ComponentManager;
 import org.asf.centuria.entities.inventoryitems.InventoryItemManager;
 import org.asf.centuria.modules.ICenturiaModule;
@@ -63,11 +61,9 @@ import org.asf.centuria.players.Player;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.ConnectiveServerFactory;
 
-import com.google.gson.JsonObject;
-
 public class Centuria {
 	// Update
-	public static final String SERVER_UPDATE_VERSION = "1.1.2.B1";
+	public static final String SERVER_UPDATE_VERSION = "1.1.2.2.B1";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/centuria";
 
 	// Configuration
@@ -117,7 +113,7 @@ public class Centuria {
 		System.out.println("                              Centuria                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                        Version 1.0.0.B1-HF2                        "); // not doing this
+		System.out.println("                        Version 1.1.2.2.B1                        	"); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain
@@ -686,139 +682,5 @@ public class Centuria {
 
 		// No update available
 		return false;
-	}
-
-	public static void fixSanctuaries(PlayerInventory inv, CenturiaAccount acc) {
-		//TODO: This all should probably have its own, personal methods in a sanctuary-related class.
-
-		if (!inv.containsItem("10")) {
-			// Broken inventory, delete the sanctuary saves as it will break
-			inv.deleteItem("5");
-			inv.deleteItem("6");
-			inv.deleteItem("201");
-		}
-
-		//
-		// Looks
-		//
-
-		if (Centuria.giveAllSanctuaryTypes) {
-			// Give missing sanctuary types
-			int[] sanctuaryTypes = new int[] { 9588, 12632, 12637, 12964, 21273, 23627, 24122, 25414, 26065, 28431,
-					9760, 9764 };
-			for (int id : sanctuaryTypes)
-				if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(id))
-					inv.getSanctuaryAccessor().unlockSanctuary(id);
-		} else {
-			// Give default sanctuary if needed
-			if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(9588))
-				inv.getSanctuaryAccessor().unlockSanctuary(9588);
-		}
-
-		//
-		// Remove broken sanctuary files
-		//
-
-		for (String id : inv.getSanctuaryAccessor().getSanctuaryLookIDs()) {
-			// Get sanctuary object
-			JsonObject sancD = inv.getSanctuaryAccessor().getSanctuaryLook(id).get("components").getAsJsonObject();
-
-			// Check data
-			if (!sancD.has("SanctuaryLook")) {
-				// Delete the entry
-				inv.getItem("201").getAsJsonArray().remove(inv.getSanctuaryAccessor().getSanctuaryLook(id));
-				continue;
-			}
-
-			// Load sanc look info
-			JsonObject sanc = sancD.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
-
-			// Check validity
-			String classId = sanc.get("classInvId").getAsString();
-			if (inv.getSanctuaryAccessor().getSanctuaryClassObject(classId) == null) {
-				// Delete the entry
-				inv.getItem("201").getAsJsonArray().remove(inv.getSanctuaryAccessor().getSanctuaryLook(id));
-			}
-		}
-
-		//
-		// Check look count and add missing look slots
-		//
-
-		for (int i = inv.getSanctuaryAccessor().getSanctuaryLookCount(); i < 12; i++) {
-			inv.getSanctuaryAccessor().addExtraSanctuarySlot();
-		}
-
-		//
-		// Fix missing primary slots
-		//
-
-		for (int house : inv.getSanctuaryAccessor().getUnlockedHouseTypes()) {
-			boolean found = false;
-
-			// Check if there is any primary look saved
-			for (String id : inv.getSanctuaryAccessor().getSanctuaryLookIDs()) {
-				// Get sanctuary object
-				JsonObject sanc = inv.getSanctuaryAccessor().getSanctuaryLook(id);
-
-				if (sanc.get("components").getAsJsonObject().get("SanctuaryLook").getAsJsonObject().get("info")
-						.getAsJsonObject().get("houseDefId").getAsInt() != house)
-					continue;
-
-				// Check if its a primary slot
-				if (sanc.get("components").getAsJsonObject().has("PrimaryLook")) {
-					found = true;
-					break;
-				}
-			}
-
-			// Save if needed
-			if (!found) {
-				inv.getSanctuaryAccessor().addExtraSanctuarySlot();
-			}
-		}
-
-		//
-		// Fix missing name info
-		//
-
-		for (String id : inv.getSanctuaryAccessor().getSanctuaryLookIDs()) {
-			JsonObject look = inv.getSanctuaryAccessor().getSanctuaryLook(id);
-			JsonObject components = look.get("components").getAsJsonObject();
-
-			// Add name component if missing
-			if (!components.has("Name")) {
-				JsonObject nm = new JsonObject();
-				nm.addProperty("name", "");
-				components.add("Name", nm);
-
-				inv.setItem("201", inv.getItem("201"));
-			}
-		}
-
-		//
-		// Active sanctuary
-		//
-
-		JsonObject activeSanc = inv.getSanctuaryAccessor().getSanctuaryLook(acc.getActiveSanctuaryLook());
-		if (activeSanc == null) {
-			// Select first primary slot
-			for (String id : inv.getSanctuaryAccessor().getSanctuaryLookIDs()) {
-				// Get sanctuary object
-				JsonObject sanc = inv.getSanctuaryAccessor().getSanctuaryLook(id);
-
-				// Check if its a primary slot
-				if (sanc.get("components").getAsJsonObject().has("PrimaryLook")) {
-					// Assign active sanctuary
-					acc.setActiveSanctuaryLook(id);
-					break;
-				}
-			}
-		}
-
-		// Save changes
-		for (String change : inv.getAccessor().getItemsToSave())
-			inv.setItem(change, inv.getItem(change));
-		inv.getAccessor().completedSave();
 	}
 }

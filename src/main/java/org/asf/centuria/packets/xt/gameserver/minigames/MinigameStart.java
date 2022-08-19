@@ -4,16 +4,14 @@ import java.io.IOException;
 
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
-import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.players.Player;
 
 public class MinigameStart implements IXtPacket<MinigameStart> {
 
 	private static final String PACKET_ID = "ms";
 
-    public int UNK1 = 1;
+	public int UNK1 = 1;
 
 	@Override
 	public MinigameStart instantiate() {
@@ -31,9 +29,9 @@ public class MinigameStart implements IXtPacket<MinigameStart> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-            writer.writeInt(-1); //padding
-            writer.writeInt(UNK1);
-            writer.writeString(""); // Data suffix
+		writer.writeInt(-1); // padding
+		writer.writeInt(UNK1);
+		writer.writeString(""); // Data suffix
 	}
 
 	@Override

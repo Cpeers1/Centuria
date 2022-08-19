@@ -10,7 +10,6 @@ import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.accounts.highlevel.ItemAccessor;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
-import org.asf.centuria.enums.inventory.InventoryType;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.players.Player;
@@ -271,7 +270,43 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		// Sanctuaries
 		if (slot.equals("5") || slot.equals("6") || slot.equals("102") || slot.equals("10") || slot.equals("201")) {
 			if (!plr.sanctuaryPreloadCompleted) {
-				Centuria.fixSanctuaries(inv, plr.account);
+				// Fix missing sancs
+				if (!inv.containsItem("201")) {
+					inv.deleteItem("10");
+					inv.deleteItem("5");
+					inv.deleteItem("6");
+
+					//
+					// Looks
+					//
+
+					if (Centuria.giveAllSanctuaryTypes) {
+						// Give missing sanctuary types
+						int[] sanctuaryTypes = new int[] { 9588, 12632, 12637, 12964, 21273, 23627, 24122, 25414, 26065,
+								28431, 9760, 9764 };
+						for (int id : sanctuaryTypes)
+							if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(id))
+								inv.getSanctuaryAccessor().unlockSanctuary(id);
+					} else {
+						// Give default sanctuary if needed
+						if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(9588))
+							inv.getSanctuaryAccessor().unlockSanctuary(9588);
+					}
+
+					//
+					// Check look count and add missing look slots
+					//
+
+					for (int i = inv.getSanctuaryAccessor().getSanctuaryLookCount(); i < 12; i++) {
+						inv.getSanctuaryAccessor().addExtraSanctuarySlot();
+					}
+
+					//
+					// Active sanc look
+					//
+					plr.activeSanctuaryLook = inv.getSanctuaryAccessor().getFirstSanctuaryLook().get("id").getAsString();
+					plr.account.setActiveSanctuaryLook(plr.activeSanctuaryLook);
+				}
 				plr.activeSanctuaryLook = plr.account.getActiveSanctuaryLook();
 				plr.sanctuaryPreloadCompleted = true;
 			}
@@ -419,7 +454,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			// Set defaults
 			// inv.getUserVarAccesor().setDefaultPlayerVarValues();
 		}
-		
+
 		// PlayerVars
 		if (slot.equals("110")) {
 			if (inv.getItem("110") == null || inv.getItem("110").getAsJsonArray().isEmpty()) {

@@ -49,7 +49,7 @@ public class UpdateDisplayNameHandler {
 		manager.releaseDisplayName(account.getDisplayName());
 		account.updateDisplayName(newName);
 		manager.lockDisplayName(newName, account.getAccountID());
-		account.kick("Display name changed");
+		account.kickDirect("SYSTEM", "Display name changed");
 		return event.reply("Display name updates successfully.");
 	}
 }

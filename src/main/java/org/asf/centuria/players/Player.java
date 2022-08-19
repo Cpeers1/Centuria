@@ -2,7 +2,6 @@ package org.asf.centuria.players;
 
 import java.util.HashMap;
 
-import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.data.XtWriter;
@@ -139,8 +138,6 @@ public class Player {
 			// Find owner
 			CenturiaAccount sancOwner = AccountManager.getInstance().getAccount(sanctuaryOwner);
 			if (!sancOwner.getPlayerInventory().containsItem("201")) {
-				// Fix sanctuaries
-				Centuria.fixSanctuaries(sancOwner.getPlayerInventory(), sancOwner);
 				Player plr = sancOwner.getOnlinePlayerInstance();
 				if (plr != null)
 					plr.activeSanctuaryLook = sancOwner.getActiveSanctuaryLook();
@@ -227,8 +224,6 @@ public class Player {
 			// Find owner
 			CenturiaAccount sancOwner = AccountManager.getInstance().getAccount(sanctuaryOwner);
 			if (!sancOwner.getPlayerInventory().containsItem("201")) {
-				// Fix sanctuaries
-				Centuria.fixSanctuaries(sancOwner.getPlayerInventory(), sancOwner);
 				Player plr = sancOwner.getOnlinePlayerInstance();
 				if (plr != null)
 					plr.activeSanctuaryLook = sancOwner.getActiveSanctuaryLook();

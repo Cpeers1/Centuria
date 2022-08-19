@@ -1,22 +1,11 @@
 package org.asf.centuria.packets.xt.gameserver.sanctuaries;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
-import org.asf.centuria.accounts.highlevel.TwiggleAccessor;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
-import org.asf.centuria.entities.inventoryitems.InventoryItem;
-import org.asf.centuria.entities.inventoryitems.twiggles.TwiggleItem;
-import org.asf.centuria.entities.twiggles.TwiggleWorkParameters;
 import org.asf.centuria.entities.uservars.UserVarValue;
-import org.asf.centuria.enums.twiggles.TwiggleState;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
@@ -24,9 +13,6 @@ import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.world.JoinRoom;
 import org.asf.centuria.players.Player;
 import org.asf.centuria.social.SocialManager;
-import org.asf.centuria.util.SanctuaryWorkCalculator;
-
-import com.google.gson.JsonArray;
 
 public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgradeCompletePacket> {
 
@@ -73,19 +59,19 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 			var twiggleItem = twiggleAccessor.getTwiggle(twiggleInvId);
 
 			switch (twiggleItem.getTwiggleComponent().workType) {
-				case WorkingOtherSanctuary:
-				case WorkingSanctuary:
-					// we are ok
-					break;
-				case FinishedOtherSanctuary:
-				case FinishedSanctuary:
-				case None:
-				default: {
-					// failed to complete expansion
-					this.success = false;
-					client.sendPacket(this);
-					return true;
-				}
+			case WorkingOtherSanctuary:
+			case WorkingSanctuary:
+				// we are ok
+				break;
+			case FinishedOtherSanctuary:
+			case FinishedSanctuary:
+			case None:
+			default: {
+				// failed to complete expansion
+				this.success = false;
+				client.sendPacket(this);
+				return true;
+			}
 			}
 
 			if (twiggleItem.getTwiggleComponent().twiggleWorkParams.stage != null) {
@@ -93,95 +79,87 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 				var didSucceed = player.account.getPlayerInventory().getSanctuaryAccessor().upgradeSanctuaryToStage(
 						twiggleItem.getTwiggleComponent().twiggleWorkParams.classItemInvId,
 						twiggleItem.getTwiggleComponent().twiggleWorkParams.stage);
-				
-				if(didSucceed)
-				{
+
+				if (didSucceed) {
 					var il = player.account.getPlayerInventory().getItem("201");
 					var ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
 					// send IL
 					player.client.sendPacket(ilPacket);
-					
+
 					il = player.account.getPlayerInventory().getItem("5");
 					ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
 					// send IL
 					player.client.sendPacket(ilPacket);
-					
+
 					il = player.account.getPlayerInventory().getItem("10");
 					ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
 					// send IL
 					player.client.sendPacket(ilPacket);
-					
+
 					il = player.account.getPlayerInventory().getItem("110");
 					ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
 					// send IL
 					player.client.sendPacket(ilPacket);
-				}
-				else
-				{
+				} else {
 					// failed to complete expansion
 					this.success = false;
 					client.sendPacket(this);
 					return true;
 				}
-			}
-			else if(twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex != null)
-			{
+			} else if (twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex != null) {
 				// its a stage upgrade
 				var didSucceed = player.account.getPlayerInventory().getSanctuaryAccessor().enlargenSanctuaryRooms(
 						twiggleItem.getTwiggleComponent().twiggleWorkParams.classItemInvId,
 						twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex);
-				
-				if(didSucceed)
-				{
+
+				if (didSucceed) {
 					var il = player.account.getPlayerInventory().getItem("201");
 					var ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
 					// send IL
 					player.client.sendPacket(ilPacket);
-					
+
 					il = player.account.getPlayerInventory().getItem("5");
 					ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
 					// send IL
 					player.client.sendPacket(ilPacket);
-					
+
 					il = player.account.getPlayerInventory().getItem("10");
 					ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
 					// send IL
 					player.client.sendPacket(ilPacket);
-					
+
 					il = player.account.getPlayerInventory().getItem("110");
 					ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
 					// send IL
 					player.client.sendPacket(ilPacket);
-				}
-				else
-				{
+				} else {
 					// failed to complete expansion
 					this.success = false;
 					client.sendPacket(this);
 					return true;
 				}
 			}
-			
+
 			twiggleAccessor.clearTwiggleWork(twiggleInvId);
 			this.success = true;
 			player.client.sendPacket(this);
-			
+
 			JoinSanctuary(client, player.account.getAccountID());
 
 		} catch (Exception e) {
@@ -194,19 +172,16 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 
 		return true;
 	}
-	
-	public void JoinSanctuary(SmartfoxClient client, String sanctuaryOwner)
-	{
+
+	public void JoinSanctuary(SmartfoxClient client, String sanctuaryOwner) {
 		var isAllowed = true;
-		
+
 		// Load player object
 		Player player = (Player) client.container;
 
 		// Find owner
 		CenturiaAccount sancOwner = AccountManager.getInstance().getAccount(sanctuaryOwner);
 		if (!sancOwner.getPlayerInventory().containsItem("201")) {
-			// Fix sanctuaries
-			Centuria.fixSanctuaries(sancOwner.getPlayerInventory(), sancOwner);
 			Player plr = sancOwner.getOnlinePlayerInstance();
 			if (plr != null)
 				plr.activeSanctuaryLook = sancOwner.getActiveSanctuaryLook();
@@ -233,7 +208,7 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 					isAllowed = false;
 				}
 			} else
-				//Everyone
+				// Everyone
 				isAllowed = true;
 		} else
 			isAllowed = true;
