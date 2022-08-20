@@ -1,11 +1,11 @@
 package org.asf.centuria.modules.events.players;
 
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventObject;
 import org.asf.centuria.modules.eventbus.EventPath;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
-import org.asf.centuria.players.Player;
 
 /**
  * 

@@ -38,6 +38,7 @@ import javax.net.ssl.SSLContext;
 import org.asf.connective.https.ConnectiveHTTPSServer;
 import org.asf.centuria.entities.components.ComponentManager;
 import org.asf.centuria.entities.inventoryitems.InventoryItemManager;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.ICenturiaModule;
 import org.asf.centuria.modules.ModuleManager;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -57,7 +58,6 @@ import org.asf.centuria.networking.http.api.UpdateDisplayNameHandler;
 import org.asf.centuria.networking.http.api.UserHandler;
 import org.asf.centuria.networking.http.api.XPDetailsHandler;
 import org.asf.centuria.networking.http.director.GameServerRequestHandler;
-import org.asf.centuria.players.Player;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.ConnectiveServerFactory;
 

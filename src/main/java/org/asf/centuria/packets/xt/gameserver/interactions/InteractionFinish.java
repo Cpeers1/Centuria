@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.InteractionManager;
 import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
@@ -13,7 +14,6 @@ import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.interactions.InteractionSuccessEvent;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.players.Player;
 
 public class InteractionFinish implements IXtPacket<InteractionFinish> {
 

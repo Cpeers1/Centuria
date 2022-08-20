@@ -12,7 +12,7 @@ import java.util.UUID;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
-import org.asf.centuria.players.Player;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.social.SocialEntry;
 import org.asf.centuria.social.SocialManager;
 import org.asf.rats.ConnectiveHTTPServer;

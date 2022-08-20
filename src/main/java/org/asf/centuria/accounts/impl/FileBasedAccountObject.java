@@ -13,10 +13,10 @@ import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.LevelInfo;
 import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.dms.DMManager;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.AccountDeletionEvent;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.centuria.players.Player;
 import org.asf.centuria.social.SocialEntry;
 import org.asf.centuria.social.SocialManager;
 

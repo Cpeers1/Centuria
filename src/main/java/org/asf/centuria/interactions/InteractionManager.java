@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.asf.centuria.data.XtWriter;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.modules.InspirationCollectionModule;
 import org.asf.centuria.interactions.modules.InteractionModule;
 import org.asf.centuria.interactions.modules.ResourceCollectionModule;
 import org.asf.centuria.interactions.modules.ShopkeeperModule;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
-import org.asf.centuria.players.Player;
 
 public class InteractionManager {
 

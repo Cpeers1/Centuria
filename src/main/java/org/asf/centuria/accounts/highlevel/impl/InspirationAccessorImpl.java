@@ -7,9 +7,9 @@ import org.asf.centuria.accounts.highlevel.InspirationAccessor;
 import org.asf.centuria.accounts.highlevel.ItemAccessor;
 import org.asf.centuria.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.centuria.entities.inspiration.InspirationCombineResult;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.enums.inspiration.InspirationCombineStatus;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.centuria.players.Player;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

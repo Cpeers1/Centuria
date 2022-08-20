@@ -11,9 +11,9 @@ import java.util.HashMap;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.chatserver.networking.AbstractChatPacket;
 import org.asf.centuria.networking.gameserver.GameServer;
-import org.asf.centuria.players.Player;
 import org.asf.centuria.util.TaskThread;
 
 import com.google.gson.JsonObject;

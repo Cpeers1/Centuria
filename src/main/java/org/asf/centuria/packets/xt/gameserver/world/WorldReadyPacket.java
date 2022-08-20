@@ -11,6 +11,7 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.generic.Velocity;
 import org.asf.centuria.entities.objects.WorldObjectMoveNodeData;
 import org.asf.centuria.entities.objects.WorldObjectPositionInfo;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.sanctuaries.SanctuaryObjectData;
 import org.asf.centuria.enums.actors.ActorActionType;
 import org.asf.centuria.enums.sanctuaries.SanctuaryObjectType;
@@ -22,7 +23,6 @@ import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.sanctuaries.SanctuaryWorldObjectInfoPacket;
-import org.asf.centuria.players.Player;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

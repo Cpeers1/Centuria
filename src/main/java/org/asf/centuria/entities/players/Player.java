@@ -1,6 +1,8 @@
-package org.asf.centuria.players;
+package org.asf.centuria.entities.players;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
@@ -8,8 +10,10 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.generic.Quaternion;
 import org.asf.centuria.entities.generic.Vector3;
 import org.asf.centuria.entities.generic.Velocity;
+import org.asf.centuria.entities.inventoryitems.InventoryItem;
 import org.asf.centuria.entities.objects.WorldObjectMoveNodeData;
 import org.asf.centuria.entities.objects.WorldObjectPositionInfo;
+import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.enums.actors.ActorActionType;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
@@ -71,7 +75,11 @@ public class Player {
 	public String teleportDestination;
 	public Vector3 targetPos;
 	public Quaternion targetRot;
-
+	
+	// Trades
+	public Trade tradeEngagedIn;
+	private List<InventoryItem> tradeList;
+	
 	public void destroyAt(Player player) {
 		// Delete character
 		WorldObjectDelete packet = new WorldObjectDelete(account.getAccountID());
@@ -522,7 +530,25 @@ public class Player {
 			client.sendPacket(jumpToPlayerResponse);
 			return false;
 		}
-
 	}
+	
+	/**
+	 * Gets the players trade list. Will load the trade list if it hasn't been loaded before. 
+	 * @return A list of items in the player's trade list.
+	 */
+	public List<InventoryItem> getTradeList()
+	{
+		if(tradeList == null)
+		{
+			try {
+				tradeList = this.account.getPlayerInventory().getItemAccessor(this).loadTradeList();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}		
+		}
+		
+		return tradeList;
+	}
+	
 
 }

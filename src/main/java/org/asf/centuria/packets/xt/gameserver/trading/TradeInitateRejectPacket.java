@@ -1,20 +1,21 @@
-package org.asf.centuria.packets.xt.gameserver.world;
+package org.asf.centuria.packets.xt.gameserver.trading;
 
 import java.io.IOException;
 
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.enums.trading.TradeValidationType;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class RoomJoinPrevious implements IXtPacket<RoomJoinPrevious> {
+public class TradeInitateRejectPacket implements IXtPacket<TradeInitateRejectPacket> {
 
-	private static final String PACKET_ID = "rjp";
+	private static final String PACKET_ID = "ti";
 	
 	@Override
-	public RoomJoinPrevious instantiate() {
-		return new RoomJoinPrevious();
+	public TradeInitateRejectPacket instantiate() {
+		return new TradeInitateRejectPacket();
 	}
 
 	@Override
@@ -32,11 +33,7 @@ public class RoomJoinPrevious implements IXtPacket<RoomJoinPrevious> {
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		// Make the client load the tutorial
-		Player plr = (Player) client.container;
-        plr.teleportToPreviousRoom();
 		return true;
 	}
 
 }
-
