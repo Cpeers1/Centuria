@@ -67,6 +67,7 @@ import org.asf.centuria.packets.xt.gameserver.shops.ShopList;
 import org.asf.centuria.packets.xt.gameserver.social.FindPlayer;
 import org.asf.centuria.packets.xt.gameserver.social.JumpToPlayer;
 import org.asf.centuria.packets.xt.gameserver.social.PlayerOnlineStatus;
+import org.asf.centuria.packets.xt.gameserver.trading.TradeListPacket;
 import org.asf.centuria.packets.xt.gameserver.world.JoinRoom;
 import org.asf.centuria.packets.xt.gameserver.world.RoomJoinTutorial;
 import org.asf.centuria.packets.xt.gameserver.world.RoomJoinPrevious;
@@ -156,6 +157,7 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new SanctuaryUpgradeCompletePacket());
 		registerPacket(new UserVarSetPacket());
 		registerPacket(new InventoryItemInspirationCombinePacket());
+		registerPacket(new TradeListPacket());
 
 		// Allow modules to register packets
 		GameServerStartupEvent ev = new GameServerStartupEvent(this, t -> registerPacket(t));

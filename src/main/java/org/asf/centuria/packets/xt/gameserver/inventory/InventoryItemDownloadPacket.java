@@ -196,6 +196,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 						}
 					}
 				} catch (IOException e) {
+					throw new RuntimeException(e);
 				}
 
 				// Save changes

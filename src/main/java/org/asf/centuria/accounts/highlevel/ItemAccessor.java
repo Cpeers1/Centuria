@@ -105,6 +105,7 @@ public class ItemAccessor {
 	
 	private static final String[] tradeableInventories = new String[]
 	{
+		"100",
 		"102",
 		"103",
 		"111"
