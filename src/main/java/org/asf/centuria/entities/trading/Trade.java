@@ -17,15 +17,40 @@ public class Trade {
 
 	public List<InventoryItem> itemsToReceive;
 
-	public boolean readyStatusMe;
+	public boolean readyStatusInitiater;
 
-	public boolean readyStatusThem;
+	public boolean readyStatusTarget;
 
 	public boolean isConfirming;
 
-	public Boolean isAcceptedByMe;
+	public Boolean isAcceptedByInitiater;
 
-	public Boolean isAcceptedByThem;
+	public Boolean isAcceptedByTarget;
 
 	public String chatConversationId;
+	
+	private Trade()
+	{ }
+	
+	public static Trade StartNewTrade(Player initiatedByUser, Player targetUser)
+	{
+		//create a new trade
+		Trade newTrade = new Trade();
+		
+		//set the trades engaged in for both players
+		initiatedByUser.tradeEngagedIn = newTrade;
+		targetUser.tradeEngagedIn = newTrade;
+		
+		// Set the trade properties
+		newTrade.targetUser = targetUser;
+		newTrade.initiatedByUser = initiatedByUser;
+		newTrade.isStarted = false;
+		newTrade.readyStatusInitiater = false;
+		newTrade.readyStatusTarget = false;
+		
+		//
+		
+		
+		return newTrade;
+	}
 }

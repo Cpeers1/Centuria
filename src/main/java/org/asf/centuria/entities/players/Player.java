@@ -78,7 +78,6 @@ public class Player {
 	
 	// Trades
 	public Trade tradeEngagedIn;
-	private List<InventoryItem> tradeList;
 	
 	public void destroyAt(Player player) {
 		// Delete character
@@ -538,16 +537,11 @@ public class Player {
 	 */
 	public List<InventoryItem> getTradeList()
 	{
-		if(tradeList == null)
-		{
-			try {
-				tradeList = this.account.getPlayerInventory().getItemAccessor(this).loadTradeList();
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}		
-		}
-		
-		return tradeList;
+		try {
+			return this.account.getPlayerInventory().getItemAccessor(this).loadTradeList();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}		
 	}
 	
 

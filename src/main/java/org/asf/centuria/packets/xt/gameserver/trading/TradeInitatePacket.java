@@ -13,8 +13,12 @@ public class TradeInitatePacket implements IXtPacket<TradeInitatePacket> {
 
 	private static final String PACKET_ID = "ti";
 	
+	//Inbound
+	public String targetUserId;
+	
+	//Outbound
 	public TradeValidationType tradeValidationType;
-	public String userId;
+	public String sourceUserId;
 	public boolean success;
 	
 	@Override

@@ -1,8 +1,8 @@
-package org.asf.centuria.entities.inventoryitems.dyes;
+package org.asf.centuria.entities.inventoryitems.clothing;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.asf.centuria.entities.components.generic.QuantityComponent;
+import org.asf.centuria.entities.components.generic.ColorableComponent;
 import org.asf.centuria.entities.components.generic.TimeStampComponent;
 import org.asf.centuria.entities.components.generic.TradeableComponent;
 import org.asf.centuria.entities.inventoryitems.InventoryItem;
@@ -12,15 +12,15 @@ import org.asf.centuria.enums.inventory.InventoryType;
 import com.google.gson.JsonObject;
 
 @Item
-public class DyeItem extends InventoryItem {
+public class ClothingItem extends InventoryItem {
 
-	public final static InventoryType INV_TYPE = InventoryType.Dye;
+	public final static InventoryType INV_TYPE = InventoryType.Clothing;
 
-	public DyeItem(int defId, String uuid) {
+	public ClothingItem(int defId, String uuid) {
 		super(defId, uuid, INV_TYPE);
 	}
 
-	public DyeItem() {
+	public ClothingItem() {
 		super(0, "", INV_TYPE);
 	}
 
@@ -52,8 +52,8 @@ public class DyeItem extends InventoryItem {
 		return (TradeableComponent) this.getComponent(TradeableComponent.COMPONENT_NAME);
 	}
 
-	public QuantityComponent getQuantityComponent() {
-		return (QuantityComponent) this.getComponent(QuantityComponent.COMPONENT_NAME);
+	public ColorableComponent getColorableComponent() {
+		return (ColorableComponent) this.getComponent(ColorableComponent.COMPONENT_NAME);
 	}
 
 	public TimeStampComponent getTimeStampComponent() {
@@ -64,7 +64,7 @@ public class DyeItem extends InventoryItem {
 		this.SetComponent(component);
 	}
 
-	public void setQuantityComponent(QuantityComponent component) {
+	public void setColorableComponent(ColorableComponent component) {
 		this.SetComponent(component);
 	}
 
