@@ -7,13 +7,13 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class TradeInitateRejectPacket implements IXtPacket<TradeInitateRejectPacket> {
+public class TradeInitateCancelPacket implements IXtPacket<TradeInitateCancelPacket> {
 
-	private static final String PACKET_ID = "tir";
+	private static final String PACKET_ID = "tic";
 	
 	@Override
-	public TradeInitateRejectPacket instantiate() {
-		return new TradeInitateRejectPacket();
+	public TradeInitateCancelPacket instantiate() {
+		return new TradeInitateCancelPacket();
 	}
 
 	@Override

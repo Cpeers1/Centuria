@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
-import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.enums.trading.TradeValidationType;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
