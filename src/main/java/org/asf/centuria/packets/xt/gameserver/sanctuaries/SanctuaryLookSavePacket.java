@@ -2,6 +2,7 @@ package org.asf.centuria.packets.xt.gameserver.sanctuaries;
 
 import java.io.IOException;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
@@ -47,7 +48,7 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 		Player plr = (Player) client.container;
 
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Client to server (lookSlotId: " + lookSlotId
 					+ ", lookSlotName: " + lookSlotName + ")");
 		}
@@ -68,7 +69,7 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 
 		// send this packet
 
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Server to client IL: " + ilPacket.build());
 		}
 
@@ -81,7 +82,7 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 
 		// send this packet
 
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Server to client IL: " + ilPacket.build());
 		}
 
@@ -94,7 +95,7 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 
 		// send this packet
 
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Server to client IL: " + ilPacket.build());
 		}
 
@@ -107,13 +108,13 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 
 		// send this packet
 
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Server to client IL: " + ilPacket.build());
 		}
 
 		plr.client.sendPacket(this);
 
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Server to client SSL: " + this.build());
 		}
 

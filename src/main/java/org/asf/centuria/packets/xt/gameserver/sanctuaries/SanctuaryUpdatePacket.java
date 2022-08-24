@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.generic.Quaternion;
@@ -78,7 +79,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		}
 
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			if (numOfAdditions > 0) {
 				System.out.println(
 						"[SANCTUARY] [UPDATE] Client to server: " + numOfAdditions + " furniture additions...");
@@ -92,7 +93,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		}
 
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			if (numOfRemovals > 0) {
 				System.out
 						.println("[SANCTUARY] [UPDATE] Client to server: " + numOfRemovals + " furniture removals...");
@@ -106,7 +107,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		}
 
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			if (numOfRoomChanges > 0) {
 				System.out.println("[SANCTUARY] [UPDATE] Client to server: " + numOfRoomChanges + " room updates...");
 			}
@@ -247,7 +248,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 							player.client.sendPacket(packet);
 
 							// Log
-							if (System.getProperty("debugMode") != null) {
+							if (Centuria.debugMode) {
 								System.out.println(
 										"[SANCTUARY] [UPDATE] Server to client: load object (" + packet.build() + ")");
 							}
@@ -279,7 +280,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 						player.client.sendPacket(pk);
 
 						// Log
-						if (System.getProperty("debugMode") != null) {
+						if (Centuria.debugMode) {
 							System.out.println("[SANCTUARY] [UPDATE] Server to client: Delete object (" + pk + ")");
 						}
 					}
@@ -320,7 +321,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 						player.client.sendPacket(packet);
 
 						// Log
-						if (System.getProperty("debugMode") != null) {
+						if (Centuria.debugMode) {
 							System.out.println(
 									"[SANCTUARY] [UPDATE] Server to client: update house (" + packet.build() + ")");
 						}

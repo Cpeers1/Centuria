@@ -2,6 +2,7 @@ package org.asf.centuria.packets.xt.gameserver.objects;
 
 import java.io.IOException;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
@@ -60,7 +61,7 @@ public class WorldObjectRespawn implements IXtPacket<WorldObjectRespawn> {
 		pk.writeString(""); // Data suffix
 
 		// Log if in debug
-		if (System.getProperty("debugMode") != null)
+		if (Centuria.debugMode)
 			System.out.println("Respawn set: " + plr.account.getDisplayName() + ": " + plr.respawn.replace("%", ", "));
 
 		// Broadcast respawn

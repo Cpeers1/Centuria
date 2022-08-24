@@ -2,6 +2,7 @@ package org.asf.centuria.packets.xt.gameserver.sanctuaries;
 
 import java.io.IOException;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
@@ -47,7 +48,7 @@ public class SanctuaryLookSwitchPacket implements IXtPacket<SanctuaryLookSwitchP
 		Player plr = (Player) client.container;
 
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SANCTUARYEDITOR] [SELECTLOOK]  Client to server (look: " + lookId + ")");
 		}
 

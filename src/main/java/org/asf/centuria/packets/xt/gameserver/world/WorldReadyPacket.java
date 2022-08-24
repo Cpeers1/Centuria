@@ -3,6 +3,7 @@ package org.asf.centuria.packets.xt.gameserver.world;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.PlayerInventory;
@@ -49,7 +50,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 	public void parse(XtReader reader) throws IOException {
 		teleportUUID = reader.read();
 
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[WorldReadyPacket] recieved...");
 		}
 	}
@@ -117,7 +118,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
 				player.syncTo(plr);
 
-				if (System.getProperty("debugMode") != null) {
+				if (Centuria.debugMode) {
 					System.out.println("[WorldReadyPacket] Syncing player " + player.account.getDisplayName() + " to "
 							+ plr.account.getDisplayName());
 				}
@@ -142,7 +143,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
 				plr.syncTo(player);
 
-				if (System.getProperty("debugMode") != null) {
+				if (Centuria.debugMode) {
 					System.out.println("[WorldReadyPacket] Syncing spawn " + player.account.getDisplayName() + " to "
 							+ plr.account.getDisplayName());
 				}
@@ -233,7 +234,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					client.sendPacket(sanctuaryWorldObjectInfo);
 
 					// Log
-					if (System.getProperty("debugMode") != null) {
+					if (Centuria.debugMode) {
 						System.out.println("[SANCTUARY] [LOAD]  Server to client: load object (id: " + objId
 								+ ", type: furniture, defId: " + furnitureObject.get("defId").getAsString() + ")");
 					}
@@ -250,7 +251,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				+ (System.currentTimeMillis() / 1000) + "%0%0%0%0%0%0%1%0%0%0%0.0%0%0%" + houseJson.toString() + "%");
 
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SANCTUARY] [LOAD]  Server to client: load object (id: " + houseId
 					+ ", type: house, defId: " + houseJson.get("defId").getAsString() + ")");
 		}
@@ -264,7 +265,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				+ (System.currentTimeMillis() / 1000) + "%0%0%0%0%0%0%1%0%0%0%0.0%0%1%" + islandJson.toString() + "%");
 
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SANCTUARY] [LOAD]  Server to client: load object (id: " + islandId
 					+ ", type: island, defId: " + islandJson.get("defId").getAsString() + ")");
 		}

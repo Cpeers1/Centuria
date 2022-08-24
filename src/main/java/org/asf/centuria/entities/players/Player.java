@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.data.XtWriter;
@@ -344,7 +345,7 @@ public class Player {
 			plr.respawnItems.clear();
 
 			// Log
-			if (System.getProperty("debugMode") != null) {
+			if (Centuria.debugMode) {
 				System.out.println("[JOINROOM] Client to server (room: " + plr.pendingRoom + ", level: "
 						+ plr.pendingLevelID + ")");
 			}
@@ -407,7 +408,7 @@ public class Player {
 			plr.respawnItems.clear();
 
 			// Log
-			if (System.getProperty("debugMode") != null) {
+			if (Centuria.debugMode) {
 				System.out.println("[JOINROOM] Client to server (room: " + plr.pendingRoom + ", level: "
 						+ plr.pendingLevelID + ")");
 			}
@@ -445,7 +446,7 @@ public class Player {
 			client.sendPacket(join);
 
 			// Log
-			if (System.getProperty("debugMode") != null) {
+			if (Centuria.debugMode) {
 				System.out.println("[JOINROOM]  Client to server (room: " + plr.pendingRoom + ", level: "
 						+ plr.pendingLevelID + ")");
 			}
