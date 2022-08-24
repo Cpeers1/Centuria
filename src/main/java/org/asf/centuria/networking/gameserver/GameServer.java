@@ -232,26 +232,10 @@ public class GameServer extends BaseSmartfoxServer {
 			}
 
 			if (lockout || shutdown) {
-				JsonObject response = new JsonObject();
-				JsonObject b = new JsonObject();
-				b.addProperty("r", auth.rField);
-				JsonObject o = new JsonObject();
-				o.addProperty("statusId", -16);
-				o.addProperty("_cmd", "login");
-				JsonObject params = new JsonObject();
-				params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
-				params.addProperty("pendingFlags", 0);
-				params.addProperty("activeLookId", acc.getActiveLook());
-				params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
-				params.addProperty("sessionId", acc.getAccountID());
-				params.addProperty("userId", acc.getAccountNumericID());
-				params.addProperty("avatarInvId", 0);
-				o.add("params", params);
-				o.addProperty("status", -16);
-				b.add("o", o);
-				response.add("b", b);
-				response.addProperty("t", "xt");
-				sendPacket(client, response.toString());
+				sendLoginResponse(client, auth, acc, 
+				-16, 
+				0);
+
 				client.disconnect();
 				return;
 			}
@@ -259,26 +243,10 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// If the client is out of date, send error
 		if (badClient) {
-			JsonObject response = new JsonObject();
-			JsonObject b = new JsonObject();
-			b.addProperty("r", auth.rField);
-			JsonObject o = new JsonObject();
-			o.addProperty("statusId", -24);
-			o.addProperty("_cmd", "login");
-			JsonObject params = new JsonObject();
-			params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
-			params.addProperty("pendingFlags", 0);
-			params.addProperty("activeLookId", acc.getActiveLook());
-			params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
-			params.addProperty("sessionId", acc.getAccountID());
-			params.addProperty("userId", acc.getAccountNumericID());
-			params.addProperty("avatarInvId", 0);
-			o.add("params", params);
-			o.addProperty("status", -24);
-			b.add("o", o);
-			response.add("b", b);
-			response.addProperty("t", "xt");
-			sendPacket(client, response.toString());
+			sendLoginResponse(client, auth, acc, 
+			-24, 
+			0);
+
 			client.disconnect();
 			return;
 		}
@@ -288,26 +256,10 @@ public class GameServer extends BaseSmartfoxServer {
 			System.out.println("User '" + acc.getDisplayName() + "' could not connect: user is banned.");
 
 			// Disconnect with error
-			JsonObject response = new JsonObject();
-			JsonObject b = new JsonObject();
-			b.addProperty("r", auth.rField);
-			JsonObject o = new JsonObject();
-			o.addProperty("statusId", -15);
-			o.addProperty("_cmd", "login");
-			JsonObject params = new JsonObject();
-			params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
-			params.addProperty("pendingFlags", 0);
-			params.addProperty("activeLookId", acc.getActiveLook());
-			params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
-			params.addProperty("sessionId", acc.getAccountID());
-			params.addProperty("userId", acc.getAccountNumericID());
-			params.addProperty("avatarInvId", 0);
-			o.add("params", params);
-			o.addProperty("status", -15);
-			b.add("o", o);
-			response.add("b", b);
-			response.addProperty("t", "xt");
-			sendPacket(client, response.toString());
+			sendLoginResponse(client, auth, acc,
+			-15,
+			0);
+
 			client.disconnect();
 			return;
 		}
@@ -317,26 +269,10 @@ public class GameServer extends BaseSmartfoxServer {
 			System.out.println("User '" + acc.getDisplayName() + "' could not connect: user is IP or VPN banned.");
 
 			// Disconnect silently
-			JsonObject response = new JsonObject();
-			JsonObject b = new JsonObject();
-			b.addProperty("r", auth.rField);
-			JsonObject o = new JsonObject();
-			o.addProperty("statusId", -23);
-			o.addProperty("_cmd", "login");
-			JsonObject params = new JsonObject();
-			params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
-			params.addProperty("pendingFlags", 0);
-			params.addProperty("activeLookId", acc.getActiveLook());
-			params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
-			params.addProperty("sessionId", acc.getAccountID());
-			params.addProperty("userId", acc.getAccountNumericID());
-			params.addProperty("avatarInvId", 0);
-			o.add("params", params);
-			o.addProperty("status", -23);
-			b.add("o", o);
-			response.add("b", b);
-			response.addProperty("t", "xt");
-			sendPacket(client, response.toString());
+			sendLoginResponse(client, auth, acc, 
+			1, 
+			0);
+			
 			client.disconnect();
 			return;
 		}
@@ -353,28 +289,12 @@ public class GameServer extends BaseSmartfoxServer {
 		AccountLoginEvent ev = new AccountLoginEvent(this, acc, client);
 		EventBus.getInstance().dispatchEvent(ev);
 		if (ev.isHandled() && ev.getStatus() != 1) {
-			JsonObject response = new JsonObject();
-			JsonObject b = new JsonObject();
-			b.addProperty("r", auth.rField);
-			JsonObject o = new JsonObject();
-			o.addProperty("statusId", ev.getStatus());
-			o.addProperty("_cmd", "login");
-			JsonObject params = new JsonObject();
-			params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
-			params.addProperty("pendingFlags", 0);
-			params.addProperty("activeLookId", acc.getActiveLook());
-			params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
-			params.addProperty("sessionId", acc.getAccountID());
-			params.addProperty("userId", acc.getAccountNumericID());
-			params.addProperty("avatarInvId", 0);
-			o.add("params", params);
-			o.addProperty("status", ev.getStatus());
-			b.add("o", o);
-			response.add("b", b);
-			response.addProperty("t", "xt");
+			sendLoginResponse(client, auth, acc, 
+			ev.getStatus(), 
+			0);
+			
 			System.out.println("Login failure: " + acc.getLoginName() + ": module terminated login process with code "
 					+ ev.getStatus());
-			sendPacket(client, response.toString());
 			client.disconnect();
 			return;
 		}
@@ -393,26 +313,9 @@ public class GameServer extends BaseSmartfoxServer {
 		client.container = plr;
 
 		// Send response
-		JsonObject response = new JsonObject();
-		JsonObject b = new JsonObject();
-		b.addProperty("r", auth.rField);
-		JsonObject o = new JsonObject();
-		o.addProperty("statusId", 1);
-		o.addProperty("_cmd", "login");
-		JsonObject params = new JsonObject();
-		params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
-		params.addProperty("pendingFlags", (plr.account.isPlayerNew() ? 2 : 3));
-		params.addProperty("activeLookId", plr.activeLook);
-		params.addProperty("sanctuaryLookId", plr.activeSanctuaryLook);
-		params.addProperty("sessionId", plr.account.getAccountID());
-		params.addProperty("userId", plr.account.getAccountNumericID());
-		params.addProperty("avatarInvId", 0);
-		o.add("params", params);
-		o.addProperty("status", 1);
-		b.add("o", o);
-		response.add("b", b);
-		response.addProperty("t", "xt");
-		sendPacket(client, response.toString());
+		sendLoginResponse(client, auth, acc, 
+		1, 
+		plr.account.isPlayerNew() ? 2 : 3);
 
 		// Initial login
 		System.out.println(
@@ -442,6 +345,38 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Dispatch join event
 		EventBus.getInstance().dispatchEvent(new PlayerJoinEvent(this, plr, acc, client));
+
+	}
+
+	public void sendLoginResponse(SmartfoxClient client, ClientToServerAuthPacket auth, CenturiaAccount acc, int statusCode, int pendingFlags){
+		JsonObject response = new JsonObject();
+		JsonObject b = new JsonObject();
+		b.addProperty("r", auth.rField);
+		JsonObject o = new JsonObject();
+		o.addProperty("statusId", statusCode);
+		o.addProperty("_cmd", "login");
+		JsonObject params = new JsonObject();
+		params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
+		params.addProperty("pendingFlags", pendingFlags);
+		params.addProperty("activeLookId", acc.getActiveLook());
+		params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
+		params.addProperty("sessionId", acc.getAccountID());
+		params.addProperty("userId", acc.getAccountNumericID());
+		params.addProperty("avatarInvId", 0);
+		o.add("params", params);
+		o.addProperty("status", statusCode);
+		b.add("o", o);
+		response.add("b", b);
+		response.addProperty("t", "xt");
+		
+		try {
+			sendPacket(client, response.toString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return;
 	}
 
 	// IP ban checks (both vpn block and ip banning)

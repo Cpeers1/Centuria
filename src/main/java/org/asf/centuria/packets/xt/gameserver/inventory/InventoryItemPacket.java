@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.zip.GZIPOutputStream;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
@@ -35,7 +36,7 @@ public class InventoryItemPacket implements IXtPacket<InventoryItemPacket> {
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[INVENTORY] [UPDATE]  Server to client: " + item);
 		}
 

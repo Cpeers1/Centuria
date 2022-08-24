@@ -78,6 +78,7 @@ public class Centuria {
 	public static boolean giveAllResources = true;
 	public static boolean encryptChat = false;
 	public static boolean encryptGame = false;
+	public static boolean debugMode = false;
 	public static String discoveryAddress = "localhost";
 
 	// Servers
@@ -174,7 +175,7 @@ public class Centuria {
 
 		// Updater
 		if (!disableUpdater
-				&& (System.getProperty("debugMode") == null || System.getProperty("debugMode").equals("false"))) {
+				&& !Centuria.debugMode) {
 			// Check for updates
 			if (shouldUpdate(updateChannel)) {
 				// Dispatch event
@@ -348,7 +349,7 @@ public class Centuria {
 							+ "give-all-clothes=true\n" + "give-all-wings=true\n" + "give-all-sanctuary-types=true\n"
 							+ "give-all-furniture=true\n" + "give-all-currency=true\n" + "give-all-resources=true\n"
 							+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
-							+ "encrypt-game=false\n\nvpn-user-whitelist=vpn-whitelist\n" + "vpn-ipv4-banlist=\n"
+							+ "encrypt-game=false\n" + "debug-mode=false\n" + "\nvpn-user-whitelist=vpn-whitelist\n" + "vpn-ipv4-banlist=\n"
 							+ "vpn-ipv6-banlist=");
 		}
 
@@ -401,6 +402,7 @@ public class Centuria {
 		encryptGame = properties.getOrDefault("encrypt-game", "false").equals("true")
 				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
 		discoveryAddress = properties.getOrDefault("discovery-server-address", discoveryAddress);
+		debugMode = properties.getOrDefault("debug-mode", "false").equals("true");
 
 		// Start the servers
 		System.out.println("Starting Emulated Feral API server...");

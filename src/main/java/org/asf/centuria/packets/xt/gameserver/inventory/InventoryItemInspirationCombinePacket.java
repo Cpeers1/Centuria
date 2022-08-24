@@ -2,6 +2,7 @@ package org.asf.centuria.packets.xt.gameserver.inventory;
 
 import java.io.IOException;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.inspiration.InspirationCombineResult;
@@ -51,7 +52,7 @@ public class InventoryItemInspirationCombinePacket implements IXtPacket<Inventor
 		Player plr = (Player) client.container;
 
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			String ids = "";
 
 			for (var id : inspirationIds) {
@@ -67,7 +68,7 @@ public class InventoryItemInspirationCombinePacket implements IXtPacket<Inventor
 		// build packet
 		plr.client.sendPacket(this);
 
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[INVENTORY] [UPDATE]  Server to client: " + this.build());
 		}
 

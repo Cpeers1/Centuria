@@ -16,6 +16,7 @@ import org.asf.cyan.api.common.CyanComponent;
 import org.asf.cyan.api.config.serializing.internal.Splitter;
 import org.asf.cyan.fluid.bytecode.FluidClassPool;
 import org.asf.cyan.fluid.bytecode.sources.LoaderClassSourceProvider;
+import org.asf.centuria.Centuria;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -134,7 +135,7 @@ public class ModuleManager extends CyanComponent {
 		moduleLoader = new URLClassLoader(sources.toArray(t -> new URL[t]), getClass().getClassLoader());
 
 		// Add debug modules if debugMode is enabled
-		if (System.getProperty("debugMode") != null && System.getProperty("debugMode").equals("true")) {
+		if (Centuria.debugMode) {
 			System.out.println("Importing debug classpath...");
 			if (System.getProperty("addCpModules") != null) {
 				for (String mod : System.getProperty("addCpModules").split(":")) {

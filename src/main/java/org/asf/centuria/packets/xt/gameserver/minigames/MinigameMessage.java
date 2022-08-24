@@ -2,6 +2,7 @@ package org.asf.centuria.packets.xt.gameserver.minigames;
 
 import java.io.IOException;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
@@ -42,7 +43,7 @@ public class MinigameMessage implements IXtPacket<MinigameMessage> {
 		Player plr = (Player) client.container;
 
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println(
 					"[MINIGAME] [MESSAGE] Client to server (command: " + command + ")");
 		}

@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.asf.centuria.Centuria;
 import org.reflections.Reflections;
 
 /**
@@ -38,7 +39,7 @@ public final class ComponentManager {
 			
 			var componentName = componentClass.getDeclaredConstructor().newInstance().getComponentName();
 			
-			if (System.getProperty("debugMode") != null) {
+			if (Centuria.debugMode) {
 				System.out.println("Loading component into component register: " + componentName);
 			}
 			

@@ -2,6 +2,7 @@ package org.asf.centuria.packets.xt.gameserver.inventory;
 
 import java.io.IOException;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
@@ -30,7 +31,7 @@ public class InventoryItemRemovedPacket implements IXtPacket<InventoryItemRemove
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			String itms = "";
 			for (String itm : items)
 				if (itms.isEmpty())
