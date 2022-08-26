@@ -2,6 +2,7 @@ package org.asf.centuria.packets.xt.gameserver.social;
 
 import java.io.IOException;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
@@ -45,7 +46,7 @@ public class FindPlayer implements IXtPacket<FindPlayer> {
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Find avatar
 
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SOCIAL] [FindPlayer] Client to server ( playerName: " + name + " )");
 		}
 
@@ -54,7 +55,7 @@ public class FindPlayer implements IXtPacket<FindPlayer> {
 			client.sendPacket(this);
 
 			// log interaction details
-			if (System.getProperty("debugMode") != null) {
+			if (Centuria.debugMode) {
 				System.out.println("[SOCIAL] [FindPlayer] Server to client ( " + this.build() + " )");
 			}
 
@@ -67,7 +68,7 @@ public class FindPlayer implements IXtPacket<FindPlayer> {
 		this.success = true;
 		client.sendPacket(this);
 
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SOCIAL] [FindPlayer] Server to client ( " + this.build() + " )");
 		}
 

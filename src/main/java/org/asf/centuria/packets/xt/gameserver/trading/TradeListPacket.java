@@ -9,8 +9,6 @@ import java.util.zip.GZIPOutputStream;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.inventoryitems.InventoryItem;
-import org.asf.centuria.entities.players.Player;
-import org.asf.centuria.enums.trading.TradeValidationType;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;

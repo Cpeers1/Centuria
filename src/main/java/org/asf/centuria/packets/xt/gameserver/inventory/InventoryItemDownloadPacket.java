@@ -51,7 +51,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		PlayerInventory inv = plr.account.getPlayerInventory();
 
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[INVENTORY] [REQUEST]  Client to server (type: " + slot + ")");
 		}
 

@@ -3,6 +3,7 @@ package org.asf.centuria.interactions;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
@@ -186,7 +187,7 @@ public class InteractionManager {
 
 		// Warn
 		if (warn) {
-			if (System.getProperty("debugMode") != null) {
+			if (Centuria.debugMode) {
 				System.err.println("[INTERACTION] [UNHANDLED] Client to server (target: " + interactableId + ", state: "
 						+ state + ")");
 			}

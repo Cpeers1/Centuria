@@ -2,6 +2,7 @@ package org.asf.centuria.packets.xt.gameserver.settings;
 
 import java.io.IOException;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.highlevel.impl.UserVarAccessorImpl;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
@@ -52,7 +53,7 @@ public class UserVarSetPacket implements IXtPacket<UserVarSetPacket> {
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// log interaction details
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SETTINGS] [USERVARSET]  Client to server (varDefId: " + varDefId + ", value: " + value
 					+ ", index: " + index + ")");
 		}
@@ -68,7 +69,7 @@ public class UserVarSetPacket implements IXtPacket<UserVarSetPacket> {
 			outputInv.add(item.toJsonObject());
 		}
 
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SETTINGS] [USERVARSET] output inv: " + outputInv.toString());
 		}
 
@@ -79,13 +80,13 @@ public class UserVarSetPacket implements IXtPacket<UserVarSetPacket> {
 		// send packet..
 		client.sendPacket(itemPacket);
 
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SETTINGS] [USERVARSET]  Sending Response: " + itemPacket.build() + " ... ");
 		}
 
 		client.sendPacket(this);
 
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[SETTINGS] [USERVARSET]  Sending Response: " + this.build() + " ... ");
 		}
 

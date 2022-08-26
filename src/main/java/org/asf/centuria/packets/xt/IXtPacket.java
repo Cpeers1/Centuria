@@ -26,7 +26,7 @@ public interface IXtPacket<T extends IXtPacket<T>> extends ISmartfoxPacket {
 		if (!content.startsWith("%xt%"))
 			return false;
 		
-		//if (System.getProperty("debugMode") != null) {
+		//if (Centuria.debugMode) {
 			//System.out.println("client to server: " + content);
 		//}
 				

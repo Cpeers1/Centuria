@@ -3,6 +3,7 @@ package org.asf.centuria.packets.xt.gameserver.interactions;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
@@ -47,7 +48,7 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 		// Interaction finish
 		Player plr = (Player) client.container;
 
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[INTERACTION] [FINISH] Client to server (target: " + target + ")");
 		}
 
