@@ -2,15 +2,16 @@ package org.asf.centuria.packets.xt.gameserver.interactions;
 
 import java.io.IOException;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.interactions.InteractionCancelEvent;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.players.Player;
 
 public class InteractionCancel implements IXtPacket<InteractionCancel> {
 
@@ -43,7 +44,7 @@ public class InteractionCancel implements IXtPacket<InteractionCancel> {
 		Player plr = (Player) client.container;
 
 		// log interaction details
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[INTERACTION] [CANCELED] Client to server (target: " + target + ")");
 		}
 

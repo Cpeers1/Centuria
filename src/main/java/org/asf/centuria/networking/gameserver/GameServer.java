@@ -17,6 +17,7 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.data.XtWriter;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.ipbans.IpBanManager;
@@ -66,13 +67,13 @@ import org.asf.centuria.packets.xt.gameserver.shops.ShopList;
 import org.asf.centuria.packets.xt.gameserver.social.FindPlayer;
 import org.asf.centuria.packets.xt.gameserver.social.JumpToPlayer;
 import org.asf.centuria.packets.xt.gameserver.social.PlayerOnlineStatus;
+import org.asf.centuria.packets.xt.gameserver.trading.TradeListPacket;
 import org.asf.centuria.packets.xt.gameserver.world.JoinRoom;
 import org.asf.centuria.packets.xt.gameserver.world.RoomJoinTutorial;
 import org.asf.centuria.packets.xt.gameserver.world.RoomJoinPrevious;
 import org.asf.centuria.packets.xt.gameserver.minigames.MinigameJoin;
 import org.asf.centuria.packets.xt.gameserver.minigames.MinigameMessage;
 import org.asf.centuria.packets.xt.gameserver.world.WorldReadyPacket;
-import org.asf.centuria.players.Player;
 import org.asf.centuria.security.AddressChecker;
 import org.asf.centuria.security.IpAddressMatcher;
 import org.asf.centuria.social.SocialEntry;
@@ -156,6 +157,7 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new SanctuaryUpgradeCompletePacket());
 		registerPacket(new UserVarSetPacket());
 		registerPacket(new InventoryItemInspirationCombinePacket());
+		registerPacket(new TradeListPacket());
 
 		// Allow modules to register packets
 		GameServerStartupEvent ev = new GameServerStartupEvent(this, t -> registerPacket(t));

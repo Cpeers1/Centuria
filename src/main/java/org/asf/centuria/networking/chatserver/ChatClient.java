@@ -11,9 +11,9 @@ import java.util.HashMap;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.chatserver.networking.AbstractChatPacket;
 import org.asf.centuria.networking.gameserver.GameServer;
-import org.asf.centuria.players.Player;
 import org.asf.centuria.util.TaskThread;
 
 import com.google.gson.JsonObject;
@@ -198,13 +198,13 @@ public class ChatClient {
 
 	// Packet handling code
 	void handle(JsonObject packet) {
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println("[CHAT] Client to server (user " + player.getDisplayName() + "): " + packet);
 		}
 		if (!handlePacket(packet)) {
 			// Packet not found
 			// Allow debug mode to re-register packets
-			if (System.getProperty("debugMode") != null) {
+			if (Centuria.debugMode) {
 				server.registry.clear();
 				server.registerPackets();
 			}
@@ -275,7 +275,7 @@ public class ChatClient {
 				client.getOutputStream().write(0x0a);
 				client.getOutputStream().write(0);
 				client.getOutputStream().flush();
-				if (System.getProperty("debugMode") != null) {
+				if (Centuria.debugMode) {
 					System.out.println("[CHAT] Server to client (user " + player.getDisplayName() + "): " + packet);
 				}
 			} catch (Exception e) {

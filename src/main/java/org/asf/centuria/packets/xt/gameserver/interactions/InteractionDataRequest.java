@@ -2,8 +2,10 @@ package org.asf.centuria.packets.xt.gameserver.interactions;
 
 import java.io.IOException;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.InteractionManager;
 import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
@@ -11,7 +13,6 @@ import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.interactions.InteractionDataRequestEvent;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.players.Player;
 
 public class InteractionDataRequest implements IXtPacket<InteractionDataRequest> {
 
@@ -45,7 +46,7 @@ public class InteractionDataRequest implements IXtPacket<InteractionDataRequest>
 		// Interaction data request
 		Player plr = (Player) client.container;
 
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			System.out.println(
 					"[INTERACTION] [ASKRESPONSE] Client to server (target: " + target + ", state: " + state + ")");
 		}

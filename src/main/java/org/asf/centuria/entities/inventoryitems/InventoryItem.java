@@ -64,7 +64,7 @@ public abstract class InventoryItem {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	protected void fromJsonObject(JsonObject object) throws InstantiationException, IllegalAccessException,
+	public void fromJsonObject(JsonObject object) throws InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		// this continues adding the fields from the object.
 
@@ -115,7 +115,7 @@ public abstract class InventoryItem {
 	 * 
 	 * @param component The component to add.
 	 */
-	protected void addComponent(InventoryItemComponent component) {
+	public void addComponent(InventoryItemComponent component) {
 		// adds the component..
 		components.put(component.getComponentName(), component);
 	}
@@ -126,7 +126,7 @@ public abstract class InventoryItem {
 	 * @param component The component to look for.
 	 * @return Whether the component was found or not.
 	 */
-	protected boolean hasComponent(InventoryItemComponent component) {
+	public boolean hasComponent(InventoryItemComponent component) {
 		boolean result = false;
 
 		for (var set : components.entrySet()) {
@@ -145,7 +145,7 @@ public abstract class InventoryItem {
 	 * @param componentName The name of the component.
 	 * @return The inventory item component.
 	 */
-	protected InventoryItemComponent getComponent(String componentName) {
+	public InventoryItemComponent getComponent(String componentName) {
 		InventoryItemComponent result = null;
 
 		for (var set : components.entrySet()) {
@@ -164,7 +164,7 @@ public abstract class InventoryItem {
 	 * 
 	 * @param component
 	 */
-	protected void SetComponent(InventoryItemComponent component) {
+	public void SetComponent(InventoryItemComponent component) {
 		
 		//TODO: Is the behaviour of replace acceptable for me not to need this check?
 		if(components.containsKey(component.getComponentName()))
