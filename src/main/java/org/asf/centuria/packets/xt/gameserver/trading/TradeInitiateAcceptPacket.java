@@ -4,25 +4,17 @@ import java.io.IOException;
 
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
-import org.asf.centuria.enums.trading.TradeValidationType;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class TradeInitatePacket implements IXtPacket<TradeInitatePacket> {
+public class TradeInitiateAcceptPacket implements IXtPacket<TradeInitiateAcceptPacket> {
 
-	private static final String PACKET_ID = "ti";
-	
-	//Inbound
-	public String targetUserId;
-	
-	//Outbound
-	public TradeValidationType tradeValidationType;
-	public String sourceUserId;
-	public boolean success;
+	private static final String PACKET_ID = "tia";
 	
 	@Override
-	public TradeInitatePacket instantiate() {
-		return new TradeInitatePacket();
+	public TradeInitiateAcceptPacket instantiate() {
+		return new TradeInitiateAcceptPacket();
 	}
 
 	@Override
@@ -37,16 +29,21 @@ public class TradeInitatePacket implements IXtPacket<TradeInitatePacket> {
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		writer.writeInt(-1); // Data prefix
-
-		writer.writeInt(tradeValidationType.value); //trade validation type
-		writer.writeString(userId); //user ID (For the tradee?)
-		writer.writeBoolean(success); //success 
-		
 		writer.writeString(""); // Data suffix
 	}
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
+		
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[TRADE] [TradeInitiateAccept] Client to server.");
+		}
+		
+		Player player = ((Player) client.container);
+		if(player.tradeEngagedIn != null)
+		{
+			player.tradeEngagedIn.AcceptTrade(PACKET_ID);
+		}
 		return true;
 	}
 
