@@ -1,13 +1,19 @@
 package org.asf.centuria.entities.trading;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.asf.centuria.entities.inventoryitems.InventoryItem;
 import org.asf.centuria.entities.players.Player;
-import org.asf.centuria.enums.trading.TradeValidationType;
-import org.asf.centuria.packets.xt.gameserver.trading.TradeInitateCancelPacket;
-import org.asf.centuria.packets.xt.gameserver.trading.TradeInitatePacket;
-import org.asf.centuria.packets.xt.gameserver.trading.TradeInitateRejectPacket;
+import org.asf.centuria.packets.xt.gameserver.trading.TradeAddRemoveItemPacket;
+import org.asf.centuria.packets.xt.gameserver.trading.TradeExitPacket;
+import org.asf.centuria.packets.xt.gameserver.trading.TradeInitiateAcceptPacket;
+import org.asf.centuria.packets.xt.gameserver.trading.TradeInitiateCancelPacket;
+import org.asf.centuria.packets.xt.gameserver.trading.TradeInitiateFailPacket;
+import org.asf.centuria.packets.xt.gameserver.trading.TradeInitiatePacket;
+import org.asf.centuria.packets.xt.gameserver.trading.TradeInitiateRejectPacket;
+
+import com.google.gson.JsonElement;
 
 public class Trade {
 
@@ -22,19 +28,19 @@ public class Trade {
 	public Player sourcePlayer;
 
 	/**
-	 * If the trade has been started (accepted by both players after initation)
+	 * If the trade has been started (accepted by both players after initiation)
 	 */
 	public boolean isStarted;
 
 	/**
 	 * Items that the source player is offering.
 	 */
-	public List<InventoryItem> itemsToGive;
+	public Map<String, ItemForTrade> itemsToGive = new HashMap<String, ItemForTrade>();
 
 	/**
 	 * Items the target player is offering.
 	 */
-	public List<InventoryItem> itemsToReceive;
+	public Map<String, ItemForTrade> itemsToReceive = new HashMap<String, ItemForTrade>();
 
 	/**
 	 * The ready (initial accept) status for the source player.
@@ -74,19 +80,21 @@ public class Trade {
 	 * @param sourcePlayer The player who initiated the trade.
 	 * @param targetPlayer The player who was targeted for the trade.
 	 * @return The new trade.
+	 * @throws IOException 
 	 */
-	public static Trade StartNewTrade(Player sourcePlayer, Player targetPlayer)
+	public static Trade StartNewTrade(Player sourcePlayer, Player targetPlayer) throws IOException
 	{
 		if(sourcePlayer.tradeEngagedIn != null || targetPlayer.tradeEngagedIn != null
 			|| sourcePlayer.roomReady == false || sourcePlayer.roomReady == false)
 		{
 			//Players are already engaged in a trade, or arn't fully loaded yet.
-			TradeInitatePacket tradeInitatePacket = new TradeInitatePacket();
-			tradeInitatePacket.success = false;
-			tradeInitatePacket.tradeValidationType = TradeValidationType.UserNotAvaliable;
-			tradeInitatePacket.userId = targetPlayer.account.getAccountID();
+			if (System.getProperty("debugMode") != null) {
+				System.out.println("[TRADE] [TradeInitiateFailPacket] Server to client.");
+			}
+			
+			TradeInitiateFailPacket tradeInitiateFailPacket = new TradeInitiateFailPacket();
 
-			sourcePlayer.client.sendPacket(tradeInitatePacket);
+			sourcePlayer.client.sendPacket(tradeInitiateFailPacket);
 			return null;
 		}
 
@@ -102,22 +110,65 @@ public class Trade {
 		sourcePlayer.tradeEngagedIn = newTrade;
 
 		//Create new trade initiate packet for target player
-		TradeInitatePacket tradeInitatePacket = new TradeInitatePacket();
-		tradeInitatePacket.success = true;
-		tradeInitatePacket.tradeValidationType = TradeValidationType.Success;
-		tradeInitatePacket.userId = sourcePlayer.account.getAccountID();
+		TradeInitiatePacket tradeInitiatePacket = new TradeInitiatePacket();
+		tradeInitiatePacket.success = true;
+		tradeInitiatePacket.outboundUserId = sourcePlayer.account.getAccountID();
 
-		targetPlayer.client.sendPacket(tradeInitatePacket);
+		targetPlayer.client.sendPacket(tradeInitiatePacket);
+		
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[TRADE] [TradeInitiate] Server to client with ID " + targetPlayer.account.getAccountID() + ": " + tradeInitiatePacket.build());
+		}
+		
+		//Create trade initiate packet for source player
+		tradeInitiatePacket = new TradeInitiatePacket();
+		tradeInitiatePacket.success = true;
+		
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[TRADE] [TradeInitiate] Server to client with ID " + sourcePlayer.account.getAccountID() + ": " + tradeInitiatePacket.build());
+		}
 
-		//Create trade intiate packet for source player
-		tradeInitatePacket = new TradeInitatePacket();
-		tradeInitatePacket.success = true;
-		tradeInitatePacket.tradeValidationType = TradeValidationType.Success;
-		tradeInitatePacket.userId = targetPlayer.account.getAccountID();
-
-		targetPlayer.client.sendPacket(tradeInitatePacket);
+		sourcePlayer.client.sendPacket(tradeInitiatePacket);
 
 		return newTrade;
+	}
+
+	/**
+	 * Cancels a trade (source player reject).
+	 * @throws IOException 
+	 */
+	public void CancelTrade() throws IOException
+	{
+		TradeInitiateCancelPacket cancelPacket = new TradeInitiateCancelPacket();
+				
+		//TODO: Does the source player need a cancel packet?
+		targetPlayer.client.sendPacket(cancelPacket);
+		
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[TRADE] [TraceCancel] Server to client with ID " + sourcePlayer.account.getAccountID() + ": " + cancelPacket.build());
+		}
+
+		sourcePlayer.tradeEngagedIn = null;
+		targetPlayer.tradeEngagedIn = null;
+	}
+	
+	/**
+	 * Rejects a trade (target player reject).
+	 * @throws IOException 
+	 */
+	public void RejectTrade() throws IOException
+	{
+		TradeInitiateRejectPacket rejectPacket = new TradeInitiateRejectPacket();
+
+		//TODO: Does the target player need a reject packet?
+		sourcePlayer.client.sendPacket(rejectPacket);
+
+		if (System.getProperty("debugMode") != null) {
+			System.out.println("[TRADE] [TradeReject] Server to client with ID " + sourcePlayer.account.getAccountID() + ": " + rejectPacket.build());
+		}
+		
+		sourcePlayer.tradeEngagedIn = null;
+		targetPlayer.tradeEngagedIn = null;
 	}
 
 	/**
@@ -126,50 +177,109 @@ public class Trade {
 	 */
 	public void AcceptTrade(String acceptedById)
 	{
-		if(acceptedById.equals(sourcePlayer.account.getAccountID()))
-		{
-			readyStatusSource = true;
-		}
-		else if(acceptedById.equals(targetPlayer.account.getAccountID()))
-		{
-			readyStatusTarget = true;
-		}
-
-		if(readyStatusSource && readyStatusTarget)
-		{
-			//TODO: Trade Accept Logic
-			isConfirming = false;
-			isStarted = true;
-			isAcceptedBySource = false;
-			isAcceptedByTarget = false;
-		}
-	}
-
-	/**
-	 * Cancels a trade (source player reject).
-	 */
-	public void CancelTrade()
-	{
-		TradeInitateCancelPacket cancelPacket = new TradeInitateCancelPacket();
+		isStarted = true;
 		
-		//TODO: Does the source player need a cancel packet?
-		targetPlayer.client.sendPacket(cancelPacket);
-
-		sourcePlayer.tradeEngagedIn = null;
-		targetPlayer.tradeEngagedIn = null;
+		TradeInitiateAcceptPacket acceptPacket = new TradeInitiateAcceptPacket();
+		
+		//tell the source player the trade has been accepted
+		sourcePlayer.client.sendPacket(acceptPacket);
 	}
 	
 	/**
-	 * Rejects a trade (target player reject).
+	 * Called when the trade is exited by either players.
+	 * @param exitedPlayer The player who exited.
 	 */
-	public void RejectTrade()
+	public void TradeExit(Player exitedPlayer)
 	{
-		TradeInitateRejectPacket rejectPacket = new TradeInitateRejectPacket();
+		TradeExitPacket tradeExitPacket = new TradeExitPacket();
+		
+		if(exitedPlayer.account.getAccountID() == sourcePlayer.account.getAccountID())
+		{
+			targetPlayer.client.sendPacket(tradeExitPacket);
+		}
+		else
+		{
+			sourcePlayer.client.sendPacket(tradeExitPacket);
+		}
 
-		//TODO: Does the target player need a reject packet?
-		sourcePlayer.client.sendPacket(rejectPacket);
-
-		sourcePlayer.tradeEngagedIn = null;
 		targetPlayer.tradeEngagedIn = null;
+		sourcePlayer.tradeEngagedIn = null;
+	}
+	
+	/**
+	 * Add this item to the trade.
+	 * @param player The player who is giving them 
+	 * @param itemId The item id of the item/
+	 * @param item The item's json.
+	 * @param quantity The quantity of the item.
+	 */
+	public void AddItemToTrade(Player player, String itemId, JsonElement item, int quantity)
+	{		
+		//TODO: IMPLEMENT / FIXES FOR QUANTITY
+		ItemForTrade itemForTrade = new ItemForTrade();
+		itemForTrade.item = item;
+		itemForTrade.quantity = quantity;
+		
+		TradeAddRemoveItemPacket tradeAddRemovePacket = new TradeAddRemoveItemPacket();
+		tradeAddRemovePacket.isAdding = true;
+		tradeAddRemovePacket.success = true;
+		tradeAddRemovePacket.updatedItem = item;
+		tradeAddRemovePacket.inboundQuantity = quantity;
+		tradeAddRemovePacket.userId = player.account.getAccountID();
+		
+		if(player.account.getAccountID() == sourcePlayer.account.getAccountID())
+		{
+			var itemToGive = itemsToGive.get(itemId);
+			
+			if(itemToGive != null)
+			{
+				itemToGive.quantity += quantity;
+			}
+
+			targetPlayer.client.sendPacket(tradeAddRemovePacket);
+		}
+		else
+		{
+			itemsToReceive.put(itemId, itemForTrade);
+			sourcePlayer.client.sendPacket(tradeAddRemovePacket);
+		}
+	}
+	
+	/**
+	 * Removes an item for trades.
+	 * @param player The player who is removing the items.
+	 * @param itemId The player item id.
+	 * @param quantity The quantity of the item to remove.
+	 */
+	public void RemoveItemFromTrade(Player player, String itemId, int quantity)
+	{	
+		TradeAddRemoveItemPacket tradeAddRemovePacket = new TradeAddRemoveItemPacket();
+		tradeAddRemovePacket.isAdding = true;
+		tradeAddRemovePacket.success = true;
+		tradeAddRemovePacket.inboundQuantity = quantity;
+		tradeAddRemovePacket.userId = player.account.getAccountID();
+		
+		if(player.account.getAccountID() == sourcePlayer.account.getAccountID())
+		{
+			var item = itemsToGive.get(itemId);
+			item.quantity -= quantity;
+			if(item.quantity <= 0)
+			{
+				itemsToGive.remove(itemId);
+			}
+			tradeAddRemovePacket.updatedItem = item.item;
+			targetPlayer.client.sendPacket(tradeAddRemovePacket);
+		}
+		else
+		{
+			var item = itemsToReceive.get(itemId);
+			item.quantity -= quantity;
+			if(item.quantity <= 0)
+			{
+				itemsToReceive.remove(itemId);
+			}
+			tradeAddRemovePacket.updatedItem = item.item;
+			sourcePlayer.client.sendPacket(tradeAddRemovePacket);
+		}
 	}
 }
