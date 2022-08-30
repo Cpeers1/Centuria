@@ -1,17 +1,17 @@
-package org.asf.centuria.packets.xt.gameserver.inventory;
+package org.asf.centuria.packets.xt.gameserver.trading;
 
 import java.io.IOException;
 
 import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.players.Player;
 
 import com.google.gson.JsonObject;
 
-public class InventoryItemTradeListUpdate implements IXtPacket<InventoryItemTradeListUpdate> {
+public class TradeListUpdatePacket implements IXtPacket<TradeListUpdatePacket> {
 
 	private static final String PACKET_ID = "tlu";
 
@@ -19,8 +19,8 @@ public class InventoryItemTradeListUpdate implements IXtPacket<InventoryItemTrad
 	public boolean add = true;
 
 	@Override
-	public InventoryItemTradeListUpdate instantiate() {
-		return new InventoryItemTradeListUpdate();
+	public TradeListUpdatePacket instantiate() {
+		return new TradeListUpdatePacket();
 	}
 
 	@Override
@@ -52,6 +52,7 @@ public class InventoryItemTradeListUpdate implements IXtPacket<InventoryItemTrad
 		// Find inventory ID
 		String invType = inv.getAccessor().getInventoryIDOfItem(itemID);
 
+		//TODO: Refactor this into something else
 		// Handle packet
 		if (invType != null) {
 			// Find object

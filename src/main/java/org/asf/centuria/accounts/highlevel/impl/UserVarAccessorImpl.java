@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.accounts.highlevel.UserVarAccessor;
 import org.asf.centuria.entities.uservars.SetUserVarResult;
@@ -526,7 +527,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 					var defaultVal = entryObj.get("defaultValue").getAsInt();
 					this.setPlayerVarValue(defId, 0, defaultVal);
 
-					if (System.getProperty("debugMode") != null) {
+					if (Centuria.debugMode) {
 						System.out.println("[USERVARS] Setting uservar " + entryObj.get("userVarName").getAsString()
 								+ " (DefId: " + defId + ") to default value of " + defaultVal + ".");
 					}

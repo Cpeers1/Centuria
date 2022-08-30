@@ -17,6 +17,7 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.data.XtWriter;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.ipbans.IpBanManager;
@@ -33,46 +34,20 @@ import org.asf.centuria.packets.smartfox.ISmartfoxPacket;
 import org.asf.centuria.packets.xml.handshake.auth.ClientToServerAuthPacket;
 import org.asf.centuria.packets.xml.handshake.version.ClientToServerHandshake;
 import org.asf.centuria.packets.xml.handshake.version.ServerToClientOK;
-import org.asf.centuria.packets.xt.KeepAlive;
-import org.asf.centuria.packets.xt.gameserver.PrefixedPacket;
-import org.asf.centuria.packets.xt.gameserver.avatareditor.AvatarEditorSelectLook;
-import org.asf.centuria.packets.xt.gameserver.avatareditor.UserAvatarSave;
-import org.asf.centuria.packets.xt.gameserver.avatareditor.UserTutorialCompleted;
-import org.asf.centuria.packets.xt.gameserver.interactions.InteractionCancel;
-import org.asf.centuria.packets.xt.gameserver.interactions.InteractionDataRequest;
-import org.asf.centuria.packets.xt.gameserver.interactions.InteractionFinish;
-import org.asf.centuria.packets.xt.gameserver.interactions.InteractionStart;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemInspirationCombinePacket;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemTradeListUpdate;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemUseDye;
-import org.asf.centuria.packets.xt.gameserver.objects.WorldObjectGlide;
-import org.asf.centuria.packets.xt.gameserver.objects.WorldObjectRespawn;
-import org.asf.centuria.packets.xt.gameserver.objects.WorldObjectSetRespawn;
-import org.asf.centuria.packets.xt.gameserver.objects.WorldObjectUpdate;
-import org.asf.centuria.packets.xt.gameserver.players.AvatarAction;
-import org.asf.centuria.packets.xt.gameserver.players.AvatarLookGet;
-import org.asf.centuria.packets.xt.gameserver.sanctuaries.SanctuaryJoinPacket;
-import org.asf.centuria.packets.xt.gameserver.sanctuaries.SanctuaryLookLoadPacket;
-import org.asf.centuria.packets.xt.gameserver.sanctuaries.SanctuaryLookSavePacket;
-import org.asf.centuria.packets.xt.gameserver.sanctuaries.SanctuaryLookSwitchPacket;
-import org.asf.centuria.packets.xt.gameserver.sanctuaries.SanctuaryUpdatePacket;
-import org.asf.centuria.packets.xt.gameserver.sanctuaries.SanctuaryUpgradeCompletePacket;
-import org.asf.centuria.packets.xt.gameserver.sanctuaries.SanctuaryUpgradeStartPacket;
-import org.asf.centuria.packets.xt.gameserver.settings.UserVarSetPacket;
-import org.asf.centuria.packets.xt.gameserver.shops.ItemUncraftPacket;
-import org.asf.centuria.packets.xt.gameserver.shops.ShopItemBuy;
-import org.asf.centuria.packets.xt.gameserver.shops.ShopList;
-import org.asf.centuria.packets.xt.gameserver.social.FindPlayer;
-import org.asf.centuria.packets.xt.gameserver.social.JumpToPlayer;
-import org.asf.centuria.packets.xt.gameserver.social.PlayerOnlineStatus;
-import org.asf.centuria.packets.xt.gameserver.world.JoinRoom;
-import org.asf.centuria.packets.xt.gameserver.world.RoomJoinTutorial;
-import org.asf.centuria.packets.xt.gameserver.world.RoomJoinPrevious;
-import org.asf.centuria.packets.xt.gameserver.minigames.MinigameJoin;
-import org.asf.centuria.packets.xt.gameserver.minigames.MinigameMessage;
-import org.asf.centuria.packets.xt.gameserver.world.WorldReadyPacket;
-import org.asf.centuria.players.Player;
+import org.asf.centuria.packets.xt.*;
+import org.asf.centuria.packets.xt.gameserver.*;
+import org.asf.centuria.packets.xt.gameserver.avatareditor.*;
+import org.asf.centuria.packets.xt.gameserver.interactions.*;
+import org.asf.centuria.packets.xt.gameserver.inventory.*;
+import org.asf.centuria.packets.xt.gameserver.minigames.*;
+import org.asf.centuria.packets.xt.gameserver.objects.*;
+import org.asf.centuria.packets.xt.gameserver.players.*;
+import org.asf.centuria.packets.xt.gameserver.sanctuaries.*;
+import org.asf.centuria.packets.xt.gameserver.settings.*;
+import org.asf.centuria.packets.xt.gameserver.shops.*;
+import org.asf.centuria.packets.xt.gameserver.social.*;
+import org.asf.centuria.packets.xt.gameserver.trading.*;
+import org.asf.centuria.packets.xt.gameserver.world.*;
 import org.asf.centuria.security.AddressChecker;
 import org.asf.centuria.security.IpAddressMatcher;
 import org.asf.centuria.social.SocialEntry;
@@ -121,7 +96,7 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new PrefixedPacket());
 		registerPacket(new InventoryItemDownloadPacket());
 		registerPacket(new InventoryItemUseDye());
-		registerPacket(new InventoryItemTradeListUpdate());
+		registerPacket(new TradeListUpdatePacket());
 		registerPacket(new JoinRoom());
 		registerPacket(new RoomJoinPrevious());
 		registerPacket(new RoomJoinTutorial());
@@ -156,6 +131,16 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new SanctuaryUpgradeCompletePacket());
 		registerPacket(new UserVarSetPacket());
 		registerPacket(new InventoryItemInspirationCombinePacket());
+		
+		// Trading Packets
+		registerPacket(new TradeListPacket());
+		registerPacket(new TradeInitiatePacket());
+		registerPacket(new TradeInitiateCancelPacket());
+		registerPacket(new TradeInitiateFailPacket());
+		registerPacket(new TradeInitiateRejectPacket());
+		registerPacket(new TradeInitiateAcceptPacket());
+		registerPacket(new TradeExitPacket());
+		registerPacket(new TradeAddRemoveItemPacket());
 
 		// Allow modules to register packets
 		GameServerStartupEvent ev = new GameServerStartupEvent(this, t -> registerPacket(t));
@@ -230,26 +215,10 @@ public class GameServer extends BaseSmartfoxServer {
 			}
 
 			if (lockout || shutdown) {
-				JsonObject response = new JsonObject();
-				JsonObject b = new JsonObject();
-				b.addProperty("r", auth.rField);
-				JsonObject o = new JsonObject();
-				o.addProperty("statusId", -16);
-				o.addProperty("_cmd", "login");
-				JsonObject params = new JsonObject();
-				params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
-				params.addProperty("pendingFlags", 0);
-				params.addProperty("activeLookId", acc.getActiveLook());
-				params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
-				params.addProperty("sessionId", acc.getAccountID());
-				params.addProperty("userId", acc.getAccountNumericID());
-				params.addProperty("avatarInvId", 0);
-				o.add("params", params);
-				o.addProperty("status", -16);
-				b.add("o", o);
-				response.add("b", b);
-				response.addProperty("t", "xt");
-				sendPacket(client, response.toString());
+				sendLoginResponse(client, auth, acc, 
+				-16, 
+				0);
+
 				client.disconnect();
 				return;
 			}
@@ -257,26 +226,10 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// If the client is out of date, send error
 		if (badClient) {
-			JsonObject response = new JsonObject();
-			JsonObject b = new JsonObject();
-			b.addProperty("r", auth.rField);
-			JsonObject o = new JsonObject();
-			o.addProperty("statusId", -24);
-			o.addProperty("_cmd", "login");
-			JsonObject params = new JsonObject();
-			params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
-			params.addProperty("pendingFlags", 0);
-			params.addProperty("activeLookId", acc.getActiveLook());
-			params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
-			params.addProperty("sessionId", acc.getAccountID());
-			params.addProperty("userId", acc.getAccountNumericID());
-			params.addProperty("avatarInvId", 0);
-			o.add("params", params);
-			o.addProperty("status", -24);
-			b.add("o", o);
-			response.add("b", b);
-			response.addProperty("t", "xt");
-			sendPacket(client, response.toString());
+			sendLoginResponse(client, auth, acc, 
+			-24, 
+			0);
+
 			client.disconnect();
 			return;
 		}
@@ -286,26 +239,10 @@ public class GameServer extends BaseSmartfoxServer {
 			System.out.println("User '" + acc.getDisplayName() + "' could not connect: user is banned.");
 
 			// Disconnect with error
-			JsonObject response = new JsonObject();
-			JsonObject b = new JsonObject();
-			b.addProperty("r", auth.rField);
-			JsonObject o = new JsonObject();
-			o.addProperty("statusId", -15);
-			o.addProperty("_cmd", "login");
-			JsonObject params = new JsonObject();
-			params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
-			params.addProperty("pendingFlags", 0);
-			params.addProperty("activeLookId", acc.getActiveLook());
-			params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
-			params.addProperty("sessionId", acc.getAccountID());
-			params.addProperty("userId", acc.getAccountNumericID());
-			params.addProperty("avatarInvId", 0);
-			o.add("params", params);
-			o.addProperty("status", -15);
-			b.add("o", o);
-			response.add("b", b);
-			response.addProperty("t", "xt");
-			sendPacket(client, response.toString());
+			sendLoginResponse(client, auth, acc,
+			-15,
+			0);
+
 			client.disconnect();
 			return;
 		}
@@ -315,26 +252,10 @@ public class GameServer extends BaseSmartfoxServer {
 			System.out.println("User '" + acc.getDisplayName() + "' could not connect: user is IP or VPN banned.");
 
 			// Disconnect silently
-			JsonObject response = new JsonObject();
-			JsonObject b = new JsonObject();
-			b.addProperty("r", auth.rField);
-			JsonObject o = new JsonObject();
-			o.addProperty("statusId", -23);
-			o.addProperty("_cmd", "login");
-			JsonObject params = new JsonObject();
-			params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
-			params.addProperty("pendingFlags", 0);
-			params.addProperty("activeLookId", acc.getActiveLook());
-			params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
-			params.addProperty("sessionId", acc.getAccountID());
-			params.addProperty("userId", acc.getAccountNumericID());
-			params.addProperty("avatarInvId", 0);
-			o.add("params", params);
-			o.addProperty("status", -23);
-			b.add("o", o);
-			response.add("b", b);
-			response.addProperty("t", "xt");
-			sendPacket(client, response.toString());
+			sendLoginResponse(client, auth, acc, 
+			1, 
+			0);
+			
 			client.disconnect();
 			return;
 		}
@@ -351,28 +272,12 @@ public class GameServer extends BaseSmartfoxServer {
 		AccountLoginEvent ev = new AccountLoginEvent(this, acc, client);
 		EventBus.getInstance().dispatchEvent(ev);
 		if (ev.isHandled() && ev.getStatus() != 1) {
-			JsonObject response = new JsonObject();
-			JsonObject b = new JsonObject();
-			b.addProperty("r", auth.rField);
-			JsonObject o = new JsonObject();
-			o.addProperty("statusId", ev.getStatus());
-			o.addProperty("_cmd", "login");
-			JsonObject params = new JsonObject();
-			params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
-			params.addProperty("pendingFlags", 0);
-			params.addProperty("activeLookId", acc.getActiveLook());
-			params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
-			params.addProperty("sessionId", acc.getAccountID());
-			params.addProperty("userId", acc.getAccountNumericID());
-			params.addProperty("avatarInvId", 0);
-			o.add("params", params);
-			o.addProperty("status", ev.getStatus());
-			b.add("o", o);
-			response.add("b", b);
-			response.addProperty("t", "xt");
+			sendLoginResponse(client, auth, acc, 
+			ev.getStatus(), 
+			0);
+			
 			System.out.println("Login failure: " + acc.getLoginName() + ": module terminated login process with code "
 					+ ev.getStatus());
-			sendPacket(client, response.toString());
 			client.disconnect();
 			return;
 		}
@@ -391,26 +296,9 @@ public class GameServer extends BaseSmartfoxServer {
 		client.container = plr;
 
 		// Send response
-		JsonObject response = new JsonObject();
-		JsonObject b = new JsonObject();
-		b.addProperty("r", auth.rField);
-		JsonObject o = new JsonObject();
-		o.addProperty("statusId", 1);
-		o.addProperty("_cmd", "login");
-		JsonObject params = new JsonObject();
-		params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
-		params.addProperty("pendingFlags", (plr.account.isPlayerNew() ? 2 : 3));
-		params.addProperty("activeLookId", plr.activeLook);
-		params.addProperty("sanctuaryLookId", plr.activeSanctuaryLook);
-		params.addProperty("sessionId", plr.account.getAccountID());
-		params.addProperty("userId", plr.account.getAccountNumericID());
-		params.addProperty("avatarInvId", 0);
-		o.add("params", params);
-		o.addProperty("status", 1);
-		b.add("o", o);
-		response.add("b", b);
-		response.addProperty("t", "xt");
-		sendPacket(client, response.toString());
+		sendLoginResponse(client, auth, acc, 
+		1, 
+		plr.account.isPlayerNew() ? 2 : 3);
 
 		// Initial login
 		System.out.println(
@@ -440,6 +328,38 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Dispatch join event
 		EventBus.getInstance().dispatchEvent(new PlayerJoinEvent(this, plr, acc, client));
+
+	}
+
+	public void sendLoginResponse(SmartfoxClient client, ClientToServerAuthPacket auth, CenturiaAccount acc, int statusCode, int pendingFlags){
+		JsonObject response = new JsonObject();
+		JsonObject b = new JsonObject();
+		b.addProperty("r", auth.rField);
+		JsonObject o = new JsonObject();
+		o.addProperty("statusId", statusCode);
+		o.addProperty("_cmd", "login");
+		JsonObject params = new JsonObject();
+		params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
+		params.addProperty("pendingFlags", pendingFlags);
+		params.addProperty("activeLookId", acc.getActiveLook());
+		params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
+		params.addProperty("sessionId", acc.getAccountID());
+		params.addProperty("userId", acc.getAccountNumericID());
+		params.addProperty("avatarInvId", 0);
+		o.add("params", params);
+		o.addProperty("status", statusCode);
+		b.add("o", o);
+		response.add("b", b);
+		response.addProperty("t", "xt");
+		
+		try {
+			sendPacket(client, response.toString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return;
 	}
 
 	// IP ban checks (both vpn block and ip banning)

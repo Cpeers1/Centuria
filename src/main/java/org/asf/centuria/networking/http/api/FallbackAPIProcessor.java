@@ -12,7 +12,7 @@ import java.util.UUID;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
-import org.asf.centuria.players.Player;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.social.SocialEntry;
 import org.asf.centuria.social.SocialManager;
 import org.asf.rats.ConnectiveHTTPServer;
@@ -90,7 +90,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 						response.addProperty("error", "not_blocked");
 					}
 
-					if (System.getProperty("debugMode") != null) {
+					if (Centuria.debugMode) {
 						System.out.println("[API] [r/block] [" + method + "] | Processed get block status request ");
 					}
 
@@ -117,7 +117,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 					// add player is blocked.
 					socialListManager.setBlockedPlayer(sourcePlayerID, targetPlayerID, true);
 
-					if (System.getProperty("debugMode") != null) {
+					if (Centuria.debugMode) {
 						System.out.println("[API] [r/block] [" + method + "] | Processed block Request ");
 					}
 
@@ -137,7 +137,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 					socialListManager.openSocialList(sourcePlayerID);
 
 					// log details
-					if (System.getProperty("debugMode") != null) {
+					if (Centuria.debugMode) {
 						System.out.println("[API] [r/block] [" + method + "] | Processed Unblock Request ");
 					}
 
@@ -157,7 +157,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				}
 				default: {
 					// log details
-					if (System.getProperty("debugMode") != null) {
+					if (Centuria.debugMode) {
 						System.err.println("[API] [r/block] [" + method + "] | Unhandled method ");
 					}
 				}
@@ -178,7 +178,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				String sourcePlayerID = acc.getAccountID();
 
 				// log details
-				if (System.getProperty("debugMode") != null) {
+				if (Centuria.debugMode) {
 					System.out.println("[API] [r/follow] [" + method + "] inbound: ( source: " + sourcePlayerID
 							+ ", target: " + targetPlayerID + " )");
 				}
@@ -190,7 +190,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				switch (method.toLowerCase()) {
 				case "post": {
 					// log interaction details
-					if (System.getProperty("debugMode") != null) {
+					if (Centuria.debugMode) {
 						System.out.println("[API] [r/follow] Processed friend request, sending 201... ");
 					}
 
@@ -243,7 +243,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				}
 				default: {
 					// log details
-					if (System.getProperty("debugMode") != null) {
+					if (Centuria.debugMode) {
 						System.err.println("[API] [r/follow] [" + method + "] | Unhandled method ");
 					}
 				}
@@ -261,7 +261,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				String sourcePlayerID = acc.getAccountID();
 
 				// log details
-				if (System.getProperty("debugMode") != null) {
+				if (Centuria.debugMode) {
 					System.out.println(
 							"[API] [r/followers] [" + method + "] Client to server ( source: " + sourcePlayerID + " )");
 				}
@@ -292,7 +292,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				setBody(jsonArray.toString());
 
 				// log interaction details
-				if (System.getProperty("debugMode") != null) {
+				if (Centuria.debugMode) {
 					System.out.println("[API] [r/followers] outbound: ( " + jsonArray.toString() + " )");
 				}
 
@@ -310,7 +310,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				String sourcePlayerID = acc.getAccountID();
 
 				// log details
-				if (System.getProperty("debugMode") != null) {
+				if (Centuria.debugMode) {
 					System.out.println("[API] [r/followings] [" + method + "]  Client to server ( source: "
 							+ sourcePlayerID + " )");
 				}
@@ -339,7 +339,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				setBody(jsonArray.toString());
 
 				// log interaction details
-				if (System.getProperty("debugMode") != null) {
+				if (Centuria.debugMode) {
 					System.out.println("[API] [r/followings] outbound: ( " + jsonArray.toString() + " )");
 				}
 			} else if (path.startsWith("/r/favorite")) {
@@ -357,7 +357,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				String sourcePlayerID = acc.getAccountID();
 
 				// log details
-				if (System.getProperty("debugMode") != null) {
+				if (Centuria.debugMode) {
 					System.out.println("[API] [r/favorite] [" + method + "]  Client to server ( source: "
 							+ sourcePlayerID + ", target : " + targetPlayerID + ", body: " + body + " )");
 				}
@@ -374,7 +374,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 					setResponseMessage("No Content");
 
 					// log details
-					if (System.getProperty("debugMode") != null) {
+					if (Centuria.debugMode) {
 						System.out.println("[API] [r/favorite] [" + method + "] Handled.");
 					}
 
@@ -385,14 +385,14 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 					friendListManager.setFavoritePlayer(sourcePlayerID, targetPlayerID, false);
 
 					// log details
-					if (System.getProperty("debugMode") != null) {
+					if (Centuria.debugMode) {
 						System.out.println("[API] [r/favorite] [" + method + "] Handled.");
 					}
 					break;
 				}
 				default: {
 					// log details
-					if (System.getProperty("debugMode") != null) {
+					if (Centuria.debugMode) {
 						System.err.println("[API] [r/favorite] [" + method + "] | Unhandled method ");
 					}
 				}
@@ -403,12 +403,12 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				// dud handler
 
 				// log details
-				if (System.getProperty("debugMode") != null) {
+				if (Centuria.debugMode) {
 					System.out.println("[API] [/s/desktop] [" + method + "] DUD");
 				}
 			} else {
 				// log details
-				if (System.getProperty("debugMode") != null) {
+				if (Centuria.debugMode) {
 					System.err.println("[API] Unhandled Api Call: ( path:" + path + " ) ( method: " + method
 							+ " ) ( body: " + body + " )");
 				}
@@ -417,7 +417,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				setBody("{}");
 			}
 		} catch (Exception e) {
-			if (System.getProperty("debugMode") != null) {
+			if (Centuria.debugMode) {
 				System.err.println("[FALLBACKAPI] ERROR : " + e.getMessage() + " )");
 			}
 		}

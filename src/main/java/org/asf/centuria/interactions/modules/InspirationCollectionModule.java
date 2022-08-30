@@ -2,10 +2,11 @@ package org.asf.centuria.interactions.modules;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
-import org.asf.centuria.players.Player;
 
 public class InspirationCollectionModule extends InteractionModule {
 

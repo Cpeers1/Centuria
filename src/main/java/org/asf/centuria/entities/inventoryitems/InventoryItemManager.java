@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.enums.inventory.InventoryType;
 import org.reflections.Reflections;
 
@@ -39,7 +40,7 @@ public final class InventoryItemManager {
 			
 			var itemType = itemClass.getDeclaredConstructor().newInstance().getInventoryType();
 			
-			if (System.getProperty("debugMode") != null) {
+			if (Centuria.debugMode) {
 				System.out.println("Loading item into item register: " + itemType.toString());
 			}
 			

@@ -17,6 +17,7 @@ import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -28,7 +29,6 @@ import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.world.JoinRoom;
-import org.asf.centuria.players.Player;
 import org.asf.centuria.social.SocialManager;
 
 import com.google.gson.JsonObject;

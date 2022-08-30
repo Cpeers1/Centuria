@@ -2,7 +2,7 @@ package org.asf.centuria.accounts.highlevel;
 
 import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.entities.inspiration.InspirationCombineResult;
-import org.asf.centuria.players.Player;
+import org.asf.centuria.entities.players.Player;
 
 import com.google.gson.JsonObject;
 

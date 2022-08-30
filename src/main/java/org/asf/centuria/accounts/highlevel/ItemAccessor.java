@@ -2,8 +2,10 @@ package org.asf.centuria.accounts.highlevel;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -21,11 +23,15 @@ import org.asf.centuria.accounts.highlevel.itemdata.inventory.impl.SanctuaryHous
 import org.asf.centuria.accounts.highlevel.itemdata.inventory.impl.SanctuaryIslandHelper;
 import org.asf.centuria.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.centuria.accounts.highlevel.itemdata.item.ItemInfo;
+import org.asf.centuria.entities.components.generic.TradeableComponent;
+import org.asf.centuria.entities.inventoryitems.InventoryItem;
+import org.asf.centuria.entities.inventoryitems.InventoryItemManager;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.enums.inventory.InventoryStorageType;
+import org.asf.centuria.enums.inventory.InventoryType;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemRemovedPacket;
-import org.asf.centuria.players.Player;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -95,6 +101,14 @@ public class ItemAccessor {
 			put("8", new InventoryDefinitionContainer(InventoryStorageType.SINGLE_ITEM,
 					new GenericHelper("8", new ItemComponent("Inspiration", new JsonObject()))));
 		}
+	};
+	
+	private static final String[] tradeableInventories = new String[]
+	{
+		"100",
+		"102",
+		"103",
+		"111"
 	};
 
 	static {
@@ -736,5 +750,44 @@ public class ItemAccessor {
 		// Fallback
 		return 0;
 
+	}
+	
+	public List<InventoryItem> loadTradeList() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
+	{
+		List<InventoryItem> tradeList = new ArrayList<InventoryItem>();
+		
+		for(String inventoryNumber : tradeableInventories)
+		{
+			// Find inventory
+			if (!inventoryTypeMap.containsKey(inventoryNumber))
+				return null;
+			
+			if (!inventory.containsItem(inventoryNumber))
+				inventory.setItem(inventoryNumber, new JsonArray());
+
+			var invObject = inventory.getItem(inventoryNumber).getAsJsonArray();
+			
+			var itemClass = InventoryItemManager.getItemTypeFromInvType(InventoryType.get(Integer.parseInt(inventoryNumber)));
+			
+			for(var itemObject : invObject)
+			{
+				var tradeableComponent = itemObject.getAsJsonObject()
+						.get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+						.get(TradeableComponent.COMPONENT_NAME);
+				
+				if(tradeableComponent != null)
+				{
+					if(tradeableComponent.getAsJsonObject().get("isInTradeList").getAsBoolean())
+					{					
+						var invItem = itemClass.getDeclaredConstructor().newInstance();
+						invItem.fromJsonObject(itemObject.getAsJsonObject());
+						
+						tradeList.add(invItem);
+					}
+				}
+			}
+		}
+		
+		return tradeList;
 	}
 }

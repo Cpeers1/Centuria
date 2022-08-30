@@ -26,7 +26,7 @@ import com.google.gson.JsonObject;
 @Item
 public final class UserVarItem extends InventoryItem {
 
-	public final static InventoryType INV_TYPE = InventoryType.Settings;
+	public final static InventoryType INV_TYPE = InventoryType.UserVar;
 
 	private UserVarType type;
 		
@@ -55,6 +55,7 @@ public final class UserVarItem extends InventoryItem {
 		return INV_TYPE;
 	}
 
+	@Override
 	public JsonObject toJsonObject() {
 		return super.toJsonObject();
 	}
@@ -70,6 +71,7 @@ public final class UserVarItem extends InventoryItem {
 	/**
 	 * Populates this item with properties from a json object of the same type.
 	 */
+	@Override
 	public void fromJsonObject(JsonObject object) throws InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 

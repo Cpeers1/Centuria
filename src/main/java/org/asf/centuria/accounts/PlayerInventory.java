@@ -23,7 +23,7 @@ import org.asf.centuria.accounts.highlevel.impl.InteractionMemoryAccessorImpl;
 import org.asf.centuria.accounts.highlevel.impl.SanctuaryAccessorImpl;
 import org.asf.centuria.accounts.highlevel.impl.TwiggleAccessorImpl;
 import org.asf.centuria.accounts.highlevel.impl.UserVarAccessorImpl;
-import org.asf.centuria.players.Player;
+import org.asf.centuria.entities.players.Player;
 
 public abstract class PlayerInventory {
 

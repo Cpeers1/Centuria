@@ -2,9 +2,9 @@ package org.asf.centuria.interactions.modules;
 
 import java.util.List;
 
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
-import org.asf.centuria.players.Player;
 
 public abstract class InteractionModule {
 

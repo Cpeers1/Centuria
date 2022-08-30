@@ -3,9 +3,9 @@ package org.asf.centuria.interactions.modules;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
-import org.asf.centuria.players.Player;
 import org.asf.centuria.shops.ShopManager;
 
 public class ShopkeeperModule extends InteractionModule {

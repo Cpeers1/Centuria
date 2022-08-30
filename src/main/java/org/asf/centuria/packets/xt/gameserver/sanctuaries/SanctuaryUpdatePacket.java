@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.generic.Quaternion;
@@ -14,6 +15,7 @@ import org.asf.centuria.entities.generic.Velocity;
 import org.asf.centuria.entities.inventoryitems.InventoryItem;
 import org.asf.centuria.entities.objects.WorldObjectMoveNodeData;
 import org.asf.centuria.entities.objects.WorldObjectPositionInfo;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.sanctuaries.RoomInfoObject;
 import org.asf.centuria.entities.sanctuaries.SanctuaryObjectData;
 import org.asf.centuria.entities.sanctuaries.UpdateSancObjectItem;
@@ -24,7 +26,6 @@ import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
-import org.asf.centuria.players.Player;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -78,7 +79,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		}
 
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			if (numOfAdditions > 0) {
 				System.out.println(
 						"[SANCTUARY] [UPDATE] Client to server: " + numOfAdditions + " furniture additions...");
@@ -92,7 +93,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		}
 
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			if (numOfRemovals > 0) {
 				System.out
 						.println("[SANCTUARY] [UPDATE] Client to server: " + numOfRemovals + " furniture removals...");
@@ -106,7 +107,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		}
 
 		// Log
-		if (System.getProperty("debugMode") != null) {
+		if (Centuria.debugMode) {
 			if (numOfRoomChanges > 0) {
 				System.out.println("[SANCTUARY] [UPDATE] Client to server: " + numOfRoomChanges + " room updates...");
 			}
@@ -247,7 +248,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 							player.client.sendPacket(packet);
 
 							// Log
-							if (System.getProperty("debugMode") != null) {
+							if (Centuria.debugMode) {
 								System.out.println(
 										"[SANCTUARY] [UPDATE] Server to client: load object (" + packet.build() + ")");
 							}
@@ -279,7 +280,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 						player.client.sendPacket(pk);
 
 						// Log
-						if (System.getProperty("debugMode") != null) {
+						if (Centuria.debugMode) {
 							System.out.println("[SANCTUARY] [UPDATE] Server to client: Delete object (" + pk + ")");
 						}
 					}
@@ -320,7 +321,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 						player.client.sendPacket(packet);
 
 						// Log
-						if (System.getProperty("debugMode") != null) {
+						if (Centuria.debugMode) {
 							System.out.println(
 									"[SANCTUARY] [UPDATE] Server to client: update house (" + packet.build() + ")");
 						}

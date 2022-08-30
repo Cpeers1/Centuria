@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import org.asf.centuria.Centuria;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.AccountBanEvent;
@@ -11,7 +12,6 @@ import org.asf.centuria.modules.events.accounts.AccountKickEvent;
 import org.asf.centuria.modules.events.accounts.AccountMuteEvent;
 import org.asf.centuria.modules.events.accounts.AccountPardonEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
-import org.asf.centuria.players.Player;
 
 import com.google.gson.JsonObject;
 

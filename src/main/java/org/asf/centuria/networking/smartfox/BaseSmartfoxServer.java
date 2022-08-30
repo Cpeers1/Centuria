@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.packets.smartfox.ISmartfoxPacket;
 
 public abstract class BaseSmartfoxServer {
@@ -95,7 +96,7 @@ public abstract class BaseSmartfoxServer {
 			SmartfoxClient client = new SmartfoxClient(clientSocket, this);
 
 			// Non-debug
-			if (System.getProperty("debugMode") == null) {
+			if (!Centuria.debugMode) {
 				try {
 					// Run start code
 					startClient(client);
@@ -199,7 +200,7 @@ public abstract class BaseSmartfoxServer {
 	private void handle(String data, SmartfoxClient client) throws IOException {
 		if (!handlePacket(data, client)) {
 			// Allow debug mode to re-register packets
-			if (System.getProperty("debugMode") != null) {
+			if (Centuria.debugMode) {
 				packets.clear();
 				setupComplete = false;
 				registerPackets();

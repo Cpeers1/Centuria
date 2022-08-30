@@ -16,7 +16,7 @@ import com.google.gson.JsonObject;
 @Item
 public class TwiggleItem extends InventoryItem {
 
-	public final static InventoryType INV_TYPE = InventoryType.Twiggles;
+	public final static InventoryType INV_TYPE = InventoryType.Twiggle;
 	
 	public TwiggleItem(int defId, String uuid) {
 		super(defId, uuid, INV_TYPE);
@@ -35,6 +35,7 @@ public class TwiggleItem extends InventoryItem {
 	/**
 	 * Converts this item to a jsonObject with the correct format to be in an inventory.
 	 */
+	@Override
 	public JsonObject toJsonObject() {
 		return super.toJsonObject();
 	}
@@ -42,6 +43,7 @@ public class TwiggleItem extends InventoryItem {
 	/**
 	 * Populates this item with properties from an inventory jsonObject of the same type.
 	 */
+	@Override
 	public void fromJsonObject(JsonObject object) throws InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		super.fromJsonObject(object);
