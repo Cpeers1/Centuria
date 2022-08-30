@@ -132,7 +132,8 @@ public class DiscordBotModule implements ICenturiaModule {
 			// Create commands
 			ApplicationCommandRequest cmd = ApplicationCommandRequest.builder().name("centuria")
 					.description("Centuria Commands").addOption(CommandHandler.setupCommand())
-					.addOption(CommandHandler.createAccountPanel()).addOption(CommandHandler.getAccountInfo()).build();
+					.addOption(CommandHandler.createAccountPanel()).addOption(CommandHandler.getAccountInfo())
+					.addOption(CommandHandler.getDiscordAccountInfo()).build();
 
 			// Connect
 			client.gateway().setEnabledIntents(IntentSet.of(Intent.GUILD_PRESENCES, Intent.GUILD_MESSAGES,
@@ -188,13 +189,6 @@ public class DiscordBotModule implements ICenturiaModule {
 									return event.getMessage().getChannel().block().createMessage("**IMPORTANT**\n"
 											+ "As of 08/17/2022, text commands have been removed.\n\nPlease use the new slash commands instead."
 											+ "\nFurhtermore, command permissions __no longer use Discord permissions only, it checks for ingame permissions too.__");
-//									String cmd = msg.substring("centuria!".length());
-//									if (!cmd.isEmpty() && event.getMember().isPresent()) {
-//										// Handle the command
-//										CommandHandler.handle(cmd, g, event.getMessage()
-//												.getChannel(EntityRetrievalStrategy.STORE_FALLBACK_REST).block(),
-//												event.getMember().get(), gateway);
-//									}
 								}
 								if (msg.startsWith("centuria!")) {
 									// Inform commands have moved
@@ -242,8 +236,6 @@ public class DiscordBotModule implements ICenturiaModule {
 
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
