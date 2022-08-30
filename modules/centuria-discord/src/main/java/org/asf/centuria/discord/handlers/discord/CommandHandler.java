@@ -62,7 +62,62 @@ public class CommandHandler {
 		return ApplicationCommandOptionData.builder().name("getdiscord").description("Link info retrieval command")
 				.addOption(ApplicationCommandOptionData.builder().name("centuria-displayname")
 						.type(ApplicationCommandOption.Type.STRING.getValue())
-						.description("User to retrieve the Discord account details from").required(true).build())
+						.description("Player to retrieve the Discord account details from").required(true).build())
+				.type(ApplicationCommandOption.Type.SUB_COMMAND.getValue()).build();
+	}
+
+	/**
+	 * The account kick command
+	 */
+	public static ApplicationCommandOptionData kick() {
+		return ApplicationCommandOptionData.builder().name("kick").description("Kick a player")
+				.addOption(ApplicationCommandOptionData.builder().name("centuria-displayname")
+						.type(ApplicationCommandOption.Type.STRING.getValue()).description("Player to kick")
+						.required(true).build())
+				.addOption(ApplicationCommandOptionData.builder().name("reason")
+						.type(ApplicationCommandOption.Type.STRING.getValue()).description("Kick reason").build())
+				.type(ApplicationCommandOption.Type.SUB_COMMAND.getValue()).build();
+	}
+
+	/**
+	 * The account ban command
+	 */
+	public static ApplicationCommandOptionData ban() {
+		return ApplicationCommandOptionData.builder().name("permban").description("Permanently bans a player")
+				.addOption(ApplicationCommandOptionData.builder().name("centuria-displayname")
+						.type(ApplicationCommandOption.Type.STRING.getValue()).description("Player to ban")
+						.required(true).build())
+				.addOption(ApplicationCommandOptionData.builder().name("reason")
+						.type(ApplicationCommandOption.Type.STRING.getValue()).description("Ban reason").build())
+				.type(ApplicationCommandOption.Type.SUB_COMMAND.getValue()).build();
+	}
+
+	/**
+	 * The account ban command
+	 */
+	public static ApplicationCommandOptionData tempBan() {
+		return ApplicationCommandOptionData.builder().name("tempban").description("Temporarily bans a player")
+				.addOption(ApplicationCommandOptionData.builder().name("centuria-displayname")
+						.type(ApplicationCommandOption.Type.STRING.getValue()).description("Player to ban")
+						.required(true).build())
+				.addOption(ApplicationCommandOptionData.builder().name("days")
+						.type(ApplicationCommandOption.Type.INTEGER.getValue())
+						.description("Days to ban the player for").required(true).build())
+				.addOption(ApplicationCommandOptionData.builder().name("reason")
+						.type(ApplicationCommandOption.Type.STRING.getValue()).description("Ban reason").build())
+				.type(ApplicationCommandOption.Type.SUB_COMMAND.getValue()).build();
+	}
+
+	/**
+	 * The account pardon command
+	 */
+	public static ApplicationCommandOptionData pardon() {
+		return ApplicationCommandOptionData.builder().name("pardon").description("Removes player penalties")
+				.addOption(ApplicationCommandOptionData.builder().name("centuria-displayname")
+						.type(ApplicationCommandOption.Type.STRING.getValue()).description("Player to ban")
+						.required(true).build())
+				.addOption(ApplicationCommandOptionData.builder().name("reason")
+						.type(ApplicationCommandOption.Type.STRING.getValue()).description("Pardon reason").build())
 				.type(ApplicationCommandOption.Type.SUB_COMMAND.getValue()).build();
 	}
 
@@ -134,6 +189,201 @@ public class CommandHandler {
 				} catch (Exception e) {
 				}
 				event.reply(res).block();
+				break;
+			}
+			case "kick": {
+				// Required permissions: mod (ingame)
+				CenturiaAccount modacc = LinkUtils
+						.getAccountByDiscordID(event.getInteraction().getUser().getId().asString());
+				if (modacc == null) {
+					event.reply("**Error:** You dont have a Centuria account linked to your Discord account").block();
+					return Mono.empty();
+				}
+
+				String permLevel = "member";
+				if (modacc.getPlayerInventory().containsItem("permissions")) {
+					permLevel = modacc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+							.get("permissionLevel").getAsString();
+				}
+				if (!GameServer.hasPerm(permLevel, "moderator")) {
+					event.reply("**Error:** no Centuria moderator permissions.").block();
+					return Mono.empty();
+				}
+
+				// Find player UUID
+				var params = data.options().get().get(0).options().get();
+				String uuid = AccountManager.getInstance().getUserByDisplayName(params.get(0).value().get());
+				if (uuid == null) {
+					// Respond with error message
+					event.reply("**Error:** player not recognized.").block();
+					return Mono.empty();
+				}
+				CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+				if (acc == null) {
+					// Respond with error message
+					event.reply("**Error:** player not recognized.").block();
+					return Mono.empty();
+				}
+				if (acc.getOnlinePlayerInstance() == null) {
+					event.reply("**Error:** player not online.").block();
+					return Mono.empty();
+				}
+
+				// Kick
+				if (params.size() == 1) {
+					event.reply("Kicked player " + acc.getDisplayName()).block();
+					acc.kick(modacc.getAccountID(), null);
+				} else if (params.size() == 2) {
+					event.reply("Kicked player " + acc.getDisplayName() + ": " + params.get(1).value().get()).block();
+					acc.kick(modacc.getAccountID(), params.get(1).value().get());
+				}
+				break;
+			}
+			case "permban": {
+				// Required permissions: mod (ingame)
+				CenturiaAccount modacc = LinkUtils
+						.getAccountByDiscordID(event.getInteraction().getUser().getId().asString());
+				if (modacc == null) {
+					event.reply("**Error:** You dont have a Centuria account linked to your Discord account").block();
+					return Mono.empty();
+				}
+
+				String permLevel = "member";
+				if (modacc.getPlayerInventory().containsItem("permissions")) {
+					permLevel = modacc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+							.get("permissionLevel").getAsString();
+				}
+				if (!GameServer.hasPerm(permLevel, "moderator")) {
+					event.reply("**Error:** no Centuria moderator permissions.").block();
+					return Mono.empty();
+				}
+
+				// Find player UUID
+				var params = data.options().get().get(0).options().get();
+				String uuid = AccountManager.getInstance().getUserByDisplayName(params.get(0).value().get());
+				if (uuid == null) {
+					// Respond with error message
+					event.reply("**Error:** player not recognized.").block();
+					return Mono.empty();
+				}
+				CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+				if (acc == null) {
+					// Respond with error message
+					event.reply("**Error:** player not recognized.").block();
+					return Mono.empty();
+				}
+				if (acc.isBanned()) {
+					event.reply("**Error:** player is already banned.").block();
+					return Mono.empty();
+				}
+
+				// Ban
+				if (params.size() == 1) {
+					event.reply("Banned player " + acc.getDisplayName()).block();
+					acc.ban(modacc.getAccountID(), null);
+				} else if (params.size() == 2) {
+					event.reply("Banned player " + acc.getDisplayName() + ": " + params.get(1).value().get()).block();
+					acc.ban(modacc.getAccountID(), params.get(1).value().get());
+				}
+				break;
+			}
+			case "tempban": {
+				// Required permissions: mod (ingame)
+				CenturiaAccount modacc = LinkUtils
+						.getAccountByDiscordID(event.getInteraction().getUser().getId().asString());
+				if (modacc == null) {
+					event.reply("**Error:** You dont have a Centuria account linked to your Discord account").block();
+					return Mono.empty();
+				}
+
+				String permLevel = "member";
+				if (modacc.getPlayerInventory().containsItem("permissions")) {
+					permLevel = modacc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+							.get("permissionLevel").getAsString();
+				}
+				if (!GameServer.hasPerm(permLevel, "moderator")) {
+					event.reply("**Error:** no Centuria moderator permissions.").block();
+					return Mono.empty();
+				}
+
+				// Find player UUID
+				var params = data.options().get().get(0).options().get();
+				String uuid = AccountManager.getInstance().getUserByDisplayName(params.get(0).value().get());
+				if (uuid == null) {
+					// Respond with error message
+					event.reply("**Error:** player not recognized.").block();
+					return Mono.empty();
+				}
+				CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+				if (acc == null) {
+					// Respond with error message
+					event.reply("**Error:** player not recognized.").block();
+					return Mono.empty();
+				}
+				if (acc.isBanned()) {
+					event.reply("**Error:** player is already banned.").block();
+					return Mono.empty();
+				}
+
+				// Tempban
+				if (params.size() == 2) {
+					event.reply("Temporarily banned player " + acc.getDisplayName()).block();
+					acc.tempban(Integer.valueOf(params.get(1).value().get()), modacc.getAccountID(), null);
+				} else if (params.size() == 3) {
+					event.reply(
+							"Temporarily banned player " + acc.getDisplayName() + ": " + params.get(2).value().get())
+							.block();
+					acc.tempban(Integer.valueOf(params.get(1).value().get()), modacc.getAccountID(),
+							params.get(2).value().get());
+				}
+				break;
+			}
+			case "pardon": {
+				// Required permissions: mod (ingame)
+				CenturiaAccount modacc = LinkUtils
+						.getAccountByDiscordID(event.getInteraction().getUser().getId().asString());
+				if (modacc == null) {
+					event.reply("**Error:** You dont have a Centuria account linked to your Discord account").block();
+					return Mono.empty();
+				}
+
+				String permLevel = "member";
+				if (modacc.getPlayerInventory().containsItem("permissions")) {
+					permLevel = modacc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+							.get("permissionLevel").getAsString();
+				}
+				if (!GameServer.hasPerm(permLevel, "moderator")) {
+					event.reply("**Error:** no Centuria moderator permissions.").block();
+					return Mono.empty();
+				}
+
+				// Find player UUID
+				var params = data.options().get().get(0).options().get();
+				String uuid = AccountManager.getInstance().getUserByDisplayName(params.get(0).value().get());
+				if (uuid == null) {
+					// Respond with error message
+					event.reply("**Error:** player not recognized.").block();
+					return Mono.empty();
+				}
+				CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+				if (acc == null) {
+					// Respond with error message
+					event.reply("**Error:** player not recognized.").block();
+					return Mono.empty();
+				}
+				if (!acc.isBanned() && !acc.isMuted()) {
+					event.reply("**Error:** player has no penalties.").block();
+					return Mono.empty();
+				}
+
+				// Pardon
+				if (params.size() == 1) {
+					event.reply("Pardoned player " + acc.getDisplayName()).block();
+					acc.pardon(modacc.getAccountID(), null);
+				} else if (params.size() == 2) {
+					event.reply("Temporarily banned player " + acc.getDisplayName()).block();
+					acc.pardon(modacc.getAccountID(), params.get(1).value().get());
+				}
 				break;
 			}
 			case "getaccountinfo": {

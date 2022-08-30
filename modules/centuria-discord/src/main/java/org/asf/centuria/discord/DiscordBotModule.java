@@ -133,7 +133,9 @@ public class DiscordBotModule implements ICenturiaModule {
 			ApplicationCommandRequest cmd = ApplicationCommandRequest.builder().name("centuria")
 					.description("Centuria Commands").addOption(CommandHandler.setupCommand())
 					.addOption(CommandHandler.createAccountPanel()).addOption(CommandHandler.getAccountInfo())
-					.addOption(CommandHandler.getDiscordAccountInfo()).build();
+					.addOption(CommandHandler.getDiscordAccountInfo()).addOption(CommandHandler.kick())
+					.addOption(CommandHandler.ban()).addOption(CommandHandler.tempBan())
+					.addOption(CommandHandler.pardon()).build();
 
 			// Connect
 			client.gateway().setEnabledIntents(IntentSet.of(Intent.GUILD_PRESENCES, Intent.GUILD_MESSAGES,
