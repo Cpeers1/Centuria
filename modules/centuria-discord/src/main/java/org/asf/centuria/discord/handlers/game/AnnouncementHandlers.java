@@ -7,8 +7,6 @@ import org.asf.centuria.discord.DiscordBotModule;
 import org.asf.centuria.discord.ServerConfigUtils;
 import org.asf.centuria.modules.eventbus.EventListener;
 import org.asf.centuria.modules.eventbus.IEventReceiver;
-import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
-import org.asf.centuria.modules.events.maintenance.MaintenanceStartEvent;
 import org.asf.centuria.modules.events.updates.ServerUpdateEvent;
 
 import com.google.gson.JsonObject;

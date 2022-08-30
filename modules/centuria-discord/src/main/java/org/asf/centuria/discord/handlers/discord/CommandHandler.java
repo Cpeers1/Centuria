@@ -7,8 +7,11 @@ import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.discord.DiscordBotModule;
 import org.asf.centuria.discord.LinkUtils;
 import org.asf.centuria.discord.ServerConfigUtils;
+import org.reactivestreams.Publisher;
 
 import discord4j.core.GatewayDiscordClient;
+import discord4j.core.event.domain.interaction.ApplicationCommandInteractionEvent;
+import discord4j.core.object.command.ApplicationCommandOption;
 import discord4j.core.object.component.ActionRow;
 import discord4j.core.object.component.Button;
 import discord4j.core.object.component.SelectMenu;
@@ -19,8 +22,11 @@ import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.retriever.EntityRetrievalStrategy;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.MessageCreateSpec;
+import discord4j.discordjson.json.ApplicationCommandInteractionData;
+import discord4j.discordjson.json.ApplicationCommandOptionData;
 import discord4j.rest.util.Color;
 import discord4j.rest.util.Permission;
+import reactor.core.publisher.Mono;
 
 public class CommandHandler {
 
@@ -197,6 +203,54 @@ public class CommandHandler {
 			break;
 		}
 		}
+	}
+
+	/**
+	 * The setup command
+	 */
+	public static ApplicationCommandOptionData setupCommand() {
+		return ApplicationCommandOptionData.builder().name("setup").description("Server configuration command")
+				.type(ApplicationCommandOption.Type.SUB_COMMAND.getValue()).build();
+	}
+
+	/**
+	 * The account panel setup command
+	 */
+	public static ApplicationCommandOptionData createAccountPanel() {
+		return ApplicationCommandOptionData.builder().name("createaccountpanel")
+				.description("Account panel creation command")
+				.type(ApplicationCommandOption.Type.SUB_COMMAND.getValue()).build();
+	}
+
+	/**
+	 * The account info command
+	 */
+	public static ApplicationCommandOptionData getAccountInfo() {
+		return ApplicationCommandOptionData.builder().name("getaccountinfo")
+				.description("Account info retrieval command")
+				.addOption(ApplicationCommandOptionData.builder().name("member")
+						.type(ApplicationCommandOption.Type.USER.getValue())
+						.description("User to retrieve the Centuria account details from").required(true).build())
+				.type(ApplicationCommandOption.Type.SUB_COMMAND.getValue()).build();
+	}
+
+	/**
+	 * Handles slash commands
+	 * 
+	 * @param event   Command event
+	 * @param guild   Guild it was run in
+	 * @param gateway Client
+	 */
+	public static Publisher<Object> handle(ApplicationCommandInteractionEvent event, Guild guild,
+			GatewayDiscordClient gateway) {
+		ApplicationCommandInteractionData data = (ApplicationCommandInteractionData) event.getInteraction().getData().data().get();
+		String command = data.name().get();
+		if (command.equalsIgnoreCase("centuria")) {
+			// Right command, find the subcommand
+			String subCmd = data.options().get().get(0).name();
+			subCmd = subCmd;
+		}
+		return Mono.empty();
 	}
 
 }

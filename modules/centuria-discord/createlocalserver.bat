@@ -1,5 +1,5 @@
 @echo off
-set git="https://github.com/SkySwimmer/Centuria.git"
+set git="https://github.com/Cpeers1/Centuria.git"
 set dir=%cd%
 
 echo Updating standalone installation for testing...

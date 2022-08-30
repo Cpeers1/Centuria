@@ -466,7 +466,7 @@ public class SendMessage extends AbstractChatPacket {
 							}
 						}
 						// Build message
-						String response = "List of online players:";
+						String response = Centuria.gameServer.getPlayers().length + " player(s) online:";
 						for (ChatClient cl : client.getServer().getClients()) {
 							Player plr = cl.getPlayer().getOnlinePlayerInstance();
 							if (plr != null && !suspiciousClients.containsKey(cl)) {
@@ -1509,6 +1509,10 @@ public class SendMessage extends AbstractChatPacket {
 					for (String commandMessage : commandMessages) {
 						message += "\n - " + commandMessage;
 					}
+					message += "\n\nSymbol guide:";
+					message += "\n[] = optional arguement";
+					message += "\n<> = replace with arguement";
+					message += "\nYou do not need the symbols on the command itself, its only for informational purposes.";
 					systemMessage(message, cmdId, client);
 					return true;
 				}

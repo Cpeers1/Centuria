@@ -23,9 +23,12 @@ import org.asf.centuria.modules.eventbus.EventBus;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.guild.BanEvent;
+import discord4j.core.event.domain.guild.GuildCreateEvent;
+import discord4j.core.event.domain.interaction.ApplicationCommandInteractionEvent;
 import discord4j.core.event.domain.interaction.ButtonInteractionEvent;
 import discord4j.core.event.domain.interaction.ModalSubmitInteractionEvent;
 import discord4j.core.event.domain.interaction.SelectMenuInteractionEvent;
@@ -35,7 +38,7 @@ import discord4j.core.object.entity.Guild;
 import discord4j.core.object.presence.ClientActivity;
 import discord4j.core.object.presence.ClientPresence;
 import discord4j.core.object.presence.Status;
-import discord4j.core.retriever.EntityRetrievalStrategy;
+import discord4j.discordjson.json.ApplicationCommandRequest;
 import discord4j.gateway.intent.Intent;
 import discord4j.gateway.intent.IntentSet;
 import reactor.core.publisher.Mono;
@@ -126,13 +129,30 @@ public class DiscordBotModule implements ICenturiaModule {
 			// Build the client
 			client = DiscordClient.create(config.get("token").getAsString());
 
+			// Create commands
+			ApplicationCommandRequest cmd = ApplicationCommandRequest.builder().name("centuria")
+					.description("Centuria Commands").addOption(CommandHandler.setupCommand())
+					.addOption(CommandHandler.createAccountPanel()).addOption(CommandHandler.getAccountInfo()).build();
+
 			// Connect
 			client.gateway().setEnabledIntents(IntentSet.of(Intent.GUILD_PRESENCES, Intent.GUILD_MESSAGES,
-					Intent.DIRECT_MESSAGES, Intent.GUILD_MEMBERS)).withGateway(gateway -> {
+					Intent.DIRECT_MESSAGES, Intent.GUILD_MEMBERS, Intent.GUILDS)).withGateway(gateway -> {
 						// Button handler
 						Mono<Void> ev = gateway.on(ButtonInteractionEvent.class, event -> {
 							return InteractionButtonHandler.handle(event, gateway);
 						}).then();
+
+						// Join guild handler
+						ev = ev.then().and(gateway.on(GuildCreateEvent.class, event -> {
+							if (gateway.getRestClient().getApplicationService()
+									.getGuildApplicationCommands(gateway.getRestClient().getApplicationId().block(),
+											754991742226399272l)
+									.count().block() == 0)
+								return gateway.getRestClient().getApplicationService().createGuildApplicationCommand(
+										gateway.getRestClient().getApplicationId().block(),
+										event.getGuild().getId().asLong(), cmd);
+							return Mono.empty();
+						}));
 
 						// Select menu handler
 						ev = ev.then().and(gateway.on(SelectMenuInteractionEvent.class, event -> {
@@ -149,6 +169,12 @@ public class DiscordBotModule implements ICenturiaModule {
 							return BanHandler.handle(event, gateway);
 						}));
 
+						// Slash command handler
+						ev = ev.then().and(gateway.on(ApplicationCommandInteractionEvent.class, event -> {
+							Guild guild = event.getInteraction().getGuild().block();
+							return CommandHandler.handle(event, guild, gateway);
+						}));
+
 						// Command handler
 						ev = ev.then().and(gateway.on(MessageCreateEvent.class, event -> {
 							Guild g = event.getGuild().block();
@@ -157,14 +183,24 @@ public class DiscordBotModule implements ICenturiaModule {
 								String msg = event.getMessage().getContent();
 
 								// Only handle commands
+								if (msg.startsWith("emuferal!")) {
+									// Inform commands have moved
+									return event.getMessage().getChannel().block().createMessage("**IMPORTANT**\n"
+											+ "As of 08/17/2022, text commands have been removed.\n\nPlease use the new slash commands instead."
+											+ "\nFurhtermore, command permissions __no longer use Discord permissions only, it checks for ingame permissions too.__");
+//									String cmd = msg.substring("centuria!".length());
+//									if (!cmd.isEmpty() && event.getMember().isPresent()) {
+//										// Handle the command
+//										CommandHandler.handle(cmd, g, event.getMessage()
+//												.getChannel(EntityRetrievalStrategy.STORE_FALLBACK_REST).block(),
+//												event.getMember().get(), gateway);
+//									}
+								}
 								if (msg.startsWith("centuria!")) {
-									String cmd = msg.substring("centuria!".length());
-									if (!cmd.isEmpty() && event.getMember().isPresent()) {
-										// Handle the command
-										CommandHandler.handle(cmd, g, event.getMessage()
-												.getChannel(EntityRetrievalStrategy.STORE_FALLBACK_REST).block(),
-												event.getMember().get(), gateway);
-									}
+									// Inform commands have moved
+									return event.getMessage().getChannel().block().createMessage("**IMPORTANT**\n"
+											+ "As of 08/17/2022, text commands have been removed.\n\nPlease use the new slash commands instead."
+											+ "\nFurhtermore, command permissions __no longer use Discord permissions only, it checks for ingame permissions too.__");
 								}
 							}
 							return Mono.empty();
