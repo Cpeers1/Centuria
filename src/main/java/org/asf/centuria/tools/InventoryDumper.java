@@ -7,8 +7,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
+import org.asf.centuria.accounts.InventoryManager;
 import org.asf.centuria.data.XtReader;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -393,7 +393,7 @@ public class InventoryDumper {
 
 					JsonArray localAvatars = JsonParser
 							.parseString(Files.readString(new File(invOut, "200.json").toPath())).getAsJsonArray();
-					JsonArray avatars = InventoryItemDownloadPacket.buildDefaultLooksFile(null);
+					JsonArray avatars = InventoryManager.buildDefaultLooksFile(null);
 					SwingUtilities.invokeLater(() -> {
 						lblNewLabel.setText("Processing avatar file...");
 						progressBar.setMaximum(localAvatars.size());
