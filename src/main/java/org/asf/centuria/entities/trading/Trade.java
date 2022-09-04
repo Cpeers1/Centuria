@@ -372,6 +372,12 @@ public class Trade {
 		}
 	}
 
+	/**
+	 * Called when one player accepts the trade.
+	 * 
+	 * @param player The player who accepted the trade.
+	 * @throws IOException
+	 */
 	public void TradeReadyAccept(Player player) throws IOException {
 		// Switch the accept value for the player who accepted..
 		if (player.account.getAccountID() == sourcePlayer.account.getAccountID()) {
@@ -405,31 +411,36 @@ public class Trade {
 			}
 		}
 	}
-	
-	public void PerformTrade()
-	{
-		//Give and remove items..
+
+	/**
+	 * Performs the trade, giving items to both players and setting the trades
+	 * they are engaged in to null.
+	 */
+	public void PerformTrade() {
+		// Give and remove items..
 		TradeReadyAcceptPacket tradeReadyAcceptPacket = new TradeReadyAcceptPacket();
 		tradeReadyAcceptPacket.outbound_Success = true;
 		tradeReadyAcceptPacket.outbound_WaitingForOtherPlayer = false;
-		
-		for(var set : itemsToGive.entrySet())
-		{
-			//items to give are source player..
-			sourcePlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer).remove(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
-			targetPlayer.account.getPlayerInventory().getItemAccessor(targetPlayer).add(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
+
+		for (var set : itemsToGive.entrySet()) {
+			// items to give are source player..
+			sourcePlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer)
+					.remove(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
+			targetPlayer.account.getPlayerInventory().getItemAccessor(targetPlayer)
+					.add(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
 		}
-		
-		for(var set : itemsToReceive.entrySet())
-		{
-			//items to receive are target player..
-			targetPlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer).remove(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
-			sourcePlayer.account.getPlayerInventory().getItemAccessor(targetPlayer).add(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
+
+		for (var set : itemsToReceive.entrySet()) {
+			// items to receive are target player..
+			targetPlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer)
+					.remove(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
+			sourcePlayer.account.getPlayerInventory().getItemAccessor(targetPlayer)
+					.add(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
 		}
 
 		targetPlayer.client.sendPacket(tradeReadyAcceptPacket);
 		sourcePlayer.client.sendPacket(tradeReadyAcceptPacket);
-		
+
 		targetPlayer.tradeEngagedIn = null;
 		sourcePlayer.tradeEngagedIn = null;
 	}
