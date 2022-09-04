@@ -432,9 +432,9 @@ public class Trade {
 
 		for (var set : itemsToReceive.entrySet()) {
 			// items to receive are target player..
-			targetPlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer)
+			targetPlayer.account.getPlayerInventory().getItemAccessor(targetPlayer)
 					.remove(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
-			sourcePlayer.account.getPlayerInventory().getItemAccessor(targetPlayer)
+			sourcePlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer)
 					.add(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
 		}
 
