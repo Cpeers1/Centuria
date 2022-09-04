@@ -42,7 +42,7 @@ public class TradeExitPacket implements IXtPacket<TradeExitPacket> {
 		Player player = ((Player) client.container);
 		if(player.tradeEngagedIn != null)
 		{
-			player.tradeEngagedIn.TradeExit(player);
+			player.tradeEngagedIn.tradeExit(player);
 		}
 		return true;
 	}
