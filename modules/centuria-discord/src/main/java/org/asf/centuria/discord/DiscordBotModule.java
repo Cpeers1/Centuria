@@ -151,9 +151,14 @@ public class DiscordBotModule implements ICenturiaModule {
 									.getGuildApplicationCommands(gateway.getRestClient().getApplicationId().block(),
 											754991742226399272l)
 									.count().block() == 0)
-								return gateway.getRestClient().getApplicationService().createGuildApplicationCommand(
-										gateway.getRestClient().getApplicationId().block(),
-										event.getGuild().getId().asLong(), cmd);
+								try {
+									gateway.getRestClient().getApplicationService()
+											.createGuildApplicationCommand(
+													gateway.getRestClient().getApplicationId().block(),
+													event.getGuild().getId().asLong(), cmd)
+											.block();
+								} catch (Exception e) {
+								}
 							return Mono.empty();
 						}));
 
