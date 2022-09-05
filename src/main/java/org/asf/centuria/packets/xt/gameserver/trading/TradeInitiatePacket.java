@@ -73,7 +73,7 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 		Player targetPlayer = AccountManager.getInstance().getAccount(inboundUserId).getOnlinePlayerInstance();
 		
 		//Start a new trade.
-		var trade = Trade.StartNewTrade(sourcePlayer, targetPlayer);
+		var trade = Trade.startNewTrade(sourcePlayer, targetPlayer);
 		
 		return true;
 	}

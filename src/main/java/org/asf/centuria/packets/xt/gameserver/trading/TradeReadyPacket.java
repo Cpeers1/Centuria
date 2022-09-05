@@ -8,13 +8,21 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class TradeInitiateRejectPacket implements IXtPacket<TradeInitiateRejectPacket> {
+public class TradeReadyPacket implements IXtPacket<TradeReadyPacket> {
 
-	private static final String PACKET_ID = "tir";
+	private static final String PACKET_ID = "tr";
+	
+	//inbound
+	public int inbound_ReadyState;
+	
+	//outbound
+	public boolean outbound_Success;
+	public String outbound_UserId;
+	public int outbound_ReadyState;
 	
 	@Override
-	public TradeInitiateRejectPacket instantiate() {
-		return new TradeInitiateRejectPacket();
+	public TradeReadyPacket instantiate() {
+		return new TradeReadyPacket();
 	}
 
 	@Override
@@ -24,11 +32,17 @@ public class TradeInitiateRejectPacket implements IXtPacket<TradeInitiateRejectP
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
+		inbound_ReadyState = reader.readInt();
 	}
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		writer.writeInt(-1); // Data prefix
+		
+		writer.writeBoolean(outbound_Success);
+		writer.writeString(outbound_UserId);
+		writer.writeInt(outbound_ReadyState);
+		
 		writer.writeString(""); // Data suffix
 	}
 
@@ -36,13 +50,13 @@ public class TradeInitiateRejectPacket implements IXtPacket<TradeInitiateRejectP
 	public boolean handle(SmartfoxClient client) throws IOException {
 		
 		if (System.getProperty("debugMode") != null) {
-			System.out.println("[TRADE] [TradeInitiateReject] Client to server.");
+			System.out.println("[TRADE] [TradeReady] Client to server: ( readyState: " + inbound_ReadyState + " )");
 		}
 		
 		Player player = ((Player) client.container);
 		if(player.tradeEngagedIn != null)
 		{
-			player.tradeEngagedIn.rejectTrade();
+			player.tradeEngagedIn.tradeReady(player, inbound_ReadyState);
 		}
 		return true;
 	}

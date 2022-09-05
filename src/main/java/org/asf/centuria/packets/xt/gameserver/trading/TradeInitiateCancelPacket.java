@@ -42,7 +42,7 @@ public class TradeInitiateCancelPacket implements IXtPacket<TradeInitiateCancelP
 		Player player = ((Player) client.container);
 		if(player.tradeEngagedIn != null)
 		{
-			player.tradeEngagedIn.CancelTrade();
+			player.tradeEngagedIn.cancelTrade();
 		}
 		return true;
 	}

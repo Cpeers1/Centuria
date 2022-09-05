@@ -18,6 +18,7 @@ import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.enums.players.OnlineStatus;
 import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.ipbans.IpBanManager;
@@ -141,7 +142,10 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new TradeInitiateAcceptPacket());
 		registerPacket(new TradeExitPacket());
 		registerPacket(new TradeAddRemoveItemPacket());
-
+		registerPacket(new TradeReadyPacket());
+		registerPacket(new TradeReadyRejectPacket());
+		registerPacket(new TradeReadyAcceptPacket());
+		
 		// Allow modules to register packets
 		GameServerStartupEvent ev = new GameServerStartupEvent(this, t -> registerPacket(t));
 		EventBus.getInstance().dispatchEvent(ev);
@@ -312,13 +316,10 @@ public class GameServer extends BaseSmartfoxServer {
 				// Send online status update
 				Player player = getPlayer(ent.playerID);
 				if (player != null) {
-					XtWriter wr = new XtWriter();
-					wr.writeString("rfosu"); // ID
-					wr.writeInt(-1); // Data prefix
-					wr.writeString(plr.account.getAccountID()); // Player who joined
-					wr.writeInt(1); // Online
-					wr.writeString(""); // Data suffix
-					player.client.sendPacket(wr.encode());
+					RelationshipFollowOnlineStatusUpdate res = new RelationshipFollowOnlineStatusUpdate();
+					res.userUUID = plr.account.getAccountID();
+					res.playerOnlineStatus = OnlineStatus.LoggedInToRoom;
+					client.sendPacket(res);
 				}
 			}
 		}
@@ -503,13 +504,10 @@ public class GameServer extends BaseSmartfoxServer {
 						// Send online status update
 						Player player = getPlayer(ent.playerID);
 						if (player != null) {
-							XtWriter wr = new XtWriter();
-							wr.writeString("rfosu"); // ID
-							wr.writeInt(-1); // Data prefix
-							wr.writeString(plr.account.getAccountID()); // Player who left
-							wr.writeInt(-1); // Offline
-							wr.writeString(""); // Data suffix
-							player.client.sendPacket(wr.encode());
+							RelationshipFollowOnlineStatusUpdate res = new RelationshipFollowOnlineStatusUpdate();
+							res.userUUID = plr.account.getAccountID();
+							res.playerOnlineStatus = OnlineStatus.Offline;
+							client.sendPacket(res);
 						}
 					}
 				}

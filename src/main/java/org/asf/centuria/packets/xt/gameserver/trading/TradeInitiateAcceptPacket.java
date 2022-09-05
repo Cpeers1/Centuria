@@ -42,7 +42,7 @@ public class TradeInitiateAcceptPacket implements IXtPacket<TradeInitiateAcceptP
 		Player player = ((Player) client.container);
 		if(player.tradeEngagedIn != null)
 		{
-			player.tradeEngagedIn.AcceptTrade(PACKET_ID);
+			player.tradeEngagedIn.tradeAccept(PACKET_ID);
 		}
 		return true;
 	}
