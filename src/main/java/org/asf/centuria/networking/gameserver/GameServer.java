@@ -142,7 +142,10 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new TradeInitiateAcceptPacket());
 		registerPacket(new TradeExitPacket());
 		registerPacket(new TradeAddRemoveItemPacket());
-
+		registerPacket(new TradeReadyPacket());
+		registerPacket(new TradeReadyRejectPacket());
+		registerPacket(new TradeReadyAcceptPacket());
+		
 		// Allow modules to register packets
 		GameServerStartupEvent ev = new GameServerStartupEvent(this, t -> registerPacket(t));
 		EventBus.getInstance().dispatchEvent(ev);

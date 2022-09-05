@@ -59,6 +59,7 @@ public class HistoryPacket extends AbstractChatPacket {
 				try {
 					obj.addProperty("message_id", UUID.nameUUIDFromBytes(msg.sentAt.getBytes("UTF-8")).toString());
 				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
 				}
 				obj.add("participants", members);
 				obj.addProperty("sent_at", msg.sentAt);
