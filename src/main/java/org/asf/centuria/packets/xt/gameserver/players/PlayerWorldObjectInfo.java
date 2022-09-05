@@ -3,11 +3,11 @@ package org.asf.centuria.packets.xt.gameserver.players;
 import java.io.IOException;
 
 import org.asf.centuria.data.XtWriter;
-import org.asf.centuria.packets.xt.gameserver.objects.WorldObjectInfo;
+import org.asf.centuria.packets.xt.gameserver.world.WorldObjectInfoPacket;
 
 import com.google.gson.JsonObject;
 
-public class PlayerWorldObjectInfo extends WorldObjectInfo {
+public class PlayerWorldObjectInfo extends WorldObjectInfoPacket {
     public JsonObject look; //TODO: make into a component (eventually)
     public String displayName;
     public int unknownValue; //TODO: what is this??

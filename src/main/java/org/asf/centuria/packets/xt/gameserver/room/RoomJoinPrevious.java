@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.world;
+package org.asf.centuria.packets.xt.gameserver.room;
 
 import java.io.IOException;
 

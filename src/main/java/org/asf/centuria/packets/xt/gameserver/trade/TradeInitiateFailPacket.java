@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.trading;
+package org.asf.centuria.packets.xt.gameserver.trade;
 
 import java.io.IOException;
 
@@ -8,13 +8,13 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class TradeInitiateCancelPacket implements IXtPacket<TradeInitiateCancelPacket> {
+public class TradeInitiateFailPacket implements IXtPacket<TradeInitiateFailPacket> {
 
 	private static final String PACKET_ID = "tic";
 	
 	@Override
-	public TradeInitiateCancelPacket instantiate() {
-		return new TradeInitiateCancelPacket();
+	public TradeInitiateFailPacket instantiate() {
+		return new TradeInitiateFailPacket();
 	}
 
 	@Override
@@ -36,14 +36,9 @@ public class TradeInitiateCancelPacket implements IXtPacket<TradeInitiateCancelP
 	public boolean handle(SmartfoxClient client) throws IOException {
 		
 		if (System.getProperty("debugMode") != null) {
-			System.out.println("[TRADE] [TradeInitiateCancel] Client to server.");
+			System.out.println("[TRADE] [TradeInitateFail] Client to server.");
 		}
 		
-		Player player = ((Player) client.container);
-		if(player.tradeEngagedIn != null)
-		{
-			player.tradeEngagedIn.cancelTrade();
-		}
 		return true;
 	}
 

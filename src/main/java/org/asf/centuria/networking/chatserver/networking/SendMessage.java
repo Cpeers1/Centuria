@@ -28,7 +28,7 @@ import org.asf.centuria.modules.events.maintenance.MaintenanceStartEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.centuria.packets.xt.gameserver.world.JoinRoom;
+import org.asf.centuria.packets.xt.gameserver.room.RoomJoin;
 import org.asf.centuria.social.SocialManager;
 
 import com.google.gson.JsonObject;
@@ -731,7 +731,7 @@ public class SendMessage extends AbstractChatPacket {
 						for (Player plr : Centuria.gameServer.getPlayers()) {
 							if (plr.account.getAccountID().equals(client.getPlayer().getAccountID())) {
 								// Load the requested room
-								JoinRoom join = new JoinRoom();
+								RoomJoin join = new RoomJoin();
 								join.levelType = 0; // World
 								join.levelID = 1718;
 

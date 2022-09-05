@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.objects;
+package org.asf.centuria.packets.xt.gameserver.world;
 
 import java.io.IOException;
 
@@ -7,15 +7,15 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class WorldObjectDelete implements IXtPacket<WorldObjectDelete> {
+public class WorldObjectDeletePacket implements IXtPacket<WorldObjectDeletePacket> {
 
 	private static final String PACKET_ID = "od";
 
 	public String objectId;
 
 	@Override
-	public WorldObjectDelete instantiate() {
-		return new WorldObjectDelete(objectId);
+	public WorldObjectDeletePacket instantiate() {
+		return new WorldObjectDeletePacket(objectId);
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class WorldObjectDelete implements IXtPacket<WorldObjectDelete> {
 		return true;
 	}
 
-    public WorldObjectDelete(String objectId)
+    public WorldObjectDeletePacket(String objectId)
     {
         super();
         this.objectId = objectId;

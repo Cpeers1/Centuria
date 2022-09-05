@@ -9,7 +9,7 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.minigames.TwiggleBuilders;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.packets.xt.gameserver.world.JoinRoom;
+import org.asf.centuria.packets.xt.gameserver.room.RoomJoin;
 
 public class MinigameJoin implements IXtPacket<MinigameJoin> {
 
@@ -68,7 +68,7 @@ public class MinigameJoin implements IXtPacket<MinigameJoin> {
 		
 
 		// Send response
-		JoinRoom join = new JoinRoom();
+		RoomJoin join = new RoomJoin();
 		join.success = isMinigameSupported;
 		join.levelType = 1;
 		join.levelID = MinigameID;

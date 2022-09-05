@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.trading;
+package org.asf.centuria.packets.xt.gameserver.trade;
 
 import java.io.IOException;
 
@@ -8,13 +8,21 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class TradeInitiateAcceptPacket implements IXtPacket<TradeInitiateAcceptPacket> {
+public class TradeReadyPacket implements IXtPacket<TradeReadyPacket> {
 
-	private static final String PACKET_ID = "tia";
+	private static final String PACKET_ID = "tr";
+	
+	//inbound
+	public int inbound_ReadyState;
+	
+	//outbound
+	public boolean outbound_Success;
+	public String outbound_UserId;
+	public int outbound_ReadyState;
 	
 	@Override
-	public TradeInitiateAcceptPacket instantiate() {
-		return new TradeInitiateAcceptPacket();
+	public TradeReadyPacket instantiate() {
+		return new TradeReadyPacket();
 	}
 
 	@Override
@@ -24,11 +32,17 @@ public class TradeInitiateAcceptPacket implements IXtPacket<TradeInitiateAcceptP
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
+		inbound_ReadyState = reader.readInt();
 	}
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		writer.writeInt(-1); // Data prefix
+		
+		writer.writeBoolean(outbound_Success);
+		writer.writeString(outbound_UserId);
+		writer.writeInt(outbound_ReadyState);
+		
 		writer.writeString(""); // Data suffix
 	}
 
@@ -36,13 +50,13 @@ public class TradeInitiateAcceptPacket implements IXtPacket<TradeInitiateAcceptP
 	public boolean handle(SmartfoxClient client) throws IOException {
 		
 		if (System.getProperty("debugMode") != null) {
-			System.out.println("[TRADE] [TradeInitiateAccept] Client to server.");
+			System.out.println("[TRADE] [TradeReady] Client to server: ( readyState: " + inbound_ReadyState + " )");
 		}
 		
 		Player player = ((Player) client.container);
 		if(player.tradeEngagedIn != null)
 		{
-			player.tradeEngagedIn.tradeAccept(PACKET_ID);
+			player.tradeEngagedIn.tradeReady(player, inbound_ReadyState);
 		}
 		return true;
 	}

@@ -8,13 +8,22 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class RoomJoinTutorial implements IXtPacket<RoomJoinTutorial> {
+public class WorldObjectRespawnSetPacket implements IXtPacket<WorldObjectRespawnSetPacket> {
 
-	private static final String PACKET_ID = "rjt";
-	
+	private static final String PACKET_ID = "ors";
+
+	public double x;
+	public double y;
+	public double z;
+
+	public double rw;
+	public double rx;
+	public double ry;
+	public double rz;
+
 	@Override
-	public RoomJoinTutorial instantiate() {
-		return new RoomJoinTutorial();
+	public WorldObjectRespawnSetPacket instantiate() {
+		return new WorldObjectRespawnSetPacket();
 	}
 
 	@Override
@@ -24,6 +33,13 @@ public class RoomJoinTutorial implements IXtPacket<RoomJoinTutorial> {
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
+		x = reader.readDouble();
+		y = reader.readDouble();
+		z = reader.readDouble();
+		rw = reader.readDouble();
+		rx = reader.readDouble();
+		ry = reader.readDouble();
+		rz = reader.readDouble();
 	}
 
 	@Override
@@ -32,9 +48,9 @@ public class RoomJoinTutorial implements IXtPacket<RoomJoinTutorial> {
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		// Make the client load the tutorial
+		// Set respawn
 		Player plr = (Player) client.container;
-		plr.teleportToRoom(25280, 4, -1, "room_25280", "");
+		plr.respawn = x + "%" + y + "%" + z + "%" + rw + "%" + rx + "%" + ry + "%" + rz;
 		return true;
 	}
 

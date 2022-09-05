@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.asf.centuria.entities.players.Player;
-import org.asf.centuria.packets.xt.gameserver.trading.*;
+import org.asf.centuria.packets.xt.gameserver.trade.*;
 
 import com.google.gson.JsonObject;
 

@@ -88,7 +88,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Send to tutorial if new
 		if (plr.account.isPlayerNew()) {
 			// Tutorial spawn
-			WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
+			WorldObjectInfoAvatarLocalPacket res = new WorldObjectInfoAvatarLocalPacket();
 			res.x = 107.67;
 			res.y = 8.85;
 			res.z = -44.85;
@@ -286,7 +286,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					continue;
 				}
 
-				WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
+				WorldObjectInfoAvatarLocalPacket res = new WorldObjectInfoAvatarLocalPacket();
 				res.x = player.lastPosX;
 				res.y = player.lastPosY;
 				res.z = player.lastPosZ;
@@ -310,7 +310,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Spawn at target if present
 		if (plr.targetPos != null && plr.targetRot != null) {
-			WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
+			WorldObjectInfoAvatarLocalPacket res = new WorldObjectInfoAvatarLocalPacket();
 			res.x = plr.targetPos.x;
 			res.y = plr.targetPos.y;
 			res.z = plr.targetPos.z;
@@ -345,7 +345,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				System.out.println("Player teleport: " + plr.account.getDisplayName() + ": "
 						+ helper.get("worldID").getAsString());
 
-				WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
+				WorldObjectInfoAvatarLocalPacket res = new WorldObjectInfoAvatarLocalPacket();
 				res.x = helper.get("spawnX").getAsDouble();
 				res.y = helper.get("spawnY").getAsDouble();
 				res.z = helper.get("spawnZ").getAsDouble();
@@ -370,7 +370,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Spawn not found
 		System.err.println("Player teleport: " + plr.account.getDisplayName() + " to unrecognized spawn!");
-		WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
+		WorldObjectInfoAvatarLocalPacket res = new WorldObjectInfoAvatarLocalPacket();
 		res.x = 0;
 		res.y = 80;
 		res.z = 0;

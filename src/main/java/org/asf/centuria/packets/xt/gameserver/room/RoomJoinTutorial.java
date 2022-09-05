@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.trading;
+package org.asf.centuria.packets.xt.gameserver.room;
 
 import java.io.IOException;
 
@@ -8,13 +8,13 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class TradeInitiateFailPacket implements IXtPacket<TradeInitiateFailPacket> {
+public class RoomJoinTutorial implements IXtPacket<RoomJoinTutorial> {
 
-	private static final String PACKET_ID = "tic";
+	private static final String PACKET_ID = "rjt";
 	
 	@Override
-	public TradeInitiateFailPacket instantiate() {
-		return new TradeInitiateFailPacket();
+	public RoomJoinTutorial instantiate() {
+		return new RoomJoinTutorial();
 	}
 
 	@Override
@@ -28,17 +28,13 @@ public class TradeInitiateFailPacket implements IXtPacket<TradeInitiateFailPacke
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data prefix
-		writer.writeString(""); // Data suffix
 	}
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		
-		if (System.getProperty("debugMode") != null) {
-			System.out.println("[TRADE] [TradeInitateFail] Client to server.");
-		}
-		
+		// Make the client load the tutorial
+		Player plr = (Player) client.container;
+		plr.teleportToRoom(25280, 4, -1, "room_25280", "");
 		return true;
 	}
 

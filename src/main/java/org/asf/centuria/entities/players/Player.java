@@ -20,10 +20,10 @@ import org.asf.centuria.enums.actors.ActorActionType;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
-import org.asf.centuria.packets.xt.gameserver.objects.WorldObjectDelete;
 import org.asf.centuria.packets.xt.gameserver.players.PlayerWorldObjectInfo;
+import org.asf.centuria.packets.xt.gameserver.room.RoomJoin;
 import org.asf.centuria.packets.xt.gameserver.social.JumpToPlayer;
-import org.asf.centuria.packets.xt.gameserver.world.JoinRoom;
+import org.asf.centuria.packets.xt.gameserver.world.WorldObjectDeletePacket;
 import org.asf.centuria.social.SocialManager;
 
 import com.google.gson.JsonArray;
@@ -82,7 +82,7 @@ public class Player {
 	
 	public void destroyAt(Player player) {
 		// Delete character
-		WorldObjectDelete packet = new WorldObjectDelete(account.getAccountID());
+		WorldObjectDeletePacket packet = new WorldObjectDeletePacket(account.getAccountID());
 		player.client.sendPacket(packet);
 		lastAction = ActorActionType.None;
 	}
@@ -176,7 +176,7 @@ public class Player {
 			}
 
 			// Build room join
-			JoinRoom join = new JoinRoom();
+			RoomJoin join = new RoomJoin();
 			join.success = isAllowed;
 			join.levelType = 2;
 			join.levelID = 1689;
@@ -209,7 +209,7 @@ public class Player {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			client.sendPacket(new JoinRoom().markAsFailed());
+			client.sendPacket(new RoomJoin().markAsFailed());
 			return false;
 		}
 	}
@@ -262,7 +262,7 @@ public class Player {
 			}
 
 			// Build room join
-			JoinRoom join = new JoinRoom();
+			RoomJoin join = new RoomJoin();
 			join.success = isAllowed;
 			join.levelType = 2;
 			join.levelID = 1689;
@@ -300,7 +300,7 @@ public class Player {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			client.sendPacket(new JoinRoom().markAsFailed());
+			client.sendPacket(new RoomJoin().markAsFailed());
 			return false;
 		}
 
@@ -330,7 +330,7 @@ public class Player {
 			}
 
 			// Assign room
-			JoinRoom join = new JoinRoom();
+			RoomJoin join = new RoomJoin();
 			join.levelType = levelType;
 			join.levelID = levelID;
 			join.teleport = teleport;
@@ -355,7 +355,7 @@ public class Player {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			client.sendPacket(new JoinRoom().markAsFailed());
+			client.sendPacket(new RoomJoin().markAsFailed());
 			return false;
 		}
 	}
@@ -387,7 +387,7 @@ public class Player {
 			}
 
 			// Assign room
-			JoinRoom join = new JoinRoom();
+			RoomJoin join = new RoomJoin();
 			join.levelType = levelType;
 			join.levelID = levelID;
 			join.roomIdentifier = plr.pendingRoom;
@@ -418,7 +418,7 @@ public class Player {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			client.sendPacket(new JoinRoom().markAsFailed());
+			client.sendPacket(new RoomJoin().markAsFailed());
 			return false;
 		}
 	}
@@ -439,7 +439,7 @@ public class Player {
 			plr.levelType = plr.previousLevelType;
 
 			// Send response
-			JoinRoom join = new JoinRoom();
+			RoomJoin join = new RoomJoin();
 			join.levelType = plr.levelType;
 			join.levelID = plr.pendingLevelID;
 			client.sendPacket(join);

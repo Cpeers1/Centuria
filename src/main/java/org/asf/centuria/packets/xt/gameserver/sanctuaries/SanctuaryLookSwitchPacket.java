@@ -9,7 +9,7 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.packets.xt.gameserver.world.JoinRoom;
+import org.asf.centuria.packets.xt.gameserver.room.RoomJoin;
 
 public class SanctuaryLookSwitchPacket implements IXtPacket<SanctuaryLookSwitchPacket> {
 
@@ -65,7 +65,7 @@ public class SanctuaryLookSwitchPacket implements IXtPacket<SanctuaryLookSwitchP
 		for (Player player : ((GameServer) client.getServer()).getPlayers()) {
 			if (player.room != null && player.room.equals("sanctuary_" + plr.account.getAccountID())) {
 				// Build room join
-				JoinRoom join = new JoinRoom();
+				RoomJoin join = new RoomJoin();
 				join.levelType = 2;
 				join.levelID = 1689;
 				join.roomIdentifier = "sanctuary_" + plr.account.getAccountID();

@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.trading;
+package org.asf.centuria.packets.xt.gameserver.trade;
 
 import java.io.IOException;
 

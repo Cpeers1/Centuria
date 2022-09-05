@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.objects;
+package org.asf.centuria.packets.xt.gameserver.world;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
+public class WorldObjectUpdatePacket implements IXtPacket<WorldObjectUpdatePacket> {
 
 	private static final String PACKET_ID = "ou";
 
@@ -19,8 +19,8 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 	private String data;
 
 	@Override
-	public WorldObjectUpdate instantiate() {
-		return new WorldObjectUpdate();
+	public WorldObjectUpdatePacket instantiate() {
+		return new WorldObjectUpdatePacket();
 	}
 
 	@Override

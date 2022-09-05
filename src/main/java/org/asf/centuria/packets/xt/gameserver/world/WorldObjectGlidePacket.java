@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.objects;
+package org.asf.centuria.packets.xt.gameserver.world;
 
 import java.io.IOException;
 
@@ -9,15 +9,15 @@ import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class WorldObjectGlide implements IXtPacket<WorldObjectGlide> {
+public class WorldObjectGlidePacket implements IXtPacket<WorldObjectGlidePacket> {
 
 	private static final String PACKET_ID = "og";
 
 	private String playerUUID;
 
 	@Override
-	public WorldObjectGlide instantiate() {
-		return new WorldObjectGlide();
+	public WorldObjectGlidePacket instantiate() {
+		return new WorldObjectGlidePacket();
 	}
 
 	@Override

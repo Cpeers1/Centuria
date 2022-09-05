@@ -7,7 +7,7 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class WorldObjectInfoAvatarLocal implements IXtPacket<WorldObjectInfoAvatarLocal> {
+public class WorldObjectInfoAvatarLocalPacket implements IXtPacket<WorldObjectInfoAvatarLocalPacket> {
 	
 	private static final String PACKET_ID = "oial";
 
@@ -21,8 +21,8 @@ public class WorldObjectInfoAvatarLocal implements IXtPacket<WorldObjectInfoAvat
 	public double rw;
 
 	@Override
-	public WorldObjectInfoAvatarLocal instantiate() {
-		return new WorldObjectInfoAvatarLocal();
+	public WorldObjectInfoAvatarLocalPacket instantiate() {
+		return new WorldObjectInfoAvatarLocalPacket();
 	}
 
 	@Override
