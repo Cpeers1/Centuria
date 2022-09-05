@@ -69,11 +69,11 @@ public class QuestManager extends InteractionModule {
 
 	@Override
 	public void prepareWorld(int levelID, List<String> ids, Player player) {
-		String activeQuest = getActiveQuest(player.account);
-		if (activeQuest != null) {
-			
-			activeQuest = activeQuest;
-		}
+//		String activeQuest = getActiveQuest(player.account);
+//		if (activeQuest != null) {
+//			
+//			activeQuest = activeQuest;
+//		}
 	}
 
 	@Override
