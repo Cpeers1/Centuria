@@ -21,10 +21,10 @@ public class ModuleCommands implements IEventReceiver {
 	@EventListener
 	public void initCommands(ModuleCommandSyntaxListEvent ev) {
 		// Add pair and unpair
-		ev.addCommandSyntaxMessage("pair <pair-code>");
-		ev.addCommandSyntaxMessage("transferownership <pair-code> [confirm]");
-		ev.addCommandSyntaxMessage("ipblock [list/unblock] [<ip-address>]");
-		ev.addCommandSyntaxMessage("ipwhitelist [list/revoke] [<ip-address>]");
+		ev.addCommandSyntaxMessage("pairdiscord <pair-code>");
+		ev.addCommandSyntaxMessage("transferdiscord <pair-code> [confirm]");
+		ev.addCommandSyntaxMessage("2faipblock [list/unblock] [<ip-address>]");
+		ev.addCommandSyntaxMessage("2faipwhitelist [list/revoke] [<ip-address>]");
 
 		// Add moderator command for pulling user info
 		if (ev.hasPermission("moderator")) {
@@ -37,6 +37,26 @@ public class ModuleCommands implements IEventReceiver {
 		// Handle command
 		switch (ev.getCommandID()) {
 		case "pair": {
+			ev.respond(
+					"The generic pair command has been deprecated, use pairdiscord instead (same syntax as the legacy command)");
+			break;
+		}
+		case "transferownership": {
+			ev.respond(
+					"The generic transferownership command has been deprecated, use v instead (same syntax as the legacy command)");
+			break;
+		}
+		case "ipblock": {
+			ev.respond(
+					"The generic ipblock command has been deprecated, use 2faipblock instead (same syntax as the legacy command)");
+			break;
+		}
+		case "ipwhitelist": {
+			ev.respond(
+					"The generic ipwhitelist command has been deprecated, use 2faipwhitelist instead (same syntax as the legacy command)");
+			break;
+		}
+		case "pairdiscord": {
 			if (ev.getCommandArguments().length < 1) {
 				// Respond with error message
 				ev.respond("Missing argument: pair-code");
@@ -80,7 +100,7 @@ public class ModuleCommands implements IEventReceiver {
 
 			break;
 		}
-		case "transferownership": {
+		case "transferdiscord": {
 			if (ev.getCommandArguments().length < 1) {
 				// Respond with error message
 				ev.respond("Missing argument: pair-code");
@@ -134,7 +154,7 @@ public class ModuleCommands implements IEventReceiver {
 					+ discordUser.getTag() + "!");
 			break;
 		}
-		case "ipblock": {
+		case "2faipblock": {
 			// IP block utility
 
 			// Verify arguments
@@ -190,7 +210,7 @@ public class ModuleCommands implements IEventReceiver {
 
 			break;
 		}
-		case "ipwhitelist": {
+		case "2faipwhitelist": {
 			// IP whitelist utility
 
 			// Verify arguments

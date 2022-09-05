@@ -9,6 +9,7 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.modules.InspirationCollectionModule;
 import org.asf.centuria.interactions.modules.InteractionModule;
+import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.interactions.modules.ResourceCollectionModule;
 import org.asf.centuria.interactions.modules.ShopkeeperModule;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
@@ -20,6 +21,7 @@ public class InteractionManager {
 	static {
 		// Add modules
 		// TODO: quest module (needs to be loaded BEFORE resource collection)
+		modules.add(new QuestManager());
 		modules.add(new ShopkeeperModule());
 		modules.add(new InspirationCollectionModule());
 		modules.add(new ResourceCollectionModule());

@@ -155,6 +155,18 @@ public class NetworkedObjects {
 	}
 
 	/**
+	 * Retrieves level overrides for a specific level ID
+	 * 
+	 * @param levelId Level ID
+	 * @return Array of override collection IDs
+	 */
+	public static String[] getOverridesFor(String levelId) {
+		if (!levelOverrideMap.containsKey(levelId))
+			return new String[0];
+		return levelOverrideMap.get(levelId).toArray(t -> new String[t]);
+	}
+
+	/**
 	 * Retrieves object collection IDs by LevelId
 	 * 
 	 * @param levelId Level ID to retrieve collections for

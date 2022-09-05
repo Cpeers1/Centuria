@@ -7,8 +7,6 @@ import org.asf.centuria.discord.DiscordBotModule;
 import org.asf.centuria.discord.ServerConfigUtils;
 import org.asf.centuria.modules.eventbus.EventListener;
 import org.asf.centuria.modules.eventbus.IEventReceiver;
-import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
-import org.asf.centuria.modules.events.maintenance.MaintenanceStartEvent;
 import org.asf.centuria.modules.events.updates.ServerUpdateEvent;
 
 import com.google.gson.JsonObject;
@@ -53,7 +51,7 @@ public class AnnouncementHandlers implements IEventReceiver {
 			if (event.hasVersionInfo()) {
 				messageComplete += "Changelog:\n";
 				messageComplete += "```\n";
-				InputStream strm = new URL("https://raw.githubusercontent.com/SkySwimmer/Centuria/main/changelogs/"
+				InputStream strm = new URL("https://raw.githubusercontent.com/Cpeers1/Centuria/main/changelogs/"
 						+ event.getUpdateVersion()).openStream();
 				String log = new String(strm.readAllBytes(), "UTF-8");
 				strm.close();

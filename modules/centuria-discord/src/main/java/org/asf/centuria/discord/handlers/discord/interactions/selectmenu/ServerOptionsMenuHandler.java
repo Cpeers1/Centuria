@@ -28,7 +28,8 @@ public class ServerOptionsMenuHandler {
 		JsonObject config = ServerConfigUtils.getServerConfig(gid);
 		if (config.has(key))
 			config.remove(key);
-		config.addProperty(key, option);
+		if (!option.equals("c/reset"))
+			config.addProperty(key, option);
 		ServerConfigUtils.saveServerConfig(gid, config);
 
 		// Reply success

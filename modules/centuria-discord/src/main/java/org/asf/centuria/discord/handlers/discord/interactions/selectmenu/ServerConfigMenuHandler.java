@@ -33,8 +33,7 @@ public class ServerConfigMenuHandler {
 		String option = event.getValues().get(0);
 		switch (option) {
 		case "modrole":
-			return event.reply(roleSetting(
-					"moderatorRole", "Moderator Role",
+			return event.reply(roleSetting("moderatorRole", "Moderator Role",
 					new String[] { "moderator", "mod", "centuria" }, event.getMessage().get().getGuild().block()));
 		case "devrole":
 			return event.reply(roleSetting("developerRole", "Developer Role",
@@ -73,8 +72,9 @@ public class ServerConfigMenuHandler {
 			lastSelectedChannel = obj.get(configOptionName).getAsString();
 
 		// Build role list
-		int i = 0;
-		ArrayList<Option> roleSelectionList = new ArrayList<Option>();
+		int i = 1;
+		ArrayList<Option> chSelectionList = new ArrayList<Option>();
+		chSelectionList.add(Option.of("Reset", "c/reset"));
 		for (GuildChannel channel : guild.getChannels(EntityRetrievalStrategy.STORE_FALLBACK_REST).toIterable()) {
 			if (channel.getType() != Type.GUILD_TEXT)
 				continue;
@@ -88,7 +88,7 @@ public class ServerConfigMenuHandler {
 			Option opt = Option.of(gChName, gChId);
 			if (lastSelectedChannel != null && lastSelectedChannel.equals(gChId))
 				opt = opt.withDefault(true);
-			roleSelectionList.add(opt);
+			chSelectionList.add(opt);
 
 			i++;
 			// Prevent size from going past the discord limit
@@ -108,7 +108,7 @@ public class ServerConfigMenuHandler {
 			Option opt = Option.of(gChName, gChId);
 			if (lastSelectedChannel != null && lastSelectedChannel.equals(gChId))
 				opt = opt.withDefault(true);
-			roleSelectionList.add(opt);
+			chSelectionList.add(opt);
 
 			i++;
 			// Prevent size from going past the discord limit
@@ -119,7 +119,7 @@ public class ServerConfigMenuHandler {
 		// Build message
 		InteractionApplicationCommandCallbackSpec.Builder msg = InteractionApplicationCommandCallbackSpec.builder();
 		msg.content("Channel configuration: **" + channelName + "**");
-		msg.addComponent(ActionRow.of(SelectMenu.of("serveroptionselection/" + configOptionName, roleSelectionList)));
+		msg.addComponent(ActionRow.of(SelectMenu.of("serveroptionselection/" + configOptionName, chSelectionList)));
 
 		// Return message
 		return msg.ephemeral(true).build();
@@ -135,8 +135,9 @@ public class ServerConfigMenuHandler {
 			lastSelectedRole = obj.get(configOptionName).getAsString();
 
 		// Build role list
-		int i = 0;
+		int i = 1;
 		ArrayList<Option> roleSelectionList = new ArrayList<Option>();
+		roleSelectionList.add(Option.of("Reset", "c/reset"));
 		for (Role role : guild.getRoles(EntityRetrievalStrategy.STORE_FALLBACK_REST).toIterable()) {
 			if (role.isEveryone())
 				continue;
