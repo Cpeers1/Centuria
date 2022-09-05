@@ -63,7 +63,7 @@ import org.asf.rats.ConnectiveServerFactory;
 
 public class Centuria {
 	// Update
-	public static final String SERVER_UPDATE_VERSION = "1.1.2.2.B1";
+	public static final String SERVER_UPDATE_VERSION = "1.2.0.B1";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/centuria";
 
 	// Configuration
