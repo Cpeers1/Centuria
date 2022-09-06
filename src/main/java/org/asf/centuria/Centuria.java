@@ -36,6 +36,8 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
 import org.asf.connective.https.ConnectiveHTTPSServer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.asf.centuria.entities.components.ComponentManager;
 import org.asf.centuria.entities.inventoryitems.InventoryItemManager;
 import org.asf.centuria.entities.players.Player;
@@ -67,6 +69,7 @@ public class Centuria {
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/centuria";
 
 	// Configuration
+	public static Logger logger = LogManager.getLogger("CENTURIA");
 	public static boolean allowRegistration = true;
 	public static boolean giveAllAvatars = true;
 	public static boolean giveAllMods = true;
@@ -122,6 +125,13 @@ public class Centuria {
 		System.out.println("--------------------------------------------------------------------");
 		System.out.println("");
 
+		// Setup logging
+		if (System.getProperty("debugMode") != null) {
+			System.setProperty("log4j2.configurationFile", Centuria.class.getResource("/log4j2-ide.xml").toString());
+		} else {
+			System.setProperty("log4j2.configurationFile", Centuria.class.getResource("/log4j2.xml").toString());
+		}
+
 		// Load modules
 		ModuleManager.getInstance().initializeComponents();
 
@@ -174,8 +184,7 @@ public class Centuria {
 		}
 
 		// Updater
-		if (!disableUpdater
-				&& !Centuria.debugMode) {
+		if (!disableUpdater && !Centuria.debugMode) {
 			// Check for updates
 			if (shouldUpdate(updateChannel)) {
 				// Dispatch event
@@ -349,8 +358,8 @@ public class Centuria {
 							+ "give-all-clothes=true\n" + "give-all-wings=true\n" + "give-all-sanctuary-types=true\n"
 							+ "give-all-furniture=true\n" + "give-all-currency=true\n" + "give-all-resources=true\n"
 							+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
-							+ "encrypt-game=false\n" + "debug-mode=false\n" + "\nvpn-user-whitelist=vpn-whitelist\n" + "vpn-ipv4-banlist=\n"
-							+ "vpn-ipv6-banlist=");
+							+ "encrypt-game=false\n" + "debug-mode=false\n" + "\nvpn-user-whitelist=vpn-whitelist\n"
+							+ "vpn-ipv4-banlist=\n" + "vpn-ipv6-banlist=");
 		}
 
 		// Parse properties
@@ -405,7 +414,7 @@ public class Centuria {
 		debugMode = properties.getOrDefault("debug-mode", "false").equals("true");
 
 		// Start the servers
-		System.out.println("Starting Emulated Feral API server...");
+		Centuria.logger.info("Starting Emulated Feral API server...");
 
 		//
 		// Start API server
@@ -422,9 +431,9 @@ public class Centuria {
 
 			apiServer = factory.build();
 		} catch (Exception e) {
-			System.err.println("Unable to start on port " + Integer.parseInt(properties.get("api-port"))
+			Centuria.logger.fatal("Unable to start on port " + Integer.parseInt(properties.get("api-port"))
 					+ "! Switching to debug mode!");
-			System.err.println("If you are not attempting to debug the server, please run as root.");
+			Centuria.logger.fatal("If you are not attempting to debug the server, please run as root.");
 
 			factory = new ConnectiveServerFactory().setPort(6970).setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
 					.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT);
@@ -451,7 +460,7 @@ public class Centuria {
 
 		//
 		// Start director server
-		System.out.println("Starting Emulated Feral Director server...");
+		Centuria.logger.info("Starting Emulated Feral Director server...");
 		directorServer = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("director-port")))
 				.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
 				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
@@ -461,7 +470,7 @@ public class Centuria {
 		//
 		// Load game server
 		ServerSocket sock;
-		System.out.println("Starting Emulated Feral Game server...");
+		Centuria.logger.info("Starting Emulated Feral Game server...");
 		if (encryptGame)
 			try {
 				sock = getContext(new File("keystore.jks"),
@@ -512,7 +521,7 @@ public class Centuria {
 
 		//
 		// Start chat server
-		System.out.println("Starting Emulated Feral Chat server...");
+		Centuria.logger.info("Starting Emulated Feral Chat server...");
 		if (encryptChat)
 			try {
 				sock = getContext(new File("keystore.jks"),
@@ -531,14 +540,14 @@ public class Centuria {
 		chatServer.start();
 
 		// Post-initialize modules
-		System.out.println("Post-initializing Centuria modules...");
+		Centuria.logger.info("Post-initializing Centuria modules...");
 		for (ICenturiaModule module : ModuleManager.getInstance().getAllModules()) {
-			System.out.println("Post-initializing module: " + module.id());
+			Centuria.logger.info("Post-initializing module: " + module.id());
 			module.postInit();
 		}
 
 		// Log completion
-		System.out.println("Successfully started emulated servers.");
+		Centuria.logger.info("Successfully started emulated servers.");
 	}
 
 	private static SSLContext getContext(File keystore, char[] password)
@@ -643,7 +652,7 @@ public class Centuria {
 
 	// Updater
 	private static boolean shouldUpdate(String channel) {
-		System.out.println("Checking for updates...");
+		Centuria.logger.info("Checking for updates...");
 
 		try {
 			InputStream updateLog = new URL(Centuria.DOWNLOAD_BASE_URL + "/" + channel + "/update.info").openStream();
@@ -652,8 +661,8 @@ public class Centuria {
 
 			if (!SERVER_UPDATE_VERSION.equals(update)) {
 				// Download the update list
-				System.out.println("Update available, new version: " + update);
-				System.out.println("Preparing to update Centuria...");
+				Centuria.logger.info("Update available, new version: " + update);
+				Centuria.logger.info("Preparing to update Centuria...");
 				InputStream strm = new URL(Centuria.DOWNLOAD_BASE_URL + "/" + channel + "/" + update + "/update.list")
 						.openStream();
 				String fileList = new String(strm.readAllBytes(), "UTF-8").trim();

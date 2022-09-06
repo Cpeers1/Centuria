@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.reflections.Reflections;
 
@@ -39,10 +40,7 @@ public final class ComponentManager {
 			
 			var componentName = componentClass.getDeclaredConstructor().newInstance().getComponentName();
 			
-			if (Centuria.debugMode) {
-				System.out.println("Loading component into component register: " + componentName);
-			}
-			
+			Centuria.logger.debug(MarkerManager.getMarker("COMPONENTS"), "Loading component into component register: " + componentName);			
 			componentRegister.put(componentName, componentClass);	
 		}
 	}

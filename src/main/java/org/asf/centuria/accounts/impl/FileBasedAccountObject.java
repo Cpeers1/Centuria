@@ -442,7 +442,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 		}
 
 		// Log
-		System.out.println("Account deleted: " + getLoginName());
+		Centuria.logger.info("Account deleted: " + getLoginName());
 
 		// Delete inventory
 		inv.delete();
