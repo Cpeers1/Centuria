@@ -7,7 +7,6 @@ import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.discord.DiscordBotModule;
 import org.asf.centuria.discord.LinkUtils;
 import org.asf.centuria.networking.gameserver.GameServer;
-import org.reactivestreams.Publisher;
 
 import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
@@ -128,7 +127,7 @@ public class CommandHandler {
 	 * @param guild   Guild it was run in
 	 * @param gateway Client
 	 */
-	public static Publisher<Object> handle(ApplicationCommandInteractionEvent event, Guild guild,
+	public static Mono<?> handle(ApplicationCommandInteractionEvent event, Guild guild,
 			GatewayDiscordClient gateway) {
 		ApplicationCommandInteractionData data = (ApplicationCommandInteractionData) event.getInteraction().getData()
 				.data().get();

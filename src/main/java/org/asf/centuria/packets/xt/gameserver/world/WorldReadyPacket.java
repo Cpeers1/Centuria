@@ -19,6 +19,7 @@ import org.asf.centuria.enums.sanctuaries.SanctuaryObjectType;
 import org.asf.centuria.interactions.InteractionManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.levels.LevelJoinEvent;
+import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
@@ -126,9 +127,31 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			}
 		}
 
-		try {
-			Thread.sleep(5000); // Temporary wait
-		} catch (InterruptedException e) {
+		// If there is a chat server connection, switch the chat to the new room to get
+		// around the chat room leave bug which causes players to see chat from other
+		// worlds
+		ChatClient chClient = Centuria.chatServer.getClient(plr.account.getAccountID());
+		if (chClient != null) {
+			// Leave old public rooms
+			for (String room : chClient.getRooms()) {
+				if (!chClient.isRoomPrivate(room))
+					chClient.leaveRoom(room);
+			}
+
+			// Join room
+			if (!chClient.isInRoom("room_" + plr.levelID))
+				chClient.joinRoom("room_" + plr.levelID, false);
+
+			// Send response
+			JsonObject res = new JsonObject();
+			res.addProperty("conversationId", "room_" + plr.levelID);
+			res.addProperty("participant", plr.account.getAccountID());
+			res.addProperty("eventId", "conversations.addParticipant");
+			res.addProperty("success", true);
+			chClient.sendPacket(res);
+
+			// Make the player know its in the chat
+			plr.wasInChat = true;
 		}
 
 		// Find spawn

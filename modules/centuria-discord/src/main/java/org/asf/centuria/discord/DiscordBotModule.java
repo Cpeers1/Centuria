@@ -158,6 +158,7 @@ public class DiscordBotModule implements ICenturiaModule {
 													event.getGuild().getId().asLong(), cmd)
 											.block();
 								} catch (Exception e) {
+									// Server did not grant the ability to create commands, lets not crash
 								}
 							return Mono.empty();
 						}));

@@ -11,7 +11,7 @@ import org.asf.centuria.discord.LinkUtils;
 import org.asf.centuria.discord.ServerConfigUtils;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.players.Player;
+import org.asf.centuria.entities.players.Player;
 
 import com.google.gson.JsonObject;
 

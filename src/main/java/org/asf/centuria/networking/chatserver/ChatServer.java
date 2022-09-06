@@ -227,4 +227,17 @@ public class ChatServer {
 		return roomData;
 	}
 
+	/**
+	 * Retrieves chat clients by ID
+	 * 
+	 * @param accountID Account ID
+	 * @return ChatClient instance or null
+	 */
+	public ChatClient getClient(String accountID) {
+		for (ChatClient cl : getClients())
+			if (cl.getPlayer().getAccountID().equals(accountID))
+				return cl;
+		return null;
+	}
+
 }

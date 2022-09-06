@@ -3,7 +3,7 @@ package org.asf.centuria.discord.handlers.game.packets;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.asf.centuria.players.Player;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.data.XtReader;
