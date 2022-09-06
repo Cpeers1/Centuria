@@ -144,24 +144,24 @@ public class DiscordBotModule implements ICenturiaModule {
 						Mono<Void> ev = gateway.on(ButtonInteractionEvent.class, event -> {
 							return InteractionButtonHandler.handle(event, gateway);
 						}).then();
-
-						// Join guild handler
-						ev = ev.then().and(gateway.on(GuildCreateEvent.class, event -> {
-							try {
-								if (gateway.getRestClient().getApplicationService()
-										.getGuildApplicationCommands(gateway.getRestClient().getApplicationId().block(),
-												event.getGuild().getId().asLong())
-										.count().block() == 0)
-									gateway.getRestClient().getApplicationService()
-											.createGuildApplicationCommand(
-													gateway.getRestClient().getApplicationId().block(),
-													event.getGuild().getId().asLong(), cmd)
-											.block();
-							} catch (Exception e) {
-								// Server did not grant the ability to create commands, lets not crash
-							}
-							return Mono.empty();
-						}));
+//
+//						// Join guild handler
+//						ev = ev.then().and(gateway.on(GuildCreateEvent.class, event -> {
+//							try {
+//								if (gateway.getRestClient().getApplicationService()
+//										.getGuildApplicationCommands(gateway.getRestClient().getApplicationId().block(),
+//												event.getGuild().getId().asLong())
+//										.count().block() == 0)
+//									gateway.getRestClient().getApplicationService()
+//											.createGuildApplicationCommand(
+//													gateway.getRestClient().getApplicationId().block(),
+//													event.getGuild().getId().asLong(), cmd)
+//											.block();
+//							} catch (Exception e) {
+//								// Server did not grant the ability to create commands, lets not crash
+//							}
+//							return Mono.empty();
+//						}));
 
 						// Select menu handler
 						ev = ev.then().and(gateway.on(SelectMenuInteractionEvent.class, event -> {
