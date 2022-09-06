@@ -132,7 +132,7 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new SanctuaryUpgradeCompletePacket());
 		registerPacket(new UserVarSetPacket());
 		registerPacket(new InventoryItemInspirationCombinePacket());
-		
+
 		// Trading Packets
 		registerPacket(new TradeListPacket());
 		registerPacket(new TradeInitiatePacket());
@@ -145,7 +145,7 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new TradeReadyPacket());
 		registerPacket(new TradeReadyRejectPacket());
 		registerPacket(new TradeReadyAcceptPacket());
-		
+
 		// Allow modules to register packets
 		GameServerStartupEvent ev = new GameServerStartupEvent(this, t -> registerPacket(t));
 		EventBus.getInstance().dispatchEvent(ev);
@@ -219,9 +219,7 @@ public class GameServer extends BaseSmartfoxServer {
 			}
 
 			if (lockout || shutdown) {
-				sendLoginResponse(client, auth, acc, 
-				-16, 
-				0);
+				sendLoginResponse(client, auth, acc, -16, 0);
 
 				client.disconnect();
 				return;
@@ -230,9 +228,7 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// If the client is out of date, send error
 		if (badClient) {
-			sendLoginResponse(client, auth, acc, 
-			-24, 
-			0);
+			sendLoginResponse(client, auth, acc, -24, 0);
 
 			client.disconnect();
 			return;
@@ -243,9 +239,7 @@ public class GameServer extends BaseSmartfoxServer {
 			System.out.println("User '" + acc.getDisplayName() + "' could not connect: user is banned.");
 
 			// Disconnect with error
-			sendLoginResponse(client, auth, acc,
-			-15,
-			0);
+			sendLoginResponse(client, auth, acc, -15, 0);
 
 			client.disconnect();
 			return;
@@ -256,10 +250,8 @@ public class GameServer extends BaseSmartfoxServer {
 			System.out.println("User '" + acc.getDisplayName() + "' could not connect: user is IP or VPN banned.");
 
 			// Disconnect silently
-			sendLoginResponse(client, auth, acc, 
-			1, 
-			0);
-			
+			sendLoginResponse(client, auth, acc, 1, 0);
+
 			client.disconnect();
 			return;
 		}
@@ -276,10 +268,8 @@ public class GameServer extends BaseSmartfoxServer {
 		AccountLoginEvent ev = new AccountLoginEvent(this, acc, client);
 		EventBus.getInstance().dispatchEvent(ev);
 		if (ev.isHandled() && ev.getStatus() != 1) {
-			sendLoginResponse(client, auth, acc, 
-			ev.getStatus(), 
-			0);
-			
+			sendLoginResponse(client, auth, acc, ev.getStatus(), 0);
+
 			System.out.println("Login failure: " + acc.getLoginName() + ": module terminated login process with code "
 					+ ev.getStatus());
 			client.disconnect();
@@ -300,9 +290,7 @@ public class GameServer extends BaseSmartfoxServer {
 		client.container = plr;
 
 		// Send response
-		sendLoginResponse(client, auth, acc, 
-		1, 
-		plr.account.isPlayerNew() ? 2 : 3);
+		sendLoginResponse(client, auth, acc, 1, plr.account.isPlayerNew() ? 2 : 3);
 
 		// Initial login
 		System.out.println(
@@ -332,7 +320,8 @@ public class GameServer extends BaseSmartfoxServer {
 
 	}
 
-	public void sendLoginResponse(SmartfoxClient client, ClientToServerAuthPacket auth, CenturiaAccount acc, int statusCode, int pendingFlags){
+	public void sendLoginResponse(SmartfoxClient client, ClientToServerAuthPacket auth, CenturiaAccount acc,
+			int statusCode, int pendingFlags) {
 		JsonObject response = new JsonObject();
 		JsonObject b = new JsonObject();
 		b.addProperty("r", auth.rField);
@@ -352,7 +341,7 @@ public class GameServer extends BaseSmartfoxServer {
 		b.add("o", o);
 		response.add("b", b);
 		response.addProperty("t", "xt");
-		
+
 		try {
 			sendPacket(client, response.toString());
 		} catch (IOException e) {
@@ -649,9 +638,15 @@ public class GameServer extends BaseSmartfoxServer {
 	 * @return Player instance or null if offline
 	 */
 	public Player getPlayer(String accountID) {
-		if (players.containsKey(accountID))
-			return players.get(accountID);
-		return null;
+		while (true) {
+			try {
+				if (players.containsKey(accountID))
+					return players.get(accountID);
+				return null;
+			} catch (Exception e) {
+				continue;
+			}
+		}
 	}
 
 }

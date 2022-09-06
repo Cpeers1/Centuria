@@ -142,26 +142,31 @@ public class DiscordBotModule implements ICenturiaModule {
 					Intent.DIRECT_MESSAGES, Intent.GUILD_MEMBERS, Intent.GUILDS)).withGateway(gateway -> {
 						// Button handler
 						Mono<Void> ev = gateway.on(ButtonInteractionEvent.class, event -> {
-							return InteractionButtonHandler.handle(event, gateway);
+							try {
+								InteractionButtonHandler.handle(event, gateway).block();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							return Mono.empty();
 						}).then();
-//
-//						// Join guild handler
-//						ev = ev.then().and(gateway.on(GuildCreateEvent.class, event -> {
-//							try {
-//								if (gateway.getRestClient().getApplicationService()
-//										.getGuildApplicationCommands(gateway.getRestClient().getApplicationId().block(),
-//												event.getGuild().getId().asLong())
-//										.count().block() == 0)
-//									gateway.getRestClient().getApplicationService()
-//											.createGuildApplicationCommand(
-//													gateway.getRestClient().getApplicationId().block(),
-//													event.getGuild().getId().asLong(), cmd)
-//											.block();
-//							} catch (Exception e) {
-//								// Server did not grant the ability to create commands, lets not crash
-//							}
-//							return Mono.empty();
-//						}));
+
+						// Join guild handler
+						ev = ev.then().and(gateway.on(GuildCreateEvent.class, event -> {
+							try {
+								if (gateway.getRestClient().getApplicationService()
+										.getGuildApplicationCommands(gateway.getRestClient().getApplicationId().block(),
+												event.getGuild().getId().asLong())
+										.count().block() == 0)
+									gateway.getRestClient().getApplicationService()
+											.createGuildApplicationCommand(
+													gateway.getRestClient().getApplicationId().block(),
+													event.getGuild().getId().asLong(), cmd)
+											.block();
+							} catch (Exception e) {
+								// Server did not grant the ability to create commands, lets not crash
+							}
+							return Mono.empty();
+						}));
 
 						// Select menu handler
 						ev = ev.then().and(gateway.on(SelectMenuInteractionEvent.class, event -> {
@@ -180,8 +185,13 @@ public class DiscordBotModule implements ICenturiaModule {
 
 						// Slash command handler
 						ev = ev.then().and(gateway.on(ApplicationCommandInteractionEvent.class, event -> {
-							Guild guild = event.getInteraction().getGuild().block();
-							return CommandHandler.handle(event, guild, gateway);
+							try {
+								Guild guild = event.getInteraction().getGuild().block();
+								CommandHandler.handle(event, guild, gateway).block();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							return Mono.empty();
 						}));
 
 						// Command handler
