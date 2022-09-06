@@ -4,12 +4,16 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
+import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemRemovedPacket;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -41,18 +45,43 @@ public class QuestManager extends InteractionModule {
 	 * @return Quest defID string or null if all quests are completed
 	 */
 	public String getActiveQuest(CenturiaAccount player) {
-		JsonObject progressionMap = player.getPlayerInventory().getAccessor().findInventoryObject("311", 22781)
-				.get("components").getAsJsonObject().get("SocialExpanseLinearGenericQuestsCompletion")
-				.getAsJsonObject();
-		JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
-		ArrayList<String> completedQuests = new ArrayList<String>();
-		arr.forEach(t -> completedQuests.add(t.getAsString()));
-		String quest = firstQuest;
-		while (quest != null) {
-			if (!completedQuests.contains(quest))
-				return quest;
+		for (int i = 0; i < 2; i++) {
+			try {
+				JsonObject progressionMap = player.getPlayerInventory().getAccessor().findInventoryObject("311", 22781)
+						.get("components").getAsJsonObject().get("SocialExpanseLinearGenericQuestsCompletion")
+						.getAsJsonObject();
+				JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
+				ArrayList<String> completedQuests = new ArrayList<String>();
+				arr.forEach(t -> completedQuests.add(t.getAsString()));
+				String quest = firstQuest;
+				while (quest != null) {
+					if (!completedQuests.contains(quest))
+						return quest;
 
-			quest = questMap.get(quest);
+					quest = questMap.get(quest);
+				}
+				return null;
+			} catch (Exception e) {
+				// Damaged container, lets reset it
+				JsonObject oldObj = player.getPlayerInventory().getAccessor().removeInventoryObject("311", 22781);
+
+				// Build entry
+				JsonObject questObject = new JsonObject();
+				questObject.add("completedQuests", new JsonArray());
+
+				// Save and send to the client
+				player.getPlayerInventory().getAccessor().createInventoryObject("311", 22781,
+						new ItemComponent("SocialExpanseLinearGenericQuestsCompletion", questObject));
+				var plr = player.getOnlinePlayerInstance();
+				if (plr != null) {
+					InventoryItemRemovedPacket pkR = new InventoryItemRemovedPacket();
+					pkR.items = new String[] { oldObj.get("id").getAsString() };
+					plr.client.sendPacket(pkR);
+					InventoryItemPacket pk = new InventoryItemPacket();
+					pk.item = player.getPlayerInventory().getAccessor().findInventoryObject("311", 22781);
+					plr.client.sendPacket(pk);
+				}
+			}
 		}
 		return null;
 	}
@@ -61,7 +90,8 @@ public class QuestManager extends InteractionModule {
 	 * Retrieves the next quest ID of a player
 	 * 
 	 * @param player Account to retrieve the next quest ID from
-	 * @return Quest defID string or null if all quests are completed after the current one
+	 * @return Quest defID string or null if all quests are completed after the
+	 *         current one
 	 */
 	public String getNextQuest(CenturiaAccount player) {
 		return questMap.get(getActiveQuest(player));
@@ -69,11 +99,11 @@ public class QuestManager extends InteractionModule {
 
 	@Override
 	public void prepareWorld(int levelID, List<String> ids, Player player) {
-//		String activeQuest = getActiveQuest(player.account);
-//		if (activeQuest != null) {
-//			
-//			activeQuest = activeQuest;
-//		}
+		String activeQuest = getActiveQuest(player.account);
+		if (activeQuest != null) {
+
+			activeQuest = activeQuest;
+		}
 	}
 
 	@Override
