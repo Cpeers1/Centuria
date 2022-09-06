@@ -4,12 +4,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.centuria.entities.players.Player;
-import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
@@ -74,9 +72,11 @@ public class QuestManager extends InteractionModule {
 						new ItemComponent("SocialExpanseLinearGenericQuestsCompletion", questObject));
 				var plr = player.getOnlinePlayerInstance();
 				if (plr != null) {
-					InventoryItemRemovedPacket pkR = new InventoryItemRemovedPacket();
-					pkR.items = new String[] { oldObj.get("id").getAsString() };
-					plr.client.sendPacket(pkR);
+					if (oldObj != null) {
+						InventoryItemRemovedPacket pkR = new InventoryItemRemovedPacket();
+						pkR.items = new String[] { oldObj.get("id").getAsString() };
+						plr.client.sendPacket(pkR);
+					}
 					InventoryItemPacket pk = new InventoryItemPacket();
 					pk.item = player.getPlayerInventory().getAccessor().findInventoryObject("311", 22781);
 					plr.client.sendPacket(pk);
