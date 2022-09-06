@@ -3,6 +3,9 @@ package org.asf.centuria.util;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
+import org.apache.logging.log4j.MarkerManager;
+import org.asf.centuria.Centuria;
+
 public class TaskThread extends Thread {
 
 	private ArrayList<Runnable> tasks = new ArrayList<Runnable>();
@@ -42,8 +45,7 @@ public class TaskThread extends Thread {
 					if (task != null)
 						task.run();
 				} catch (Exception e) {
-					System.err.println("Exception in TaskThread " + getName() + ": " + e.getClass().getTypeName()
-							+ (e.getMessage() != null ? ": " + e.getMessage() : ""));
+					Centuria.logger.error(MarkerManager.getMarker("TaskThreads"), "Exception in TaskThread " + getName(), e);
 					e.printStackTrace();
 				}
 				try {
