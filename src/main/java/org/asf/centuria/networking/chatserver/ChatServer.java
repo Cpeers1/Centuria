@@ -55,6 +55,16 @@ public class ChatServer {
 	public ChatClient[] getClients() {
 		while (true) {
 			try {
+				ArrayList<ChatClient> clients = new ArrayList<ChatClient>(this.clients);
+				var cls = clients;
+				for (ChatClient cl : cls) {
+					if (cl == null || cl.getPlayer() == null) {
+						clients.remove(cl);
+					}
+					if (cl == null) {
+						this.clients.remove(cl);
+					}
+				}
 				return clients.toArray(t -> new ChatClient[t]);
 			} catch (ConcurrentModificationException e) {
 			}
