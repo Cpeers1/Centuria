@@ -142,12 +142,7 @@ public class DiscordBotModule implements ICenturiaModule {
 					Intent.DIRECT_MESSAGES, Intent.GUILD_MEMBERS, Intent.GUILDS)).withGateway(gateway -> {
 						// Button handler
 						Mono<Void> ev = gateway.on(ButtonInteractionEvent.class, event -> {
-							try {
-								InteractionButtonHandler.handle(event, gateway).block();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-							return Mono.empty();
+							return InteractionButtonHandler.handle(event, gateway);
 						}).then();
 
 						// Join guild handler
@@ -185,13 +180,8 @@ public class DiscordBotModule implements ICenturiaModule {
 
 						// Slash command handler
 						ev = ev.then().and(gateway.on(ApplicationCommandInteractionEvent.class, event -> {
-							try {
-								Guild guild = event.getInteraction().getGuild().block();
-								CommandHandler.handle(event, guild, gateway).block();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-							return Mono.empty();
+							Guild guild = event.getInteraction().getGuild().block();
+							return CommandHandler.handle(event, guild, gateway);
 						}));
 
 						// Command handler
