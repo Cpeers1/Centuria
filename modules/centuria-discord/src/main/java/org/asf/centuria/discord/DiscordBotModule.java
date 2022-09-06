@@ -147,19 +147,19 @@ public class DiscordBotModule implements ICenturiaModule {
 
 						// Join guild handler
 						ev = ev.then().and(gateway.on(GuildCreateEvent.class, event -> {
-							try {
-								if (gateway.getRestClient().getApplicationService()
-										.getGuildApplicationCommands(gateway.getRestClient().getApplicationId().block(),
-												event.getGuild().getId().asLong())
-										.count().block() == 0)
+							if (gateway.getRestClient().getApplicationService()
+									.getGuildApplicationCommands(gateway.getRestClient().getApplicationId().block(),
+											754991742226399272l)
+									.count().block() == 0)
+								try {
 									gateway.getRestClient().getApplicationService()
 											.createGuildApplicationCommand(
 													gateway.getRestClient().getApplicationId().block(),
 													event.getGuild().getId().asLong(), cmd)
 											.block();
-							} catch (Exception e) {
-								// Server did not grant the ability to create commands, lets not crash
-							}
+								} catch (Exception e) {
+									// Server did not grant the ability to create commands, lets not crash
+								}
 							return Mono.empty();
 						}));
 
