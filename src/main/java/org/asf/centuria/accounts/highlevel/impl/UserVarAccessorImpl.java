@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.accounts.highlevel.UserVarAccessor;
@@ -527,10 +528,9 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 					var defaultVal = entryObj.get("defaultValue").getAsInt();
 					this.setPlayerVarValue(defId, 0, defaultVal);
 
-					if (Centuria.debugMode) {
-						System.out.println("[USERVARS] Setting uservar " + entryObj.get("userVarName").getAsString()
-								+ " (DefId: " + defId + ") to default value of " + defaultVal + ".");
-					}
+					Centuria.logger.debug(MarkerManager.getMarker("USERVARS"),
+							"Setting uservar " + entryObj.get("userVarName").getAsString() + " (DefId: " + defId
+									+ ") to default value of " + defaultVal + ".");
 				}
 			}
 		}

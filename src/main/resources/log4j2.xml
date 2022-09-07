@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="[%d{HH:mm:ss} %5level] - %highlight{%msg%n%throwable}" />
+		</Console>	
+		<Routing name="Logfile">
+			<Routes pattern="$${sd:type}">
+				<Route>
+					<RollingFile name="LOG" fileName="logs/latest.log"
+						filePattern="logs/%d{YYYY-MM-DD}-%i.log.gz">
+						<PatternLayout
+							pattern="[%d{HH:mm:ss}] [%-5level] [%t] [%c{1}%notEmpty{/%markerSimpleName}] - %msg%n%throwable" />
+						<Policies />
+					</RollingFile>
+				</Route>
+				<Route ref="Console" key="Audit" />
+			</Routes>
+		</Routing>
+	</Appenders>
+	<Loggers>
+		<Root level="all">
+			<AppenderRef ref="Console" level="info" />
+			<AppenderRef ref="Logfile" level="info" />
+		</Root>
+	</Loggers>
+</Configuration>

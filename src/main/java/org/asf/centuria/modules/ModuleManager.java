@@ -125,7 +125,7 @@ public class ModuleManager extends CyanComponent {
 				modulePool.addSource(f.toURI().toURL());
 			} catch (MalformedURLException e) {
 				// Log failure
-				System.err.println("Failed to load class path entry " + path + ": " + e.getClass().getSimpleName()
+				Centuria.logger.error("Failed to load class path entry " + path + ": " + e.getClass().getSimpleName()
 						+ (e.getMessage() != null ? ": " + e.getMessage() : ""));
 				e.printStackTrace();
 			}

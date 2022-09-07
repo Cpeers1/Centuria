@@ -1,13 +1,7 @@
 package org.asf.centuria.accounts;
 
 import org.asf.centuria.Centuria;
-import org.asf.centuria.accounts.PlayerInventory;
-import org.asf.centuria.accounts.highlevel.ItemAccessor;
-import org.asf.centuria.data.XtReader;
-import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
-import org.asf.centuria.networking.smartfox.SmartfoxClient;
-import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
 import java.io.IOException;
@@ -170,7 +164,7 @@ public class InventoryManager {
 
 		// Load the helper from resources
 		if (plr != null)
-			System.out.println("Generating avatar file for " + plr.account.getDisplayName());
+			Centuria.logger.info("Generating avatar file for " + plr.account.getDisplayName());
 		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
 				.getResourceAsStream("defaultitems/avatarhelper.json");
 		JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
@@ -182,7 +176,7 @@ public class InventoryManager {
 		for (String avatarSpecies : helper.keySet()) {
 			JsonObject speciesData = helper.get(avatarSpecies).getAsJsonObject();
 			if (plr != null)
-				System.out.println("Generating avatar species object " + avatarSpecies + " for "
+				Centuria.logger.info("Generating avatar species object " + avatarSpecies + " for "
 						+ plr.account.getDisplayName() + "...");
 
 			// Build 11 look files and set the first to primary

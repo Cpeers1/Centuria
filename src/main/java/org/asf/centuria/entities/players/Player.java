@@ -1,9 +1,9 @@
 package org.asf.centuria.entities.players;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
@@ -76,10 +76,10 @@ public class Player {
 	public String teleportDestination;
 	public Vector3 targetPos;
 	public Quaternion targetRot;
-	
+
 	// Trades
 	public Trade tradeEngagedIn;
-	
+
 	public void destroyAt(Player player) {
 		// Delete character
 		WorldObjectDelete packet = new WorldObjectDelete(account.getAccountID());
@@ -344,10 +344,8 @@ public class Player {
 			plr.respawnItems.clear();
 
 			// Log
-			if (Centuria.debugMode) {
-				System.out.println("[JOINROOM] Client to server (room: " + plr.pendingRoom + ", level: "
-						+ plr.pendingLevelID + ")");
-			}
+			Centuria.logger.debug(MarkerManager.getMarker("JOINROOM"),
+					"Client to server (room: " + plr.pendingRoom + ", level: " + plr.pendingLevelID + ")");
 
 			// Send response
 			client.sendPacket(join);
@@ -407,10 +405,8 @@ public class Player {
 			plr.respawnItems.clear();
 
 			// Log
-			if (Centuria.debugMode) {
-				System.out.println("[JOINROOM] Client to server (room: " + plr.pendingRoom + ", level: "
-						+ plr.pendingLevelID + ")");
-			}
+			Centuria.logger.debug(MarkerManager.getMarker("JOINROOM"),
+					" Client to server (room: " + plr.pendingRoom + ", level: " + plr.pendingLevelID + ")");
 
 			// Send response
 			client.sendPacket(join);
@@ -445,10 +441,8 @@ public class Player {
 			client.sendPacket(join);
 
 			// Log
-			if (Centuria.debugMode) {
-				System.out.println("[JOINROOM]  Client to server (room: " + plr.pendingRoom + ", level: "
-						+ plr.pendingLevelID + ")");
-			}
+			Centuria.logger.debug(MarkerManager.getMarker("JOINROOM"),
+					"Client to server (room: " + plr.pendingRoom + ", level: " + plr.pendingLevelID + ")");
 
 			return true;
 		} catch (Exception e) {
@@ -531,19 +525,19 @@ public class Player {
 			return false;
 		}
 	}
-	
+
 	/**
-	 * Gets the players trade list. Will load the trade list if it hasn't been loaded before. 
+	 * Gets the players trade list. Will load the trade list if it hasn't been
+	 * loaded before.
+	 * 
 	 * @return A list of items in the player's trade list.
 	 */
-	public List<InventoryItem> getTradeList()
-	{
+	public List<InventoryItem> getTradeList() {
 		try {
 			return this.account.getPlayerInventory().getItemAccessor(this).loadTradeList();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		}		
+		}
 	}
-	
 
 }

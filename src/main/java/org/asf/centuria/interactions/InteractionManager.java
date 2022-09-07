@@ -190,7 +190,7 @@ public class InteractionManager {
 		// Warn
 		if (warn) {
 			if (Centuria.debugMode) {
-				System.err.println("[INTERACTION] [UNHANDLED] Client to server (target: " + interactableId + ", state: "
+				Centuria.logger.error("[INTERACTION] [UNHANDLED] Client to server (target: " + interactableId + ", state: "
 						+ state + ")");
 			}
 		}

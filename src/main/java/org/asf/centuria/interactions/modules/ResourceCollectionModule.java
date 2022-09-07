@@ -205,7 +205,7 @@ public class ResourceCollectionModule extends InteractionModule {
 					// Load transformer
 					importObjectsIntoMemory(transformer);
 				} catch (Exception e) {
-					System.err.println("Transformer failed to load: " + ele.getAsString() + " (" + fileName + "): "
+					Centuria.logger.error("Transformer failed to load: " + ele.getAsString() + " (" + fileName + "): "
 							+ e.getClass().getSimpleName() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
 					e.printStackTrace();
 				}
