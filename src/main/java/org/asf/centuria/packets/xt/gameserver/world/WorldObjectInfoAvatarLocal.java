@@ -36,7 +36,7 @@ public class WorldObjectInfoAvatarLocal implements IXtPacket<WorldObjectInfoAvat
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 
 		// Position
 		writer.writeDouble(x);
@@ -49,7 +49,7 @@ public class WorldObjectInfoAvatarLocal implements IXtPacket<WorldObjectInfoAvat
 		writer.writeDouble(rz);
 		writer.writeDouble(rw);
 
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

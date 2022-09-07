@@ -36,12 +36,12 @@ public class TradeListUpdatePacket implements IXtPacket<TradeListUpdatePacket> {
 
 	@Override
 	public void build(XtWriter writer) {
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 
 		writer.writeString(itemID);
 		writer.writeInt(add ? 1 : 0);
 
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

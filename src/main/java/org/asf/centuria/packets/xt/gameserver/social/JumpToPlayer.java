@@ -35,13 +35,13 @@ public class JumpToPlayer implements IXtPacket<JumpToPlayer> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // data prefix
+		writer.writeInt(DATA_PREFIX); // data prefix
 		
 		writer.writeBoolean(success); // success
 		writer.writeInt(roomIssId); //roomIssId
 		writer.writeString(otherNode); //other node?
 		
-		writer.writeString(""); // data suffix
+		writer.writeString(DATA_SUFFIX); // data suffix
 	}
 
 	@Override

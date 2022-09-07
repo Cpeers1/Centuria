@@ -40,7 +40,7 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 
 		if(tradeValidationType != null)
 		{
@@ -57,7 +57,7 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 			writer.writeBoolean(success); //success 		
 		}
 		
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 		Player targetPlayer = AccountManager.getInstance().getAccount(inboundUserId).getOnlinePlayerInstance();
 		
 		//Start a new trade.
-		var trade = Trade.startNewTrade(sourcePlayer, targetPlayer);
+		Trade.startNewTrade(sourcePlayer, targetPlayer);
 		
 		return true;
 	}

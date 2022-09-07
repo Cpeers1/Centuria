@@ -30,11 +30,11 @@ public class WorldObjectDelete implements IXtPacket<WorldObjectDelete> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1);
+		writer.writeInt(DATA_PREFIX);
 
 		writer.writeString(objectId); //Simple packet, just sends a delete cmd with an ID
 
-		writer.writeString("");
+		writer.writeString(DATA_SUFFIX);
 	}
 
 	@Override

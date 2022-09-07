@@ -4,12 +4,9 @@ import java.io.IOException;
 
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
-import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.enums.players.OnlineStatus;
-import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.social.SocialManager;
 
 public class RelationshipFollowOnlineStatusUpdate implements IXtPacket<RelationshipFollowOnlineStatusUpdate> {
 
@@ -34,12 +31,12 @@ public class RelationshipFollowOnlineStatusUpdate implements IXtPacket<Relations
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // data prefix
+		writer.writeInt(DATA_PREFIX); // data prefix
 		
 		writer.writeString(userUUID);
 		writer.writeInt(playerOnlineStatus.value);
 		
-		writer.writeString(""); // data suffix
+		writer.writeString(DATA_SUFFIX); // data suffix
 	}
 
 	@Override

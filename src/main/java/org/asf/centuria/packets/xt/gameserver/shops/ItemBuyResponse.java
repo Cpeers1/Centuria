@@ -34,7 +34,7 @@ public class ItemBuyResponse implements IXtPacket<ItemBuyResponse> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 
 		writer.writeInt(status.getStatus());
 		writer.writeInt(items.size());
@@ -50,7 +50,7 @@ public class ItemBuyResponse implements IXtPacket<ItemBuyResponse> {
 			});
 		}
 
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

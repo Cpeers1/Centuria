@@ -31,11 +31,13 @@ public class MinigameCurrency implements IXtPacket<MinigameCurrency> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // padding
+		writer.writeInt(DATA_PREFIX); // padding
+
 		writer.writeInt(Currency);
 		writer.writeInt(UNK1);
 		writer.writeString(UNK2);
-		writer.writeString(""); // Data suffix
+
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

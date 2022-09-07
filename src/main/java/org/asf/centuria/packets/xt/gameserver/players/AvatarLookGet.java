@@ -65,7 +65,7 @@ public class AvatarLookGet implements IXtPacket<AvatarLookGet> {
 				// Send response
 				XtWriter writer = new XtWriter();
 				writer.writeString("alg");
-				writer.writeInt(-1); // data prefix
+				writer.writeInt(DATA_PREFIX); // data prefix
 				// Compress and send look
 				JsonObject look = lookObj.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject();
 				ByteArrayOutputStream op = new ByteArrayOutputStream();
@@ -74,7 +74,7 @@ public class AvatarLookGet implements IXtPacket<AvatarLookGet> {
 				gz.close();
 				op.close();
 				writer.writeString(Base64.getEncoder().encodeToString(op.toByteArray()));
-				writer.writeString(""); // data suffix
+				writer.writeString(DATA_SUFFIX); // data suffix
 				client.sendPacket(writer.encode());
 			} catch (IOException e) {
 			}

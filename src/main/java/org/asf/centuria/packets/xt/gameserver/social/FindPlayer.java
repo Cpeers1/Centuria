@@ -34,12 +34,12 @@ public class FindPlayer implements IXtPacket<FindPlayer> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // data prefix
+		writer.writeInt(DATA_PREFIX); // data prefix
 
 		writer.writeBoolean(success); // success
 		writer.writeString(accountId); // account ID
 
-		writer.writeString(""); // data suffix
+		writer.writeString(DATA_SUFFIX); // data suffix
 	}
 
 	@Override

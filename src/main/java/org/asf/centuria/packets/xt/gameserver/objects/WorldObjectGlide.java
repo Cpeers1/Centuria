@@ -31,11 +31,11 @@ public class WorldObjectGlide implements IXtPacket<WorldObjectGlide> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 
 		writer.writeString(playerUUID);
 
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

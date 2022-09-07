@@ -39,12 +39,12 @@ public class ItemUncraftPacket implements IXtPacket<ItemUncraftPacket> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 
 		writer.writeBoolean(success);
 		writer.writeString(itemId);
 
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

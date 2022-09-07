@@ -33,14 +33,14 @@ public class ShopList implements IXtPacket<ShopList> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 
 		writer.writeString(shopType);
 		writer.writeInt(items.length);
 		for (String itm : items)
 			writer.writeString(itm);
 
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

@@ -34,7 +34,7 @@ public class WorldObjectInfo implements IXtPacket<WorldObjectInfo> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1);
+		writer.writeInt(DATA_PREFIX);
 		
 		writer.writeString(id); // World object ID
 		writer.writeInt(defId); // Def Id 
@@ -65,7 +65,7 @@ public class WorldObjectInfo implements IXtPacket<WorldObjectInfo> {
 		//Action Type
 		writer.writeInt(lastMove.actorActionType.value);
 		
-		writer.writeString("");
+		writer.writeString(DATA_SUFFIX);
 	}
 
 	@Override

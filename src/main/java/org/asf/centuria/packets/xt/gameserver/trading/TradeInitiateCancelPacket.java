@@ -28,8 +28,8 @@ public class TradeInitiateCancelPacket implements IXtPacket<TradeInitiateCancelP
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data prefix
-		writer.writeString(""); // Data suffix
+		writer.writeInt(DATA_PREFIX); // Data prefix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

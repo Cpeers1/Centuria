@@ -38,8 +38,6 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 	private List<RoomInfoObject> roomChanges = new ArrayList<RoomInfoObject>();
 	private List<String> removals = new ArrayList<String>();
 	private JsonObject houseInv;
-	
-	private int ITEM_LIMIT = 250;
 
 	@Override
 	public String id() {

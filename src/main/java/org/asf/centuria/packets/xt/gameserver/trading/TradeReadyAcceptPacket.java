@@ -35,7 +35,7 @@ public class TradeReadyAcceptPacket implements IXtPacket<TradeReadyAcceptPacket>
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 		
 		writer.writeBoolean(outbound_Success);
 		
@@ -54,7 +54,7 @@ public class TradeReadyAcceptPacket implements IXtPacket<TradeReadyAcceptPacket>
 			}
 		}
 		
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

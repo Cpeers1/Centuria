@@ -29,9 +29,9 @@ public class MinigameStart implements IXtPacket<MinigameStart> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // padding
+		writer.writeInt(DATA_PREFIX); // padding
 		writer.writeInt(UNK1);
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

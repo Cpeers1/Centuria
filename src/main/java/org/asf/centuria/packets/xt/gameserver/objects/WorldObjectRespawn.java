@@ -33,12 +33,12 @@ public class WorldObjectRespawn implements IXtPacket<WorldObjectRespawn> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 
 		writer.writeString(playerUUID);
 		writer.writeString(data);
 
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override
@@ -51,14 +51,14 @@ public class WorldObjectRespawn implements IXtPacket<WorldObjectRespawn> {
 
 		XtWriter pk = new XtWriter();
 		pk.writeString("ou");
-		pk.writeInt(-1); // Data prefix
+		pk.writeInt(DATA_PREFIX); // Data prefix
 		pk.writeString(playerUUID);
 		pk.add("0");
 		pk.add(Long.toString(System.currentTimeMillis() / 1000));
 		pk.writeString(data);
 		pk.writeString("0%0%0%0");
 		pk.writeString("0");
-		pk.writeString(""); // Data suffix
+		pk.writeString(DATA_SUFFIX); // Data suffix
 
 		// Log if in debug
 		if (Centuria.debugMode)

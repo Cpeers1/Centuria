@@ -35,12 +35,12 @@ public class PlayerOnlineStatus implements IXtPacket<PlayerOnlineStatus> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // data prefix
+		writer.writeInt(DATA_PREFIX); // data prefix
 		
 		writer.writeString(playerID); // player ID
 		writer.writeInt(playerOnlineStatus.value); // player online status
 		
-		writer.writeString(""); // data suffix
+		writer.writeString(DATA_SUFFIX); // data suffix
 	}
 
 	@Override

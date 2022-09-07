@@ -39,12 +39,12 @@ public class InventoryItemInspirationCombinePacket implements IXtPacket<Inventor
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 
 		writer.writeInt(result.combineStatus.value);
 		writer.writeInt(result.enigmaDefId);
 
-		writer.writeString(""); // Empty suffix
+		writer.writeString(DATA_SUFFIX); // Empty suffix
 	}
 
 	@Override

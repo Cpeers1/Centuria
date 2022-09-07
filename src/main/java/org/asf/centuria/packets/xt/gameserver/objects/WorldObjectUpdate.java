@@ -11,6 +11,7 @@ import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
+//TODO: This is really really really ugly, this should be redone
 public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 
 	private static final String PACKET_ID = "ou";
@@ -47,7 +48,7 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 		XtReader rd = new XtReader(data);
 		XtWriter pk = new XtWriter();
 		pk.writeString("ou");
-		pk.writeInt(-1); // Data prefix
+		pk.writeInt(DATA_PREFIX); // Data prefix
 		pk.writeString(plr.account.getAccountID());
 		pk.writeInt(mode);
 		pk.writeLong(System.currentTimeMillis() / 1000);
@@ -189,7 +190,7 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 				System.out.println("[OBJECTS] [OU] Unhandled Mode " + mode + " call : " + data);
 			}
 		}
-		pk.writeString(""); // Data suffix
+		pk.writeString(DATA_SUFFIX); // Data suffix
 
 		// Save location
 		plr.lastLocation = plr.lastPosX + "%" + plr.lastPosY + "%" + plr.lastPosZ + "%" + plr.lastRotX + "%"

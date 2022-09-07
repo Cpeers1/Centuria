@@ -37,13 +37,13 @@ public class TradeReadyPacket implements IXtPacket<TradeReadyPacket> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 		
 		writer.writeBoolean(outbound_Success);
 		writer.writeString(outbound_UserId);
 		writer.writeInt(outbound_ReadyState);
 		
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

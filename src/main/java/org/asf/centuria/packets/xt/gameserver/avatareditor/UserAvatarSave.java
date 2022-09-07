@@ -131,7 +131,7 @@ public class UserAvatarSave implements IXtPacket<UserAvatarSave> {
 			client.sendPacket(this);
 		}
 
-		return true; //TODO: is this the correct return?
+		return true; 
 	}
 
 }

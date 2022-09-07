@@ -77,7 +77,7 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 				// Build quest command
 				XtWriter pk = new XtWriter();
 				pk.writeString("qcmd");
-				pk.writeInt(-1); // Data prefix
+				pk.writeInt(DATA_PREFIX); // Data prefix
 				pk.writeString(st.command); // command
 				pk.writeInt(0); // State
 				pk.writeString(target); // Interactable
@@ -85,7 +85,7 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 				// Parameters
 				for (String param : st.params)
 					pk.writeString(param);
-				pk.writeString(""); // Data suffix
+				pk.writeString(DATA_SUFFIX); // Data suffix
 				client.sendPacket(pk.encode());
 			}
 		}
@@ -93,11 +93,11 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 		// Build response
 		XtWriter pk = new XtWriter();
 		pk.writeString("oaf");
-		pk.writeInt(-1); // Data prefix
+		pk.writeInt(DATA_PREFIX); // Data prefix
 		pk.writeString(target); // Interactable
 		pk.writeInt(obj.primaryObjectInfo.type); // Type
 		pk.writeString(destroy ? "2" : "0");
-		pk.writeString(""); // Data suffix
+		pk.writeString(DATA_SUFFIX); // Data suffix
 		client.sendPacket(pk.encode());
 
 		return true;

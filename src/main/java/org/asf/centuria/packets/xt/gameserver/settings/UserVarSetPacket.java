@@ -40,14 +40,14 @@ public class UserVarSetPacket implements IXtPacket<UserVarSetPacket> {
 
 	@Override
 	public void build(XtWriter wr) throws IOException {
-		wr.writeInt(-1); // Data prefix
+		wr.writeInt(DATA_PREFIX); // Data prefix
 
 		wr.writeBoolean(true);
 		wr.writeInt(varDefId);
 		wr.writeInt(value);
 		wr.writeInt(index);
 
-		wr.writeString(""); // data suffix
+		wr.writeString(DATA_SUFFIX); // data suffix
 	}
 
 	@Override

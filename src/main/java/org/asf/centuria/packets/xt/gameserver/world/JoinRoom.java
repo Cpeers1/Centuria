@@ -37,7 +37,7 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(issRoomID); // Iss Room ID (unused as we dont support it)
+		writer.writeInt(DATA_PREFIX); // Iss Room ID (unused as we dont support it)
 
 		writer.writeBoolean(success); // Success
 		writer.writeInt(levelID); // Room ID
@@ -46,7 +46,7 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 		writer.writeString(teleport); // Specific teleport
 		writer.writeString(roomIdentifier); // Chat room ID
 
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

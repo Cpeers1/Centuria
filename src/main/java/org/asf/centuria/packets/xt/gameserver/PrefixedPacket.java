@@ -34,7 +34,7 @@ public class PrefixedPacket implements IXtPacket<PrefixedPacket> {
 	@Override
 	public void build(XtWriter writer) {
 		writer.writeString(packetID);
-		writer.writeInt(-1); // data prefix (always -1)
+		writer.writeInt(DATA_PREFIX); // data prefix (always -1)
 	}
 
 	@Override

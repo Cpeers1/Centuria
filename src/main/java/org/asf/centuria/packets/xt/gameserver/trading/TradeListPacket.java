@@ -42,7 +42,7 @@ public class TradeListPacket implements IXtPacket<TradeListPacket> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 
 		JsonArray items = new JsonArray();
 		for(var item : tradeListItems)
@@ -57,7 +57,7 @@ public class TradeListPacket implements IXtPacket<TradeListPacket> {
 		op.close();
 		writer.writeString(Base64.getEncoder().encodeToString(op.toByteArray()));
 		
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

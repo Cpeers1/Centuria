@@ -11,7 +11,6 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class TradeAddRemoveItemPacket implements IXtPacket<TradeAddRemoveItemPacket> {
@@ -49,7 +48,7 @@ public class TradeAddRemoveItemPacket implements IXtPacket<TradeAddRemoveItemPac
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 
 		writer.writeBoolean(success);
 
@@ -66,7 +65,7 @@ public class TradeAddRemoveItemPacket implements IXtPacket<TradeAddRemoveItemPac
 			writer.writeString(Base64.getEncoder().encodeToString(op.toByteArray()));
 		}
 
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

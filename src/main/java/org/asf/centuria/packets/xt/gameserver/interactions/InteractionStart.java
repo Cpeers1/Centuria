@@ -38,12 +38,12 @@ public class InteractionStart implements IXtPacket<InteractionStart> {
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		// TODO: verify this
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 
 		writer.writeString(target);
 		writer.writeString(source);
 
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override

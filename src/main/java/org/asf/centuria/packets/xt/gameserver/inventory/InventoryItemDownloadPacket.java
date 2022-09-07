@@ -2,7 +2,6 @@ package org.asf.centuria.packets.xt.gameserver.inventory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.UUID;
 
 import org.asf.centuria.Centuria;

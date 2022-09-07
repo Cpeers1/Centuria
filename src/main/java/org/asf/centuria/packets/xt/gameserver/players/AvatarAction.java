@@ -45,7 +45,7 @@ public class AvatarAction implements IXtPacket<AvatarAction> {
 		//Write packet
 		XtWriter pk = new XtWriter();
 		pk.writeString("ou");
-		pk.writeInt(-1); // Data prefix
+		pk.writeInt(DATA_PREFIX); // Data prefix
 		pk.writeString(plr.account.getAccountID());
 		pk.writeInt(4);
 		pk.writeLong(System.currentTimeMillis() / 1000);
@@ -61,7 +61,7 @@ public class AvatarAction implements IXtPacket<AvatarAction> {
 		pk.writeString("0");
 		pk.writeDouble(plr.lastRotW);
 		pk.writeInt(plr.lastAction.value);
-		pk.writeString(""); // Data suffix
+		pk.writeString(DATA_SUFFIX); // Data suffix
 
 		// Broadcast sync
 		GameServer srv = (GameServer) client.getServer();

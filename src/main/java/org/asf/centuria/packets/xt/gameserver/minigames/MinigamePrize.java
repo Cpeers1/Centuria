@@ -33,13 +33,13 @@ public class MinigamePrize implements IXtPacket<MinigamePrize> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(-1); // padding
+		writer.writeInt(DATA_PREFIX); // padding
 		writer.writeString(ItemDefId);
 		writer.writeInt(ItemCount);
 		writer.writeInt(Given ? 1 : 0);
 		writer.writeInt(PrizeIndex1);
 		writer.writeInt(PrizeIndex2);
-		writer.writeString(""); // Data suffix
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override
