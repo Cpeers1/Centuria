@@ -30,6 +30,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+@SuppressWarnings("unused")
 public class Player {
 
 	public SmartfoxClient client;
@@ -76,10 +77,15 @@ public class Player {
 	public String teleportDestination;
 	public Vector3 targetPos;
 	public Quaternion targetRot;
-	
+
 	// Trades
 	public Trade tradeEngagedIn;
-	
+
+	// Quests
+	public int questStage = 0;
+	public int questTask = 0;
+	public int questObjective = 0;
+
 	public void destroyAt(Player player) {
 		// Delete character
 		WorldObjectDelete packet = new WorldObjectDelete(account.getAccountID());
@@ -340,7 +346,13 @@ public class Player {
 			plr.pendingLevelID = levelID;
 			plr.pendingRoom = "room_" + levelID;
 			plr.levelType = levelType;
+			
+			// Reset quest stage
+			plr.questStage = 1;
+			plr.questObjective = 1;
+			plr.questTask = 1;
 
+			// Clear respawn items
 			plr.respawnItems.clear();
 
 			// Log
@@ -531,19 +543,19 @@ public class Player {
 			return false;
 		}
 	}
-	
+
 	/**
-	 * Gets the players trade list. Will load the trade list if it hasn't been loaded before. 
+	 * Gets the players trade list. Will load the trade list if it hasn't been
+	 * loaded before.
+	 * 
 	 * @return A list of items in the player's trade list.
 	 */
-	public List<InventoryItem> getTradeList()
-	{
+	public List<InventoryItem> getTradeList() {
 		try {
 			return this.account.getPlayerInventory().getItemAccessor(this).loadTradeList();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		}		
+		}
 	}
-	
 
 }

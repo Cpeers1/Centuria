@@ -10,12 +10,15 @@ import org.asf.centuria.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
+import org.asf.centuria.interactions.dataobjects.ObjectCollection;
+import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.modules.quests.QuestDefinition;
 import org.asf.centuria.interactions.modules.quests.QuestObjective;
 import org.asf.centuria.interactions.modules.quests.QuestTask;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemRemovedPacket;
+import org.asf.centuria.packets.xt.gameserver.quests.QuestCommand;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -48,6 +51,7 @@ public class QuestManager extends InteractionModule {
 				quest.defID = def.get("defID").getAsInt();
 				quest.name = def.get("name").getAsString();
 				quest.levelOverrideID = def.get("levelOverrideID").getAsInt();
+				quest.questLocation = def.get("questLocation").getAsInt();
 
 				JsonArray objectives = def.get("objectives").getAsJsonArray();
 				for (JsonElement ele : objectives) {
@@ -146,26 +150,118 @@ public class QuestManager extends InteractionModule {
 			if ((levelID == 2147 && quest.questLocation == 0) || (levelID == 9687 && quest.questLocation == 1)
 					|| (levelID == 2364 && quest.questLocation == 2)) {
 				// Load objects
-				String[] uuids = NetworkedObjects.getCollectionIdsForOverride(Integer.toString(quest.levelOverrideID));
-				for (String uuid : uuids) {
-					ids.add(uuid);
+				String[] collections = NetworkedObjects
+						.getCollectionIdsForOverride(Integer.toString(quest.levelOverrideID));
+				for (String id : collections) {
+					ObjectCollection objs = NetworkedObjects.getObjects(id);
+					for (String uuid : objs.objects.keySet()) {
+						ids.add(uuid);
+					}
 				}
 			}
 		}
 	}
 
+	// For checking if a object is a NPC
+	public boolean isNPC(NetworkedObject object) {
+		// Check commands, command 3 is dialogue so then its a NPC
+		for (ArrayList<StateInfo> states : object.stateInfo.values()) {
+			if (states.stream().anyMatch(t -> t.command.equals("67")))
+				return true;
+			for (StateInfo state : states) {
+				for (ArrayList<StateInfo> sstates : state.branches.values()) {
+					for (StateInfo sstate : sstates) {
+						if (sstate.command.equals("67"))
+							return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public boolean canHandle(Player player, String id, NetworkedObject object) {
+		String activeQuest = getActiveQuest(player.account);
+		if (activeQuest != null) {
+			QuestDefinition quest = questDefinitions.get(activeQuest);
+
+			// Check location
+			// 0 = mugmyre
+			// 1 = lakeroot
+			// 2 = blood tundra
+			if ((player.levelID == 2147 && quest.questLocation == 0)
+					|| (player.levelID == 9687 && quest.questLocation == 1)
+					|| (player.levelID == 2364 && quest.questLocation == 2)) {
+				// Load objects
+				String[] collections = NetworkedObjects
+						.getCollectionIdsForOverride(Integer.toString(quest.levelOverrideID));
+				for (String colID : collections) {
+					ObjectCollection objs = NetworkedObjects.getObjects(colID);
+					for (String uuid : objs.objects.keySet()) {
+						if (uuid.equals(id))
+							return true;
+					}
+				}
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public boolean handleInteractionSuccess(Player player, String id, NetworkedObject object, int state) {
+		if (canHandle(player, id, object)) {
+			id = id;
+		}
 		return false;
 	}
 
 	@Override
+	public boolean shouldDestroyResource(Player player, String id, NetworkedObject object, int state,
+			boolean destroyOnCompletion) {
+		if (canHandle(player, id, object))
+			return true;
+		return destroyOnCompletion;
+	}
+
+	@Override
 	public boolean handleInteractionDataRequest(Player player, String id, NetworkedObject object, int state) {
+		if (canHandle(player, id, object)) {
+
+			String activeQuest = getActiveQuest(player.account);
+			if (activeQuest != null) {
+				QuestDefinition quest = questDefinitions.get(activeQuest);
+
+				// Find quest objective
+				int objectiveID = player.questObjective;
+				int taskID = player.questTask;
+
+				QuestObjective objective = quest.objectives.get(objectiveID - 1);
+				QuestTask task = objective.tasks.get(taskID - 1);
+
+				// Update quest NPCs
+				String[] collections = NetworkedObjects
+						.getCollectionIdsForOverride(Integer.toString(quest.levelOverrideID));
+				for (String colID : collections) {
+					ObjectCollection objs = NetworkedObjects.getObjects(colID);
+					for (String key : objs.objects.keySet()) {
+						NetworkedObject obj = objs.objects.get(key);
+						if (isNPC(obj)) {
+							// Update
+							QuestCommand cmd = new QuestCommand();
+							cmd.type = 1;
+							cmd.id = key;
+							cmd.params.add("1");
+							cmd.params.add(Integer.toString(taskID));
+							cmd.params.add(Integer.toString(player.questStage++));
+							player.client.sendPacket(cmd);
+						}
+					}
+				}
+
+				id = id;
+			}
+		}
 		return false;
 	}
 

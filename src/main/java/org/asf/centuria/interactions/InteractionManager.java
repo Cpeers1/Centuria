@@ -37,16 +37,17 @@ public class InteractionManager {
 		// Load object ids
 		NetworkedObjects.init();
 		ArrayList<String> ids = new ArrayList<String>();
+
 		// Find level objects
 		for (String id : NetworkedObjects.getCollectionIdsForLevel(Integer.toString(levelID))) {
 			NetworkedObjects.getObjects(id).objects.keySet().forEach(t -> ids.add(t));
 		}
 
-		// Initialize objects
-		initializeNetworkedObjects(client, ids.toArray(t -> new String[t]));
-
 		// Initialize modules
 		modules.forEach(t -> t.prepareWorld(levelID, ids, (Player) client.container));
+
+		// Initialize objects
+		initializeNetworkedObjects(client, ids.toArray(t -> new String[t]));
 	}
 
 	/**

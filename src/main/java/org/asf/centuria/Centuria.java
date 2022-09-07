@@ -403,6 +403,8 @@ public class Centuria {
 				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
 		discoveryAddress = properties.getOrDefault("discovery-server-address", discoveryAddress);
 		debugMode = properties.getOrDefault("debug-mode", "false").equals("true");
+		if (System.getProperty("debugMode", "false").equals("true"))
+			debugMode = true;
 
 		// Start the servers
 		System.out.println("Starting Emulated Feral API server...");
