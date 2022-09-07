@@ -52,12 +52,12 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		Player plr = (Player) client.container;
+		roomIdentifier  = "room_" + levelID;
 		plr.teleportToRoom(levelID, levelType, issRoomID, roomIdentifier, teleport);
 		return true;
 	}
-	
-	public JoinRoom markAsFailed()
-	{
+
+	public JoinRoom markAsFailed() {
 		this.success = false;
 		this.roomIdentifier = "";
 		this.levelID = 0;
