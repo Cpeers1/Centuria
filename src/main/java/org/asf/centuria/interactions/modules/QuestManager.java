@@ -8,12 +8,17 @@ import java.util.List;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
+import org.asf.centuria.interactions.modules.quests.QuestDefinition;
+import org.asf.centuria.interactions.modules.quests.QuestObjective;
+import org.asf.centuria.interactions.modules.quests.QuestTask;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemRemovedPacket;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -21,6 +26,7 @@ public class QuestManager extends InteractionModule {
 
 	private static String firstQuest = "7537";
 	private static HashMap<String, String> questMap = new HashMap<String, String>();
+	private static HashMap<String, QuestDefinition> questDefinitions = new HashMap<String, QuestDefinition>();
 	static {
 		try {
 			// Load the quest map
@@ -29,6 +35,36 @@ public class QuestManager extends InteractionModule {
 			JsonObject quests = helper.get("QuestMap").getAsJsonObject();
 			for (String key : quests.keySet()) {
 				questMap.put(key, quests.get(key).getAsString());
+			}
+			strm.close();
+
+			// Load quest definitions
+			strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("quests.json");
+			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
+			quests = helper.get("Quests").getAsJsonObject();
+			for (String key : quests.keySet()) {
+				JsonObject def = quests.get(key).getAsJsonObject();
+				QuestDefinition quest = new QuestDefinition();
+				quest.defID = def.get("defID").getAsInt();
+				quest.name = def.get("name").getAsString();
+				quest.levelOverrideID = def.get("levelOverrideID").getAsInt();
+
+				JsonArray objectives = def.get("objectives").getAsJsonArray();
+				for (JsonElement ele : objectives) {
+					JsonObject obj = ele.getAsJsonObject();
+					QuestObjective objective = new QuestObjective();
+					objective.title = obj.get("title").getAsString();
+					objective.isLastObjective = obj.get("isLastObjective").getAsBoolean();
+					JsonArray tasks = obj.get("tasks").getAsJsonArray();
+					for (JsonElement taskEle : tasks) {
+						JsonObject tsk = taskEle.getAsJsonObject();
+						QuestTask task = new QuestTask();
+						task.targetProgress = tsk.get("targetProgress").getAsInt();
+						objective.tasks.add(task);
+					}
+					quest.objectives.add(objective);
+				}
+				questDefinitions.put(key, quest);
 			}
 			strm.close();
 		} catch (Exception e) {
@@ -101,8 +137,20 @@ public class QuestManager extends InteractionModule {
 	public void prepareWorld(int levelID, List<String> ids, Player player) {
 		String activeQuest = getActiveQuest(player.account);
 		if (activeQuest != null) {
+			QuestDefinition quest = questDefinitions.get(activeQuest);
 
-			activeQuest = activeQuest;
+			// Check location
+			// 0 = mugmyre
+			// 1 = lakeroot
+			// 2 = blood tundra
+			if ((levelID == 2147 && quest.questLocation == 0) || (levelID == 9687 && quest.questLocation == 1)
+					|| (levelID == 2364 && quest.questLocation == 2)) {
+				// Load objects
+				String[] uuids = NetworkedObjects.getCollectionIdsForOverride(Integer.toString(quest.levelOverrideID));
+				for (String uuid : uuids) {
+					ids.add(uuid);
+				}
+			}
 		}
 	}
 
