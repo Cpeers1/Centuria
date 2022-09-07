@@ -136,14 +136,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			if (!chClient.isInRoom("room_" + plr.levelID))
 				chClient.joinRoom("room_" + plr.levelID, false);
 
-			// Send response
-			JsonObject res = new JsonObject();
-			res.addProperty("conversationId", "room_" + plr.levelID);
-			res.addProperty("participant", plr.account.getAccountID());
-			res.addProperty("eventId", "conversations.addParticipant");
-			res.addProperty("success", true);
-			chClient.sendPacket(res);
-
 			// Make the player know its in the chat
 			plr.wasInChat = true;
 		}
