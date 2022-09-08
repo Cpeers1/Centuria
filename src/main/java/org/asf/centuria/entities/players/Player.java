@@ -20,10 +20,10 @@ import org.asf.centuria.enums.actors.ActorActionType;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
-import org.asf.centuria.packets.xt.gameserver.players.PlayerWorldObjectInfo;
-import org.asf.centuria.packets.xt.gameserver.room.RoomJoin;
-import org.asf.centuria.packets.xt.gameserver.social.JumpToPlayer;
-import org.asf.centuria.packets.xt.gameserver.world.WorldObjectDeletePacket;
+import org.asf.centuria.packets.xt.gameserver.avatar.AvatarWorldObjectInfoPacket;
+import org.asf.centuria.packets.xt.gameserver.object.ObjectDeletePacket;
+import org.asf.centuria.packets.xt.gameserver.relationship.RelationshipJumpToPlayerPacket;
+import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
 import org.asf.centuria.social.SocialManager;
 
 import com.google.gson.JsonArray;
@@ -82,7 +82,7 @@ public class Player {
 
 	public void destroyAt(Player player) {
 		// Delete character
-		WorldObjectDeletePacket packet = new WorldObjectDeletePacket(account.getAccountID());
+		ObjectDeletePacket packet = new ObjectDeletePacket(account.getAccountID());
 		player.client.sendPacket(packet);
 		lastAction = ActorActionType.None;
 	}
@@ -104,7 +104,7 @@ public class Player {
 		if (lookObj != null) {
 
 			// Spawn player
-			PlayerWorldObjectInfo packet = new PlayerWorldObjectInfo();
+			AvatarWorldObjectInfoPacket packet = new AvatarWorldObjectInfoPacket();
 
 			// Object creation parameters
 			packet.id = account.getAccountID();
@@ -176,7 +176,7 @@ public class Player {
 			}
 
 			// Build room join
-			RoomJoin join = new RoomJoin();
+			RoomJoinPacket join = new RoomJoinPacket();
 			join.success = isAllowed;
 			join.levelType = 2;
 			join.levelID = 1689;
@@ -209,7 +209,7 @@ public class Player {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			client.sendPacket(new RoomJoin().markAsFailed());
+			client.sendPacket(new RoomJoinPacket().markAsFailed());
 			return false;
 		}
 	}
@@ -262,7 +262,7 @@ public class Player {
 			}
 
 			// Build room join
-			RoomJoin join = new RoomJoin();
+			RoomJoinPacket join = new RoomJoinPacket();
 			join.success = isAllowed;
 			join.levelType = 2;
 			join.levelID = 1689;
@@ -300,7 +300,7 @@ public class Player {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			client.sendPacket(new RoomJoin().markAsFailed());
+			client.sendPacket(new RoomJoinPacket().markAsFailed());
 			return false;
 		}
 
@@ -330,7 +330,7 @@ public class Player {
 			}
 
 			// Assign room
-			RoomJoin join = new RoomJoin();
+			RoomJoinPacket join = new RoomJoinPacket();
 			join.levelType = levelType;
 			join.levelID = levelID;
 			join.teleport = teleport;
@@ -353,7 +353,7 @@ public class Player {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			client.sendPacket(new RoomJoin().markAsFailed());
+			client.sendPacket(new RoomJoinPacket().markAsFailed());
 			return false;
 		}
 	}
@@ -385,7 +385,7 @@ public class Player {
 			}
 
 			// Assign room
-			RoomJoin join = new RoomJoin();
+			RoomJoinPacket join = new RoomJoinPacket();
 			join.levelType = levelType;
 			join.levelID = levelID;
 			join.roomIdentifier = plr.pendingRoom;
@@ -414,7 +414,7 @@ public class Player {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			client.sendPacket(new RoomJoin().markAsFailed());
+			client.sendPacket(new RoomJoinPacket().markAsFailed());
 			return false;
 		}
 	}
@@ -435,7 +435,7 @@ public class Player {
 			plr.levelType = plr.previousLevelType;
 
 			// Send response
-			RoomJoin join = new RoomJoin();
+			RoomJoinPacket join = new RoomJoinPacket();
 			join.levelType = plr.levelType;
 			join.levelID = plr.pendingLevelID;
 			client.sendPacket(join);
@@ -495,7 +495,7 @@ public class Player {
 									plr);
 						}
 
-						var jumpToPlayerResponse = new JumpToPlayer();
+						var jumpToPlayerResponse = new RelationshipJumpToPlayerPacket();
 						jumpToPlayerResponse.success = success;
 						client.sendPacket(jumpToPlayerResponse);
 						return true;
@@ -513,13 +513,13 @@ public class Player {
 				}
 			}
 
-			var jumpToPlayerResponse = new JumpToPlayer();
+			var jumpToPlayerResponse = new RelationshipJumpToPlayerPacket();
 			jumpToPlayerResponse.success = false;
 			client.sendPacket(jumpToPlayerResponse);
 			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
-			var jumpToPlayerResponse = new JumpToPlayer();
+			var jumpToPlayerResponse = new RelationshipJumpToPlayerPacket();
 			jumpToPlayerResponse.success = false;
 			client.sendPacket(jumpToPlayerResponse);
 			return false;
