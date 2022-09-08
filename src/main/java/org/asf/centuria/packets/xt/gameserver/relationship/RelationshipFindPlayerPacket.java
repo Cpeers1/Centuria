@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.relationshipss;
+package org.asf.centuria.packets.xt.gameserver.relationship;
 
 import java.io.IOException;
 
