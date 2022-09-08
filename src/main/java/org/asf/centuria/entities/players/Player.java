@@ -20,7 +20,7 @@ import org.asf.centuria.enums.actors.ActorActionType;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
-import org.asf.centuria.packets.xt.gameserver.avatar.AvatarWorldObjectInfoPacket;
+import org.asf.centuria.packets.xt.gameserver.avatar.AvatarObjectInfoPacket;
 import org.asf.centuria.packets.xt.gameserver.object.ObjectDeletePacket;
 import org.asf.centuria.packets.xt.gameserver.relationship.RelationshipJumpToPlayerPacket;
 import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
@@ -104,7 +104,7 @@ public class Player {
 		if (lookObj != null) {
 
 			// Spawn player
-			AvatarWorldObjectInfoPacket packet = new AvatarWorldObjectInfoPacket();
+			AvatarObjectInfoPacket packet = new AvatarObjectInfoPacket();
 
 			// Object creation parameters
 			packet.id = account.getAccountID();

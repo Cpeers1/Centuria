@@ -7,7 +7,7 @@ import org.asf.centuria.packets.xt.gameserver.object.ObjectInfoPacket;
 
 import com.google.gson.JsonObject;
 
-public class AvatarWorldObjectInfoPacket extends ObjectInfoPacket {
+public class AvatarObjectInfoPacket extends ObjectInfoPacket {
     public JsonObject look; //TODO: make into a component (eventually)
     public String displayName;
     public int unknownValue; //TODO: what is this??
