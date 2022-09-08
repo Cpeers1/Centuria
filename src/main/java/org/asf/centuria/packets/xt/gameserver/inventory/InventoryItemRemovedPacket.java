@@ -41,11 +41,11 @@ public class InventoryItemRemovedPacket implements IXtPacket<InventoryItemRemove
 			System.out.println("[INVENTORY] [REMOVE]  Server to client: " + itms);
 		}
 
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 		writer.writeInt(items.length);
 		for (String itm : items)
 			writer.writeString(itm);
-		writer.writeString(""); // Empty suffix
+		writer.writeString(DATA_SUFFIX); // Empty suffix
 	}
 
 	@Override
