@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.interactions;
+package org.asf.centuria.packets.xt.gameserver.world;
 
 import java.io.IOException;
 
@@ -13,15 +13,15 @@ import org.asf.centuria.modules.events.interactions.InteractionCancelEvent;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class InteractionCancel implements IXtPacket<InteractionCancel> {
+public class WorldObjectActionCancelPacket implements IXtPacket<WorldObjectActionCancelPacket> {
 
 	private static final String PACKET_ID = "oac";
 
 	private String target;
 
 	@Override
-	public InteractionCancel instantiate() {
-		return new InteractionCancel();
+	public WorldObjectActionCancelPacket instantiate() {
+		return new WorldObjectActionCancelPacket();
 	}
 
 	@Override

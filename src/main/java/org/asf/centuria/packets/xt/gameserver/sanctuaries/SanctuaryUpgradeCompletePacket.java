@@ -11,7 +11,7 @@ import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
-import org.asf.centuria.packets.xt.gameserver.world.JoinRoom;
+import org.asf.centuria.packets.xt.gameserver.room.RoomJoin;
 import org.asf.centuria.social.SocialManager;
 
 public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgradeCompletePacket> {
@@ -214,7 +214,7 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 			isAllowed = true;
 
 		// Build room join
-		JoinRoom join = new JoinRoom();
+		RoomJoin join = new RoomJoin();
 		join.success = isAllowed;
 		join.levelType = 2;
 		join.levelID = 1689;

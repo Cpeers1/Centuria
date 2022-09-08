@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.world;
+package org.asf.centuria.packets.xt.gameserver.room;
 
 import java.io.IOException;
 
@@ -8,7 +8,7 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class JoinRoom implements IXtPacket<JoinRoom> {
+public class RoomJoin implements IXtPacket<RoomJoin> {
 
 	private static final String PACKET_ID = "rj";
 
@@ -20,8 +20,8 @@ public class JoinRoom implements IXtPacket<JoinRoom> {
 	public boolean success = true;
 
 	@Override
-	public JoinRoom instantiate() {
-		return new JoinRoom();
+	public RoomJoin instantiate() {
+		return new RoomJoin();
 	}
 
 	@Override

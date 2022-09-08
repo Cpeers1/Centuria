@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.objects;
+package org.asf.centuria.packets.xt.gameserver.world;
 
 import java.io.IOException;
 
@@ -8,7 +8,7 @@ import org.asf.centuria.entities.objects.WorldObjectMoveNodeData;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class WorldObjectInfo implements IXtPacket<WorldObjectInfo> {
+public class WorldObjectInfoPacket implements IXtPacket<WorldObjectInfoPacket> {
 
 	private static final String PACKET_ID = "oi";
 
@@ -18,8 +18,8 @@ public class WorldObjectInfo implements IXtPacket<WorldObjectInfo> {
 	public WorldObjectMoveNodeData lastMove;
 
 	@Override
-	public WorldObjectInfo instantiate() {
-		return new WorldObjectInfo();
+	public WorldObjectInfoPacket instantiate() {
+		return new WorldObjectInfoPacket();
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.interactions;
+package org.asf.centuria.packets.xt.gameserver.world;
 
 import java.io.IOException;
 
@@ -13,7 +13,7 @@ import org.asf.centuria.modules.events.interactions.InteractionStartEvent;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class InteractionStart implements IXtPacket<InteractionStart> {
+public class WorldObjectActionStartPacket implements IXtPacket<WorldObjectActionStartPacket> {
 
 	private static final String PACKET_ID = "oas";
 
@@ -21,8 +21,8 @@ public class InteractionStart implements IXtPacket<InteractionStart> {
 	private String target;
 
 	@Override
-	public InteractionStart instantiate() {
-		return new InteractionStart();
+	public WorldObjectActionStartPacket instantiate() {
+		return new WorldObjectActionStartPacket();
 	}
 
 	@Override

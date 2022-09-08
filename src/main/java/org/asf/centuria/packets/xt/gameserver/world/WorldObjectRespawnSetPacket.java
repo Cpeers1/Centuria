@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.objects;
+package org.asf.centuria.packets.xt.gameserver.world;
 
 import java.io.IOException;
 
@@ -8,7 +8,7 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class WorldObjectSetRespawn implements IXtPacket<WorldObjectSetRespawn> {
+public class WorldObjectRespawnSetPacket implements IXtPacket<WorldObjectRespawnSetPacket> {
 
 	private static final String PACKET_ID = "ors";
 
@@ -22,8 +22,8 @@ public class WorldObjectSetRespawn implements IXtPacket<WorldObjectSetRespawn> {
 	public double rz;
 
 	@Override
-	public WorldObjectSetRespawn instantiate() {
-		return new WorldObjectSetRespawn();
+	public WorldObjectRespawnSetPacket instantiate() {
+		return new WorldObjectRespawnSetPacket();
 	}
 
 	@Override

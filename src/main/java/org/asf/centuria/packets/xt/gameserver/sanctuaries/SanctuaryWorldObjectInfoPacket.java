@@ -5,7 +5,8 @@ import java.io.IOException;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.sanctuaries.SanctuaryObjectData;
 import org.asf.centuria.enums.sanctuaries.SanctuaryObjectType;
-import org.asf.centuria.packets.xt.gameserver.objects.WorldObjectInfo;
+import org.asf.centuria.packets.xt.gameserver.world.WorldObjectInfoPacket;
+
 import com.google.gson.JsonObject;
 
 /**
@@ -15,7 +16,7 @@ import com.google.gson.JsonObject;
  * @author owen9
  *
  */
-public class SanctuaryWorldObjectInfoPacket extends WorldObjectInfo {
+public class SanctuaryWorldObjectInfoPacket extends WorldObjectInfoPacket {
 
 	public SanctuaryObjectData sancObjectInfo;
 	public boolean writeFurnitureInfo;

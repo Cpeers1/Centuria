@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.objects;
+package org.asf.centuria.packets.xt.gameserver.world;
 
 import java.io.IOException;
 
@@ -20,8 +20,8 @@ public class WorldObjectUpdate implements IXtPacket<WorldObjectUpdate> {
 	private String data;
 
 	@Override
-	public WorldObjectUpdate instantiate() {
-		return new WorldObjectUpdate();
+	public WorldObjectUpdatePacket instantiate() {
+		return new WorldObjectUpdatePacket();
 	}
 
 	@Override

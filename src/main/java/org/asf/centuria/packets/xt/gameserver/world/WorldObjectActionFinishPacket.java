@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.interactions;
+package org.asf.centuria.packets.xt.gameserver.world;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import org.asf.centuria.modules.events.interactions.InteractionSuccessEvent;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class InteractionFinish implements IXtPacket<InteractionFinish> {
+public class WorldObjectActionFinishPacket implements IXtPacket<WorldObjectActionFinishPacket> {
 
 	private static final String PACKET_ID = "oaf";
 
@@ -24,8 +24,8 @@ public class InteractionFinish implements IXtPacket<InteractionFinish> {
 	private int currentState;
 
 	@Override
-	public InteractionFinish instantiate() {
-		return new InteractionFinish();
+	public WorldObjectActionFinishPacket instantiate() {
+		return new WorldObjectActionFinishPacket();
 	}
 
 	@Override

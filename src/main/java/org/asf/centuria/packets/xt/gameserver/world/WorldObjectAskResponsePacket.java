@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.interactions;
+package org.asf.centuria.packets.xt.gameserver.world;
 
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ import org.asf.centuria.modules.events.interactions.InteractionDataRequestEvent;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class InteractionDataRequest implements IXtPacket<InteractionDataRequest> {
+public class WorldObjectAskResponsePacket implements IXtPacket<WorldObjectAskResponsePacket> {
 
 	private static final String PACKET_ID = "oaskr";
 
@@ -22,8 +22,8 @@ public class InteractionDataRequest implements IXtPacket<InteractionDataRequest>
 	private int state;
 
 	@Override
-	public InteractionDataRequest instantiate() {
-		return new InteractionDataRequest();
+	public WorldObjectAskResponsePacket instantiate() {
+		return new WorldObjectAskResponsePacket();
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package org.asf.centuria.packets.xt.gameserver.trading;
+package org.asf.centuria.packets.xt.gameserver.trade;
 
 import java.io.IOException;
 
@@ -8,13 +8,13 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class TradeReadyRejectPacket implements IXtPacket<TradeReadyRejectPacket> {
+public class TradeInitiateAcceptPacket implements IXtPacket<TradeInitiateAcceptPacket> {
 
-	private static final String PACKET_ID = "trr";
+	private static final String PACKET_ID = "tia";
 	
 	@Override
-	public TradeReadyRejectPacket instantiate() {
-		return new TradeReadyRejectPacket();
+	public TradeInitiateAcceptPacket instantiate() {
+		return new TradeInitiateAcceptPacket();
 	}
 
 	@Override
@@ -36,13 +36,13 @@ public class TradeReadyRejectPacket implements IXtPacket<TradeReadyRejectPacket>
 	public boolean handle(SmartfoxClient client) throws IOException {
 		
 		if (System.getProperty("debugMode") != null) {
-			System.out.println("[TRADE] [TradeReadyReject] Client to server.");
+			System.out.println("[TRADE] [TradeInitiateAccept] Client to server.");
 		}
 		
 		Player player = ((Player) client.container);
 		if(player.tradeEngagedIn != null)
 		{
-			player.tradeEngagedIn.TradeReadyReject();
+			player.tradeEngagedIn.tradeAccept(PACKET_ID);
 		}
 		return true;
 	}
