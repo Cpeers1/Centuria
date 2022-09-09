@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.logging.log4j.MarkerManager;
+import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.highlevel.ItemAccessor;
 import org.asf.centuria.modules.ICenturiaModule;
@@ -191,9 +193,8 @@ public class ShopManager {
 					// Load transformer
 					loadShopData(transformer);
 				} catch (Exception e) {
-					System.err.println("Transformer failed to load: " + ele.getAsString() + " (" + fileName + "): "
-							+ e.getClass().getSimpleName() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
-					e.printStackTrace();
+					Centuria.logger.error(MarkerManager.getMarker("SHOPS"),
+							"Transformer failed to load: " + ele.getAsString() + " (" + fileName + ")", e);
 				}
 			}
 

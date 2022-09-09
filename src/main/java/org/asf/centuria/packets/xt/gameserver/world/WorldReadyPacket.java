@@ -3,6 +3,7 @@ package org.asf.centuria.packets.xt.gameserver.world;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
@@ -24,7 +25,8 @@ import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.centuria.packets.xt.gameserver.sanctuaries.SanctuaryWorldObjectInfoPacket;
+import org.asf.centuria.packets.xt.gameserver.object.ObjectInfoAvatarLocalPacket;
+import org.asf.centuria.packets.xt.gameserver.sanctuary.SanctuaryWorldObjectInfoPacket;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -50,10 +52,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 	@Override
 	public void parse(XtReader reader) throws IOException {
 		teleportUUID = reader.read();
-
-		if (Centuria.debugMode) {
-			System.out.println("[WorldReadyPacket] recieved...");
-		}
+		Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"), "recieved...");
 	}
 
 	@Override
@@ -89,7 +88,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Send to tutorial if new
 		if (plr.account.isPlayerNew()) {
 			// Tutorial spawn
-			WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
+			ObjectInfoAvatarLocalPacket res = new ObjectInfoAvatarLocalPacket();
 			res.x = 107.67;
 			res.y = 8.85;
 			res.z = -44.85;
@@ -118,12 +117,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		for (Player player : server.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
 				player.syncTo(plr);
-
-				if (Centuria.debugMode) {
-					System.out.println("[WorldReadyPacket] Syncing player " + player.account.getDisplayName() + " to "
-							+ plr.account.getDisplayName());
-				}
-
+				Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
+						"Syncing player " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
 			}
 		}
 
@@ -157,11 +152,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		for (Player player : server.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
 				plr.syncTo(player);
-
-				if (Centuria.debugMode) {
-					System.out.println("[WorldReadyPacket] Syncing spawn " + player.account.getDisplayName() + " to "
-							+ plr.account.getDisplayName());
-				}
+				Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
+						"Syncing spawn " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
 			}
 		}
 
@@ -249,10 +241,9 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					client.sendPacket(sanctuaryWorldObjectInfo);
 
 					// Log
-					if (Centuria.debugMode) {
-						System.out.println("[SANCTUARY] [LOAD]  Server to client: load object (id: " + objId
-								+ ", type: furniture, defId: " + furnitureObject.get("defId").getAsString() + ")");
-					}
+					Centuria.logger.debug(MarkerManager.getMarker("SANCTUARY"),
+							"[LOAD]  Server to client: load object (id: " + objId + ", type: furniture, defId: "
+									+ furnitureObject.get("defId").getAsString() + ")");
 				}
 			}
 		}
@@ -266,10 +257,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				+ (System.currentTimeMillis() / 1000) + "%0%0%0%0%0%0%1%0%0%0%0.0%0%0%" + houseJson.toString() + "%");
 
 		// Log
-		if (Centuria.debugMode) {
-			System.out.println("[SANCTUARY] [LOAD]  Server to client: load object (id: " + houseId
-					+ ", type: house, defId: " + houseJson.get("defId").getAsString() + ")");
-		}
+		Centuria.logger.debug(MarkerManager.getMarker("SANCTUARY"), "[LOAD]  Server to client: load object (id: "
+				+ houseId + ", type: house, defId: " + houseJson.get("defId").getAsString() + ")");
 
 		// Load island info
 		String islandId = info.get("islandInvId").getAsString();
@@ -280,10 +269,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				+ (System.currentTimeMillis() / 1000) + "%0%0%0%0%0%0%1%0%0%0%0.0%0%1%" + islandJson.toString() + "%");
 
 		// Log
-		if (Centuria.debugMode) {
-			System.out.println("[SANCTUARY] [LOAD]  Server to client: load object (id: " + islandId
-					+ ", type: island, defId: " + islandJson.get("defId").getAsString() + ")");
-		}
+		Centuria.logger.debug(MarkerManager.getMarker("SANCTUARY"), "[LOAD]  Server to client: load object (id: "
+				+ islandId + ", type: island, defId: " + islandJson.get("defId").getAsString() + ")");
 	}
 
 	private void handleSpawn(String id, Player plr, SmartfoxClient client) throws IOException {
@@ -293,7 +280,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		for (Player player : ((GameServer) client.getServer()).getPlayers()) {
 			if (player.account.getAccountID().equals(id)) {
 				// Send response
-				System.out.println(
+				Centuria.logger.info(
 						"Player teleport: " + plr.account.getDisplayName() + ": " + player.account.getDisplayName());
 
 				// Check room
@@ -301,7 +288,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					continue;
 				}
 
-				WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
+				ObjectInfoAvatarLocalPacket res = new ObjectInfoAvatarLocalPacket();
 				res.x = player.lastPosX;
 				res.y = player.lastPosY;
 				res.z = player.lastPosZ;
@@ -325,7 +312,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Spawn at target if present
 		if (plr.targetPos != null && plr.targetRot != null) {
-			WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
+			ObjectInfoAvatarLocalPacket res = new ObjectInfoAvatarLocalPacket();
 			res.x = plr.targetPos.x;
 			res.y = plr.targetPos.y;
 			res.z = plr.targetPos.z;
@@ -357,10 +344,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			if (helper.has(plr.pendingLevelID + "/" + id)) {
 				// Send response
 				helper = helper.get(plr.pendingLevelID + "/" + id).getAsJsonObject();
-				System.out.println("Player teleport: " + plr.account.getDisplayName() + ": "
+				Centuria.logger.info("Player teleport: " + plr.account.getDisplayName() + ": "
 						+ helper.get("worldID").getAsString());
 
-				WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
+				ObjectInfoAvatarLocalPacket res = new ObjectInfoAvatarLocalPacket();
 				res.x = helper.get("spawnX").getAsDouble();
 				res.y = helper.get("spawnY").getAsDouble();
 				res.z = helper.get("spawnZ").getAsDouble();
@@ -384,8 +371,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		}
 
 		// Spawn not found
-		System.err.println("Player teleport: " + plr.account.getDisplayName() + " to unrecognized spawn!");
-		WorldObjectInfoAvatarLocal res = new WorldObjectInfoAvatarLocal();
+		Centuria.logger.info("Player teleport: " + plr.account.getDisplayName() + " to unrecognized spawn!");
+		ObjectInfoAvatarLocalPacket res = new ObjectInfoAvatarLocalPacket();
 		res.x = 0;
 		res.y = 80;
 		res.z = 0;

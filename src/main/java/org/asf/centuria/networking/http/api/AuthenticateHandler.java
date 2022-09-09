@@ -71,7 +71,8 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 			boolean changeName = false;
 			// Check if the name is in use and not owned by the current user
 			if (manager.isDisplayNameInUse(acc.getDisplayName())
-					&& !manager.getUserByDisplayName(acc.getDisplayName()).equals(acc.getAccountID())) {
+					&& (manager.getUserByDisplayName(acc.getDisplayName()) == null
+							|| !manager.getUserByDisplayName(acc.getDisplayName()).equals(acc.getAccountID()))) {
 				// Name is in use, request change
 				changeName = true;
 			} else {
@@ -110,6 +111,7 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");
+			Centuria.logger.error(getRequest().path + " failed: 500: Internal Server Error", e);
 		}
 	}
 

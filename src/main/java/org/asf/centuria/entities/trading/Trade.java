@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.MarkerManager;
+import org.asf.centuria.Centuria;
 import org.asf.centuria.entities.players.Player;
-import org.asf.centuria.packets.xt.gameserver.trading.*;
+import org.asf.centuria.packets.xt.gameserver.trade.*;
 
 import com.google.gson.JsonObject;
 
@@ -83,10 +85,7 @@ public class Trade {
 		if (sourcePlayer.tradeEngagedIn != null || targetPlayer.tradeEngagedIn != null
 				|| sourcePlayer.roomReady == false || sourcePlayer.roomReady == false) {
 			// Players are already engaged in a trade, or arn't fully loaded yet.
-			if (System.getProperty("debugMode") != null) {
-				System.out.println("[TRADE] [TradeInitiateFailPacket] Server to client.");
-			}
-
+			Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeInitiateFailPacket] Server to client.");
 			TradeInitiateFailPacket tradeInitiateFailPacket = new TradeInitiateFailPacket();
 
 			sourcePlayer.client.sendPacket(tradeInitiateFailPacket);
@@ -110,20 +109,14 @@ public class Trade {
 		tradeInitiatePacket.outboundUserId = sourcePlayer.account.getAccountID();
 
 		targetPlayer.client.sendPacket(tradeInitiatePacket);
-
-		if (System.getProperty("debugMode") != null) {
-			System.out.println("[TRADE] [TradeInitiate] Server to client with ID " + targetPlayer.account.getAccountID()
-					+ ": " + tradeInitiatePacket.build());
-		}
+		Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeInitiate] Server to client with ID "
+				+ targetPlayer.account.getAccountID() + ": " + tradeInitiatePacket.build());
 
 		// Create trade initiate packet for source player
 		tradeInitiatePacket = new TradeInitiatePacket();
 		tradeInitiatePacket.success = true;
-
-		if (System.getProperty("debugMode") != null) {
-			System.out.println("[TRADE] [TradeInitiate] Server to client with ID " + sourcePlayer.account.getAccountID()
-					+ ": " + tradeInitiatePacket.build());
-		}
+		Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeInitiate] Server to client with ID "
+				+ sourcePlayer.account.getAccountID() + ": " + tradeInitiatePacket.build());
 
 		sourcePlayer.client.sendPacket(tradeInitiatePacket);
 
@@ -140,11 +133,8 @@ public class Trade {
 
 		// TODO: Does the source player need a cancel packet?
 		targetPlayer.client.sendPacket(cancelPacket);
-
-		if (System.getProperty("debugMode") != null) {
-			System.out.println("[TRADE] [TraceCancel] Server to client with ID " + sourcePlayer.account.getAccountID()
-					+ ": " + cancelPacket.build());
-		}
+		Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TraceCancel] Server to client with ID "
+				+ sourcePlayer.account.getAccountID() + ": " + cancelPacket.build());
 
 		sourcePlayer.tradeEngagedIn = null;
 		targetPlayer.tradeEngagedIn = null;
@@ -160,11 +150,8 @@ public class Trade {
 
 		// TODO: Does the target player need a reject packet?
 		sourcePlayer.client.sendPacket(rejectPacket);
-
-		if (System.getProperty("debugMode") != null) {
-			System.out.println("[TRADE] [TradeReject] Server to client with ID " + sourcePlayer.account.getAccountID()
-					+ ": " + rejectPacket.build());
-		}
+		Centuria.logger.debug(MarkerManager.getMarker("TRADE"),
+				"Server to client with ID " + sourcePlayer.account.getAccountID() + ": " + rejectPacket.build());
 
 		sourcePlayer.tradeEngagedIn = null;
 		targetPlayer.tradeEngagedIn = null;
@@ -184,10 +171,8 @@ public class Trade {
 		// tell the source player the trade has been accepted
 		sourcePlayer.client.sendPacket(acceptPacket);
 
-		if (System.getProperty("debugMode") != null) {
-			System.out.println("[TRADE] [TradeAccept] Server to client of player "
-					+ sourcePlayer.account.getDisplayName() + ": " + acceptPacket.build());
-		}
+		Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeAccept] Server to client of player "
+				+ sourcePlayer.account.getDisplayName() + ": " + acceptPacket.build());
 	}
 
 	/**
@@ -202,17 +187,13 @@ public class Trade {
 		if (exitedPlayer.account.getAccountID() == sourcePlayer.account.getAccountID()) {
 			targetPlayer.client.sendPacket(tradeExitPacket);
 
-			if (System.getProperty("debugMode") != null) {
-				System.out.println("[TRADE] [TradeExit] Server to client of player "
-						+ targetPlayer.account.getDisplayName() + ": " + tradeExitPacket.build());
-			}
+			Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeExit] Server to client of player "
+					+ targetPlayer.account.getDisplayName() + ": " + tradeExitPacket.build());
 		} else {
 			sourcePlayer.client.sendPacket(tradeExitPacket);
 
-			if (System.getProperty("debugMode") != null) {
-				System.out.println("[TRADE] [TradeExit] Server to client of player "
-						+ sourcePlayer.account.getDisplayName() + ": " + tradeExitPacket.build());
-			}
+			Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeExit] Server to client of player "
+					+ sourcePlayer.account.getDisplayName() + ": " + tradeExitPacket.build());
 		}
 
 		targetPlayer.tradeEngagedIn = null;
@@ -251,11 +232,9 @@ public class Trade {
 			}
 
 			targetPlayer.client.sendPacket(tradeAddRemovePacket);
-
-			if (System.getProperty("debugMode") != null) {
-				System.out.println("[TRADE] [TradeAddRemoveItem] [Add]  Server to client of player "
-						+ targetPlayer.account.getDisplayName() + ": " + tradeAddRemovePacket.build());
-			}
+			Centuria.logger.debug(MarkerManager.getMarker("TRADE"),
+					"[TradeAddRemoveItem] [Add]  Server to client of player " + targetPlayer.account.getDisplayName()
+							+ ": " + tradeAddRemovePacket.build());
 
 		} else {
 			var itemToReceive = itemsToReceive.get(itemId);
@@ -271,11 +250,9 @@ public class Trade {
 			}
 
 			sourcePlayer.client.sendPacket(tradeAddRemovePacket);
-
-			if (System.getProperty("debugMode") != null) {
-				System.out.println("[TRADE] [TradeAddRemoveItem] [Add]  Server to client of player "
-						+ sourcePlayer.account.getDisplayName() + ": " + tradeAddRemovePacket.build());
-			}
+			Centuria.logger.debug(MarkerManager.getMarker("TRADE"),
+					"[TradeAddRemoveItem] [Add]  Server to client of player " + sourcePlayer.account.getDisplayName()
+							+ ": " + tradeAddRemovePacket.build());
 		}
 
 	}
@@ -304,11 +281,11 @@ public class Trade {
 			tradeAddRemovePacket.updatedItem = item.item;
 			targetPlayer.client.sendPacket(tradeAddRemovePacket);
 
-			if (System.getProperty("debugMode") != null) {
-				System.out.println("[TRADE] [TradeAddRemoveItem] [Remove] Server to client of player "
-						+ targetPlayer.account.getDisplayName() + ": " + tradeAddRemovePacket.build());
-			}
+			Centuria.logger.debug(MarkerManager.getMarker("TRADE"),
+					"[TradeAddRemoveItem] [Remove] Server to client of player " + targetPlayer.account.getDisplayName()
+							+ ": " + tradeAddRemovePacket.build());
 		} else {
+
 			var item = itemsToReceive.get(itemId);
 			item.quantity -= quantity;
 			if (item.quantity <= 0) {
@@ -317,10 +294,9 @@ public class Trade {
 			tradeAddRemovePacket.updatedItem = item.item;
 			sourcePlayer.client.sendPacket(tradeAddRemovePacket);
 
-			if (System.getProperty("debugMode") != null) {
-				System.out.println("[TRADE] [TradeAddRemoveItem] [Remove] Server to client of player "
-						+ sourcePlayer.account.getDisplayName() + ": " + tradeAddRemovePacket.build());
-			}
+			Centuria.logger.debug(MarkerManager.getMarker("TRADE"),
+					"[TradeAddRemoveItem] [Remove] Server to client of player " + sourcePlayer.account.getDisplayName()
+							+ ": " + tradeAddRemovePacket.build());
 		}
 	}
 
@@ -340,12 +316,11 @@ public class Trade {
 		targetPlayer.client.sendPacket(tradeReadyPacket);
 		sourcePlayer.client.sendPacket(tradeReadyPacket);
 
-		if (System.getProperty("debugMode") != null) {
-			System.out.println("[TRADE] [TradeReady] Server to client of player "
-					+ targetPlayer.account.getDisplayName() + ": " + tradeReadyPacket.build());
-			System.out.println("[TRADE] [TradeReady] Server to client of player "
-					+ sourcePlayer.account.getDisplayName() + ": " + tradeReadyPacket.build());
-		}
+		Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeReady] Server to client of player "
+				+ targetPlayer.account.getDisplayName() + ": " + tradeReadyPacket.build());
+		Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeReady] Server to client of player "
+				+ sourcePlayer.account.getDisplayName() + ": " + tradeReadyPacket.build());
+
 	}
 
 	/**
@@ -364,12 +339,10 @@ public class Trade {
 		this.readyStatusSource = false;
 		this.readyStatusTarget = false;
 
-		if (System.getProperty("debugMode") != null) {
-			System.out.println("[TRADE] [TradeReadyReject] Server to client of player "
-					+ targetPlayer.account.getDisplayName() + ": " + tradeReadyRejectPacket.build());
-			System.out.println("[TRADE] [TradeReadyReject] Server to client of player "
-					+ sourcePlayer.account.getDisplayName() + ": " + tradeReadyRejectPacket.build());
-		}
+		Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeReadyReject] Server to client of player "
+				+ targetPlayer.account.getDisplayName() + ": " + tradeReadyRejectPacket.build());
+		Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeReadyReject] Server to client of player "
+				+ sourcePlayer.account.getDisplayName() + ": " + tradeReadyRejectPacket.build());
 	}
 
 	/**
@@ -395,26 +368,20 @@ public class Trade {
 			if (player.account.getAccountID() == sourcePlayer.account.getAccountID()) {
 				tradeReadyAcceptPacket.outbound_WaitingForOtherPlayer = true;
 				sourcePlayer.client.sendPacket(tradeReadyAcceptPacket);
-
-				if (System.getProperty("debugMode") != null) {
-					System.out.println("[TRADE] [TradeReadyAccept] Server to client of player "
-							+ targetPlayer.account.getDisplayName() + ": " + tradeReadyAcceptPacket.build());
-				}
+				Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeReadyAccept] Server to client of player "
+						+ targetPlayer.account.getDisplayName() + ": " + tradeReadyAcceptPacket.build());
 			} else {
 				tradeReadyAcceptPacket.outbound_WaitingForOtherPlayer = true;
 				targetPlayer.client.sendPacket(tradeReadyAcceptPacket);
-
-				if (System.getProperty("debugMode") != null) {
-					System.out.println("[TRADE] [TradeReadyAccept] Server to client of player "
-							+ sourcePlayer.account.getDisplayName() + ": " + tradeReadyAcceptPacket.build());
-				}
+				Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeReadyAccept] Server to client of player "
+						+ sourcePlayer.account.getDisplayName() + ": " + tradeReadyAcceptPacket.build());
 			}
 		}
 	}
 
 	/**
-	 * Performs the trade, giving items to both players and setting the trades
-	 * they are engaged in to null.
+	 * Performs the trade, giving items to both players and setting the trades they
+	 * are engaged in to null.
 	 */
 	public void PerformTrade() {
 		// Give and remove items..

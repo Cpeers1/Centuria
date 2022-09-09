@@ -79,6 +79,7 @@ public class XPDetailsHandler extends HttpUploadProcessor {
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");
+			Centuria.logger.error(getRequest().path + " failed: 500: Internal Server Error", e);
 		}
 	}
 

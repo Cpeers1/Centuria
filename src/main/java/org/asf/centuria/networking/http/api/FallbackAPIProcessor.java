@@ -420,6 +420,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 			if (Centuria.debugMode) {
 				System.err.println("[FALLBACKAPI] ERROR : " + e.getMessage() + " )");
 			}
+			Centuria.logger.error(getRequest().path + " failed", e);
 		}
 	}
 

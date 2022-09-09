@@ -219,7 +219,7 @@ public abstract class CenturiaAccount {
 				if (acc != null)
 					issuerNm = acc.getDisplayName();
 			}
-			System.out.println("Kicked " + getDisplayName() + ": " + (reason == null ? "Unspecified reason" : reason)
+			Centuria.logger.info("Kicked " + getDisplayName() + ": " + (reason == null ? "Unspecified reason" : reason)
 					+ " (issued by " + issuerNm + ")");
 
 			// Kick the player
@@ -344,7 +344,7 @@ public abstract class CenturiaAccount {
 			if (acc != null)
 				issuerNm = acc.getDisplayName();
 		}
-		System.out.println("Premanently banned " + getDisplayName() + ": "
+		Centuria.logger.info("Premanently banned " + getDisplayName() + ": "
 				+ (reason == null ? "Unspecified reason" : reason) + " (issued by " + issuerNm + ")");
 	}
 
@@ -403,7 +403,7 @@ public abstract class CenturiaAccount {
 			if (acc != null)
 				issuerNm = acc.getDisplayName();
 		}
-		System.out.println(
+		Centuria.logger.info(
 				"Temporarily banned " + getDisplayName() + ": " + (reason == null ? "Unspecified reason" : reason)
 						+ " (issued by " + issuerNm + ", unban in " + days + " days)");
 	}
@@ -470,7 +470,7 @@ public abstract class CenturiaAccount {
 			if (acc != null)
 				issuerNm = acc.getDisplayName();
 		}
-		System.out.println(
+		Centuria.logger.info(
 				"Muted " + getDisplayName() + ": " + (reason == null ? "Unspecified reason" : reason) + " (issued by "
 						+ issuerNm + ", unmute in " + days + " days, " + hours + " hours and " + minutes + " minutes)");
 	}
@@ -528,7 +528,7 @@ public abstract class CenturiaAccount {
 			if (acc != null)
 				issuerNm = acc.getDisplayName();
 		}
-		System.out.println("Pardoned " + getDisplayName() + ": " + (reason == null ? "Unspecified reason" : reason)
+		Centuria.logger.info("Pardoned " + getDisplayName() + ": " + (reason == null ? "Unspecified reason" : reason)
 				+ " (issued by " + issuerNm + ")");
 	}
 

@@ -37,17 +37,18 @@ import org.asf.centuria.packets.xml.handshake.version.ClientToServerHandshake;
 import org.asf.centuria.packets.xml.handshake.version.ServerToClientOK;
 import org.asf.centuria.packets.xt.*;
 import org.asf.centuria.packets.xt.gameserver.*;
-import org.asf.centuria.packets.xt.gameserver.avatareditor.*;
-import org.asf.centuria.packets.xt.gameserver.interactions.*;
+import org.asf.centuria.packets.xt.gameserver.avatar.*;
 import org.asf.centuria.packets.xt.gameserver.inventory.*;
-import org.asf.centuria.packets.xt.gameserver.minigames.*;
-import org.asf.centuria.packets.xt.gameserver.objects.*;
-import org.asf.centuria.packets.xt.gameserver.players.*;
-import org.asf.centuria.packets.xt.gameserver.sanctuaries.*;
-import org.asf.centuria.packets.xt.gameserver.settings.*;
-import org.asf.centuria.packets.xt.gameserver.shops.*;
-import org.asf.centuria.packets.xt.gameserver.social.*;
-import org.asf.centuria.packets.xt.gameserver.trading.*;
+import org.asf.centuria.packets.xt.gameserver.item.*;
+import org.asf.centuria.packets.xt.gameserver.minigame.*;
+import org.asf.centuria.packets.xt.gameserver.object.*;
+import org.asf.centuria.packets.xt.gameserver.relationship.*;
+import org.asf.centuria.packets.xt.gameserver.room.*;
+import org.asf.centuria.packets.xt.gameserver.sanctuary.*;
+import org.asf.centuria.packets.xt.gameserver.setting.*;
+import org.asf.centuria.packets.xt.gameserver.shop.*;
+import org.asf.centuria.packets.xt.gameserver.trade.*;
+import org.asf.centuria.packets.xt.gameserver.user.*;
 import org.asf.centuria.packets.xt.gameserver.world.*;
 import org.asf.centuria.security.AddressChecker;
 import org.asf.centuria.security.IpAddressMatcher;
@@ -98,31 +99,31 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new InventoryItemDownloadPacket());
 		registerPacket(new InventoryItemUseDye());
 		registerPacket(new TradeListUpdatePacket());
-		registerPacket(new JoinRoom());
-		registerPacket(new RoomJoinPrevious());
-		registerPacket(new RoomJoinTutorial());
+		registerPacket(new RoomJoinPacket());
+		registerPacket(new RoomJoinPreviousPacket());
+		registerPacket(new RoomJoinTutorialPacket());
 		registerPacket(new MinigameJoin());
 		registerPacket(new MinigameMessage());
-		registerPacket(new ShopList());
-		registerPacket(new ShopItemBuy());
+		registerPacket(new ShopListPacket());
+		registerPacket(new ShopItemBuyRequestPacket());
 		registerPacket(new ItemUncraftPacket());
 		registerPacket(new WorldReadyPacket());
-		registerPacket(new WorldObjectUpdate());
-		registerPacket(new WorldObjectRespawn());
-		registerPacket(new WorldObjectSetRespawn());
-		registerPacket(new WorldObjectGlide());
-		registerPacket(new AvatarLookGet());
-		registerPacket(new PlayerOnlineStatus());
-		registerPacket(new JumpToPlayer());
-		registerPacket(new FindPlayer());
-		registerPacket(new AvatarAction());
-		registerPacket(new InteractionStart());
-		registerPacket(new InteractionCancel());
-		registerPacket(new InteractionFinish());
-		registerPacket(new InteractionDataRequest());
-		registerPacket(new UserTutorialCompleted());
-		registerPacket(new AvatarEditorSelectLook());
-		registerPacket(new UserAvatarSave());
+		registerPacket(new ObjectUpdatePacket());
+		registerPacket(new ObjectRespawnRequestPacket());
+		registerPacket(new ObjectRespawnSetPacket());
+		registerPacket(new ObjectGlidePacket());
+		registerPacket(new AvatarLookGetPacket());
+		registerPacket(new RelationshipPlayerOnlineStatusPacket());
+		registerPacket(new RelationshipJumpToPlayerPacket());
+		registerPacket(new RelationshipFindPlayerPacket());
+		registerPacket(new AvatarActionPacket());
+		registerPacket(new ObjectActionStartPacket());
+		registerPacket(new ObjectActionCancelPacket());
+		registerPacket(new ObjectActionFinishPacket());
+		registerPacket(new ObjectAskResponsePacket());
+		registerPacket(new UserTutorialCompletedPacket());
+		registerPacket(new AvatarSelectLookPacket());
+		registerPacket(new AvatarLookSavePacket());
 		registerPacket(new SanctuaryJoinPacket());
 		registerPacket(new SanctuaryLookSwitchPacket());
 		registerPacket(new SanctuaryLookLoadPacket());
@@ -130,7 +131,7 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new SanctuaryLookSavePacket());
 		registerPacket(new SanctuaryUpgradeStartPacket());
 		registerPacket(new SanctuaryUpgradeCompletePacket());
-		registerPacket(new UserVarSetPacket());
+		registerPacket(new SettingsSetPacket());
 		registerPacket(new InventoryItemInspirationCombinePacket());
 
 		// Trading Packets
@@ -304,7 +305,7 @@ public class GameServer extends BaseSmartfoxServer {
 				// Send online status update
 				Player player = getPlayer(ent.playerID);
 				if (player != null) {
-					RelationshipFollowOnlineStatusUpdate res = new RelationshipFollowOnlineStatusUpdate();
+					RelationshipFollowOnlineStatusUpdatePacket res = new RelationshipFollowOnlineStatusUpdatePacket();
 					res.userUUID = plr.account.getAccountID();
 					res.playerOnlineStatus = OnlineStatus.LoggedInToRoom;
 					client.sendPacket(res);
@@ -493,7 +494,7 @@ public class GameServer extends BaseSmartfoxServer {
 						// Send online status update
 						Player player = getPlayer(ent.playerID);
 						if (player != null) {
-							RelationshipFollowOnlineStatusUpdate res = new RelationshipFollowOnlineStatusUpdate();
+							RelationshipFollowOnlineStatusUpdatePacket res = new RelationshipFollowOnlineStatusUpdatePacket();
 							res.userUUID = plr.account.getAccountID();
 							res.playerOnlineStatus = OnlineStatus.Offline;
 							client.sendPacket(res);

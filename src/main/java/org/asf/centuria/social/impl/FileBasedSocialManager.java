@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.social.SocialEntry;
 import org.asf.centuria.social.SocialManager;
@@ -70,8 +71,8 @@ public class FileBasedSocialManager extends SocialManager {
 			return new File(socialListPath + "/" + playerID + ".json").exists();
 		} catch (Exception e) {
 			if (Centuria.debugMode) {
-				System.err.println("[FRIENDLIST] ERROR IN RETRIEVING SOCIAL LIST : " + e.getMessage() + " | "
-						+ e.getStackTrace() + " )");
+				Centuria.logger.error(MarkerManager.getMarker("SOCIAL"),
+						"ERROR IN RETRIEVING SOCIAL LIST : " + e.getMessage() + " | " + e.getStackTrace() + " )");
 			}
 			return false;
 		}

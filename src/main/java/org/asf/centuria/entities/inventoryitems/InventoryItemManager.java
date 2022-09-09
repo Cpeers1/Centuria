@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.enums.inventory.InventoryType;
 import org.reflections.Reflections;
@@ -40,10 +41,7 @@ public final class InventoryItemManager {
 			
 			var itemType = itemClass.getDeclaredConstructor().newInstance().getInventoryType();
 			
-			if (Centuria.debugMode) {
-				System.out.println("Loading item into item register: " + itemType.toString());
-			}
-			
+			Centuria.logger.debug(MarkerManager.getMarker("ITEMS"), "Loading item into item register: " + itemType.toString());			
 			itemRegister.put(itemType, itemClass);	
 		}
 	}

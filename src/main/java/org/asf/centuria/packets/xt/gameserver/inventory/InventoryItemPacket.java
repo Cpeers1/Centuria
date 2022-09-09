@@ -46,9 +46,9 @@ public class InventoryItemPacket implements IXtPacket<InventoryItemPacket> {
 		gz.close();
 		op.close();
 
-		writer.writeInt(-1); // Data prefix
+		writer.writeInt(DATA_PREFIX); // Data prefix
 		writer.writeString(Base64.getEncoder().encodeToString(op.toByteArray()));
-		writer.writeString(""); // Empty suffix
+		writer.writeString(DATA_SUFFIX); // Empty suffix
 	}
 
 	@Override
