@@ -78,4 +78,16 @@ public abstract class InteractionModule {
 		return false;
 	}
 
+	/**
+	 * Selects a interaction state for eg. dialogue
+	 * 
+	 * @param player Player making the interaction
+	 * @param id     Interaction ID
+	 * @param object Object that was interacted with
+	 * @return State number or -1
+	 */
+	public int selectInteractionState(Player player, String id, NetworkedObject object) {
+		return -1;
+	}
+
 }

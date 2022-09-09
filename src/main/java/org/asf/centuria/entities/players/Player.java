@@ -18,6 +18,7 @@ import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.enums.actors.ActorActionType;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
+import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.gameserver.avatar.AvatarObjectInfoPacket;
@@ -82,8 +83,9 @@ public class Player {
 	public Trade tradeEngagedIn;
 
 	// Quests
-	public int questStage = 0;
-	public int questTask = 0;
+	public int questProgress;
+	public HashMap<String, Integer> questObjectData = new HashMap<String, Integer>();
+	public boolean questStarted = false;
 	public int questObjective = 0;
 
 	public void destroyAt(Player player) {
@@ -347,10 +349,11 @@ public class Player {
 			plr.pendingRoom = "room_" + levelID;
 			plr.levelType = levelType;
 			
-			// Reset quest stage
-			plr.questStage = 1;
-			plr.questObjective = 1;
-			plr.questTask = 1;
+			// Reset quest data
+			plr.questProgress = 0;
+			plr.questStarted = false;
+			plr.questObjectData.clear();
+			plr.questObjective = 0;
 
 			// Clear respawn items
 			plr.respawnItems.clear();

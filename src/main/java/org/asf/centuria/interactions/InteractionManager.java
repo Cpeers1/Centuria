@@ -167,6 +167,29 @@ public class InteractionManager {
 	}
 
 	/**
+	 * Called to select interaction states
+	 * 
+	 * @param player              Player making the interaction
+	 * @param interactableId      Interactable object ID
+	 * @param object              NetworkedObject associated with the interactable
+	 *                            ID
+	 * @param state               Old interaction state
+	 * @return New state
+	 */
+	public static int selectInteractionState(Player player, String interactableId, NetworkedObject object, int state) {
+		// Find module
+		for (InteractionModule mod : modules) {
+			if (mod.canHandle(player, interactableId, object)) {
+				// Handle interaction
+				int newState = mod.selectInteractionState(player, interactableId, object);
+				if (newState != -1)
+					return newState;
+			}
+		}
+		return state;
+	}
+
+	/**
 	 * Called to handle interaction data requests
 	 * 
 	 * @param player         Player making the interaction

@@ -8,7 +8,7 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class QuestCommand implements IXtPacket<QuestCommand> {
+public class QuestCommandVTPacket implements IXtPacket<QuestCommandVTPacket> {
 
 	public int type = 1;
 	public String id = "";
@@ -16,7 +16,7 @@ public class QuestCommand implements IXtPacket<QuestCommand> {
 
 	@Override
 	public String id() {
-		return "qcmd";
+		return "qcmdVT";
 	}
 
 	@Override
@@ -39,8 +39,8 @@ public class QuestCommand implements IXtPacket<QuestCommand> {
 	}
 
 	@Override
-	public QuestCommand instantiate() {
-		return new QuestCommand();
+	public QuestCommandVTPacket instantiate() {
+		return new QuestCommandVTPacket();
 	}
 
 }

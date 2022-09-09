@@ -70,9 +70,12 @@ public class ObjectActionFinishPacket implements IXtPacket<ObjectActionFinishPac
 			destroy = InteractionManager.handleInteraction(plr, target, obj, currentState, destroy);
 		}
 
+		// Find state
+		int state = InteractionManager.selectInteractionState(plr, target, obj, currentState);
+
 		// Send qcmd
-		if (obj.stateInfo.containsKey(Integer.toString(currentState))) {
-			ArrayList<StateInfo> states = obj.stateInfo.get(Integer.toString(currentState));
+		if (obj.stateInfo.containsKey(Integer.toString(state))) {
+			ArrayList<StateInfo> states = obj.stateInfo.get(Integer.toString(state));
 			for (StateInfo st : states) {
 				// Build quest command
 				XtWriter pk = new XtWriter();
