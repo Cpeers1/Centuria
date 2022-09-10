@@ -181,6 +181,12 @@ public class Player {
 						isAllowed = false;
 					}
 				}
+				
+				// Check sanc existence
+				JsonObject sanctuaryInfo = sancOwner.getPlayerInventory().getSanctuaryAccessor()
+						.getSanctuaryLook(sancOwner.getActiveSanctuaryLook());
+				if (sanctuaryInfo == null)
+					isAllowed = false;
 			}
 
 			// Build room join
@@ -191,7 +197,7 @@ public class Player {
 			join.roomIdentifier = "sanctuary_" + sanctuaryOwner;
 			join.teleport = sanctuaryOwner;
 
-			if (isAllowed == true) {
+			if (isAllowed) {
 				// Sync
 				GameServer srv = (GameServer) client.getServer();
 				for (Player plr2 : srv.getPlayers()) {
