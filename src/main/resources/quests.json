@@ -3434,6 +3434,41 @@
           ]
         }
       ]
+    },
+    "25287": {
+      "questLocation": -1,
+      "defID": "25282",
+      "name": "Tutorial Quest",
+      "levelOverrideID": 18179,
+      "objectives": [
+        {
+          "title": "Harvest Ingredients",
+          "isLastObjective": false,
+          "tasks": [
+            {
+              "targetProgress": 2
+            }
+          ]
+        },
+        {
+          "title": "Return to Aleta",
+          "isLastObjective": false,
+          "tasks": [
+            {
+              "targetProgress": 1
+            }
+          ]
+        },
+        {
+          "title": "Quest Complete",
+          "isLastObjective": true,
+          "tasks": [
+            {
+              "targetProgress": 1
+            }
+          ]
+        }
+      ]
     }
   }
 }
