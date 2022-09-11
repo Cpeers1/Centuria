@@ -34,7 +34,6 @@ public class QuestCommandPacket implements IXtPacket<QuestCommandPacket> {
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

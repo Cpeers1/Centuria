@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.asf.centuria.Centuria;
+import org.asf.centuria.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.NetworkedObjects;
@@ -25,6 +26,7 @@ import org.asf.centuria.modules.ICenturiaModule;
 import org.asf.centuria.modules.ModuleManager;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.util.WeightedSelectorUtil;
 
 import com.google.gson.JsonArray;
@@ -401,7 +403,8 @@ public class ResourceCollectionModule extends InteractionModule {
 				// Treasure
 
 				// Give reward
-				giveLootReward(player, id, Integer.toString(def.lootTableId));
+				giveLootReward(player, id, Integer.toString(def.lootTableId), obj.primaryObjectInfo.type,
+						obj.primaryObjectInfo.defId);
 
 				// Set unlocked and timestamp
 				player.account.getPlayerInventory().getInteractionMemory().unlocked(player.levelID, id);
@@ -421,7 +424,8 @@ public class ResourceCollectionModule extends InteractionModule {
 								// It is, lets find the table
 
 								// Give reward
-								giveLootReward(player, id, branch.params[0]);
+								giveLootReward(player, id, branch.params[0], obj.primaryObjectInfo.type,
+										obj.primaryObjectInfo.defId);
 
 								// Set unlocked and timestamp
 								player.account.getPlayerInventory().getInteractionMemory().unlocked(player.levelID, id);
@@ -453,7 +457,7 @@ public class ResourceCollectionModule extends InteractionModule {
 		return false;
 	}
 
-	private void giveLootReward(Player player, String id, String lootTableId) {
+	public static void giveLootReward(Player player, String id, String lootTableId, int type, int defID) {
 		LootTable table = lootTables.get(lootTableId);
 		if (table != null) {
 			// Find reward
@@ -469,12 +473,39 @@ public class ResourceCollectionModule extends InteractionModule {
 					count = rnd.nextInt(reward.maxCount + 1);
 
 				if (reward.itemId != null) {
-					player.account.getPlayerInventory().getItemAccessor(player).add(Integer.parseInt(reward.itemId),
-							count);
+					String[] ids = player.account.getPlayerInventory().getItemAccessor(player)
+							.add(Integer.parseInt(reward.itemId), count);
+
+					// Send gift push popups
+					for (String objID : ids) {
+						// Send gift object
+						JsonObject gift = new JsonObject();
+						gift.addProperty("fromType", type);
+						gift.addProperty("fromId", defID);
+						gift.addProperty("redeemedItemIdsExpectedCount", 0);
+						gift.addProperty("giftItemDefId", Integer.parseInt(reward.itemId));
+						gift.addProperty("count", count);
+						gift.addProperty("giftItemType",
+								player.account.getPlayerInventory().getAccessor().getInventoryIDOfItem(objID));
+						gift.addProperty("uuid", objID);
+
+						// Send object
+						String giftID = player.account.getPlayerInventory().getAccessor().createInventoryObject("302",
+								-1, new ItemComponent("Gift", gift));
+						JsonArray update = new JsonArray();
+						update.add(
+								player.account.getPlayerInventory().getAccessor().findInventoryObject("302", giftID));
+						InventoryItemPacket pkt = new InventoryItemPacket();
+						pkt.item = update;
+						player.client.sendPacket(pkt);
+
+						// Send gift-push packet
+						player.client.sendPacket("%xt%gp%-1%1%" + giftID + "%" + count + "%");
+					}
 				}
 				if (reward.referencedTableId != null) {
 					// Give table
-					giveLootReward(player, id, reward.referencedTableId);
+					giveLootReward(player, id, reward.referencedTableId, type, defID);
 				}
 			}
 		}

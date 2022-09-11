@@ -271,7 +271,8 @@ public class InventoryAccessor {
 
 		// Build object
 		JsonObject obj = new JsonObject();
-		obj.addProperty("defId", defId);
+		if (defId != -1)
+			obj.addProperty("defId", defId);
 		obj.add("components", components);
 		obj.addProperty("id", iID);
 		obj.addProperty("type", itemType);
