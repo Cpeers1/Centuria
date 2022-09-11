@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.centuria.entities.players.Player;
@@ -29,9 +30,13 @@ import com.google.gson.JsonParser;
 
 public class QuestManager extends InteractionModule {
 
+	// The quest to refuse running
+	// This will be the quest after the 3rd released each week
+	// Ignored in debug mode
+	public int questLock = 7748; // Building Bridges, locked to prevent broken quests breaking the server
+
 	// TODO:
 	// - tutorial quest support
-	// - quest reward
 	// - questline locks for testing (3 new quests each week)
 
 	private static String firstQuest = "7537";
@@ -204,6 +209,11 @@ public class QuestManager extends InteractionModule {
 			if ((player.levelID == 2147 && quest.questLocation == 0)
 					|| (player.levelID == 9687 && quest.questLocation == 1)
 					|| (player.levelID == 2364 && quest.questLocation == 2)) {
+				// Check if its a npc and if the quest is locked
+				if (quest.defID == questLock && isNPC(object)) { // && !Centuria.debugMode) {
+					return true;
+				}
+
 				// Load objects
 				String[] collections = NetworkedObjects
 						.getCollectionIdsForOverride(Integer.toString(quest.levelOverrideID));
@@ -243,6 +253,21 @@ public class QuestManager extends InteractionModule {
 			if ((player.levelID == 2147 && quest.questLocation == 0)
 					|| (player.levelID == 9687 && quest.questLocation == 1)
 					|| (player.levelID == 2364 && quest.questLocation == 2)) {
+				// Check if its a npc and if the quest is locked
+				if (quest.defID == questLock && isNPC(object)) { // && !Centuria.debugMode) {
+					// Inform the user
+					Centuria.systemMessage(player,
+							"Cannot start quest\n\n"
+							+ ""
+							+ "You have finished all quests that are currently in working order.\n"
+							+ "If development goes well, hopefully this quest and the two following it will become playable next week!\n\n"
+							+ ""
+							+ "Apologies for the inconvenience.\n"
+							+ " - Centuria Development Team",
+							true);
+					return true;
+				}
+
 				if (object.primaryObjectInfo != null && object.primaryObjectInfo.type == 31
 						&& object.subObjectInfo != null) {
 					// Check for harvest trackers
@@ -285,6 +310,15 @@ public class QuestManager extends InteractionModule {
 	public int selectInteractionState(Player player, String id, NetworkedObject object) {
 		if (canHandle(player, id, object) || (player.questObjective != 0 && !player.questStarted)) {
 			String activeQuest = getActiveQuest(player.account);
+
+			if (activeQuest != null) {
+				QuestDefinition quest = questDefinitions.get(activeQuest);
+				// Check if its a npc and if the quest is locked
+				if (quest.defID == questLock && isNPC(object)) { // && !Centuria.debugMode) {
+					return -10; // Prevent dialogue
+				}
+			}
+
 			if (activeQuest != null || (player.questObjective != 0 && !player.questStarted)) {
 				if (isNPC(object) && (player.questObjective != 0 || player.questStarted)) {
 					return player.questObjective + 1;
@@ -308,6 +342,11 @@ public class QuestManager extends InteractionModule {
 		if (activeQuest != null) {
 			QuestDefinition quest = questDefinitions.get(activeQuest);
 
+			// Check if its a npc and if the quest is locked
+			if (quest.defID == questLock && isNPC(object)) { // && !Centuria.debugMode) {
+				return true;
+			}
+
 			// Find quest objective
 			int objectiveID = player.questObjective;
 			QuestObjective objective = quest.objectives.get(objectiveID);
@@ -322,30 +361,39 @@ public class QuestManager extends InteractionModule {
 				reloadObjects(player, quest);
 			} else {
 				// Update
+				int offset = 0;
 				var branch = object.stateInfo.get("0").get(0).branches.get(Integer.toString(state));
-				player.questProgress++;
+				if (branch == null) {
+					branch = object.stateInfo.get("1").get(0).branches.get(Integer.toString(state));
+					offset = 1;
+				}
+				if (branch.size() <= offset + 1)
+					return true;
 
 				// Send quest commands
 				QuestCommandVTPacket cmd = new QuestCommandVTPacket();
 				cmd.type = 1;
-				cmd.id = branch.get(0).actorId;
+				cmd.id = branch.get(offset).actorId;
 				player.questObjectData.put(cmd.id, player.questObjectData.get(cmd.id) - 1);
 				cmd.params.add(Integer.toString(player.questObjectData.get(cmd.id)));
 				cmd.params.add("0");
 				cmd.params.add("0");
 				player.client.sendPacket(cmd);
 
-				if (branch.get(1).params.length >= 2) {
-					player.questObjectData.put(cmd.id + "-id", Integer.parseInt(branch.get(1).params[2]));
+				if (branch.get(1 + offset).params.length >= 2) {
+					player.questObjectData.put(cmd.id + "-id", Integer.parseInt(branch.get(1 + offset).params[2]));
 
 					QuestCommandPacket qcmd = new QuestCommandPacket();
 					qcmd.type = 20;
 					qcmd.id = "-1";
-					qcmd.params.add(branch.get(1).params[2]);
+					qcmd.params.add(branch.get(1 + offset).params[2]);
 					player.questObjectData.put(cmd.id + "-collect",
 							player.questObjectData.get(cmd.id + "-collect") + 1);
+					player.questProgress++;
 					qcmd.params.add(Integer.toString(player.questObjectData.get(cmd.id + "-collect")));
 					player.client.sendPacket(qcmd);
+				} else if (isNPC(object)) {
+					player.questProgress++;
 				}
 
 				// Check task
@@ -431,7 +479,18 @@ public class QuestManager extends InteractionModule {
 						comp.questID = quest.defID;
 						player.client.sendPacket(comp);
 
-						arr = arr;
+						// Find reward
+						for (StateInfo st : object.stateInfo.get(Integer.toString(player.questObjective))) {
+							st.branches.forEach((k, v) -> {
+								v.forEach(st2 -> {
+									if (st2.command.equals("41")) {
+										// Give reward
+										ResourceCollectionModule.giveLootReward(player, st2.params[0],
+												object.primaryObjectInfo.type, object.primaryObjectInfo.defId);
+									}
+								});
+							});
+						}
 
 						return true;
 					}

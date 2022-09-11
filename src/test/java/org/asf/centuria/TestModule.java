@@ -34,8 +34,10 @@ public class TestModule implements ICenturiaModule {
 
 	@EventListener
 	public void runCommand(ChatCommandEvent event) {
-		if (event.getCommandID().equals("test"))
+		if (event.getCommandID().equals("test")) {
 			event.respond("Test 123");
+			Centuria.systemMessage(event.getAccount().getOnlinePlayerInstance(), "test", true);
+		}
 	}
 
 }

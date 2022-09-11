@@ -29,8 +29,10 @@ import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.UUID;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -49,6 +51,7 @@ import org.asf.centuria.modules.events.servers.DirectorServerStartupEvent;
 import org.asf.centuria.modules.events.updates.ServerUpdateCompletionEvent;
 import org.asf.centuria.modules.events.updates.ServerUpdateEvent;
 import org.asf.centuria.modules.events.updates.UpdateCancelEvent;
+import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.ChatServer;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.http.api.FallbackAPIProcessor;
@@ -62,6 +65,8 @@ import org.asf.centuria.networking.http.api.XPDetailsHandler;
 import org.asf.centuria.networking.http.director.GameServerRequestHandler;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.ConnectiveServerFactory;
+
+import com.google.gson.JsonObject;
 
 public class Centuria {
 	// Update
@@ -99,6 +104,9 @@ public class Centuria {
 	private static boolean updating = false;
 	private static String nextVersion = null;
 
+	// Messages
+	private static String NIL_UUID = new UUID(0, 0).toString();
+
 	/**
 	 * Main method used to start the servers
 	 * 
@@ -128,6 +136,7 @@ public class Centuria {
 		// Setup logging
 		if (System.getProperty("debugMode") != null) {
 			System.setProperty("log4j2.configurationFile", Centuria.class.getResource("/log4j2-ide.xml").toString());
+			debugMode = true;
 		} else {
 			System.setProperty("log4j2.configurationFile", Centuria.class.getResource("/log4j2.xml").toString());
 		}
@@ -649,6 +658,54 @@ public class Centuria {
 			return sig.verify(signature);
 		} catch (SignatureException | NoSuchAlgorithmException | InvalidKeyException e) {
 			return false;
+		}
+	}
+
+	/**
+	 * Sends a system message to a player
+	 * 
+	 * @param player  Player to send the message to
+	 * @param message Message to send
+	 */
+	public static void systemMessage(Player player, String message) {
+		systemMessage(player, message, false);
+	}
+
+	/**
+	 * Sends a system message to a player
+	 * 
+	 * @param player  Player to send the message to
+	 * @param message Message to send
+	 * @param inDm    True for DM message, false otherwise
+	 */
+	public static void systemMessage(Player player, String message, boolean inDm) {
+		ChatClient client = chatServer.getClient(player.account.getAccountID());
+		if (client != null) {
+			if (inDm) {// && !client.isInRoom("SYSTEM")) {
+				// Build response
+				JsonObject res = new JsonObject();
+				res.addProperty("eventId", "conversations.openPrivate");
+				res.addProperty("conversationId", NIL_UUID);
+				res.addProperty("success", true);
+				client.sendPacket(res);
+				res = new JsonObject();
+				res.addProperty("conversationId", NIL_UUID);
+				res.addProperty("eventId", "conversations.create");
+				res.addProperty("success", true);
+				client.sendPacket(res);
+				client.joinRoom(NIL_UUID, true);
+			}
+
+			// Send response
+			JsonObject res = new JsonObject();
+			res.addProperty("conversationType", inDm ? "private" : "room");
+			res.addProperty("conversationId", inDm ? NIL_UUID : "room_" + player.levelID);
+			res.addProperty("message", message);
+			res.addProperty("source", NIL_UUID);
+			res.addProperty("sentAt", LocalDateTime.now().toString());
+			res.addProperty("eventId", "chat.postMessage");
+			res.addProperty("success", true);
+			client.sendPacket(res);
 		}
 	}
 
