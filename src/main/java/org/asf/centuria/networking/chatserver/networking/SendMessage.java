@@ -495,7 +495,7 @@ public class SendMessage extends AbstractChatPacket {
 							.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
 					JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
 					for (int i = 0; i < questsToRewind; i++) {
-						arr.remove(arr.get(arr.size() - 2));
+						arr.remove(arr.get(arr.size() - 1));
 					}
 
 					// Save
