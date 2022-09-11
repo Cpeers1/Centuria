@@ -182,8 +182,12 @@ public class QuestManager extends InteractionModule {
 	public static boolean isNPC(NetworkedObject object) {
 		// Check commands, command 3 is dialogue so then its a NPC
 		for (ArrayList<StateInfo> states : object.stateInfo.values()) {
-			if (states.stream().anyMatch(t -> t.command.equals("3")))
+			if (states.stream().anyMatch(t -> t.command.equals("3"))) {
+				// Make sure this is actually a NPC and not a item
+				if (object.subObjectInfo != null && object.subObjectInfo.defId == 0)
+					return false; // It is not
 				return true;
+			}
 			for (StateInfo state : states) {
 				for (ArrayList<StateInfo> sstates : state.branches.values()) {
 					for (StateInfo sstate : sstates) {
