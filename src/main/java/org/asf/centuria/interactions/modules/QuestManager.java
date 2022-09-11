@@ -36,9 +36,6 @@ public class QuestManager extends InteractionModule {
 	// Ignored in debug mode
 	public int questLock = 7748; // Building Bridges, locked to prevent broken quests breaking the server
 
-	// TODO:
-	// - tutorial quest support
-
 	private static String firstQuest = "7537";
 	private static LinkedHashMap<String, String> questMap = new LinkedHashMap<String, String>();
 	private static HashMap<String, QuestDefinition> questDefinitions = new HashMap<String, QuestDefinition>();
@@ -280,8 +277,8 @@ public class QuestManager extends InteractionModule {
 					return true;
 				}
 
-				if (object.primaryObjectInfo != null && object.primaryObjectInfo.type == 31
-						&& object.subObjectInfo != null) {
+				if ((object.primaryObjectInfo != null && object.primaryObjectInfo.type == 31
+						&& object.subObjectInfo != null) || player.levelID == 25280) {
 					// Check for harvest trackers
 					QuestObjective objective = quest.objectives.get(player.questObjective);
 					for (QuestTask task : objective.tasks) {
