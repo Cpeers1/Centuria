@@ -363,9 +363,9 @@ public class Centuria {
 		if (!serverConf.exists()) {
 			Files.writeString(serverConf.toPath(),
 					"api-port=6\n" + "director-port=6969\n" + "game-port=6968\n" + "chat-port=6972\n"
-							+ "allow-registration=true\n" + "give-all-avatars=true\n" + "give-all-mods=true\n"
-							+ "give-all-clothes=true\n" + "give-all-wings=true\n" + "give-all-sanctuary-types=true\n"
-							+ "give-all-furniture=true\n" + "give-all-currency=true\n" + "give-all-resources=true\n"
+							+ "allow-registration=true\n" + "give-all-avatars=false\n" + "give-all-mods=false\n"
+							+ "give-all-clothes=false\n" + "give-all-wings=false\n" + "give-all-sanctuary-types=false\n"
+							+ "give-all-furniture=false\n" + "give-all-currency=false\n" + "give-all-resources=false\n"
 							+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
 							+ "encrypt-game=false\n" + "debug-mode=false\n" + "\nvpn-user-whitelist=vpn-whitelist\n"
 							+ "vpn-ipv4-banlist=\n" + "vpn-ipv6-banlist=");
