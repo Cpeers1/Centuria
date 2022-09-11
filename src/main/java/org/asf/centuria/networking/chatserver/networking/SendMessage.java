@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.asf.centuria.Centuria;
@@ -19,6 +20,7 @@ import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.uservars.UserVarValue;
+import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.chatcommands.ChatCommandEvent;
@@ -31,11 +33,13 @@ import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPac
 import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
 import org.asf.centuria.social.SocialManager;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class SendMessage extends AbstractChatPacket {
 
+	private static String NIL_UUID = new UUID(0, 0).toString();
 	private static ArrayList<String> banWords = new ArrayList<String>();
 	private static ArrayList<String> filterWords = new ArrayList<String>();
 	private static ArrayList<String> alwaysfilterWords = new ArrayList<String>();
@@ -193,6 +197,23 @@ public class SendMessage extends AbstractChatPacket {
 			JsonObject banInfo = acc.getPlayerInventory().getItem("penalty").getAsJsonObject();
 			if (banInfo.get("unmuteTimestamp").getAsLong() == -1
 					|| banInfo.get("unmuteTimestamp").getAsLong() > System.currentTimeMillis()) {
+				// Time format
+				SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");
+				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+				// System message
+				JsonObject res = new JsonObject();
+				res.addProperty("conversationType", "room");
+				res.addProperty("conversationId", room);
+				res.addProperty("message", "You are muted and cannot speak in public chats.");
+				res.addProperty("source", NIL_UUID);
+				res.addProperty("sentAt", fmt.format(new Date()));
+				res.addProperty("eventId", "chat.postMessage");
+				res.addProperty("success", true);
+
+				// Send message
+				client.sendPacket(res);
+
 				return true; // ignore chat
 			}
 		}
@@ -340,9 +361,8 @@ public class SendMessage extends AbstractChatPacket {
 		// Generate the command list
 		ArrayList<String> commandMessages = new ArrayList<String>();
 
-		if (Centuria.giveAllResources) {
+		if (Centuria.giveAllResources)
 			commandMessages.add("giveBasicMaterials");
-		}
 
 		if (GameServer.hasPerm(permLevel, "moderator")) {
 			commandMessages.add("kick \"<player>\" [\"<reason>\"]");
@@ -373,6 +393,7 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("listplayers");
 			commandMessages.add("tpm <levelDefID> [<levelType>]");
 			commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
+			commandMessages.add("questrewind <amount-of-quests-to-rewind>");
 		}
 
 		// Add module commands
@@ -428,12 +449,64 @@ public class SendMessage extends AbstractChatPacket {
 
 							// TODO: Check result
 							systemMessage("You have been given 1000 of every basic material. Have fun!", cmd, client);
-							return true;
 						} else {
 							// TODO: support for giving offline players items.. somehow
 							systemMessage("Specified account does not appear to be online.", cmd, client);
 						}
+						return true;
 					}
+				} else if (cmdId.equals("questrewind")) {
+					if (args.size() < 1) {
+						// Missing argument
+						systemMessage("Missing argument: amount of quests to rewind", cmd, client);
+						return true;
+					}
+					int questsToRewind = 0;
+					try {
+						questsToRewind = Integer.parseInt(args.get(0));
+					} catch (NumberFormatException e) {
+						// Missing argument
+						systemMessage("Invalid argument: amount of quests to rewind: expected number", cmd, client);
+						return true;
+					}
+					if (questsToRewind < 1) {
+						// Missing argument
+						systemMessage(
+								"Invalid argument: amount of quests to rewind: expected a number greater or equal to one.\n\nTo restart the quest specify 1, 2 restarts the quest before the current one.",
+								cmd, client);
+						return true;
+					}
+
+					// Get current quest position
+					String quest = QuestManager.getActiveQuest(client.getPlayer());
+					int pos = QuestManager.getQuestPosition(quest);
+					if (pos < questsToRewind) {
+						// Missing argument
+						systemMessage(
+								"Invalid argument: amount of quests to rewind: number exceeds the amount of your completed quests.",
+								cmd, client);
+						return true;
+					}
+
+					// Rewind quests
+					JsonObject obj = client.getPlayer().getPlayerInventory().getAccessor().findInventoryObject("311",
+							22781);
+					JsonObject progressionMap = obj.get("components").getAsJsonObject()
+							.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
+					JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
+					for (int i = 0; i < questsToRewind; i++) {
+						arr.remove(arr.get(arr.size() - 2));
+					}
+
+					// Save
+					client.getPlayer().getPlayerInventory().setItem("311",
+							client.getPlayer().getPlayerInventory().getItem("311"));
+					systemMessage("Success! Rewinded your quest log, '"
+							+ QuestManager.getQuest(QuestManager.getActiveQuest(client.getPlayer())).name
+							+ "' is now your active quest! Please log out and log back in to complete the process.",
+							cmd, client);
+
+					return true;
 				}
 
 				// Run system command

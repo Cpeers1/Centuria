@@ -3,6 +3,7 @@ package org.asf.centuria.interactions.modules;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.asf.centuria.Centuria;
@@ -37,10 +38,9 @@ public class QuestManager extends InteractionModule {
 
 	// TODO:
 	// - tutorial quest support
-	// - questline locks for testing (3 new quests each week)
 
 	private static String firstQuest = "7537";
-	private static HashMap<String, String> questMap = new HashMap<String, String>();
+	private static LinkedHashMap<String, String> questMap = new LinkedHashMap<String, String>();
 	private static HashMap<String, QuestDefinition> questDefinitions = new HashMap<String, QuestDefinition>();
 	static {
 		try {
@@ -210,7 +210,7 @@ public class QuestManager extends InteractionModule {
 					|| (player.levelID == 9687 && quest.questLocation == 1)
 					|| (player.levelID == 2364 && quest.questLocation == 2)) {
 				// Check if its a npc and if the quest is locked
-				if (quest.defID == questLock && isNPC(object)) { // && !Centuria.debugMode) {
+				if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
 					return true;
 				}
 
@@ -254,17 +254,12 @@ public class QuestManager extends InteractionModule {
 					|| (player.levelID == 9687 && quest.questLocation == 1)
 					|| (player.levelID == 2364 && quest.questLocation == 2)) {
 				// Check if its a npc and if the quest is locked
-				if (quest.defID == questLock && isNPC(object)) { // && !Centuria.debugMode) {
+				if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
 					// Inform the user
-					Centuria.systemMessage(player,
-							"Cannot start quest\n\n"
-							+ ""
+					Centuria.systemMessage(player, "Cannot start quest\n\n" + ""
 							+ "You have finished all quests that are currently in working order.\n"
 							+ "If development goes well, hopefully this quest and the two following it will become playable next week!\n\n"
-							+ ""
-							+ "Apologies for the inconvenience.\n"
-							+ " - Centuria Development Team",
-							true);
+							+ "" + "Apologies for the inconvenience.\n" + " - Centuria Development Team", true);
 					return true;
 				}
 
@@ -314,7 +309,7 @@ public class QuestManager extends InteractionModule {
 			if (activeQuest != null) {
 				QuestDefinition quest = questDefinitions.get(activeQuest);
 				// Check if its a npc and if the quest is locked
-				if (quest.defID == questLock && isNPC(object)) { // && !Centuria.debugMode) {
+				if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
 					return -10; // Prevent dialogue
 				}
 			}
@@ -343,7 +338,7 @@ public class QuestManager extends InteractionModule {
 			QuestDefinition quest = questDefinitions.get(activeQuest);
 
 			// Check if its a npc and if the quest is locked
-			if (quest.defID == questLock && isNPC(object)) { // && !Centuria.debugMode) {
+			if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
 				return true;
 			}
 
@@ -564,6 +559,35 @@ public class QuestManager extends InteractionModule {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Retrieves the index of the quest
+	 * 
+	 * @param quest Quest ID
+	 * @return Quest index or -1
+	 */
+	public static int getQuestPosition(String quest) {
+		if (!questMap.containsKey(quest))
+			return -1;
+
+		int ind = 0;
+		for (String q : questMap.keySet()) {
+			if (q.equals(quest))
+				return ind;
+			ind++;
+		}
+		return -1;
+	}
+
+	/**
+	 * Retrieves quests by ID
+	 * 
+	 * @param quest Quest ID
+	 * @return QuestDefinition instance or null
+	 */
+	public static QuestDefinition getQuest(String quest) {
+		return questDefinitions.get(quest);
 	}
 
 }
