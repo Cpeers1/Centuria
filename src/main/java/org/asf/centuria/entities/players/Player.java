@@ -18,6 +18,7 @@ import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.enums.actors.ActorActionType;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
+import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.gameserver.avatar.AvatarObjectInfoPacket;
@@ -30,6 +31,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+@SuppressWarnings("unused")
 public class Player {
 
 	public SmartfoxClient client;
@@ -79,6 +81,13 @@ public class Player {
 
 	// Trades
 	public Trade tradeEngagedIn;
+
+	// Quests
+	public int questProgress;
+	public HashMap<String, Integer> states = new HashMap<String, Integer>();
+	public HashMap<String, Integer> questObjectData = new HashMap<String, Integer>();
+	public boolean questStarted = false;
+	public int questObjective = 0;
 
 	public void destroyAt(Player player) {
 		// Delete character
@@ -173,6 +182,12 @@ public class Player {
 						isAllowed = false;
 					}
 				}
+
+				// Check sanc existence
+				JsonObject sanctuaryInfo = sancOwner.getPlayerInventory().getSanctuaryAccessor()
+						.getSanctuaryLook(sancOwner.getActiveSanctuaryLook());
+				if (sanctuaryInfo == null)
+					isAllowed = false;
 			}
 
 			// Build room join
@@ -183,7 +198,7 @@ public class Player {
 			join.roomIdentifier = "sanctuary_" + sanctuaryOwner;
 			join.teleport = sanctuaryOwner;
 
-			if (isAllowed == true) {
+			if (isAllowed) {
 				// Sync
 				GameServer srv = (GameServer) client.getServer();
 				for (Player plr2 : srv.getPlayers()) {
@@ -269,7 +284,7 @@ public class Player {
 			join.roomIdentifier = "sanctuary_" + sanctuaryOwner;
 			join.teleport = sanctuaryOwner;
 
-			if (isAllowed == true) {
+			if (isAllowed) {
 				// Sync
 				GameServer srv = (GameServer) client.getServer();
 				for (Player plr2 : srv.getPlayers()) {
@@ -293,6 +308,18 @@ public class Player {
 				client.sendPacket(join);
 				return false;
 			}
+
+			// Reset quest data
+			questProgress = 0;
+			questStarted = false;
+			questObjectData.clear();
+			questObjective = 0;
+
+			// Reset states
+			states.clear();
+
+			// Clear respawn items
+			respawnItems.clear();
 
 			// Send packet
 			client.sendPacket(join);
@@ -341,6 +368,16 @@ public class Player {
 			plr.pendingRoom = "room_" + levelID;
 			plr.levelType = levelType;
 
+			// Reset quest data
+			plr.questProgress = 0;
+			plr.questStarted = false;
+			plr.questObjectData.clear();
+			plr.questObjective = 0;
+
+			// Reset states
+			plr.states.clear();
+
+			// Clear respawn items
 			plr.respawnItems.clear();
 
 			// Log

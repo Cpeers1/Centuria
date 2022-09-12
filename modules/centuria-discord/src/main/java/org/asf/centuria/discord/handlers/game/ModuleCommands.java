@@ -109,7 +109,7 @@ public class ModuleCommands implements IEventReceiver {
 			if (ev.getCommandArguments().length < 2 || !ev.getCommandArguments()[1].equals("confirm")) {
 				// Respond with error message
 				ev.respond(
-						"Are you sure you wish to transfer ownership of this account to another Discord account?If you wish to proceed, run '>transferownership <code> confirm'");
+						"Are you sure you wish to transfer ownership of this account to another Discord account?\nIf you wish to proceed, run '>transferdiscord <code> confirm'");
 				return;
 			}
 

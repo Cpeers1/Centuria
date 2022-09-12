@@ -37,16 +37,17 @@ public class InteractionManager {
 		// Load object ids
 		NetworkedObjects.init();
 		ArrayList<String> ids = new ArrayList<String>();
+
 		// Find level objects
 		for (String id : NetworkedObjects.getCollectionIdsForLevel(Integer.toString(levelID))) {
 			NetworkedObjects.getObjects(id).objects.keySet().forEach(t -> ids.add(t));
 		}
 
-		// Initialize objects
-		initializeNetworkedObjects(client, ids.toArray(t -> new String[t]));
-
 		// Initialize modules
 		modules.forEach(t -> t.prepareWorld(levelID, ids, (Player) client.container));
+
+		// Initialize objects
+		initializeNetworkedObjects(client, ids.toArray(t -> new String[t]));
 	}
 
 	/**
@@ -166,6 +167,26 @@ public class InteractionManager {
 	}
 
 	/**
+	 * Called to select interaction states
+	 * 
+	 * @param player         Player making the interaction
+	 * @param interactableId Interactable object ID
+	 * @param object         NetworkedObject associated with the interactable ID
+	 * @param state          Old interaction state
+	 * @return New state
+	 */
+	public static int selectInteractionState(Player player, String interactableId, NetworkedObject object, int state) {
+		// Find module
+		for (InteractionModule mod : modules) {
+			// Handle interaction
+			int newState = mod.selectInteractionState(player, interactableId, object);
+			if (newState != -1)
+				return newState;
+		}
+		return state;
+	}
+
+	/**
 	 * Called to handle interaction data requests
 	 * 
 	 * @param player         Player making the interaction
@@ -190,8 +211,8 @@ public class InteractionManager {
 		// Warn
 		if (warn) {
 			if (Centuria.debugMode) {
-				Centuria.logger.error("[INTERACTION] [UNHANDLED] Client to server (target: " + interactableId + ", state: "
-						+ state + ")");
+				Centuria.logger.error("[INTERACTION] [UNHANDLED] Client to server (target: " + interactableId
+						+ ", state: " + state + ")");
 			}
 		}
 	}

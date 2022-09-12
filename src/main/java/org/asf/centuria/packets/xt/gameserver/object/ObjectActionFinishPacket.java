@@ -2,6 +2,7 @@ package org.asf.centuria.packets.xt.gameserver.object;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
@@ -70,9 +71,15 @@ public class ObjectActionFinishPacket implements IXtPacket<ObjectActionFinishPac
 			destroy = InteractionManager.handleInteraction(plr, target, obj, currentState, destroy);
 		}
 
+		// Find state
+		int nState = plr.states.getOrDefault(target, currentState);
+		if (obj.stateInfo.containsKey(Integer.toString(nState)))
+			currentState = nState;
+		int state = InteractionManager.selectInteractionState(plr, target, obj, currentState);
+
 		// Send qcmd
-		if (obj.stateInfo.containsKey(Integer.toString(currentState))) {
-			ArrayList<StateInfo> states = obj.stateInfo.get(Integer.toString(currentState));
+		if (obj.stateInfo.containsKey(Integer.toString(state))) {
+			ArrayList<StateInfo> states = obj.stateInfo.get(Integer.toString(state));
 			for (StateInfo st : states) {
 				// Build quest command
 				XtWriter pk = new XtWriter();
@@ -82,11 +89,15 @@ public class ObjectActionFinishPacket implements IXtPacket<ObjectActionFinishPac
 				pk.writeInt(0); // State
 				pk.writeString(target); // Interactable
 				pk.writeInt(0); // Position
+
 				// Parameters
 				for (String param : st.params)
 					pk.writeString(param);
 				pk.writeString(DATA_SUFFIX); // Data suffix
 				client.sendPacket(pk.encode());
+
+				// Handle branch commands
+				runBranches(plr, st.branches, "1");
 			}
 		}
 
@@ -103,4 +114,21 @@ public class ObjectActionFinishPacket implements IXtPacket<ObjectActionFinishPac
 		return true;
 	}
 
+	private void runBranches(Player plr, HashMap<String, ArrayList<StateInfo>> branches, String id) {
+		if (branches.containsKey(id)) {
+			var states = branches.get(id);
+			for (StateInfo state : states) {
+				switch (state.command) {
+				case "1": {
+					// Switch state
+					String t = target;
+					if (!state.actorId.equals("0"))
+						t = state.actorId;
+					plr.states.put(t, Integer.parseInt(state.params[0]));
+					break;
+				}
+				}
+			}
+		}
+	}
 }

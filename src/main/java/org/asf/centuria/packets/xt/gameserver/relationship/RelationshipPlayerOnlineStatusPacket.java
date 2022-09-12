@@ -1,6 +1,7 @@
 package org.asf.centuria.packets.xt.gameserver.relationship;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
@@ -17,6 +18,7 @@ public class RelationshipPlayerOnlineStatusPacket implements IXtPacket<Relations
 
 	private String playerID = "";
 	private OnlineStatus playerOnlineStatus;
+	private static String NIL_UUID = new UUID(0, 0).toString();
 
 	@Override
 	public RelationshipPlayerOnlineStatusPacket instantiate() {
@@ -36,16 +38,22 @@ public class RelationshipPlayerOnlineStatusPacket implements IXtPacket<Relations
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		writer.writeInt(DATA_PREFIX); // data prefix
-		
+
 		writer.writeString(playerID); // player ID
 		writer.writeInt(playerOnlineStatus.value); // player online status
-		
+
 		writer.writeString(DATA_SUFFIX); // data suffix
 	}
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		
+		if (playerID.equals(NIL_UUID)) {
+			// Server, so lets be online
+			client.sendPacket(this);
+			playerOnlineStatus = OnlineStatus.LoggedInToRoom;
+			return true;
+		}
+
 		// Find online player
 		playerOnlineStatus = OnlineStatus.Offline;
 
@@ -55,17 +63,10 @@ public class RelationshipPlayerOnlineStatusPacket implements IXtPacket<Relations
 				|| !socialManager.getPlayerIsBlocked(playerID, ((Player) client.container).account.getAccountID())) {
 			for (Player plr : ((GameServer) client.getServer()).getPlayers()) {
 				if (plr.account.getAccountID().equals(playerID)) {
-
-					//TODO: Is this correct implementation for when the player is loading in?
-					if(plr.roomReady)
-					{
+					if (plr.roomReady)
 						playerOnlineStatus = OnlineStatus.LoggedInToRoom;
-					}
 					else
-					{
 						playerOnlineStatus = OnlineStatus.LoggingIn;
-					}
-
 					break;
 				}
 			}

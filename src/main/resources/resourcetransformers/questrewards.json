@@ -1,0 +1,85 @@
+{
+  "LootTables": {
+  	"7981": {
+      "objectName": "QuestReward/HatsAndHatNots",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q7981",
+          "itemId": "3768",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q7981": {
+  	  "objectName": "QuestReward/HatsAndHatNots",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 15,
+          "maxCount": 20,
+          "weight": 1
+        }
+      ]
+    },
+    "7324": {
+      "objectName": "QuestReward/ProveFishingSkills",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q7324",
+          "itemId": "5536",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q7324": {
+  	  "objectName": "QuestReward/ProveFishingSkills",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 10,
+          "maxCount": 20,
+          "weight": 1
+        }
+      ]
+    },
+    "7984": {
+      "objectName": "QuestReward/BloodTundra_Quest1",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q7984",
+          "itemId": "10742",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q7984": {
+      "objectName": "QuestReward/BloodTundra_Quest1",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 50,
+          "maxCount": 60,
+          "weight": 1
+        }
+      ]
+    }
+  }
+}

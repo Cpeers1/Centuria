@@ -3,6 +3,7 @@ package org.asf.centuria.networking.http.api;
 import java.io.ByteArrayOutputStream;
 import java.net.Socket;
 import java.util.Base64;
+import java.util.UUID;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
@@ -16,6 +17,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class DisplayNamesRequestHandler extends HttpUploadProcessor {
+
+	private static String NIL_UUID = new UUID(0, 0).toString();
 
 	@Override
 	public void process(String contentType, Socket client, String method) {
@@ -61,6 +64,13 @@ public class DisplayNamesRequestHandler extends HttpUploadProcessor {
 			for (JsonElement uuid : req.get("uuids").getAsJsonArray()) {
 				// Find account
 				String id = uuid.getAsString();
+				if (id.equals(NIL_UUID)) {
+					JsonObject d = new JsonObject();
+					d.addProperty("display_name", "[Centuria Server]");
+					d.addProperty("uuid", id);
+					found.add(d);
+					continue;
+				}
 				CenturiaAccount acc = manager.getAccount(id);
 				if (acc != null) {
 					JsonObject d = new JsonObject();
