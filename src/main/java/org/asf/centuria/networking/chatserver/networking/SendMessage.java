@@ -162,7 +162,7 @@ public class SendMessage extends AbstractChatPacket {
 		}
 
 		// Log
-		System.out.println("Chat: " + client.getPlayer().getDisplayName() + ": " + message);
+		Centuria.logger.info("Chat: " + client.getPlayer().getDisplayName() + ": " + message);
 
 		// Check filter
 		String newMessage = "";
@@ -1617,7 +1617,7 @@ public class SendMessage extends AbstractChatPacket {
 		client.sendPacket(res);
 
 		// Log
-		System.out.println(client.getPlayer().getDisplayName() + " executed chat command: " + cmd + ": " + message);
+		Centuria.logger.info(client.getPlayer().getDisplayName() + " executed chat command: " + cmd + ": " + message);
 	}
 
 }
