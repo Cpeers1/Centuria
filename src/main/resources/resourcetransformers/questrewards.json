@@ -80,6 +80,33 @@
           "weight": 1
         }
       ]
+    },
+    "7979": {
+      "objectName": "QuestReward/BuildingBridges",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q7979",
+          "itemId": "6940",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q7979": {
+      "objectName": "QuestReward/BuildingBridges",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 30,
+          "maxCount": 40,
+          "weight": 1
+        }
+      ]
     }
   }
 }

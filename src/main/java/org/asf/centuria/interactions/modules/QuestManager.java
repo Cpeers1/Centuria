@@ -34,7 +34,7 @@ public class QuestManager extends InteractionModule {
 	// The quest to refuse running
 	// This will be the quest after the 3rd released each week
 	// Ignored in debug mode
-	public int questLock = 8117; // Serial Chiller, locked to prevent broken quests breaking the server
+	public int questLock = 4585; // Scratch My Back, locked to prevent broken quests breaking the server
 
 	// TODO:
 	// - tutorial quest support

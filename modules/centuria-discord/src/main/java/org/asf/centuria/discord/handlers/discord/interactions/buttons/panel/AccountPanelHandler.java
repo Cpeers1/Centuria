@@ -7,6 +7,7 @@ import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.discord.DiscordBotModule;
 import org.asf.centuria.discord.LinkUtils;
+import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
 import com.google.gson.JsonArray;
@@ -106,6 +107,10 @@ public class AccountPanelHandler {
 					}
 				}
 				embed.addField("Avatar Species", species, true);
+
+				// Quest
+				var q = QuestManager.getActiveQuest(account);
+				embed.addField("Current quest", q == null ? "None" : QuestManager.getQuest(q).name, true);
 
 				// Last login
 				embed.addField("Last login time",
