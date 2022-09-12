@@ -19,7 +19,6 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.sanctuaries.RoomInfoObject;
 import org.asf.centuria.entities.sanctuaries.SanctuaryObjectData;
 import org.asf.centuria.entities.sanctuaries.UpdateSancObjectItem;
-import org.asf.centuria.enums.actors.ActorActionType;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.enums.sanctuaries.SanctuaryObjectType;
 import org.asf.centuria.networking.gameserver.GameServer;
@@ -234,7 +233,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 									update.objectInfo.positionInfo.rotation.w);
 							packet.lastMove.velocity = new Velocity();
 							packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
-							packet.lastMove.actorActionType = ActorActionType.None;
+							packet.lastMove.actorActionType = 0;
 							packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition;
 
 							packet.objectType = SanctuaryObjectType.Furniture;
@@ -304,7 +303,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 						packet.lastMove.positionInfo = new WorldObjectPositionInfo(0, 0, 0, 0, 0, 0, 0);
 						packet.lastMove.velocity = new Velocity();
 						packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
-						packet.lastMove.actorActionType = ActorActionType.None;
+						packet.lastMove.actorActionType = 0;
 						packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition;
 
 						packet.objectType = SanctuaryObjectType.House;

@@ -35,20 +35,13 @@ public class RelationshipJumpToPlayerPacket implements IXtPacket<RelationshipJum
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-		writer.writeInt(DATA_PREFIX); // data prefix
-		
-		writer.writeBoolean(success); // success
-		writer.writeInt(roomIssId); //roomIssId
-		writer.writeString(otherNode); //other node?
-		
-		writer.writeString(DATA_SUFFIX); // data suffix
 	}
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		Player player = ((Player) client.container);
 		player.teleportToPlayer(accountID);
-		return true; // Account not found, blocked or still loading
+		return true;
 	}
 
 }

@@ -91,7 +91,7 @@ public class ModuleManager extends CyanComponent {
 			throw new IllegalStateException("Components have already been initialized.");
 
 		// Log init message
-		System.out.println("Preparing to load modules...");
+		Centuria.logger.info("Preparing to load modules...");
 
 		// Run simple initialization
 		simpleInit();
@@ -109,7 +109,7 @@ public class ModuleManager extends CyanComponent {
 		modulePool.addSource(new LoaderClassSourceProvider(Thread.currentThread().getContextClassLoader()));
 
 		// Add the complete classpath to the pool
-		System.out.println("Importing java classpath...");
+		Centuria.logger.info("Importing java classpath...");
 		for (String path : Splitter.split(System.getProperty("java.class.path"), File.pathSeparator)) {
 			if (path.equals("."))
 				continue;
@@ -136,7 +136,7 @@ public class ModuleManager extends CyanComponent {
 
 		// Add debug modules if debugMode is enabled
 		if (Centuria.debugMode) {
-			System.out.println("Importing debug classpath...");
+			Centuria.logger.info("Importing debug classpath...");
 			if (System.getProperty("addCpModules") != null) {
 				for (String mod : System.getProperty("addCpModules").split(":")) {
 					try {
@@ -151,9 +151,9 @@ public class ModuleManager extends CyanComponent {
 		}
 
 		// Load module jars
-		System.out.println("Loading module files...");
+		Centuria.logger.info("Loading module files...");
 		for (File jar : modules.listFiles(t -> !t.isDirectory())) {
-			System.out.println("Loading module: " + jar.getName());
+			Centuria.logger.info("Loading module: " + jar.getName());
 			ZipInputStream strm = new ZipInputStream(new FileInputStream(jar));
 			modulePool.importArchive(strm);
 			strm.close();
@@ -165,42 +165,41 @@ public class ModuleManager extends CyanComponent {
 
 		// Load module classes
 		ArrayList<Class<? extends ICenturiaModule>> moduleClasses = new ArrayList<Class<? extends ICenturiaModule>>();
-		System.out.println("Loading module classes...");
+		Centuria.logger.info("Loading module classes...");
 		for (ClassNode cls : modulePool.getLoadedClasses()) {
 			if (isModuleClass(cls)) {
 				try {
 					// Load the module class
-					System.out.println("Loading module class: " + cls.name.replace("/", "."));
+					Centuria.logger.info("Loading module class: " + cls.name.replace("/", "."));
 					@SuppressWarnings("unchecked")
 					Class<? extends ICenturiaModule> modCls = (Class<? extends ICenturiaModule>) moduleLoader
 							.loadClass(cls.name.replace("/", "."));
 					moduleClasses.add(modCls);
 				} catch (ClassNotFoundException e) {
-					System.err.println("Module class load failure: " + cls.name.replace("/", "."));
+					Centuria.logger.error("Module class load failure: " + cls.name.replace("/", "."));
 				}
 			}
 		}
 
 		// Load modules
-		System.out.println("Loading Centuria modules...");
+		Centuria.logger.info("Loading Centuria modules...");
 		for (Class<? extends ICenturiaModule> mod : moduleClasses) {
 			try {
 				ICenturiaModule module = mod.getConstructor().newInstance();
 				module.preInit();
-				System.out.println("Loading module: " + module.id());
+				Centuria.logger.info("Loading module: " + module.id());
 				this.modules.put(module.id(), module);
 				EventBus.getInstance().addEventReceiver(module);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				System.err.println("Module loading failure: " + mod.getTypeName() + ": " + e.getClass().getSimpleName()
-						+ (e.getMessage() != null ? ": " + e.getMessage() : ""));
+				Centuria.logger.error("Module loading failure: " + mod.getTypeName(), e);
 			}
 		}
 
 		// Initialize modules
-		System.out.println("Initializing Centuria modules...");
+		Centuria.logger.info("Initializing Centuria modules...");
 		for (ICenturiaModule module : this.modules.values()) {
-			System.out.println("Initializing module: " + module.id());
+			Centuria.logger.info("Initializing module: " + module.id());
 			module.init();
 		}
 	}

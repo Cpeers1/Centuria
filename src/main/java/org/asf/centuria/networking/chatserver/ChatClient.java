@@ -175,11 +175,11 @@ public class ChatClient {
 				cl.disconnect();
 
 		// Log the login attempt
-		System.out.println("Chat login from IP: " + client.getRemoteSocketAddress() + ": " + acc.getLoginName());
+		Centuria.logger.info("Chat login from IP: " + client.getRemoteSocketAddress() + ": " + acc.getLoginName());
 
 		// Save account in memory
 		player = acc;
-		System.out.println("Player " + getPlayer().getDisplayName() + " connected to the chat server.");
+		Centuria.logger.info("Player " + getPlayer().getDisplayName() + " connected to the chat server.");
 
 		// Load DMs into memory
 		if (getPlayer().getPlayerInventory().containsItem("dms")) {

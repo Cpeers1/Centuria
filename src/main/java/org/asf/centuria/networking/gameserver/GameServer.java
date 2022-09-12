@@ -237,7 +237,7 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Check ban
 		if (isBanned(acc)) {
-			System.out.println("User '" + acc.getDisplayName() + "' could not connect: user is banned.");
+			Centuria.logger.info("User '" + acc.getDisplayName() + "' could not connect: user is banned.");
 
 			// Disconnect with error
 			sendLoginResponse(client, auth, acc, -15, 0);
@@ -248,7 +248,7 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Check ip ban
 		if (isIPBanned(client.getSocket(), acc, vpnIpsV4, vpnIpsV6, whitelistFile)) {
-			System.out.println("User '" + acc.getDisplayName() + "' could not connect: user is IP or VPN banned.");
+			Centuria.logger.info("User '" + acc.getDisplayName() + "' could not connect: user is IP or VPN banned.");
 
 			// Disconnect silently
 			sendLoginResponse(client, auth, acc, 1, 0);
@@ -263,7 +263,7 @@ public class GameServer extends BaseSmartfoxServer {
 			ePlr.client.disconnect();
 
 		// Log the login attempt
-		System.out.println("Login from IP: " + client.getSocket().getRemoteSocketAddress() + ": " + acc.getLoginName());
+		Centuria.logger.info("Login from IP: " + client.getSocket().getRemoteSocketAddress() + ": " + acc.getLoginName());
 
 		// Run module handshake code
 		AccountLoginEvent ev = new AccountLoginEvent(this, acc, client);
@@ -271,7 +271,7 @@ public class GameServer extends BaseSmartfoxServer {
 		if (ev.isHandled() && ev.getStatus() != 1) {
 			sendLoginResponse(client, auth, acc, ev.getStatus(), 0);
 
-			System.out.println("Login failure: " + acc.getLoginName() + ": module terminated login process with code "
+			Centuria.logger.info("Login failure: " + acc.getLoginName() + ": module terminated login process with code "
 					+ ev.getStatus());
 			client.disconnect();
 			return;
@@ -294,7 +294,7 @@ public class GameServer extends BaseSmartfoxServer {
 		sendLoginResponse(client, auth, acc, 1, plr.account.isPlayerNew() ? 2 : 3);
 
 		// Initial login
-		System.out.println(
+		Centuria.logger.info(
 				"Player connected: " + plr.account.getLoginName() + " (as " + plr.account.getDisplayName() + ")");
 		sendPacket(client, "%xt%ulc%-1%");
 
@@ -436,7 +436,7 @@ public class GameServer extends BaseSmartfoxServer {
 			Player plr = (Player) client.container;
 			if (players.containsKey(plr.account.getAccountID())) {
 				players.remove(plr.account.getAccountID());
-				System.out.println("Player disconnected: " + plr.account.getLoginName() + " (was "
+				Centuria.logger.info("Player disconnected: " + plr.account.getLoginName() + " (was "
 						+ plr.account.getDisplayName() + ")");
 
 				// Dispatch leave event

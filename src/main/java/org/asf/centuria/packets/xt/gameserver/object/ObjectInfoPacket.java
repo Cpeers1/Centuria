@@ -35,36 +35,36 @@ public class ObjectInfoPacket implements IXtPacket<ObjectInfoPacket> {
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		writer.writeInt(DATA_PREFIX);
-		
+
 		writer.writeString(id); // World object ID
-		writer.writeInt(defId); // Def Id 
+		writer.writeInt(defId); // Def Id
 		writer.writeString(ownerId); // Owner ID
-		
-		writer.writeInt(lastMove.nodeType.value); //Node type
-		writer.writeLong(lastMove.serverTime); //server time
-		
-		//Position (X,Y,Z)
+
+		writer.writeInt(lastMove.nodeType.value); // Node type
+		writer.writeLong(lastMove.serverTime); // server time
+
+		// Position (X,Y,Z)
 		writer.writeDouble(lastMove.positionInfo.position.x);
 		writer.writeDouble(lastMove.positionInfo.position.y);
 		writer.writeDouble(lastMove.positionInfo.position.z);
-		
-		//Rotation (X,Y,Z)
+
+		// Rotation (X,Y,Z)
 		writer.writeDouble(lastMove.positionInfo.rotation.x);
 		writer.writeDouble(lastMove.positionInfo.rotation.y);
 		writer.writeDouble(lastMove.positionInfo.rotation.z);
 		writer.writeDouble(lastMove.positionInfo.rotation.w);
-		
-		//Likely Direction (X,Y,Z)
+
+		// Likely Direction (X,Y,Z)
 		writer.writeDouble(lastMove.velocity.direction.x);
 		writer.writeDouble(lastMove.velocity.direction.y);
 		writer.writeDouble(lastMove.velocity.direction.z);
-		
-		//Speed (Floats are always suffixed in .0, so i know this is speed)
+
+		// Speed (Floats are always suffixed in .0, so i know this is speed)
 		writer.writeFloat(lastMove.velocity.speed);
-		
-		//Action Type
-		writer.writeInt(lastMove.actorActionType.value);
-		
+
+		// Action Type
+		writer.writeInt(lastMove.actorActionType);
+
 		writer.writeString(DATA_SUFFIX);
 	}
 

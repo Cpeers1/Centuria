@@ -16,7 +16,6 @@ import org.asf.centuria.entities.objects.WorldObjectMoveNodeData;
 import org.asf.centuria.entities.objects.WorldObjectPositionInfo;
 import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.entities.uservars.UserVarValue;
-import org.asf.centuria.enums.actors.ActorActionType;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.networking.gameserver.GameServer;
@@ -72,7 +71,7 @@ public class Player {
 	public double lastRotY = 0;
 	public double lastRotZ = 0;
 
-	public ActorActionType lastAction;
+	public int lastAction;
 
 	// Teleports
 	public String teleportDestination;
@@ -93,7 +92,7 @@ public class Player {
 		// Delete character
 		ObjectDeletePacket packet = new ObjectDeletePacket(account.getAccountID());
 		player.client.sendPacket(packet);
-		lastAction = ActorActionType.None;
+		lastAction = 0;
 	}
 
 	public void syncTo(Player player) {
@@ -121,8 +120,6 @@ public class Player {
 			packet.ownerId = account.getAccountID();
 
 			packet.lastMove = new WorldObjectMoveNodeData();
-			packet.lastMove.actorActionType = ActorActionType.Respawn; // TODO: Is this the right actor action type for
-																		// a player that's spawning in?
 			packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
 			packet.lastMove.positionInfo = new WorldObjectPositionInfo(lastPosX, lastPosY, lastPosZ, lastRotX, lastRotY,
 					lastRotZ, lastRotW);
@@ -492,20 +489,18 @@ public class Player {
 	/**
 	 * Attempts to teleport to the specified player.
 	 * 
-	 * @param targetPlayerAccountId the player id to teleport to.
+	 * @param accountID the player id to teleport to.
 	 * @return If the join was a success or not.
 	 */
-	public boolean teleportToPlayer(String targetPlayerAccountId) {
+	public boolean teleportToPlayer(String accountID) {
 		try {
 			Player player = this;
 
 			// Find player
 			for (Player plr : ((GameServer) client.getServer()).getPlayers()) {
-				if (plr.account.getAccountID().equals(targetPlayerAccountId) && plr.roomReady
-						&& !plr.room.equals("room_STAFFROOM")
-						&& (!SocialManager.getInstance().socialListExists(targetPlayerAccountId)
-								|| !SocialManager.getInstance().getPlayerIsBlocked(targetPlayerAccountId,
-										player.account.getAccountID()))) {
+				if (plr.account.getAccountID().equals(accountID) && plr.roomReady && !plr.room.equals("room_STAFFROOM")
+						&& (!SocialManager.getInstance().socialListExists(accountID) || !SocialManager.getInstance()
+								.getPlayerIsBlocked(accountID, player.account.getAccountID()))) {
 					// Load privacy settings
 					int privSetting = 0;
 					UserVarValue val = plr.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17546, 0);
@@ -519,46 +514,62 @@ public class Player {
 					else if (privSetting == 2)
 						break;
 
-					boolean success = true;
+					XtWriter writer = new XtWriter();
+					writer.writeString("rfjtr");
+					writer.writeInt(-1); // data prefix
+					writer.writeInt(1); // other world
+					writer.writeString("");
+					writer.writeString(""); // data suffix
+					client.sendPacket(writer.encode());
+
 					if (!plr.room.equals(player.room)) {
 						// Build room join
+						RoomJoinPacket join = new RoomJoinPacket();
+						join.levelType = plr.levelType;
+						join.levelID = plr.levelID;
+						join.roomIdentifier = "room_" + join.levelID;
+						player.teleportDestination = plr.account.getAccountID();
+						player.targetPos = new Vector3(plr.lastPosX, plr.lastPosY, plr.lastPosZ);
+						player.targetRot = new Quaternion(plr.lastRotX, plr.lastRotY, plr.lastRotZ, plr.lastRotW);
 
-						if (plr.room.contains("sanctuary")) {
-							// how can I get the sanctuary owner...
-							String ownerId = plr.room.substring(plr.room.indexOf('_') + 1);
-							success = player.teleportToSanctuary(ownerId, plr);
-						} else {
-							success = player.teleportToRoom(plr.levelID, plr.levelType, -1, "room_" + plr.levelID, "",
-									plr);
+						// Sync
+						GameServer srv = (GameServer) client.getServer();
+						for (Player plr2 : srv.getPlayers()) {
+							if (plr2.room != null && player.room != null && player.room != null
+									&& plr2.room.equals(player.room) && plr2 != player) {
+								player.destroyAt(plr2);
+							}
 						}
 
-						var jumpToPlayerResponse = new RelationshipJumpToPlayerPacket();
-						jumpToPlayerResponse.success = success;
-						client.sendPacket(jumpToPlayerResponse);
-						return true;
-					} else {
-						// TODO: This is weird.
-						XtWriter writer = new XtWriter();
-						writer.writeString("rfjtr");
-						writer.writeInt(-1); // data prefix
-						writer.writeInt(1); // other world
-						writer.writeString("");
-						writer.writeString(""); // data suffix
-						client.sendPacket(writer.encode());
-						return true;
+						// Assign room
+						player.roomReady = false;
+						player.pendingLevelID = plr.levelID;
+						player.pendingRoom = plr.room;
+						player.levelType = plr.levelType;
+
+						// Send packet
+						client.sendPacket(join);
 					}
+					return true;
 				}
 			}
 
-			var jumpToPlayerResponse = new RelationshipJumpToPlayerPacket();
-			jumpToPlayerResponse.success = false;
-			client.sendPacket(jumpToPlayerResponse);
+			XtWriter writer = new XtWriter();
+			writer.writeString("rfjtr");
+			writer.writeInt(-1); // data prefix
+			writer.writeInt(0); // failure
+			writer.writeString(""); // data suffix
+			client.sendPacket(writer.encode());
 			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
-			var jumpToPlayerResponse = new RelationshipJumpToPlayerPacket();
-			jumpToPlayerResponse.success = false;
-			client.sendPacket(jumpToPlayerResponse);
+
+			XtWriter writer = new XtWriter();
+			writer.writeString("rfjtr");
+			writer.writeInt(-1); // data prefix
+			writer.writeInt(0); // failure
+			writer.writeString(""); // data suffix
+			client.sendPacket(writer.encode());
 			return false;
 		}
 	}

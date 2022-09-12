@@ -7,6 +7,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -127,7 +128,7 @@ public class ChatServer {
 
 				// Remove client
 				if (clients.contains(client)) {
-					System.out.println(
+					Centuria.logger.info(
 							"Player " + client.getPlayer().getDisplayName() + " disconnected from the chat server.");
 					clients.remove(client);
 				}
@@ -145,7 +146,7 @@ public class ChatServer {
 
 				// Remove client
 				if (clients.contains(client)) {
-					System.out.println(
+					Centuria.logger.info(
 							"Player " + client.getPlayer().getDisplayName() + " disconnected from the chat server.");
 					clients.remove(client);
 				}
