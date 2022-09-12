@@ -6,12 +6,12 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
-import org.asf.centuria.enums.actors.ActorActionType;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
 //TODO: This is really really really ugly, this should be redone
+// Agreed owen - Zera
 public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 
 	private static final String PACKET_ID = "ou";
@@ -74,7 +74,7 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 			plr.lastPosX = x;
 			plr.lastPosY = y;
 			plr.lastPosZ = z;
-			plr.lastAction = ActorActionType.None;
+			plr.lastAction = 0;
 
 			pk.writeDouble(x);
 			pk.writeDouble(y);
@@ -111,7 +111,7 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 			plr.lastPosX = x;
 			plr.lastPosY = y;
 			plr.lastPosZ = z;
-			plr.lastAction.value = dd;
+			plr.lastAction = dd;
 
 			pk.writeDouble(x);
 			pk.writeDouble(y);
@@ -167,7 +167,7 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 			plr.lastPosX = x;
 			plr.lastPosY = y;
 			plr.lastPosZ = z;
-			plr.lastAction.value = dd;
+			plr.lastAction = dd;
 
 			pk.writeDouble(x);
 			pk.writeDouble(y);

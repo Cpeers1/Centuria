@@ -54,7 +54,7 @@ public class SanctuaryWorldObjectInfoPacket extends ObjectInfoPacket {
 		writer.writeFloat(lastMove.velocity.speed);
 
 		// Action Type
-		writer.writeInt(lastMove.actorActionType.value);
+		writer.writeInt(lastMove.actorActionType);
 
 		writer.writeInt(objectType.value); // sanctuary object type
 

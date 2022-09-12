@@ -15,7 +15,6 @@ import org.asf.centuria.entities.objects.WorldObjectMoveNodeData;
 import org.asf.centuria.entities.objects.WorldObjectPositionInfo;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.sanctuaries.SanctuaryObjectData;
-import org.asf.centuria.enums.actors.ActorActionType;
 import org.asf.centuria.enums.sanctuaries.SanctuaryObjectType;
 import org.asf.centuria.interactions.InteractionManager;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -221,7 +220,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 					// Object info
 					sanctuaryWorldObjectInfo.lastMove = new WorldObjectMoveNodeData();
-					sanctuaryWorldObjectInfo.lastMove.actorActionType = ActorActionType.None;
+					sanctuaryWorldObjectInfo.lastMove.actorActionType = 0;
 					sanctuaryWorldObjectInfo.lastMove.serverTime = System.currentTimeMillis() / 1000;
 					sanctuaryWorldObjectInfo.lastMove.positionInfo = positionInfo;
 					sanctuaryWorldObjectInfo.lastMove.velocity = new Velocity();

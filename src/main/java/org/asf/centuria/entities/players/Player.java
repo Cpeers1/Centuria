@@ -16,7 +16,6 @@ import org.asf.centuria.entities.objects.WorldObjectMoveNodeData;
 import org.asf.centuria.entities.objects.WorldObjectPositionInfo;
 import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.entities.uservars.UserVarValue;
-import org.asf.centuria.enums.actors.ActorActionType;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.networking.gameserver.GameServer;
@@ -72,7 +71,7 @@ public class Player {
 	public double lastRotY = 0;
 	public double lastRotZ = 0;
 
-	public ActorActionType lastAction;
+	public int lastAction;
 
 	// Teleports
 	public String teleportDestination;
@@ -93,7 +92,7 @@ public class Player {
 		// Delete character
 		ObjectDeletePacket packet = new ObjectDeletePacket(account.getAccountID());
 		player.client.sendPacket(packet);
-		lastAction = ActorActionType.None;
+		lastAction = 0;
 	}
 
 	public void syncTo(Player player) {
@@ -121,8 +120,6 @@ public class Player {
 			packet.ownerId = account.getAccountID();
 
 			packet.lastMove = new WorldObjectMoveNodeData();
-			packet.lastMove.actorActionType = ActorActionType.Respawn; // TODO: Is this the right actor action type for
-																		// a player that's spawning in?
 			packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
 			packet.lastMove.positionInfo = new WorldObjectPositionInfo(lastPosX, lastPosY, lastPosZ, lastRotX, lastRotY,
 					lastRotZ, lastRotW);

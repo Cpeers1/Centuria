@@ -299,6 +299,11 @@ public class SendMessage extends AbstractChatPacket {
 								filteredMessage = word;
 						}
 
+						// Check if the source blocked this player, if so, prevent them form receiving
+						if (socialManager.getPlayerIsBlocked(client.getPlayer().getAccountID(),
+								cl.getPlayer().getAccountID()))
+							continue; // Blocked
+
 						// Send response
 						JsonObject res = new JsonObject();
 						res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");

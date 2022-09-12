@@ -1,7 +1,6 @@
 package org.asf.centuria.entities.objects;
 
 import org.asf.centuria.entities.generic.Velocity;
-import org.asf.centuria.enums.actors.ActorActionType;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 
 /**
@@ -21,18 +20,18 @@ public class WorldObjectMoveNodeData {
 
 	public Velocity velocity;
 
-	public ActorActionType actorActionType;
+	public int actorActionType;
 
 	public WorldObjectMoveNodeData() {
 		this.nodeType = WorldObjectMoverNodeType.InitPosition;
 		this.serverTime = 0;
 		this.positionInfo = new WorldObjectPositionInfo();
 		this.velocity = new Velocity();
-		this.actorActionType = ActorActionType.None;
+		this.actorActionType = 0;
 	}
 
 	public WorldObjectMoveNodeData(WorldObjectMoverNodeType nodeType, long serverTime,
-			WorldObjectPositionInfo positionInfo, Velocity velocity, ActorActionType actorActionType) {
+			WorldObjectPositionInfo positionInfo, Velocity velocity, int actorActionType) {
 		this.nodeType = nodeType;
 		this.serverTime = serverTime;
 		this.positionInfo = positionInfo;

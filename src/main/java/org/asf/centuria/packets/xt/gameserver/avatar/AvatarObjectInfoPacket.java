@@ -44,7 +44,7 @@ public class AvatarObjectInfoPacket extends ObjectInfoPacket {
 		writer.writeFloat(lastMove.velocity.speed);
 		
 		//Action Type
-		writer.writeInt(lastMove.actorActionType.value);
+		writer.writeInt(lastMove.actorActionType);
 		
         // Look and name
         writer.writeString(look.toString());

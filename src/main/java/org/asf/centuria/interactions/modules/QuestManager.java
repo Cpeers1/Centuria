@@ -34,7 +34,7 @@ public class QuestManager extends InteractionModule {
 	// The quest to refuse running
 	// This will be the quest after the 3rd released each week
 	// Ignored in debug mode
-	public int questLock = 7748; // Building Bridges, locked to prevent broken quests breaking the server
+	public int questLock = 7748; // Serial Chiller, locked to prevent broken quests breaking the server
 
 	// TODO:
 	// - tutorial quest support
