@@ -14,15 +14,15 @@ import org.asf.centuria.packets.xt.IXtPacket;
 public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 
 	private static final String PACKET_ID = "ti";
-	
-	//Inbound
+
+	// Inbound
 	public String inboundUserId;
-	
-	//Outbound
+
+	// Outbound
 	public TradeValidationType tradeValidationType = null;
 	public String outboundUserId = null;
 	public Boolean success = null;
-	
+
 	@Override
 	public TradeInitiatePacket instantiate() {
 		return new TradeInitiatePacket();
@@ -42,39 +42,41 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 	public void build(XtWriter writer) throws IOException {
 		writer.writeInt(DATA_PREFIX); // Data prefix
 
-		if(tradeValidationType != null)
-		{
-			writer.writeInt(tradeValidationType.value); //trade validation type			
+		if (tradeValidationType != null) {
+			writer.writeInt(tradeValidationType.value); // trade validation type
 		}
 
-		if(outboundUserId != null)
-		{
-			writer.writeString(outboundUserId); //user ID 			
+		if (outboundUserId != null) {
+			writer.writeString(outboundUserId); // user ID
 		}
 
-		if(success != null)
-		{
-			writer.writeBoolean(success); //success 		
+		if (success != null) {
+			writer.writeBoolean(success); // success
 		}
-		
+
 		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		
+
 		if (System.getProperty("debugMode") != null) {
 			System.out.println("[TRADE] [TradeInitiate] Client to server: ( inboundUserId: " + inboundUserId + " )");
 		}
-		
+
 		Player sourcePlayer = ((Player) client.container);
-		
-		//Inbound user ID is the target player to trade
+
+		// Inbound user ID is the target player to trade
 		Player targetPlayer = AccountManager.getInstance().getAccount(inboundUserId).getOnlinePlayerInstance();
-		
-		//Start a new trade.
+		if (targetPlayer == null) {
+			// Fail
+			client.sendPacket(new TradeInitiateFailPacket());
+			return true;
+		}
+
+		// Start a new trade.
 		Trade.startNewTrade(sourcePlayer, targetPlayer);
-		
+
 		return true;
 	}
 
