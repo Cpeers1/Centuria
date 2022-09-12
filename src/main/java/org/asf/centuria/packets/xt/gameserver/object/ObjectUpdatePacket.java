@@ -67,13 +67,13 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 			double rz = rd.readDouble();
 			double rw = rd.readDouble();
 
-			plr.lastRotW = rw;
-			plr.lastRotX = rx;
-			plr.lastRotY = ry;
-			plr.lastRotZ = rz;
-			plr.lastPosX = x;
-			plr.lastPosY = y;
-			plr.lastPosZ = z;
+			plr.lastRot.w = rw;
+			plr.lastRot.x = rx;
+			plr.lastRot.y = ry;
+			plr.lastRot.z = rz;
+			plr.lastPos.x = x;
+			plr.lastPos.y = y;
+			plr.lastPos.z = z;
 			plr.lastAction = 0;
 
 			pk.writeDouble(x);
@@ -104,13 +104,13 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 			double rw = rd.readDouble();
 			int dd = rd.readInt();
 
-			plr.lastRotW = rw;
-			plr.lastRotX = rx;
-			plr.lastRotY = ry;
-			plr.lastRotZ = rz;
-			plr.lastPosX = x;
-			plr.lastPosY = y;
-			plr.lastPosZ = z;
+			plr.lastRot.w = rw;
+			plr.lastRot.x = rx;
+			plr.lastRot.y = ry;
+			plr.lastRot.z = rz;
+			plr.lastPos.x = x;
+			plr.lastPos.y = y;
+			plr.lastPos.z = z;
 			plr.lastAction = dd;
 
 			pk.writeDouble(x);
@@ -145,13 +145,13 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 				if (player.account.getAccountID().equals(id)) {
 					// Load coordinates
 					success = true;
-					x = player.lastPosX;
-					y = player.lastPosY;
-					z = player.lastPosZ;
-					rw = player.lastRotW;
-					rx = player.lastRotX;
-					ry = player.lastRotY;
-					rz = player.lastRotZ;
+					x = player.lastPos.x;
+					y = player.lastPos.y;
+					z = player.lastPos.z;
+					rw = player.lastRot.w;
+					rx = player.lastRot.x;
+					ry = player.lastRot.y;
+					rz = player.lastRot.z;
 					break;
 				}
 			}
@@ -160,13 +160,13 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 			if (!success)
 				break;
 
-			plr.lastRotW = rw;
-			plr.lastRotX = rx;
-			plr.lastRotY = ry;
-			plr.lastRotZ = rz;
-			plr.lastPosX = x;
-			plr.lastPosY = y;
-			plr.lastPosZ = z;
+			plr.lastRot.w = rw;
+			plr.lastRot.x = rx;
+			plr.lastRot.y = ry;
+			plr.lastRot.z = rz;
+			plr.lastPos.x = x;
+			plr.lastPos.y = y;
+			plr.lastPos.z = z;
 			plr.lastAction = dd;
 
 			pk.writeDouble(x);
@@ -193,8 +193,8 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 		pk.writeString(DATA_SUFFIX); // Data suffix
 
 		// Save location
-		plr.lastLocation = plr.lastPosX + "%" + plr.lastPosY + "%" + plr.lastPosZ + "%" + plr.lastRotX + "%"
-				+ plr.lastRotY + "%" + plr.lastRotZ + "%" + plr.lastRotW;
+		plr.lastLocation = plr.lastPos.x + "%" + plr.lastPos.y + "%" + plr.lastPos.z + "%" + plr.lastRot.x + "%"
+				+ plr.lastRot.y + "%" + plr.lastRot.z + "%" + plr.lastRot.w;
 
 		// Broadcast sync
 		String msg = pk.encode();
