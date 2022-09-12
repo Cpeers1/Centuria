@@ -470,6 +470,29 @@ public class Centuria {
 		EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
 
 		//
+		// Debug API
+		if (System.getProperty("debugAPI") != null) {
+			Centuria.logger.info("Starting debug api...");
+			factory = new ConnectiveServerFactory().setPort(Integer.parseInt(System.getProperty("debugAPI")))
+					.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
+					.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT);
+			var apiServer = factory.build();
+
+			// API processors
+			apiServer.registerProcessor(new UserHandler());
+			apiServer.registerProcessor(new XPDetailsHandler());
+			apiServer.registerProcessor(new SettingsHandler());
+			apiServer.registerProcessor(new AuthenticateHandler());
+			apiServer.registerProcessor(new UpdateDisplayNameHandler());
+			apiServer.registerProcessor(new DisplayNamesRequestHandler());
+			apiServer.registerProcessor(new RequestTokenHandler());
+			apiServer.registerProcessor(new FallbackAPIProcessor());
+
+			// Allow modules to register handlers
+			EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
+		}
+
+		//
 		// Start director server
 		Centuria.logger.info("Starting Emulated Feral Director server...");
 		directorServer = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("director-port")))
