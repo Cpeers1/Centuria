@@ -75,7 +75,11 @@ public class ObjectActionFinishPacket implements IXtPacket<ObjectActionFinishPac
 		int nState = plr.states.getOrDefault(target, currentState);
 		if (obj.stateInfo.containsKey(Integer.toString(nState)))
 			currentState = nState;
+		else
+			nState = currentState;
 		int state = InteractionManager.selectInteractionState(plr, target, obj, currentState);
+		if (nState > state)
+			state = nState;
 
 		// Send qcmd
 		if (obj.stateInfo.containsKey(Integer.toString(state))) {
