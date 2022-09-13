@@ -45,17 +45,17 @@ public class AvatarActionPacket implements IXtPacket<AvatarActionPacket> {
 		pk.writeString(plr.account.getAccountID());
 		pk.writeInt(4);
 		pk.writeLong(System.currentTimeMillis() / 1000);
-		pk.writeDouble(plr.lastPosX);
-		pk.writeDouble(plr.lastPosY);
-		pk.writeDouble(plr.lastPosZ);
+		pk.writeDouble(plr.lastPos.x);
+		pk.writeDouble(plr.lastPos.y);
+		pk.writeDouble(plr.lastPos.z);
 		pk.writeString("0");
-		pk.writeDouble(plr.lastRotX);
-		pk.writeDouble(plr.lastRotY);
-		pk.writeDouble(plr.lastRotZ);
+		pk.writeDouble(plr.lastRot.x);
+		pk.writeDouble(plr.lastRot.y);
+		pk.writeDouble(plr.lastRot.z);
 		pk.writeString("0");
 		pk.writeString("0");
 		pk.writeString("0");
-		pk.writeDouble(plr.lastRotW);
+		pk.writeDouble(plr.lastRot.w);
 		switch (action) {
 		case "8930": { // Sleep
 			plr.lastAction = 40;
