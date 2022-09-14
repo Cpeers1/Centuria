@@ -31,7 +31,7 @@ public class InteractionManager {
 	/**
 	 * Initializes the interactions for a specific level
 	 * 
-	 * @param client  Client to send the packets to
+	 * @param player  Player to send the packets to
 	 * @param levelID Level to find interactions for
 	 */
 	public static void initInteractionsFor(Player player, int levelID) {
