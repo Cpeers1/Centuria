@@ -167,7 +167,7 @@ public class Centuria {
 			disableUpdater = Boolean.parseBoolean(properties.getOrDefault("disable", "true"));
 
 			// Check if automatic updating is enabled
-			if (Boolean.parseBoolean(properties.getOrDefault("runtime-auto-update", "false"))) {
+			if (Boolean.parseBoolean(properties.getOrDefault("runtime-auto-update", "false")) && !Centuria.debugMode) {
 				int mins = Integer.parseInt(properties.getOrDefault("runtime-update-timer-length", "10"));
 
 				// Start the automatic update thread

@@ -19,7 +19,7 @@ public class XPDetailsHandler extends HttpUploadProcessor {
 
 	@Override
 	public void process(String contentType, Socket client, String method) {
-		Centuria.logger.debug("API CALL: " + getRequest().path);
+		Centuria.logger.info("API CALL: " + getRequest().path);
 		
 		try {
 			// Parse body

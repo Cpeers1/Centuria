@@ -12,7 +12,7 @@ public class RequestTokenHandler extends HttpUploadProcessor {
 
 	@Override
 	public void process(String contentType, Socket client, String method) {
-		Centuria.logger.debug("API CALL: " + getRequest().path);
+		Centuria.logger.info("API CALL: " + getRequest().path);
 		// Hardcoded response as i have no clue how to do this
 		String challenge = "kOLl8r71tG1343qobkIvdJSGuXxUZBQUtHTq7Npe91l51TrpaGLZf4nPIjSCNxniUdpdHvOfcCzV2TQRn5MXab08vwGizt0NiDmzAdWrzQMYDjgTYz7Xqbzqds2LaYTa";
 		String iv = "03KJ2tNeasisn7vI42W49IJpObpQirvu";
