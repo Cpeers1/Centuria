@@ -204,7 +204,7 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 			// Check item
 			JsonObject container = resourceContainerJson(levelID, "TreasureInteractable", "interactions");
 			if (container.has(itemID)) {
-				// Return timestamp
+				// return status
 				return container.get(itemID).getAsJsonObject().get("isLooted").getAsBoolean();
 			}
 		}

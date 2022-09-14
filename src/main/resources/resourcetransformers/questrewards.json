@@ -107,6 +107,87 @@
           "weight": 1
         }
       ]
+    },
+    "7325": {
+      "objectName": "QuestReward/BackScratchers",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q7325",
+          "itemId": "5532",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q7325": {
+      "objectName": "QuestReward/BackScratchers",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 20,
+          "maxCount": 30,
+          "weight": 1
+        }
+      ]
+    },
+    "8536": {
+      "objectName": "QuestReward/SerialChiller",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q8536",
+          "itemId": "10129",
+          "minCount": 20,
+          "maxCount": 20,
+          "weight": 1
+        }
+      ]
+    },
+    "q8536": {
+      "objectName": "QuestReward/SerialChiller",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 60,
+          "maxCount": 80,
+          "weight": 1
+        }
+      ]
+    },
+    "8539": {
+      "objectName": "QuestReward/SerialChillerSecretQuest",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q8539",
+          "itemId": "10190",
+          "minCount": 20,
+          "maxCount": 20,
+          "weight": 1
+        }
+      ]
+    },
+    "q8539": {
+      "objectName": "QuestReward/SerialChillerSecretQuest",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 30,
+          "maxCount": 50,
+          "weight": 1
+        }
+      ]
     }
   }
 }

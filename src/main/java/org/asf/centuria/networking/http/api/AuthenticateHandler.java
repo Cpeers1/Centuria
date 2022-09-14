@@ -18,6 +18,7 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 	@Override
 	public void process(String contentType, Socket client, String method) {
 		try {
+			Centuria.logger.debug("API CALL: " + getRequest().path);
 			// Parse body
 			ByteArrayOutputStream strm = new ByteArrayOutputStream();
 			ConnectiveHTTPServer.transferRequestBody(getHeaders(), getRequestBodyStream(), strm);

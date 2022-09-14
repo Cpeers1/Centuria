@@ -10,6 +10,7 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.interactions.InteractionManager;
 import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.dataobjects.ObjectCollection;
@@ -34,7 +35,7 @@ public class QuestManager extends InteractionModule {
 	// The quest to refuse running
 	// This will be the quest after the 3rd released each week
 	// Ignored in debug mode
-	public int questLock = 4585; // Scratch My Back, locked to prevent broken quests breaking the server
+	public int questLock = 5738; // Detective Kobold, locked to prevent broken quests breaking the server
 
 	// TODO:
 	// - tutorial quest support
@@ -306,28 +307,6 @@ public class QuestManager extends InteractionModule {
 	}
 
 	@Override
-	public int selectInteractionState(Player player, String id, NetworkedObject object) {
-		if (canHandle(player, id, object) || (player.questObjective != 0 && !player.questStarted)) {
-			String activeQuest = getActiveQuest(player.account);
-
-			if (activeQuest != null) {
-				QuestDefinition quest = questDefinitions.get(activeQuest);
-				// Check if its a npc and if the quest is locked
-				if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
-					return -10; // Prevent dialogue
-				}
-			}
-
-			if (activeQuest != null || (player.questObjective != 0 && !player.questStarted)) {
-				if (isNPC(object) && (player.questObjective != 0 || player.questStarted)) {
-					return player.questObjective + 1;
-				}
-			}
-		}
-		return -1;
-	}
-
-	@Override
 	public boolean shouldDestroyResource(Player player, String id, NetworkedObject object, int state,
 			boolean destroyOnCompletion) {
 		if (canHandle(player, id, object))
@@ -336,6 +315,185 @@ public class QuestManager extends InteractionModule {
 	}
 
 	@Override
+	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo stateInfo,
+			StateInfo parent) {
+		if (canHandle(player, id, object)) {
+			String activeQuest = getActiveQuest(player.account);
+			if (activeQuest != null) {
+				QuestDefinition quest = questDefinitions.get(activeQuest);
+
+				// Check if its a npc and if the quest is locked
+				if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
+					return true;
+				}
+
+				// Find quest objective
+				int objectiveID = player.questObjective;
+				QuestObjective objective = quest.objectives.get(objectiveID);
+
+				// Check location
+				// 0 = mugmyre
+				// 1 = lakeroot
+				// 2 = blood tundra
+				if ((player.levelID == 2147 && quest.questLocation == 0)
+						|| (player.levelID == 9687 && quest.questLocation == 1)
+						|| (player.levelID == 2364 && quest.questLocation == 2)) {
+					switch (stateInfo.command) {
+
+					case "67": {
+						// Quest start
+						if (!player.questStarted) {
+							player.questStarted = true;
+							player.questProgress = 0;
+							player.questObjectData.clear();
+
+							// Update objects
+							reloadObjects(player, quest);
+						}
+						return true;
+					}
+
+					case "20": {
+						// Quest task update
+						if (player.questStarted) {
+							// Find task
+							int taskID = Integer.parseInt(stateInfo.params[2]);
+							QuestTask task = objective.tasks.get(taskID);
+
+							// Find counter
+							String counterID = parent.actorId;
+
+							// Find max and current progress
+							int cur = player.questObjectData.get(counterID);
+							int rem = task.targetProgress - cur;
+
+							// Update
+							rem--;
+							cur++;
+							player.questObjectData.put(counterID, cur);
+							player.questProgress++;
+
+							// Send packet
+							QuestCommandVTPacket cmd = new QuestCommandVTPacket();
+							cmd.type = 1;
+							cmd.id = counterID;
+							cmd.params.add(Integer.toString(rem));
+							cmd.params.add("0");
+							cmd.params.add("0");
+							player.client.sendPacket(cmd);
+
+							// Send counter update packet
+							QuestCommandPacket qcmd = new QuestCommandPacket();
+							qcmd.type = 20;
+							qcmd.id = "-1";
+							qcmd.params.add(Integer.toString(taskID));
+							qcmd.params.add(Integer.toString(cur));
+							player.client.sendPacket(qcmd);
+
+							// Check progress
+							if (rem <= 0) {
+								// Done, run branches of the counter
+								var obj = NetworkedObjects.getObject(counterID);
+								InteractionManager.runBranches(player, obj.stateInfo,
+										Integer.toString(player.states.getOrDefault(counterID, 0)), id, object,
+										stateInfo);
+							}
+
+							// Check objective
+							int max = 0;
+							for (QuestTask tsk : objective.tasks) {
+								max += tsk.targetProgress;
+							}
+							if (player.questProgress >= max) {
+								// Next objective
+								player.questProgress = 0;
+								player.questObjectData.clear();
+								player.questObjective++;
+								objectiveID++;
+
+								// Send packet
+								qcmd = new QuestCommandPacket();
+								qcmd.type = 81;
+								qcmd.id = "-1";
+								qcmd.params.add(Integer.toString(player.questObjective));
+								qcmd.params.add("0");
+								player.client.sendPacket(qcmd);
+
+								// Update
+								objective = quest.objectives.get(objectiveID);
+
+								// Update objects
+								reloadObjects(player, quest);
+
+								// Check if it is the last objective
+								if (objective.isLastObjective) {
+									// Quest finished
+									player.questStarted = false;
+
+									// Finish quest
+									JsonObject obj = player.account.getPlayerInventory().getAccessor()
+											.findInventoryObject("311", 22781);
+									JsonObject progressionMap = obj.get("components").getAsJsonObject()
+											.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
+									JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
+									arr.add(quest.defID);
+
+									// Save and create inventory update
+									player.account.getPlayerInventory().setItem("311",
+											player.account.getPlayerInventory().getItem("311"));
+									JsonArray update = new JsonArray();
+									update.add(obj);
+
+									// Send packet
+									InventoryItemPacket pkt = new InventoryItemPacket();
+									pkt.item = update;
+									player.client.sendPacket(pkt);
+
+									// Send completion
+									QuestGenericLinearQuestCompletePacket comp = new QuestGenericLinearQuestCompletePacket();
+									comp.questID = quest.defID;
+									player.client.sendPacket(comp);
+
+									return true;
+								}
+							}
+						}
+						return true;
+					}
+
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int isDataRequestValid(Player player, String id, NetworkedObject object, int state) {
+		if (canHandle(player, id, object)) {
+			if (canHandle(player, id, object)) {
+				String activeQuest = getActiveQuest(player.account);
+				if (activeQuest != null) {
+					QuestDefinition quest = questDefinitions.get(activeQuest);
+
+					// Check location
+					// 0 = mugmyre
+					// 1 = lakeroot
+					// 2 = blood tundra
+					if ((player.levelID == 2147 && quest.questLocation == 0)
+							|| (player.levelID == 9687 && quest.questLocation == 1)
+							|| (player.levelID == 2364 && quest.questLocation == 2)) {
+						if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
+							return 0;
+						}
+						return 1;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+
 	public boolean handleInteractionDataRequest(Player player, String id, NetworkedObject object, int state) {
 		String activeQuest = getActiveQuest(player.account);
 		if (activeQuest != null) {
@@ -361,9 +519,11 @@ public class QuestManager extends InteractionModule {
 			} else {
 				// Update
 				int offset = 0;
-				var branch = object.stateInfo.get("0").get(0).branches.get(Integer.toString(state));
+				var stateObject = object.stateInfo.get("0").get(0);
+				var branch = stateObject.branches.get(Integer.toString(state));
 				if (branch == null) {
-					branch = object.stateInfo.get("1").get(0).branches.get(Integer.toString(state));
+					stateObject = object.stateInfo.get("1").get(0);
+					branch = stateObject.branches.get(Integer.toString(state));
 					offset = 1;
 				}
 				if (branch.size() <= offset + 1)
@@ -388,6 +548,16 @@ public class QuestManager extends InteractionModule {
 					qcmd.params.add(branch.get(1 + offset).params[2]);
 					player.questObjectData.put(cmd.id + "-collect",
 							player.questObjectData.get(cmd.id + "-collect") + 1);
+
+					// Check completion
+					if (player.questObjectData.get(cmd.id) <= 0) {
+						// Done, run states
+						var obj = NetworkedObjects.getObject(branch.get(offset).actorId);
+						InteractionManager.runBranches(player, obj.stateInfo,
+								Integer.toString(player.states.getOrDefault(cmd.id, 0)), id, object,
+								branch.get(offset));
+					}
+
 					player.questProgress++;
 					qcmd.params.add(Integer.toString(player.questObjectData.get(cmd.id + "-collect")));
 					player.client.sendPacket(qcmd);
@@ -412,10 +582,21 @@ public class QuestManager extends InteractionModule {
 									cmd.id = tState.actorId;
 									player.questObjectData.put(tState.actorId,
 											player.questObjectData.get(tState.actorId) - 1);
+									player.questObjectData.put(tState.actorId + "-collect",
+											player.questObjectData.get(tState.actorId + "-collect") + 1);
 									cmd.params.add(Integer.toString(player.questObjectData.get(tState.actorId)));
 									cmd.params.add("0");
 									cmd.params.add("0");
 									player.client.sendPacket(cmd);
+
+									// Check completion
+									if (player.questObjectData.get(tState.actorId) <= 0) {
+										// Done, run states
+										var obj = NetworkedObjects.getObject(tState.actorId);
+										InteractionManager.runBranches(player, obj.stateInfo,
+												Integer.toString(player.states.getOrDefault(tState.actorId, 0)), id,
+												object, tState);
+									}
 								}
 							}
 						}
@@ -529,8 +710,7 @@ public class QuestManager extends InteractionModule {
 										if (t2.command.equals("1") && !t2.actorId.equals("0")) {
 											try {
 												// Save object to memory
-												player.questObjectData.put(t2.actorId, Integer.parseInt(t2.params[0]));
-												player.questObjectData.put(t2.actorId + "-collect", 0);
+												player.questObjectData.put(t2.actorId, 0);
 											} catch (Exception e) {
 												// Not a valid object
 											}

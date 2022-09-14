@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
+import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 
 public abstract class InteractionModule {
@@ -56,15 +57,31 @@ public abstract class InteractionModule {
 	public abstract boolean handleInteractionSuccess(Player player, String id, NetworkedObject object, int state);
 
 	/**
-	 * Handles interaction data requests
+	 * Checks if interaction requests are valid or not (OASKR)
 	 * 
 	 * @param player Player making the interaction
 	 * @param id     Interaction ID
 	 * @param object Object that was interacted with
 	 * @param state  Interaction state
-	 * @return True if the given interaction request was handled, false otherwise
+	 * @return 1 if the request is safe to run, 0 if denied, -1 if unhandled
 	 */
-	public abstract boolean handleInteractionDataRequest(Player player, String id, NetworkedObject object, int state);
+	public int isDataRequestValid(Player player, String id, NetworkedObject object, int state) {
+		return -1;
+	}
+
+	/**
+	 * Quest command implementation
+	 * 
+	 * @param player  Player making the interaction
+	 * @param id      Interaction ID
+	 * @param object  Object that was interacted with
+	 * @param command Command state
+	 * @param parent  Parent command state
+	 * @return True if the command was handled, false otherwise
+	 */
+	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo command, StateInfo parent) {
+		return false;
+	}
 
 	/**
 	 * Initializes world objects
@@ -76,18 +93,6 @@ public abstract class InteractionModule {
 	 */
 	public boolean initializeWorldObjects(SmartfoxClient client, String id, NetworkedObject obj) {
 		return false;
-	}
-
-	/**
-	 * Selects a interaction state for eg. dialogue
-	 * 
-	 * @param player Player making the interaction
-	 * @param id     Interaction ID
-	 * @param object Object that was interacted with
-	 * @return State number or -1
-	 */
-	public int selectInteractionState(Player player, String id, NetworkedObject object) {
-		return -1;
 	}
 
 }

@@ -22,7 +22,8 @@ public class ShopkeeperModule extends InteractionModule {
 				if (!state.branches.isEmpty()) {
 					for (ArrayList<StateInfo> branches : state.branches.values()) {
 						for (StateInfo branch : branches)
-							if (branch.command.equals("84") && branch.params.length == 3 && ShopManager.isShop(branch.params[2]))
+							if (branch.command.equals("84") && branch.params.length == 3
+									&& ShopManager.isShop(branch.params[2]))
 								return true;
 					}
 				}
@@ -37,10 +38,13 @@ public class ShopkeeperModule extends InteractionModule {
 	}
 
 	@Override
-	public boolean handleInteractionDataRequest(Player player, String id, NetworkedObject object, int state) {
-		// Prevent freezing
-		player.client.sendPacket("%xt%$ui%-1%0%");
-		return true;
+	public int isDataRequestValid(Player player, String id, NetworkedObject object, int state) {
+		if (canHandle(player, id, object)) {
+			// Prevent freezing
+			player.client.sendPacket("%xt%$ui%-1%0%");
+			return 1;
+		}
+		return -1;
 	}
 
 }

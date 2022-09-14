@@ -1,5 +1,6 @@
 package org.asf.centuria.entities.players;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import org.asf.centuria.entities.objects.WorldObjectPositionInfo;
 import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
+import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
@@ -83,7 +85,9 @@ public class Player {
 
 	// Quests
 	public int questProgress;
+	public ArrayList<String> interactions = new ArrayList<String>();
 	public HashMap<String, Integer> states = new HashMap<String, Integer>();
+	public HashMap<String, ArrayList<StateInfo>> stateObjects = new HashMap<String, ArrayList<StateInfo>>();
 	public HashMap<String, Integer> questObjectData = new HashMap<String, Integer>();
 	public boolean questStarted = false;
 	public int questObjective = 0;
@@ -314,6 +318,8 @@ public class Player {
 
 			// Reset states
 			states.clear();
+			stateObjects.clear();
+			interactions.clear();
 
 			// Clear respawn items
 			respawnItems.clear();
@@ -372,7 +378,9 @@ public class Player {
 			plr.questObjective = 0;
 
 			// Reset states
-			plr.states.clear();
+			states.clear();
+			stateObjects.clear();
+			interactions.clear();
 
 			// Clear respawn items
 			plr.respawnItems.clear();
@@ -437,6 +445,17 @@ public class Player {
 					targetedPlayer.lastRotW);
 
 			plr.respawnItems.clear();
+
+			// Reset quest data
+			plr.questProgress = 0;
+			plr.questStarted = false;
+			plr.questObjectData.clear();
+			plr.questObjective = 0;
+
+			// Reset states
+			states.clear();
+			stateObjects.clear();
+			interactions.clear();
 
 			// Log
 			Centuria.logger.debug(MarkerManager.getMarker("JOINROOM"),
