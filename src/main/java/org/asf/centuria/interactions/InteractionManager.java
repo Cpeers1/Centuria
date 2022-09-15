@@ -253,8 +253,7 @@ public class InteractionManager {
 					// Give table
 					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
 							"Running command: 41 (give loot), GIVE TABLE " + state.params[0]);
-					ResourceCollectionModule.giveLootReward(plr, state.params[0], object.primaryObjectInfo.type,
-							object.primaryObjectInfo.defId);
+					ResourceCollectionModule.giveLootReward(plr, state.params[0], object.primaryObjectInfo.defId);
 					break;
 				}
 				default: {
