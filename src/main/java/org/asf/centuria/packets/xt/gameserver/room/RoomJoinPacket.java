@@ -43,7 +43,7 @@ public class RoomJoinPacket implements IXtPacket<RoomJoinPacket> {
 		writer.writeInt(levelID); // Room ID
 		writer.writeInt(levelType); // Room type
 		writer.writeInt(issRoomID); // Iss Room ID (unused as we dont support it)
-		writer.writeString(teleport); // Specific teleport
+		writer.writeString(teleport); // Specific teleport??
 		writer.writeString(roomIdentifier); // Chat room ID
 
 		writer.writeString(DATA_SUFFIX); // Data suffix

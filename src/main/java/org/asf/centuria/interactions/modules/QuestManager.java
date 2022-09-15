@@ -666,7 +666,7 @@ public class QuestManager extends InteractionModule {
 									if (st2.command.equals("41")) {
 										// Give reward
 										ResourceCollectionModule.giveLootReward(player, st2.params[0],
-												object.primaryObjectInfo.type, object.primaryObjectInfo.defId);
+												object.primaryObjectInfo.defId);
 									}
 								});
 							});

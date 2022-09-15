@@ -542,11 +542,42 @@ public class Player {
 					client.sendPacket(writer.encode());
 
 					if (!plr.room.equals(player.room)) {
+						// Check sanc
+						if (plr.levelType == 2 && plr.room.startsWith("sanctuary_")) {
+							String sanctuaryOwner = plr.room.substring("sanctuary_".length());
+							// Find owner
+							CenturiaAccount sancOwner = AccountManager.getInstance().getAccount(sanctuaryOwner);
+							if (!sancOwner.getPlayerInventory().containsItem("201")) {
+								Player plr2 = sancOwner.getOnlinePlayerInstance();
+								if (plr2 != null)
+									plr2.activeSanctuaryLook = sancOwner.getActiveSanctuaryLook();
+							}
+
+							// Check owner
+							boolean isOwner = player.account.getAccountID().equals(sanctuaryOwner);
+
+							if (!isOwner) {
+								// Load privacy settings
+								privSetting = 0;
+								val = sancOwner.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
+								if (val != null)
+									privSetting = val.value;
+
+								// Verify access
+								if (privSetting == 1
+										&& !SocialManager.getInstance().getPlayerIsFollowing(plr.account.getAccountID(),
+												player.account.getAccountID()))
+									break;
+								else if (privSetting == 2)
+									break;
+							}
+						}
+
 						// Build room join
 						RoomJoinPacket join = new RoomJoinPacket();
 						join.levelType = plr.levelType;
 						join.levelID = plr.levelID;
-						join.roomIdentifier = "room_" + join.levelID;
+						join.roomIdentifier = plr.room;
 						player.teleportDestination = plr.account.getAccountID();
 						player.targetPos = new Vector3(plr.lastPosX, plr.lastPosY, plr.lastPosZ);
 						player.targetRot = new Quaternion(plr.lastRotX, plr.lastRotY, plr.lastRotZ, plr.lastRotW);
