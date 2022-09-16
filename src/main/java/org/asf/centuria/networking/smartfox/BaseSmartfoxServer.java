@@ -108,7 +108,9 @@ public abstract class BaseSmartfoxServer {
 							handle(data, client);
 						} catch (Exception e) {
 							if (!(e instanceof IOException)) {
-								Centuria.logger.error("Connection died!", e);
+								System.err.println("Connection died! Exception: " + e.getClass().getTypeName()
+										+ (e.getMessage() != null ? ": " + e.getMessage() : ""));
+								e.printStackTrace();
 							}
 							try {
 								client.getSocket().close();
@@ -129,7 +131,9 @@ public abstract class BaseSmartfoxServer {
 					}
 				} catch (Exception e) {
 					if (!(e instanceof IOException)) {
-						Centuria.logger.error("Connection died!", e);
+						System.err.println("Connection died! Exception: " + e.getClass().getTypeName()
+								+ (e.getMessage() != null ? ": " + e.getMessage() : ""));
+						e.printStackTrace();
 					}
 					try {
 						client.getSocket().close();
