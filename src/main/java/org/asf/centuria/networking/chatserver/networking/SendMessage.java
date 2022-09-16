@@ -398,8 +398,8 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("listplayers");
 			commandMessages.add("tpm <levelDefID> [<levelType>]");
 			commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
-			commandMessages.add("questrewind <amount-of-quests-to-rewind>");
 		}
+		commandMessages.add("questrewind <amount-of-quests-to-rewind>");
 
 		// Add module commands
 		ModuleCommandSyntaxListEvent evMCSL = new ModuleCommandSyntaxListEvent(commandMessages, client,
