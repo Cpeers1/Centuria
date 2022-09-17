@@ -2,6 +2,7 @@ package org.asf.centuria.packets.xt.gameserver.inventory;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
@@ -38,7 +39,7 @@ public class InventoryItemRemovedPacket implements IXtPacket<InventoryItemRemove
 					itms = itm;
 				else
 					itms += ", " + itm;
-			System.out.println("[INVENTORY] [REMOVE]  Server to client: " + itms);
+			Centuria.logger.debug(MarkerManager.getMarker("ITEMREMOVE"), "Server to client: " + itms);
 		}
 
 		writer.writeInt(DATA_PREFIX); // Data prefix

@@ -74,7 +74,7 @@ public class Centuria {
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/centuria";
 
 	// Configuration
-	public static Logger logger = LogManager.getLogger("CENTURIA");
+	public static Logger logger;
 	public static boolean allowRegistration = true;
 	public static boolean giveAllAvatars = true;
 	public static boolean giveAllMods = true;
@@ -140,6 +140,7 @@ public class Centuria {
 		} else {
 			System.setProperty("log4j2.configurationFile", Centuria.class.getResource("/log4j2.xml").toString());
 		}
+		logger = LogManager.getLogger("CENTURIA");
 
 		// Load modules
 		ModuleManager.getInstance().initializeComponents();

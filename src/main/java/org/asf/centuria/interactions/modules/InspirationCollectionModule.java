@@ -1,6 +1,7 @@
 package org.asf.centuria.interactions.modules;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.asf.centuria.entities.players.Player;
@@ -66,7 +67,8 @@ public class InspirationCollectionModule extends InteractionModule {
 	}
 
 	@Override
-	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo stateInfo, StateInfo parent) {
+	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo stateInfo, StateInfo parent,
+			HashMap<String, Object> memory) {
 		// add inspiration to inventory?
 		// get inspiration ID from commands
 

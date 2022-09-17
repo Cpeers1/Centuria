@@ -191,9 +191,9 @@ public class InteractionManager {
 			}
 		}
 		if (!handled) {
-			Centuria.logger.warn(MarkerManager.getMarker("INTERACTIONS"), "OASKR for " + interactableId
-					+ " did not have its validity checked by any interaction module, the interaction will not be run!");
-			return;
+			if (Centuria.debugMode)
+				Centuria.logger.warn(MarkerManager.getMarker("INTERACTIONS"), "OASKR for " + interactableId
+						+ " did not have its validity checked by any interaction module!");
 		}
 
 		// Find state
@@ -232,6 +232,7 @@ public class InteractionManager {
 		// TODO: implement more, hopefully switch everything over
 		// and use the modules for security checks
 		if (branches.containsKey(id)) {
+			HashMap<String, Object> memory = new HashMap<String, Object>();
 			var states = branches.get(id);
 			plr.stateObjects.put(target, states);
 			for (StateInfo state : states) {
@@ -261,7 +262,7 @@ public class InteractionManager {
 					boolean warn = true;
 					for (InteractionModule mod : modules) {
 						// Run interaction
-						if (mod.handleCommand(plr, target, object, state, parent)) {
+						if (mod.handleCommand(plr, target, object, state, parent, memory)) {
 							warn = false;
 							break;
 						}

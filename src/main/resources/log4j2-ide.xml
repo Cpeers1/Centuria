@@ -3,7 +3,7 @@
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">
 			<PatternLayout
-				pattern="[%d{HH:mm:ss} %5level] - %msg%n%throwable" />
+				pattern="[%d{HH:mm:ss} %5level] [%c{1}%notEmpty{/%markerSimpleName}] - %msg%n%throwable" />
 		</Console>
 		<Routing name="Logfile">
 			<Routes pattern="$${sd:type}">

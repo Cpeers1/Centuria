@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.InventoryManager;
 import org.asf.centuria.accounts.PlayerInventory;
@@ -51,9 +52,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		PlayerInventory inv = plr.account.getPlayerInventory();
 
 		// Log
-		if (Centuria.debugMode) {
-			System.out.println("[INVENTORY] [REQUEST]  Client to server (type: " + slot + ")");
-		}
+		Centuria.logger.debug(MarkerManager.getMarker("ITEMREQUEST"), "Client to server (type: " + slot + ")");
 
 		// Check if inventory is built
 		if (!inv.containsItem("1")) {

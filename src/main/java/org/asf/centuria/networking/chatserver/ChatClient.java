@@ -8,6 +8,7 @@ import java.util.Base64;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
@@ -198,9 +199,7 @@ public class ChatClient {
 
 	// Packet handling code
 	void handle(JsonObject packet) {
-		if (Centuria.debugMode) {
-			System.out.println("[CHAT] Client to server (user " + player.getDisplayName() + "): " + packet);
-		}
+		Centuria.logger.debug(MarkerManager.getMarker("CHAT"), "Client to server (user " + player.getDisplayName() + "): " + packet);
 		if (!handlePacket(packet)) {
 			// Packet not found
 			// Allow debug mode to re-register packets
@@ -209,7 +208,7 @@ public class ChatClient {
 				server.registerPackets();
 			}
 
-			System.err.println("Unhandled packet: client " + client + " sent: " + packet.toString());
+			Centuria.logger.error("Unhandled packet: client " + client + " sent: " + packet.toString());
 		}
 	}
 
@@ -275,9 +274,7 @@ public class ChatClient {
 				client.getOutputStream().write(0x0a);
 				client.getOutputStream().write(0);
 				client.getOutputStream().flush();
-				if (Centuria.debugMode) {
-					System.out.println("[CHAT] Server to client (user " + player.getDisplayName() + "): " + packet);
-				}
+				Centuria.logger.debug(MarkerManager.getMarker("CHAT"), "Server to client (user " + player.getDisplayName() + "): " + packet);
 			} catch (Exception e) {
 			}
 		});

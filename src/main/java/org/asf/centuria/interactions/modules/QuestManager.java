@@ -313,7 +313,7 @@ public class QuestManager extends InteractionModule {
 
 	@Override
 	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo stateInfo,
-			StateInfo parent) {
+			StateInfo parent, HashMap<String, Object> memory) {
 		if (canHandle(player, id, object)) {
 			String activeQuest = getActiveQuest(player.account);
 			if (activeQuest != null) {
@@ -350,6 +350,12 @@ public class QuestManager extends InteractionModule {
 						return true;
 					}
 
+					case "13": {
+						// Reference
+						memory.put("ref", stateInfo.actorId);
+						return true;
+					}
+
 					case "20": {
 						// Quest task update
 						if (player.questStarted) {
@@ -358,7 +364,7 @@ public class QuestManager extends InteractionModule {
 							QuestTask task = objective.tasks.get(taskID);
 
 							// Find counter
-							String counterID = parent.actorId;
+							String counterID = memory.getOrDefault("ref", parent.actorId).toString();
 
 							updateCounter(counterID, task, objective, quest, player, taskID, objectiveID, id, object,
 									stateInfo);
