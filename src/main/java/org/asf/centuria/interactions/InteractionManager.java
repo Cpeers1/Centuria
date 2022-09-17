@@ -181,14 +181,12 @@ public class InteractionManager {
 		// Find module
 		boolean handled = false;
 		for (InteractionModule mod : modules) {
-			if (mod.canHandle(player, interactableId, object)) {
-				// Check if the interaction is not blocked
-				int v = mod.isDataRequestValid(player, interactableId, object, state);
-				if (v != -1)
-					handled = true;
-				if (v == 0)
-					return;
-			}
+			// Check if the interaction is not blocked
+			int v = mod.isDataRequestValid(player, interactableId, object, state);
+			if (v != -1)
+				handled = true;
+			if (v == 0)
+				return;
 		}
 		if (!handled) {
 			if (Centuria.debugMode)
