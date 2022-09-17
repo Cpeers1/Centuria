@@ -187,6 +187,8 @@ public class InteractionManager {
 				handled = true;
 			if (v == 0)
 				return;
+			else if (v == 1)
+				break;
 		}
 		if (!handled) {
 			if (Centuria.debugMode)
