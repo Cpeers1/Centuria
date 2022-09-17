@@ -43,7 +43,7 @@ public class ModuleCommands implements IEventReceiver {
 		}
 		case "transferownership": {
 			ev.respond(
-					"The generic transferownership command has been deprecated, use v instead (same syntax as the legacy command)");
+					"The generic transferownership command has been deprecated, use transferdiscord instead (same syntax as the legacy command)");
 			break;
 		}
 		case "ipblock": {

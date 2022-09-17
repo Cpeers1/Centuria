@@ -229,8 +229,6 @@ public class InteractionManager {
 	public static void runBranches(Player plr, HashMap<String, ArrayList<StateInfo>> branches, String id, String target,
 			NetworkedObject object, StateInfo parent) {
 		// Handle branch commands
-		// TODO: implement more, hopefully switch everything over
-		// and use the modules for security checks
 		if (branches.containsKey(id)) {
 			HashMap<String, Object> memory = new HashMap<String, Object>();
 			var states = branches.get(id);

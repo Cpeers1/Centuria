@@ -364,7 +364,7 @@ public class QuestManager extends InteractionModule {
 							QuestTask task = objective.tasks.get(taskID);
 
 							// Find counter
-							String counterID = memory.getOrDefault("ref", parent.actorId).toString();
+							String counterID = memory.getOrDefault("ref", memory).toString();
 
 							updateCounter(counterID, task, objective, quest, player, taskID, objectiveID, id, object,
 									stateInfo);
