@@ -84,10 +84,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Dispatch event
 		EventBus.getInstance().dispatchEvent(new LevelJoinEvent(plr.pendingLevelID, plr.pendingRoom, plr));
 
-		// Assign info
-		plr.room = plr.pendingRoom;
-		plr.levelID = plr.pendingLevelID;
-
 		// Sync
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {
@@ -95,6 +91,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				plr.destroyAt(player);
 			}
 		}
+
+		// Assign info
+		plr.room = plr.pendingRoom;
+		plr.levelID = plr.pendingLevelID;
 
 		// Send all other players to the current player
 		GameServer server = (GameServer) client.getServer();
