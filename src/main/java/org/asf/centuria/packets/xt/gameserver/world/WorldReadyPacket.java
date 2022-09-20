@@ -133,8 +133,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			}
 
 			// Join room
-			if (!chClient.isInRoom("room_" + plr.levelID))
-				chClient.joinRoom("room_" + plr.levelID, false);
+			if (!chClient.isInRoom(plr.room))
+				chClient.joinRoom(plr.room, false);
 
 			// Make the player know its in the chat
 			plr.wasInChat = true;
