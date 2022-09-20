@@ -88,21 +88,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		plr.room = plr.pendingRoom;
 		plr.levelID = plr.pendingLevelID;
 
-		// Send to tutorial if new
-		if (plr.account.isPlayerNew()) {
-			// Tutorial spawn
-			ObjectInfoAvatarLocalPacket res = new ObjectInfoAvatarLocalPacket();
-			res.x = 107.67;
-			res.y = 8.85;
-			res.z = -44.85;
-			res.rx = 0;
-			res.ry = 0.9171;
-			res.rz = -0;
-			res.rw = 0.3987;
-			client.sendPacket(res);
-			return true;
-		}
-
 		// Sync
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {
@@ -119,6 +104,21 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
 						"Syncing player " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
 			}
+		}
+
+		// Send to tutorial if new
+		if (plr.account.isPlayerNew()) {
+			// Tutorial spawn
+			ObjectInfoAvatarLocalPacket res = new ObjectInfoAvatarLocalPacket();
+			res.x = 107.67;
+			res.y = 8.85;
+			res.z = -44.85;
+			res.rx = 0;
+			res.ry = 0.9171;
+			res.rz = -0;
+			res.rw = 0.3987;
+			client.sendPacket(res);
+			return true;
 		}
 
 		// If there is a chat server connection, switch the chat to the new room to get
