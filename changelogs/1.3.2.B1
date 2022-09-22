@@ -4,6 +4,7 @@ Changes in 1.3.2.B1:
  - Implemented 'Over and Out' (WIP)
  - Rewrote quest and interaction mangaer to be wayyy more reliable
  - Fix issue with player teleports in sancs
+ - Add sanc datafixer that will repair missing save slots
  - Implement loot popups
  - Fix sync issues
  - Fix sanc chat
