@@ -244,8 +244,10 @@ public class InteractionManager {
 							"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
 					// Check state
 					NetworkedObject obj = NetworkedObjects.getObject(t);
-					if (obj.stateInfo.containsKey(state.params[0]))
+					if (obj.stateInfo.containsKey(state.params[0])) {
 						plr.states.put(t, Integer.parseInt(state.params[0]));
+						plr.stateObjects.remove(t);
+					}
 					break;
 				}
 				case "41": {
