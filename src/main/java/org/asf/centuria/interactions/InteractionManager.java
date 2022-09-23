@@ -257,6 +257,21 @@ public class InteractionManager {
 					ResourceCollectionModule.giveLootReward(plr, state.params[0], object.primaryObjectInfo.defId);
 					break;
 				}
+				case "12": {
+					// Run commands and progress
+					int stateId = plr.states.getOrDefault(state.actorId, 1);
+					plr.states.put(state.actorId, stateId + 1);
+
+					// Find object
+					NetworkedObject obj = NetworkedObjects.getObject(state.actorId);
+					var stateObjs = obj.stateInfo.get(Integer.toString(stateId));
+					for (var st : stateObjs) {
+						if (st.branches.size() != 0)
+							runBranches(plr, st.branches, "1", target, obj, state);
+					}
+
+					break;
+				}
 				default: {
 					// Find module
 					boolean warn = true;

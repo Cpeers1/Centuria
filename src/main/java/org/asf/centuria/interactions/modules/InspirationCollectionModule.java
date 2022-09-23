@@ -67,8 +67,8 @@ public class InspirationCollectionModule extends InteractionModule {
 	}
 
 	@Override
-	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo stateInfo, StateInfo parent,
-			HashMap<String, Object> memory) {
+	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo stateInfo,
+			StateInfo parent, HashMap<String, Object> memory) {
 		// add inspiration to inventory?
 		// get inspiration ID from commands
 
@@ -76,6 +76,8 @@ public class InspirationCollectionModule extends InteractionModule {
 			// get the third argument
 
 			String defId = stateInfo.params[2];
+			if (!defId.matches("^[0-9]+$"))
+				return false;
 
 			var inspirationAccessor = player.account.getPlayerInventory().getInspirationAccessor();
 			if (!inspirationAccessor.hasInspiration(Integer.valueOf(defId))) {
