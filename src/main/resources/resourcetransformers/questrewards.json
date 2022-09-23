@@ -188,6 +188,33 @@
           "weight": 1
         }
       ]
+    },
+    "7982": {
+      "objectName": "QuestReward/OverAndOut",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q7982",
+          "itemId": "9300",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q7982": {
+      "objectName": "QuestReward/OverAndOut",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 10,
+          "maxCount": 20,
+          "weight": 1
+        }
+      ]
     }
   }
 }
