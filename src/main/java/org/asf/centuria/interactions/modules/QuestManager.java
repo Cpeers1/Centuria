@@ -37,9 +37,6 @@ public class QuestManager extends InteractionModule {
 	// Ignored in debug mode
 	public int questLock = 8159; // Serpentine, locked to prevent broken quests breaking the server
 
-	// TODO:
-	// - tutorial quest support
-
 	private static String firstQuest = "7537";
 	private static LinkedHashMap<String, String> questMap = new LinkedHashMap<String, String>();
 	private static HashMap<String, QuestDefinition> questDefinitions = new HashMap<String, QuestDefinition>();
@@ -100,6 +97,10 @@ public class QuestManager extends InteractionModule {
 	 * @return Quest defID string or null if all quests are completed
 	 */
 	public static String getActiveQuest(CenturiaAccount player) {
+		if (player.isPlayerNew()
+				|| (player.getOnlinePlayerInstance() != null && player.getOnlinePlayerInstance().levelID == 25280)) {
+			return "25287";
+		}
 		for (int i = 0; i < 2; i++) {
 			try {
 				JsonObject progressionMap = player.getPlayerInventory().getAccessor().findInventoryObject("311", 22781)
@@ -161,11 +162,13 @@ public class QuestManager extends InteractionModule {
 			QuestDefinition quest = questDefinitions.get(activeQuest);
 
 			// Check location
+			// -1 = tutorial
 			// 0 = mugmyre
 			// 1 = lakeroot
 			// 2 = blood tundra
 			if ((levelID == 2147 && quest.questLocation == 0) || (levelID == 9687 && quest.questLocation == 1)
-					|| (levelID == 2364 && quest.questLocation == 2)) {
+					|| (levelID == 2364 && quest.questLocation == 2)
+					|| (levelID == 25280 && quest.questLocation == -1)) {
 				// Load objects
 				String[] collections = NetworkedObjects
 						.getCollectionIdsForOverride(Integer.toString(quest.levelOverrideID));
@@ -208,12 +211,19 @@ public class QuestManager extends InteractionModule {
 			QuestDefinition quest = questDefinitions.get(activeQuest);
 
 			// Check location
+			// -1 = tutorial
 			// 0 = mugmyre
 			// 1 = lakeroot
 			// 2 = blood tundra
 			if ((player.levelID == 2147 && quest.questLocation == 0)
 					|| (player.levelID == 9687 && quest.questLocation == 1)
-					|| (player.levelID == 2364 && quest.questLocation == 2)) {
+					|| (player.levelID == 2364 && quest.questLocation == 2)
+					|| (player.levelID == 25280 && quest.questLocation == -1)) {
+				if (player.levelID == 25280) {
+					// Tutorial handler
+					return true;
+				}
+
 				// Check if its a npc and if the quest is locked
 				if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
 					return true;
@@ -252,12 +262,28 @@ public class QuestManager extends InteractionModule {
 			QuestDefinition quest = questDefinitions.get(activeQuest);
 
 			// Check location
+			// -1 = tutorial
 			// 0 = mugmyre
 			// 1 = lakeroot
 			// 2 = blood tundra
 			if ((player.levelID == 2147 && quest.questLocation == 0)
 					|| (player.levelID == 9687 && quest.questLocation == 1)
-					|| (player.levelID == 2364 && quest.questLocation == 2)) {
+					|| (player.levelID == 2364 && quest.questLocation == 2)
+					|| (player.levelID == 25280 && quest.questLocation == -1)) {
+				if (player.levelID == 25280) {
+					// Tutorial
+					// Check if its a queenstone
+					if (object.primaryObjectInfo != null && object.primaryObjectInfo.type == 31
+						&& object.subObjectInfo != null && object.subObjectInfo.defId == 3432) {
+						// Ignore unless there have been 3 harvests
+						int harvested = player.account.getPlayerInventory().getInteractionMemory()
+								.getLastHarvestCount(player.levelID, id);
+						if (harvested + 1 < 3) {
+							return false;
+						}
+					}
+				}
+				
 				// Check if its a npc and if the quest is locked
 				if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
 					// Inform the user
@@ -291,6 +317,14 @@ public class QuestManager extends InteractionModule {
 														player.questObjective, id, object, stt);
 											}
 										}
+									}
+								}
+							}
+							for (ArrayList<StateInfo> states : tracker.stateInfo.values()) {
+								for (StateInfo stt : states) {
+									if (stt.command.equals("13")) {
+										updateCounter(stt.actorId, task, objective, quest, player, taskID,
+												player.questObjective, id, object, stt);
 									}
 								}
 							}
@@ -329,12 +363,14 @@ public class QuestManager extends InteractionModule {
 				QuestObjective objective = quest.objectives.get(objectiveID);
 
 				// Check location
+				// -1 = tutorial
 				// 0 = mugmyre
 				// 1 = lakeroot
 				// 2 = blood tundra
 				if ((player.levelID == 2147 && quest.questLocation == 0)
 						|| (player.levelID == 9687 && quest.questLocation == 1)
-						|| (player.levelID == 2364 && quest.questLocation == 2)) {
+						|| (player.levelID == 2364 && quest.questLocation == 2)
+						|| (player.levelID == 25280 && quest.questLocation == -1)) {
 					switch (stateInfo.command) {
 
 					case "67": {
@@ -382,7 +418,7 @@ public class QuestManager extends InteractionModule {
 	private void updateCounter(String counterID, QuestTask task, QuestObjective objective, QuestDefinition quest,
 			Player player, int taskID, int objectiveID, String id, NetworkedObject object, StateInfo stateInfo) {
 		// Find max and current progress
-		int cur = player.questObjectData.get(counterID);
+		int cur = player.questObjectData.getOrDefault(counterID, 0);
 		int rem = task.targetProgress - cur;
 
 		// Update
@@ -481,12 +517,14 @@ public class QuestManager extends InteractionModule {
 					QuestDefinition quest = questDefinitions.get(activeQuest);
 
 					// Check location
+					// -1 = tutorial
 					// 0 = mugmyre
 					// 1 = lakeroot
 					// 2 = blood tundra
 					if ((player.levelID == 2147 && quest.questLocation == 0)
 							|| (player.levelID == 9687 && quest.questLocation == 1)
-							|| (player.levelID == 2364 && quest.questLocation == 2)) {
+							|| (player.levelID == 2364 && quest.questLocation == 2)
+							|| (player.levelID == 25280 && quest.questLocation == -1)) {
 						if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
 							return 0;
 						}
