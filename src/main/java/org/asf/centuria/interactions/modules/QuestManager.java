@@ -274,7 +274,7 @@ public class QuestManager extends InteractionModule {
 					// Tutorial
 					// Check if its a queenstone
 					if (object.primaryObjectInfo != null && object.primaryObjectInfo.type == 31
-						&& object.subObjectInfo != null && object.subObjectInfo.defId == 3432) {
+							&& object.subObjectInfo != null && object.subObjectInfo.defId == 3432) {
 						// Ignore unless there have been 3 harvests
 						int harvested = player.account.getPlayerInventory().getInteractionMemory()
 								.getLastHarvestCount(player.levelID, id);
@@ -283,7 +283,7 @@ public class QuestManager extends InteractionModule {
 						}
 					}
 				}
-				
+
 				// Check if its a npc and if the quest is locked
 				if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
 					// Inform the user
@@ -444,6 +444,27 @@ public class QuestManager extends InteractionModule {
 		qcmd.params.add(Integer.toString(cur));
 		player.client.sendPacket(qcmd);
 
+		// Check objective for branch commands
+		int max = 0;
+		for (QuestTask tsk : objective.tasks) {
+			max += tsk.targetProgress;
+		}
+		if (player.questProgress >= max) {
+			// Handle quest command 13
+			var obj = NetworkedObjects.getObject(counterID);
+			String state = Integer.toString(player.states.getOrDefault(counterID, 0));
+			if (obj.stateInfo.containsKey(state)) {
+				for (StateInfo st : obj.stateInfo.get(state)) {
+					if (st.command.equals("13")) {
+						var o = NetworkedObjects.getObject(st.actorId);
+						if (o != null && o.stateInfo.containsKey(st.params[0])) {
+							InteractionManager.runBranches(player, o.stateInfo, st.params[0], id, object, stateInfo);
+						}
+					}
+				}
+			}
+		}
+
 		// Check progress
 		if (rem <= 0) {
 			// Done, run branches of the counter
@@ -453,10 +474,6 @@ public class QuestManager extends InteractionModule {
 		}
 
 		// Check objective
-		int max = 0;
-		for (QuestTask tsk : objective.tasks) {
-			max += tsk.targetProgress;
-		}
 		if (player.questProgress >= max) {
 			// Next objective
 			player.questProgress = 0;
@@ -550,7 +567,7 @@ public class QuestManager extends InteractionModule {
 					QuestCommandPacket cmd = new QuestCommandPacket();
 					cmd.type = 1;
 					cmd.id = key;
-					cmd.params.add(Integer.toString(player.questObjective + 1));
+					cmd.params.add(Integer.toString(player.questObjective));
 					cmd.params.add("1");
 					cmd.params.add("1");
 					player.client.sendPacket(cmd);

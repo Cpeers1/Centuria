@@ -197,7 +197,9 @@ public class InteractionManager {
 		}
 
 		// Find state
+		boolean resetted = false;
 		if (!player.stateObjects.containsKey(interactableId)) {
+			resetted = true;
 			int tState = 0;
 			int nState = player.states.getOrDefault(interactableId, 0);
 			if (object.stateInfo.containsKey(Integer.toString(nState)))
@@ -209,9 +211,18 @@ public class InteractionManager {
 		}
 		if (player.stateObjects.containsKey(interactableId)) {
 			// Run branches
+			int branches = 0;
 			ArrayList<StateInfo> states = player.stateObjects.get(interactableId);
 			for (StateInfo st : states) {
-				runBranches(player, st.branches, Integer.toString(state), interactableId, object, st);
+				if (st.branches.containsKey(Integer.toString(state))) {
+					runBranches(player, st.branches, Integer.toString(state), interactableId, object, st);
+					branches += st.branches.get(Integer.toString(state)).size();
+				}
+			}
+			if (branches == 0 && !resetted) {
+				// Reset states and try again
+				player.stateObjects.remove(interactableId);
+				handleInteractionDataRequest(player, interactableId, object, state);
 			}
 		}
 	}
@@ -244,10 +255,8 @@ public class InteractionManager {
 							"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
 					// Check state
 					NetworkedObject obj = NetworkedObjects.getObject(t);
-					if (obj.stateInfo.containsKey(state.params[0])) {
+					if (obj.stateInfo.containsKey(state.params[0]))
 						plr.states.put(t, Integer.parseInt(state.params[0]));
-						plr.stateObjects.remove(t);
-					}
 					break;
 				}
 				case "41": {
@@ -259,6 +268,8 @@ public class InteractionManager {
 				}
 				case "12": {
 					// Run commands and progress
+					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+							"Running command: 12");
 					int stateId = plr.states.getOrDefault(state.actorId, 1);
 					plr.states.put(state.actorId, stateId + 1);
 
