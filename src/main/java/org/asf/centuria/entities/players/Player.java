@@ -62,16 +62,9 @@ public class Player {
 	public String respawn = null;
 	public String lastLocation = null;
 
-	// TODO: Clean up into vector3 type.
-	public double lastPosX = 0;
-	public double lastPosY = -1000;
-	public double lastPosZ = 0;
+	public Vector3 lastPos = new Vector3(0, -1000, 0);
 
-	// TODO: Clean up into quaternion type.
-	public double lastRotW = 0;
-	public double lastRotX = 0;
-	public double lastRotY = 0;
-	public double lastRotZ = 0;
+	public Quaternion lastRot = new Quaternion(0, 0, 0, 0);
 
 	public int lastAction;
 
@@ -125,8 +118,8 @@ public class Player {
 
 			packet.lastMove = new WorldObjectMoveNodeData();
 			packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
-			packet.lastMove.positionInfo = new WorldObjectPositionInfo(lastPosX, lastPosY, lastPosZ, lastRotX, lastRotY,
-					lastRotZ, lastRotW);
+			packet.lastMove.positionInfo = new WorldObjectPositionInfo(lastPos.x, lastPos.y, lastPos.z, lastRot.x, lastRot.y,
+					lastRot.z, lastRot.w);
 			packet.lastMove.velocity = new Velocity();
 			packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition;
 
@@ -301,10 +294,10 @@ public class Player {
 				player.pendingRoom = "sanctuary_" + sanctuaryOwner;
 				player.levelType = join.levelType;
 				player.teleportDestination = targetedPlayer.account.getAccountID();
-				player.targetPos = new Vector3(targetedPlayer.lastPosX, targetedPlayer.lastPosY,
-						targetedPlayer.lastPosZ);
-				player.targetRot = new Quaternion(targetedPlayer.lastRotX, targetedPlayer.lastRotY,
-						targetedPlayer.lastRotZ, targetedPlayer.lastRotW);
+				player.targetPos = new Vector3(targetedPlayer.lastPos.x, targetedPlayer.lastPos.y,
+						targetedPlayer.lastPos.z);
+				player.targetRot = new Quaternion(targetedPlayer.lastRot.x, targetedPlayer.lastRot.y,
+						targetedPlayer.lastRot.z, targetedPlayer.lastRot.w);
 			} else {
 				client.sendPacket(join);
 				return false;
@@ -440,9 +433,9 @@ public class Player {
 			plr.levelType = levelType;
 
 			plr.teleportDestination = targetedPlayer.account.getAccountID();
-			plr.targetPos = new Vector3(targetedPlayer.lastPosX, targetedPlayer.lastPosY, targetedPlayer.lastPosZ);
-			plr.targetRot = new Quaternion(targetedPlayer.lastRotX, targetedPlayer.lastRotY, targetedPlayer.lastRotZ,
-					targetedPlayer.lastRotW);
+			plr.targetPos = new Vector3(targetedPlayer.lastPos.x, targetedPlayer.lastPos.y, targetedPlayer.lastPos.z);
+			plr.targetRot = new Quaternion(targetedPlayer.lastRot.x, targetedPlayer.lastRot.y, targetedPlayer.lastRot.z,
+					targetedPlayer.lastRot.w);
 
 			plr.respawnItems.clear();
 

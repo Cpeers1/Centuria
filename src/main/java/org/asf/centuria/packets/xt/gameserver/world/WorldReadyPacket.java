@@ -288,20 +288,20 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				}
 
 				ObjectInfoAvatarLocalPacket res = new ObjectInfoAvatarLocalPacket();
-				res.x = player.lastPosX;
-				res.y = player.lastPosY;
-				res.z = player.lastPosZ;
-				res.rw = player.lastRotW;
-				res.rx = player.lastRotX;
-				res.ry = player.lastRotY;
-				res.rz = player.lastRotZ;
-				plr.lastPosX = res.x;
-				plr.lastPosY = res.y;
-				plr.lastPosZ = res.z;
-				plr.lastRotW = res.rx;
-				plr.lastRotX = res.ry;
-				plr.lastRotY = res.rz;
-				plr.lastRotZ = res.rw;
+				res.x = player.lastPos.x;
+				res.y = player.lastPos.y;
+				res.z = player.lastPos.z;
+				res.rw = player.lastRot.w;
+				res.rx = player.lastRot.x;
+				res.ry = player.lastRot.y;
+				res.rz = player.lastRot.z;
+				plr.lastPos.x = res.x;
+				plr.lastPos.y = res.y;
+				plr.lastPos.z = res.z;
+				plr.lastRot.w = res.rx;
+				plr.lastRot.x = res.ry;
+				plr.lastRot.y = res.rz;
+				plr.lastRot.z = res.rw;
 				client.sendPacket(res);
 				plr.respawn = res.x + "%" + res.y + "%" + res.z + "%" + res.rx + "%" + res.ry + "%" + res.rz + "%"
 						+ res.rw;
@@ -319,13 +319,13 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			res.rx = plr.targetRot.x;
 			res.ry = plr.targetRot.y;
 			res.rz = plr.targetRot.z;
-			plr.lastPosX = res.x;
-			plr.lastPosY = res.y;
-			plr.lastPosZ = res.z;
-			plr.lastRotW = res.rx;
-			plr.lastRotX = res.ry;
-			plr.lastRotY = res.rz;
-			plr.lastRotZ = res.rw;
+			plr.lastPos.x = res.x;
+			plr.lastPos.y = res.y;
+			plr.lastPos.z = res.z;
+			plr.lastRot.w = res.rx;
+			plr.lastRot.x = res.ry;
+			plr.lastRot.y = res.rz;
+			plr.lastRot.z = res.rw;
 			client.sendPacket(res);
 			plr.respawn = res.x + "%" + res.y + "%" + res.z + "%" + res.rx + "%" + res.ry + "%" + res.rz + "%" + res.rw;
 			return;
@@ -354,13 +354,13 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				res.rx = helper.get("spawnRotX").getAsDouble();
 				res.ry = helper.get("spawnRotY").getAsDouble();
 				res.rz = helper.get("spawnRotZ").getAsDouble();
-				plr.lastPosX = res.x;
-				plr.lastPosY = res.y;
-				plr.lastPosZ = res.z;
-				plr.lastRotW = res.rx;
-				plr.lastRotX = res.ry;
-				plr.lastRotY = res.rz;
-				plr.lastRotZ = res.rw;
+				plr.lastPos.x = res.x;
+				plr.lastPos.y = res.y;
+				plr.lastPos.z = res.z;
+				plr.lastRot.w = res.rx;
+				plr.lastRot.x = res.ry;
+				plr.lastRot.y = res.rz;
+				plr.lastRot.z = res.rw;
 				client.sendPacket(res);
 				plr.respawn = res.x + "%" + res.y + "%" + res.z + "%" + res.rx + "%" + res.ry + "%" + res.rz + "%"
 						+ res.rw;
@@ -379,13 +379,13 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		res.rx = 0;
 		res.ry = 0;
 		res.rz = 0;
-		plr.lastPosX = res.x;
-		plr.lastPosY = res.y;
-		plr.lastPosZ = res.z;
-		plr.lastRotW = res.rw;
-		plr.lastRotX = res.rx;
-		plr.lastRotY = res.ry;
-		plr.lastRotZ = res.rz;
+		plr.lastPos.x = res.x;
+		plr.lastPos.y = res.y;
+		plr.lastPos.z = res.z;
+		plr.lastRot.w = res.rw;
+		plr.lastRot.x = res.rx;
+		plr.lastRot.y = res.ry;
+		plr.lastRot.z = res.rz;
 		client.sendPacket(res);
 		plr.respawn = res.x + "%" + res.y + "%" + res.z + "%" + res.rx + "%" + res.ry + "%" + res.rz + "%" + res.rw;
 	}
