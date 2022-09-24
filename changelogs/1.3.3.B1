@@ -1,0 +1,2 @@
+Changes in 1.3.3.B1:
+ - Fixed the quest manager, quests with multiple tasks in a objective should now work
