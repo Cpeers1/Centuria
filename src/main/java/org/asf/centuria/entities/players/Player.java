@@ -572,8 +572,8 @@ public class Player {
 						join.levelID = plr.levelID;
 						join.roomIdentifier = plr.room;
 						player.teleportDestination = plr.account.getAccountID();
-						player.targetPos = new Vector3(plr.lastPosX, plr.lastPosY, plr.lastPosZ);
-						player.targetRot = new Quaternion(plr.lastRotX, plr.lastRotY, plr.lastRotZ, plr.lastRotW);
+						player.targetPos = new Vector3(plr.lastPos.x, plr.lastPos.y, plr.lastPos.z);
+						player.targetRot = new Quaternion(plr.lastRot.x, plr.lastRot.y, plr.lastRot.z, plr.lastRot.w);
 
 						// Sync
 						GameServer srv = (GameServer) client.getServer();
