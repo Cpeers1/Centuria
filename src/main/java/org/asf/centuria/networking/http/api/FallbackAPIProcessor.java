@@ -29,6 +29,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 
 	@Override
 	public void process(String contentType, Socket client, String method) {
+		Centuria.logger.info("API CALL: " + getRequest().path);
 		String path = this.getRequestPath();
 		AccountManager manager = AccountManager.getInstance();
 

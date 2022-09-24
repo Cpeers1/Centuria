@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
@@ -36,9 +37,7 @@ public class InventoryItemPacket implements IXtPacket<InventoryItemPacket> {
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		// Log
-		if (Centuria.debugMode) {
-			System.out.println("[INVENTORY] [UPDATE]  Server to client: " + item);
-		}
+		Centuria.logger.debug(MarkerManager.getMarker("ITEMUPDATE"), "Server to client: " + item);
 
 		ByteArrayOutputStream op = new ByteArrayOutputStream();
 		GZIPOutputStream gz = new GZIPOutputStream(op);

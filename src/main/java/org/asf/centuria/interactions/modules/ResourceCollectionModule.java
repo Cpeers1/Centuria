@@ -393,7 +393,7 @@ public class ResourceCollectionModule extends InteractionModule {
 	}
 
 	@Override
-	public boolean handleInteractionDataRequest(Player player, String id, NetworkedObject obj, int stateN) {
+	public int isDataRequestValid(Player player, String id, NetworkedObject obj, int stateN) {
 		// Check if the object is a resource
 		if (obj.primaryObjectInfo != null && resources.containsKey(Integer.toString(obj.primaryObjectInfo.defId))) {
 			ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
@@ -402,15 +402,21 @@ public class ResourceCollectionModule extends InteractionModule {
 			if (def.lootType == ResourceType.LOOT) {
 				// Treasure
 
+				// Check time
+				if (player.account.getPlayerInventory().getInteractionMemory().hasTreasureBeenUnlocked(player.levelID,
+						id)
+						&& System.currentTimeMillis() < (player.account.getPlayerInventory().getInteractionMemory()
+								.getLastTreasureUnlockTime(player.levelID, id) + (def.respawnSeconds * 1000)))
+					return 0; // Cannot loot yet
+
 				// Give reward
-				giveLootReward(player, Integer.toString(def.lootTableId), obj.primaryObjectInfo.type,
-						obj.primaryObjectInfo.defId);
+				giveLootReward(player, Integer.toString(def.lootTableId), obj.primaryObjectInfo.defId);
 
 				// Set unlocked and timestamp
 				player.account.getPlayerInventory().getInteractionMemory().unlocked(player.levelID, id);
 				player.account.getPlayerInventory().getInteractionMemory().saveTo(player.client);
 				player.respawnItems.put(id, (long) (System.currentTimeMillis() + (def.respawnSeconds * 1000)));
-				return true;
+				return 1;
 			}
 		}
 
@@ -423,17 +429,10 @@ public class ResourceCollectionModule extends InteractionModule {
 							if (branch.command.equals("41") && branch.params.length > 0) {
 								// It is, lets find the table
 
-								// Give reward
-								giveLootReward(player, branch.params[0], obj.primaryObjectInfo.type,
-										obj.primaryObjectInfo.defId);
-
-								// Set unlocked and timestamp
-								player.account.getPlayerInventory().getInteractionMemory().unlocked(player.levelID, id);
-								player.account.getPlayerInventory().getInteractionMemory().saveTo(player.client);
-
 								// Find respawn timestamp
 								ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
-								double respawnSeconds = 600; // 10 minutes fallback
+								double respawnSeconds = 600; // 10 minutes fallback // TODO: FIND A BETTER WAY TO DO
+																// THIS
 								if (def != null) {
 									respawnSeconds = def.respawnSeconds;
 								} else {
@@ -443,10 +442,22 @@ public class ResourceCollectionModule extends InteractionModule {
 									}
 								}
 
+								// Check time
+								if (player.account.getPlayerInventory().getInteractionMemory()
+										.hasTreasureBeenUnlocked(player.levelID, id)
+										&& System.currentTimeMillis() < (player.account.getPlayerInventory()
+												.getInteractionMemory().getLastTreasureUnlockTime(player.levelID, id)
+												+ (respawnSeconds * 1000)))
+									return 0; // Cannot loot yet
+
+								// Set unlocked and timestamp
+								player.account.getPlayerInventory().getInteractionMemory().unlocked(player.levelID, id);
+								player.account.getPlayerInventory().getInteractionMemory().saveTo(player.client);
+
 								// Make sure the resource will be respawned
 								player.respawnItems.put(id,
 										(long) (System.currentTimeMillis() + (respawnSeconds * 1000)));
-								return true;
+								return 1;
 							}
 						}
 					}
@@ -454,10 +465,10 @@ public class ResourceCollectionModule extends InteractionModule {
 			}
 		}
 
-		return false;
+		return -1;
 	}
 
-	public static void giveLootReward(Player player, String lootTableId, int type, int defID) {
+	public static void giveLootReward(Player player, String lootTableId, int sourceDefID) {
 		LootTable table = lootTables.get(lootTableId);
 		if (table != null) {
 			// Find reward
@@ -480,13 +491,13 @@ public class ResourceCollectionModule extends InteractionModule {
 					for (String objID : ids) {
 						// Send gift object
 						JsonObject gift = new JsonObject();
-						gift.addProperty("fromType", type);
+						gift.addProperty("fromType", 5);
 						gift.addProperty("redeemedItemIdsExpectedCount", 0);
 						gift.addProperty("giftItemDefId", Integer.parseInt(reward.itemId));
 						gift.addProperty("count", count);
 						gift.addProperty("giftItemType",
 								player.account.getPlayerInventory().getAccessor().getInventoryIDOfItem(objID));
-						gift.addProperty("fromId", defID);
+						gift.addProperty("fromId", sourceDefID);
 						gift.addProperty("uuid", objID);
 
 						// Send object
@@ -511,7 +522,7 @@ public class ResourceCollectionModule extends InteractionModule {
 				}
 				if (reward.referencedTableId != null) {
 					// Give table
-					giveLootReward(player, reward.referencedTableId, type, defID);
+					giveLootReward(player, reward.referencedTableId, sourceDefID);
 				}
 			}
 		}

@@ -82,7 +82,7 @@ public class Trade {
 	 * @throws IOException
 	 */
 	public static Trade startNewTrade(Player sourcePlayer, Player targetPlayer) throws IOException {
-		if (sourcePlayer.tradeEngagedIn != null || targetPlayer.tradeEngagedIn != null
+		if (targetPlayer == null || sourcePlayer.tradeEngagedIn != null || targetPlayer.tradeEngagedIn != null
 				|| sourcePlayer.roomReady == false || sourcePlayer.roomReady == false) {
 			// Players are already engaged in a trade, or arn't fully loaded yet.
 			Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeInitiateFailPacket] Server to client.");

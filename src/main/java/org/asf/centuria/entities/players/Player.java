@@ -1,5 +1,6 @@
 package org.asf.centuria.entities.players;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import org.asf.centuria.entities.objects.WorldObjectPositionInfo;
 import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
+import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
@@ -76,7 +78,9 @@ public class Player {
 
 	// Quests
 	public int questProgress;
+	public ArrayList<String> interactions = new ArrayList<String>();
 	public HashMap<String, Integer> states = new HashMap<String, Integer>();
+	public HashMap<String, ArrayList<StateInfo>> stateObjects = new HashMap<String, ArrayList<StateInfo>>();
 	public HashMap<String, Integer> questObjectData = new HashMap<String, Integer>();
 	public boolean questStarted = false;
 	public int questObjective = 0;
@@ -307,6 +311,8 @@ public class Player {
 
 			// Reset states
 			states.clear();
+			stateObjects.clear();
+			interactions.clear();
 
 			// Clear respawn items
 			respawnItems.clear();
@@ -365,7 +371,9 @@ public class Player {
 			plr.questObjective = 0;
 
 			// Reset states
-			plr.states.clear();
+			states.clear();
+			stateObjects.clear();
+			interactions.clear();
 
 			// Clear respawn items
 			plr.respawnItems.clear();
@@ -430,6 +438,17 @@ public class Player {
 					targetedPlayer.lastRot.w);
 
 			plr.respawnItems.clear();
+
+			// Reset quest data
+			plr.questProgress = 0;
+			plr.questStarted = false;
+			plr.questObjectData.clear();
+			plr.questObjective = 0;
+
+			// Reset states
+			states.clear();
+			stateObjects.clear();
+			interactions.clear();
 
 			// Log
 			Centuria.logger.debug(MarkerManager.getMarker("JOINROOM"),
@@ -516,11 +535,42 @@ public class Player {
 					client.sendPacket(writer.encode());
 
 					if (!plr.room.equals(player.room)) {
+						// Check sanc
+						if (plr.levelType == 2 && plr.room.startsWith("sanctuary_")) {
+							String sanctuaryOwner = plr.room.substring("sanctuary_".length());
+							// Find owner
+							CenturiaAccount sancOwner = AccountManager.getInstance().getAccount(sanctuaryOwner);
+							if (!sancOwner.getPlayerInventory().containsItem("201")) {
+								Player plr2 = sancOwner.getOnlinePlayerInstance();
+								if (plr2 != null)
+									plr2.activeSanctuaryLook = sancOwner.getActiveSanctuaryLook();
+							}
+
+							// Check owner
+							boolean isOwner = player.account.getAccountID().equals(sanctuaryOwner);
+
+							if (!isOwner) {
+								// Load privacy settings
+								privSetting = 0;
+								val = sancOwner.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
+								if (val != null)
+									privSetting = val.value;
+
+								// Verify access
+								if (privSetting == 1
+										&& !SocialManager.getInstance().getPlayerIsFollowing(plr.account.getAccountID(),
+												player.account.getAccountID()))
+									break;
+								else if (privSetting == 2)
+									break;
+							}
+						}
+
 						// Build room join
 						RoomJoinPacket join = new RoomJoinPacket();
 						join.levelType = plr.levelType;
 						join.levelID = plr.levelID;
-						join.roomIdentifier = "room_" + join.levelID;
+						join.roomIdentifier = plr.room;
 						player.teleportDestination = plr.account.getAccountID();
 						player.targetPos = new Vector3(plr.lastPos.x, plr.lastPos.y, plr.lastPos.z);
 						player.targetRot = new Quaternion(plr.lastRot.x, plr.lastRot.y, plr.lastRot.z, plr.lastRot.w);

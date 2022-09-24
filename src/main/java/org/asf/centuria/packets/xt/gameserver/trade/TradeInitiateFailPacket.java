@@ -9,7 +9,7 @@ import org.asf.centuria.packets.xt.IXtPacket;
 
 public class TradeInitiateFailPacket implements IXtPacket<TradeInitiateFailPacket> {
 
-	private static final String PACKET_ID = "tic";
+	private static final String PACKET_ID = "tic"; // TODO: correct this packet
 	
 	@Override
 	public TradeInitiateFailPacket instantiate() {

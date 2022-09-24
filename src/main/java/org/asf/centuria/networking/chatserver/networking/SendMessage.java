@@ -398,8 +398,8 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("listplayers");
 			commandMessages.add("tpm <levelDefID> [<levelType>]");
 			commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
-			commandMessages.add("questrewind <amount-of-quests-to-rewind>");
 		}
+		commandMessages.add("questrewind <amount-of-quests-to-rewind>");
 
 		// Add module commands
 		ModuleCommandSyntaxListEvent evMCSL = new ModuleCommandSyntaxListEvent(commandMessages, client,
@@ -549,9 +549,10 @@ public class SendMessage extends AbstractChatPacket {
 							Player plr = cl.getPlayer().getOnlinePlayerInstance();
 							if (plr != null && !suspiciousClients.containsKey(cl)) {
 								String map = "UNKOWN: " + plr.levelID;
-								if (helper.has(Integer.toString(plr.levelID)))
-									map = plr.levelID == 25280 ? "Tutorial"
-											: helper.get(Integer.toString(plr.levelID)).getAsString();
+								if (plr.levelID == 25280)
+									map = "Tutorial";
+								else if (helper.has(Integer.toString(plr.levelID)))
+									map = helper.get(Integer.toString(plr.levelID)).getAsString();
 								response += "\n - " + plr.account.getDisplayName() + " (" + map + ")";
 							} else if (!suspiciousClients.containsKey(cl)) {
 								suspiciousClients.put(cl, "no gameserver connection");

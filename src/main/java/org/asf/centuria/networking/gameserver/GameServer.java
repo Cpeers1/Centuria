@@ -133,6 +133,7 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new SanctuaryUpgradeCompletePacket());
 		registerPacket(new SettingsSetPacket());
 		registerPacket(new InventoryItemInspirationCombinePacket());
+		registerPacket(new GiftRedeemPacket());
 
 		// Trading Packets
 		registerPacket(new TradeListPacket());

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.InventoryManager;
 import org.asf.centuria.accounts.PlayerInventory;
@@ -51,9 +52,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		PlayerInventory inv = plr.account.getPlayerInventory();
 
 		// Log
-		if (Centuria.debugMode) {
-			System.out.println("[INVENTORY] [REQUEST]  Client to server (type: " + slot + ")");
-		}
+		Centuria.logger.debug(MarkerManager.getMarker("ITEMREQUEST"), "Client to server (type: " + slot + ")");
 
 		// Check if inventory is built
 		if (!inv.containsItem("1")) {
@@ -276,39 +275,36 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 					inv.deleteItem("10");
 					inv.deleteItem("5");
 					inv.deleteItem("6");
-
-					//
-					// Looks
-					//
-
-					if (Centuria.giveAllSanctuaryTypes) {
-						// Give missing sanctuary types
-						int[] sanctuaryTypes = new int[] { 9588, 12632, 12637, 12964, 21273, 23627, 24122, 25414, 26065,
-								28431, 9760, 9764 };
-						for (int id : sanctuaryTypes)
-							if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(id))
-								inv.getSanctuaryAccessor().unlockSanctuary(id);
-					} else {
-						// Give default sanctuary if needed
-						if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(9588))
-							inv.getSanctuaryAccessor().unlockSanctuary(9588);
-					}
-
-					//
-					// Check look count and add missing look slots
-					//
-
-					for (int i = inv.getSanctuaryAccessor().getSanctuaryLookCount(); i < 12; i++) {
-						inv.getSanctuaryAccessor().addExtraSanctuarySlot();
-					}
-
-					//
-					// Active sanc look
-					//
-					plr.activeSanctuaryLook = inv.getSanctuaryAccessor().getFirstSanctuaryLook().get("id").getAsString();
-					plr.account.setActiveSanctuaryLook(plr.activeSanctuaryLook);
 				}
-				plr.activeSanctuaryLook = plr.account.getActiveSanctuaryLook();
+
+				// Looks
+				if (Centuria.giveAllSanctuaryTypes) {
+					// Give missing sanctuary types
+					int[] sanctuaryTypes = new int[] { 9588, 12632, 12637, 12964, 21273, 23627, 24122, 25414, 26065,
+							28431, 9760, 9764 };
+					for (int id : sanctuaryTypes)
+						if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(id))
+							inv.getSanctuaryAccessor().unlockSanctuary(id);
+				} else {
+					// Give default sanctuary if needed
+					if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(9588))
+						inv.getSanctuaryAccessor().unlockSanctuary(9588);
+				}
+
+				// Check look count and add missing look slots
+				for (int i = inv.getSanctuaryAccessor().getSanctuaryLookCount(); i < 12; i++)
+					inv.getSanctuaryAccessor().addExtraSanctuarySlot();
+
+				// Active sanc look
+				if (plr.account.getPlayerInventory().getSanctuaryAccessor()
+						.getSanctuaryLook(plr.account.getActiveSanctuaryLook()) == null) {
+					plr.activeSanctuaryLook = inv.getSanctuaryAccessor().getFirstSanctuaryLook().get("id")
+							.getAsString();
+					plr.account.setActiveSanctuaryLook(plr.activeSanctuaryLook);
+				} else
+					plr.activeSanctuaryLook = plr.account.getActiveSanctuaryLook();
+				
+				// Complete
 				plr.sanctuaryPreloadCompleted = true;
 			}
 		}
@@ -318,7 +314,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 		// Repair broken avatars
 		if (slot.equals("200")) {
-			 InventoryManager.fixBrokenAvatars(item.getAsJsonArray(), inv);
+			InventoryManager.fixBrokenAvatars(item.getAsJsonArray(), inv);
 		}
 
 		// Currency

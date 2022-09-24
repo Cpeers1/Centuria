@@ -45,7 +45,7 @@ public class LoginEventHandler implements IEventReceiver {
 				&& event.getAccount().getPlayerInventory().getItem("accountoptions").getAsJsonObject().get("enable2fa")
 						.getAsBoolean()) {
 			// Check whitelist
-			if (!UserAllowedIpUtils.isAllowed(event.getAccount(), ip)) {
+			if (!UserAllowedIpUtils.isAllowed(event.getAccount(), ip) || ip.equals("127.0.0.1")) {
 				try {
 					// Find account
 					String userId = LinkUtils.getDiscordAccountFrom(event.getAccount());
@@ -63,7 +63,8 @@ public class LoginEventHandler implements IEventReceiver {
 					content += "Here follow the details of the login attempt:\n";
 					content += "**Account login name:** `" + event.getAccount().getLoginName() + "`\n";
 					content += "**Ingame player name:** `" + event.getAccount().getDisplayName() + "`\n";
-					content += "**Requested from IP:** `" + ip + "`\n";
+					if (!ip.equals("127.0.0.1"))
+						content += "**Requested from IP:** `" + ip + "`\n";
 					content += "**Last login time:** " + (event.getAccount().getLastLoginTime() == -1 ? "`Unknown`"
 							: "<t:" + event.getAccount().getLastLoginTime() + ">") + "\n";
 					content += "**Requested at:** <t:" + System.currentTimeMillis() / 1000 + ">\n";
@@ -131,12 +132,18 @@ public class LoginEventHandler implements IEventReceiver {
 					}, 15 * 60);
 
 					// Buttons
-					msg.addComponent(ActionRow.of(
-							Button.success("confirmallow2fa/" + userId + "/" + codeAllow, "Confirm login"),
-							Button.success("confirmwhitelistip2fa/" + userId + "/" + codeWhitelist,
-									"Always allow from this IP"),
-							Button.danger("confirmdeny2fa/" + userId + "/" + codeReject, "Reject login"),
-							Button.danger("confirmblock2fa/" + userId + "/" + codeRejectBlock, "Block IP & Reject")));
+					if (!ip.equals("127.0.0.1"))
+						msg.addComponent(ActionRow.of(
+								Button.success("confirmallow2fa/" + userId + "/" + codeAllow, "Confirm login"),
+								Button.success("confirmwhitelistip2fa/" + userId + "/" + codeWhitelist,
+										"Always allow from this IP"),
+								Button.danger("confirmdeny2fa/" + userId + "/" + codeReject, "Reject login"),
+								Button.danger("confirmblock2fa/" + userId + "/" + codeRejectBlock,
+										"Block IP & Reject")));
+					else
+						msg.addComponent(ActionRow.of(
+								Button.success("confirmallow2fa/" + userId + "/" + codeAllow, "Confirm login"),
+								Button.danger("confirmdeny2fa/" + userId + "/" + codeReject, "Reject login")));
 
 					// Send DM
 					owner.getPrivateChannel().block().createMessage(msg.build()).subscribe();

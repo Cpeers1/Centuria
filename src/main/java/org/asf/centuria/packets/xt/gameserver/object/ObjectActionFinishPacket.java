@@ -2,7 +2,6 @@ package org.asf.centuria.packets.xt.gameserver.object;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
@@ -48,6 +47,8 @@ public class ObjectActionFinishPacket implements IXtPacket<ObjectActionFinishPac
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Interaction finish
 		Player plr = (Player) client.container;
+		if (!plr.interactions.contains(target))
+			return true; // Invalid interaction
 
 		if (Centuria.debugMode) {
 			System.out.println("[INTERACTION] [FINISH] Client to server (target: " + target + ")");
@@ -75,11 +76,11 @@ public class ObjectActionFinishPacket implements IXtPacket<ObjectActionFinishPac
 		int nState = plr.states.getOrDefault(target, currentState);
 		if (obj.stateInfo.containsKey(Integer.toString(nState)))
 			currentState = nState;
-		int state = InteractionManager.selectInteractionState(plr, target, obj, currentState);
 
 		// Send qcmd
-		if (obj.stateInfo.containsKey(Integer.toString(state))) {
-			ArrayList<StateInfo> states = obj.stateInfo.get(Integer.toString(state));
+		if (obj.stateInfo.containsKey(Integer.toString(currentState))) {
+			ArrayList<StateInfo> states = obj.stateInfo.get(Integer.toString(currentState));
+			plr.stateObjects.put(target, states);
 			for (StateInfo st : states) {
 				// Build quest command
 				XtWriter pk = new XtWriter();
@@ -95,9 +96,6 @@ public class ObjectActionFinishPacket implements IXtPacket<ObjectActionFinishPac
 					pk.writeString(param);
 				pk.writeString(DATA_SUFFIX); // Data suffix
 				client.sendPacket(pk.encode());
-
-				// Handle branch commands
-				runBranches(plr, st.branches, "1");
 			}
 		}
 
@@ -112,23 +110,5 @@ public class ObjectActionFinishPacket implements IXtPacket<ObjectActionFinishPac
 		client.sendPacket(pk.encode());
 
 		return true;
-	}
-
-	private void runBranches(Player plr, HashMap<String, ArrayList<StateInfo>> branches, String id) {
-		if (branches.containsKey(id)) {
-			var states = branches.get(id);
-			for (StateInfo state : states) {
-				switch (state.command) {
-				case "1": {
-					// Switch state
-					String t = target;
-					if (!state.actorId.equals("0"))
-						t = state.actorId;
-					plr.states.put(t, Integer.parseInt(state.params[0]));
-					break;
-				}
-				}
-			}
-		}
 	}
 }

@@ -1,7 +1,6 @@
 package org.asf.centuria.packets.xt.gameserver.object;
 
 import java.io.IOException;
-
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
@@ -19,7 +18,7 @@ public class ObjectAskResponsePacket implements IXtPacket<ObjectAskResponsePacke
 	private static final String PACKET_ID = "oaskr";
 
 	private String target;
-	private int state;
+	private int currentState;
 
 	@Override
 	public ObjectAskResponsePacket instantiate() {
@@ -34,7 +33,7 @@ public class ObjectAskResponsePacket implements IXtPacket<ObjectAskResponsePacke
 	@Override
 	public void parse(XtReader reader) throws IOException {
 		target = reader.read();
-		state = reader.readInt();
+		currentState = reader.readInt();
 	}
 
 	@Override
@@ -45,10 +44,12 @@ public class ObjectAskResponsePacket implements IXtPacket<ObjectAskResponsePacke
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Interaction data request
 		Player plr = (Player) client.container;
+		if (!plr.interactions.contains(target))
+			return true; // Invalid interaction
 
 		if (Centuria.debugMode) {
-			System.out.println(
-					"[INTERACTION] [ASKRESPONSE] Client to server (target: " + target + ", state: " + state + ")");
+			System.out.println("[INTERACTION] [ASKRESPONSE] Client to server (target: " + target + ", state: "
+					+ currentState + ")");
 		}
 
 		// Find object
@@ -57,13 +58,13 @@ public class ObjectAskResponsePacket implements IXtPacket<ObjectAskResponsePacke
 			return true;
 
 		// Dispatch event
-		InteractionDataRequestEvent req = new InteractionDataRequestEvent(plr, target, obj, state);
+		InteractionDataRequestEvent req = new InteractionDataRequestEvent(plr, target, obj, currentState);
 		EventBus.getInstance().dispatchEvent(req);
 		if (req.isHandled())
 			return true;
 
 		// Handle request
-		InteractionManager.handleInteractionDataRequest(plr, target, obj, state);
+		InteractionManager.handleInteractionDataRequest(plr, target, obj, currentState);
 		return true;
 	}
 

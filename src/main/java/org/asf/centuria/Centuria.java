@@ -70,11 +70,11 @@ import com.google.gson.JsonObject;
 
 public class Centuria {
 	// Update
-	public static final String SERVER_UPDATE_VERSION = "1.3.1.B3";
+	public static final String SERVER_UPDATE_VERSION = "1.3.2.B1";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/centuria";
 
 	// Configuration
-	public static Logger logger = LogManager.getLogger("CENTURIA");
+	public static Logger logger;
 	public static boolean allowRegistration = true;
 	public static boolean giveAllAvatars = true;
 	public static boolean giveAllMods = true;
@@ -125,7 +125,7 @@ public class Centuria {
 		System.out.println("                              Centuria                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                          Version 1.3.1.B3                          "); // not doing this
+		System.out.println("                          Version 1.3.2.B1                          "); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain
@@ -140,6 +140,7 @@ public class Centuria {
 		} else {
 			System.setProperty("log4j2.configurationFile", Centuria.class.getResource("/log4j2.xml").toString());
 		}
+		logger = LogManager.getLogger("CENTURIA");
 
 		// Load modules
 		ModuleManager.getInstance().initializeComponents();
@@ -167,7 +168,7 @@ public class Centuria {
 			disableUpdater = Boolean.parseBoolean(properties.getOrDefault("disable", "true"));
 
 			// Check if automatic updating is enabled
-			if (Boolean.parseBoolean(properties.getOrDefault("runtime-auto-update", "false"))) {
+			if (Boolean.parseBoolean(properties.getOrDefault("runtime-auto-update", "false")) && !Centuria.debugMode) {
 				int mins = Integer.parseInt(properties.getOrDefault("runtime-update-timer-length", "10"));
 
 				// Start the automatic update thread
@@ -468,6 +469,29 @@ public class Centuria {
 
 		// Allow modules to register handlers
 		EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
+
+		//
+		// Debug API
+		if (System.getProperty("debugAPI") != null) {
+			Centuria.logger.info("Starting debug api...");
+			factory = new ConnectiveServerFactory().setPort(Integer.parseInt(System.getProperty("debugAPI")))
+					.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
+					.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT);
+			var apiServer = factory.build();
+
+			// API processors
+			apiServer.registerProcessor(new UserHandler());
+			apiServer.registerProcessor(new XPDetailsHandler());
+			apiServer.registerProcessor(new SettingsHandler());
+			apiServer.registerProcessor(new AuthenticateHandler());
+			apiServer.registerProcessor(new UpdateDisplayNameHandler());
+			apiServer.registerProcessor(new DisplayNamesRequestHandler());
+			apiServer.registerProcessor(new RequestTokenHandler());
+			apiServer.registerProcessor(new FallbackAPIProcessor());
+
+			// Allow modules to register handlers
+			EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
+		}
 
 		//
 		// Start director server

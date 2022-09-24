@@ -76,7 +76,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		plr.account.getPlayerInventory().getInteractionMemory().prepareLevel(plr.pendingLevelID);
 
 		// Initialize interactions
-		InteractionManager.initInteractionsFor(client, plr.pendingLevelID);
+		InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
 
 		// Save changes
 		plr.account.getPlayerInventory().getInteractionMemory().saveTo(client);
@@ -84,9 +84,27 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Dispatch event
 		EventBus.getInstance().dispatchEvent(new LevelJoinEvent(plr.pendingLevelID, plr.pendingRoom, plr));
 
+		// Sync
+		GameServer srv = (GameServer) client.getServer();
+		for (Player player : srv.getPlayers()) {
+			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+				plr.destroyAt(player);
+			}
+		}
+
 		// Assign info
 		plr.room = plr.pendingRoom;
 		plr.levelID = plr.pendingLevelID;
+
+		// Send all other players to the current player
+		GameServer server = (GameServer) client.getServer();
+		for (Player player : server.getPlayers()) {
+			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+				player.syncTo(plr);
+				Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
+						"Syncing player " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
+			}
+		}
 
 		// Send to tutorial if new
 		if (plr.account.isPlayerNew()) {
@@ -103,24 +121,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			return true;
 		}
 
-		// Sync
-		GameServer srv = (GameServer) client.getServer();
-		for (Player player : srv.getPlayers()) {
-			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				plr.destroyAt(player);
-			}
-		}
-
-		// Send all other players to the current player
-		GameServer server = (GameServer) client.getServer();
-		for (Player player : server.getPlayers()) {
-			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				player.syncTo(plr);
-				Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
-						"Syncing player " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
-			}
-		}
-
 		// If there is a chat server connection, switch the chat to the new room to get
 		// around the chat room leave bug which causes players to see chat from other
 		// worlds
@@ -133,8 +133,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			}
 
 			// Join room
-			if (!chClient.isInRoom("room_" + plr.levelID))
-				chClient.joinRoom("room_" + plr.levelID, false);
+			if (!chClient.isInRoom(plr.room))
+				chClient.joinRoom(plr.room, false);
 
 			// Make the player know its in the chat
 			plr.wasInChat = true;
