@@ -567,7 +567,7 @@ public class QuestManager extends InteractionModule {
 					QuestCommandPacket cmd = new QuestCommandPacket();
 					cmd.type = 1;
 					cmd.id = key;
-					cmd.params.add(Integer.toString(player.questObjective + 1));
+					cmd.params.add(Integer.toString(player.questObjective));
 					cmd.params.add("1");
 					cmd.params.add("1");
 					player.client.sendPacket(cmd);
