@@ -291,6 +291,9 @@ public class QuestManager extends InteractionModule {
 							+ "You have finished all quests that are currently in working order.\n"
 							+ "If development goes well, hopefully this quest and the two following it will become playable next week!\n\n"
 							+ "" + "Apologies for the inconvenience.\n" + " - Centuria Development Team", true);
+					
+					// Block running the interaction
+					player.states.put(id, -1);
 					return true;
 				}
 
