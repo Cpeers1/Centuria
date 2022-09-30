@@ -90,13 +90,13 @@ public class FurnitureItemAccessorImpl extends FurnitureItemAccessor {
 	}
 
 	@Override
-	public String getDefaultFurnitureChannelHSV(int defID, int channel) {
+	public JsonObject getDefaultFurnitureChannelHSV(int defID, int channel) {
 		// Check existence
 		if (helper.has(Integer.toString(defID))) {
 			// Find channel
 			JsonObject data = helper.get(Integer.toString(defID)).getAsJsonObject();
 			if (data.has("color" + channel + "HSV"))
-				return data.get("color" + channel + "HSV").getAsJsonObject().get("_hsv").getAsString();
+				return data.get("color" + channel + "HSV").getAsJsonObject();
 		}
 		return null;
 	}

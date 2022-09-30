@@ -40,8 +40,6 @@ public class ClothingConverter {
 								int channels = 0;
 								for (String key : data.keySet()) {
 									if (key.startsWith("color") && key.endsWith("HSVDefault")) {
-										if (data.get(key).getAsJsonObject().get("_hsv").getAsString().equals("0,0,0"))
-											continue;
 										String channel = key.substring("color".length());
 										channel = channel.substring(0, channel.lastIndexOf("HSVDefault"));
 										if (channel.matches("^[0-9]+$")) {
@@ -56,10 +54,7 @@ public class ClothingConverter {
 									itm.addProperty("availableChannels", channels);
 									for (int i = 1; i <= channels; i++) {
 										if (data.has("color" + i + "HSVDefault")) {
-											JsonObject hsv = new JsonObject();
-											hsv.addProperty("_hsv", data.get("color" + i + "HSVDefault")
-													.getAsJsonObject().get("_hsv").getAsString());
-											itm.add("color" + i + "HSV", hsv);
+											itm.add("color" + i + "HSV", data.get("color" + i + "HSVDefault"));
 										}
 									}
 									clothing.add(lastID, itm);

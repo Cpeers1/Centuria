@@ -40,67 +40,111 @@ public class NetworkedObjects {
 					.getResourceAsStream("networkedobjects.json");
 			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
 			strm.close();
+			loadObjects(helper);
 
-			// Load all entries
+			// Load transformers
+			strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("objecttransformers/index.json");
+			JsonArray transformers = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonArray();
+			strm.close();
+			for (JsonElement el : transformers) {
+				strm = InventoryItemDownloadPacket.class.getClassLoader()
+						.getResourceAsStream("objecttransformers/" + el.getAsString());
+				helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
+				strm.close();
+				loadObjects(helper);
+			}
+		} catch (IOException e) {
+			// This is very bad, should not start allow the server to continue otherwise things will break HARD
+			throw new RuntimeException(e);
+		}
+
+		// Dispatch event
+		EventBus.getInstance()
+				.dispatchEvent(new ObjectDefinitionInitEvent(objects, levelOverrideMap, overrideMap, objectIdMap));
+
+		isReady = true;
+	}
+
+	private static void loadObjects(JsonObject helper) {
+		// Load all entries
+		if (helper.has("Objects")) {
 			JsonObject objectData = helper.get("Objects").getAsJsonObject();
 			for (String objectId : objectData.keySet()) {
 				JsonObject info = objectData.get(objectId).getAsJsonObject();
 				ObjectCollection objectCol = new ObjectCollection();
-				objectCol.name = info.get("name").getAsString();
-				info = info.get("objects").getAsJsonObject();
+				if (objects.containsKey(objectId))
+					objectCol = objects.get(objectId);
+				if (info.has("name"))
+					objectCol.name = info.get("name").getAsString();
+				if (info.has("objects")) {
+					info = info.get("objects").getAsJsonObject();
 
-				for (String uuid : info.keySet()) {
-					// Deserialize entry
-					JsonObject object = info.get(uuid).getAsJsonObject();
+					for (String uuid : info.keySet()) {
+						// Deserialize entry
+						JsonObject object = info.get(uuid).getAsJsonObject();
 
-					NetworkedObject obj = new NetworkedObject();
-					obj.containerId = objectId;
-					obj.objectName = object.get("objectName").getAsString();
-					obj.localType = object.get("localType").getAsInt();
+						NetworkedObject obj = new NetworkedObject();
+						if (objectCol.objects.containsKey(uuid))
+							obj = objectCol.objects.get(uuid);
+						obj.containerId = objectId;
+						if (object.has("objectName"))
+							obj.objectName = object.get("objectName").getAsString();
+						if (object.has("localType"))
+							obj.localType = object.get("localType").getAsInt();
 
-					if (object.has("primaryObjectInfo")) {
-						obj.primaryObjectInfo = new ObjectInfo();
-						obj.primaryObjectInfo.defId = object.get("primaryObjectInfo").getAsJsonObject().get("defId")
-								.getAsInt();
-						obj.primaryObjectInfo.type = object.get("primaryObjectInfo").getAsJsonObject().get("type")
-								.getAsInt();
+						if (object.has("primaryObjectInfo")) {
+							obj.primaryObjectInfo = new ObjectInfo();
+							obj.primaryObjectInfo.defId = object.get("primaryObjectInfo").getAsJsonObject().get("defId")
+									.getAsInt();
+							obj.primaryObjectInfo.type = object.get("primaryObjectInfo").getAsJsonObject().get("type")
+									.getAsInt();
+						}
+						if (object.has("subObjectInfo")) {
+							obj.subObjectInfo = new ObjectInfo();
+							obj.subObjectInfo.defId = object.get("subObjectInfo").getAsJsonObject().get("defId")
+									.getAsInt();
+							obj.subObjectInfo.type = object.get("subObjectInfo").getAsJsonObject().get("type")
+									.getAsInt();
+						}
+
+						if (object.has("locationInfo")) {
+							LocationInfo locationInfo = new LocationInfo();
+							locationInfo.position = new PositionInfo();
+							locationInfo.rotation = new RotationInfo();
+							locationInfo.position.x = object.get("locationInfo").getAsJsonObject().get("position")
+									.getAsJsonObject().get("x").getAsDouble();
+							locationInfo.position.y = object.get("locationInfo").getAsJsonObject().get("position")
+									.getAsJsonObject().get("y").getAsDouble();
+							locationInfo.position.z = object.get("locationInfo").getAsJsonObject().get("position")
+									.getAsJsonObject().get("z").getAsDouble();
+							locationInfo.rotation.x = object.get("locationInfo").getAsJsonObject().get("rotation")
+									.getAsJsonObject().get("x").getAsDouble();
+							locationInfo.rotation.y = object.get("locationInfo").getAsJsonObject().get("rotation")
+									.getAsJsonObject().get("y").getAsDouble();
+							locationInfo.rotation.z = object.get("locationInfo").getAsJsonObject().get("rotation")
+									.getAsJsonObject().get("z").getAsDouble();
+							locationInfo.rotation.w = object.get("locationInfo").getAsJsonObject().get("rotation")
+									.getAsJsonObject().get("w").getAsDouble();
+							obj.locationInfo = locationInfo;
+						}
+						if (object.has("stateInfo")) {
+							genBranches(object.get("stateInfo").getAsJsonObject(), obj.stateInfo);
+						}
+
+						// Add to collection
+						objectCol.objects.put(uuid, obj);
+						objectIdMap.put(uuid, objectId);
 					}
-					if (object.has("subObjectInfo")) {
-						obj.subObjectInfo = new ObjectInfo();
-						obj.subObjectInfo.defId = object.get("subObjectInfo").getAsJsonObject().get("defId").getAsInt();
-						obj.subObjectInfo.type = object.get("subObjectInfo").getAsJsonObject().get("type").getAsInt();
-					}
-
-					LocationInfo locationInfo = new LocationInfo();
-					locationInfo.position = new PositionInfo();
-					locationInfo.rotation = new RotationInfo();
-					locationInfo.position.x = object.get("locationInfo").getAsJsonObject().get("position")
-							.getAsJsonObject().get("x").getAsDouble();
-					locationInfo.position.y = object.get("locationInfo").getAsJsonObject().get("position")
-							.getAsJsonObject().get("y").getAsDouble();
-					locationInfo.position.z = object.get("locationInfo").getAsJsonObject().get("position")
-							.getAsJsonObject().get("z").getAsDouble();
-					locationInfo.rotation.x = object.get("locationInfo").getAsJsonObject().get("rotation")
-							.getAsJsonObject().get("x").getAsDouble();
-					locationInfo.rotation.y = object.get("locationInfo").getAsJsonObject().get("rotation")
-							.getAsJsonObject().get("y").getAsDouble();
-					locationInfo.rotation.z = object.get("locationInfo").getAsJsonObject().get("rotation")
-							.getAsJsonObject().get("z").getAsDouble();
-					locationInfo.rotation.w = object.get("locationInfo").getAsJsonObject().get("rotation")
-							.getAsJsonObject().get("w").getAsDouble();
-					obj.locationInfo = locationInfo;
-					genBranches(object.get("stateInfo").getAsJsonObject(), obj.stateInfo);
-
-					// Add to collection
-					objectCol.objects.put(uuid, obj);
-					objectIdMap.put(uuid, objectId);
 				}
 
 				// Add object to memory
 				objects.put(objectId, objectCol);
 			}
+		}
 
-			// Load level overrides
+		// Load level overrides
+		if (helper.has("LevelOverrides")) {
 			JsonObject overrides = helper.get("LevelOverrides").getAsJsonObject();
 			for (String id : overrides.keySet()) {
 				ArrayList<String> ids = new ArrayList<String>();
@@ -109,9 +153,11 @@ public class NetworkedObjects {
 				}
 				levelOverrideMap.put(id, ids);
 			}
+		}
 
-			// Override map
-			overrides = helper.get("Overrides").getAsJsonObject();
+		// Override map
+		if (helper.has("Overrides")) {
+			JsonObject overrides = helper.get("Overrides").getAsJsonObject();
 			for (String id : overrides.keySet()) {
 				ArrayList<String> ids = new ArrayList<String>();
 				for (JsonElement ele : overrides.get(id).getAsJsonArray()) {
@@ -119,14 +165,7 @@ public class NetworkedObjects {
 				}
 				overrideMap.put(id, ids);
 			}
-		} catch (IOException e) {
 		}
-
-		// Dispatch event
-		EventBus.getInstance()
-				.dispatchEvent(new ObjectDefinitionInitEvent(objects, levelOverrideMap, overrideMap, objectIdMap));
-
-		isReady = true;
 	}
 
 	private static void genBranches(JsonObject branches, HashMap<String, ArrayList<StateInfo>> output) {

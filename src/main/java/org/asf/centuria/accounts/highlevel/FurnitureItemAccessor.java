@@ -53,9 +53,9 @@ public abstract class FurnitureItemAccessor extends AbstractInventoryAccessor {
 	 * 
 	 * @param defID   Furniture defID
 	 * @param channel Channel number
-	 * @return HSV string or null
+	 * @return HSV object or null
 	 */
-	public abstract String getDefaultFurnitureChannelHSV(int defID, int channel);
+	public abstract JsonObject getDefaultFurnitureChannelHSV(int defID, int channel);
 
 	/**
 	 * Retrieves the default color of a furniture color channel

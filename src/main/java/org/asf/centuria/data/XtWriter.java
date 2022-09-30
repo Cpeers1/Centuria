@@ -17,6 +17,11 @@ public class XtWriter {
 		return d;
 
 	}
+	
+	@Override
+	public String toString() {
+		return encode();
+	}
 
 	public void add(String object) {
 		objects.add(object);

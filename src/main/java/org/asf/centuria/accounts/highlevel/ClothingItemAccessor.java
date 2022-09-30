@@ -55,6 +55,6 @@ public abstract class ClothingItemAccessor extends AbstractInventoryAccessor {
 	 * @param channel Channel number
 	 * @return HSV string or null
 	 */
-	public abstract String getDefaultClothingChannelHSV(int defID, int channel);
+	public abstract JsonObject getDefaultClothingChannelHSV(int defID, int channel);
 
 }
