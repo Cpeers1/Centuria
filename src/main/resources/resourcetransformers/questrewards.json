@@ -431,6 +431,33 @@
           "weight": 1
         }
       ]
+    },
+     "7978": {
+      "objectName": "QuestReward/AxeFavor",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q7978",
+          "itemId": "9768",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+     "q7978": {
+      "objectName": "QuestReward/AxeFavor",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 10,
+          "maxCount": 20,
+          "weight": 1
+        }
+      ]
     }
   }
 }
