@@ -2,10 +2,7 @@ package org.asf.centuria.entities.inventoryitems.twiggles;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.asf.centuria.entities.components.generic.NameComponent;
 import org.asf.centuria.entities.components.generic.TimeStampComponent;
-import org.asf.centuria.entities.components.sanctuaries.PrimaryLookComponent;
-import org.asf.centuria.entities.components.sanctuaries.SanctuaryLookComponent;
 import org.asf.centuria.entities.components.twiggles.TwiggleComponent;
 import org.asf.centuria.entities.inventoryitems.InventoryItem;
 import org.asf.centuria.entities.inventoryitems.Item;
