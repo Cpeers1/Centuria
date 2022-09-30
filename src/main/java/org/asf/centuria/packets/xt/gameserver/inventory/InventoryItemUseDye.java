@@ -137,15 +137,15 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 
 			// Apply undye
 			for (int ch : undye) {
-				String hsv;
+				JsonObject hsv;
 				if (!isFurniture)
 					hsv = inv.getClothingAccessor().getDefaultClothingChannelHSV(item.get("defId").getAsInt(), ch);
 				else
 					hsv = inv.getFurnitureAccessor().getDefaultFurnitureChannelHSV(item.get("defId").getAsInt(), ch);
 				String obj = "color" + ch + "HSV";
 				if (target.has(obj) && hsv != null) {
-					target.get(obj).getAsJsonObject().remove("_hsv");
-					target.get(obj).getAsJsonObject().addProperty("_hsv", hsv);
+					target.remove(obj);
+					target.add(obj, hsv);
 				}
 			}
 		}
