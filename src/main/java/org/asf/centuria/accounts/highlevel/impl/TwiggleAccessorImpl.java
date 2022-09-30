@@ -2,7 +2,6 @@ package org.asf.centuria.accounts.highlevel.impl;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

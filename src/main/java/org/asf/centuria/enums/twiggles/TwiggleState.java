@@ -3,8 +3,6 @@ package org.asf.centuria.enums.twiggles;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.asf.centuria.enums.inventory.InventoryType;
-
 public enum TwiggleState {
 	None(0),
 	WorkingSanctuary(1),

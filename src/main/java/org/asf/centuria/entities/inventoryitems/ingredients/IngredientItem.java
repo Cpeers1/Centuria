@@ -2,12 +2,9 @@ package org.asf.centuria.entities.inventoryitems.ingredients;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.asf.centuria.entities.components.generic.NameComponent;
 import org.asf.centuria.entities.components.generic.QuantityComponent;
 import org.asf.centuria.entities.components.generic.TimeStampComponent;
 import org.asf.centuria.entities.components.generic.TradeableComponent;
-import org.asf.centuria.entities.components.sanctuaries.PrimaryLookComponent;
-import org.asf.centuria.entities.components.sanctuaries.SanctuaryLookComponent;
 import org.asf.centuria.entities.inventoryitems.InventoryItem;
 import org.asf.centuria.entities.inventoryitems.Item;
 import org.asf.centuria.enums.inventory.InventoryType;
