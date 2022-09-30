@@ -55,6 +55,8 @@ public class NetworkedObjects {
 				loadObjects(helper);
 			}
 		} catch (IOException e) {
+			// This is very bad, should not start allow the server to continue otherwise things will break HARD
+			throw new RuntimeException(e);
 		}
 
 		// Dispatch event
