@@ -350,6 +350,33 @@
           "weight": 1
         }
       ]
+    },
+    "7983": {
+      "objectName": "QuestReward/StrayPuppies",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q7983",
+          "itemId": "10683",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q7983": {
+      "objectName": "QuestReward/StrayPuppies",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 80,
+          "maxCount": 100,
+          "weight": 1
+        }
+      ]
     }
   }
 }
