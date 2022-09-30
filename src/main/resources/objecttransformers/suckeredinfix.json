@@ -1,0 +1,88 @@
+{
+	"Objects": {
+		"4224": {
+			"objects": {
+				"3bff6bfd-8596-4cab-9878-d1afc867325c": {
+					"stateInfo": {
+						"0": [
+							{
+								"command": "3",
+								"actorId": "3bff6bfd-8596-4cab-9878-d1afc867325c",
+								"params": [
+									"0"
+								],
+								"branches": {
+									"1": [
+										{
+											"command": "1",
+											"actorId": "3bff6bfd-8596-4cab-9878-d1afc867325c",
+											"params": [
+												"1"
+											]
+										},
+										{
+											"command": "1",
+											"actorId": "7ae46bc9-48b0-4bd4-97cf-591f07e9a12c",
+											"params": [
+												"1"
+											]
+										},
+										{
+											"command": "1",
+											"actorId": "2c66c3ff-3100-4d85-b640-aad43bfe6a25",
+											"params": [
+												"5"
+											]
+										},
+										{
+											"command": "1",
+											"actorId": "d7dd1827-6445-4a75-8d56-4f955160b981",
+											"params": [
+												"1"
+											]
+										},
+										{
+											"command": "1",
+											"actorId": "3d65bb58-5349-4ce1-b6e1-18aaf0cef823",
+											"params": [
+												"1"
+											]
+										},
+										{
+											"command": "1",
+											"actorId": "6b40d941-b70c-4ebe-9f95-b8086aeda8e6",
+											"params": [
+												"1"
+											]
+										},
+										{
+											"command": "1",
+											"actorId": "975a3e3f-2ffd-4d46-8d52-bd5cbe85ca6f",
+											"params": [
+												"1"
+											]
+										},
+										{
+											"command": "1",
+											"actorId": "07980413-85b9-4e97-bd92-9348acfa21c1",
+											"params": [
+												"1"
+											]
+										},
+										{
+											"command": "67",
+											"actorId": "0",
+											"params": [
+												"0"
+											]
+										}
+									]
+								}
+							}
+						]
+					}
+				}
+			}
+		}
+	}
+}

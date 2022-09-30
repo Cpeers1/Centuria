@@ -291,7 +291,7 @@ public class QuestManager extends InteractionModule {
 							+ "You have finished all quests that are currently in working order.\n"
 							+ "If development goes well, hopefully this quest and the two following it will become playable next week!\n\n"
 							+ "" + "Apologies for the inconvenience.\n" + " - Centuria Development Team", true);
-					
+
 					// Block running the interaction
 					player.states.put(id, -1);
 					return true;
@@ -404,6 +404,15 @@ public class QuestManager extends InteractionModule {
 
 							// Find counter
 							String counterID = memory.getOrDefault("ref", parent.actorId).toString();
+							if (!memory.containsKey("ref")) {
+								// Fuck you wildworks, messed up branch order!
+								for (StateInfo st : player.stateObjects.get(id)) {
+									if (st.command.equals("13")) {
+										counterID = st.actorId;
+										break;
+									}
+								}
+							}
 
 							updateCounter(counterID, task, objective, quest, player, taskID, objectiveID, id, object,
 									stateInfo);
