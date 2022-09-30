@@ -377,6 +377,33 @@
           "weight": 1
         }
       ]
+    },
+    "7330": {
+      "objectName": "QuestReward/HappyBDay",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q7330",
+          "itemId": "4433",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q7330": {
+      "objectName": "QuestReward/HappyBDay",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 30,
+          "maxCount": 50,
+          "weight": 1
+        }
+      ]
     }
   }
 }
