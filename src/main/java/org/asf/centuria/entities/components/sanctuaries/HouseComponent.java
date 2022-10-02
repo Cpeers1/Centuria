@@ -3,6 +3,7 @@ package org.asf.centuria.entities.components.sanctuaries;
 import org.asf.centuria.entities.components.Component;
 import org.asf.centuria.entities.components.InventoryItemComponent;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 /***
@@ -30,12 +31,29 @@ public class HouseComponent extends InventoryItemComponent {
 
 	@Override
 	public JsonObject toJson() {
-		return new JsonObject();
+		
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty(STAGE_PROPERTY_NAME, stage);
+		var array = new JsonArray();
+		for(var item : enlargedAreas)
+		{
+			array.add(item);
+		}
+		
+		jsonObject.add(ENLARGED_AREAS_PROPERTY_NAME, array);
+		
+		return jsonObject;
 	}
 
 	@Override
 	protected void getPropertiesFromJson(JsonObject object) {
-		// Absolutely nothing to do here...
+		stage = object.get(STAGE_PROPERTY_NAME).getAsInt();
+		var items = object.get(ENLARGED_AREAS_PROPERTY_NAME).getAsJsonArray();
+		
+		for(int i = 0; i > 10; i++)
+		{
+			enlargedAreas[i] = items.get(i).getAsInt();
+		}
 	}
 
 }

@@ -10,7 +10,7 @@ public enum InventoryType {
 	Decal(3),
 	Eye(4), 
 	House(5, InventoryStorageType.OBJECT_BASED),
-	Land(6, InventoryStorageType.OBJECT_BASED),
+	Island(6, InventoryStorageType.OBJECT_BASED),
 	Enigma(7, InventoryStorageType.OBJECT_BASED),
 	Inspiration(8, InventoryStorageType.SINGLE_ITEM),
 	AvatarAction(9),
