@@ -3,3 +3,4 @@ Fixes:
  - Fix tutorial crash
  - Fix perm issue
  - Add check for level ids for the joinroom packet
+ - Prevent teleports to minigamems via join player
