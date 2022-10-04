@@ -1,12 +1,17 @@
 package org.asf.centuria.packets.xt.gameserver.room;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
+import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class RoomJoinPacket implements IXtPacket<RoomJoinPacket> {
 
@@ -51,9 +56,21 @@ public class RoomJoinPacket implements IXtPacket<RoomJoinPacket> {
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		Player plr = (Player) client.container;
-		roomIdentifier = "room_" + levelID;
-		plr.teleportToRoom(levelID, levelType, issRoomID, roomIdentifier, teleport);
+		// Check room
+		// Load helper
+		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("spawns.json");
+		JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+				.get("Maps").getAsJsonObject();
+		strm.close();
+		if (!helper.has(Integer.toString(levelID))) {
+			// YEAH NO
+			markAsFailed();
+			client.sendPacket(this);
+		} else {
+			Player plr = (Player) client.container;
+			roomIdentifier = "room_" + levelID;
+			plr.teleportToRoom(levelID, levelType, issRoomID, roomIdentifier, teleport);
+		}
 		return true;
 	}
 

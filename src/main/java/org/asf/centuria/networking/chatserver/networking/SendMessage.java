@@ -384,6 +384,7 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("srp \"<raw-packet>\" [<player>]");
 			}
 			if (GameServer.hasPerm(permLevel, "admin")) {
+				commandMessages.add("tpm <levelDefID> [<levelType>]");
 				commandMessages.add("makeadmin \"<player>\"");
 				commandMessages.add("makemoderator \"<player>\"");
 				commandMessages.add("removeperms \"<player>\"");
@@ -396,7 +397,6 @@ public class SendMessage extends AbstractChatPacket {
 			}
 			commandMessages.add("staffroom");
 			commandMessages.add("listplayers");
-			commandMessages.add("tpm <levelDefID> [<levelType>]");
 			commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
 		}
 		commandMessages.add("questrewind <amount-of-quests-to-rewind>");
@@ -1431,27 +1431,30 @@ public class SendMessage extends AbstractChatPacket {
 						}
 					}
 					case "tpm": {
-						try {
-							// Teleports a player to a map.
-							String defID = "";
-							if (args.size() < 1) {
-								systemMessage("Missing argument: teleport defID", cmd, client);
-								return true;
-							}
+						// Check perms
+						if (GameServer.hasPerm(permLevel, "admin")) {
+							try {
+								// Teleports a player to a map.
+								String defID = "";
+								if (args.size() < 1) {
+									systemMessage("Missing argument: teleport defID", cmd, client);
+									return true;
+								}
 
-							// Parse arguments
-							defID = args.get(0);
-							String type = "0";
-							if (args.size() > 1) {
-								type = args.get(1);
-							}
+								// Parse arguments
+								defID = args.get(0);
+								String type = "0";
+								if (args.size() > 1) {
+									type = args.get(1);
+								}
 
-							// Teleport
-							client.getPlayer().getOnlinePlayerInstance().teleportToRoom(Integer.valueOf(defID),
-									Integer.valueOf(type), -1, "room_" + defID, "");
-						} catch (Exception e) {
-							e.printStackTrace();
-							systemMessage("Error: " + e, cmd, client);
+								// Teleport
+								client.getPlayer().getOnlinePlayerInstance().teleportToRoom(Integer.valueOf(defID),
+										Integer.valueOf(type), -1, "room_" + defID, "");
+							} catch (Exception e) {
+								e.printStackTrace();
+								systemMessage("Error: " + e, cmd, client);
+							}
 						}
 
 						return true;
