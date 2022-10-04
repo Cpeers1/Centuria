@@ -429,6 +429,8 @@ public class QuestManager extends InteractionModule {
 
 	private void updateCounter(String counterID, QuestTask task, QuestObjective objective, QuestDefinition quest,
 			Player player, int taskID, int objectiveID, String id, NetworkedObject object, StateInfo stateInfo) {
+		if (counterID.equals("0"))
+			return; // Fuck this
 		// Find max and current progress
 		int cur = player.questObjectData.getOrDefault(counterID, 0);
 		int rem = task.targetProgress - cur;
