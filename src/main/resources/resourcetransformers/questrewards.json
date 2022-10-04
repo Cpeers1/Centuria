@@ -458,6 +458,60 @@
           "weight": 1
         }
       ]
+    },
+    "7328": {
+      "objectName": "QuestReward/StatueLimitations",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q7328",
+          "itemId": "5537",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q7328": {
+      "objectName": "QuestReward/StatueLimitations",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 40,
+          "maxCount": 50,
+          "weight": 1
+        }
+      ]
+    },
+    "8724": {
+      "objectName": "QuestReward/PetBlooderfly",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q8724",
+          "itemId": "6967",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q8724": {
+      "objectName": "QuestReward/PetBlooderfly",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 60,
+          "maxCount": 70,
+          "weight": 1
+        }
+      ]
     }
   }
 }

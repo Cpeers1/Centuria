@@ -4,3 +4,7 @@ Fixes:
  - Fix perm issue
  - Add check for level ids for the joinroom packet
  - Prevent teleports to minigamems via join player
+
+Added quests:
+ - Statue of Limitations
+ - Blood for Blood
