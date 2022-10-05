@@ -7,19 +7,19 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class MinigamePrize implements IXtPacket<MinigamePrize> {
+public class MinigamePrizePacket implements IXtPacket<MinigamePrizePacket> {
 
 	private static final String PACKET_ID = "mpz";
 
-	public String ItemDefId;
-	public int ItemCount;
-	public boolean Given;
-	public int PrizeIndex1;
-	public int PrizeIndex2;
+	public String itemDefId;
+	public int itemCount;
+	public boolean given;
+	public int prizeIndex1;
+	public int prizeIndex2;
 
 	@Override
-	public MinigamePrize instantiate() {
-		return new MinigamePrize();
+	public MinigamePrizePacket instantiate() {
+		return new MinigamePrizePacket();
 	}
 
 	@Override
@@ -34,11 +34,11 @@ public class MinigamePrize implements IXtPacket<MinigamePrize> {
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		writer.writeInt(DATA_PREFIX); // padding
-		writer.writeString(ItemDefId);
-		writer.writeInt(ItemCount);
-		writer.writeInt(Given ? 1 : 0);
-		writer.writeInt(PrizeIndex1);
-		writer.writeInt(PrizeIndex2);
+		writer.writeString(itemDefId);
+		writer.writeInt(itemCount);
+		writer.writeInt(given ? 1 : 0);
+		writer.writeInt(prizeIndex1);
+		writer.writeInt(prizeIndex2);
 		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
