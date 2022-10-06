@@ -97,9 +97,9 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		}
 
 		// Debug
-		boolean runDebug =false;
+		boolean runDebug = false;
 		if (plr.levelID == 0 && Centuria.debugMode && System.getProperty("debugJoinLevel") != null) {
-			runDebug =true;
+			runDebug = true;
 		}
 
 		// Assign info
@@ -151,7 +151,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		}
 
 		// Find spawn
-		handleSpawn(teleportUUID, plr, client);
+		if (!runDebug)
+			handleSpawn(teleportUUID, plr, client);
 
 		// Reset target
 		plr.targetPos = null;
