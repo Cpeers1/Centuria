@@ -35,7 +35,7 @@ public class QuestManager extends InteractionModule {
 	// The quest to refuse running
 	// This will be the quest after the 3rd released each week
 	// Ignored in debug mode
-	public int questLock = 4485; // Statue of Limitations, locked to prevent broken quests breaking the server
+	public int questLock = 4449; // Brenda's Reckoning, locked to prevent broken quests breaking the server
 
 	private static String firstQuest = "7537";
 	private static LinkedHashMap<String, String> questMap = new LinkedHashMap<String, String>();
@@ -429,6 +429,8 @@ public class QuestManager extends InteractionModule {
 
 	private void updateCounter(String counterID, QuestTask task, QuestObjective objective, QuestDefinition quest,
 			Player player, int taskID, int objectiveID, String id, NetworkedObject object, StateInfo stateInfo) {
+		if (counterID.equals("0"))
+			return; // Fuck this
 		// Find max and current progress
 		int cur = player.questObjectData.getOrDefault(counterID, 0);
 		int rem = task.targetProgress - cur;
