@@ -203,40 +203,47 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Debug
 		if (runDebug) {
-			int oldL = plr.levelID;
-			int oldT = plr.levelType;
-			int levelID = Integer.parseInt(System.getProperty("debugJoinLevel"));
-			int levelType = Integer.parseInt(System.getProperty("debugLevelType", "0"));
-			if (levelType == 1) {
-				// Minigame
-				AbstractMinigame game = MinigameManager.getGameFor(levelID);
-				if (game != null) {
-					game = game.instantiate();
-					plr.currentGame = game;
-					game.onJoin(plr);
-
-					// Set previous
-					plr.previousLevelID = oldL;
-					plr.previousLevelType = oldT;
-
-					// Assign room
-					plr.roomReady = true;
-					plr.levelID = levelID;
-					plr.room = "room_" + levelID;
-					plr.levelType = 1;
+			new Thread(() -> {
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
 				}
 
-				// Send response
-				RoomJoinPacket join = new RoomJoinPacket();
-				join.success = true;
-				join.levelType = 1;
-				join.levelID = levelID;
-				client.sendPacket(join);
+				int oldL = plr.levelID;
+				int oldT = plr.levelType;
+				int levelID = Integer.parseInt(System.getProperty("debugJoinLevel"));
+				int levelType = Integer.parseInt(System.getProperty("debugLevelType", "0"));
+				if (levelType == 1) {
+					// Minigame
+					AbstractMinigame game = MinigameManager.getGameFor(levelID);
+					if (game != null) {
+						game = game.instantiate();
+						plr.currentGame = game;
+						game.onJoin(plr);
 
-				// Start game
-				MinigameStartPacket start = new MinigameStartPacket();
-				client.sendPacket(start);
-			}
+						// Set previous
+						plr.previousLevelID = oldL;
+						plr.previousLevelType = oldT;
+
+						// Assign room
+						plr.roomReady = true;
+						plr.levelID = levelID;
+						plr.room = "room_" + levelID;
+						plr.levelType = 1;
+					}
+
+					// Send response
+					RoomJoinPacket join = new RoomJoinPacket();
+					join.success = true;
+					join.levelType = 1;
+					join.levelID = levelID;
+					client.sendPacket(join);
+
+					// Start game
+					MinigameStartPacket start = new MinigameStartPacket();
+					client.sendPacket(start);
+				}
+			}).start();
 		}
 
 		return true;
