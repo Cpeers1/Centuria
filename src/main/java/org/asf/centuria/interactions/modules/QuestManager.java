@@ -515,21 +515,25 @@ public class QuestManager extends InteractionModule {
 				player.questStarted = false;
 
 				// Finish quest
-				JsonObject obj = player.account.getPlayerInventory().getAccessor().findInventoryObject("311", 22781);
-				JsonObject progressionMap = obj.get("components").getAsJsonObject()
-						.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
-				JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
-				arr.add(quest.defID);
+				if (player.levelID != 25280) {
+					JsonObject obj = player.account.getPlayerInventory().getAccessor().findInventoryObject("311",
+							22781);
+					JsonObject progressionMap = obj.get("components").getAsJsonObject()
+							.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
+					JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
+					arr.add(quest.defID);
 
-				// Save and create inventory update
-				player.account.getPlayerInventory().setItem("311", player.account.getPlayerInventory().getItem("311"));
-				JsonArray update = new JsonArray();
-				update.add(obj);
+					// Save and create inventory update
+					player.account.getPlayerInventory().setItem("311",
+							player.account.getPlayerInventory().getItem("311"));
+					JsonArray update = new JsonArray();
+					update.add(obj);
 
-				// Send packet
-				InventoryItemPacket pkt = new InventoryItemPacket();
-				pkt.item = update;
-				player.client.sendPacket(pkt);
+					// Send packet
+					InventoryItemPacket pkt = new InventoryItemPacket();
+					pkt.item = update;
+					player.client.sendPacket(pkt);
+				}
 
 				// Send completion
 				QuestGenericLinearQuestCompletePacket comp = new QuestGenericLinearQuestCompletePacket();

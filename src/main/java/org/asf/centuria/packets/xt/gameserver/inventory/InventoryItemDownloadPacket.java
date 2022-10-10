@@ -2,6 +2,7 @@ package org.asf.centuria.packets.xt.gameserver.inventory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.apache.logging.log4j.MarkerManager;
@@ -303,7 +304,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 					plr.account.setActiveSanctuaryLook(plr.activeSanctuaryLook);
 				} else
 					plr.activeSanctuaryLook = plr.account.getActiveSanctuaryLook();
-				
+
 				// Complete
 				plr.sanctuaryPreloadCompleted = true;
 			}
@@ -429,6 +430,21 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 				// Save item
 				inv.setItem(slot, item);
+			} else {
+				// Fix broken quest progression
+				JsonObject progressionMap = plr.account.getPlayerInventory().getAccessor()
+						.findInventoryObject("311", 22781).get("components").getAsJsonObject()
+						.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
+				JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
+				ArrayList<String> completedQuests = new ArrayList<String>();
+				arr.forEach(t -> completedQuests.add(t.getAsString()));
+				if (completedQuests.contains("25287")) {
+					// Fix
+					arr.remove(completedQuests.indexOf("25287"));
+					plr.account.getPlayerInventory().setItem("311", plr.account.getPlayerInventory().getItem("311"));
+					item = inv.getItem("311");
+					inv.setItem(slot, item);
+				}
 			}
 		}
 
