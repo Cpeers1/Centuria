@@ -149,7 +149,7 @@ public class DiscordBotModule implements ICenturiaModule {
 						ev = ev.then().and(gateway.on(GuildCreateEvent.class, event -> {
 							if (gateway.getRestClient().getApplicationService()
 									.getGuildApplicationCommands(gateway.getRestClient().getApplicationId().block(),
-											754991742226399272l)
+											event.getGuild().getId().asLong())
 									.count().block() == 0)
 								try {
 									gateway.getRestClient().getApplicationService()
