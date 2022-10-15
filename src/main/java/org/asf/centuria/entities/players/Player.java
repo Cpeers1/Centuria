@@ -118,8 +118,8 @@ public class Player {
 
 			packet.lastMove = new WorldObjectMoveNodeData();
 			packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
-			packet.lastMove.positionInfo = new WorldObjectPositionInfo(lastPos.x, lastPos.y, lastPos.z, lastRot.x, lastRot.y,
-					lastRot.z, lastRot.w);
+			packet.lastMove.positionInfo = new WorldObjectPositionInfo(lastPos.x, lastPos.y, lastPos.z, lastRot.x,
+					lastRot.y, lastRot.z, lastRot.w);
 			packet.lastMove.velocity = new Velocity();
 			packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition;
 
@@ -510,7 +510,8 @@ public class Player {
 
 			// Find player
 			for (Player plr : ((GameServer) client.getServer()).getPlayers()) {
-				if (plr.account.getAccountID().equals(accountID) && plr.roomReady && !plr.room.equals("room_STAFFROOM")
+				if (plr.account.getAccountID().equals(accountID) && plr.roomReady && plr.levelType != 1
+						&& !plr.room.equals("room_STAFFROOM")
 						&& (!SocialManager.getInstance().socialListExists(accountID) || !SocialManager.getInstance()
 								.getPlayerIsBlocked(accountID, player.account.getAccountID()))) {
 					// Load privacy settings

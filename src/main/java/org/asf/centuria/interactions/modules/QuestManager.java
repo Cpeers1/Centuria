@@ -35,7 +35,7 @@ public class QuestManager extends InteractionModule {
 	// The quest to refuse running
 	// This will be the quest after the 3rd released each week
 	// Ignored in debug mode
-	public int questLock = 4485; // Statue of Limitations, locked to prevent broken quests breaking the server
+	public int questLock = 4449; // Brenda's Reckoning, locked to prevent broken quests breaking the server
 
 	private static String firstQuest = "7537";
 	private static LinkedHashMap<String, String> questMap = new LinkedHashMap<String, String>();
@@ -429,6 +429,8 @@ public class QuestManager extends InteractionModule {
 
 	private void updateCounter(String counterID, QuestTask task, QuestObjective objective, QuestDefinition quest,
 			Player player, int taskID, int objectiveID, String id, NetworkedObject object, StateInfo stateInfo) {
+		if (counterID.equals("0"))
+			return; // Fuck this
 		// Find max and current progress
 		int cur = player.questObjectData.getOrDefault(counterID, 0);
 		int rem = task.targetProgress - cur;
@@ -513,21 +515,25 @@ public class QuestManager extends InteractionModule {
 				player.questStarted = false;
 
 				// Finish quest
-				JsonObject obj = player.account.getPlayerInventory().getAccessor().findInventoryObject("311", 22781);
-				JsonObject progressionMap = obj.get("components").getAsJsonObject()
-						.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
-				JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
-				arr.add(quest.defID);
+				if (player.levelID != 25280) {
+					JsonObject obj = player.account.getPlayerInventory().getAccessor().findInventoryObject("311",
+							22781);
+					JsonObject progressionMap = obj.get("components").getAsJsonObject()
+							.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
+					JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
+					arr.add(quest.defID);
 
-				// Save and create inventory update
-				player.account.getPlayerInventory().setItem("311", player.account.getPlayerInventory().getItem("311"));
-				JsonArray update = new JsonArray();
-				update.add(obj);
+					// Save and create inventory update
+					player.account.getPlayerInventory().setItem("311",
+							player.account.getPlayerInventory().getItem("311"));
+					JsonArray update = new JsonArray();
+					update.add(obj);
 
-				// Send packet
-				InventoryItemPacket pkt = new InventoryItemPacket();
-				pkt.item = update;
-				player.client.sendPacket(pkt);
+					// Send packet
+					InventoryItemPacket pkt = new InventoryItemPacket();
+					pkt.item = update;
+					player.client.sendPacket(pkt);
+				}
 
 				// Send completion
 				QuestGenericLinearQuestCompletePacket comp = new QuestGenericLinearQuestCompletePacket();

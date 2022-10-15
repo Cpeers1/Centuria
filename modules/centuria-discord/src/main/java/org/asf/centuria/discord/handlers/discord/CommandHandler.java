@@ -380,7 +380,7 @@ public class CommandHandler {
 					event.reply("Pardoned player " + acc.getDisplayName()).block();
 					acc.pardon(modacc.getAccountID(), null);
 				} else if (params.size() == 2) {
-					event.reply("Temporarily banned player " + acc.getDisplayName()).block();
+					event.reply("Pardoned player " + acc.getDisplayName()).block();
 					acc.pardon(modacc.getAccountID(), params.get(1).value().get());
 				}
 				break;
