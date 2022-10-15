@@ -4,7 +4,10 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import org.asf.centuria.Centuria;
+import org.asf.centuria.accounts.highlevel.impl.UserVarAccessorImpl;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.entities.uservars.UserVarValue;
+import org.asf.centuria.enums.players.PrivacySetting;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.AccountBanEvent;
@@ -13,6 +16,7 @@ import org.asf.centuria.modules.events.accounts.AccountMuteEvent;
 import org.asf.centuria.modules.events.accounts.AccountPardonEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public abstract class CenturiaAccount {
@@ -156,6 +160,15 @@ public abstract class CenturiaAccount {
 	 * Deletes the account from disk and kicks all connected instances
 	 */
 	public abstract void deleteAccount();
+	
+	
+	// Settings
+	public PlayerPrivacySettings privacySettings;
+	
+	public CenturiaAccount()
+	{
+		this.privacySettings = new PlayerPrivacySettings();
+	}
 
 	/**
 	 * Kicks the player if online
@@ -568,6 +581,213 @@ public abstract class CenturiaAccount {
 		}
 
 		return false;
+	}
+	
+
+	public class PlayerPrivacySettings {
+		//TODO: Caching for Player Privacy Settings?
+		
+		private final static int FOLLOWS_PRIVACY_SETTING_DEF_ID = 17547;
+		private final static int GOTOPLAYER_PRIVACY_SETTING_DEF_ID = 17546;
+		private final static int SANCTUARY_PRIVACY_SETTING_DEF_ID = 17544;
+		private final static int TRADING_PRIVACY_SETTING_DEF_ID = 17545;
+		private final static int VOICECHAT_PRIVACY_SETTING_DEF_ID = 29555;
+		
+		
+		public PrivacySetting getFollowsPrivacySetting()
+		{
+			// Load privacy settings
+			int privSetting = 0;
+			UserVarValue val = getPlayerInventory().getUserVarAccesor().getPlayerVarValue(FOLLOWS_PRIVACY_SETTING_DEF_ID, 0);
+			if (val != null)
+				privSetting = val.value;
+			
+			return PrivacySetting.get(privSetting);
+		}
+		
+		public PrivacySetting getGoToPlayerPrivacySetting()
+		{
+			// Load privacy settings
+			int privSetting = 0;
+			UserVarValue val = getPlayerInventory().getUserVarAccesor().getPlayerVarValue(GOTOPLAYER_PRIVACY_SETTING_DEF_ID, 0);
+			if (val != null)
+				privSetting = val.value;
+			
+			return PrivacySetting.get(privSetting);
+		}
+		
+		public PrivacySetting getSanctuaryPrivacySetting()
+		{
+			// Load privacy settings
+			int privSetting = 0;
+			UserVarValue val = getPlayerInventory().getUserVarAccesor().getPlayerVarValue(SANCTUARY_PRIVACY_SETTING_DEF_ID, 0);
+			if (val != null)
+				privSetting = val.value;
+			
+			return PrivacySetting.get(privSetting);
+		}
+	
+		public PrivacySetting getTradingPrivacySetting()
+		{
+			// Load privacy settings
+			int privSetting = 0;
+			UserVarValue val = getPlayerInventory().getUserVarAccesor().getPlayerVarValue(TRADING_PRIVACY_SETTING_DEF_ID, 0);
+			if (val != null)
+				privSetting = val.value;
+			
+			return PrivacySetting.get(privSetting);
+		}
+		
+		public PrivacySetting getVoiceChatPrivacySetting()
+		{
+			// Load privacy settings
+			int privSetting = 0;
+			UserVarValue val = getPlayerInventory().getUserVarAccesor().getPlayerVarValue(VOICECHAT_PRIVACY_SETTING_DEF_ID, 0);
+			if (val != null)
+				privSetting = val.value;
+			
+			return PrivacySetting.get(privSetting);
+		}
+		
+		public JsonArray setFollowsPrivacySetting(PrivacySetting newSetting)
+		{
+			var varAccessor = new UserVarAccessorImpl(getPlayerInventory());
+			var output = varAccessor.setPlayerVarValue(FOLLOWS_PRIVACY_SETTING_DEF_ID, 0, newSetting.value);
+	
+			var outputInv = new JsonArray();
+	
+			for (var item : output.changedUserVars) {
+				outputInv.add(item.toJsonObject());
+			}
+	
+			return outputInv;
+		}
+		
+		public JsonArray setFollowsPrivacySetting(int newSetting)
+		{
+			var varAccessor = new UserVarAccessorImpl(getPlayerInventory());
+			var output = varAccessor.setPlayerVarValue(FOLLOWS_PRIVACY_SETTING_DEF_ID, 0, newSetting);
+	
+			var outputInv = new JsonArray();
+	
+			for (var item : output.changedUserVars) {
+				outputInv.add(item.toJsonObject());
+			}
+	
+			return outputInv;
+		}
+		
+		public JsonArray setGoToPlayerPrivacySetting(PrivacySetting newSetting)
+		{
+			var varAccessor = new UserVarAccessorImpl(getPlayerInventory());
+			var output = varAccessor.setPlayerVarValue(GOTOPLAYER_PRIVACY_SETTING_DEF_ID, 0, newSetting.value);
+	
+			var outputInv = new JsonArray();
+	
+			for (var item : output.changedUserVars) {
+				outputInv.add(item.toJsonObject());
+			}
+	
+			return outputInv;
+		}
+		
+		public JsonArray setGoToPlayerPrivacySetting(int newSetting)
+		{
+			var varAccessor = new UserVarAccessorImpl(getPlayerInventory());
+			var output = varAccessor.setPlayerVarValue(GOTOPLAYER_PRIVACY_SETTING_DEF_ID, 0, newSetting);
+	
+			var outputInv = new JsonArray();
+	
+			for (var item : output.changedUserVars) {
+				outputInv.add(item.toJsonObject());
+			}
+	
+			return outputInv;
+		}
+		
+		public JsonArray setSanctuaryPrivacySetting(PrivacySetting newSetting)
+		{
+			var varAccessor = new UserVarAccessorImpl(getPlayerInventory());
+			var output = varAccessor.setPlayerVarValue(SANCTUARY_PRIVACY_SETTING_DEF_ID, 0, newSetting.value);
+	
+			var outputInv = new JsonArray();
+	
+			for (var item : output.changedUserVars) {
+				outputInv.add(item.toJsonObject());
+			}
+	
+			return outputInv;
+		}
+		
+		public JsonArray setSanctuaryPrivacySetting(int newSetting)
+		{
+			var varAccessor = new UserVarAccessorImpl(getPlayerInventory());
+			var output = varAccessor.setPlayerVarValue(SANCTUARY_PRIVACY_SETTING_DEF_ID, 0, newSetting);
+	
+			var outputInv = new JsonArray();
+	
+			for (var item : output.changedUserVars) {
+				outputInv.add(item.toJsonObject());
+			}
+	
+			return outputInv;
+		}
+	
+		public JsonArray setTradingPrivacySetting(PrivacySetting newSetting)
+		{
+			var varAccessor = new UserVarAccessorImpl(getPlayerInventory());
+			var output = varAccessor.setPlayerVarValue(TRADING_PRIVACY_SETTING_DEF_ID, 0, newSetting.value);
+	
+			var outputInv = new JsonArray();
+	
+			for (var item : output.changedUserVars) {
+				outputInv.add(item.toJsonObject());
+			}
+	
+			return outputInv;
+		}
+		
+		public JsonArray setTradingPrivacySetting(int newSetting)
+		{
+			var varAccessor = new UserVarAccessorImpl(getPlayerInventory());
+			var output = varAccessor.setPlayerVarValue(TRADING_PRIVACY_SETTING_DEF_ID, 0, newSetting);
+	
+			var outputInv = new JsonArray();
+	
+			for (var item : output.changedUserVars) {
+				outputInv.add(item.toJsonObject());
+			}
+	
+			return outputInv;
+		}
+	
+		public JsonArray setVoiceChatPrivacySetting(PrivacySetting newSetting)
+		{
+			var varAccessor = new UserVarAccessorImpl(getPlayerInventory());
+			var output = varAccessor.setPlayerVarValue(VOICECHAT_PRIVACY_SETTING_DEF_ID, 0, newSetting.value);
+	
+			var outputInv = new JsonArray();
+	
+			for (var item : output.changedUserVars) {
+				outputInv.add(item.toJsonObject());
+			}
+	
+			return outputInv;
+		}
+		
+		public JsonArray setVoiceChatPrivacySetting(int newSetting)
+		{
+			var varAccessor = new UserVarAccessorImpl(getPlayerInventory());
+			var output = varAccessor.setPlayerVarValue(VOICECHAT_PRIVACY_SETTING_DEF_ID, 0, newSetting);
+	
+			var outputInv = new JsonArray();
+	
+			for (var item : output.changedUserVars) {
+				outputInv.add(item.toJsonObject());
+			}
+	
+			return outputInv;
+		}
 	}
 
 }

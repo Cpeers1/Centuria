@@ -8,6 +8,7 @@ import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.accounts.highlevel.impl.UserVarAccessorImpl;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.generic.Quaternion;
 import org.asf.centuria.entities.generic.Vector3;
@@ -18,6 +19,7 @@ import org.asf.centuria.entities.objects.WorldObjectPositionInfo;
 import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
+import org.asf.centuria.enums.players.PrivacySetting;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.networking.gameserver.GameServer;
@@ -155,20 +157,18 @@ public class Player {
 			}
 
 			// Check owner
+			
 			boolean isOwner = player.account.getAccountID().equals(sanctuaryOwner);
 
 			if (!isOwner) {
 				// Load privacy settings
-				int privSetting = 0;
-				UserVarValue val = sancOwner.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
-				if (val != null)
-					privSetting = val.value;
+				var setting = sancOwner.privacySettings.getSanctuaryPrivacySetting();
 
 				// Verify access
-				if (privSetting == 2) {
+				if (setting == PrivacySetting.Nobody) {
 					// Nobody
 					isAllowed = false;
-				} else if (privSetting == 1) {
+				} else if (setting == PrivacySetting.Followers) {
 					// Followers
 					// Check if the owner follows the current player
 					if (!SocialManager.getInstance().getPlayerIsFollowing(sanctuaryOwner,
@@ -251,16 +251,13 @@ public class Player {
 
 			if (!isOwner) {
 				// Load privacy settings
-				int privSetting = 0;
-				UserVarValue val = sancOwner.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
-				if (val != null)
-					privSetting = val.value;
+				var setting = sancOwner.privacySettings.getSanctuaryPrivacySetting();
 
 				// Verify access
-				if (privSetting == 2) {
+				if (setting == PrivacySetting.Nobody) {
 					// Nobody
 					isAllowed = false;
-				} else if (privSetting == 1) {
+				} else if (setting == PrivacySetting.Followers) {
 					// Followers
 					// Check if the owner follows the current player
 					if (!SocialManager.getInstance().getPlayerIsFollowing(sanctuaryOwner,
@@ -515,16 +512,13 @@ public class Player {
 						&& (!SocialManager.getInstance().socialListExists(accountID) || !SocialManager.getInstance()
 								.getPlayerIsBlocked(accountID, player.account.getAccountID()))) {
 					// Load privacy settings
-					int privSetting = 0;
-					UserVarValue val = plr.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17546, 0);
-					if (val != null)
-						privSetting = val.value;
+					var privSetting = plr.account.privacySettings.getGoToPlayerPrivacySetting();
 
 					// Verify privacy settings
-					if (privSetting == 1 && !SocialManager.getInstance()
+					if (privSetting == PrivacySetting.Followers && !SocialManager.getInstance()
 							.getPlayerIsFollowing(plr.account.getAccountID(), player.account.getAccountID()))
 						break;
-					else if (privSetting == 2)
+					else if (privSetting == PrivacySetting.Nobody)
 						break;
 
 					XtWriter writer = new XtWriter();
@@ -552,17 +546,14 @@ public class Player {
 
 							if (!isOwner) {
 								// Load privacy settings
-								privSetting = 0;
-								val = sancOwner.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
-								if (val != null)
-									privSetting = val.value;
+								privSetting = sancOwner.privacySettings.getSanctuaryPrivacySetting();
 
 								// Verify access
-								if (privSetting == 1
+								if (privSetting == PrivacySetting.Followers
 										&& !SocialManager.getInstance().getPlayerIsFollowing(plr.account.getAccountID(),
 												player.account.getAccountID()))
 									break;
-								else if (privSetting == 2)
+								else if (privSetting == PrivacySetting.Nobody)
 									break;
 							}
 						}
@@ -631,5 +622,7 @@ public class Player {
 			throw new RuntimeException(e);
 		}
 	}
+	
+
 
 }

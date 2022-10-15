@@ -141,47 +141,61 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				// find the item
 
 				JsonElement element = null;
-				int index = 0;
+				int elementIndex = 0;
 
 				for (var item : inv.getAsJsonArray()) {
 					if (item.getAsJsonObject().get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt() == defID) {
 						element = item;
 						break;
 					}
-					index++;
+					elementIndex++;
 				}
-
-				if (element == null) {
-					var output = new SetUserVarResult(false, null);
-
-					return output; // cannot find
-				}
-
-				var type = getVarType(defID);
-
-				UserVarItem userVarItem = new UserVarItem(type);
-				userVarItem.fromJsonObject(element.getAsJsonObject());
-
-				UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
-				for (int i = 0; i < values.length; i++) {
+				
+				UserVarValue[] userVarValues = new UserVarValue[values.length];
+				for(int i = 0; i < values.length; i++)
+				{
 					var userVarValue = new UserVarValue();
 					userVarValue.index = i;
 					userVarValue.value = values[i];
-
-					userVarComponent.setUserVarValue(userVarValue);
+					userVarValues[i] = userVarValue;
 				}
 
-				userVarItem.setUserVarComponent(userVarComponent);
+				if (element == null) {
+					var userVarItem = createNewUserVar(defID, userVarValues);
+					element = userVarItem.toJsonObject();
+					inv.getAsJsonArray().set(elementIndex, element);
 
-				var object = userVarItem.toJsonObject();
-				inv.getAsJsonArray().set(index, object);
+					var outputVarInv = new JsonArray();
+					outputVarInv.add(element);
 
-				var outputVarInv = new JsonArray();
-				outputVarInv.add(object);
+					inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
+					
+					return new SetUserVarResult(true, new UserVarItem[] { userVarItem });
+				}
+				else
+				{
+					var type = getVarType(defID);
 
-				inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
+					UserVarItem userVarItem = new UserVarItem(type);
+					userVarItem.fromJsonObject(element.getAsJsonObject());
+					
+					UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
+					for (int i = 0; i < userVarValues.length; i++) {
+						userVarComponent.setUserVarValue(userVarValues[i]);
+					}
+					
+					userVarItem.setUserVarComponent(userVarComponent);
+					
+					var object = userVarItem.toJsonObject();
+					inv.getAsJsonArray().set(elementIndex, object);
 
-				return null;
+					var outputVarInv = new JsonArray();
+					outputVarInv.add(object);
+
+					inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
+					
+					return new SetUserVarResult(true, new UserVarItem[] { userVarItem });
+				}
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -191,14 +205,15 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 	@Override
 	public SetUserVarResult setPlayerVarValue(int defID, int index, int value) {
 		try {
+			
+			UserVarValue[] userVarValues = new UserVarValue[1];
+
+			userVarValues[0] = new UserVarValue();
+			userVarValues[0].index = index;
+			userVarValues[0].value = value;
+			
 			if (!inventory.getAccessor().hasInventoryObject(Integer.toString(UserVarItem.INV_TYPE.invTypeId), defID)) {
 				// create the inventory object
-
-				UserVarValue[] userVarValues = new UserVarValue[1];
-
-				userVarValues[0] = new UserVarValue();
-				userVarValues[0].index = index;
-				userVarValues[0].value = value;
 
 				var newVarObject = createNewUserVar(defID, userVarValues);
 
@@ -226,34 +241,43 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 					}
 					elementIndex++;
 				}
-
+				
 				if (element == null) {
-					var output = new SetUserVarResult(false, null);
+					var userVarItem = createNewUserVar(defID, userVarValues);
+					element = userVarItem.toJsonObject();
+					inv.getAsJsonArray().set(elementIndex, element);
 
-					return output; // cannot find
+					var outputVarInv = new JsonArray();
+					outputVarInv.add(element);
+
+					inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
+					
+					return new SetUserVarResult(true, new UserVarItem[] { userVarItem });
 				}
+				else
+				{
+					var type = getVarType(defID);
 
-				var type = getVarType(defID);
+					UserVarItem userVarItem = new UserVarItem(type);
+					userVarItem.fromJsonObject(element.getAsJsonObject());
 
-				UserVarItem userVarItem = new UserVarItem(type);
-				userVarItem.fromJsonObject(element.getAsJsonObject());
+					UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 
-				UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
+					var userVarValue = new UserVarValue();
+					userVarValue.index = index;
+					userVarValue.value = value;
 
-				var userVarValue = new UserVarValue();
-				userVarValue.index = index;
-				userVarValue.value = value;
+					userVarComponent.setUserVarValue(userVarValue);
 
-				userVarComponent.setUserVarValue(userVarValue);
+					userVarItem.setUserVarComponent(userVarComponent);
 
-				userVarItem.setUserVarComponent(userVarComponent);
+					var object = userVarItem.toJsonObject();
+					inv.getAsJsonArray().set(elementIndex, object);
 
-				var object = userVarItem.toJsonObject();
-				inv.getAsJsonArray().set(elementIndex, object);
+					inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
 
-				inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
-
-				return new SetUserVarResult(true, new UserVarItem[] { userVarItem });
+					return new SetUserVarResult(true, new UserVarItem[] { userVarItem });				
+				}
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -305,34 +329,54 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 				}
 
 				if (element == null) {
-					var output = new SetUserVarResult(false, null);
+					
+					UserVarValue[] userVarValues = new UserVarValue[indexToValueUpdateMap.size()];
+					int indexB = 0;
+					for (var indexToValueUpdate : indexToValueUpdateMap.entrySet()) {
+						var userVarValue = new UserVarValue();
+						userVarValue.index = indexToValueUpdate.getKey();
+						userVarValue.value = indexToValueUpdate.getValue();
+						userVarValues[indexB] = userVarValue;
+						
+						indexB++;
+					}
+					
+					var userVarItem = createNewUserVar(defID, userVarValues);
+					element = userVarItem.toJsonObject();
+					inv.getAsJsonArray().set(elementIndex, element);
 
-					return output; // cannot find
+					var outputVarInv = new JsonArray();
+					outputVarInv.add(element);
+
+					inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
+					
+					return new SetUserVarResult(true, new UserVarItem[] { userVarItem });
 				}
+				else {
+					var type = getVarType(defID);
 
-				var type = getVarType(defID);
+					UserVarItem userVarItem = new UserVarItem(type);
+					userVarItem.fromJsonObject(element.getAsJsonObject());
 
-				UserVarItem userVarItem = new UserVarItem(type);
-				userVarItem.fromJsonObject(element.getAsJsonObject());
+					UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 
-				UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
+					for (var indexToValueUpdate : indexToValueUpdateMap.entrySet()) {
+						var userVarValue = new UserVarValue();
+						userVarValue.index = indexToValueUpdate.getKey();
+						userVarValue.value = indexToValueUpdate.getValue();
 
-				for (var indexToValueUpdate : indexToValueUpdateMap.entrySet()) {
-					var userVarValue = new UserVarValue();
-					userVarValue.index = indexToValueUpdate.getKey();
-					userVarValue.value = indexToValueUpdate.getValue();
+						userVarComponent.setUserVarValue(userVarValue);
+					}
 
-					userVarComponent.setUserVarValue(userVarValue);
+					userVarItem.setUserVarComponent(userVarComponent);
+
+					var object = userVarItem.toJsonObject();
+					inv.getAsJsonArray().set(elementIndex, object);
+
+					inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
+
+					return new SetUserVarResult(true, new UserVarItem[] { userVarItem });				
 				}
-
-				userVarItem.setUserVarComponent(userVarComponent);
-
-				var object = userVarItem.toJsonObject();
-				inv.getAsJsonArray().set(elementIndex, object);
-
-				inventory.setItem(Integer.toString(UserVarItem.INV_TYPE.invTypeId), inv);
-
-				return new SetUserVarResult(true, new UserVarItem[] { userVarItem });
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
