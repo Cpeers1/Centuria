@@ -88,6 +88,7 @@ public class Centuria {
 	public static boolean encryptGame = false;
 	public static boolean debugMode = false;
 	public static String discoveryAddress = "localhost";
+	public static String spawnBehaviour;
 
 	// Servers
 	private static ConnectiveHTTPServer apiServer;
@@ -367,9 +368,10 @@ public class Centuria {
 							+ "allow-registration=true\n" + "give-all-avatars=false\n" + "give-all-mods=false\n"
 							+ "give-all-clothes=false\n" + "give-all-wings=false\n" + "give-all-sanctuary-types=false\n"
 							+ "give-all-furniture=false\n" + "give-all-currency=false\n" + "give-all-resources=false\n"
-							+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
-							+ "encrypt-game=false\n" + "debug-mode=false\n" + "\nvpn-user-whitelist=vpn-whitelist\n"
-							+ "vpn-ipv4-banlist=\n" + "vpn-ipv6-banlist=");
+							+ "server-spawn-behaviour=random\n" + "discovery-server-address=localhost\n"
+							+ "encrypt-api=false\n" + "encrypt-chat=true\n" + "encrypt-game=false\n"
+							+ "debug-mode=false\n" + "\nvpn-user-whitelist=vpn-whitelist\n" + "vpn-ipv4-banlist=\n"
+							+ "vpn-ipv6-banlist=");
 		}
 
 		// Parse properties
@@ -422,6 +424,9 @@ public class Centuria {
 				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
 		discoveryAddress = properties.getOrDefault("discovery-server-address", discoveryAddress);
 		debugMode = properties.getOrDefault("debug-mode", "false").equals("true");
+		spawnBehaviour = properties.getOrDefault("server-spawn-behaviour", "random");
+		if (spawnBehaviour == null)
+			spawnBehaviour = "random";
 		if (System.getProperty("debugMode", "false").equals("true"))
 			debugMode = true;
 

@@ -8,24 +8,49 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
+import org.asf.centuria.interactions.groupobjects.GroupObject;
+import org.asf.centuria.interactions.groupobjects.spawnbehaviourproviders.FallbackSpawnBehaviour;
+import org.asf.centuria.interactions.groupobjects.spawnbehaviourproviders.ISpawnBehaviourProvider;
 import org.asf.centuria.interactions.modules.InspirationCollectionModule;
 import org.asf.centuria.interactions.modules.InteractionModule;
 import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.interactions.modules.ResourceCollectionModule;
 import org.asf.centuria.interactions.modules.ShopkeeperModule;
+import org.asf.centuria.interactions.modules.linearobjects.LockpickItemModule;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 
 public class InteractionManager {
 
 	private static ArrayList<InteractionModule> modules = new ArrayList<InteractionModule>();
+	private static ArrayList<ISpawnBehaviourProvider> spawnBehaviours = new ArrayList<ISpawnBehaviourProvider>();
 
 	static {
 		// Add modules
-		// TODO: quest module (needs to be loaded BEFORE resource collection)
 		modules.add(new QuestManager());
 		modules.add(new ShopkeeperModule());
 		modules.add(new InspirationCollectionModule());
 		modules.add(new ResourceCollectionModule());
+		modules.add(new LockpickItemModule());
+
+		// Spawn behaviours
+		spawnBehaviours.add(new FallbackSpawnBehaviour());
+//		spawnBehaviours.add(new RandomizedSpawnBehaviour());
+	}
+
+	/**
+	 * Finds the active spawn behaviour
+	 * 
+	 * @return ISpawnBehaviourProvider instance
+	 */
+	public static ISpawnBehaviourProvider getActiveSpawnBehaviour() {
+		for (ISpawnBehaviourProvider b : spawnBehaviours) {
+			if (b.getID().equals(Centuria.spawnBehaviour))
+				return b;
+		}
+
+		Centuria.logger.warn(MarkerManager.getMarker("InteractionManager"), "Invalid spawn behaviour: "
+				+ Centuria.spawnBehaviour + ", defaulting to fallback! Please edit server configuration!");
+		return spawnBehaviours.stream().filter(t -> t.getID().equals("fallback")).findFirst().get();
 	}
 
 	/**
@@ -48,17 +73,18 @@ public class InteractionManager {
 		modules.forEach(t -> t.prepareWorld(levelID, ids, player));
 
 		// Initialize objects
-		initializeNetworkedObjects(player.client, ids.toArray(t -> new String[t]));
+		initializeNetworkedObjects(player.client, ids.toArray(t -> new String[t]), levelID);
 		player.interactions.addAll(ids);
 	}
 
 	/**
 	 * Initializes networked objects (eg. npcs)
 	 * 
-	 * @param client Client to send the packets to
-	 * @param ids    Object UUIDs to initialize
+	 * @param client  Client to send the packets to
+	 * @param ids     Object UUIDs to initialize
+	 * @param levelID Level to find interactions for
 	 */
-	public static void initializeNetworkedObjects(SmartfoxClient client, String[] ids) {
+	public static void initializeNetworkedObjects(SmartfoxClient client, String[] ids, int levelID) {
 		HashMap<String, NetworkedObject> data = new HashMap<String, NetworkedObject>();
 
 		// Add objects
@@ -81,6 +107,21 @@ public class InteractionManager {
 		}
 		packet.writeString(""); // data suffix
 		client.sendPacket(packet.encode());
+
+		GroupObject[] linearObjects = getActiveSpawnBehaviour().provideCurrent(levelID);
+		if (linearObjects.length != 0) {
+			// Init group objects
+			packet = new XtWriter();
+			packet.writeString("qsgo");
+			packet.writeString("-1"); // data prefix
+			packet.writeLong(linearObjects.length); // count
+			for (GroupObject ent : linearObjects) {
+				packet.writeString(ent.id);
+				packet.writeInt(ent.type);
+			}
+			packet.writeString(""); // data suffix
+			client.sendPacket(packet.encode());
+		}
 
 		// Send qcmd packets
 		for (String id : data.keySet()) {
@@ -268,8 +309,7 @@ public class InteractionManager {
 				}
 				case "12": {
 					// Run commands and progress
-					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-							"Running command: 12");
+					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"), "Running command: 12");
 					int stateId = plr.states.getOrDefault(state.actorId, 1);
 					plr.states.put(state.actorId, stateId + 1);
 
