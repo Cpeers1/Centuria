@@ -29,6 +29,8 @@ public class LockpickItemModule extends InteractionModule {
 	public boolean handleInteractionSuccess(Player player, String id, NetworkedObject object, int state) {
 		// Add lockpick
 		player.account.getPlayerInventory().getCurrencyAccessor().addLockpicks(player.client, 1);
+		
+		// TODO: respawning?
 		return false;
 	}
 
