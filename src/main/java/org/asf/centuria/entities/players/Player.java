@@ -122,6 +122,7 @@ public class Player {
 					lastRot.y, lastRot.z, lastRot.w);
 			packet.lastMove.velocity = new Velocity();
 			packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition;
+			packet.lastMove.actorActionType = lastAction;
 
 			// Look and name
 			packet.look = lookObj.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject().get("info")
