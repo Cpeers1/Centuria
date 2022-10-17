@@ -1,0 +1,2 @@
+Fixes in 1.3.7.B1:
+ - Fixed a bug that caused initial actions to not be synced (the bug would happen if someone logs in, a sitting player would not be sitting for the newly-logged-in player, fixed now)
