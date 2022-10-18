@@ -351,7 +351,7 @@ public class QuestManager extends InteractionModule {
 	@Override
 	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo stateInfo,
 			StateInfo parent, HashMap<String, Object> memory) {
-		if (canHandle(player, id, object)) {
+		if (canHandle(player, id, object) && parent != null) {
 			String activeQuest = getActiveQuest(player.account);
 			if (activeQuest != null) {
 				QuestDefinition quest = questDefinitions.get(activeQuest);
