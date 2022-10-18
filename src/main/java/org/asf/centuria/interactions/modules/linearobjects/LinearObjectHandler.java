@@ -18,7 +18,6 @@ public class LinearObjectHandler extends InteractionModule {
 	// TODO: random spawning (emuferal spawning mechanics, from server config)
 	// TODO: rotation locks for respawn (prevent respawning til next rotation)
 	// TODO: new rewards for chests etc
-	// TODO: waystones
 
 	@Override
 	public void prepareWorld(int levelID, List<String> ids, Player player) {
