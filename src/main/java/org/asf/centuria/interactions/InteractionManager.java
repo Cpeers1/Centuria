@@ -20,7 +20,6 @@ import org.asf.centuria.interactions.modules.ResourceCollectionModule;
 import org.asf.centuria.interactions.modules.ShopkeeperModule;
 import org.asf.centuria.interactions.modules.linearobjects.LinearObjectHandler;
 import org.asf.centuria.interactions.modules.linearobjects.LockpickItemModule;
-import org.asf.centuria.networking.smartfox.SmartfoxClient;
 
 public class InteractionManager {
 
@@ -84,7 +83,7 @@ public class InteractionManager {
 	/**
 	 * Initializes networked objects (eg. npcs)
 	 * 
-	 * @player  Player to send the packets to
+	 * @player Player to send the packets to
 	 * @param ids     Object UUIDs to initialize
 	 * @param levelID Level to find interactions for
 	 */
@@ -309,7 +308,8 @@ public class InteractionManager {
 					// Give table
 					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
 							"Running command: 41 (give loot), GIVE TABLE " + state.params[0]);
-					ResourceCollectionModule.giveLootReward(plr, state.params[0], object.primaryObjectInfo.defId);
+					ResourceCollectionModule.giveLootReward(plr, state.params[0], object.primaryObjectInfo.type,
+							object.primaryObjectInfo.defId);
 					break;
 				}
 				case "12": {
@@ -346,6 +346,126 @@ public class InteractionManager {
 					break;
 				}
 				}
+			}
+		}
+	}
+
+	/**
+	 * Runs state commands
+	 * 
+	 * @param states State commands to run
+	 * @param plr    Player performing the interaction
+	 * @param object Object interacted with
+	 * @param target Interaction ID
+	 */
+	public static void runStates(ArrayList<StateInfo> states, Player plr, NetworkedObject object, String target) {
+		HashMap<String, Object> memory = new HashMap<String, Object>();
+		for (StateInfo state : states) {
+			// Log commands
+			String args = "";
+			for (String arg : state.params) {
+				args += ", " + arg;
+			}
+			if (!args.isEmpty())
+				args = args.substring(2);
+			Centuria.logger
+					.debug("Object interaction command: " + target + ", command: " + state.command + ", args: " + args);
+
+			// Handle states
+			switch (state.command) {
+			case "1": {
+				// Switch state
+				String t = target;
+				if (!state.actorId.equals("0"))
+					t = state.actorId;
+				Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+						"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
+				// Check state
+				NetworkedObject obj = NetworkedObjects.getObject(t);
+				if (obj.stateInfo.containsKey(state.params[0]))
+					plr.states.put(t, Integer.parseInt(state.params[0]));
+				break;
+			}
+			case "35":
+			case "84":
+				// Handled by group objects
+			case "3":
+				// Dialogue is clientside
+			case "41":
+				// Not allowed
+				break;
+			case "13": {
+				// Run other states (MIGHT BE BUGGY)
+				Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+						"Running command: 13 (run states): " + state.params[0]);
+				String t = target;
+				if (!state.actorId.equals("0"))
+					t = state.actorId;
+				Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+						"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
+
+				// Find target
+				NetworkedObject obj = NetworkedObjects.getObject(t);
+
+				// Find state
+				if (obj.stateInfo.containsKey(state.params[0])) {
+					runStates(obj.stateInfo.get(state.params[0]), plr, obj, t);
+				}
+
+				break;
+			}
+			case "12": {
+				// Run commands and progress
+				Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"), "Running command: 12");
+				int stateId = plr.states.getOrDefault(state.actorId, 1);
+				plr.states.put(state.actorId, stateId + 1);
+
+				// Find object
+				NetworkedObject obj = NetworkedObjects.getObject(state.actorId);
+				var stateObjs = obj.stateInfo.get(Integer.toString(stateId));
+				for (var st : stateObjs) {
+					if (st.branches.size() != 0)
+						runBranches(plr, st.branches, "1", target, obj, state);
+				}
+
+				break;
+			}
+			default: {
+				// Find module
+				boolean warn = true;
+				for (InteractionModule mod : modules) {
+					// Run interaction
+					if (mod.handleCommand(plr, target, object, state, null, memory)) {
+						warn = false;
+						break;
+					}
+				}
+
+				// Unhandled if true
+				if (warn)
+					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+							"Unhandled state command (OAF packet): " + state.command);
+				break;
+			}
+			}
+
+			// Check if it needs to be sent to the client
+			int cmdI = Integer.parseInt(state.command);
+			if (cmdI <= 20 || cmdI == 38 || cmdI == 81 || cmdI == 82) {
+				// Build quest command
+				XtWriter pk = new XtWriter();
+				pk.writeString("qcmd");
+				pk.writeInt(-1); // Data prefix
+				pk.writeString(state.command); // command
+				pk.writeInt(0); // State
+				pk.writeString(target); // Interactable
+				pk.writeInt(0); // Position
+
+				// Parameters
+				for (String param : state.params)
+					pk.writeString(param);
+				pk.writeString(""); // Data suffix
+				plr.client.sendPacket(pk.encode());
 			}
 		}
 	}

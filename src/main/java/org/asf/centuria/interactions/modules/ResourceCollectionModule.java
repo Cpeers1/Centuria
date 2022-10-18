@@ -410,7 +410,7 @@ public class ResourceCollectionModule extends InteractionModule {
 					return 0; // Cannot loot yet
 
 				// Give reward
-				giveLootReward(player, Integer.toString(def.lootTableId), obj.primaryObjectInfo.defId);
+				giveLootReward(player, Integer.toString(def.lootTableId), obj.primaryObjectInfo.type, obj.primaryObjectInfo.defId);
 
 				// Set unlocked and timestamp
 				player.account.getPlayerInventory().getInteractionMemory().unlocked(player.levelID, id);
@@ -468,7 +468,7 @@ public class ResourceCollectionModule extends InteractionModule {
 		return -1;
 	}
 
-	public static void giveLootReward(Player player, String lootTableId, int sourceDefID) {
+	public static void giveLootReward(Player player, String lootTableId, int sourceType, int sourceDefID) {
 		LootTable table = lootTables.get(lootTableId);
 		if (table != null) {
 			// Find reward
@@ -491,7 +491,7 @@ public class ResourceCollectionModule extends InteractionModule {
 					for (String objID : ids) {
 						// Send gift object
 						JsonObject gift = new JsonObject();
-						gift.addProperty("fromType", 5);
+						gift.addProperty("fromType", 2);
 						gift.addProperty("redeemedItemIdsExpectedCount", 0);
 						gift.addProperty("giftItemDefId", Integer.parseInt(reward.itemId));
 						gift.addProperty("count", count);
@@ -522,7 +522,7 @@ public class ResourceCollectionModule extends InteractionModule {
 				}
 				if (reward.referencedTableId != null) {
 					// Give table
-					giveLootReward(player, reward.referencedTableId, sourceDefID);
+					giveLootReward(player, reward.referencedTableId, sourceType, sourceDefID);
 				}
 			}
 		}

@@ -81,22 +81,7 @@ public class ObjectActionFinishPacket implements IXtPacket<ObjectActionFinishPac
 		if (obj.stateInfo.containsKey(Integer.toString(currentState))) {
 			ArrayList<StateInfo> states = obj.stateInfo.get(Integer.toString(currentState));
 			plr.stateObjects.put(target, states);
-			for (StateInfo st : states) {
-				// Build quest command
-				XtWriter pk = new XtWriter();
-				pk.writeString("qcmd");
-				pk.writeInt(DATA_PREFIX); // Data prefix
-				pk.writeString(st.command); // command
-				pk.writeInt(0); // State
-				pk.writeString(target); // Interactable
-				pk.writeInt(0); // Position
-
-				// Parameters
-				for (String param : st.params)
-					pk.writeString(param);
-				pk.writeString(DATA_SUFFIX); // Data suffix
-				client.sendPacket(pk.encode());
-			}
+			InteractionManager.runStates(states, plr, obj, target);
 		}
 
 		// Build response

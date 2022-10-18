@@ -1,14 +1,15 @@
 package org.asf.centuria.interactions.modules.linearobjects;
 
 import org.asf.centuria.Centuria;
-import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.InteractionManager;
+import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.modules.InteractionModule;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class LinearObjectHandler extends InteractionModule {
@@ -16,8 +17,7 @@ public class LinearObjectHandler extends InteractionModule {
 	// TODO: rotation spawning (og game spawning mechanics)
 	// TODO: random spawning (emuferal spawning mechanics, from server config)
 	// TODO: rotation locks for respawn (prevent respawning til next rotation)
-	// TODO: locked chests rewards
-	// TODO: dig spots
+	// TODO: new rewards for chests etc
 	// TODO: waystones
 	// TODO: enigmas?
 
@@ -28,6 +28,75 @@ public class LinearObjectHandler extends InteractionModule {
 	@Override
 	public boolean canHandle(Player player, String id, NetworkedObject object) {
 		return player.groupOjects.stream().anyMatch(t -> t.id.equals(id)); // Check if its a valid object
+	}
+
+	@Override
+	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo st, StateInfo parent,
+			HashMap<String, Object> memory) {
+		if (canHandle(player, id, object)) {
+			// Log commands
+			String args = "";
+			for (String arg : st.params) {
+				args += ", " + arg;
+			}
+			if (!args.isEmpty())
+				args = args.substring(2);
+			// Handle commands
+			switch (st.command) {
+			case "84": {
+				String command = st.params[0];
+				switch (command) {
+				case "1": {
+					// Save
+					Centuria.logger.debug("Group object collect: " + st.params[2]);
+					InteractionManager.getActiveSpawnBehaviour().onCollect(player, st.params[2]);
+					break;
+				}
+				case "3": {
+					// Use (eg. lockpicks breaking)
+					Centuria.logger.debug("Group object use: " + st.params[1]);
+					switch (st.params[1]) {
+					case "2": {
+						Centuria.logger.debug("Group object use lockpick");
+						player.account.getPlayerInventory().getCurrencyAccessor().removeLockpicks(player.client, 1);
+						break;
+					}
+					default: {
+						Centuria.logger.debug("Unhandled group object use: " + st.params[1]);
+						break;
+					}
+					}
+					break;
+				}
+				default: {
+					Centuria.logger.debug("Unhandled group object SUB command: " + id + ", command: " + st.command
+							+ ", args: " + args + " (subcommand: " + command + ")");
+					break;
+				}
+				}
+				break;
+			}
+			case "35": {
+				// Branches
+				Centuria.logger.debug("Call branches: " + st.params[1]);
+				NetworkedObject obj = NetworkedObjects.getObject(st.params[1]);
+				InteractionManager.runBranches(player, st.branches, "0", id, object, st);
+				if (!st.params[1].equals(id)) {
+					// Okay weird one still figuring the rest out but this works
+					InteractionManager.runBranches(player, obj.stateInfo,
+							obj.stateInfo.keySet().stream().findFirst().get(), st.params[1], obj, st);
+				}
+				break;
+			}
+			default: {
+				Centuria.logger.debug("Unhandled group object interaction command: " + id + ", command: " + st.command
+						+ ", args: " + args);
+				break;
+			}
+			}
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -57,47 +126,9 @@ public class LinearObjectHandler extends InteractionModule {
 			}
 			if (!args.isEmpty())
 				args = args.substring(2);
-			Centuria.logger.debug("Group object interaction command: " + id + ", state: " + state + ", command: " + st.command + ", args: " + args);
-
-			// Handle commands
-			switch (st.command) {
-				case "84": {
-					String command = st.params[0];
-					switch (command) {
-						case "1": {
-							// Save
-							Centuria.logger.debug("Group object collect: " + st.params[2]);
-							InteractionManager.getActiveSpawnBehaviour().onCollect(player, st.params[2]);
-							break;
-						}
-						case "3": {
-							// Use (eg. lockpicks breaking)
-							Centuria.logger.debug("Group object use: " + st.params[1]);
-							switch (st.params[1]) {
-								case "2": {
-									Centuria.logger.debug("Group object use lockpick");
-									player.account.getPlayerInventory().getCurrencyAccessor().removeLockpicks(player.client, 1);
-									break;
-								}
-								default:{
-									Centuria.logger.debug("Unhandled group object use: " + st.params[1]);
-									break;
-								}
-							}
-							break;
-						}
-						default: {
-							Centuria.logger.debug("Unhandled group object SUB command: " + id + ", state: " + state + ", command: " + st.command + ", args: " + args + " (subcommand: " + command + ")");
-							break;
-						}
-					}
-					break;
-				}
-				default: {
-					Centuria.logger.debug("Unhandled group object interaction command: " + id + ", state: " + state + ", command: " + st.command + ", args: " + args);
-					break;
-				}
-			}
+			Centuria.logger.debug("Group object interaction command: " + id + ", state: " + state + ", command: "
+					+ st.command + ", args: " + args);
+			handleCommand(player, id, object, st, null, null);
 		}
 
 		return false;

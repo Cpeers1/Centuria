@@ -36,7 +36,6 @@ public class InspirationCollectionModule extends InteractionModule {
 						for (ArrayList<StateInfo> branches : stateInfo.branches.values()) {
 							for (StateInfo branch : branches) {
 								if (branch.command.equals("84") && stateInfo.params.length == 3) {
-
 									// if param 1 is 1 and param 2 is 4, it means 'give inspiration'
 									// I think...
 									if (stateInfo.params[0].equals("1") && stateInfo.params[1].equals("4")) {
@@ -61,9 +60,12 @@ public class InspirationCollectionModule extends InteractionModule {
 	@Override
 	public int isDataRequestValid(Player player, String id, NetworkedObject object, int state) {
 		if (canHandle(player, id, object)) {
-			return 1; // Safe to run
+			object.stateInfo
+					.forEach((k, states) -> states.forEach(t -> handleCommand(player, id, object, t, null, null)));
+			return 0; // We handled it now
 		}
 		return -1;
+
 	}
 
 	@Override
@@ -72,7 +74,7 @@ public class InspirationCollectionModule extends InteractionModule {
 		// add inspiration to inventory?
 		// get inspiration ID from commands
 
-		if (stateInfo.command.equals("84")) {
+		if (stateInfo.command.equals("84") && canHandle(player, id, object)) {
 			// get the third argument
 
 			String defId = stateInfo.params[2];

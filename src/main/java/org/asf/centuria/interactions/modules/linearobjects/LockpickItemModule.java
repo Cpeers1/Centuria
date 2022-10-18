@@ -1,10 +1,8 @@
 package org.asf.centuria.interactions.modules.linearobjects;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.asf.centuria.entities.players.Player;
-import org.asf.centuria.interactions.InteractionManager;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.modules.InteractionModule;
 
@@ -28,8 +26,6 @@ public class LockpickItemModule extends InteractionModule {
 	public boolean handleInteractionSuccess(Player player, String id, NetworkedObject object, int state) {
 		// Add lockpick
 		player.account.getPlayerInventory().getCurrencyAccessor().addLockpicks(player.client, 1);
-		
-		// TODO: respawning?
 		return false;
 	}
 
