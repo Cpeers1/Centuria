@@ -83,7 +83,7 @@ public class InteractionManager {
 	/**
 	 * Initializes networked objects (eg. npcs)
 	 * 
-	 * @player Player to send the packets to
+	 * @param player Player to send the packets to
 	 * @param ids     Object UUIDs to initialize
 	 * @param levelID Level to find interactions for
 	 */
