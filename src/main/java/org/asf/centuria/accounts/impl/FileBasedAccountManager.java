@@ -31,7 +31,7 @@ public class FileBasedAccountManager extends AccountManager {
 	private static String[] nameBlacklist = new String[] { "kit", "kitsendragn", "kitsendragon", "fera", "fero",
 			"wwadmin", "ayli", "komodorihero", "wwsam", "blinky", "fer.ocity" };
 
-	private static ArrayList<String> banWords = new ArrayList<String>();
+	private static ArrayList<String> muteWords = new ArrayList<String>();
 	private static ArrayList<String> filterWords = new ArrayList<String>();
 
 	static {
@@ -58,7 +58,7 @@ public class FileBasedAccountManager extends AccountManager {
 		// Load ban words
 		try {
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("textfilter/instaban.txt");
+					.getResourceAsStream("textfilter/instamute.txt");
 			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
 			for (String line : lines.split("\n")) {
 				if (line.isEmpty() || line.startsWith("#"))
@@ -69,7 +69,7 @@ public class FileBasedAccountManager extends AccountManager {
 					data = data.replace("  ", "");
 
 				for (String word : data.split(" "))
-					banWords.add(word.toLowerCase());
+					muteWords.add(word.toLowerCase());
 			}
 			strm.close();
 		} catch (IOException e) {
@@ -256,7 +256,7 @@ public class FileBasedAccountManager extends AccountManager {
 
 		// Prevent banned and filtered words
 		for (String word : username.split(" ")) {
-			if (banWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+			if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 				return null;
 			}
 

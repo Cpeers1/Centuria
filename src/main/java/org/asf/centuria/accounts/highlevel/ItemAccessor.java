@@ -102,14 +102,8 @@ public class ItemAccessor {
 					new GenericHelper("8", new ItemComponent("Inspiration", new JsonObject()))));
 		}
 	};
-	
-	private static final String[] tradeableInventories = new String[]
-	{
-		"100",
-		"102",
-		"103",
-		"111"
-	};
+
+	private static final String[] tradeableInventories = new String[] { "100", "102", "103", "111" };
 
 	static {
 		try {
@@ -239,6 +233,10 @@ public class ItemAccessor {
 			pk.item = arr;
 			player.client.sendPacket(pk);
 
+			// Add item to save
+			if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
+				inventory.getAccessor().itemsToSave.add(info.inventory);
+
 			// Save items
 			for (String itm : inventory.getAccessor().itemsToSave) {
 				inventory.setItem(itm, inventory.getItem(itm));
@@ -305,6 +303,10 @@ public class ItemAccessor {
 			arr.add(obj);
 			pk.item = arr;
 			player.client.sendPacket(pk);
+
+			// Add item to save
+			if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
+				inventory.getAccessor().itemsToSave.add(info.inventory);
 
 			// Save items
 			for (String itm : inventory.getAccessor().itemsToSave) {
@@ -380,6 +382,8 @@ public class ItemAccessor {
 
 				if (!syncedInventories.contains(obj.get("type").getAsString())) {
 					syncedInventories.add(obj.get("type").getAsString());
+					if (!inventory.getAccessor().itemsToSave.contains(obj.get("type").getAsString()))
+						inventory.getAccessor().itemsToSave.add(obj.get("type").getAsString());
 				}
 			}
 			pk.item = arr;
@@ -461,6 +465,10 @@ public class ItemAccessor {
 				player.client.sendPacket(pk);
 			}
 
+			// Add item to save
+			if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
+				inventory.getAccessor().itemsToSave.add(info.inventory);
+
 			// Save items
 			for (String itm : inventory.getAccessor().itemsToSave) {
 				inventory.setItem(itm, inventory.getItem(itm));
@@ -540,6 +548,10 @@ public class ItemAccessor {
 				pk.items = removedItemUUIDs;
 				player.client.sendPacket(pk);
 			}
+
+			// Add item to save
+			if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
+				inventory.getAccessor().itemsToSave.add(info.inventory);
 
 			// Save items
 			for (String itm : inventory.getAccessor().itemsToSave) {
@@ -664,8 +676,11 @@ public class ItemAccessor {
 				InventoryItemPacket pk = new InventoryItemPacket();
 				pk.item = arr;
 				player.client.sendPacket(pk);
-
 			}
+
+			// Add item to save
+			if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
+				inventory.getAccessor().itemsToSave.add(info.inventory);
 
 			// Save items
 			for (String itm : inventory.getAccessor().itemsToSave) {
@@ -751,43 +766,39 @@ public class ItemAccessor {
 		return 0;
 
 	}
-	
-	public List<InventoryItem> loadTradeList() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
-	{
+
+	public List<InventoryItem> loadTradeList() throws InstantiationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		List<InventoryItem> tradeList = new ArrayList<InventoryItem>();
-		
-		for(String inventoryNumber : tradeableInventories)
-		{
+
+		for (String inventoryNumber : tradeableInventories) {
 			// Find inventory
 			if (!inventoryTypeMap.containsKey(inventoryNumber))
 				return null;
-			
+
 			if (!inventory.containsItem(inventoryNumber))
 				inventory.setItem(inventoryNumber, new JsonArray());
 
 			var invObject = inventory.getItem(inventoryNumber).getAsJsonArray();
-			
-			var itemClass = InventoryItemManager.getItemTypeFromInvType(InventoryType.get(Integer.parseInt(inventoryNumber)));
-			
-			for(var itemObject : invObject)
-			{
-				var tradeableComponent = itemObject.getAsJsonObject()
-						.get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
-						.get(TradeableComponent.COMPONENT_NAME);
-				
-				if(tradeableComponent != null)
-				{
-					if(tradeableComponent.getAsJsonObject().get("isInTradeList").getAsBoolean())
-					{					
+
+			var itemClass = InventoryItemManager
+					.getItemTypeFromInvType(InventoryType.get(Integer.parseInt(inventoryNumber)));
+
+			for (var itemObject : invObject) {
+				var tradeableComponent = itemObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME)
+						.getAsJsonObject().get(TradeableComponent.COMPONENT_NAME);
+
+				if (tradeableComponent != null) {
+					if (tradeableComponent.getAsJsonObject().get("isInTradeList").getAsBoolean()) {
 						var invItem = itemClass.getDeclaredConstructor().newInstance();
 						invItem.fromJsonObject(itemObject.getAsJsonObject());
-						
+
 						tradeList.add(invItem);
 					}
 				}
 			}
 		}
-		
+
 		return tradeList;
 	}
 }
