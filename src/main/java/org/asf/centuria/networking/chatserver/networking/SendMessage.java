@@ -40,7 +40,7 @@ import com.google.gson.JsonParser;
 public class SendMessage extends AbstractChatPacket {
 
 	private static String NIL_UUID = new UUID(0, 0).toString();
-	private static ArrayList<String> banWords = new ArrayList<String>();
+	private static ArrayList<String> muteWords = new ArrayList<String>();
 	private static ArrayList<String> filterWords = new ArrayList<String>();
 	private static ArrayList<String> alwaysfilterWords = new ArrayList<String>();
 
@@ -69,7 +69,7 @@ public class SendMessage extends AbstractChatPacket {
 		// Load ban words
 		try {
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("textfilter/instaban.txt");
+					.getResourceAsStream("textfilter/instamute.txt");
 			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
 			for (String line : lines.split("\n")) {
 				if (line.isEmpty() || line.startsWith("#"))
@@ -80,7 +80,7 @@ public class SendMessage extends AbstractChatPacket {
 					data = data.replace("  ", "");
 
 				for (String word : data.split(";"))
-					banWords.add(word.toLowerCase());
+					muteWords.add(word.toLowerCase());
 			}
 			strm.close();
 		} catch (IOException e) {
@@ -134,6 +134,8 @@ public class SendMessage extends AbstractChatPacket {
 
 	@Override
 	public boolean handle(ChatClient client) {
+		DMManager manager = DMManager.getInstance();
+
 		// Ignore 'limbo' players
 		Player gameClient = client.getPlayer().getOnlinePlayerInstance();
 		if (gameClient == null) {
@@ -163,22 +165,6 @@ public class SendMessage extends AbstractChatPacket {
 
 		// Log
 		Centuria.logger.info("Chat: " + client.getPlayer().getDisplayName() + ": " + message);
-
-		// Check filter
-		String newMessage = "";
-		for (String word : message.split(" ")) {
-			if (banWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-				// Ban
-				client.getPlayer().ban("Illegal word in chat");
-				return true;
-			}
-
-			if (!newMessage.isEmpty())
-				newMessage += " " + word;
-			else
-				newMessage = word;
-		}
-		message = newMessage;
 
 		// Increase ban counter
 		client.banCounter++;
@@ -218,13 +204,41 @@ public class SendMessage extends AbstractChatPacket {
 			}
 		}
 
+		// Check filter
+		String newMessage = "";
+		for (String word : message.split(" ")) {
+			if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				// Mute
+				client.getPlayer().mute(0, 0, 30, "SYSTEM", "Illegal word in chat");
+
+				// Send system message
+				if (client.isRoomPrivate(room)) {
+					// DM message
+					Centuria.systemMessage(gameClient,
+							"You have been automatically muted for violating the emulator rules, mute will last 30 minutes.\nReason: illegal word in chat.",
+							true);
+				} else {
+					// Public chat
+					Centuria.systemMessage(gameClient,
+							"You have been automatically muted for violating the emulator rules, mute will last 30 minutes.\\nReason: illegal word in chat.");
+				}
+
+				return true;
+			}
+
+			if (!newMessage.isEmpty())
+				newMessage += " " + word;
+			else
+				newMessage = word;
+		}
+		message = newMessage;
+
 		if (client.isInRoom(room)) {
 			// Time format
 			SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");
 			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 			// If it is a DM, save message
-			DMManager manager = DMManager.getInstance();
 			if (client.isRoomPrivate(room) && manager.dmExists(room)) {
 				PrivateChatMessage msg = new PrivateChatMessage();
 				msg.content = message;

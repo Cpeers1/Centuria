@@ -19,7 +19,6 @@ public class LinearObjectHandler extends InteractionModule {
 	// TODO: rotation locks for respawn (prevent respawning til next rotation)
 	// TODO: new rewards for chests etc
 	// TODO: waystones
-	// TODO: enigmas?
 
 	@Override
 	public void prepareWorld(int levelID, List<String> ids, Player player) {
