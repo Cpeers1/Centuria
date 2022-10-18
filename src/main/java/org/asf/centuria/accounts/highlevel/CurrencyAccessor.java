@@ -92,10 +92,6 @@ public class CurrencyAccessor {
 	 * @param likes New amount of likes
 	 */
 	public void setLikesDirectly(int likes) {
-		if (likes <= 0) {
-			inventory.getAccessor().removeInventoryObject("104", 2327);
-			return;
-		}
 		if (!inventory.getAccessor().hasInventoryObject("104", 2327)) {
 			// Create object
 			JsonObject dq = new JsonObject();
@@ -115,10 +111,6 @@ public class CurrencyAccessor {
 	 * @param starFrags New amount of star fragments
 	 */
 	public void setStarFragmentsDirectly(int starFrags) {
-		if (starFrags <= 0) {
-			inventory.getAccessor().removeInventoryObject("104", 14500);
-			return;
-		}
 		if (!inventory.getAccessor().hasInventoryObject("104", 14500)) {
 			// Create object
 			JsonObject dq = new JsonObject();
@@ -138,10 +130,6 @@ public class CurrencyAccessor {
 	 * @param lockpicks New amount of lockpicks
 	 */
 	public void setLockpicksDirectly(int lockpicks) {
-		if (lockpicks <= 0) {
-			inventory.getAccessor().removeInventoryObject("104", 8372);
-			return;
-		}
 		if (!inventory.getAccessor().hasInventoryObject("104", 8372)) {
 			// Create object
 			JsonObject dq = new JsonObject();

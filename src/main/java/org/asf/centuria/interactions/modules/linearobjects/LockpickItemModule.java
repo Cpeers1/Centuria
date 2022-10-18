@@ -18,9 +18,8 @@ public class LockpickItemModule extends InteractionModule {
 	public boolean canHandle(Player player, String id, NetworkedObject object) {
 		if (object.primaryObjectInfo != null && object.primaryObjectInfo.type == 1
 				&& object.primaryObjectInfo.defId == 6965) {
-			// This is a lockpick, check if its valid at this time
-			return Stream.of(InteractionManager.getActiveSpawnBehaviour().provideCurrent(player.levelID))
-					.anyMatch(t -> t.id.equals(id));
+			// This is a lockpick, check validity
+			return player.groupOjects.stream().anyMatch(t -> t.id.equals(id));
 		}
 		return false;
 	}

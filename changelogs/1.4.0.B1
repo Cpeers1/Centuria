@@ -1,2 +1,10 @@
-Fixes in 1.3.7.B1:
+Fixes in 1.4.0.B1:
  - Fixed a bug that caused initial actions to not be synced (the bug would happen if someone logs in, a sitting player would not be sitting for the newly-logged-in player, fixed now)
+ - Fix issue with currency accessors breaking
+
+Changes in 1.4.0.B1:
+ - Removed the 10k lockpicks from creative mode (ruins gameplay)
+ - Removed the automatic lockpick restocker from creative mode (ruins gameplay)
+ - Changed creative mode automatic star fragment restocker to run if below 100
+ - Changed creative mode automatic likes restocker to run if below 100
+ - Changed startup log a bit

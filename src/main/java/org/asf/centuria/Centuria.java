@@ -431,7 +431,7 @@ public class Centuria {
 			debugMode = true;
 
 		// Start the servers
-		Centuria.logger.info("Starting Emulated Feral API server...");
+		Centuria.logger.info("Starting API server on port " + Integer.parseInt(properties.get("api-port")) + "...");
 
 		//
 		// Start API server
@@ -500,7 +500,7 @@ public class Centuria {
 
 		//
 		// Start director server
-		Centuria.logger.info("Starting Emulated Feral Director server...");
+		Centuria.logger.info("Starting Director server on port " + Integer.parseInt(properties.get("director-port")) + "...");
 		directorServer = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("director-port")))
 				.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
 				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
@@ -510,7 +510,7 @@ public class Centuria {
 		//
 		// Load game server
 		ServerSocket sock;
-		Centuria.logger.info("Starting Emulated Feral Game server...");
+		Centuria.logger.info("Starting Game server on port " + Integer.parseInt(properties.get("game-port")) + "...");
 		if (encryptGame)
 			try {
 				sock = getContext(new File("keystore.jks"),
@@ -561,7 +561,7 @@ public class Centuria {
 
 		//
 		// Start chat server
-		Centuria.logger.info("Starting Emulated Feral Chat server...");
+		Centuria.logger.info("Starting Chat server on port " + Integer.parseInt(properties.get("chat-port")) + "...");
 		if (encryptChat)
 			try {
 				sock = getContext(new File("keystore.jks"),

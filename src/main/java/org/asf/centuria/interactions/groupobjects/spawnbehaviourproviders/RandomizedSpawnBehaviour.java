@@ -3,6 +3,7 @@ package org.asf.centuria.interactions.groupobjects.spawnbehaviourproviders;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.groupobjects.GroupObject;
 
 public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
@@ -20,9 +21,14 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 	}
 
 	@Override
-	public GroupObject[] provideCurrent(int levelID) {
+	public GroupObject[] provideCurrent(int levelID, Player plr) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void onCollect(Player player, String id) {
+		// TODO Auto-generated method stub
 	}
 
 }

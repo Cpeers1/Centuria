@@ -19,6 +19,7 @@ import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
+import org.asf.centuria.interactions.groupobjects.GroupObject;
 import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
@@ -79,6 +80,7 @@ public class Player {
 	// Quests
 	public int questProgress;
 	public ArrayList<String> interactions = new ArrayList<String>();
+	public ArrayList<GroupObject> groupOjects = new ArrayList<GroupObject>();
 	public HashMap<String, Integer> states = new HashMap<String, Integer>();
 	public HashMap<String, ArrayList<StateInfo>> stateObjects = new HashMap<String, ArrayList<StateInfo>>();
 	public HashMap<String, Integer> questObjectData = new HashMap<String, Integer>();
@@ -314,6 +316,7 @@ public class Player {
 			states.clear();
 			stateObjects.clear();
 			interactions.clear();
+			groupOjects.clear();
 
 			// Clear respawn items
 			respawnItems.clear();
@@ -375,6 +378,7 @@ public class Player {
 			states.clear();
 			stateObjects.clear();
 			interactions.clear();
+			groupOjects.clear();
 
 			// Clear respawn items
 			plr.respawnItems.clear();
@@ -450,6 +454,7 @@ public class Player {
 			states.clear();
 			stateObjects.clear();
 			interactions.clear();
+			groupOjects.clear();
 
 			// Log
 			Centuria.logger.debug(MarkerManager.getMarker("JOINROOM"),

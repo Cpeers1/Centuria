@@ -373,7 +373,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				obj.addProperty("defId", 8372);
 				JsonObject components = new JsonObject();
 				JsonObject quantity = new JsonObject();
-				quantity.addProperty("quantity", (Centuria.giveAllCurrency ? 10000 : 0));
+				quantity.addProperty("quantity", 0);
 				components.add("Quantity", quantity);
 				obj.add("components", components);
 				obj.addProperty("id", UUID.randomUUID().toString());
@@ -387,14 +387,11 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			// Creative mode
 			if (Centuria.giveAllCurrency) {
 				// Add 10k if 0
-				if (inv.getCurrencyAccessor().getLikes() <= 0) {
+				if (inv.getCurrencyAccessor().getLikes() <= 100) {
 					inv.getCurrencyAccessor().setLikesDirectly(10000);
 				}
-				if (inv.getCurrencyAccessor().getStarFragments() <= 0) {
+				if (inv.getCurrencyAccessor().getStarFragments() <= 100) {
 					inv.getCurrencyAccessor().setStarFragmentsDirectly(10000);
-				}
-				if (inv.getCurrencyAccessor().getLockpicks() <= 0) {
-					inv.getCurrencyAccessor().setLockpicksDirectly(10000);
 				}
 			}
 

@@ -2,6 +2,8 @@ package org.asf.centuria.interactions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Stream;
+
 import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtWriter;
@@ -16,6 +18,7 @@ import org.asf.centuria.interactions.modules.InteractionModule;
 import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.interactions.modules.ResourceCollectionModule;
 import org.asf.centuria.interactions.modules.ShopkeeperModule;
+import org.asf.centuria.interactions.modules.linearobjects.LinearObjectHandler;
 import org.asf.centuria.interactions.modules.linearobjects.LockpickItemModule;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 
@@ -31,6 +34,7 @@ public class InteractionManager {
 		modules.add(new InspirationCollectionModule());
 		modules.add(new ResourceCollectionModule());
 		modules.add(new LockpickItemModule());
+		modules.add(new LinearObjectHandler());
 
 		// Spawn behaviours
 		spawnBehaviours.add(new FallbackSpawnBehaviour());
@@ -73,18 +77,18 @@ public class InteractionManager {
 		modules.forEach(t -> t.prepareWorld(levelID, ids, player));
 
 		// Initialize objects
-		initializeNetworkedObjects(player.client, ids.toArray(t -> new String[t]), levelID);
+		initializeNetworkedObjects(player, ids.toArray(t -> new String[t]), levelID);
 		player.interactions.addAll(ids);
 	}
 
 	/**
 	 * Initializes networked objects (eg. npcs)
 	 * 
-	 * @param client  Client to send the packets to
+	 * @player  Player to send the packets to
 	 * @param ids     Object UUIDs to initialize
 	 * @param levelID Level to find interactions for
 	 */
-	public static void initializeNetworkedObjects(SmartfoxClient client, String[] ids, int levelID) {
+	public static void initializeNetworkedObjects(Player player, String[] ids, int levelID) {
 		HashMap<String, NetworkedObject> data = new HashMap<String, NetworkedObject>();
 
 		// Add objects
@@ -106,9 +110,10 @@ public class InteractionManager {
 			packet.writeInt(ent.primaryObjectInfo.defId);
 		}
 		packet.writeString(""); // data suffix
-		client.sendPacket(packet.encode());
+		player.client.sendPacket(packet.encode());
 
-		GroupObject[] linearObjects = getActiveSpawnBehaviour().provideCurrent(levelID);
+		GroupObject[] linearObjects = getActiveSpawnBehaviour().provideCurrent(levelID, player);
+		player.groupOjects.addAll(Stream.of(linearObjects).toList());
 		if (linearObjects.length != 0) {
 			// Init group objects
 			packet = new XtWriter();
@@ -120,7 +125,7 @@ public class InteractionManager {
 				packet.writeInt(ent.type);
 			}
 			packet.writeString(""); // data suffix
-			client.sendPacket(packet.encode());
+			player.client.sendPacket(packet.encode());
 		}
 
 		// Send qcmd packets
@@ -137,7 +142,7 @@ public class InteractionManager {
 				packet.writeString("0"); // unknown
 				packet.writeString("1"); // unknown
 				packet.writeString(""); // data suffix
-				client.sendPacket(packet.encode());
+				player.client.sendPacket(packet.encode());
 			}
 		}
 
@@ -146,7 +151,7 @@ public class InteractionManager {
 			NetworkedObject ent = data.get(id);
 			boolean handled = false;
 			for (InteractionModule mod : modules) {
-				if (mod.initializeWorldObjects(client, id, ent)) {
+				if (mod.initializeWorldObjects(player.client, id, ent)) {
 					handled = true;
 					break;
 				}
@@ -177,7 +182,7 @@ public class InteractionManager {
 			wr.writeDouble(ent.locationInfo.rotation.w);
 			wr.add("0%0%0%0.0%0%0%0");
 			wr.writeString(""); // data suffix
-			client.sendPacket(wr.encode());
+			player.client.sendPacket(wr.encode());
 		}
 	}
 
