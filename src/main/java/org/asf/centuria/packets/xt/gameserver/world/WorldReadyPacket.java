@@ -156,9 +156,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			}
 		}
 
-		// Set location
-		plr.lastLocation = plr.respawn;
-
 		// Sanctuary loading
 		if (plr.levelType == 2 && plr.room.startsWith("sanctuary_")) {
 			String ownerID = plr.room.substring("sanctuary_".length());
