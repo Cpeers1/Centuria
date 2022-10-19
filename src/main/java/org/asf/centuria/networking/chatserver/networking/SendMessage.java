@@ -825,14 +825,14 @@ public class SendMessage extends AbstractChatPacket {
 										// Ban player
 										plr.account.ban(client.getPlayer().getAccountID(), reason);
 									}
-
-									return true;
 								} catch (Exception e) {
 								}
 							}
 
 							// Log completion
 							systemMessage("Banned IP: " + args.get(0), cmd, client);
+
+							return true;
 						} catch (Exception e) {
 						}
 
