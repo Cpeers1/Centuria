@@ -158,6 +158,7 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 
 		// Add fields
 		id = plr.account.getAccountID();
+		time = System.currentTimeMillis() / 1000;
 
 		// UUID-based teleport
 		if (mode == 5) {
