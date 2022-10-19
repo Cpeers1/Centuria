@@ -25,6 +25,10 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 			return;
 
 		// Reset lockpicks
+		if (getAccessor().findInventoryObject("104", 8372) == null) {
+			new File("inventories/" + id + "/fixed").delete();
+			return;
+		}
 		JsonObject obj = getAccessor().findInventoryObject("104", 8372).get("components").getAsJsonObject()
 				.get("Quantity").getAsJsonObject();
 		obj.remove("quantity");
