@@ -36,6 +36,21 @@ import com.google.gson.JsonObject;
 @SuppressWarnings("unused")
 public class Player {
 
+	//
+	// Moderation (SYNC ONLY)
+	//
+	public boolean ghostMode = false;
+
+	/**
+	 * Avoid usage of this field, its not always in sync with the permission
+	 * manager, use it only for high-performance code
+	 */
+	public boolean hasModPerms = false;
+
+	//
+	// Other fields
+	//
+
 	public SmartfoxClient client;
 	public CenturiaAccount account;
 
@@ -95,6 +110,9 @@ public class Player {
 	}
 
 	public void syncTo(Player player) {
+		if (ghostMode && !player.hasModPerms)
+			return; // Ghosting
+
 		// Find avatar
 		JsonArray items = account.getPlayerInventory().getItem("avatars").getAsJsonArray();
 		JsonObject lookObj = null;

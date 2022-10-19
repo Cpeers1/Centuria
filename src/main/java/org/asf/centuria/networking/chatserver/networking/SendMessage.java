@@ -13,6 +13,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
@@ -248,6 +249,7 @@ public class SendMessage extends AbstractChatPacket {
 			}
 
 			// Send to all in room
+			Player cPlayer = gameClient;
 			SocialManager socialManager = SocialManager.getInstance();
 			for (ChatClient cl : client.getServer().getClients()) {
 				if (cl.isInRoom(room)) {
@@ -256,6 +258,10 @@ public class SendMessage extends AbstractChatPacket {
 						// Check limbo player
 						gameClient = cl.getPlayer().getOnlinePlayerInstance();
 						if (gameClient == null || !gameClient.roomReady || gameClient.room == null)
+							continue;
+
+						// Check ghost mode
+						if (cPlayer.ghostMode && !gameClient.hasModPerms)
 							continue;
 
 						// Filter
@@ -386,6 +392,7 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("giveBasicCurrency");
 
 		if (GameServer.hasPerm(permLevel, "moderator")) {
+			commandMessages.add("toggleghostmode");
 			commandMessages.add("kick \"<player>\" [\"<reason>\"]");
 			commandMessages.add("ipban \"<player/address>\" [\"<reason>\"]");
 			commandMessages.add("pardonip \"<ip>\" [\"<reason>\"]");
@@ -580,7 +587,8 @@ public class SendMessage extends AbstractChatPacket {
 									map = "Tutorial";
 								else if (helper.has(Integer.toString(plr.levelID)))
 									map = helper.get(Integer.toString(plr.levelID)).getAsString();
-								response += "\n - " + plr.account.getDisplayName() + " (" + map + ")";
+								response += "\n - " + plr.account.getDisplayName() + " (" + map + ")"
+										+ (plr.ghostMode ? " [GHOSTING]" : "");
 							} else if (!suspiciousClients.containsKey(cl)) {
 								suspiciousClients.put(cl, "no gameserver connection");
 							}
@@ -1068,6 +1076,44 @@ public class SendMessage extends AbstractChatPacket {
 						systemMessage("Player is not online.", cmd, client);
 						return true;
 					}
+					case "toggleghostmode": {
+						// Ghost mode
+						Player plr = client.getPlayer().getOnlinePlayerInstance();
+						if (plr.ghostMode) {
+							plr.ghostMode = false;
+
+							// Spawn for everyone in room
+							GameServer server = (GameServer) plr.client.getServer();
+							for (Player player : server.getPlayers()) {
+								if (plr.room != null && player.room != null && player.room.equals(plr.room)
+										&& player != plr) {
+									player.syncTo(plr);
+									Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"), "Syncing player "
+											+ player.account.getDisplayName() + " to " + plr.account.getDisplayName());
+								}
+							}
+
+							systemMessage("Ghost mode disabled. You are visible to everyone.", cmd, client);
+						} else {
+							plr.ghostMode = true;
+
+							// Spawn for everyone in room
+							GameServer server = (GameServer) plr.client.getServer();
+							for (Player player : server.getPlayers()) {
+								if (plr.room != null && player.room != null && player.room.equals(plr.room)
+										&& player != plr && !player.hasModPerms) {
+									player.destroyAt(player);
+									Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
+											"Removing player " + player.account.getDisplayName() + " from "
+													+ plr.account.getDisplayName());
+								}
+							}
+
+							systemMessage("Ghost mode enabled. You are now invisible to non-moderators.", cmd, client);
+						}
+
+						return true;
+					}
 
 					//
 					// Admin commands below
@@ -1210,6 +1256,7 @@ public class SendMessage extends AbstractChatPacket {
 								if (plr.account.getDisplayName().equals(args.get(0))) {
 									// Update inventory
 									plr.account.getPlayerInventory().deleteItem("permissions");
+									plr.hasModPerms = false;
 									break;
 								}
 							}

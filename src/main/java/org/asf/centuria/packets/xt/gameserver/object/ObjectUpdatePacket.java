@@ -201,6 +201,9 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+				// Check ghost mode
+				if (plr.ghostMode && !player.hasModPerms)
+					continue; // Ghost
 				player.client.sendPacket(msg);
 			}
 		}

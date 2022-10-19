@@ -264,7 +264,8 @@ public class GameServer extends BaseSmartfoxServer {
 			ePlr.client.disconnect();
 
 		// Log the login attempt
-		Centuria.logger.info("Login from IP: " + client.getSocket().getRemoteSocketAddress() + ": " + acc.getLoginName());
+		Centuria.logger
+				.info("Login from IP: " + client.getSocket().getRemoteSocketAddress() + ": " + acc.getLoginName());
 
 		// Run module handshake code
 		AccountLoginEvent ev = new AccountLoginEvent(this, acc, client);
@@ -280,6 +281,9 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Build Player object
 		Player plr = new Player();
+		String permLevel = acc.getPlayerInventory().getItem("permissions").getAsJsonObject().get("permissionLevel")
+				.getAsString();
+		plr.hasModPerms = GameServer.hasPerm(permLevel, "moderator");
 		plr.client = client;
 		plr.account = acc;
 		plr.activeLook = acc.getActiveLook();
@@ -295,8 +299,8 @@ public class GameServer extends BaseSmartfoxServer {
 		sendLoginResponse(client, auth, acc, 1, plr.account.isPlayerNew() ? 2 : 3);
 
 		// Initial login
-		Centuria.logger.info(
-				"Player connected: " + plr.account.getLoginName() + " (as " + plr.account.getDisplayName() + ")");
+		Centuria.logger
+				.info("Player connected: " + plr.account.getLoginName() + " (as " + plr.account.getDisplayName() + ")");
 		sendPacket(client, "%xt%ulc%-1%");
 
 		// Notify followers
