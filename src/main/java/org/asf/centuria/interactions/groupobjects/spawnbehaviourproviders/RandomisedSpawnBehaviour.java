@@ -102,28 +102,28 @@ public class RandomisedSpawnBehaviour implements ISpawnBehaviourProvider {
 								"rotation-hours=3\n"
 
 										// Minimal chest count
-										+ "lockedchests-min=7\n"
+										+ "lockedchests-min=12\n"
 
 										// Maximal chest count
-										+ "lockedchests-max=9\n"
+										+ "lockedchests-max=15\n"
 
 										// Digspot minimal count
-										+ "digspots-min=4\n"
+										+ "digspots-min=6\n"
 
 										// Digspot maximal count
-										+ "digspots-max=6\n"
+										+ "digspots-max=8\n"
 
 										// Minimal lockpick count
-										+ "lockpicks-min=7\n"
+										+ "lockpicks-min=12\n"
 
 										// Maximal lockpick count
-										+ "lockpicks-max=9\n"
+										+ "lockpicks-max=15\n"
 
 										// Minimal waystone path count
-										+ "waystone-paths-min=2\n"
+										+ "waystone-paths-min=3\n"
 
 										// lockpicks waystone path count
-										+ "waystone-paths-max=3\n");
+										+ "waystone-paths-max=4\n");
 					} catch (IOException e) {
 						throw new RuntimeException(e);
 					}
@@ -182,8 +182,8 @@ public class RandomisedSpawnBehaviour implements ISpawnBehaviourProvider {
 			// Spawn lockpicks
 			//
 
-			int minLockpicks = Integer.parseInt(properties.getOrDefault("lockpicks-min", "7"));
-			int maxLockpicks = Integer.parseInt(properties.getOrDefault("lockpicks-max", "9"));
+			int minLockpicks = Integer.parseInt(properties.getOrDefault("lockpicks-min", "12"));
+			int maxLockpicks = Integer.parseInt(properties.getOrDefault("lockpicks-max", "15"));
 			int lockpicksToSpawn = rnd.nextInt(maxLockpicks + 1);
 			while (lockpicksToSpawn < minLockpicks)
 				lockpicksToSpawn = rnd.nextInt(maxLockpicks + 1);
@@ -218,8 +218,8 @@ public class RandomisedSpawnBehaviour implements ISpawnBehaviourProvider {
 			// Spawn waystones
 			//
 
-			int minWaystonePaths = Integer.parseInt(properties.getOrDefault("waystone-paths-min", "2"));
-			int maxWaystonePaths = Integer.parseInt(properties.getOrDefault("waystone-paths-max", "3"));
+			int minWaystonePaths = Integer.parseInt(properties.getOrDefault("waystone-paths-min", "3"));
+			int maxWaystonePaths = Integer.parseInt(properties.getOrDefault("waystone-paths-max", "4"));
 			int waystonePathsToSpawn = rnd.nextInt(maxWaystonePaths + 1);
 			while (waystonePathsToSpawn < minWaystonePaths)
 				waystonePathsToSpawn = rnd.nextInt(maxWaystonePaths + 1);
@@ -257,8 +257,8 @@ public class RandomisedSpawnBehaviour implements ISpawnBehaviourProvider {
 			// Spawn dig spots
 			//
 
-			int minDigspots = Integer.parseInt(properties.getOrDefault("digspot-min", "4"));
-			int maxDigspots = Integer.parseInt(properties.getOrDefault("digspot-max", "6"));
+			int minDigspots = Integer.parseInt(properties.getOrDefault("digspot-min", "6"));
+			int maxDigspots = Integer.parseInt(properties.getOrDefault("digspot-max", "8"));
 			int digspotsToSpawn = rnd.nextInt(maxDigspots + 1);
 			while (digspotsToSpawn < minDigspots)
 				digspotsToSpawn = rnd.nextInt(maxDigspots + 1);
@@ -318,8 +318,8 @@ public class RandomisedSpawnBehaviour implements ISpawnBehaviourProvider {
 			// Spawn chests
 			//
 
-			int minChests = Integer.parseInt(properties.getOrDefault("lockedchests-min", "7"));
-			int maxChests = Integer.parseInt(properties.getOrDefault("lockedchests-max", "9"));
+			int minChests = Integer.parseInt(properties.getOrDefault("lockedchests-min", "12"));
+			int maxChests = Integer.parseInt(properties.getOrDefault("lockedchests-max", "15"));
 			int chestsToSpawn = rnd.nextInt(maxChests + 1);
 			while (chestsToSpawn < minChests)
 				chestsToSpawn = rnd.nextInt(maxChests + 1);
