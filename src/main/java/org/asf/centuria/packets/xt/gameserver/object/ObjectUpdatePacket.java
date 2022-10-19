@@ -26,9 +26,8 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 
 	// Coordiante-mode
 	public Vector3 position = new Vector3();
-	public Vector3 direction = new Vector3();
+	public Quaternion unk = new Quaternion();
 	public Quaternion rotation = new Quaternion();
-	public float speed;
 
 	// Action
 	public int action;
@@ -60,19 +59,17 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 			position.y = reader.readDouble();
 			position.z = reader.readDouble();
 
-			// Read direction
-			direction.x = reader.readDouble();
-			direction.y = reader.readDouble();
-			direction.z = reader.readDouble();
+			// Read unknown stuff
+			unk.x = reader.readDouble();
+			unk.y = reader.readDouble();
+			unk.z = reader.readDouble();
+			unk.w = reader.readDouble();
 
-			// Read rotation
+			// Read rotation?
 			rotation.x = reader.readDouble();
 			rotation.y = reader.readDouble();
 			rotation.z = reader.readDouble();
 			rotation.w = reader.readDouble();
-
-			// Read speed
-			speed = reader.readFloat();
 			break;
 		}
 		case 4: {
@@ -83,20 +80,18 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 			position.y = reader.readDouble();
 			position.z = reader.readDouble();
 
-			// Read direction
-			direction.x = reader.readDouble();
-			direction.y = reader.readDouble();
-			direction.z = reader.readDouble();
+			// Read unknown stuff
+			unk.x = reader.readDouble();
+			unk.y = reader.readDouble();
+			unk.z = reader.readDouble();
+			unk.w = reader.readDouble();
 
-			// Read rotation
+			// Read rotation?
 			rotation.x = reader.readDouble();
 			rotation.y = reader.readDouble();
 			rotation.z = reader.readDouble();
 			rotation.w = reader.readDouble();
 
-			// Read speed
-			speed = reader.readFloat();
-			
 			// Read action
 			action = reader.readInt();
 			break;
@@ -129,19 +124,15 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 		writer.writeDouble(position.y);
 		writer.writeDouble(position.z);
 
-		// Write rotation
+		// Then WW's fucking nightmare: DONT ASK BC IDK HOW BUT IT WORKS
+		writer.writeDouble(unk.x);
 		writer.writeDouble(rotation.x);
 		writer.writeDouble(rotation.y);
 		writer.writeDouble(rotation.z);
+		writer.writeDouble(unk.y);
+		writer.writeDouble(unk.z);
+		writer.writeDouble(unk.w);
 		writer.writeDouble(rotation.w);
-
-		// Write direction
-		writer.writeDouble(direction.x);
-		writer.writeDouble(direction.y);
-		writer.writeDouble(direction.z);
-
-		// Write speed
-		writer.writeFloat(speed);
 
 		// Write action
 		writer.writeInt(action);
