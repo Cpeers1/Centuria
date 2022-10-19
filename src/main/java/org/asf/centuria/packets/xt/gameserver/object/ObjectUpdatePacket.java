@@ -46,6 +46,7 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 	@Override
 	public void parse(XtReader reader) throws IOException {
 		mode = reader.readInt();
+		time = reader.readLong();
 
 		// Check mode
 		switch (mode) {
@@ -136,7 +137,6 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 			return true;
 
 		// Add fields
-		time = System.currentTimeMillis() / 1000;
 		id = plr.account.getAccountID();
 
 		// UUID-based teleport
