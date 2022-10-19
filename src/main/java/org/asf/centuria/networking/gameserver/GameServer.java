@@ -281,9 +281,11 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Build Player object
 		Player plr = new Player();
-		String permLevel = acc.getPlayerInventory().getItem("permissions").getAsJsonObject().get("permissionLevel")
-				.getAsString();
-		plr.hasModPerms = GameServer.hasPerm(permLevel, "moderator");
+		if (acc.getPlayerInventory().containsItem("permissions")) {
+			String permLevel = acc.getPlayerInventory().getItem("permissions").getAsJsonObject().get("permissionLevel")
+					.getAsString();
+			plr.hasModPerms = GameServer.hasPerm(permLevel, "moderator");
+		}
 		plr.client = client;
 		plr.account = acc;
 		plr.activeLook = acc.getActiveLook();

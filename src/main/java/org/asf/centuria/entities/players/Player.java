@@ -535,10 +535,11 @@ public class Player {
 
 			// Find player
 			for (Player plr : ((GameServer) client.getServer()).getPlayers()) {
-				if (plr.account.getAccountID().equals(accountID) && plr.roomReady && plr.levelType != 1
-						&& !plr.room.equals("room_STAFFROOM")
-						&& (!SocialManager.getInstance().socialListExists(accountID) || !SocialManager.getInstance()
-								.getPlayerIsBlocked(accountID, player.account.getAccountID()))) {
+				if ((plr.account.getAccountID().equals(accountID) && plr.roomReady && plr.levelType != 1)
+						&& ((!plr.room.equals("room_STAFFROOM")
+								&& (!SocialManager.getInstance().socialListExists(accountID) || !SocialManager
+										.getInstance().getPlayerIsBlocked(accountID, player.account.getAccountID())))
+								|| (player.overrideTpLocks && player.hasModPerms))) {
 					// Load privacy settings
 					int privSetting = 0;
 					UserVarValue val = plr.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17546, 0);
