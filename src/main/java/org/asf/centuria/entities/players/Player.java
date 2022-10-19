@@ -77,10 +77,8 @@ public class Player {
 	public String room = null;
 
 	public String respawn = null;
-	public String lastLocation = null;
 
 	public Vector3 lastPos = new Vector3(0, -1000, 0);
-
 	public Quaternion lastRot = new Quaternion(0, 0, 0, 0);
 
 	public int lastAction;

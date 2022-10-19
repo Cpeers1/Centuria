@@ -13,6 +13,7 @@ Fixes in 1.4.0.B1:
  - Fix issue with currency accessors breaking
  - Fix issues with inspirations
  - Fix loot popup issues
+ - Overhaul player sync
 
 Changes in 1.4.0.B1:
  - Removed the 10k lockpicks from creative mode (ruins gameplay)
