@@ -150,7 +150,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 		// Check rotation
 		int rotationHours = Integer.parseInt(properties.getOrDefault("rotation-hours", "3"));
 		if (rotations.containsKey(levelID)
-				&& rotations.get(levelID).time < (System.currentTimeMillis() + (rotationHours * 60 * 60 * 1000))) {
+				&& rotations.get(levelID).time + (rotationHours * 60 * 60 * 1000) > System.currentTimeMillis()) {
 			update = false;
 		}
 
