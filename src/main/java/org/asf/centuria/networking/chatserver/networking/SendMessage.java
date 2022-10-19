@@ -1103,7 +1103,7 @@ public class SendMessage extends AbstractChatPacket {
 							for (Player player : server.getPlayers()) {
 								if (plr.room != null && player.room != null && player.room.equals(plr.room)
 										&& player != plr) {
-									player.syncTo(plr);
+									plr.syncTo(player);
 									Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"), "Syncing player "
 											+ player.account.getDisplayName() + " to " + plr.account.getDisplayName());
 								}
@@ -1118,7 +1118,7 @@ public class SendMessage extends AbstractChatPacket {
 							for (Player player : server.getPlayers()) {
 								if (plr.room != null && player.room != null && player.room.equals(plr.room)
 										&& player != plr && !player.hasModPerms) {
-									player.destroyAt(player);
+									plr.destroyAt(player);
 									Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
 											"Removing player " + player.account.getDisplayName() + " from "
 													+ plr.account.getDisplayName());
