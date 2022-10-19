@@ -18,7 +18,7 @@ import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.groupobjects.GroupObject;
 import org.asf.centuria.util.RandomSelectorUtil;
 
-public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
+public class RandomisedSpawnBehaviour implements ISpawnBehaviourProvider {
 
 	private boolean loaded = false;
 	private Random rnd = new Random();
