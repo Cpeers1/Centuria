@@ -393,6 +393,7 @@ public class SendMessage extends AbstractChatPacket {
 
 		if (GameServer.hasPerm(permLevel, "moderator")) {
 			commandMessages.add("toggleghostmode");
+			commandMessages.add("toggletpoverride");
 			commandMessages.add("kick \"<player>\" [\"<reason>\"]");
 			commandMessages.add("ipban \"<player/address>\" [\"<reason>\"]");
 			commandMessages.add("pardonip \"<ip>\" [\"<reason>\"]");
@@ -1074,6 +1075,21 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Player not found
 						systemMessage("Player is not online.", cmd, client);
+						return true;
+					}
+					case "toggletpoverride": {
+						// Override tp locks
+						Player plr = client.getPlayer().getOnlinePlayerInstance();
+						if (plr.overrideTpLocks) {
+							plr.overrideTpLocks = false;
+							systemMessage(
+									"Teleport override disabled. The system will no longer ignore follower settings.",
+									cmd, client);
+						} else {
+							plr.overrideTpLocks = true;
+							systemMessage("Teleport override enabled. The system will ignore follower settings.", cmd,
+									client);
+						}
 						return true;
 					}
 					case "toggleghostmode": {

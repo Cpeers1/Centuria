@@ -40,6 +40,7 @@ public class Player {
 	// Moderation (SYNC ONLY)
 	//
 	public boolean ghostMode = false;
+	public boolean overrideTpLocks = false;
 
 	/**
 	 * Avoid usage of this field, its not always in sync with the permission
@@ -545,11 +546,13 @@ public class Player {
 						privSetting = val.value;
 
 					// Verify privacy settings
-					if (privSetting == 1 && !SocialManager.getInstance()
-							.getPlayerIsFollowing(plr.account.getAccountID(), player.account.getAccountID()))
-						break;
-					else if (privSetting == 2)
-						break;
+					if (!player.overrideTpLocks || !player.hasModPerms) {
+						if (privSetting == 1 && !SocialManager.getInstance()
+								.getPlayerIsFollowing(plr.account.getAccountID(), player.account.getAccountID()))
+							break;
+						else if (privSetting == 2)
+							break;
+					}
 
 					XtWriter writer = new XtWriter();
 					writer.writeString("rfjtr");
@@ -574,7 +577,7 @@ public class Player {
 							// Check owner
 							boolean isOwner = player.account.getAccountID().equals(sanctuaryOwner);
 
-							if (!isOwner) {
+							if (!isOwner && (!player.overrideTpLocks || !player.hasModPerms)) {
 								// Load privacy settings
 								privSetting = 0;
 								val = sancOwner.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
