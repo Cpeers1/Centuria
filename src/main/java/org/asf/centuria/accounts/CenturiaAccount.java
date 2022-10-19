@@ -282,7 +282,7 @@ public abstract class CenturiaAccount {
 					String ipaddr2 = addr2.getHostAddress();
 					if (ipaddr.equals(ipaddr2) && !plr2.account.getAccountID().equals(getAccountID())) {
 						// Ban
-						plr.account.ban(issuer, reason + " [AUTOMATIC BAN DUE TO IP BAN OF " + getDisplayName() + "]");
+						plr2.account.ban(issuer, reason + " [AUTOMATIC BAN DUE TO IP BAN OF " + getDisplayName() + "]");
 					}
 				} catch (Exception e) {
 				}
