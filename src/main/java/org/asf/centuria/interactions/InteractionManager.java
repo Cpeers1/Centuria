@@ -42,6 +42,26 @@ public class InteractionManager {
 	}
 
 	/**
+	 * Registers a interaction module
+	 * 
+	 * @param module Interaction module to register
+	 */
+	public static void registerModule(InteractionModule module) {
+		if (!modules.contains(module))
+			modules.add(module);
+	}
+
+	/**
+	 * Registers a spawning behaviour
+	 * 
+	 * @param behaviour Spawn behaviour to register
+	 */
+	public static void registerModule(ISpawnBehaviourProvider behaviour) {
+		if (!spawnBehaviours.contains(behaviour))
+			spawnBehaviours.add(behaviour);
+	}
+
+	/**
 	 * Finds the active spawn behaviour
 	 * 
 	 * @return ISpawnBehaviourProvider instance
@@ -84,7 +104,7 @@ public class InteractionManager {
 	/**
 	 * Initializes networked objects (eg. npcs)
 	 * 
-	 * @param player Player to send the packets to
+	 * @param player  Player to send the packets to
 	 * @param ids     Object UUIDs to initialize
 	 * @param levelID Level to find interactions for
 	 */

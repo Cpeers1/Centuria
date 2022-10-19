@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 import org.asf.centuria.accounts.PlayerInventory;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -22,51 +21,17 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 		id = userID;
 
 		// Data fixer
-		try {
-			if (!new File("inventories/" + id).exists()) {
-				new File("inventories/" + id).mkdirs();
-				new File("inventories/" + id + "/fixed").createNewFile();
-				return;
-			}
+		if (!new File("inventories/" + id + "/fixed").exists())
+			return;
 
-			if (new File("inventories/" + id + "/fixed").exists())
-				return;
+		// Reset lockpicks
+		JsonObject obj = getAccessor().findInventoryObject("104", 8372).get("components").getAsJsonObject()
+				.get("Quantity").getAsJsonObject();
+		obj.remove("quantity");
+		obj.addProperty("quantity", 0);
+		setItem("104", getItem("104"));
 
-			// Combine all objects
-			JsonArray inventory = new JsonArray();
-			for (File obj : new File("inventories/" + id).listFiles(t -> t.isFile() && t.getName().endsWith(".json"))) {
-				// Check validity
-				if (!obj.getName().matches("^[0-9]+\\.json$"))
-					continue;
-
-				// Load object
-				JsonElement ele = JsonParser.parseString(Files.readString(obj.toPath()));
-				if (ele.isJsonArray()) {
-					inventory.addAll(ele.getAsJsonArray());
-					obj.delete();
-				}
-			}
-
-			// Split objects
-			HashMap<String, JsonArray> inventoryObjects = new HashMap<String, JsonArray>();
-			for (JsonElement ele : inventory) {
-				String type = ele.getAsJsonObject().get("type").getAsString();
-				if (!inventoryObjects.containsKey(type))
-					inventoryObjects.put(type, new JsonArray());
-				inventoryObjects.get(type).add(ele);
-			}
-
-			// Save objects
-			inventoryObjects.forEach((file, object) -> {
-				try {
-					Files.writeString(Path.of("inventories/" + id + "/" + file + ".json"), object.toString());
-				} catch (IOException e) {
-				}
-			});
-
-			new File("inventories/" + id + "/fixed").createNewFile();
-		} catch (IOException e) {
-		}
+		new File("inventories/" + id + "/fixed").delete();
 	}
 
 	@Override
