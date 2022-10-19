@@ -46,7 +46,6 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 	@Override
 	public void parse(XtReader reader) throws IOException {
 		mode = reader.readInt();
-		time = reader.readLong();
 
 		// Check mode
 		switch (mode) {
