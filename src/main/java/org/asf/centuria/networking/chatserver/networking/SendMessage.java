@@ -382,6 +382,8 @@ public class SendMessage extends AbstractChatPacket {
 
 		if (Centuria.giveAllResources)
 			commandMessages.add("giveBasicMaterials");
+		if (Centuria.giveAllCurrency)
+			commandMessages.add("giveBasicCurrency");
 
 		if (GameServer.hasPerm(permLevel, "moderator")) {
 			commandMessages.add("kick \"<player>\" [\"<reason>\"]");
@@ -447,8 +449,7 @@ public class SendMessage extends AbstractChatPacket {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
 
 						if (onlinePlayer != null) {
-							var accessor = client.getPlayer().getPlayerInventory()
-									.getItemAccessor(client.getPlayer().getOnlinePlayerInstance());
+							var accessor = client.getPlayer().getPlayerInventory().getItemAccessor(onlinePlayer);
 
 							accessor.add(6691, 1000);
 							accessor.add(6692, 1000);
@@ -468,9 +469,21 @@ public class SendMessage extends AbstractChatPacket {
 
 							// TODO: Check result
 							systemMessage("You have been given 1000 of every basic material. Have fun!", cmd, client);
-						} else {
-							// TODO: support for giving offline players items.. somehow
-							systemMessage("Specified account does not appear to be online.", cmd, client);
+						}
+						return true;
+					}
+				} else if (cmdId.equals("givebasiccurrency")) {
+					if (Centuria.giveAllCurrency) {
+						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
+
+						if (onlinePlayer != null) {
+							var accessor = client.getPlayer().getPlayerInventory().getCurrencyAccessor();
+
+							accessor.addLikes(onlinePlayer.client, 1000);
+							accessor.addStarFragments(onlinePlayer.client, 1000);
+
+							// TODO: Check result
+							systemMessage("You have been given 1000 star fragments and likes. Have fun!", cmd, client);
 						}
 						return true;
 					}
