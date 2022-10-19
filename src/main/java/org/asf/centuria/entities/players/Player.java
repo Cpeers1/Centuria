@@ -546,6 +546,10 @@ public class Player {
 					if (val != null)
 						privSetting = val.value;
 
+					// Ghost check
+					if (!player.hasModPerms && plr.ghostMode)
+						break;
+
 					// Verify privacy settings
 					if (!player.overrideTpLocks || !player.hasModPerms) {
 						if (privSetting == 1 && !SocialManager.getInstance()

@@ -261,7 +261,7 @@ public class SendMessage extends AbstractChatPacket {
 							continue;
 
 						// Check ghost mode
-						if (cPlayer.ghostMode && !gameClient.hasModPerms)
+						if (cPlayer.ghostMode && !gameClient.hasModPerms && !client.isRoomPrivate(room))
 							continue;
 
 						// Filter
