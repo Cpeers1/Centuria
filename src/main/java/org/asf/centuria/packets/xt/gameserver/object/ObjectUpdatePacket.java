@@ -73,10 +73,31 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 
 			// Read speed
 			speed = reader.readFloat();
+			break;
 		}
 		case 4: {
 			// Action
-			// Same as above so lets use case fallthrough and add a extra read
+
+			// Read position
+			position.x = reader.readDouble();
+			position.y = reader.readDouble();
+			position.z = reader.readDouble();
+
+			// Read direction
+			direction.x = reader.readDouble();
+			direction.y = reader.readDouble();
+			direction.z = reader.readDouble();
+
+			// Read rotation
+			rotation.x = reader.readDouble();
+			rotation.y = reader.readDouble();
+			rotation.z = reader.readDouble();
+			rotation.w = reader.readDouble();
+
+			// Read speed
+			speed = reader.readFloat();
+			
+			// Read action
 			action = reader.readInt();
 			break;
 		}
