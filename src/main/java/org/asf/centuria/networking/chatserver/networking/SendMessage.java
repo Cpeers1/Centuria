@@ -396,7 +396,7 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("toggletpoverride");
 			commandMessages.add("kick \"<player>\" [\"<reason>\"]");
 			commandMessages.add("ipban \"<player/address>\" [\"<reason>\"]");
-			commandMessages.add("pardonip \"<ip>\" [\"<reason>\"]");
+			commandMessages.add("pardonip \"<ip>\"");
 			commandMessages.add("permban \"<player>\" [\"<reason>\"]");
 			commandMessages.add("tempban \"<player>\" <days>\" [\"<reason>\"]");
 			commandMessages.add("forcenamechange \"<player>\"");
