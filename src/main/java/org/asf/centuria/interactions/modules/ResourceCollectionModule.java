@@ -27,7 +27,7 @@ import org.asf.centuria.modules.ModuleManager;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
-import org.asf.centuria.util.WeightedSelectorUtil;
+import org.asf.centuria.util.RandomSelectorUtil;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -369,7 +369,7 @@ public class ResourceCollectionModule extends InteractionModule {
 						table.rewards.forEach(t -> {
 							options.put(t, t.weight);
 						});
-						HarvestReward reward = WeightedSelectorUtil.select(options);
+						HarvestReward reward = RandomSelectorUtil.selectWeighted(options);
 						if (reward != null) {
 							// Give reward
 							int count = rnd.nextInt(reward.maxCount + 1);
@@ -476,7 +476,7 @@ public class ResourceCollectionModule extends InteractionModule {
 			table.rewards.forEach(t -> {
 				options.put(t, t.weight);
 			});
-			LootReward reward = WeightedSelectorUtil.select(options);
+			LootReward reward = RandomSelectorUtil.selectWeighted(options);
 			if (reward != null) {
 				// Give reward
 				int count = rnd.nextInt(reward.maxCount + 1);

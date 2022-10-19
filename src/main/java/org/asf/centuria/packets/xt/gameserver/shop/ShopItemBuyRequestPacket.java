@@ -15,7 +15,7 @@ import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.shops.ShopManager;
 import org.asf.centuria.shops.info.ShopItem;
-import org.asf.centuria.util.WeightedSelectorUtil;
+import org.asf.centuria.util.RandomSelectorUtil;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -167,7 +167,7 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 			}
 
 			// Retrieve entry
-			String item = WeightedSelectorUtil.select(weights);
+			String item = RandomSelectorUtil.selectWeighted(weights);
 			if (item != null) {
 				// Give eureka item
 				BoughtItemInfo e = new BoughtItemInfo();

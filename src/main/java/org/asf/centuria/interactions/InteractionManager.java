@@ -13,6 +13,7 @@ import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.groupobjects.GroupObject;
 import org.asf.centuria.interactions.groupobjects.spawnbehaviourproviders.FallbackSpawnBehaviour;
 import org.asf.centuria.interactions.groupobjects.spawnbehaviourproviders.ISpawnBehaviourProvider;
+import org.asf.centuria.interactions.groupobjects.spawnbehaviourproviders.RandomizedSpawnBehaviour;
 import org.asf.centuria.interactions.modules.InspirationCollectionModule;
 import org.asf.centuria.interactions.modules.InteractionModule;
 import org.asf.centuria.interactions.modules.QuestManager;
@@ -37,7 +38,7 @@ public class InteractionManager {
 
 		// Spawn behaviours
 		spawnBehaviours.add(new FallbackSpawnBehaviour());
-//		spawnBehaviours.add(new RandomizedSpawnBehaviour());
+		spawnBehaviours.add(new RandomizedSpawnBehaviour());
 	}
 
 	/**

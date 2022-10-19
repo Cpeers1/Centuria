@@ -15,8 +15,6 @@ import java.util.List;
 public class LinearObjectHandler extends InteractionModule {
 
 	// TODO: rotation spawning (og game spawning mechanics)
-	// TODO: random spawning (emuferal spawning mechanics, from server config)
-	// TODO: rotation locks for respawn (prevent respawning til next rotation)
 	// TODO: new rewards for chests etc
 
 	@Override
