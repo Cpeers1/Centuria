@@ -30,9 +30,7 @@ public class TestModule implements ICenturiaModule {
 
 	@EventListener
 	public void interactionSuccess(InteractionSuccessEvent event) {
-		event.getPlayer().account.getLevel().addXP(10);
-		event.setDestroyResource(false);
-		event.setHandled();
+		event.getPlayer().account.getLevel().addXP(3);
 	}
 
 	@EventListener

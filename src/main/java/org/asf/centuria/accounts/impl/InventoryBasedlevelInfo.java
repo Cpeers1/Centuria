@@ -426,8 +426,8 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 			}
 
 			// Add item
-			String[] objects = account.getPlayerInventory().getItemAccessor(null).add(lvl.levelUpRewardDefId,
-					lvl.levelUpRewardQuantity);
+			String[] objects = account.getPlayerInventory().getItemAccessor(account.getOnlinePlayerInstance())
+					.add(lvl.levelUpRewardDefId, lvl.levelUpRewardQuantity);
 			if (account.getOnlinePlayerInstance() != null) {
 				String objID = objects[0];
 

@@ -496,6 +496,9 @@ public class ResourceCollectionModule extends InteractionModule {
 					info.reward = reward;
 					return info;
 				}
+				if (reward.referencedTableId != null) {
+					return getLootReward(reward.referencedTableId);
+				}
 			}
 		}
 		return null;
@@ -511,9 +514,9 @@ public class ResourceCollectionModule extends InteractionModule {
 	 */
 	public static void giveLootReward(Player player, String lootTableId, int giftType, int sourceDefID) {
 		LootInfo info = getLootReward(lootTableId);
-		LootReward reward = info.reward;
-		int count = info.count;
-		if (reward != null) {
+		if (info != null) {
+			LootReward reward = info.reward;
+			int count = info.count;
 			String[] ids = player.account.getPlayerInventory().getItemAccessor(player)
 					.add(Integer.parseInt(reward.itemId), count);
 
@@ -550,10 +553,10 @@ public class ResourceCollectionModule extends InteractionModule {
 				player.client.sendPacket("%xt%gp%-1%1%" + giftID + "%" + count + "%");
 				break;
 			}
-		}
-		if (reward.referencedTableId != null) {
-			// Give table
-			giveLootReward(player, reward.referencedTableId, giftType, sourceDefID);
+			if (reward.referencedTableId != null) {
+				// Give table
+				giveLootReward(player, reward.referencedTableId, giftType, sourceDefID);
+			}
 		}
 	}
 
