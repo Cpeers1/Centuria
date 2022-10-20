@@ -282,6 +282,8 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				// parse query
 				HashMap<String, String> query = new HashMap<String, String>();
 				for (String querySegment : getRequest().query.split("&")) {
+					if (querySegment.isEmpty())
+						continue;
 					String key = querySegment.substring(0, querySegment.indexOf("="));
 					String value = querySegment.substring(querySegment.indexOf("=") + 1);
 					query.put(key, value);
@@ -345,6 +347,8 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				// parse query
 				HashMap<String, String> query = new HashMap<String, String>();
 				for (String querySegment : getRequest().query.split("&")) {
+					if (querySegment.isEmpty())
+						continue;
 					String key = querySegment.substring(0, querySegment.indexOf("="));
 					String value = querySegment.substring(querySegment.indexOf("=") + 1);
 					query.put(key, value);

@@ -298,40 +298,8 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 	@Override
 	public LevelInfo getLevel() {
-		// TODO Auto-generated method stub
-
 		if (level == null)
-			level = new LevelInfo() {
-
-				@Override
-				public boolean isLevelAvailable() {
-					return false;
-				}
-
-				@Override
-				public int getLevel() {
-					return -1;
-				}
-
-				@Override
-				public int getTotalXP() {
-					return -1;
-				}
-
-				@Override
-				public int getCurrentXP() {
-					return -1;
-				}
-
-				@Override
-				public int getLevelupXPCount() {
-					return -1;
-				}
-
-				@Override
-				public void addXP(int xp) {
-				}
-			};
+			level = new InventoryBasedlevelInfo(this);
 
 		return level;
 	}

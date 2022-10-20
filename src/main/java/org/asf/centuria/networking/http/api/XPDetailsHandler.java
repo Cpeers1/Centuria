@@ -67,7 +67,7 @@ public class XPDetailsHandler extends HttpUploadProcessor {
 					cLv.addProperty("level", acc.getLevel().getCurrentXP());
 					cLv.addProperty("required", acc.getLevel().getLevelupXPCount());
 					cLv.addProperty("xp", acc.getLevel().getCurrentXP());
-					lvD.add("current_level", lvD);
+					lvD.add("current_level", cLv);
 					lvD.addProperty("total_xp", acc.getLevel().getTotalXP());
 					lvD.addProperty("uuid", uuid);
 					found.add(lvD);
