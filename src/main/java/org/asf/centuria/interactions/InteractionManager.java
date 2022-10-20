@@ -13,7 +13,7 @@ import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.groupobjects.GroupObject;
 import org.asf.centuria.interactions.groupobjects.spawnbehaviourproviders.FallbackSpawnBehaviour;
 import org.asf.centuria.interactions.groupobjects.spawnbehaviourproviders.ISpawnBehaviourProvider;
-import org.asf.centuria.interactions.groupobjects.spawnbehaviourproviders.RandomisedSpawnBehaviour;
+import org.asf.centuria.interactions.groupobjects.spawnbehaviourproviders.RandomizedSpawnBehaviour;
 import org.asf.centuria.interactions.modules.InspirationCollectionModule;
 import org.asf.centuria.interactions.modules.InteractionModule;
 import org.asf.centuria.interactions.modules.QuestManager;
@@ -38,7 +38,7 @@ public class InteractionManager {
 
 		// Spawn behaviours
 		spawnBehaviours.add(new FallbackSpawnBehaviour());
-		spawnBehaviours.add(new RandomisedSpawnBehaviour());
+		spawnBehaviours.add(new RandomizedSpawnBehaviour());
 	}
 
 	/**
@@ -329,7 +329,7 @@ public class InteractionManager {
 					// Give table
 					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
 							"Running command: 41 (give loot), GIVE TABLE " + state.params[0]);
-					ResourceCollectionModule.giveLootReward(plr, state.params[0], object.primaryObjectInfo.defId);
+					ResourceCollectionModule.giveLootReward(plr, state.params[0], 2, object.primaryObjectInfo.defId);
 					break;
 				}
 				case "12": {

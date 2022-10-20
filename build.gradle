@@ -88,6 +88,8 @@ dependencies {
 	
 	implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
 	testImplementation group: 'org.slf4j', name: 'slf4j-nop', version: '1.7.36'
+	
+	implementation group: 'net.objecthunter', name: 'exp4j', version: '0.4.8'
 }
 
 project.configurations.implementation.canBeResolved = true

@@ -19,6 +19,7 @@ import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.modules.resourcecollection.ResourceDefinition;
 import org.asf.centuria.interactions.modules.resourcecollection.ResourceType;
 import org.asf.centuria.interactions.modules.resourcecollection.rewards.HarvestReward;
+import org.asf.centuria.interactions.modules.resourcecollection.rewards.LootInfo;
 import org.asf.centuria.interactions.modules.resourcecollection.rewards.LootReward;
 import org.asf.centuria.interactions.modules.resourcecollection.tables.HarvestTable;
 import org.asf.centuria.interactions.modules.resourcecollection.tables.LootTable;
@@ -410,7 +411,7 @@ public class ResourceCollectionModule extends InteractionModule {
 					return 0; // Cannot loot yet
 
 				// Give reward
-				giveLootReward(player, Integer.toString(def.lootTableId), obj.primaryObjectInfo.defId);
+				giveLootReward(player, Integer.toString(def.lootTableId), 2, obj.primaryObjectInfo.defId);
 
 				// Set unlocked and timestamp
 				player.account.getPlayerInventory().getInteractionMemory().unlocked(player.levelID, id);
@@ -468,7 +469,13 @@ public class ResourceCollectionModule extends InteractionModule {
 		return -1;
 	}
 
-	public static void giveLootReward(Player player, String lootTableId, int sourceDefID) {
+	/**
+	 * Selects loot from a loot table
+	 * 
+	 * @param lootTableId Table to select loot from
+	 * @return LootInfo object or null
+	 */
+	public static LootInfo getLootReward(String lootTableId) {
 		LootTable table = lootTables.get(lootTableId);
 		if (table != null) {
 			// Find reward
@@ -484,47 +491,69 @@ public class ResourceCollectionModule extends InteractionModule {
 					count = rnd.nextInt(reward.maxCount + 1);
 
 				if (reward.itemId != null) {
-					String[] ids = player.account.getPlayerInventory().getItemAccessor(player)
-							.add(Integer.parseInt(reward.itemId), count);
-
-					// Send gift push popups
-					for (String objID : ids) {
-						// Send gift object
-						JsonObject gift = new JsonObject();
-						gift.addProperty("fromType", 2);
-						gift.addProperty("redeemedItemIdsExpectedCount", 0);
-						gift.addProperty("giftItemDefId", Integer.parseInt(reward.itemId));
-						gift.addProperty("count", count);
-						gift.addProperty("giftItemType",
-								player.account.getPlayerInventory().getAccessor().getInventoryIDOfItem(objID));
-						gift.addProperty("fromId", sourceDefID);
-						gift.addProperty("uuid", objID);
-
-						// Send object
-						JsonObject components = new JsonObject();
-						components.add("Gift", gift);
-
-						// Build object
-						String giftID = UUID.randomUUID().toString();
-						JsonObject obj = new JsonObject();
-						obj.add("components", components);
-						obj.addProperty("id", giftID);
-						obj.addProperty("type", 302);
-						JsonArray update = new JsonArray();
-						update.add(obj);
-						InventoryItemPacket pkt = new InventoryItemPacket();
-						pkt.item = update;
-						player.client.sendPacket(pkt);
-
-						// Send gift-push packet
-						player.client.sendPacket("%xt%gp%-1%1%" + giftID + "%" + count + "%");
-					}
-				}
-				if (reward.referencedTableId != null) {
-					// Give table
-					giveLootReward(player, reward.referencedTableId, sourceDefID);
+					LootInfo info = new LootInfo();
+					info.count = count;
+					info.reward = reward;
+					return info;
 				}
 			}
+		}
+		return null;
+	}
+
+	/**
+	 * Gives loot to a player
+	 * 
+	 * @param player      Player to give loot to
+	 * @param lootTableId Loot table
+	 * @param giftType    Gift type number
+	 * @param sourceDefID Source object defID
+	 */
+	public static void giveLootReward(Player player, String lootTableId, int giftType, int sourceDefID) {
+		LootInfo info = getLootReward(lootTableId);
+		LootReward reward = info.reward;
+		int count = info.count;
+		if (reward != null) {
+			String[] ids = player.account.getPlayerInventory().getItemAccessor(player)
+					.add(Integer.parseInt(reward.itemId), count);
+
+			// Send gift push popups
+			for (String objID : ids) {
+				// Send gift object
+				JsonObject gift = new JsonObject();
+				gift.addProperty("fromType", giftType);
+				gift.addProperty("redeemedItemIdsExpectedCount", 0);
+				gift.addProperty("giftItemDefId", Integer.parseInt(reward.itemId));
+				gift.addProperty("count", count);
+				gift.addProperty("giftItemType",
+						player.account.getPlayerInventory().getAccessor().getInventoryIDOfItem(objID));
+				gift.addProperty("fromId", sourceDefID);
+				gift.addProperty("uuid", objID);
+
+				// Send object
+				JsonObject components = new JsonObject();
+				components.add("Gift", gift);
+
+				// Build object
+				String giftID = UUID.randomUUID().toString();
+				JsonObject obj = new JsonObject();
+				obj.add("components", components);
+				obj.addProperty("id", giftID);
+				obj.addProperty("type", 302);
+				JsonArray update = new JsonArray();
+				update.add(obj);
+				InventoryItemPacket pkt = new InventoryItemPacket();
+				pkt.item = update;
+				player.client.sendPacket(pkt);
+
+				// Send gift-push packet
+				player.client.sendPacket("%xt%gp%-1%1%" + giftID + "%" + count + "%");
+				break;
+			}
+		}
+		if (reward.referencedTableId != null) {
+			// Give table
+			giveLootReward(player, reward.referencedTableId, giftType, sourceDefID);
 		}
 	}
 

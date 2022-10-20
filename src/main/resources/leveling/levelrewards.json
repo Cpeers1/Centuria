@@ -1,0 +1,11 @@
+{
+	"__NOTE__": "This is unfinished",
+	
+	"fallbackRewards": [
+		{
+			"itemDefId": 2327,
+			"quantityEval": "25 + ((level - 1) * 5)",
+			"weight": 10
+		}
+	]
+}

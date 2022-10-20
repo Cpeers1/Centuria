@@ -106,6 +106,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			}
 		}
 
+		// XP init
+		if (plr.account.getLevel().isLevelAvailable() && !plr.account.isPlayerNew())
+			plr.account.getLevel().onWorldJoin(plr);
+
 		// Send to tutorial if new
 		if (plr.account.isPlayerNew()) {
 			// Tutorial spawn

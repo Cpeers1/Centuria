@@ -1,5 +1,7 @@
 package org.asf.centuria.accounts;
 
+import org.asf.centuria.entities.players.Player;
+
 public abstract class LevelInfo {
 
 	/**
@@ -43,5 +45,12 @@ public abstract class LevelInfo {
 	 * @param xp XP to give
 	 */
 	public abstract void addXP(int xp);
+
+	/**
+	 * Called to handle world join
+	 * 
+	 * @param player Player that joined the world
+	 */
+	public abstract void onWorldJoin(Player player);
 
 }
