@@ -29,7 +29,7 @@
 		{
 			"xp": 150,
 			"conditions": [
-				"type:mod"
+				"type:bodymod"
 			]
 		},
 		{
@@ -140,6 +140,37 @@
 	"levelevents.enigmacreated": [
 		{
 			"xp": 450
+		}
+	],
+	"levelevents.waystones": [
+		{
+			"xp": 140
+		}
+	],
+	"levelevents.digspots": [
+		{
+			"xp": 30,
+			"conditions": [
+				"rarity:common"
+			]
+		},
+		{
+			"xp": 45,
+			"conditions": [
+				"rarity:cool"
+			]
+		},		
+		{
+			"xp": 80,
+			"conditions": [
+				"rarity:rare"
+			]
+		},		
+		{
+			"xp": 120,
+			"conditions": [
+				"rarity:epic"
+			]
 		}
 	],
 	"levelevents.chests": [

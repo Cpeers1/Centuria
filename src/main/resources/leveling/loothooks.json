@@ -1,4 +1,18 @@
 {
+	"15799": [
+		{
+			"__NOTE__": "Dig spots",
+			"event": "levelevents.digspots",
+			"tags": []
+		}
+	],
+	"15798": [
+		{
+			"__NOTE__": "Waystones",
+			"event": "levelevents.waystones",
+			"tags": []
+		}
+	],
 	"7162": [
 		{
 			"__NOTE__": "Chest: basic",

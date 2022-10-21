@@ -478,33 +478,7 @@ public class ResourceCollectionModule extends InteractionModule {
 						player.account.getPlayerInventory().getInteractionMemory().harvested(player.levelID, id);
 						player.account.getPlayerInventory().getInteractionMemory().saveTo(player.client);
 						player.respawnItems.put(id, (long) (System.currentTimeMillis() + (def.respawnSeconds * 1000)));
-
-						// Find map name
-						String map = "unknown";
-						switch (player.levelID) {
-						case 820:
-							map = "cityfera";
-							break;
-						case 2364:
-							map = "bloodtundra";
-							break;
-						case 9687:
-							map = "lakeroot";
-							break;
-						case 2147:
-							map = "mugmyre";
-							break;
-						case 1689:
-							map = "sanctuary";
-							break;
-						case 3273:
-							map = "sunkenthicket";
-							break;
-						case 1825:
-							map = "shatteredbay";
-							break;
-						}
-						ev.tags.add("map:" + map);
+						ev.tags.add("map:" + manName(player));
 
 						// Dispatch XP event
 						LevelEventBus.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
@@ -684,40 +658,61 @@ public class ResourceCollectionModule extends InteractionModule {
 						ev.tags.addAll(event.tags);
 
 						// Add tags
+						int rarity = ItemAccessor.getItemRarity(reward.itemId);
+						ev.tags.add("rarity:"
+								+ (rarity == 0 ? "common" : (rarity == 1 ? "cool" : (rarity == 2 ? "rare" : "epic"))));
 						ev.tags.add("loottable:" + lootTableId);
 						ev.tags.add("itemdefid:" + reward.itemId);
 						ev.tags.add("itemcount:" + count);
-
-						// Find map name
-						String map = "unknown";
-						switch (player.levelID) {
-						case 820:
-							map = "cityfera";
-							break;
-						case 2364:
-							map = "bloodtundra";
-							break;
-						case 9687:
-							map = "lakeroot";
-							break;
-						case 2147:
-							map = "mugmyre";
-							break;
-						case 1689:
-							map = "sanctuary";
-							break;
-						case 3273:
-							map = "sunkenthicket";
-							break;
-						case 1825:
-							map = "shatteredbay";
-							break;
-						}
-						ev.tags.add("map:" + map);
+						ev.tags.add("map:" + manName(player));
 
 						// Dispatch event
 						LevelEventBus.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
 					});
+				}
+
+				// Chest hook
+				LootTable table = lootTables.get(lootTableId);
+				if (table != null) {
+					// I know, not the best, but idfk how to identify what chest type a chest is
+					// except by checking the object name
+					if (table.objectName.startsWith("TreasureChest/")) {
+						EventInfo ev = new EventInfo();
+						ev.event = "levelevents.chests";
+
+						// Add tags
+						int rarity = ItemAccessor.getItemRarity(reward.itemId);
+						ev.tags.add("rarity:"
+								+ (rarity == 0 ? "common" : (rarity == 1 ? "cool" : (rarity == 2 ? "rare" : "epic"))));
+						ev.tags.add("loottable:" + lootTableId);
+						ev.tags.add("itemdefid:" + reward.itemId);
+						ev.tags.add("itemcount:" + count);
+						ev.tags.add("map:" + manName(player));
+
+						// Its a treasure chest, lets see which type
+						if (table.objectName.contains("/Bronze")) {
+							// Bronze
+							ev.tags.add("type:bronze");
+
+							// Dispatch event
+							LevelEventBus
+									.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
+						} else if (table.objectName.contains("/Silver")) {
+							// Silver
+							ev.tags.add("type:silver");
+
+							// Dispatch event
+							LevelEventBus
+									.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
+						} else if (table.objectName.contains("/Gold")) {
+							// Gold
+							ev.tags.add("type:gold");
+
+							// Dispatch event
+							LevelEventBus
+									.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
+						}
+					}
 				}
 			} else {
 				// Level hooks
@@ -730,33 +725,7 @@ public class ResourceCollectionModule extends InteractionModule {
 
 						// Add tags
 						ev.tags.add("loottable:" + lootTableId);
-
-						// Find map name
-						String map = "unknown";
-						switch (player.levelID) {
-						case 820:
-							map = "cityfera";
-							break;
-						case 2364:
-							map = "bloodtundra";
-							break;
-						case 9687:
-							map = "lakeroot";
-							break;
-						case 2147:
-							map = "mugmyre";
-							break;
-						case 1689:
-							map = "sanctuary";
-							break;
-						case 3273:
-							map = "sunkenthicket";
-							break;
-						case 1825:
-							map = "shatteredbay";
-							break;
-						}
-						ev.tags.add("map:" + map);
+						ev.tags.add("map:" + manName(player));
 
 						// Dispatch event
 						LevelEventBus.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
@@ -768,6 +737,36 @@ public class ResourceCollectionModule extends InteractionModule {
 				giveLootReward(player, reward.referencedTableId, giftType, sourceDefID);
 			}
 		}
+	}
+
+	// Lets not copy/paste like a madman
+	private static String manName(Player player) {
+		// Find map name
+		String map = "unknown";
+		switch (player.levelID) {
+		case 820:
+			map = "cityfera";
+			break;
+		case 2364:
+			map = "bloodtundra";
+			break;
+		case 9687:
+			map = "lakeroot";
+			break;
+		case 2147:
+			map = "mugmyre";
+			break;
+		case 1689:
+			map = "sanctuary";
+			break;
+		case 3273:
+			map = "sunkenthicket";
+			break;
+		case 1825:
+			map = "shatteredbay";
+			break;
+		}
+		return map;
 	}
 
 	@Override
