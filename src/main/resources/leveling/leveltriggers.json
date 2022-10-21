@@ -19,34 +19,6 @@
 			]
 		}
 	],
-	"levelevents.crafting": [
-		{
-			"xp": 5,
-			"conditions": [
-				"type:dye",
-				"rarity:common"
-			]
-		},
-		{
-			"xp": 5,
-			"conditions": [
-				"rarity:common"
-			]
-		},
-		{
-			"xp": 20,
-			"conditions": [
-				"type:dye",
-				"rarity:cool"
-			]
-		},
-		{
-			"xp": 20,
-			"conditions": [
-				"rarity:cool"
-			]
-		}
-	],
 	"levelevents.purchases": [
 		{
 			"xp": 200,

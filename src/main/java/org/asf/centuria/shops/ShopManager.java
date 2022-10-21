@@ -322,15 +322,31 @@ public class ShopManager {
 			items.add(id);
 		});
 
+		// Enigma items
+		for (String enigma : shop.enigmas) {
+			// Add enigma if present in the inventory
+			if (player.getPlayerInventory().getAccessor().hasInventoryObject("7", Integer.parseInt(enigma))) {
+				JsonObject obj = player.getPlayerInventory().getAccessor().findInventoryObject("7",
+						Integer.parseInt(enigma));
+
+				// Check if its been unraveled
+				JsonObject data = obj.get("components").getAsJsonObject().get("Enigma").getAsJsonObject();
+				if (data.get("activated").getAsBoolean())
+					// Add it
+					items.add(Integer.toString(player.getPlayerInventory().getInspirationAccessor()
+							.getEnigmaResult(Integer.parseInt(enigma))));
+			}
+		}
+
 		return items.toArray(t -> new String[t]);
 	}
 
 	/**
-	 * Retrieves the enigma items a player can get for a specific shop
+	 * Retrieves the inactivate enigma items a player has
 	 * 
 	 * @param player Player to create the list for
 	 * @param shopId Shop content defID
-	 * @return Array of items in the shop
+	 * @return Array of enigmas to unravel
 	 */
 	public static String[] getEnigmaItems(CenturiaAccount player, String shopId) {
 		if (!shops.containsKey(shopId))
@@ -343,9 +359,15 @@ public class ShopManager {
 		ArrayList<String> items = new ArrayList<String>();
 		shop.enigmas.forEach(enigma -> {
 			// Add enigma if present in the inventory
-			if (player.getPlayerInventory().getAccessor().hasInventoryObject("7", Integer.parseInt(enigma)))
-				items.add(Integer.toString(player.getPlayerInventory().getInspirationAccessor()
-						.getEnigmaResult(Integer.parseInt(enigma))));
+			if (player.getPlayerInventory().getAccessor().hasInventoryObject("7", Integer.parseInt(enigma))) {
+				JsonObject obj = player.getPlayerInventory().getAccessor().findInventoryObject("7",
+						Integer.parseInt(enigma));
+
+				// Check if its been unraveled
+				JsonObject data = obj.get("components").getAsJsonObject().get("Enigma").getAsJsonObject();
+				if (!data.get("activated").getAsBoolean())
+					items.add(obj.get("id").getAsString());
+			}
 		});
 
 		return items.toArray(t -> new String[t]);
