@@ -608,6 +608,7 @@ public class ResourceCollectionModule extends InteractionModule {
 	 */
 	public static void giveLootReward(Player player, String lootTableId, int giftType, int sourceDefID) {
 		String originalTableId = lootTableId;
+		boolean rewarded = false;
 		while (true) {
 			LootInfo info = getLootReward(lootTableId);
 			if (info != null) {
@@ -673,10 +674,13 @@ public class ResourceCollectionModule extends InteractionModule {
 							LevelEventBus
 									.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
 						});
+						if (!rewarded && originalTableId.equals(lootTableF))
+							rewarded = true;
 					}
 
 					// Hooks for the original table id
-					if (levelHooks.containsKey(originalTableId)) {
+					if (levelHooks.containsKey(originalTableId) && !rewarded) {
+						rewarded = true;
 						levelHooks.get(originalTableId).forEach(event -> {
 							// Build event object
 							EventInfo ev = new EventInfo();
