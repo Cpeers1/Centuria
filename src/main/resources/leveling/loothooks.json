@@ -30,5 +30,170 @@
 				"type:lore"
 			]
 		}
+	],
+	"7324": [
+		{
+			"__NOTE__": "Quest: Prove Your Fishing Skills",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"7984": [
+		{
+			"__NOTE__": "Quest: Hide and Seek",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
+	],
+	"7979": [
+		{
+			"__NOTE__": "Quest: Building Bridges",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore",
+				"type:lorefollowup"
+			]
+		}
+	],
+	"7325": [
+		{
+			"__NOTE__": "Quest: Scratch My Back",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"8536": [
+		{
+			"__NOTE__": "Quest: Serial Chiller",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore",
+				"type:lorefollowup"
+			]
+		}
+	],
+	"8539": [
+		{
+			"__NOTE__": "Quest: Serial Chiller",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:secret"
+			]
+		}
+	],
+	"7982": [
+		{
+			"__NOTE__": "Quest: Over and Out",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"7326": [
+		{
+			"__NOTE__": "Quest: Detective Kobold",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
+	],
+	"8185": [
+		{
+			"__NOTE__": "Quest: Serpentine",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
+	],
+	"7980": [
+		{
+			"__NOTE__": "Quest: Candlelight Vigil",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"7327": [
+		{
+			"__NOTE__": "Quest: Suckered In",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"8537": [
+		{
+			"__NOTE__": "Quest: Lost and Found",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
+	],
+	"7983": [
+		{
+			"__NOTE__": "Quest: Stray Puppies",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"7330": [
+		{
+			"__NOTE__": "Quest: Perfect Party",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"8186": [
+		{
+			"__NOTE__": "Quest: Beatrice\u0027s Rawbone Stew",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
+	],
+	"7978": [
+		{
+			"__NOTE__": "Quest: Can I Axe You a Favor",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"7328": [
+		{
+			"__NOTE__": "Quest: Statue of Limitations",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
+	],
+	"8724": [
+		{
+			"__NOTE__": "Quest: Blood For Blood",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore",
+				"type:lorefollowup"
+			]
+		}
 	]
 }
