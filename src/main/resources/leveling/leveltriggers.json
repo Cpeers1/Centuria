@@ -46,41 +46,6 @@
 			]
 		},
 		{
-			"xp": 40,
-			"endHere": false,
-			"conditions": [
-				"shop:ferafashions"
-			]
-		},
-		{
-			"xp": 50,
-			"endHere": false,
-			"conditions": [
-				"shop:todyefor"
-			]
-		},
-		{
-			"xp": 65,
-			"endHere": false,
-			"conditions": [
-				"shop:twiglasworkshop"
-			]
-		},
-		{
-			"xp": 20,
-			"endHere": false,
-			"conditions": [
-				"shop:bellamysoutpost"
-			]
-		},
-		{
-			"xp": 40,
-			"endHere": false,
-			"conditions": [
-				"shop:reputablegoods"
-			]
-		},
-		{
 			"xp": 150,
 			"endHere": false,
 			"conditions": [
@@ -102,7 +67,7 @@
 			]
 		},
 		{
-			"xp": 20,
+			"xp": 40,
 			"conditions": [
 				"rarity:cool"
 			]
