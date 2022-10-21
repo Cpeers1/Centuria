@@ -1,0 +1,259 @@
+{
+	"levelevents.harvest": [
+		{
+			"xp": 10,
+			"conditions": [
+				"rarity:common"
+			]
+		},
+		{
+			"xp": 15,
+			"conditions": [
+				"rarity:cool"
+			]
+		},		
+		{
+			"xp": 30,
+			"conditions": [
+				"rarity:rare"
+			]
+		}
+	],
+	"levelevents.crafting": [
+		{
+			"xp": 5,
+			"conditions": [
+				"type:dye",
+				"rarity:common"
+			]
+		},
+		{
+			"xp": 5,
+			"conditions": [
+				"rarity:common"
+			]
+		},
+		{
+			"xp": 20,
+			"conditions": [
+				"type:dye",
+				"rarity:cool"
+			]
+		},
+		{
+			"xp": 20,
+			"conditions": [
+				"rarity:cool"
+			]
+		}
+	],
+	"levelevents.purchases": [
+		{
+			"xp": 200,
+			"conditions": [
+				"type:avatar"
+			]
+		},
+		{
+			"xp": 150,
+			"conditions": [
+				"type:mod"
+			]
+		},
+		{
+			"xp": 200,
+			"conditions": [
+				"type:sanctuary"
+			]
+		},
+		{
+			"xp": 80,
+			"endHere": false,
+			"conditions": [
+				"shop:astrale"
+			]
+		},
+		{
+			"xp": 40,
+			"endHere": false,
+			"conditions": [
+				"shop:ferafashions"
+			]
+		},
+		{
+			"xp": 50,
+			"endHere": false,
+			"conditions": [
+				"shop:todyefor"
+			]
+		},
+		{
+			"xp": 65,
+			"endHere": false,
+			"conditions": [
+				"shop:twiglasworkshop"
+			]
+		},
+		{
+			"xp": 20,
+			"endHere": false,
+			"conditions": [
+				"shop:bellamysoutpost"
+			]
+		},
+		{
+			"xp": 40,
+			"endHere": false,
+			"conditions": [
+				"shop:reputablegoods"
+			]
+		},
+		{
+			"xp": 150,
+			"endHere": false,
+			"conditions": [
+				"eureka:true"
+			]
+		},
+		{
+			"xp": 5,
+			"conditions": [
+				"type:dye",
+				"rarity:common"
+			]
+		},
+		{
+			"xp": 20,
+			"conditions": [
+				"type:dye",
+				"rarity:cool"
+			]
+		},
+		{
+			"xp": 20,
+			"conditions": [
+				"rarity:cool"
+			]
+		},
+		{
+			"xp": 5,
+			"conditions": [
+				"rarity:common"
+			]
+		}
+	],
+	"levelevents.inspirations": [
+		{
+			"xp": 55,
+			"conditions": [
+				"map:lakeroot"
+			]
+		},
+		{
+			"xp": 90,
+			"conditions": [
+				"map:bloodtundra"
+			]
+		},
+		{
+			"xp": 50,
+			"conditions": [
+				"map:mugmyre"
+			]
+		},
+		{
+			"xp": 40
+		}
+	],
+	"levelevents.enigmacreated": [
+		{
+			"xp": 450
+		}
+	],
+	"levelevents.chests": [
+		{
+			"xp": 10,
+			"conditions": [
+				"type:basic"
+			]
+		},
+		{
+			"xp": 50,
+			"conditions": [
+				"type:bronze"
+			]
+		},
+		{
+			"xp": 80,
+			"conditions": [
+				"type:silver"
+			]
+		},
+		{
+			"xp": 150,
+			"conditions": [
+				"type:gold"
+			]
+		}
+	],
+	"levelevents.quests": [
+		{
+			"xp": 120,
+			"conditions": [
+				"type:filler",
+				"map:bloodtundra"
+			]
+		},
+		{
+			"xp": 100,
+			"conditions": [
+				"type:filler"
+			]
+		},
+		{
+			"xp": 320,
+			"conditions": [
+				"type:lorefollowup",
+				"map:bloodtundra"
+			]
+		},
+		{
+			"xp": 250,
+			"conditions": [
+				"type:lore",
+				"map:bloodtundra"
+			]
+		},
+		{
+			"xp": 300,
+			"conditions": [
+				"type:lorefollowup",
+				"map:lakeroot"
+			]
+		},
+		{
+			"xp": 230,
+			"conditions": [
+				"type:lore",
+				"map:lakeroot"
+			]
+		},
+		{
+			"xp": 310,
+			"conditions": [
+				"type:lorefollowup",
+				"map:mugmyre"
+			]
+		},
+		{
+			"xp": 220,
+			"conditions": [
+				"type:lore",
+				"map:mugmyre"
+			]
+		},
+		{
+			"xp": 100
+		}
+	]
+}

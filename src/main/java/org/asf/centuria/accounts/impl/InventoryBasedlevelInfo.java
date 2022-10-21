@@ -9,11 +9,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Stream;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.LevelInfo;
+import org.asf.centuria.accounts.impl.leveltypes.LevelReward;
+import org.asf.centuria.accounts.impl.leveltypes.LevelRewards;
+import org.asf.centuria.accounts.impl.leveltypes.RewardDefinition;
+import org.asf.centuria.accounts.impl.leveltypes.TriggerInfo;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.levelevents.LevelEventBus;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.levels.XpUpdatePacket;
@@ -33,52 +40,6 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 	private CenturiaAccount account;
 	private static Random rnd = new Random();
 
-	// Reward definitions
-	private static class RewardDefinition {
-		// Basics
-		public int weight;
-		public int itemQuantity;
-		public int itemDefId;
-
-		// Eval-based
-		public String quantityEval;
-		public String weightEval;
-
-		// Randomized
-		public int quantityMin = -1;
-		public int quantityMax = -1;
-
-		public RewardDefinition parse(JsonObject obj) {
-			itemDefId = obj.get("itemDefId").getAsInt();
-			if (obj.has("weight"))
-				weight = obj.get("weight").getAsInt();
-			if (obj.has("itemQuantity"))
-				itemQuantity = obj.get("itemQuantity").getAsInt();
-			if (obj.has("quantityMin"))
-				quantityMin = obj.get("quantityMin").getAsInt();
-			if (obj.has("quantityMax"))
-				quantityMax = obj.get("quantityMax").getAsInt();
-			if (obj.has("weightEval"))
-				weightEval = obj.get("weightEval").getAsString();
-			if (obj.has("quantityEval"))
-				quantityEval = obj.get("quantityEval").getAsString();
-			return this;
-		}
-	}
-
-	private static class LevelReward {
-		public ArrayList<String> levels = new ArrayList<String>();
-		public ArrayList<RewardDefinition> rewards = new ArrayList<RewardDefinition>();
-	}
-
-	private static class LevelRewards {
-		// Level rewards
-		public ArrayList<LevelReward> rewardsForLevels = new ArrayList<LevelReward>();
-
-		// Fallback rewards
-		public ArrayList<RewardDefinition> fallbackRewards = new ArrayList<RewardDefinition>();
-	}
-
 	// Options
 	private static int maxLevel;
 	private static String levelCurveEval;
@@ -91,6 +52,7 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 				// Create config
 				Files.writeString(levelConf.toPath(),
 						"max-level=1000\n" + "rewards=resource://leveling/levelrewards.json\n"
+								+ "triggers=resource://leveling/leveltriggers.json\n"
 								+ "level-curve-eval=(100 + ((level - 1) * 25) + (totalxp / 10))\n");
 			}
 
@@ -153,6 +115,63 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 					rewards.fallbackRewards.add(new RewardDefinition().parse(ele.getAsJsonObject()));
 				}
 			}
+
+			// Load triggers
+			JsonObject triggers;
+			String triggerFile = config.getOrDefault("triggers", "resource://leveling/leveltriggers.json");
+			if (triggerFile.startsWith("resource://")) {
+				String res = triggerFile.substring("resource://".length());
+
+				// Load the resource
+				InputStream strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream(res);
+				triggers = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
+				strm.close();
+			} else {
+				triggers = JsonParser.parseString(Files.readString(Path.of(triggerFile))).getAsJsonObject();
+			}
+
+			// Register all triggers
+			triggers.keySet().forEach(eventType -> {
+				ArrayList<TriggerInfo> infos = new ArrayList<TriggerInfo>();
+				JsonArray triggerData = triggers.get(eventType).getAsJsonArray();
+				for (JsonElement ele : triggerData) {
+					JsonObject obj = ele.getAsJsonObject();
+					TriggerInfo trigger = new TriggerInfo();
+					trigger.xp = obj.get("xp").getAsInt();
+					if (obj.has("endHere"))
+						trigger.endHere = obj.get("endHere").getAsBoolean();
+					if (obj.has("conditions")) {
+						JsonArray conditions = obj.get("conditions").getAsJsonArray();
+						for (JsonElement cond : conditions)
+							trigger.conditions.add(cond.getAsString());
+					}
+					infos.add(trigger);
+				}
+				LevelEventBus.registerHandler(eventType, event -> {
+					int addedXp = 0;
+
+					// Find handler
+					for (TriggerInfo trigger : infos) {
+						// Check conditions
+						boolean match = true;
+						for (String condition : trigger.conditions) {
+							if (!Stream.of(event.getTags()).anyMatch(t -> t.equals(condition))) {
+								match = false;
+								break;
+							}
+						}
+						if (match) {
+							// Handle
+							addedXp += trigger.xp;
+							if (trigger.endHere)
+								break;
+						}
+					}
+
+					// Add xp
+					event.getPlayer().account.getLevel().addXP(addedXp);
+				});
+			});
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -259,6 +278,8 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 
 	@Override
 	public void addXP(int xp) {
+		Centuria.logger.debug(MarkerManager.getMarker("LEVELING"), "Add xp: " + xp);
+
 		// Retrieve level object
 		if (!account.getPlayerInventory().containsItem("level")) {
 			// Create object
@@ -464,6 +485,9 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 						.sendPacket("%xt%gp%-1%1%" + giftID + "%" + lvl.levelUpRewardQuantity + "%");
 			}
 
+			// Increase level
+			currentLevel++;
+
 			// Evaluate the curve
 			ExpressionBuilder builder = new ExpressionBuilder(levelCurveEval);
 			builder.variables("level", "lastlevel", "totalxp");
@@ -477,7 +501,9 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 
 			// Increase
 			totXp += levelUpCount;
-			currentLevel++;
+
+			// Log
+			Centuria.logger.debug(MarkerManager.getMarker("LEVELING"), "Level up: " + currentLevel);
 
 			if (remaining < levelUpCount || currentLevel >= maxLevel)
 				// Alright we can break, no more levels to add

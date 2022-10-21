@@ -1,0 +1,20 @@
+{
+	"7162": [
+		{
+			"__NOTE__": "Chest: basic",
+			"event": "levelevents.chests",
+			"tags": [
+				"type:basic"
+			]
+		}
+	],
+	"7981": [
+		{
+			"__NOTE__": "Quest: Hats and Hat Nots",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
+	]
+}

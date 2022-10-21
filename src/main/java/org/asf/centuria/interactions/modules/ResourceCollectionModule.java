@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import org.asf.centuria.Centuria;
+import org.asf.centuria.accounts.highlevel.ItemAccessor;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.NetworkedObjects;
@@ -18,11 +19,14 @@ import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.modules.resourcecollection.ResourceDefinition;
 import org.asf.centuria.interactions.modules.resourcecollection.ResourceType;
+import org.asf.centuria.interactions.modules.resourcecollection.levelhooks.EventInfo;
 import org.asf.centuria.interactions.modules.resourcecollection.rewards.HarvestReward;
 import org.asf.centuria.interactions.modules.resourcecollection.rewards.LootInfo;
 import org.asf.centuria.interactions.modules.resourcecollection.rewards.LootReward;
 import org.asf.centuria.interactions.modules.resourcecollection.tables.HarvestTable;
 import org.asf.centuria.interactions.modules.resourcecollection.tables.LootTable;
+import org.asf.centuria.levelevents.LevelEvent;
+import org.asf.centuria.levelevents.LevelEventBus;
 import org.asf.centuria.modules.ICenturiaModule;
 import org.asf.centuria.modules.ModuleManager;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
@@ -41,6 +45,26 @@ public class ResourceCollectionModule extends InteractionModule {
 	private static HashMap<String, ResourceDefinition> resources = new HashMap<String, ResourceDefinition>();
 	private static HashMap<String, HarvestTable> harvestTables = new HashMap<String, HarvestTable>();
 	private static HashMap<String, LootTable> lootTables = new HashMap<String, LootTable>();
+	private static HashMap<String, ArrayList<EventInfo>> levelHooks = new HashMap<String, ArrayList<EventInfo>>();
+
+	// Called to load level hooks into memory
+	private static void importLevelHooks(JsonObject data) {
+		// Load all tables
+		data.keySet().forEach(table -> {
+			// Create list
+			levelHooks.put(table, new ArrayList<EventInfo>());
+
+			// Add objects
+			JsonArray infos = data.get(table).getAsJsonArray();
+			for (JsonElement ele : infos) {
+				JsonObject eventInfo = ele.getAsJsonObject();
+				EventInfo event = new EventInfo();
+				event.event = eventInfo.get("event").getAsString();
+				eventInfo.get("tags").getAsJsonArray().forEach(t -> event.tags.add(t.getAsString()));
+				levelHooks.get(table).add(event);
+			}
+		});
+	}
 
 	// Called to load the tables into memory
 	private static void importObjectsIntoMemory(JsonObject data) {
@@ -168,8 +192,64 @@ public class ResourceCollectionModule extends InteractionModule {
 			for (ICenturiaModule module : ModuleManager.getInstance().getAllModules()) {
 				loadTransformers(module.getClass());
 			}
+
+			// Load level hooksa
+			strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("leveling/loothooks.json");
+			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
+			importLevelHooks(helper);
+			strm.close();
+
+			// Load module transformers
+			for (ICenturiaModule module : ModuleManager.getInstance().getAllModules()) {
+				loadHooks(module.getClass());
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	private static void loadHooks(Class<?> cls) {
+		URL source = cls.getProtectionDomain().getCodeSource().getLocation();
+
+		// Generate a base URL
+		String baseURL = "";
+		String fileName = "";
+		try {
+			File sourceFile = new File(source.toURI());
+			fileName = sourceFile.getName();
+			if (sourceFile.isDirectory()) {
+				baseURL = source + (source.toString().endsWith("/") ? "" : "/");
+			} else {
+				baseURL = "jar:" + source + "!/";
+			}
+		} catch (Exception e) {
+			return;
+		}
+
+		try {
+			// Find the transformer document
+			InputStream strm = new URL(baseURL + "leveling/index.json").openStream();
+			JsonArray index = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonArray();
+			strm.close();
+
+			// Load all transformers
+			for (JsonElement ele : index) {
+				try {
+					// Find the transformer document
+					strm = new URL(baseURL + "leveling/" + ele.getAsString()).openStream();
+					JsonObject transformer = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8"))
+							.getAsJsonObject();
+					strm.close();
+
+					// Load transformer
+					importLevelHooks(transformer);
+				} catch (Exception e) {
+					Centuria.logger.error("Transformer failed to load: " + ele.getAsString() + " (" + fileName + "): "
+							+ e.getClass().getSimpleName() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
+					e.printStackTrace();
+				}
+			}
+		} catch (Exception e) {
 		}
 	}
 
@@ -370,6 +450,11 @@ public class ResourceCollectionModule extends InteractionModule {
 						table.rewards.forEach(t -> {
 							options.put(t, t.weight);
 						});
+
+						// XP info
+						EventInfo ev = new EventInfo();
+						ev.event = "levelevents.harvest";
+
 						HarvestReward reward = RandomSelectorUtil.selectWeighted(options);
 						if (reward != null) {
 							// Give reward
@@ -378,12 +463,51 @@ public class ResourceCollectionModule extends InteractionModule {
 								count = rnd.nextInt(reward.maxCount + 1);
 							player.account.getPlayerInventory().getItemAccessor(player)
 									.add(Integer.parseInt(reward.itemId), count);
+
+							// Add tags
+							ev.tags.add("itemdefid:" + reward.itemId);
+							ev.tags.add("itemcount:" + count);
+
+							// Add item rarity
+							int rarity = ItemAccessor.getItemRarity(reward.itemId);
+							ev.tags.add("rarity:" + (rarity == 0 ? "common"
+									: (rarity == 1 ? "cool" : (rarity == 2 ? "rare" : "epic"))));
 						}
 
 						// Set harvest count and timestamp
 						player.account.getPlayerInventory().getInteractionMemory().harvested(player.levelID, id);
 						player.account.getPlayerInventory().getInteractionMemory().saveTo(player.client);
 						player.respawnItems.put(id, (long) (System.currentTimeMillis() + (def.respawnSeconds * 1000)));
+
+						// Find map name
+						String map = "unknown";
+						switch (player.levelID) {
+						case 820:
+							map = "cityfera";
+							break;
+						case 2364:
+							map = "bloodtundra";
+							break;
+						case 9687:
+							map = "lakeroot";
+							break;
+						case 2147:
+							map = "mugmyre";
+							break;
+						case 1689:
+							map = "sanctuary";
+							break;
+						case 3273:
+							map = "sunkenthicket";
+							break;
+						case 1825:
+							map = "shatteredbay";
+							break;
+						}
+						ev.tags.add("map:" + map);
+
+						// Dispatch XP event
+						LevelEventBus.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
 						return true;
 					}
 				}
@@ -485,20 +609,16 @@ public class ResourceCollectionModule extends InteractionModule {
 			});
 			LootReward reward = RandomSelectorUtil.selectWeighted(options);
 			if (reward != null) {
-				// Give reward
-				int count = rnd.nextInt(reward.maxCount + 1);
-				while (count < reward.minCount)
-					count = rnd.nextInt(reward.maxCount + 1);
-
+				// Retrieve reward
+				LootInfo info = new LootInfo();
 				if (reward.itemId != null) {
-					LootInfo info = new LootInfo();
+					int count = rnd.nextInt(reward.maxCount + 1);
+					while (count < reward.minCount)
+						count = rnd.nextInt(reward.maxCount + 1);
 					info.count = count;
-					info.reward = reward;
-					return info;
 				}
-				if (reward.referencedTableId != null) {
-					return getLootReward(reward.referencedTableId);
-				}
+				info.reward = reward;
+				return info;
 			}
 		}
 		return null;
@@ -516,42 +636,132 @@ public class ResourceCollectionModule extends InteractionModule {
 		LootInfo info = getLootReward(lootTableId);
 		if (info != null) {
 			LootReward reward = info.reward;
-			int count = info.count;
-			String[] ids = player.account.getPlayerInventory().getItemAccessor(player)
-					.add(Integer.parseInt(reward.itemId), count);
+			if (reward.itemId != null) {
+				int count = info.count;
+				String[] ids = player.account.getPlayerInventory().getItemAccessor(player)
+						.add(Integer.parseInt(reward.itemId), count);
 
-			// Send gift push popups
-			for (String objID : ids) {
-				// Send gift object
-				JsonObject gift = new JsonObject();
-				gift.addProperty("fromType", giftType);
-				gift.addProperty("redeemedItemIdsExpectedCount", 0);
-				gift.addProperty("giftItemDefId", Integer.parseInt(reward.itemId));
-				gift.addProperty("count", count);
-				gift.addProperty("giftItemType",
-						player.account.getPlayerInventory().getAccessor().getInventoryIDOfItem(objID));
-				gift.addProperty("fromId", sourceDefID);
-				gift.addProperty("uuid", objID);
+				// Send gift push popups
+				for (String objID : ids) {
+					// Send gift object
+					JsonObject gift = new JsonObject();
+					gift.addProperty("fromType", giftType);
+					gift.addProperty("redeemedItemIdsExpectedCount", 0);
+					gift.addProperty("giftItemDefId", Integer.parseInt(reward.itemId));
+					gift.addProperty("count", count);
+					gift.addProperty("giftItemType",
+							player.account.getPlayerInventory().getAccessor().getInventoryIDOfItem(objID));
+					gift.addProperty("fromId", sourceDefID);
+					gift.addProperty("uuid", objID);
 
-				// Send object
-				JsonObject components = new JsonObject();
-				components.add("Gift", gift);
+					// Send object
+					JsonObject components = new JsonObject();
+					components.add("Gift", gift);
 
-				// Build object
-				String giftID = UUID.randomUUID().toString();
-				JsonObject obj = new JsonObject();
-				obj.add("components", components);
-				obj.addProperty("id", giftID);
-				obj.addProperty("type", 302);
-				JsonArray update = new JsonArray();
-				update.add(obj);
-				InventoryItemPacket pkt = new InventoryItemPacket();
-				pkt.item = update;
-				player.client.sendPacket(pkt);
+					// Build object
+					String giftID = UUID.randomUUID().toString();
+					JsonObject obj = new JsonObject();
+					obj.add("components", components);
+					obj.addProperty("id", giftID);
+					obj.addProperty("type", 302);
+					JsonArray update = new JsonArray();
+					update.add(obj);
+					InventoryItemPacket pkt = new InventoryItemPacket();
+					pkt.item = update;
+					player.client.sendPacket(pkt);
 
-				// Send gift-push packet
-				player.client.sendPacket("%xt%gp%-1%1%" + giftID + "%" + count + "%");
-				break;
+					// Send gift-push packet
+					player.client.sendPacket("%xt%gp%-1%1%" + giftID + "%" + count + "%");
+					break;
+				}
+
+				// Level hooks
+				if (levelHooks.containsKey(lootTableId)) {
+					levelHooks.get(lootTableId).forEach(event -> {
+						// Build event object
+						EventInfo ev = new EventInfo();
+						ev.event = event.event;
+						ev.tags.addAll(event.tags);
+
+						// Add tags
+						ev.tags.add("loottable:" + lootTableId);
+						ev.tags.add("itemdefid:" + reward.itemId);
+						ev.tags.add("itemcount:" + count);
+
+						// Find map name
+						String map = "unknown";
+						switch (player.levelID) {
+						case 820:
+							map = "cityfera";
+							break;
+						case 2364:
+							map = "bloodtundra";
+							break;
+						case 9687:
+							map = "lakeroot";
+							break;
+						case 2147:
+							map = "mugmyre";
+							break;
+						case 1689:
+							map = "sanctuary";
+							break;
+						case 3273:
+							map = "sunkenthicket";
+							break;
+						case 1825:
+							map = "shatteredbay";
+							break;
+						}
+						ev.tags.add("map:" + map);
+
+						// Dispatch event
+						LevelEventBus.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
+					});
+				}
+			} else {
+				// Level hooks
+				if (levelHooks.containsKey(lootTableId)) {
+					levelHooks.get(lootTableId).forEach(event -> {
+						// Build event object
+						EventInfo ev = new EventInfo();
+						ev.event = event.event;
+						ev.tags.addAll(event.tags);
+
+						// Add tags
+						ev.tags.add("loottable:" + lootTableId);
+
+						// Find map name
+						String map = "unknown";
+						switch (player.levelID) {
+						case 820:
+							map = "cityfera";
+							break;
+						case 2364:
+							map = "bloodtundra";
+							break;
+						case 9687:
+							map = "lakeroot";
+							break;
+						case 2147:
+							map = "mugmyre";
+							break;
+						case 1689:
+							map = "sanctuary";
+							break;
+						case 3273:
+							map = "sunkenthicket";
+							break;
+						case 1825:
+							map = "shatteredbay";
+							break;
+						}
+						ev.tags.add("map:" + map);
+
+						// Dispatch event
+						LevelEventBus.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
+					});
+				}
 			}
 			if (reward.referencedTableId != null) {
 				// Give table

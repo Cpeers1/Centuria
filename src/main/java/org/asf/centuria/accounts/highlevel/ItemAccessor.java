@@ -120,6 +120,7 @@ public class ItemAccessor {
 				ItemInfo info = new ItemInfo();
 				info.inventory = itmI.get("inventory").getAsString();
 				info.objectName = itmI.get("objectName").getAsString();
+				info.rarity = itmI.get("rarity").getAsInt();
 				if (!info.inventory.equals("0"))
 					definitions.put(itemID, info);
 			});
@@ -130,6 +131,18 @@ public class ItemAccessor {
 	public ItemAccessor(PlayerInventory inventory, Player player) {
 		this.inventory = inventory;
 		this.player = player;
+	}
+
+	/**
+	 * Retrieves the rarity of a item
+	 * 
+	 * @param itemDefId Item defID
+	 * @return Rarity number, 0 = common, 1 = cool, 2 = rare, 3 = epic
+	 */
+	public static int getItemRarity(String itemDefId) {
+		if (definitions.containsKey(itemDefId))
+			return definitions.get(itemDefId).rarity;
+		return 0;
 	}
 
 	/**
