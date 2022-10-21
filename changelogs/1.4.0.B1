@@ -3,6 +3,7 @@ New features in 1.4.0.B1:
  - Locked chests
  - Dig spots
  - Waystones
+ - Leveling
 
 New commands in 1.4.0.B1:
  - giveBasicCurrency: command to give likes and star fragments in creative mode
@@ -24,3 +25,7 @@ Changes in 1.4.0.B1:
  - Changed startup log a bit
  - Partial interaction manager rework
  
+ 
+NOTE:
+All the new features are Work-In-Progress and subject to change, rewards, the leveling curve and level rewards are uninished
+and have yet to change. Please use the official Discord to give feedback in #📽・emuferal-suggestions if you have any ideas.

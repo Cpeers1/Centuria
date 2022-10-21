@@ -479,10 +479,12 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 			totXp += levelUpCount;
 			currentLevel++;
 
-			if (remaining < levelUpCount)
+			if (remaining < levelUpCount || currentLevel >= maxLevel)
 				// Alright we can break, no more levels to add
 				break;
 		}
+		if (currentLevel >= maxLevel)
+			return levelUpCount;
 		return remaining;
 	}
 
