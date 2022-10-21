@@ -7,6 +7,9 @@ import java.util.List;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
+import org.asf.centuria.interactions.modules.resourcecollection.levelhooks.EventInfo;
+import org.asf.centuria.levelevents.LevelEvent;
+import org.asf.centuria.levelevents.LevelEventBus;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 
 public class InspirationCollectionModule extends InteractionModule {
@@ -85,6 +88,43 @@ public class InspirationCollectionModule extends InteractionModule {
 			if (!inspirationAccessor.hasInspiration(Integer.valueOf(defId))) {
 				// Add inspiration
 				inspirationAccessor.addInspiration(Integer.valueOf(defId));
+
+				// Add xp
+				EventInfo ev = new EventInfo();
+				ev.event = "levelevents.inspirations";
+
+				// Find map name
+				String map = "unknown";
+				switch (player.levelID) {
+				case 820:
+					map = "cityfera";
+					break;
+				case 2364:
+					map = "bloodtundra";
+					break;
+				case 9687:
+					map = "lakeroot";
+					break;
+				case 2147:
+					map = "mugmyre";
+					break;
+				case 1689:
+					map = "sanctuary";
+					break;
+				case 3273:
+					map = "sunkenthicket";
+					break;
+				case 1825:
+					map = "shatteredbay";
+					break;
+				}
+
+				// Add tags
+				ev.tags.add("inspiration:" + defId);
+				ev.tags.add("map:" + map);
+
+				// Dispatch event
+				LevelEventBus.dispatch(new LevelEvent(ev.event, ev.tags.toArray(new String[0]), player));
 			}
 
 			// Update inventory

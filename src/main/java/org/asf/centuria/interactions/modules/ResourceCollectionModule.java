@@ -607,134 +607,146 @@ public class ResourceCollectionModule extends InteractionModule {
 	 * @param sourceDefID Source object defID
 	 */
 	public static void giveLootReward(Player player, String lootTableId, int giftType, int sourceDefID) {
-		LootInfo info = getLootReward(lootTableId);
-		if (info != null) {
-			LootReward reward = info.reward;
-			if (reward.itemId != null) {
-				int count = info.count;
-				String[] ids = player.account.getPlayerInventory().getItemAccessor(player)
-						.add(Integer.parseInt(reward.itemId), count);
+		String originalTableId = lootTableId;
+		while (true) {
+			LootInfo info = getLootReward(lootTableId);
+			if (info != null) {
+				LootReward reward = info.reward;
+				if (reward.itemId != null) {
+					int count = info.count;
+					String[] ids = player.account.getPlayerInventory().getItemAccessor(player)
+							.add(Integer.parseInt(reward.itemId), count);
 
-				// Send gift push popups
-				for (String objID : ids) {
-					// Send gift object
-					JsonObject gift = new JsonObject();
-					gift.addProperty("fromType", giftType);
-					gift.addProperty("redeemedItemIdsExpectedCount", 0);
-					gift.addProperty("giftItemDefId", Integer.parseInt(reward.itemId));
-					gift.addProperty("count", count);
-					gift.addProperty("giftItemType",
-							player.account.getPlayerInventory().getAccessor().getInventoryIDOfItem(objID));
-					gift.addProperty("fromId", sourceDefID);
-					gift.addProperty("uuid", objID);
+					// Send gift push popups
+					for (String objID : ids) {
+						// Send gift object
+						JsonObject gift = new JsonObject();
+						gift.addProperty("fromType", giftType);
+						gift.addProperty("redeemedItemIdsExpectedCount", 0);
+						gift.addProperty("giftItemDefId", Integer.parseInt(reward.itemId));
+						gift.addProperty("count", count);
+						gift.addProperty("giftItemType",
+								player.account.getPlayerInventory().getAccessor().getInventoryIDOfItem(objID));
+						gift.addProperty("fromId", sourceDefID);
+						gift.addProperty("uuid", objID);
 
-					// Send object
-					JsonObject components = new JsonObject();
-					components.add("Gift", gift);
+						// Send object
+						JsonObject components = new JsonObject();
+						components.add("Gift", gift);
 
-					// Build object
-					String giftID = UUID.randomUUID().toString();
-					JsonObject obj = new JsonObject();
-					obj.add("components", components);
-					obj.addProperty("id", giftID);
-					obj.addProperty("type", 302);
-					JsonArray update = new JsonArray();
-					update.add(obj);
-					InventoryItemPacket pkt = new InventoryItemPacket();
-					pkt.item = update;
-					player.client.sendPacket(pkt);
+						// Build object
+						String giftID = UUID.randomUUID().toString();
+						JsonObject obj = new JsonObject();
+						obj.add("components", components);
+						obj.addProperty("id", giftID);
+						obj.addProperty("type", 302);
+						JsonArray update = new JsonArray();
+						update.add(obj);
+						InventoryItemPacket pkt = new InventoryItemPacket();
+						pkt.item = update;
+						player.client.sendPacket(pkt);
 
-					// Send gift-push packet
-					player.client.sendPacket("%xt%gp%-1%1%" + giftID + "%" + count + "%");
-					break;
-				}
+						// Send gift-push packet
+						player.client.sendPacket("%xt%gp%-1%1%" + giftID + "%" + count + "%");
+						break;
+					}
 
-				// Level hooks
-				if (levelHooks.containsKey(lootTableId)) {
-					levelHooks.get(lootTableId).forEach(event -> {
-						// Build event object
-						EventInfo ev = new EventInfo();
-						ev.event = event.event;
-						ev.tags.addAll(event.tags);
+					// Level hooks
+					final String lootTableF = lootTableId;
+					if (levelHooks.containsKey(lootTableId)) {
+						levelHooks.get(lootTableId).forEach(event -> {
+							// Build event object
+							EventInfo ev = new EventInfo();
+							ev.event = event.event;
+							ev.tags.addAll(event.tags);
 
-						// Add tags
-						int rarity = ItemAccessor.getItemRarity(reward.itemId);
-						ev.tags.add("rarity:"
-								+ (rarity == 0 ? "common" : (rarity == 1 ? "cool" : (rarity == 2 ? "rare" : "epic"))));
-						ev.tags.add("loottable:" + lootTableId);
-						ev.tags.add("itemdefid:" + reward.itemId);
-						ev.tags.add("itemcount:" + count);
-						ev.tags.add("map:" + manName(player));
-
-						// Dispatch event
-						LevelEventBus.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
-					});
-				}
-
-				// Chest hook
-				LootTable table = lootTables.get(lootTableId);
-				if (table != null) {
-					// I know, not the best, but idfk how to identify what chest type a chest is
-					// except by checking the object name
-					if (table.objectName.startsWith("TreasureChest/")) {
-						EventInfo ev = new EventInfo();
-						ev.event = "levelevents.chests";
-
-						// Add tags
-						int rarity = ItemAccessor.getItemRarity(reward.itemId);
-						ev.tags.add("rarity:"
-								+ (rarity == 0 ? "common" : (rarity == 1 ? "cool" : (rarity == 2 ? "rare" : "epic"))));
-						ev.tags.add("loottable:" + lootTableId);
-						ev.tags.add("itemdefid:" + reward.itemId);
-						ev.tags.add("itemcount:" + count);
-						ev.tags.add("map:" + manName(player));
-
-						// Its a treasure chest, lets see which type
-						if (table.objectName.contains("/Bronze")) {
-							// Bronze
-							ev.tags.add("type:bronze");
+							// Add tags
+							int rarity = ItemAccessor.getItemRarity(reward.itemId);
+							ev.tags.add("rarity:" + (rarity == 0 ? "common"
+									: (rarity == 1 ? "cool" : (rarity == 2 ? "rare" : "epic"))));
+							ev.tags.add("loottable:" + lootTableF);
+							ev.tags.add("itemdefid:" + reward.itemId);
+							ev.tags.add("itemcount:" + count);
+							ev.tags.add("map:" + manName(player));
 
 							// Dispatch event
 							LevelEventBus
 									.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
-						} else if (table.objectName.contains("/Silver")) {
-							// Silver
-							ev.tags.add("type:silver");
+						});
+					}
+
+					// Hooks for the original table id
+					if (levelHooks.containsKey(originalTableId)) {
+						levelHooks.get(originalTableId).forEach(event -> {
+							// Build event object
+							EventInfo ev = new EventInfo();
+							ev.event = event.event;
+							ev.tags.addAll(event.tags);
+
+							// Add tags
+							int rarity = ItemAccessor.getItemRarity(reward.itemId);
+							ev.tags.add("rarity:" + (rarity == 0 ? "common"
+									: (rarity == 1 ? "cool" : (rarity == 2 ? "rare" : "epic"))));
+							ev.tags.add("loottable:" + lootTableF);
+							ev.tags.add("itemdefid:" + reward.itemId);
+							ev.tags.add("itemcount:" + count);
+							ev.tags.add("map:" + manName(player));
 
 							// Dispatch event
 							LevelEventBus
 									.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
-						} else if (table.objectName.contains("/Gold")) {
-							// Gold
-							ev.tags.add("type:gold");
+						});
+					}
 
-							// Dispatch event
-							LevelEventBus
-									.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
+					// Chest hook
+					LootTable table = lootTables.get(lootTableId);
+					if (table != null) {
+						// I know, not the best, but idfk how to identify what chest type a chest is
+						// except by checking the object name
+						if (table.objectName.startsWith("TreasureChest/")) {
+							EventInfo ev = new EventInfo();
+							ev.event = "levelevents.chests";
+
+							// Add tags
+							int rarity = ItemAccessor.getItemRarity(reward.itemId);
+							ev.tags.add("rarity:" + (rarity == 0 ? "common"
+									: (rarity == 1 ? "cool" : (rarity == 2 ? "rare" : "epic"))));
+							ev.tags.add("loottable:" + lootTableId);
+							ev.tags.add("itemdefid:" + reward.itemId);
+							ev.tags.add("itemcount:" + count);
+							ev.tags.add("map:" + manName(player));
+
+							// Its a treasure chest, lets see which type
+							if (table.objectName.contains("/Bronze")) {
+								// Bronze
+								ev.tags.add("type:bronze");
+
+								// Dispatch event
+								LevelEventBus.dispatch(
+										new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
+							} else if (table.objectName.contains("/Silver")) {
+								// Silver
+								ev.tags.add("type:silver");
+
+								// Dispatch event
+								LevelEventBus.dispatch(
+										new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
+							} else if (table.objectName.contains("/Gold")) {
+								// Gold
+								ev.tags.add("type:gold");
+
+								// Dispatch event
+								LevelEventBus.dispatch(
+										new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
+							}
 						}
 					}
 				}
-			} else {
-				// Level hooks
-				if (levelHooks.containsKey(lootTableId)) {
-					levelHooks.get(lootTableId).forEach(event -> {
-						// Build event object
-						EventInfo ev = new EventInfo();
-						ev.event = event.event;
-						ev.tags.addAll(event.tags);
-
-						// Add tags
-						ev.tags.add("loottable:" + lootTableId);
-						ev.tags.add("map:" + manName(player));
-
-						// Dispatch event
-						LevelEventBus.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
-					});
-				}
-			}
-			if (reward.referencedTableId != null) {
-				// Give table
-				giveLootReward(player, reward.referencedTableId, giftType, sourceDefID);
+				if (reward.referencedTableId != null) {
+					// Continue
+					lootTableId = reward.referencedTableId;
+				} else
+					break;
 			}
 		}
 	}

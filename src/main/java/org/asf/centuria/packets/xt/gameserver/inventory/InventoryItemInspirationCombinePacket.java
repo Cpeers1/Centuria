@@ -7,6 +7,10 @@ import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.inspiration.InspirationCombineResult;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.enums.inspiration.InspirationCombineStatus;
+import org.asf.centuria.interactions.modules.resourcecollection.levelhooks.EventInfo;
+import org.asf.centuria.levelevents.LevelEvent;
+import org.asf.centuria.levelevents.LevelEventBus;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
@@ -64,6 +68,44 @@ public class InventoryItemInspirationCombinePacket implements IXtPacket<Inventor
 		}
 
 		result = plr.account.getPlayerInventory().getInspirationAccessor().combineInspirations(inspirationIds, plr);
+		if (result.combineStatus == InspirationCombineStatus.Successful) {
+			// Add xp
+			EventInfo ev = new EventInfo();
+			ev.event = "levelevents.enigmacreated";
+
+			// Find map name
+			String map = "unknown";
+			switch (plr.levelID) {
+			case 820:
+				map = "cityfera";
+				break;
+			case 2364:
+				map = "bloodtundra";
+				break;
+			case 9687:
+				map = "lakeroot";
+				break;
+			case 2147:
+				map = "mugmyre";
+				break;
+			case 1689:
+				map = "sanctuary";
+				break;
+			case 3273:
+				map = "sunkenthicket";
+				break;
+			case 1825:
+				map = "shatteredbay";
+				break;
+			}
+
+			// Add tags
+			ev.tags.add("enigma:" + result.enigmaDefId);
+			ev.tags.add("map:" + map);
+
+			// Dispatch event
+			LevelEventBus.dispatch(new LevelEvent(ev.event, ev.tags.toArray(new String[0]), plr));
+		}
 
 		// build packet
 		plr.client.sendPacket(this);
