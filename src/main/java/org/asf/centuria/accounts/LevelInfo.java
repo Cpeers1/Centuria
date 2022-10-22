@@ -40,11 +40,25 @@ public abstract class LevelInfo {
 	public abstract int getLevelupXPCount();
 
 	/**
+	 * Removes xp from the player
+	 * 
+	 * @param xp XP to take
+	 */
+	public abstract void removeXP(int xp);
+
+	/**
 	 * Adds XP to the player
 	 * 
 	 * @param xp XP to give
 	 */
 	public abstract void addXP(int xp);
+
+	/**
+	 * Sets the player level
+	 * 
+	 * @param level Player level
+	 */
+	public abstract void setLevel(int level);
 
 	/**
 	 * Called to handle world join

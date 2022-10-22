@@ -50,10 +50,10 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 			File levelConf = new File("leveling.conf");
 			if (!levelConf.exists()) {
 				// Create config
-				Files.writeString(levelConf.toPath(),
-						"max-level=1000\n" + "rewards=resource://leveling/levelrewards.json\n"
-								+ "triggers=resource://leveling/leveltriggers.json\n"
-								+ "level-curve-eval=(100 + ((level - 1) * 25) + (totalxp / 10))\n");
+				Files.writeString(levelConf.toPath(), "max-level=101\n"
+						+ "rewards=resource://leveling/levelrewards.json\n"
+						+ "triggers=resource://leveling/leveltriggers.json\n"
+						+ "level-curve-eval=(300 + ((level - 1) * 100) + ((totalxp / 100) - ((level - 1) * 9.7478463184)))\n");
 			}
 
 			// Load config
@@ -71,8 +71,9 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 			}
 
 			// Parse
-			maxLevel = Integer.valueOf(config.getOrDefault("max-level", "1000"));
-			levelCurveEval = config.getOrDefault("level-curve-eval", "(100 + ((level - 1) * 25) + (totalxp / 10))");
+			maxLevel = Integer.valueOf(config.getOrDefault("max-level", "101"));
+			levelCurveEval = config.getOrDefault("level-curve-eval",
+					"(300 + ((level - 1) * 100) + ((totalxp / 100) - ((level - 1) * 9.7478463184)))");
 
 			// Load rewards
 			JsonObject rewardsConf;
@@ -561,6 +562,114 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 
 	@Override
 	public void onWorldJoin(Player player) {
+	}
+
+	@Override
+	public void removeXP(int xp) {
+		// Add fields
+		XpUpdatePacket packet = new XpUpdatePacket();
+		packet.userId = account.getAccountID();
+		packet.previous = new XpUpdatePacket.Level();
+		packet.previous.level = getLevel();
+		packet.previous.levelUpXp = getLevelupXPCount();
+		packet.previous.xp = getCurrentXP();
+		packet.current = new XpUpdatePacket.Level();
+
+		// Get new xp count
+		if (getCurrentXP() - xp < 0)
+			xp = getCurrentXP();
+		packet.addedXp = -xp;
+		xp = getCurrentXP() - xp;
+
+		// Create level object
+		JsonObject levelInfo = new JsonObject();
+
+		// Basics
+		levelInfo.addProperty("totalXp", getTotalXP());
+		levelInfo.addProperty("currentLevel", getLevel());
+		levelInfo.addProperty("currentLevelXp", xp);
+		levelInfo.addProperty("currentLevelMaxXp", getLevelupXPCount());
+
+		// Save
+		account.getPlayerInventory().setItem("level", levelInfo);
+
+		// Add new level
+		packet.current = new XpUpdatePacket.Level();
+		packet.current.level = getLevel();
+		packet.current.levelUpXp = getLevelupXPCount();
+		packet.current.xp = getCurrentXP();
+		packet.totalXp = getTotalXP();
+
+		// Send packet
+		String room = null;
+		if (account.getOnlinePlayerInstance() != null) {
+			room = account.getOnlinePlayerInstance().room;
+		}
+		for (Player plr : Centuria.gameServer.getPlayers()) {
+			if (plr.roomReady && plr.room != null && (room == null || plr.room.equals(room))) {
+				plr.client.sendPacket(packet);
+			}
+		}
+	}
+
+	@Override
+	public void setLevel(int level) {
+		// Add fields
+		XpUpdatePacket packet = new XpUpdatePacket();
+		packet.userId = account.getAccountID();
+		packet.addedXp = 0;
+		packet.previous = new XpUpdatePacket.Level();
+		packet.previous.level = getLevel();
+		packet.previous.levelUpXp = getLevelupXPCount();
+		packet.previous.xp = getCurrentXP();
+		packet.current = new XpUpdatePacket.Level();
+
+		// Create level object
+		JsonObject levelInfo = new JsonObject();
+
+		// Evaluate the curve
+		int tXP = 0;
+		int lUpXp = 0;
+		for (int i = 0; i < level; i++) {
+			ExpressionBuilder builder = new ExpressionBuilder(levelCurveEval);
+			builder.variables("level", "lastlevel", "totalxp");
+			Expression exp = builder.build();
+			exp.setVariable("level", level);
+			exp.setVariable("lastlevel", level - 1);
+			exp.setVariable("totalxp", tXP);
+			int levelUpCount = (int) exp.evaluate();
+			if (levelUpCount > 15000)
+				levelUpCount = 15000;
+			tXP += levelUpCount;
+			lUpXp = levelUpCount;
+		}
+
+		// Basics
+		levelInfo.addProperty("totalXp", 0);
+		levelInfo.addProperty("currentLevel", level);
+		levelInfo.addProperty("currentLevelXp", 0);
+		levelInfo.addProperty("currentLevelMaxXp", lUpXp);
+
+		// Save
+		account.getPlayerInventory().setItem("level", levelInfo);
+
+		// Add new level
+		packet.current = new XpUpdatePacket.Level();
+		packet.current.level = getLevel();
+		packet.current.levelUpXp = getLevelupXPCount();
+		packet.current.xp = getCurrentXP();
+		packet.totalXp = getTotalXP();
+
+		// Send packet
+		String room = null;
+		if (account.getOnlinePlayerInstance() != null) {
+			room = account.getOnlinePlayerInstance().room;
+		}
+		for (Player plr : Centuria.gameServer.getPlayers()) {
+			if (plr.roomReady && plr.room != null && (room == null || plr.room.equals(room))) {
+				plr.client.sendPacket(packet);
+			}
+		}
 	}
 
 }

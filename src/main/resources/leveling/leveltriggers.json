@@ -140,7 +140,7 @@
 	],
 	"levelevents.chests": [
 		{
-			"xp": 10,
+			"xp": 15,
 			"conditions": [
 				"type:basic"
 			]

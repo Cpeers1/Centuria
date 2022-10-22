@@ -21,6 +21,7 @@ import org.asf.centuria.accounts.highlevel.itemdata.inventory.impl.GenericHelper
 import org.asf.centuria.accounts.highlevel.itemdata.inventory.impl.SanctuaryClassHelper;
 import org.asf.centuria.accounts.highlevel.itemdata.inventory.impl.SanctuaryHouseHelper;
 import org.asf.centuria.accounts.highlevel.itemdata.inventory.impl.SanctuaryIslandHelper;
+import org.asf.centuria.accounts.highlevel.itemdata.item.ItemBundleEntry;
 import org.asf.centuria.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.centuria.accounts.highlevel.itemdata.item.ItemInfo;
 import org.asf.centuria.entities.components.generic.TradeableComponent;
@@ -43,6 +44,7 @@ public class ItemAccessor {
 	private Player player;
 	private PlayerInventory inventory;
 	private static HashMap<String, ItemInfo> definitions = new HashMap<String, ItemInfo>();
+	private static HashMap<String, ItemBundleEntry> bundles = new HashMap<String, ItemBundleEntry>();
 
 	private static ItemComponent tradelisComponent() {
 		JsonObject tr = new JsonObject();
@@ -115,14 +117,32 @@ public class ItemAccessor {
 			strm.close();
 
 			// Load all items
+			final JsonObject helperFinal = helper;
 			helper.keySet().forEach(itemID -> {
-				JsonObject itmI = helper.get(itemID).getAsJsonObject();
+				JsonObject itmI = helperFinal.get(itemID).getAsJsonObject();
 				ItemInfo info = new ItemInfo();
 				info.inventory = itmI.get("inventory").getAsString();
 				info.objectName = itmI.get("objectName").getAsString();
 				info.rarity = itmI.get("rarity").getAsInt();
 				if (!info.inventory.equals("0"))
 					definitions.put(itemID, info);
+			});
+
+			// Load bundles
+			strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("bundles.json");
+			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("bundles")
+					.getAsJsonObject();
+			strm.close();
+
+			// Load all bundles
+			final JsonObject helperFinal2 = helper;
+			helper.keySet().forEach(itemID -> {
+				JsonObject itmI = helperFinal2.get(itemID).getAsJsonObject();
+				ItemBundleEntry info = new ItemBundleEntry();
+				info.objectName = itmI.get("objectName").getAsString();
+				JsonObject itms = itmI.get("items").getAsJsonObject();
+				itms.keySet().forEach(id -> info.items.put(id, itms.get(id).getAsInt()));
+				bundles.put(itemID, info);
 			});
 		} catch (IOException e) {
 		}
@@ -279,8 +299,25 @@ public class ItemAccessor {
 
 		// Find definition
 		ItemInfo info = definitions.get(Integer.toString(defID));
-		if (info == null)
+		if (info == null) {
+			// Find bundle
+			if (bundles.containsKey(Integer.toString(defID))) {
+				String res = null;
+
+				// Add items
+				ItemBundleEntry entry = bundles.get(Integer.toString(defID));
+				for (String id : entry.items.keySet()) {
+					int count = entry.items.get(id);
+					String[] ids = add(Integer.parseInt(id), count);
+					if (res == null && ids.length > 0)
+						res = ids[0];
+				}
+
+				return res;
+			}
+
 			return null;
+		}
 
 		// Find inventory
 		if (!inventoryTypeMap.containsKey(info.inventory))
@@ -355,8 +392,25 @@ public class ItemAccessor {
 
 		// Find definition
 		ItemInfo info = definitions.get(Integer.toString(defID));
-		if (info == null)
+		if (info == null) {
+			// Find bundle
+			if (bundles.containsKey(Integer.toString(defID))) {
+				ArrayList<String> res = new ArrayList<String>();
+
+				// Add items
+				ItemBundleEntry entry = bundles.get(Integer.toString(defID));
+				for (String id : entry.items.keySet()) {
+					int itC = entry.items.get(id);
+					String[] ids = add(Integer.parseInt(id), count * itC);
+					for (String itmI : ids)
+						res.add(itmI);
+				}
+
+				return res.toArray(t -> new String[t]);
+			}
+
 			return new String[0];
+		}
 
 		// Find inventory
 		if (!inventoryTypeMap.containsKey(info.inventory))
