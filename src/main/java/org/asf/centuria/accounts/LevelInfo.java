@@ -61,6 +61,13 @@ public abstract class LevelInfo {
 	public abstract void setLevel(int level);
 
 	/**
+	 * Adds levels to the player
+	 * 
+	 * @param levels Levels to add
+	 */
+	public abstract void addLevel(int levels);
+
+	/**
 	 * Called to handle world join
 	 * 
 	 * @param player Player that joined the world

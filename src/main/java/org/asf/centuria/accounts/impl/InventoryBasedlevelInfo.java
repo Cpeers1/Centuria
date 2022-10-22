@@ -672,4 +672,28 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 		}
 	}
 
+	@Override
+	public void addLevel(int levels) {
+		int xpToAdd = 0;
+		int level = getLevel();
+		int tXP = getTotalXP();
+		for (int i = 0; i < levels; i++) {
+			ExpressionBuilder builder = new ExpressionBuilder(levelCurveEval);
+			builder.variables("level", "lastlevel", "totalxp");
+			Expression exp = builder.build();
+			exp.setVariable("level", level);
+			exp.setVariable("lastlevel", level - 1);
+			exp.setVariable("totalxp", tXP);
+			int levelUpCount = (int) exp.evaluate();
+			if (levelUpCount > 15000)
+				levelUpCount = 15000;
+
+			tXP += levelUpCount;
+			xpToAdd += levelUpCount;
+			level++;
+		}
+
+		addXP(xpToAdd);
+	}
+
 }

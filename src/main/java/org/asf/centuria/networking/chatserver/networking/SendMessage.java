@@ -403,11 +403,13 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("changeothername \"<player>\" \"<new-name>\"");
 			commandMessages.add("mute \"<player>\" <minutes> [hours] [days] [\"<reason>\"]");
 			commandMessages.add("pardon \"<player>\" [\"<reason>\"]");
-			if (GameServer.hasPerm(permLevel, "developer")) {
-				commandMessages.add("makedeveloper \"<name>\"");
-				commandMessages.add("srp \"<raw-packet>\" [<player>]");
-			}
+			commandMessages.add("xpinfo [\"<player>\"]");
+			commandMessages.add("takexp <amount> [\"<player>\"]");
+			commandMessages.add("resetxp [\"<player>\"]");
+			commandMessages.add("takelevels <amount> [\"<player>\"]");
 			if (GameServer.hasPerm(permLevel, "admin")) {
+				commandMessages.add("addxp <amount> [\"<player>\"]");
+				commandMessages.add("addlevels <amount> [\"<player>\"]");
 				commandMessages.add("tpm <levelDefID> [<levelType>]");
 				commandMessages.add("makeadmin \"<player>\"");
 				commandMessages.add("makemoderator \"<player>\"");
@@ -418,6 +420,10 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("updateshutdown");
 				commandMessages.add("update <60|30|15|10|5|3|1>");
 				commandMessages.add("cancelupdate");
+			}
+			if (GameServer.hasPerm(permLevel, "developer")) {
+				commandMessages.add("makedeveloper \"<name>\"");
+				commandMessages.add("srp \"<raw-packet>\" [<player>]");
 			}
 			commandMessages.add("staffroom");
 			commandMessages.add("listplayers");
@@ -1548,6 +1554,202 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						return true;
+					}
+					case "xpinfo": {
+						// XP info
+						// Parse arguments
+						String player = client.getPlayer().getDisplayName();
+						if (args.size() > 0) {
+							player = args.get(0);
+						}
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Display info
+						try {
+							systemMessage("XP details:\n" + "Level: " + acc.getLevel().getLevel() + "\nXP: "
+									+ acc.getLevel().getCurrentXP() + " / " + acc.getLevel().getLevelupXPCount()
+									+ "\nTotal XP: " + acc.getLevel().getTotalXP(), cmd, client);
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
+						}
+
+						return true;
+					}
+					case "takexp": {
+						// Take XP
+						// Parse arguments
+						String player = client.getPlayer().getDisplayName();
+						if (args.size() < 1) {
+							systemMessage("Missing argument: xp amount", cmd, client);
+							return true;
+						}
+						if (args.size() > 1) {
+							player = args.get(1);
+						}
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Take xp
+						try {
+							int xp = Integer.parseInt(args.get(0));
+							if (xp < 0) {
+								systemMessage("Invalid XP amount: " + xp, cmd, client);
+								return true;
+							}
+							acc.getLevel().removeXP(xp);
+							systemMessage("Removed " + xp + " XP from " + acc.getDisplayName() + ".", cmd, client);
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
+						}
+
+						return true;
+					}
+					case "resetxp": {
+						// Reset XP
+						// Parse arguments
+						String player = client.getPlayer().getDisplayName();
+						if (args.size() > 0) {
+							player = args.get(0);
+						}
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Take xp
+						try {
+							int xp = acc.getLevel().getCurrentXP();
+							acc.getLevel().removeXP(xp);
+							systemMessage("Removed " + xp + " XP from " + acc.getDisplayName() + ".", cmd, client);
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
+						}
+
+						return true;
+					}
+					case "takelevels": {
+						// Take levels
+						// Parse arguments
+						String player = client.getPlayer().getDisplayName();
+						if (args.size() < 1) {
+							systemMessage("Missing argument: levels to remove", cmd, client);
+							return true;
+						}
+						if (args.size() > 1) {
+							player = args.get(1);
+						}
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Take xp
+						try {
+							int levels = Integer.parseInt(args.get(0));
+							if (levels < acc.getLevel().getLevel()) {
+								systemMessage("Invalid amount of levels to remove: " + levels + " (user is at "
+										+ acc.getLevel().getLevel() + ")", cmd, client);
+								return true;
+							}
+							acc.getLevel().setLevel(acc.getLevel().getLevel() - levels);
+							systemMessage("Removed " + levels + " levels from " + acc.getDisplayName() + ".", cmd,
+									client);
+							acc.kickDirect(uuid, "Levels were changed, relog required.");
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
+						}
+
+						return true;
+					}
+					case "addxp": {
+						// Add XP
+						// Parse arguments
+						if (GameServer.hasPerm(permLevel, "admin")) {
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() < 1) {
+								systemMessage("Missing argument: xp amount", cmd, client);
+								return true;
+							}
+							if (args.size() > 1) {
+								player = args.get(1);
+							}
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// Take xp
+							try {
+								int xp = Integer.parseInt(args.get(0));
+								if (xp < 0) {
+									systemMessage("Invalid XP amount: " + xp, cmd, client);
+									return true;
+								}
+								acc.getLevel().addXP(xp);
+								systemMessage("Given " + xp + " XP to " + acc.getDisplayName() + ".", cmd, client);
+							} catch (Exception e) {
+								systemMessage("Error: " + e, cmd, client);
+							}
+
+							return true;
+						}
+					}
+					case "addlevels": {
+						// Add XP
+						// Parse arguments
+						if (GameServer.hasPerm(permLevel, "admin")) {
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() < 1) {
+								systemMessage("Missing argument: levels to add", cmd, client);
+								return true;
+							}
+							if (args.size() > 1) {
+								player = args.get(1);
+							}
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// Take xp
+							try {
+								int levels = Integer.parseInt(args.get(0));
+								if (levels < 0) {
+									systemMessage("Invalid XP amount: " + levels, cmd, client);
+									return true;
+								}
+								acc.getLevel().addLevel(levels);
+								systemMessage("Given " + levels + " levels to " + acc.getDisplayName() + ".", cmd,
+										client);
+							} catch (Exception e) {
+								systemMessage("Error: " + e, cmd, client);
+							}
+
+							return true;
+						}
 					}
 					case "srp": {
 						// Sends a raw packet
