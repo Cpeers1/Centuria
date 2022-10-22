@@ -35,7 +35,7 @@ import com.google.gson.JsonParser;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
-public class InventoryBasedlevelInfo extends LevelInfo {
+public class LevelManager extends LevelInfo {
 
 	private CenturiaAccount account;
 	private static Random rnd = new Random();
@@ -178,7 +178,7 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 		}
 	}
 
-	public InventoryBasedlevelInfo(CenturiaAccount account) {
+	public LevelManager(CenturiaAccount account) {
 		this.account = account;
 	}
 
@@ -291,6 +291,10 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 		int cL = getLevel();
 		int cLUP = getLevelupXPCount();
 		int cXP = getCurrentXP();
+
+		// Level cap
+		if (getLevel() >= maxLevel)
+			return;
 
 		// Add xp
 		if (cXP + xp < cLUP) {
@@ -451,6 +455,16 @@ public class InventoryBasedlevelInfo extends LevelInfo {
 			String[] objects = account.getPlayerInventory().getItemAccessor(account.getOnlinePlayerInstance())
 					.add(lvl.levelUpRewardDefId, lvl.levelUpRewardQuantity);
 			if (account.getOnlinePlayerInstance() != null) {
+				if (objects.length == 0) {
+					Centuria.logger.error(MarkerManager.getMarker("LEVELING"), "Invalid level reward: "
+							+ lvl.levelUpRewardDefId + " for level " + lvl.level + ", defaulting to likes.");
+
+					// Default to likes
+					lvl.levelUpRewardDefId = 2327;
+					lvl.levelUpRewardQuantity = 25;
+					objects = account.getPlayerInventory().getItemAccessor(account.getOnlinePlayerInstance())
+							.add(lvl.levelUpRewardDefId, lvl.levelUpRewardQuantity);
+				}
 				String objID = objects[0];
 
 				// Create giftpush

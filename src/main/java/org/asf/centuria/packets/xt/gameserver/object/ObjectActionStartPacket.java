@@ -72,7 +72,6 @@ public class ObjectActionStartPacket implements IXtPacket<ObjectActionStartPacke
 			System.out.println("[INTERACTION] [START]  Server to client: " + build());
 		}
 
-		// TODO?
 		return true;
 	}
 

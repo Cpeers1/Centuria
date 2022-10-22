@@ -7,6 +7,7 @@ import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.modules.InteractionModule;
+import org.asf.centuria.packets.xt.gameserver.quests.QuestCommandPacket;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,14 +74,32 @@ public class LinearObjectHandler extends InteractionModule {
 				break;
 			}
 			case "35": {
-				// Branches
+				// Branches & progress
 				Centuria.logger.debug("Call branches: " + st.params[1]);
 				NetworkedObject obj = NetworkedObjects.getObject(st.params[1]);
 				InteractionManager.runBranches(player, st.branches, "0", id, object, st);
-				if (!st.params[1].equals(id)) {
-					// Okay weird one still figuring the rest out but this works
-					InteractionManager.runBranches(player, obj.stateInfo,
-							obj.stateInfo.keySet().stream().findFirst().get(), st.params[1], obj, st);
+
+				// Progress
+				int stateId = player.states.getOrDefault(st.params[1], 1) + 1;
+				if (obj.stateInfo.containsKey(Integer.toString(stateId - 1))) {
+					// Run states
+					InteractionManager.runBranches(player, obj.stateInfo, Integer.toString(stateId - 1), st.params[1],
+							obj, st);
+				}
+
+				if (obj.stateInfo.containsKey(Integer.toString(stateId))
+						|| obj.stateInfo.containsKey(Integer.toString(stateId - 1))) {
+					// Update
+					player.states.put(st.params[1], stateId);
+
+					// Send state info
+					QuestCommandPacket qcmd = new QuestCommandPacket();
+					qcmd.id = st.params[1];
+					qcmd.type = 1;
+					qcmd.params.add(Integer.toString(stateId - 1));
+					qcmd.params.add("0");
+					qcmd.params.add("0");
+					player.client.sendPacket(qcmd);
 				}
 				break;
 			}

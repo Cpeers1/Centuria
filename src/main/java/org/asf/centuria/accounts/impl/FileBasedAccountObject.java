@@ -299,7 +299,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 	@Override
 	public LevelInfo getLevel() {
 		if (level == null)
-			level = new InventoryBasedlevelInfo(this);
+			level = new LevelManager(this);
 
 		return level;
 	}

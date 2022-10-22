@@ -75,12 +75,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Initialize interaction memory
 		plr.account.getPlayerInventory().getInteractionMemory().prepareLevel(plr.pendingLevelID);
 
-		// Initialize interactions
-		InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
-
-		// Save changes
-		plr.account.getPlayerInventory().getInteractionMemory().saveTo(client);
-
 		// Dispatch event
 		EventBus.getInstance().dispatchEvent(new LevelJoinEvent(plr.pendingLevelID, plr.pendingRoom, plr));
 
@@ -106,10 +100,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			}
 		}
 
-		// XP init
-		if (plr.account.getLevel().isLevelAvailable() && !plr.account.isPlayerNew())
-			plr.account.getLevel().onWorldJoin(plr);
-
 		// Send to tutorial if new
 		if (plr.account.isPlayerNew()) {
 			// Tutorial spawn
@@ -122,6 +112,17 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			res.rz = -0;
 			res.rw = 0.3987;
 			client.sendPacket(res);
+
+			// Initialize interactions
+			InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
+
+			// Save changes
+			plr.account.getPlayerInventory().getInteractionMemory().saveTo(client);
+
+			// XP init
+			if (plr.account.getLevel().isLevelAvailable() && !plr.account.isPlayerNew())
+				plr.account.getLevel().onWorldJoin(plr);
+
 			return true;
 		}
 
@@ -146,6 +147,16 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Find spawn
 		handleSpawn(teleportUUID, plr, client);
+
+		// Initialize interactions
+		InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
+
+		// Save changes
+		plr.account.getPlayerInventory().getInteractionMemory().saveTo(client);
+
+		// XP init
+		if (plr.account.getLevel().isLevelAvailable() && !plr.account.isPlayerNew())
+			plr.account.getLevel().onWorldJoin(plr);
 
 		// Reset target
 		plr.targetPos = null;

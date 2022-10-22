@@ -1663,7 +1663,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Take xp
 						try {
 							int levels = Integer.parseInt(args.get(0));
-							if (acc.getLevel().getLevel() < levels) {
+							if (acc.getLevel().getLevel() <= levels) {
 								systemMessage("Invalid amount of levels to remove: " + levels + " (user is at "
 										+ acc.getLevel().getLevel() + ")", cmd, client);
 								return true;
@@ -1698,7 +1698,7 @@ public class SendMessage extends AbstractChatPacket {
 							}
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
-							// Take xp
+							// Add xp
 							try {
 								int xp = Integer.parseInt(args.get(0));
 								if (xp < 0) {
@@ -1709,6 +1709,7 @@ public class SendMessage extends AbstractChatPacket {
 								systemMessage("Given " + xp + " XP to " + acc.getDisplayName() + ".", cmd, client);
 							} catch (Exception e) {
 								systemMessage("Error: " + e, cmd, client);
+								e.printStackTrace();
 							}
 
 							return true;
