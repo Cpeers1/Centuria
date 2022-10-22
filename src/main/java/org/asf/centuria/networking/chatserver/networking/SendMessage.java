@@ -1663,12 +1663,12 @@ public class SendMessage extends AbstractChatPacket {
 						// Take xp
 						try {
 							int levels = Integer.parseInt(args.get(0));
-							if (levels < acc.getLevel().getLevel()) {
+							if (acc.getLevel().getLevel() < levels) {
 								systemMessage("Invalid amount of levels to remove: " + levels + " (user is at "
 										+ acc.getLevel().getLevel() + ")", cmd, client);
 								return true;
 							}
-							acc.getLevel().setLevel(acc.getLevel().getLevel() - levels);
+							acc.getLevel().setLevel(acc.getLevel().getLevel() - (levels - 1));
 							systemMessage("Removed " + levels + " levels from " + acc.getDisplayName() + ".", cmd,
 									client);
 							acc.kickDirect(uuid, "Levels were changed, relog required.");
