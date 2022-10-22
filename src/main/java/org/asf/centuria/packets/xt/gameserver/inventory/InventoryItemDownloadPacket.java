@@ -220,7 +220,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 		// Furniture
 		if (slot.equals("102") && Centuria.giveAllFurnitureItems) {
-			// Scan furniturehelper and give all clothes
+			// Scan furniturehelper and give all furniture
 			try {
 				// Load helper
 				InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()

@@ -461,7 +461,7 @@ public class LevelManager extends LevelInfo {
 
 					// Default to likes
 					lvl.levelUpRewardDefId = 2327;
-					lvl.levelUpRewardQuantity = 25;
+					lvl.levelUpRewardQuantity = 100;
 					objects = account.getPlayerInventory().getItemAccessor(account.getOnlinePlayerInstance())
 							.add(lvl.levelUpRewardDefId, lvl.levelUpRewardQuantity);
 				}
