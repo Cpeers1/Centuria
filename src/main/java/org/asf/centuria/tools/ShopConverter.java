@@ -3,6 +3,7 @@ package org.asf.centuria.tools;
 import java.nio.file.*;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -22,8 +23,8 @@ public class ShopConverter {
 		String lastName = "";
 		String lastData = null;
 		String lastID = null;
-		HashMap<String, JsonArray> lists = new HashMap<String, JsonArray>();
-		HashMap<String, String> objectNames = new HashMap<String, String>();
+		LinkedHashMap<String, JsonArray> lists = new LinkedHashMap<String, JsonArray>();
+		LinkedHashMap<String, String> objectNames = new LinkedHashMap<String, String>();
 		for (String line : Files.readAllLines(Path.of(args[3]))) {
 			if (line.startsWith("\"") && !line.startsWith("\"\"") && !line.startsWith("\"DefID")) {
 				lastID = line.substring(1);
@@ -58,8 +59,9 @@ public class ShopConverter {
 		}
 
 		JsonObject uncrafting = new JsonObject();
-		HashMap<String, HashMap<String, Integer>> costs = new HashMap<String, HashMap<String, Integer>>();
-		HashMap<String, HashMap<String, Integer>> eurekaItems = new HashMap<String, HashMap<String, Integer>>();
+		LinkedHashMap<String, String> itemTypes = new LinkedHashMap<String, String>();
+		LinkedHashMap<String, HashMap<String, Integer>> costs = new LinkedHashMap<String, HashMap<String, Integer>>();
+		LinkedHashMap<String, HashMap<String, Integer>> eurekaItems = new LinkedHashMap<String, HashMap<String, Integer>>();
 
 		lastName = "";
 		lastData = null;
@@ -110,6 +112,9 @@ public class ShopConverter {
 						}
 					} else if (data.get("componentClass").getAsString().equals("RecyclableDefComponent")) {
 						uncraftable = true;
+					} else if (data.get("componentClass").getAsString().equals("ItemDefComponent")) {
+						data = data.get("componentJSON").getAsJsonObject();
+						itemTypes.put(lastID, data.get("itemType").getAsString());
 					}
 				}
 
@@ -137,7 +142,7 @@ public class ShopConverter {
 		lastName = "";
 		lastData = null;
 		lastID = null;
-		HashMap<String, HashMap<String, Integer>> bundles = new HashMap<String, HashMap<String, Integer>>();
+		LinkedHashMap<String, HashMap<String, Integer>> bundles = new LinkedHashMap<String, HashMap<String, Integer>>();
 		for (String line : Files.readAllLines(Path.of(args[4]))) {
 			if (line.startsWith("\"") && !line.startsWith("\"\"") && !line.startsWith("\"DefID")) {
 				lastID = line.substring(1);
@@ -227,8 +232,18 @@ public class ShopConverter {
 
 										if (lastID.equals("30549")) {
 											// Astrale shop
-											// Single-time purchases
-											entry.addProperty("stock", 1);
+											// Single-time purchases for avatars, body mods, sancs, enigmas and bundles
+											if (itms.size() != 1)
+												entry.addProperty("stock", 1);
+											else {
+												String type = itemTypes
+														.get(itms.keySet().toArray(t -> new String[t])[0]);
+												if (type.equals("1") || type.equals("2") || type.equals("10")
+														|| type.equals("7"))
+													entry.addProperty("stock", 1);
+												else
+													entry.addProperty("stock", -1);
+											}
 										} else {
 											// Other shop
 											// Set to -1 to disable
