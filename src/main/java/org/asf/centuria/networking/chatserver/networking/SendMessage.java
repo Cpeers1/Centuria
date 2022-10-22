@@ -1668,7 +1668,7 @@ public class SendMessage extends AbstractChatPacket {
 										+ acc.getLevel().getLevel() + ")", cmd, client);
 								return true;
 							}
-							acc.getLevel().setLevel(acc.getLevel().getLevel() - (levels - 1));
+							acc.getLevel().setLevel(acc.getLevel().getLevel() - levels);
 							systemMessage("Removed " + levels + " levels from " + acc.getDisplayName() + ".", cmd,
 									client);
 							acc.kickDirect(uuid, "Levels were changed, relog required.");
