@@ -215,9 +215,6 @@ public class LevelManager extends LevelInfo {
 
 	@Override
 	public int getLevel() {
-		if (account.isPlayerNew())
-			return 0;
-
 		// Retrieve level object
 		if (!account.getPlayerInventory().containsItem("level")) {
 			// Create object
@@ -231,9 +228,6 @@ public class LevelManager extends LevelInfo {
 
 	@Override
 	public int getTotalXP() {
-		if (account.isPlayerNew())
-			return 0;
-
 		// Retrieve level object
 		if (!account.getPlayerInventory().containsItem("level")) {
 			// Create object
@@ -247,9 +241,6 @@ public class LevelManager extends LevelInfo {
 
 	@Override
 	public int getCurrentXP() {
-		if (account.isPlayerNew())
-			return 0;
-
 		// Retrieve level object
 		if (!account.getPlayerInventory().containsItem("level")) {
 			// Create object
@@ -263,9 +254,6 @@ public class LevelManager extends LevelInfo {
 
 	@Override
 	public int getLevelupXPCount() {
-		if (account.isPlayerNew())
-			return 0;
-
 		// Retrieve level object
 		if (!account.getPlayerInventory().containsItem("level")) {
 			// Create object
