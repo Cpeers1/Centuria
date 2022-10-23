@@ -100,6 +100,9 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			}
 		}
 
+		// Initialize interactions
+		InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
+
 		// Save changes
 		plr.account.getPlayerInventory().getInteractionMemory().saveTo(client);
 
@@ -119,9 +122,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			res.rz = -0;
 			res.rw = 0.3987;
 			client.sendPacket(res);
-
-			// Initialize interactions
-			InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
 
 			return true;
 		}
