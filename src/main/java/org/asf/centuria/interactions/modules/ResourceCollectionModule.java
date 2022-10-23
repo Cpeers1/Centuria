@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.highlevel.ItemAccessor;
 import org.asf.centuria.data.XtWriter;
@@ -472,6 +473,11 @@ public class ResourceCollectionModule extends InteractionModule {
 							int rarity = ItemAccessor.getItemRarity(reward.itemId);
 							ev.tags.add("rarity:" + (rarity == 0 ? "common"
 									: (rarity == 1 ? "cool" : (rarity == 2 ? "rare" : "epic"))));
+
+							// Log
+							Centuria.logger.info(MarkerManager.getMarker("RESOURCE COLLECTION"),
+									"Player " + player.account.getDisplayName() + " harvested " + obj.objectName + " ("
+											+ id + ")" + " and received " + count + " of item " + reward.itemId);
 						}
 
 						// Set harvest count and timestamp
@@ -607,6 +613,10 @@ public class ResourceCollectionModule extends InteractionModule {
 	 * @param sourceDefID Source object defID
 	 */
 	public static void giveLootReward(Player player, String lootTableId, int giftType, int sourceDefID) {
+		// Log
+		Centuria.logger.info(MarkerManager.getMarker("RESOURCE COLLECTION"),
+				"Giving loot to player " + player.account.getDisplayName() + ", giving table " + lootTableId);
+
 		String originalTableId = lootTableId;
 		boolean rewarded = false;
 		while (true) {

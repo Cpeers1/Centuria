@@ -1,5 +1,6 @@
 package org.asf.centuria.interactions.modules.linearobjects;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.InteractionManager;
@@ -47,6 +48,11 @@ public class LinearObjectHandler extends InteractionModule {
 					// Save
 					Centuria.logger.debug("Group object collect: " + st.params[2]);
 					InteractionManager.getActiveSpawnBehaviour().onCollect(player, st.params[2]);
+
+					// Log
+					Centuria.logger.info(MarkerManager.getMarker("EXANSE OBJECTS"),
+							"Player " + player.account.getDisplayName() + " unlocked object " + object.objectName + " ("
+									+ id + ")");
 					break;
 				}
 				case "3": {
@@ -56,6 +62,11 @@ public class LinearObjectHandler extends InteractionModule {
 					case "2": {
 						Centuria.logger.debug("Group object use lockpick");
 						player.account.getPlayerInventory().getCurrencyAccessor().removeLockpicks(player.client, 1);
+
+						// Log
+						Centuria.logger.info(MarkerManager.getMarker("EXANSE OBJECTS"),
+								"Player " + player.account.getDisplayName()
+										+ " broke a lockpick while interacting with a locked chest.");
 						break;
 					}
 					default: {

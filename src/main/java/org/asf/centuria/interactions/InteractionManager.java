@@ -349,6 +349,10 @@ public class InteractionManager {
 					break;
 				}
 				default: {
+					// Log
+					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+							"Running command: " + state.command);
+
 					// Find module
 					boolean warn = true;
 					for (InteractionModule mod : modules) {
