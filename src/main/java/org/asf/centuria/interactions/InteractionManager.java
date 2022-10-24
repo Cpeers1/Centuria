@@ -323,8 +323,18 @@ public class InteractionManager {
 							"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
 					// Check state
 					NetworkedObject obj = NetworkedObjects.getObject(t);
-					if (obj.stateInfo.containsKey(state.params[0]))
+					if (obj.stateInfo.containsKey(state.params[0])) {
 						plr.states.put(t, Integer.parseInt(state.params[0]));
+
+						// Build quest command
+						QuestCommandPacket packet = new QuestCommandPacket();
+						packet.id = state.actorId;
+						packet.type = 1;
+						// Parameters
+						for (String param : state.params)
+							packet.params.add(param);
+						plr.client.sendPacket(packet);
+					}
 					break;
 				}
 				case "41": {
@@ -410,7 +420,8 @@ public class InteractionManager {
 
 				// Check if it needs to be sent to the client
 				int cmdI = Integer.parseInt(state.command);
-				if ((cmdI <= 20 || cmdI == 38 || cmdI == 81 || cmdI == 82) && !state.command.equals("3")) {
+				if ((cmdI <= 20 || cmdI == 38 || cmdI == 81 || cmdI == 82) && !state.command.equals("3")
+						&& !state.command.equals("1")) {
 					// Build quest command
 					QuestCommandPacket packet = new QuestCommandPacket();
 					packet.id = state.actorId;
