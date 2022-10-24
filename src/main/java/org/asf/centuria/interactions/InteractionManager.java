@@ -353,10 +353,11 @@ public class InteractionManager {
 					// Find object
 					NetworkedObject obj = NetworkedObjects.getObject(state.actorId);
 					var stateObjs = obj.stateInfo.get(Integer.toString(stateId));
-					for (var st : stateObjs) {
-						if (st.branches.size() != 0)
-							runBranches(plr, st.branches, "1", target, obj, state);
-					}
+					if (stateObjs != null)
+						for (var st : stateObjs) {
+							if (st.branches.size() != 0)
+								runBranches(plr, st.branches, "1", target, obj, state);
+						}
 
 					break;
 				}
