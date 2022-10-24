@@ -593,6 +593,33 @@
           "weight": 1
         }
       ]
+    },
+    "11750": {
+      "objectName": "QuestReward/WizardTrials",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q11750",
+          "itemId": "10867",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q11750": {
+      "objectName": "QuestReward/WizardTrials",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 20,
+          "maxCount": 35,
+          "weight": 1
+        }
+      ]
     }
   }
 }

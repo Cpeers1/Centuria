@@ -222,5 +222,14 @@
 				"type:lore"
 			]
 		}
+	],
+	"11750": [
+		{
+			"__NOTE__": "Quest: The Trial of Five Brodys",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
 	]
 }
