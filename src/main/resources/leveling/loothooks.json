@@ -204,5 +204,14 @@
 				"type:filler"
 			]
 		}
+	],
+	"7329": [
+		{
+			"__NOTE__": "Quest: The NuCrystal Life",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
 	]
 }

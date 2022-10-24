@@ -539,6 +539,33 @@
           "weight": 1
         }
       ]
+    },
+    "7329": {
+      "objectName": "QuestReward/HikingDisaster",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q7329",
+          "itemId": "6022",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q7329": {
+      "objectName": "QuestReward/HikingDisaster",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 15,
+          "maxCount": 20,
+          "weight": 1
+        }
+      ]
     }
   }
 }
