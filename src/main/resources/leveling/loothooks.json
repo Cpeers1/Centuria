@@ -240,5 +240,14 @@
 				"type:filler"
 			]
 		}
+	],
+	"8638": [
+		{
+			"__NOTE__": "Quest: What Remains",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
 	]
 }

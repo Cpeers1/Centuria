@@ -647,6 +647,33 @@
           "weight": 1
         }
       ]
+    },
+    "8638": {
+      "objectName": "QuestReward/SearchingBonepiles",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q8638",
+          "itemId": "9276",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q8638": {
+      "objectName": "QuestReward/SearchingBonepiles",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 60,
+          "maxCount": 75,
+          "weight": 1
+        }
+      ]
     }
   }
 }
