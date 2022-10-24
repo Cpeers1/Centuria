@@ -195,5 +195,14 @@
 				"type:lorefollowup"
 			]
 		}
+	],
+	"7977": [
+		{
+			"__NOTE__": "Quest: Brenda\u0027s Reckoning",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
 	]
 }

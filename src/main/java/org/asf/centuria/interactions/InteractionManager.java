@@ -21,6 +21,7 @@ import org.asf.centuria.interactions.modules.ResourceCollectionModule;
 import org.asf.centuria.interactions.modules.ShopkeeperModule;
 import org.asf.centuria.interactions.modules.linearobjects.LinearObjectHandler;
 import org.asf.centuria.interactions.modules.linearobjects.LockpickItemModule;
+import org.asf.centuria.packets.xt.gameserver.quests.QuestCommandPacket;
 
 public class InteractionManager {
 
@@ -370,6 +371,19 @@ public class InteractionManager {
 					break;
 				}
 				}
+
+				// Check if it needs to be sent to the client
+				int cmdI = Integer.parseInt(state.command);
+				if (cmdI <= 20 || cmdI == 38 || cmdI == 81 || cmdI == 82) {
+					// Build quest command
+					QuestCommandPacket packet = new QuestCommandPacket();
+					packet.id = state.actorId;
+					packet.type = cmdI;
+					// Parameters
+					for (String param : state.params)
+						packet.params.add(param);
+					plr.client.sendPacket(packet);
+				}
 			}
 		}
 	}
@@ -414,7 +428,21 @@ public class InteractionManager {
 			case "84":
 				// Handled by group objects
 			case "3":
-				// Dialogue is clientside
+				// Build quest command
+				XtWriter pk = new XtWriter();
+				pk.writeString("qcmd");
+				pk.writeInt(-1); // Data prefix
+				pk.writeString(state.command); // command
+				pk.writeInt(0); // State
+				pk.writeString(target); // Interactable
+				pk.writeInt(0); // Position
+
+				// Parameters
+				for (String param : state.params)
+					pk.writeString(param);
+				pk.writeString(""); // Data suffix
+				plr.client.sendPacket(pk.encode());
+				break;
 			case "41":
 				// Not allowed
 				break;
@@ -477,19 +505,13 @@ public class InteractionManager {
 			int cmdI = Integer.parseInt(state.command);
 			if (cmdI <= 20 || cmdI == 38 || cmdI == 81 || cmdI == 82) {
 				// Build quest command
-				XtWriter pk = new XtWriter();
-				pk.writeString("qcmd");
-				pk.writeInt(-1); // Data prefix
-				pk.writeString(state.command); // command
-				pk.writeInt(0); // State
-				pk.writeString(target); // Interactable
-				pk.writeInt(0); // Position
-
+				QuestCommandPacket packet = new QuestCommandPacket();
+				packet.id = state.actorId;
+				packet.type = cmdI;
 				// Parameters
 				for (String param : state.params)
-					pk.writeString(param);
-				pk.writeString(""); // Data suffix
-				plr.client.sendPacket(pk.encode());
+					packet.params.add(param);
+				plr.client.sendPacket(packet);
 			}
 		}
 	}

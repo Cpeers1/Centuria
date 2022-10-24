@@ -512,6 +512,33 @@
           "weight": 1
         }
       ]
+    },
+    "7977": {
+      "objectName": "QuestReward/BrendasAwakening",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q7977",
+          "itemId": "4948",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+ 	"q7977": {
+      "objectName": "QuestReward/BrendasAwakening",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 40,
+          "maxCount": 50,
+          "weight": 1
+        }
+      ]
     }
   }
 }
