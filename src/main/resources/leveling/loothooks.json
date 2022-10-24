@@ -249,5 +249,14 @@
 				"type:lore"
 			]
 		}
+	],
+	"11751": [
+		{
+			"__NOTE__": "Quest: Curry Conquest",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
 	]
 }
