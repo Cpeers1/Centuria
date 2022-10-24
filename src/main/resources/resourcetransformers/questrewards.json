@@ -620,6 +620,33 @@
           "weight": 1
         }
       ]
+    },
+    "11984": {
+      "objectName": "QuestReward/MyrefolksNewClothes",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q11984",
+          "itemId": "10955",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q11984": {
+      "objectName": "QuestReward/MyrefolksNewClothes",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 30,
+          "maxCount": 45,
+          "weight": 1
+        }
+      ]
     }
   }
 }

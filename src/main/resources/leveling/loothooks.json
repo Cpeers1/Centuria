@@ -231,5 +231,14 @@
 				"type:filler"
 			]
 		}
+	],
+	"11984": [
+		{
+			"__NOTE__": "Quest: The Actor's New Clothes",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
 	]
 }
