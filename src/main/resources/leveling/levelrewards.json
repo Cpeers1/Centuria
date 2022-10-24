@@ -1,0 +1,1069 @@
+{
+    "rewardsForLevels": [
+        {
+            "levels": [ "1" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 50
+                }
+            ]
+        },
+       	{
+            "levels": [ "2" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22057,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+       	{
+            "levels": [ "3" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 100
+                }
+            ]
+        },
+        {
+            "levels": [ "4" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22059,
+                    "itemQuantity": 1
+                }
+            ]
+        },        
+        {
+            "levels": [ "5" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2120,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+       	{
+            "levels": [ "6" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 300
+                }
+            ]
+        },
+        {
+            "levels": [ "7" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22060,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "8" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 14500,
+                    "itemQuantity": 10
+                }
+            ]
+        },
+        {
+            "levels": [ "9" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 21867,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "10" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2118,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "11" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 450
+                }
+            ]
+        },
+        {
+            "levels": [ "12" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22069,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "13" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22070,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "14" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 21972,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "15" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2117,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "16" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 14500,
+                    "itemQuantity": 20
+                }
+            ]
+        },
+        {
+            "levels": [ "17" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 18677,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "18" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 600
+                }
+            ]
+        },
+        {
+            "levels": [ "19" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 10147,
+                    "itemQuantity": 5
+                }
+            ]
+        },
+        {
+            "levels": [ "20" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2123,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "21" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 14500,
+                    "itemQuantity": 30
+                }
+            ]
+        },
+        {
+            "levels": [ "22" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22079,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "23" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22080,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "24" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 18680,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "25" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 5625,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "26" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22082,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "27" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 100
+                }
+            ]
+        },
+        {
+            "levels": [ "28" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 19677,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "29" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 14500,
+                    "itemQuantity": 40
+                }
+            ]
+        },
+        {
+            "levels": [ "30" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 5628,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "31" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22084,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "32" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 21778,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "33" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22085,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "34" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 14500,
+                    "itemQuantity": 50
+                }
+            ]
+        },
+        {
+            "levels": [ "35" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 5634,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "36" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22087,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "37" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22088,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "38" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 1500
+                }
+            ]
+        },
+        {
+            "levels": [ "39" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22089,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "40" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 5637,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "41" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22423,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "42" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22091,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "43" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 1750
+                }
+            ]
+        },
+        {
+            "levels": [ "44" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 14500,
+                    "itemQuantity": 1750
+                }
+            ]
+        },
+        {
+            "levels": [ "45" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 5631,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "46" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22093,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "47" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 19716,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "48" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 1900
+                }
+            ]
+        },
+        {
+            "levels": [ "49" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22094,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "50" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 7405,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "51" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22096,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "52" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22097,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "53" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22098,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "54" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 2300
+                }
+            ]
+        },
+        {
+            "levels": [ "55" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 7404,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "56" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 19719,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "57" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 14500,
+                    "itemQuantity": 50
+                }
+            ]
+        },
+        {
+            "levels": [ "58" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22100,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "59" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 21781,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "60" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 7403,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "61" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22102,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "62" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22103,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "63" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22104,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "64" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 2500
+                }
+            ]
+        },
+        {
+            "levels": [ "65" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 7406,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "66" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22105,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "67" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22439,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "68" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 19683,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "69" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 21772,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "70" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 7407,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "71" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22108,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "72" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 19686,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "73" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 2650
+                }
+            ]
+        },
+        {
+            "levels": [ "74" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22109,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "75" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 3071,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "76" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22111,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "77" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 14500,
+                    "itemQuantity": 50
+                }
+            ]
+        },
+        {
+            "levels": [ "78" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 21784,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "79" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22112,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "80" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 3069,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "81" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 2800
+                }
+            ]
+        },
+        {
+            "levels": [ "82" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 19704,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "83" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22114,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "84" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 14500,
+                    "itemQuantity": 50
+                }
+            ]
+        },
+        {
+            "levels": [ "84" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 14500,
+                    "itemQuantity": 50
+                }
+            ]
+        },
+        {
+            "levels": [ "85" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 3067,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "86" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22117,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "87" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22118,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "88" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 3000
+                }
+            ]
+        },
+        {
+            "levels": [ "89" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22119,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "90" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 3073,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "91" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22121,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "92" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22122,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "93" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22123,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "94" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22124,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "95" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 3075,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "96" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22126,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "97" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2327,
+                    "itemQuantity": 3200
+                }
+            ]
+        },
+        {
+            "levels": [ "98" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22127,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "99" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 2084,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "100" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 22440,
+                    "itemQuantity": 1
+                }
+            ]
+        },
+        {
+            "levels": [ "101" ],
+            "rewards": [
+                {
+                    "weight": 100,
+                    "itemDefId": 14500,
+                    "itemQuantity": 50
+                }
+            ]
+        }
+    ],
+    
+    "fallbackRewards": [
+    	{
+    		"__NOTE__": "Star fragments",
+            "weight": 40,
+            "itemDefId": 14500,
+            "quantityEval": "0.5 * level"
+        },
+        {
+    		"__NOTE__": "Lockpicks",
+            "weight": 60,
+            "itemDefId": 8372,
+            "quantityEval": "0.1 * level"
+        },
+    	{
+    		"__NOTE__": "Likes",
+            "weight": 50,
+            "itemDefId": 2327,
+            "quantityEval": "25 * level"
+        },
+        {
+    		"__NOTE__": "Ingredient Bundle (x30 Cotton, x10 Silk, x30 Thread, x5 Leather, x10 Stones, x10 Wood, x15 Clay, x10 Glass, x5 Steel, x30 Pigment Potions, x10 Copper, x3 Gold, x20 Twiggle Tears, x10 Wires, & x5 Iron)",
+            "weight": 25,
+            "itemDefId": 22100,
+            "itemQuantity": 1
+        },
+        {
+    		"__NOTE__": "Loot Pack (x1 Forest Green Dye, x1 Farmer's Bucket, x1 Fortune Teller Orbs, x1 Netchweed Sofa, & x1 Parka Hood)",
+            "weight": 15,
+            "itemDefId": 22096,
+            "itemQuantity": 1
+        },
+        {
+    		"__NOTE__": "Bellamy's Outpost Ingredient Bundle (x30 Cotton, x30 Silk, x10 Thread x10 Leather, x30 Stone, x30 Wood, x10 Clay, x10 Glass, x10 Steel, x30 Pigment Potion, x10 Copper, x5 Gold, x20 Twiggle Tears, x10 Wire, & x10 Iron)",
+            "weight": 20,
+            "itemDefId": 22112,
+            "itemQuantity": 1
+        },
+        {
+    		"__NOTE__": "Loot Pack (10 Frilled Wings, 20 Bat Eyes, 30 Bat Leathers, x1 Wizard Beard, x1 Witch Cape, x1 Fin Bustle)",
+            "weight": 15,
+            "itemDefId": 22119,
+            "itemQuantity": 1
+        }
+    ]
+}

@@ -20,7 +20,7 @@ public class XPDetailsHandler extends HttpUploadProcessor {
 	@Override
 	public void process(String contentType, Socket client, String method) {
 		Centuria.logger.info("API CALL: " + getRequest().path);
-		
+
 		try {
 			// Parse body
 			ByteArrayOutputStream strm = new ByteArrayOutputStream();
@@ -64,10 +64,10 @@ public class XPDetailsHandler extends HttpUploadProcessor {
 				if (acc.getLevel().isLevelAvailable()) {
 					JsonObject lvD = new JsonObject();
 					JsonObject cLv = new JsonObject();
-					cLv.addProperty("level", acc.getLevel().getCurrentXP());
+					cLv.addProperty("level", acc.getLevel().getLevel());
 					cLv.addProperty("required", acc.getLevel().getLevelupXPCount());
 					cLv.addProperty("xp", acc.getLevel().getCurrentXP());
-					lvD.add("current_level", lvD);
+					lvD.add("current_level", cLv);
 					lvD.addProperty("total_xp", acc.getLevel().getTotalXP());
 					lvD.addProperty("uuid", uuid);
 					found.add(lvD);

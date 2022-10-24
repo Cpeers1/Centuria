@@ -34,6 +34,7 @@ public class ItemDefinitionConverter {
 				lastData = lastData.replace("`", "\"");
 				JsonObject obj = JsonParser.parseString(lastData).getAsJsonObject();
 
+				int rarity = 0;
 				int itemType = -1;
 				for (JsonElement ele : obj.get("components").getAsJsonArray()) {
 					JsonObject data = ele.getAsJsonObject();
@@ -42,11 +43,19 @@ public class ItemDefinitionConverter {
 						itemType = data.get("itemType").getAsInt();
 					}
 				}
+				for (JsonElement ele : obj.get("components").getAsJsonArray()) {
+					JsonObject data = ele.getAsJsonObject();
+					if (data.get("componentClass").getAsString().equals("RarityDefComponent")) {
+						data = data.get("componentJSON").getAsJsonObject();
+						rarity = data.get("rarity").getAsInt();
+					}
+				}
 
 				if (itemType != -1) {
 					JsonObject itm = new JsonObject();
 					itm.addProperty("inventory", itemType);
 					itm.addProperty("objectName", lastName);
+					itm.addProperty("rarity", rarity);
 					definitions.add(lastID, itm);
 				}
 

@@ -10,12 +10,15 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.shops.BoughtItemInfo;
 import org.asf.centuria.enums.shops.ItemBuyStatus;
+import org.asf.centuria.interactions.modules.resourcecollection.levelhooks.EventInfo;
+import org.asf.centuria.levelevents.LevelEvent;
+import org.asf.centuria.levelevents.LevelEventBus;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.shops.ShopManager;
 import org.asf.centuria.shops.info.ShopItem;
-import org.asf.centuria.util.WeightedSelectorUtil;
+import org.asf.centuria.util.RandomSelectorUtil;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -23,7 +26,7 @@ import com.google.gson.JsonObject;
 public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPacket> {
 
 	private static final String PACKET_ID = "$b";
-	
+
 	private String item;
 	private String shopType;
 	private int count;
@@ -85,6 +88,51 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 			client.sendPacket(pkt);
 			return true;
 		}
+
+		// Prepare XP event
+		EventInfo ev = new EventInfo();
+		ev.event = "levelevents.purchases";
+
+		// Find shop name
+		String shop = "unknown";
+		switch (shopType) {
+		case "11600": {
+			shop = "todyefor";
+			break;
+		}
+		case "4688":
+		case "11599": {
+			shop = "ferafashions";
+			break;
+		}
+		case "30550":
+		case "14873": {
+			shop = "astrale";
+			break;
+		}
+		case "28741":
+		case "28745":
+		case "28746": {
+			shop = "airmail";
+			break;
+		}
+		case "6707": {
+			shop = "bellamysoutpost";
+			break;
+		}
+		case "4957": {
+			shop = "reputablegoods";
+			break;
+		}
+		case "11601": {
+			shop = "twiglasworkshop";
+			break;
+		}
+		}
+
+		// Add tags
+		ev.tags.add("shop:" + shop);
+		ev.tags.add("purchase:" + item);
 
 		// Buy item
 		ShopItemBuyResponsePacket res = new ShopItemBuyResponsePacket();
@@ -149,6 +197,53 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 				i.count = amount;
 				i.itemID = itemId;
 				res.items.add(i);
+
+				// Find type
+				String type = "generic";
+				switch (ItemAccessor.getInventoryTypeOf(Integer.parseInt(id))) {
+				case "1": {
+					type = "avatar";
+					break;
+				}
+				case "2": {
+					type = "bodymod";
+					break;
+				}
+				case "7": {
+					type = "enigma";
+					break;
+				}
+				case "100": {
+					type = "clothing";
+					break;
+				}
+				case "102": {
+					type = "furniture";
+					break;
+				}
+				case "103": {
+					type = "resource";
+					break;
+				}
+				case "111": {
+					type = "dye";
+					break;
+				}
+				case "5":
+				case "6":
+				case "10": {
+					type = "sanctuary";
+					break;
+				}
+				}
+
+				// Add tags
+				ev.tags.add("type:" + type);
+				ev.tags.add("item:" + id);
+				ev.tags.add("itemcount:" + amount);
+				int rarity = ItemAccessor.getItemRarity(id);
+				ev.tags.add("rarity:"
+						+ (rarity == 0 ? "common" : (rarity == 1 ? "cool" : (rarity == 2 ? "rare" : "epic"))));
 			}
 		});
 
@@ -167,13 +262,16 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 			}
 
 			// Retrieve entry
-			String item = WeightedSelectorUtil.select(weights);
+			String item = RandomSelectorUtil.selectWeighted(weights);
 			if (item != null) {
 				// Give eureka item
 				BoughtItemInfo e = new BoughtItemInfo();
 				e.itemID = acc.add(Integer.parseInt(item));
 				e.count = 1;
 				res.eurekaItems.add(e);
+
+				// Eureka tag
+				ev.tags.add("eureka:true");
 			}
 		}
 
@@ -188,6 +286,9 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 		resp.shopType = shopType;
 		resp.items = ShopManager.getShopContents(((Player) client.container).account, shopType);
 		client.sendPacket(resp);
+
+		// Dispatch event
+		LevelEventBus.dispatch(new LevelEvent(ev.event, ev.tags.toArray(new String[0]), plr));
 
 		return true;
 	}

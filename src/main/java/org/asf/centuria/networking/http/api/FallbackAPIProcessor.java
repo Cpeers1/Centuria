@@ -8,6 +8,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.HashMap;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
@@ -278,7 +279,25 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				// make new json Array
 				JsonArray jsonArray = new JsonArray();
 
-				for (SocialEntry entry : followerList) {
+				// parse query
+				HashMap<String, String> query = new HashMap<String, String>();
+				for (String querySegment : getRequest().query.split("&")) {
+					if (querySegment.isEmpty())
+						continue;
+					String key = querySegment.substring(0, querySegment.indexOf("="));
+					String value = querySegment.substring(querySegment.indexOf("=") + 1);
+					query.put(key, value);
+				}
+
+				// find entries
+				int page = Integer.parseInt(query.getOrDefault("page", "1"));
+				int limit = Integer.parseInt(query.getOrDefault("limit", Integer.toString(Integer.MAX_VALUE)));
+				for (int i = (page - 1) * limit; i < followerList.length; i++) {
+					SocialEntry entry = followerList[i];
+
+					if (i >= page * limit)
+						break;
+
 					// make a new json object for the entry
 					var newJsonObject = new JsonObject();
 					newJsonObject.addProperty("created_at", entry.addedAt);
@@ -325,7 +344,24 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				// make new json Array
 				JsonArray jsonArray = new JsonArray();
 
-				for (SocialEntry entry : followingList) {
+				// parse query
+				HashMap<String, String> query = new HashMap<String, String>();
+				for (String querySegment : getRequest().query.split("&")) {
+					if (querySegment.isEmpty())
+						continue;
+					String key = querySegment.substring(0, querySegment.indexOf("="));
+					String value = querySegment.substring(querySegment.indexOf("=") + 1);
+					query.put(key, value);
+				}
+
+				// find entries
+				int page = Integer.parseInt(query.getOrDefault("page", "1"));
+				int limit = Integer.parseInt(query.getOrDefault("limit", Integer.toString(Integer.MAX_VALUE)));
+				for (int i = (page - 1) * limit; i < followingList.length; i++) {
+					SocialEntry entry = followingList[i];
+
+					if (i >= page * limit)
+						break;
 					// make a new json object for the entry
 					var newJsonObject = new JsonObject();
 					newJsonObject.addProperty("created_at", entry.addedAt);

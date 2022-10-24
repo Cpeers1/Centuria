@@ -261,7 +261,7 @@ public class InventoryAccessor {
 
 		// Add components
 		for (ItemComponent component : componentData) {
-			components.add(component.componentName, component.componentData);
+			components.add(component.componentName, component.componentData.deepCopy());
 		}
 
 		// Add timestamp

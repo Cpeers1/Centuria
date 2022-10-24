@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
+import org.asf.centuria.accounts.highlevel.ItemAccessor;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.NetworkedObjects;
@@ -18,16 +20,20 @@ import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.modules.resourcecollection.ResourceDefinition;
 import org.asf.centuria.interactions.modules.resourcecollection.ResourceType;
+import org.asf.centuria.interactions.modules.resourcecollection.levelhooks.EventInfo;
 import org.asf.centuria.interactions.modules.resourcecollection.rewards.HarvestReward;
+import org.asf.centuria.interactions.modules.resourcecollection.rewards.LootInfo;
 import org.asf.centuria.interactions.modules.resourcecollection.rewards.LootReward;
 import org.asf.centuria.interactions.modules.resourcecollection.tables.HarvestTable;
 import org.asf.centuria.interactions.modules.resourcecollection.tables.LootTable;
+import org.asf.centuria.levelevents.LevelEvent;
+import org.asf.centuria.levelevents.LevelEventBus;
 import org.asf.centuria.modules.ICenturiaModule;
 import org.asf.centuria.modules.ModuleManager;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
-import org.asf.centuria.util.WeightedSelectorUtil;
+import org.asf.centuria.util.RandomSelectorUtil;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -40,6 +46,26 @@ public class ResourceCollectionModule extends InteractionModule {
 	private static HashMap<String, ResourceDefinition> resources = new HashMap<String, ResourceDefinition>();
 	private static HashMap<String, HarvestTable> harvestTables = new HashMap<String, HarvestTable>();
 	private static HashMap<String, LootTable> lootTables = new HashMap<String, LootTable>();
+	private static HashMap<String, ArrayList<EventInfo>> levelHooks = new HashMap<String, ArrayList<EventInfo>>();
+
+	// Called to load level hooks into memory
+	private static void importLevelHooks(JsonObject data) {
+		// Load all tables
+		data.keySet().forEach(table -> {
+			// Create list
+			levelHooks.put(table, new ArrayList<EventInfo>());
+
+			// Add objects
+			JsonArray infos = data.get(table).getAsJsonArray();
+			for (JsonElement ele : infos) {
+				JsonObject eventInfo = ele.getAsJsonObject();
+				EventInfo event = new EventInfo();
+				event.event = eventInfo.get("event").getAsString();
+				eventInfo.get("tags").getAsJsonArray().forEach(t -> event.tags.add(t.getAsString()));
+				levelHooks.get(table).add(event);
+			}
+		});
+	}
 
 	// Called to load the tables into memory
 	private static void importObjectsIntoMemory(JsonObject data) {
@@ -167,8 +193,64 @@ public class ResourceCollectionModule extends InteractionModule {
 			for (ICenturiaModule module : ModuleManager.getInstance().getAllModules()) {
 				loadTransformers(module.getClass());
 			}
+
+			// Load level hooksa
+			strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("leveling/loothooks.json");
+			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
+			importLevelHooks(helper);
+			strm.close();
+
+			// Load module transformers
+			for (ICenturiaModule module : ModuleManager.getInstance().getAllModules()) {
+				loadHooks(module.getClass());
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	private static void loadHooks(Class<?> cls) {
+		URL source = cls.getProtectionDomain().getCodeSource().getLocation();
+
+		// Generate a base URL
+		String baseURL = "";
+		String fileName = "";
+		try {
+			File sourceFile = new File(source.toURI());
+			fileName = sourceFile.getName();
+			if (sourceFile.isDirectory()) {
+				baseURL = source + (source.toString().endsWith("/") ? "" : "/");
+			} else {
+				baseURL = "jar:" + source + "!/";
+			}
+		} catch (Exception e) {
+			return;
+		}
+
+		try {
+			// Find the transformer document
+			InputStream strm = new URL(baseURL + "leveling/index.json").openStream();
+			JsonArray index = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonArray();
+			strm.close();
+
+			// Load all transformers
+			for (JsonElement ele : index) {
+				try {
+					// Find the transformer document
+					strm = new URL(baseURL + "leveling/" + ele.getAsString()).openStream();
+					JsonObject transformer = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8"))
+							.getAsJsonObject();
+					strm.close();
+
+					// Load transformer
+					importLevelHooks(transformer);
+				} catch (Exception e) {
+					Centuria.logger.error("Transformer failed to load: " + ele.getAsString() + " (" + fileName + "): "
+							+ e.getClass().getSimpleName() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
+					e.printStackTrace();
+				}
+			}
+		} catch (Exception e) {
 		}
 	}
 
@@ -369,7 +451,12 @@ public class ResourceCollectionModule extends InteractionModule {
 						table.rewards.forEach(t -> {
 							options.put(t, t.weight);
 						});
-						HarvestReward reward = WeightedSelectorUtil.select(options);
+
+						// XP info
+						EventInfo ev = new EventInfo();
+						ev.event = "levelevents.harvest";
+
+						HarvestReward reward = RandomSelectorUtil.selectWeighted(options);
 						if (reward != null) {
 							// Give reward
 							int count = rnd.nextInt(reward.maxCount + 1);
@@ -377,12 +464,30 @@ public class ResourceCollectionModule extends InteractionModule {
 								count = rnd.nextInt(reward.maxCount + 1);
 							player.account.getPlayerInventory().getItemAccessor(player)
 									.add(Integer.parseInt(reward.itemId), count);
+
+							// Add tags
+							ev.tags.add("itemdefid:" + reward.itemId);
+							ev.tags.add("itemcount:" + count);
+
+							// Add item rarity
+							int rarity = ItemAccessor.getItemRarity(reward.itemId);
+							ev.tags.add("rarity:" + (rarity == 0 ? "common"
+									: (rarity == 1 ? "cool" : (rarity == 2 ? "rare" : "epic"))));
+
+							// Log
+							Centuria.logger.info(MarkerManager.getMarker("RESOURCE COLLECTION"),
+									"Player " + player.account.getDisplayName() + " harvested " + obj.objectName + " ("
+											+ id + ")" + " and received " + count + " of item " + reward.itemId);
 						}
 
 						// Set harvest count and timestamp
 						player.account.getPlayerInventory().getInteractionMemory().harvested(player.levelID, id);
 						player.account.getPlayerInventory().getInteractionMemory().saveTo(player.client);
 						player.respawnItems.put(id, (long) (System.currentTimeMillis() + (def.respawnSeconds * 1000)));
+						ev.tags.add("map:" + manName(player));
+
+						// Dispatch XP event
+						LevelEventBus.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
 						return true;
 					}
 				}
@@ -410,7 +515,7 @@ public class ResourceCollectionModule extends InteractionModule {
 					return 0; // Cannot loot yet
 
 				// Give reward
-				giveLootReward(player, Integer.toString(def.lootTableId), obj.primaryObjectInfo.defId);
+				giveLootReward(player, Integer.toString(def.lootTableId), 2, obj.primaryObjectInfo.defId);
 
 				// Set unlocked and timestamp
 				player.account.getPlayerInventory().getInteractionMemory().unlocked(player.levelID, id);
@@ -468,7 +573,13 @@ public class ResourceCollectionModule extends InteractionModule {
 		return -1;
 	}
 
-	public static void giveLootReward(Player player, String lootTableId, int sourceDefID) {
+	/**
+	 * Selects loot from a loot table
+	 * 
+	 * @param lootTableId Table to select loot from
+	 * @return LootInfo object or null
+	 */
+	public static LootInfo getLootReward(String lootTableId) {
 		LootTable table = lootTables.get(lootTableId);
 		if (table != null) {
 			// Find reward
@@ -476,14 +587,44 @@ public class ResourceCollectionModule extends InteractionModule {
 			table.rewards.forEach(t -> {
 				options.put(t, t.weight);
 			});
-			LootReward reward = WeightedSelectorUtil.select(options);
+			LootReward reward = RandomSelectorUtil.selectWeighted(options);
 			if (reward != null) {
-				// Give reward
-				int count = rnd.nextInt(reward.maxCount + 1);
-				while (count < reward.minCount)
-					count = rnd.nextInt(reward.maxCount + 1);
-
+				// Retrieve reward
+				LootInfo info = new LootInfo();
 				if (reward.itemId != null) {
+					int count = rnd.nextInt(reward.maxCount + 1);
+					while (count < reward.minCount)
+						count = rnd.nextInt(reward.maxCount + 1);
+					info.count = count;
+				}
+				info.reward = reward;
+				return info;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Gives loot to a player
+	 * 
+	 * @param player      Player to give loot to
+	 * @param lootTableId Loot table
+	 * @param giftType    Gift type number
+	 * @param sourceDefID Source object defID
+	 */
+	public static void giveLootReward(Player player, String lootTableId, int giftType, int sourceDefID) {
+		// Log
+		Centuria.logger.info(MarkerManager.getMarker("RESOURCE COLLECTION"),
+				"Giving loot to player " + player.account.getDisplayName() + ", giving table " + lootTableId);
+
+		String originalTableId = lootTableId;
+		boolean rewarded = false;
+		while (true) {
+			LootInfo info = getLootReward(lootTableId);
+			if (info != null) {
+				LootReward reward = info.reward;
+				if (reward.itemId != null) {
+					int count = info.count;
 					String[] ids = player.account.getPlayerInventory().getItemAccessor(player)
 							.add(Integer.parseInt(reward.itemId), count);
 
@@ -491,7 +632,7 @@ public class ResourceCollectionModule extends InteractionModule {
 					for (String objID : ids) {
 						// Send gift object
 						JsonObject gift = new JsonObject();
-						gift.addProperty("fromType", 5);
+						gift.addProperty("fromType", giftType);
 						gift.addProperty("redeemedItemIdsExpectedCount", 0);
 						gift.addProperty("giftItemDefId", Integer.parseInt(reward.itemId));
 						gift.addProperty("count", count);
@@ -518,14 +659,140 @@ public class ResourceCollectionModule extends InteractionModule {
 
 						// Send gift-push packet
 						player.client.sendPacket("%xt%gp%-1%1%" + giftID + "%" + count + "%");
+						break;
+					}
+
+					// Level hooks
+					final String lootTableF = lootTableId;
+					if (levelHooks.containsKey(lootTableId)) {
+						levelHooks.get(lootTableId).forEach(event -> {
+							// Build event object
+							EventInfo ev = new EventInfo();
+							ev.event = event.event;
+							ev.tags.addAll(event.tags);
+
+							// Add tags
+							int rarity = ItemAccessor.getItemRarity(reward.itemId);
+							ev.tags.add("rarity:" + (rarity == 0 ? "common"
+									: (rarity == 1 ? "cool" : (rarity == 2 ? "rare" : "epic"))));
+							ev.tags.add("loottable:" + lootTableF);
+							ev.tags.add("itemdefid:" + reward.itemId);
+							ev.tags.add("itemcount:" + count);
+							ev.tags.add("map:" + manName(player));
+
+							// Dispatch event
+							LevelEventBus
+									.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
+						});
+						if (!rewarded && originalTableId.equals(lootTableF))
+							rewarded = true;
+					}
+
+					// Hooks for the original table id
+					if (levelHooks.containsKey(originalTableId) && !rewarded) {
+						rewarded = true;
+						levelHooks.get(originalTableId).forEach(event -> {
+							// Build event object
+							EventInfo ev = new EventInfo();
+							ev.event = event.event;
+							ev.tags.addAll(event.tags);
+
+							// Add tags
+							int rarity = ItemAccessor.getItemRarity(reward.itemId);
+							ev.tags.add("rarity:" + (rarity == 0 ? "common"
+									: (rarity == 1 ? "cool" : (rarity == 2 ? "rare" : "epic"))));
+							ev.tags.add("loottable:" + lootTableF);
+							ev.tags.add("itemdefid:" + reward.itemId);
+							ev.tags.add("itemcount:" + count);
+							ev.tags.add("map:" + manName(player));
+
+							// Dispatch event
+							LevelEventBus
+									.dispatch(new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
+						});
+					}
+
+					// Chest hook
+					LootTable table = lootTables.get(lootTableId);
+					if (table != null) {
+						// I know, not the best, but idfk how to identify what chest type a chest is
+						// except by checking the object name
+						if (table.objectName.startsWith("TreasureChest/")) {
+							EventInfo ev = new EventInfo();
+							ev.event = "levelevents.chests";
+
+							// Add tags
+							int rarity = ItemAccessor.getItemRarity(reward.itemId);
+							ev.tags.add("rarity:" + (rarity == 0 ? "common"
+									: (rarity == 1 ? "cool" : (rarity == 2 ? "rare" : "epic"))));
+							ev.tags.add("loottable:" + lootTableId);
+							ev.tags.add("itemdefid:" + reward.itemId);
+							ev.tags.add("itemcount:" + count);
+							ev.tags.add("map:" + manName(player));
+
+							// Its a treasure chest, lets see which type
+							if (table.objectName.contains("/Bronze")) {
+								// Bronze
+								ev.tags.add("type:bronze");
+
+								// Dispatch event
+								LevelEventBus.dispatch(
+										new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
+							} else if (table.objectName.contains("/Silver")) {
+								// Silver
+								ev.tags.add("type:silver");
+
+								// Dispatch event
+								LevelEventBus.dispatch(
+										new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
+							} else if (table.objectName.contains("/Gold")) {
+								// Gold
+								ev.tags.add("type:gold");
+
+								// Dispatch event
+								LevelEventBus.dispatch(
+										new LevelEvent(ev.event, ev.tags.toArray(t -> new String[t]), player));
+							}
+						}
 					}
 				}
 				if (reward.referencedTableId != null) {
-					// Give table
-					giveLootReward(player, reward.referencedTableId, sourceDefID);
-				}
+					// Continue
+					lootTableId = reward.referencedTableId;
+				} else
+					break;
 			}
 		}
+	}
+
+	// Lets not copy/paste like a madman
+	private static String manName(Player player) {
+		// Find map name
+		String map = "unknown";
+		switch (player.levelID) {
+		case 820:
+			map = "cityfera";
+			break;
+		case 2364:
+			map = "bloodtundra";
+			break;
+		case 9687:
+			map = "lakeroot";
+			break;
+		case 2147:
+			map = "mugmyre";
+			break;
+		case 1689:
+			map = "sanctuary";
+			break;
+		case 3273:
+			map = "sunkenthicket";
+			break;
+		case 1825:
+			map = "shatteredbay";
+			break;
+		}
+		return map;
 	}
 
 	@Override

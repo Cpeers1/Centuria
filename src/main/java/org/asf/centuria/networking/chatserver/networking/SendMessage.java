@@ -13,6 +13,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
@@ -40,7 +41,7 @@ import com.google.gson.JsonParser;
 public class SendMessage extends AbstractChatPacket {
 
 	private static String NIL_UUID = new UUID(0, 0).toString();
-	private static ArrayList<String> banWords = new ArrayList<String>();
+	private static ArrayList<String> muteWords = new ArrayList<String>();
 	private static ArrayList<String> filterWords = new ArrayList<String>();
 	private static ArrayList<String> alwaysfilterWords = new ArrayList<String>();
 
@@ -69,7 +70,7 @@ public class SendMessage extends AbstractChatPacket {
 		// Load ban words
 		try {
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("textfilter/instaban.txt");
+					.getResourceAsStream("textfilter/instamute.txt");
 			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
 			for (String line : lines.split("\n")) {
 				if (line.isEmpty() || line.startsWith("#"))
@@ -80,7 +81,7 @@ public class SendMessage extends AbstractChatPacket {
 					data = data.replace("  ", "");
 
 				for (String word : data.split(";"))
-					banWords.add(word.toLowerCase());
+					muteWords.add(word.toLowerCase());
 			}
 			strm.close();
 		} catch (IOException e) {
@@ -134,6 +135,8 @@ public class SendMessage extends AbstractChatPacket {
 
 	@Override
 	public boolean handle(ChatClient client) {
+		DMManager manager = DMManager.getInstance();
+
 		// Ignore 'limbo' players
 		Player gameClient = client.getPlayer().getOnlinePlayerInstance();
 		if (gameClient == null) {
@@ -163,22 +166,6 @@ public class SendMessage extends AbstractChatPacket {
 
 		// Log
 		Centuria.logger.info("Chat: " + client.getPlayer().getDisplayName() + ": " + message);
-
-		// Check filter
-		String newMessage = "";
-		for (String word : message.split(" ")) {
-			if (banWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-				// Ban
-				client.getPlayer().ban("Illegal word in chat");
-				return true;
-			}
-
-			if (!newMessage.isEmpty())
-				newMessage += " " + word;
-			else
-				newMessage = word;
-		}
-		message = newMessage;
 
 		// Increase ban counter
 		client.banCounter++;
@@ -218,13 +205,41 @@ public class SendMessage extends AbstractChatPacket {
 			}
 		}
 
+		// Check filter
+		String newMessage = "";
+		for (String word : message.split(" ")) {
+			if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				// Mute
+				client.getPlayer().mute(0, 0, 30, "SYSTEM", "Illegal word in chat");
+
+				// Send system message
+				if (client.isRoomPrivate(room)) {
+					// DM message
+					Centuria.systemMessage(gameClient,
+							"You have been automatically muted for violating the emulator rules, mute will last 30 minutes.\nReason: illegal word in chat.",
+							true);
+				} else {
+					// Public chat
+					Centuria.systemMessage(gameClient,
+							"You have been automatically muted for violating the emulator rules, mute will last 30 minutes.\\nReason: illegal word in chat.");
+				}
+
+				return true;
+			}
+
+			if (!newMessage.isEmpty())
+				newMessage += " " + word;
+			else
+				newMessage = word;
+		}
+		message = newMessage;
+
 		if (client.isInRoom(room)) {
 			// Time format
 			SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");
 			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 			// If it is a DM, save message
-			DMManager manager = DMManager.getInstance();
 			if (client.isRoomPrivate(room) && manager.dmExists(room)) {
 				PrivateChatMessage msg = new PrivateChatMessage();
 				msg.content = message;
@@ -234,6 +249,7 @@ public class SendMessage extends AbstractChatPacket {
 			}
 
 			// Send to all in room
+			Player cPlayer = gameClient;
 			SocialManager socialManager = SocialManager.getInstance();
 			for (ChatClient cl : client.getServer().getClients()) {
 				if (cl.isInRoom(room)) {
@@ -242,6 +258,10 @@ public class SendMessage extends AbstractChatPacket {
 						// Check limbo player
 						gameClient = cl.getPlayer().getOnlinePlayerInstance();
 						if (gameClient == null || !gameClient.roomReady || gameClient.room == null)
+							continue;
+
+						// Check ghost mode
+						if (cPlayer.ghostMode && !gameClient.hasModPerms && !client.isRoomPrivate(room))
 							continue;
 
 						// Filter
@@ -368,22 +388,28 @@ public class SendMessage extends AbstractChatPacket {
 
 		if (Centuria.giveAllResources)
 			commandMessages.add("giveBasicMaterials");
+		if (Centuria.giveAllCurrency)
+			commandMessages.add("giveBasicCurrency");
 
 		if (GameServer.hasPerm(permLevel, "moderator")) {
+			commandMessages.add("toggleghostmode");
+			commandMessages.add("toggletpoverride");
 			commandMessages.add("kick \"<player>\" [\"<reason>\"]");
 			commandMessages.add("ipban \"<player/address>\" [\"<reason>\"]");
-			commandMessages.add("pardonip \"<ip>\" [\"<reason>\"]");
+			commandMessages.add("pardonip \"<ip>\"");
 			commandMessages.add("permban \"<player>\" [\"<reason>\"]");
 			commandMessages.add("tempban \"<player>\" <days>\" [\"<reason>\"]");
 			commandMessages.add("forcenamechange \"<player>\"");
 			commandMessages.add("changeothername \"<player>\" \"<new-name>\"");
 			commandMessages.add("mute \"<player>\" <minutes> [hours] [days] [\"<reason>\"]");
 			commandMessages.add("pardon \"<player>\" [\"<reason>\"]");
-			if (GameServer.hasPerm(permLevel, "developer")) {
-				commandMessages.add("makedeveloper \"<name>\"");
-				commandMessages.add("srp \"<raw-packet>\" [<player>]");
-			}
+			commandMessages.add("xpinfo [\"<player>\"]");
+			commandMessages.add("takexp <amount> [\"<player>\"]");
+			commandMessages.add("resetxp [\"<player>\"]");
+			commandMessages.add("takelevels <amount> [\"<player>\"]");
 			if (GameServer.hasPerm(permLevel, "admin")) {
+				commandMessages.add("addxp <amount> [\"<player>\"]");
+				commandMessages.add("addlevels <amount> [\"<player>\"]");
 				commandMessages.add("tpm <levelDefID> [<levelType>]");
 				commandMessages.add("makeadmin \"<player>\"");
 				commandMessages.add("makemoderator \"<player>\"");
@@ -394,6 +420,10 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("updateshutdown");
 				commandMessages.add("update <60|30|15|10|5|3|1>");
 				commandMessages.add("cancelupdate");
+			}
+			if (GameServer.hasPerm(permLevel, "developer")) {
+				commandMessages.add("makedeveloper \"<name>\"");
+				commandMessages.add("srp \"<raw-packet>\" [<player>]");
 			}
 			commandMessages.add("staffroom");
 			commandMessages.add("listplayers");
@@ -433,8 +463,7 @@ public class SendMessage extends AbstractChatPacket {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
 
 						if (onlinePlayer != null) {
-							var accessor = client.getPlayer().getPlayerInventory()
-									.getItemAccessor(client.getPlayer().getOnlinePlayerInstance());
+							var accessor = client.getPlayer().getPlayerInventory().getItemAccessor(onlinePlayer);
 
 							accessor.add(6691, 1000);
 							accessor.add(6692, 1000);
@@ -454,9 +483,21 @@ public class SendMessage extends AbstractChatPacket {
 
 							// TODO: Check result
 							systemMessage("You have been given 1000 of every basic material. Have fun!", cmd, client);
-						} else {
-							// TODO: support for giving offline players items.. somehow
-							systemMessage("Specified account does not appear to be online.", cmd, client);
+						}
+						return true;
+					}
+				} else if (cmdId.equals("givebasiccurrency")) {
+					if (Centuria.giveAllCurrency) {
+						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
+
+						if (onlinePlayer != null) {
+							var accessor = client.getPlayer().getPlayerInventory().getCurrencyAccessor();
+
+							accessor.addLikes(onlinePlayer.client, 1000);
+							accessor.addStarFragments(onlinePlayer.client, 1000);
+
+							// TODO: Check result
+							systemMessage("You have been given 1000 star fragments and likes. Have fun!", cmd, client);
 						}
 						return true;
 					}
@@ -553,7 +594,8 @@ public class SendMessage extends AbstractChatPacket {
 									map = "Tutorial";
 								else if (helper.has(Integer.toString(plr.levelID)))
 									map = helper.get(Integer.toString(plr.levelID)).getAsString();
-								response += "\n - " + plr.account.getDisplayName() + " (" + map + ")";
+								response += "\n - " + plr.account.getDisplayName() + " (" + map + ")"
+										+ (plr.ghostMode ? " [GHOSTING]" : "");
 							} else if (!suspiciousClients.containsKey(cl)) {
 								suspiciousClients.put(cl, "no gameserver connection");
 							}
@@ -789,14 +831,14 @@ public class SendMessage extends AbstractChatPacket {
 										// Ban player
 										plr.account.ban(client.getPlayer().getAccountID(), reason);
 									}
-
-									return true;
 								} catch (Exception e) {
 								}
 							}
 
 							// Log completion
 							systemMessage("Banned IP: " + args.get(0), cmd, client);
+
+							return true;
 						} catch (Exception e) {
 						}
 
@@ -1041,6 +1083,59 @@ public class SendMessage extends AbstractChatPacket {
 						systemMessage("Player is not online.", cmd, client);
 						return true;
 					}
+					case "toggletpoverride": {
+						// Override tp locks
+						Player plr = client.getPlayer().getOnlinePlayerInstance();
+						if (plr.overrideTpLocks) {
+							plr.overrideTpLocks = false;
+							systemMessage(
+									"Teleport override disabled. The system will no longer ignore follower settings.",
+									cmd, client);
+						} else {
+							plr.overrideTpLocks = true;
+							systemMessage("Teleport override enabled. The system will ignore follower settings.", cmd,
+									client);
+						}
+						return true;
+					}
+					case "toggleghostmode": {
+						// Ghost mode
+						Player plr = client.getPlayer().getOnlinePlayerInstance();
+						if (plr.ghostMode) {
+							plr.ghostMode = false;
+
+							// Spawn for everyone in room
+							GameServer server = (GameServer) plr.client.getServer();
+							for (Player player : server.getPlayers()) {
+								if (plr.room != null && player.room != null && player.room.equals(plr.room)
+										&& player != plr) {
+									plr.syncTo(player);
+									Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"), "Syncing player "
+											+ player.account.getDisplayName() + " to " + plr.account.getDisplayName());
+								}
+							}
+
+							systemMessage("Ghost mode disabled. You are visible to everyone.", cmd, client);
+						} else {
+							plr.ghostMode = true;
+
+							// Spawn for everyone in room
+							GameServer server = (GameServer) plr.client.getServer();
+							for (Player player : server.getPlayers()) {
+								if (plr.room != null && player.room != null && player.room.equals(plr.room)
+										&& player != plr && !player.hasModPerms) {
+									plr.destroyAt(player);
+									Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
+											"Removing player " + player.account.getDisplayName() + " from "
+													+ plr.account.getDisplayName());
+								}
+							}
+
+							systemMessage("Ghost mode enabled. You are now invisible to non-moderators.", cmd, client);
+						}
+
+						return true;
+					}
 
 					//
 					// Admin commands below
@@ -1183,6 +1278,7 @@ public class SendMessage extends AbstractChatPacket {
 								if (plr.account.getDisplayName().equals(args.get(0))) {
 									// Update inventory
 									plr.account.getPlayerInventory().deleteItem("permissions");
+									plr.hasModPerms = false;
 									break;
 								}
 							}
@@ -1458,6 +1554,203 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						return true;
+					}
+					case "xpinfo": {
+						// XP info
+						// Parse arguments
+						String player = client.getPlayer().getDisplayName();
+						if (args.size() > 0) {
+							player = args.get(0);
+						}
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Display info
+						try {
+							systemMessage("XP details:\n" + "Level: " + acc.getLevel().getLevel() + "\nXP: "
+									+ acc.getLevel().getCurrentXP() + " / " + acc.getLevel().getLevelupXPCount()
+									+ "\nTotal XP: " + acc.getLevel().getTotalXP(), cmd, client);
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
+						}
+
+						return true;
+					}
+					case "takexp": {
+						// Take XP
+						// Parse arguments
+						String player = client.getPlayer().getDisplayName();
+						if (args.size() < 1) {
+							systemMessage("Missing argument: xp amount", cmd, client);
+							return true;
+						}
+						if (args.size() > 1) {
+							player = args.get(1);
+						}
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Take xp
+						try {
+							int xp = Integer.parseInt(args.get(0));
+							if (xp < 0) {
+								systemMessage("Invalid XP amount: " + xp, cmd, client);
+								return true;
+							}
+							acc.getLevel().removeXP(xp);
+							systemMessage("Removed " + xp + " XP from " + acc.getDisplayName() + ".", cmd, client);
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
+						}
+
+						return true;
+					}
+					case "resetxp": {
+						// Reset XP
+						// Parse arguments
+						String player = client.getPlayer().getDisplayName();
+						if (args.size() > 0) {
+							player = args.get(0);
+						}
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Take xp
+						try {
+							int xp = acc.getLevel().getCurrentXP();
+							acc.getLevel().removeXP(xp);
+							systemMessage("Removed " + xp + " XP from " + acc.getDisplayName() + ".", cmd, client);
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
+						}
+
+						return true;
+					}
+					case "takelevels": {
+						// Take levels
+						// Parse arguments
+						String player = client.getPlayer().getDisplayName();
+						if (args.size() < 1) {
+							systemMessage("Missing argument: levels to remove", cmd, client);
+							return true;
+						}
+						if (args.size() > 1) {
+							player = args.get(1);
+						}
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Take xp
+						try {
+							int levels = Integer.parseInt(args.get(0));
+							if (acc.getLevel().getLevel() <= levels) {
+								systemMessage("Invalid amount of levels to remove: " + levels + " (user is at "
+										+ acc.getLevel().getLevel() + ")", cmd, client);
+								return true;
+							}
+							acc.getLevel().setLevel(acc.getLevel().getLevel() - levels);
+							systemMessage("Removed " + levels + " levels from " + acc.getDisplayName() + ".", cmd,
+									client);
+							acc.kickDirect(uuid, "Levels were changed, relog required.");
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
+						}
+
+						return true;
+					}
+					case "addxp": {
+						// Add XP
+						// Parse arguments
+						if (GameServer.hasPerm(permLevel, "admin")) {
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() < 1) {
+								systemMessage("Missing argument: xp amount", cmd, client);
+								return true;
+							}
+							if (args.size() > 1) {
+								player = args.get(1);
+							}
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// Add xp
+							try {
+								int xp = Integer.parseInt(args.get(0));
+								if (xp < 0) {
+									systemMessage("Invalid XP amount: " + xp, cmd, client);
+									return true;
+								}
+								acc.getLevel().addXP(xp);
+								systemMessage("Given " + xp + " XP to " + acc.getDisplayName() + ".", cmd, client);
+							} catch (Exception e) {
+								systemMessage("Error: " + e, cmd, client);
+								e.printStackTrace();
+							}
+
+							return true;
+						}
+					}
+					case "addlevels": {
+						// Add XP
+						// Parse arguments
+						if (GameServer.hasPerm(permLevel, "admin")) {
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() < 1) {
+								systemMessage("Missing argument: levels to add", cmd, client);
+								return true;
+							}
+							if (args.size() > 1) {
+								player = args.get(1);
+							}
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// Take xp
+							try {
+								int levels = Integer.parseInt(args.get(0));
+								if (levels < 0) {
+									systemMessage("Invalid XP amount: " + levels, cmd, client);
+									return true;
+								}
+								acc.getLevel().addLevel(levels);
+								systemMessage("Given " + levels + " levels to " + acc.getDisplayName() + ".", cmd,
+										client);
+							} catch (Exception e) {
+								systemMessage("Error: " + e, cmd, client);
+							}
+
+							return true;
+						}
 					}
 					case "srp": {
 						// Sends a raw packet

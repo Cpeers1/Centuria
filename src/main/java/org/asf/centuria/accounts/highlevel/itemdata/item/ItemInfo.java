@@ -4,5 +4,6 @@ public class ItemInfo {
 	
 	public String inventory;
 	public String objectName;
+	public int rarity;
 
 }

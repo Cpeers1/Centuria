@@ -7,6 +7,9 @@ import java.util.List;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
+import org.asf.centuria.interactions.modules.resourcecollection.levelhooks.EventInfo;
+import org.asf.centuria.levelevents.LevelEvent;
+import org.asf.centuria.levelevents.LevelEventBus;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 
 public class InspirationCollectionModule extends InteractionModule {
@@ -36,7 +39,6 @@ public class InspirationCollectionModule extends InteractionModule {
 						for (ArrayList<StateInfo> branches : stateInfo.branches.values()) {
 							for (StateInfo branch : branches) {
 								if (branch.command.equals("84") && stateInfo.params.length == 3) {
-
 									// if param 1 is 1 and param 2 is 4, it means 'give inspiration'
 									// I think...
 									if (stateInfo.params[0].equals("1") && stateInfo.params[1].equals("4")) {
@@ -61,9 +63,12 @@ public class InspirationCollectionModule extends InteractionModule {
 	@Override
 	public int isDataRequestValid(Player player, String id, NetworkedObject object, int state) {
 		if (canHandle(player, id, object)) {
-			return 1; // Safe to run
+			object.stateInfo
+					.forEach((k, states) -> states.forEach(t -> handleCommand(player, id, object, t, null, null)));
+			return 0; // We handled it now
 		}
 		return -1;
+
 	}
 
 	@Override
@@ -72,7 +77,7 @@ public class InspirationCollectionModule extends InteractionModule {
 		// add inspiration to inventory?
 		// get inspiration ID from commands
 
-		if (stateInfo.command.equals("84")) {
+		if (stateInfo.command.equals("84") && canHandle(player, id, object)) {
 			// get the third argument
 
 			String defId = stateInfo.params[2];
@@ -83,6 +88,43 @@ public class InspirationCollectionModule extends InteractionModule {
 			if (!inspirationAccessor.hasInspiration(Integer.valueOf(defId))) {
 				// Add inspiration
 				inspirationAccessor.addInspiration(Integer.valueOf(defId));
+
+				// Add xp
+				EventInfo ev = new EventInfo();
+				ev.event = "levelevents.inspirations";
+
+				// Find map name
+				String map = "unknown";
+				switch (player.levelID) {
+				case 820:
+					map = "cityfera";
+					break;
+				case 2364:
+					map = "bloodtundra";
+					break;
+				case 9687:
+					map = "lakeroot";
+					break;
+				case 2147:
+					map = "mugmyre";
+					break;
+				case 1689:
+					map = "sanctuary";
+					break;
+				case 3273:
+					map = "sunkenthicket";
+					break;
+				case 1825:
+					map = "shatteredbay";
+					break;
+				}
+
+				// Add tags
+				ev.tags.add("inspiration:" + defId);
+				ev.tags.add("map:" + map);
+
+				// Dispatch event
+				LevelEventBus.dispatch(new LevelEvent(ev.event, ev.tags.toArray(new String[0]), player));
 			}
 
 			// Update inventory

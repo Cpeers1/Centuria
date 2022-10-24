@@ -1,8 +1,6 @@
 package org.asf.centuria.tools;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -41,8 +39,6 @@ public class InspirationCraftingConverter {
 				lastData = "";
 			} else if (line.startsWith("\"\"")) {
 				if (!skip) {
-					System.out.println("Parsing craftable ID: " + id);
-
 					lastData = "{\n" + lastData;
 					lastData = lastData.replace("`", "\"");
 
@@ -67,16 +63,10 @@ public class InspirationCraftingConverter {
 					JsonObject recipe = component.get("componentJSON").getAsJsonObject().getAsJsonObject().get("recipe")
 							.getAsJsonObject();
 
-					if (recipe.get("_defIDs").getAsJsonArray().size() <= 0) {
-						// skip
-						craftableDefinition = new JsonObject();
-						lastData = null;
-						skip = false;
-						System.out.println("Decided to skip craftable ID: " + id + ", no recipe");
-						continue;
+					if (recipe.get("_defIDs").getAsJsonArray().size() > 0) {
+						// only add recipe if present
+						craftableDefinition.add("recipe", recipe);
 					}
-
-					craftableDefinition.add("recipe", recipe);
 					craftableDefinition.addProperty("resultItemId",
 							component.get("componentJSON").getAsJsonObject().get("itemDefID").getAsString());
 
@@ -94,15 +84,8 @@ public class InspirationCraftingConverter {
 		}
 		res.add("EnigmaRecipes", craftables);
 
-		// blegh hard coded path
-		String path = "enigmarecipes.json";
-
-		try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
-			String jsonString = new Gson().newBuilder().setPrettyPrinting().create().toJson(res);
-			out.write(jsonString);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		// dump to cli
+		System.out.println(new Gson().newBuilder().setPrettyPrinting().create().toJson(res));
 	}
 
 }

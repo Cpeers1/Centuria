@@ -4,6 +4,7 @@ import org.asf.centuria.modules.ICenturiaModule;
 import org.asf.centuria.modules.eventbus.EventListener;
 import org.asf.centuria.modules.events.chatcommands.ChatCommandEvent;
 import org.asf.centuria.modules.events.chatcommands.ModuleCommandSyntaxListEvent;
+import org.asf.centuria.modules.events.interactions.InteractionSuccessEvent;
 import org.asf.centuria.modules.events.updates.ServerUpdateEvent;
 
 public class TestModule implements ICenturiaModule {
@@ -25,6 +26,10 @@ public class TestModule implements ICenturiaModule {
 	@EventListener
 	public void update(ServerUpdateEvent event) {
 		event = event;
+	}
+
+	@EventListener
+	public void interactionSuccess(InteractionSuccessEvent event) {
 	}
 
 	@EventListener

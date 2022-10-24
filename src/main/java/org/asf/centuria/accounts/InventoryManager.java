@@ -14,8 +14,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class InventoryManager {
-    
-    public static void addEmote(JsonArray item, String emote) {
+
+	public static void addEmote(JsonArray item, String emote) {
 		// Create emote json
 		JsonObject obj = new JsonObject();
 		obj.addProperty("defId", emote);
@@ -29,38 +29,19 @@ public class InventoryManager {
 		item.add(obj);
 	}
 
-    public static void buildInventory(Player plr, PlayerInventory inv) {
+	public static void buildInventory(Player plr, PlayerInventory inv) {
 		// Check if wings, mods and clothing is disabled
 		if (!Centuria.giveAllMods && !Centuria.giveAllWings) {
 			// Save item 2 as empty item
 			inv.setItem("2", new JsonArray());
 		}
-		if (!Centuria.giveAllClothes) {
-			// Save item 100 as empty item
-			inv.setItem("100", new JsonArray());
 
-			// Add the forager's set
-			inv.getClothingAccessor().addClothing(10876, false);
-			inv.getClothingAccessor().addClothing(3863, false);
-			inv.getClothingAccessor().addClothing(3862, false);
-			inv.getClothingAccessor().addClothing(3861, false);
-			inv.getClothingAccessor().addClothing(3860, false);
-		}
-		if (!Centuria.giveAllFurnitureItems) {
-			// Save item 102 as empty item
-			inv.setItem("102", new JsonArray());
+		// Save item 100 and 102 as empty item
+		inv.setItem("102", new JsonArray());
+		inv.setItem("100", new JsonArray());
 
-			// Add the basic set
-			inv.getFurnitureAccessor().addFurniture(4152, false);
-			inv.getFurnitureAccessor().addFurniture(4150, false);
-			inv.getFurnitureAccessor().addFurniture(4119, false);
-			inv.getFurnitureAccessor().addFurniture(4118, false);
-			inv.getFurnitureAccessor().addFurniture(4117, false);
-			inv.getFurnitureAccessor().addFurniture(4116, false);
-			inv.getFurnitureAccessor().addFurniture(4115, false);
-			inv.getFurnitureAccessor().addFurniture(4114, false);
-			inv.getFurnitureAccessor().addFurniture(4113, false);
-		}
+		// Add the starter bundle
+		inv.getItemAccessor(null).add(25458);
 
 		// Build avatars
 		if (Centuria.giveAllAvatars) {
@@ -87,7 +68,7 @@ public class InventoryManager {
 		inv.getAccessor().completedSave();
 	}
 
-    public static void fixBrokenAvatars(JsonArray item, PlayerInventory inv) {
+	public static void fixBrokenAvatars(JsonArray item, PlayerInventory inv) {
 		boolean changed = false;
 
 		// Fix unlisted
@@ -159,7 +140,7 @@ public class InventoryManager {
 		}
 	}
 
-    public static JsonArray buildDefaultLooksFile(Player plr) throws IOException {
+	public static JsonArray buildDefaultLooksFile(Player plr) throws IOException {
 		JsonArray items = new JsonArray();
 
 		// Load the helper from resources
@@ -221,7 +202,7 @@ public class InventoryManager {
 				primary = false;
 			}
 		}
-        return items;
-    }
+		return items;
+	}
 
 }

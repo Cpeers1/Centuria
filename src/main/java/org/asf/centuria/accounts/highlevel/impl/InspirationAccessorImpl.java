@@ -16,22 +16,22 @@ import com.google.gson.JsonParser;
 
 public class InspirationAccessorImpl extends InspirationAccessor {
 	private static JsonObject helper;
-	private static JsonObject enigmaRecipes;
+	private static JsonObject enigmas;
 
 	static {
 		try {
 			// Load helper
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
 					.getResourceAsStream("inspirations.json");
-			
+
 			var partial = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
-			
+
 			helper = partial.get("inspirations").getAsJsonObject();
 			strm.close();
 
 			strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("recipes/enigmarecipes.json");
 
-			enigmaRecipes = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+			enigmas = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 					.get("EnigmaRecipes").getAsJsonObject();
 
 		} catch (Exception e) {
@@ -119,9 +119,11 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 		JsonObject result = null;
 		int resultID = -1;
 
-		for (String enigmaID : enigmaRecipes.keySet()) {
+		for (String enigmaID : enigmas.keySet()) {
 			// enigma info
-			JsonObject enigmaData = enigmaRecipes.get(enigmaID).getAsJsonObject();
+			JsonObject enigmaData = enigmas.get(enigmaID).getAsJsonObject();
+			if (!enigmaData.has("recipe"))
+				continue;
 			var recipeDefIds = enigmaData.get("recipe").getAsJsonObject().get("_defIDs").getAsJsonArray();
 
 			// need matches == inspirations length
@@ -160,8 +162,8 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 	@Override
 	public int getEnigmaResult(int enigma) {
 		// Find enigma
-		for (String enigmaID : enigmaRecipes.keySet()) {
-			JsonObject enigmaData = enigmaRecipes.get(enigmaID).getAsJsonObject();
+		for (String enigmaID : enigmas.keySet()) {
+			JsonObject enigmaData = enigmas.get(enigmaID).getAsJsonObject();
 			if (enigmaID.equals(Integer.toString(enigma))) {
 				// Return result
 				return enigmaData.get("resultItemId").getAsInt();

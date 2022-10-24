@@ -204,6 +204,7 @@ public abstract class CenturiaAccount {
 
 	/**
 	 * Kicks the player without sending a event
+	 * 
 	 * @param issuer Kick issuer
 	 * @param reason Kick reason
 	 */
@@ -271,6 +272,21 @@ public abstract class CenturiaAccount {
 
 			// Apply regular ban
 			ban(issuer, reason);
+
+			// Ban other users on the same IP, well, kick and prevent login and send dm
+			for (Player plr2 : Centuria.gameServer.getPlayers()) {
+				// Get IP of player
+				try {
+					InetSocketAddress ip2 = (InetSocketAddress) plr2.client.getSocket().getRemoteSocketAddress();
+					InetAddress addr2 = ip2.getAddress();
+					String ipaddr2 = addr2.getHostAddress();
+					if (ipaddr.equals(ipaddr2) && !plr2.account.getAccountID().equals(getAccountID())) {
+						// Ban
+						plr2.account.ban(issuer, reason + " [AUTOMATIC BAN DUE TO IP BAN OF " + getDisplayName() + "]");
+					}
+				} catch (Exception e) {
+				}
+			}
 
 			// Return success
 			return true;
@@ -403,8 +419,8 @@ public abstract class CenturiaAccount {
 			if (acc != null)
 				issuerNm = acc.getDisplayName();
 		}
-		Centuria.logger.info(
-				"Temporarily banned " + getDisplayName() + ": " + (reason == null ? "Unspecified reason" : reason)
+		Centuria.logger
+				.info("Temporarily banned " + getDisplayName() + ": " + (reason == null ? "Unspecified reason" : reason)
 						+ " (issued by " + issuerNm + ", unban in " + days + " days)");
 	}
 

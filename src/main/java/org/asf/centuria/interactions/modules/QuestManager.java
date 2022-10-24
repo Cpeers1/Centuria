@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.highlevel.itemdata.item.ItemComponent;
@@ -35,7 +36,7 @@ public class QuestManager extends InteractionModule {
 	// The quest to refuse running
 	// This will be the quest after the 3rd released each week
 	// Ignored in debug mode
-	public int questLock = 4449; // Brenda's Reckoning, locked to prevent broken quests breaking the server
+	public int questLock = 8119; // Tundra Ghost, locked to prevent broken quests breaking the server
 
 	private static String firstQuest = "7537";
 	private static LinkedHashMap<String, String> questMap = new LinkedHashMap<String, String>();
@@ -351,7 +352,7 @@ public class QuestManager extends InteractionModule {
 	@Override
 	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo stateInfo,
 			StateInfo parent, HashMap<String, Object> memory) {
-		if (canHandle(player, id, object)) {
+		if (canHandle(player, id, object) && parent != null) {
 			String activeQuest = getActiveQuest(player.account);
 			if (activeQuest != null) {
 				QuestDefinition quest = questDefinitions.get(activeQuest);
@@ -385,6 +386,10 @@ public class QuestManager extends InteractionModule {
 
 							// Update objects
 							reloadObjects(player, quest);
+
+							// Log start
+							Centuria.logger.info(MarkerManager.getMarker("QUESTS"), "Quest started: '" + quest.name
+									+ "', started by " + player.account.getDisplayName());
 						}
 						return true;
 					}
@@ -414,6 +419,7 @@ public class QuestManager extends InteractionModule {
 								}
 							}
 
+							// Update
 							updateCounter(counterID, task, objective, quest, player, taskID, objectiveID, id, object,
 									stateInfo);
 						}
@@ -503,6 +509,10 @@ public class QuestManager extends InteractionModule {
 			qcmd.params.add("0");
 			player.client.sendPacket(qcmd);
 
+			// Log completion
+			Centuria.logger.info(MarkerManager.getMarker("QUESTS"), "Quest objective completed: '" + objective.title
+					+ "', quest: '" + quest.name + "', completed by " + player.account.getDisplayName());
+
 			// Update
 			objective = quest.objectives.get(objectiveID);
 
@@ -513,6 +523,10 @@ public class QuestManager extends InteractionModule {
 			if (objective.isLastObjective) {
 				// Quest finished
 				player.questStarted = false;
+
+				// Log completion
+				Centuria.logger.info(MarkerManager.getMarker("QUESTS"),
+						"Quest completed: '" + quest.name + "', completed by " + player.account.getDisplayName());
 
 				// Finish quest
 				if (player.levelID != 25280) {

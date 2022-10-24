@@ -512,6 +512,222 @@
           "weight": 1
         }
       ]
+    },
+    "7977": {
+      "objectName": "QuestReward/BrendasAwakening",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q7977",
+          "itemId": "4948",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+ 	"q7977": {
+      "objectName": "QuestReward/BrendasAwakening",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 40,
+          "maxCount": 50,
+          "weight": 1
+        }
+      ]
+    },
+    "7329": {
+      "objectName": "QuestReward/HikingDisaster",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q7329",
+          "itemId": "6022",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q7329": {
+      "objectName": "QuestReward/HikingDisaster",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 15,
+          "maxCount": 20,
+          "weight": 1
+        }
+      ]
+    },
+    "8632": {
+      "objectName": "QuestReward/TobogganNightmare",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q8632",
+          "itemId": "7819",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q8632": {
+      "objectName": "QuestReward/TobogganNightmare",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 70,
+          "maxCount": 80,
+          "weight": 1
+        }
+      ]
+    },
+    "11750": {
+      "objectName": "QuestReward/WizardTrials",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q11750",
+          "itemId": "10867",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q11750": {
+      "objectName": "QuestReward/WizardTrials",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 20,
+          "maxCount": 35,
+          "weight": 1
+        }
+      ]
+    },
+    "11984": {
+      "objectName": "QuestReward/MyrefolksNewClothes",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q11984",
+          "itemId": "10955",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q11984": {
+      "objectName": "QuestReward/MyrefolksNewClothes",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 30,
+          "maxCount": 45,
+          "weight": 1
+        }
+      ]
+    },
+    "8638": {
+      "objectName": "QuestReward/SearchingBonepiles",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q8638",
+          "itemId": "9276",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q8638": {
+      "objectName": "QuestReward/SearchingBonepiles",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 50,
+          "maxCount": 65,
+          "weight": 1
+        }
+      ]
+    },
+    "11751": {
+      "objectName": "QuestReward/SoupOfRiddles",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q11751",
+          "itemId": "12484",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q11751": {
+      "objectName": "QuestReward/SoupOfRiddles",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 15,
+          "maxCount": 25,
+          "weight": 1
+        }
+      ]
+    },
+    "12007": {
+      "objectName": "QuestReward/StickySituation",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q12007",
+          "itemId": "5261",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q12007": {
+      "objectName": "QuestReward/StickySituation",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 40,
+          "maxCount": 55,
+          "weight": 1
+        }
+      ]
     }
   }
 }

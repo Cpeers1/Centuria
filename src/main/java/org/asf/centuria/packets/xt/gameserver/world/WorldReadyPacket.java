@@ -75,12 +75,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Initialize interaction memory
 		plr.account.getPlayerInventory().getInteractionMemory().prepareLevel(plr.pendingLevelID);
 
-		// Initialize interactions
-		InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
-
-		// Save changes
-		plr.account.getPlayerInventory().getInteractionMemory().saveTo(client);
-
 		// Dispatch event
 		EventBus.getInstance().dispatchEvent(new LevelJoinEvent(plr.pendingLevelID, plr.pendingRoom, plr));
 
@@ -106,6 +100,16 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			}
 		}
 
+		// Initialize interactions
+		InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
+
+		// Save changes
+		plr.account.getPlayerInventory().getInteractionMemory().saveTo(client);
+
+		// XP init
+		if (plr.account.getLevel().isLevelAvailable() && !plr.account.isPlayerNew())
+			plr.account.getLevel().onWorldJoin(plr);
+
 		// Send to tutorial if new
 		if (plr.account.isPlayerNew()) {
 			// Tutorial spawn
@@ -118,6 +122,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			res.rz = -0;
 			res.rw = 0.3987;
 			client.sendPacket(res);
+
 			return true;
 		}
 
@@ -155,9 +160,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 						"Syncing spawn " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
 			}
 		}
-
-		// Set location
-		plr.lastLocation = plr.respawn;
 
 		// Sanctuary loading
 		if (plr.levelType == 2 && plr.room.startsWith("sanctuary_")) {

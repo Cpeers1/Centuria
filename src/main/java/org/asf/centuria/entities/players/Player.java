@@ -19,6 +19,7 @@ import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
+import org.asf.centuria.interactions.groupobjects.GroupObject;
 import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
@@ -34,6 +35,22 @@ import com.google.gson.JsonObject;
 
 @SuppressWarnings("unused")
 public class Player {
+
+	//
+	// Moderation (SYNC ONLY)
+	//
+	public boolean ghostMode = false;
+	public boolean overrideTpLocks = false;
+
+	/**
+	 * Avoid usage of this field, its not always in sync with the permission
+	 * manager, use it only for high-performance code
+	 */
+	public boolean hasModPerms = false;
+
+	//
+	// Other fields
+	//
 
 	public SmartfoxClient client;
 	public CenturiaAccount account;
@@ -60,10 +77,8 @@ public class Player {
 	public String room = null;
 
 	public String respawn = null;
-	public String lastLocation = null;
 
 	public Vector3 lastPos = new Vector3(0, -1000, 0);
-
 	public Quaternion lastRot = new Quaternion(0, 0, 0, 0);
 
 	public int lastAction;
@@ -79,6 +94,7 @@ public class Player {
 	// Quests
 	public int questProgress;
 	public ArrayList<String> interactions = new ArrayList<String>();
+	public ArrayList<GroupObject> groupOjects = new ArrayList<GroupObject>();
 	public HashMap<String, Integer> states = new HashMap<String, Integer>();
 	public HashMap<String, ArrayList<StateInfo>> stateObjects = new HashMap<String, ArrayList<StateInfo>>();
 	public HashMap<String, Integer> questObjectData = new HashMap<String, Integer>();
@@ -93,6 +109,9 @@ public class Player {
 	}
 
 	public void syncTo(Player player) {
+		if (ghostMode && !player.hasModPerms)
+			return; // Ghosting
+
 		// Find avatar
 		JsonArray items = account.getPlayerInventory().getItem("avatars").getAsJsonArray();
 		JsonObject lookObj = null;
@@ -122,6 +141,7 @@ public class Player {
 					lastRot.y, lastRot.z, lastRot.w);
 			packet.lastMove.velocity = new Velocity();
 			packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition;
+			packet.lastMove.actorActionType = lastAction;
 
 			// Look and name
 			packet.look = lookObj.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject().get("info")
@@ -313,6 +333,7 @@ public class Player {
 			states.clear();
 			stateObjects.clear();
 			interactions.clear();
+			groupOjects.clear();
 
 			// Clear respawn items
 			respawnItems.clear();
@@ -374,6 +395,7 @@ public class Player {
 			states.clear();
 			stateObjects.clear();
 			interactions.clear();
+			groupOjects.clear();
 
 			// Clear respawn items
 			plr.respawnItems.clear();
@@ -449,6 +471,7 @@ public class Player {
 			states.clear();
 			stateObjects.clear();
 			interactions.clear();
+			groupOjects.clear();
 
 			// Log
 			Centuria.logger.debug(MarkerManager.getMarker("JOINROOM"),
@@ -510,22 +533,29 @@ public class Player {
 
 			// Find player
 			for (Player plr : ((GameServer) client.getServer()).getPlayers()) {
-				if (plr.account.getAccountID().equals(accountID) && plr.roomReady && plr.levelType != 1
-						&& !plr.room.equals("room_STAFFROOM")
-						&& (!SocialManager.getInstance().socialListExists(accountID) || !SocialManager.getInstance()
-								.getPlayerIsBlocked(accountID, player.account.getAccountID()))) {
+				if ((plr.account.getAccountID().equals(accountID) && plr.roomReady && plr.levelType != 1)
+						&& ((!plr.room.equals("room_STAFFROOM")
+								&& (!SocialManager.getInstance().socialListExists(accountID) || !SocialManager
+										.getInstance().getPlayerIsBlocked(accountID, player.account.getAccountID())))
+								|| (player.overrideTpLocks && player.hasModPerms))) {
 					// Load privacy settings
 					int privSetting = 0;
 					UserVarValue val = plr.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17546, 0);
 					if (val != null)
 						privSetting = val.value;
 
+					// Ghost check
+					if (!player.hasModPerms && plr.ghostMode)
+						break;
+
 					// Verify privacy settings
-					if (privSetting == 1 && !SocialManager.getInstance()
-							.getPlayerIsFollowing(plr.account.getAccountID(), player.account.getAccountID()))
-						break;
-					else if (privSetting == 2)
-						break;
+					if (!player.overrideTpLocks || !player.hasModPerms) {
+						if (privSetting == 1 && !SocialManager.getInstance()
+								.getPlayerIsFollowing(plr.account.getAccountID(), player.account.getAccountID()))
+							break;
+						else if (privSetting == 2)
+							break;
+					}
 
 					XtWriter writer = new XtWriter();
 					writer.writeString("rfjtr");
@@ -550,7 +580,7 @@ public class Player {
 							// Check owner
 							boolean isOwner = player.account.getAccountID().equals(sanctuaryOwner);
 
-							if (!isOwner) {
+							if (!isOwner && (!player.overrideTpLocks || !player.hasModPerms)) {
 								// Load privacy settings
 								privSetting = 0;
 								val = sancOwner.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);

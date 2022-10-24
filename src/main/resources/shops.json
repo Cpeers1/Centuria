@@ -1417,7 +1417,7 @@
       "contents": {
         "30198": {
           "object": "AstralShop/ALL/Avatar/ExtraLookSlot",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30197": 1
@@ -1559,7 +1559,7 @@
         },
         "30554": {
           "object": "AstralShop/ALL/Likes/BundleA",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "2327": 1000
@@ -1570,7 +1570,7 @@
         },
         "30555": {
           "object": "AstralShop/ALL/Likes/BundleB",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "2327": 2250
@@ -1581,7 +1581,7 @@
         },
         "30556": {
           "object": "AstralShop/ALL/Likes/BundleC",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "2327": 4750
@@ -1592,7 +1592,7 @@
         },
         "30557": {
           "object": "AstralShop/ALL/Likes/BundleD",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "2327": 10000
@@ -3363,7 +3363,7 @@
         },
         "31824": {
           "object": "AstralShop/ALL/Zodiac/AlexandreAmulet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28328": 1
@@ -3374,7 +3374,7 @@
         },
         "31823": {
           "object": "AstralShop/ALL/Zodiac/AlexandrePedestal",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30388": 1
@@ -3385,7 +3385,7 @@
         },
         "31834": {
           "object": "AstralShop/ALL/Zodiac/BlairAmulet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28301": 1
@@ -3396,7 +3396,7 @@
         },
         "31833": {
           "object": "AstralShop/ALL/Zodiac/BlairPedestal",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30361": 1
@@ -3407,7 +3407,7 @@
         },
         "31817": {
           "object": "AstralShop/ALL/Zodiac/BlakeAmulet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28319": 1
@@ -3418,7 +3418,7 @@
         },
         "31818": {
           "object": "AstralShop/ALL/Zodiac/BlakePedestal",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30373": 1
@@ -3429,7 +3429,7 @@
         },
         "31836": {
           "object": "AstralShop/ALL/Zodiac/CalvineAmulet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28304": 1
@@ -3440,7 +3440,7 @@
         },
         "31835": {
           "object": "AstralShop/ALL/Zodiac/CalvinePedestal",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30364": 1
@@ -3451,7 +3451,7 @@
         },
         "31827": {
           "object": "AstralShop/ALL/Zodiac/LamontAmulet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28292": 1
@@ -3462,7 +3462,7 @@
         },
         "31828": {
           "object": "AstralShop/ALL/Zodiac/LamontPedestal",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30382": 1
@@ -3473,7 +3473,7 @@
         },
         "31015": {
           "object": "AstralShop/ALL/Zodiac/LourizAmulet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28313": 1
@@ -3484,7 +3484,7 @@
         },
         "31017": {
           "object": "AstralShop/ALL/Zodiac/LourizPedestal",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30445": 1
@@ -3495,7 +3495,7 @@
         },
         "31821": {
           "object": "AstralShop/ALL/Zodiac/LynneaAmulet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28325": 1
@@ -3506,7 +3506,7 @@
         },
         "31822": {
           "object": "AstralShop/ALL/Zodiac/LynneaPedestal",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30448": 1
@@ -3517,7 +3517,7 @@
         },
         "31832": {
           "object": "AstralShop/ALL/Zodiac/MikelAmulet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28298": 1
@@ -3528,7 +3528,7 @@
         },
         "31831": {
           "object": "AstralShop/ALL/Zodiac/MikelPedestal",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30442": 1
@@ -3539,7 +3539,7 @@
         },
         "31014": {
           "object": "AstralShop/ALL/Zodiac/NaomiAmulet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28309": 1
@@ -3550,7 +3550,7 @@
         },
         "31016": {
           "object": "AstralShop/ALL/Zodiac/NaomiPedestal",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30370": 1
@@ -3561,7 +3561,7 @@
         },
         "31830": {
           "object": "AstralShop/ALL/Zodiac/RianAmulet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28295": 1
@@ -3572,7 +3572,7 @@
         },
         "31829": {
           "object": "AstralShop/ALL/Zodiac/RianPedestal",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30367": 1
@@ -3583,7 +3583,7 @@
         },
         "31058": {
           "object": "AstralShop/ALL/Zodiac/RicarloAmulet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28316": 1
@@ -3594,7 +3594,7 @@
         },
         "31059": {
           "object": "AstralShop/ALL/Zodiac/RicarloPedestal",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30379": 1
@@ -3605,7 +3605,7 @@
         },
         "31826": {
           "object": "AstralShop/ALL/Zodiac/Stig\u0026KjellAmulet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28289": 1
@@ -3616,7 +3616,7 @@
         },
         "31825": {
           "object": "AstralShop/ALL/Zodiac/Stig\u0026KjellPedestal",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30376": 1
@@ -3627,7 +3627,7 @@
         },
         "31819": {
           "object": "AstralShop/ALL/Zodiac/TomasAmulet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28322": 1
@@ -3638,7 +3638,7 @@
         },
         "31820": {
           "object": "AstralShop/ALL/Zodiac/TomasPedestal",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30386": 1
@@ -3649,7 +3649,7 @@
         },
         "31013": {
           "object": "AstralShop/ALL/DyePack/ChessBlack10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10161": 10
@@ -3660,7 +3660,7 @@
         },
         "31011": {
           "object": "AstralShop/ALL/DyePack/ChessWhite10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "26397": 10
@@ -3671,7 +3671,7 @@
         },
         "31805": {
           "object": "AstralShop/ALL/DyePack/GhastlyPurple10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31288": 10
@@ -3682,7 +3682,7 @@
         },
         "31806": {
           "object": "AstralShop/ALL/DyePack/GourdeousOrange10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31297": 10
@@ -3693,7 +3693,7 @@
         },
         "31807": {
           "object": "AstralShop/ALL/DyePack/StienGreen10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31298": 10
@@ -3704,7 +3704,7 @@
         },
         "31971": {
           "object": "AstralShop/ALL/DyePack/Autumn10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31299": 10
@@ -3715,7 +3715,7 @@
         },
         "31974": {
           "object": "AstralShop/ALL/DyePack/WarmGray10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10153": 10
@@ -3726,7 +3726,7 @@
         },
         "31977": {
           "object": "AstralShop/ALL/DyePack/SnowyBlue10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31300": 10
@@ -3737,7 +3737,7 @@
         },
         "31980": {
           "object": "AstralShop/ALL/DyePack/FrostfeteGold10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31301": 10
@@ -3748,7 +3748,7 @@
         },
         "31983": {
           "object": "AstralShop/ALL/DyePack/FrostfeteSilver10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31302": 10
@@ -3759,7 +3759,7 @@
         },
         "31986": {
           "object": "AstralShop/ALL/DyePack/Minty10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10169": 10
@@ -3770,7 +3770,7 @@
         },
         "31989": {
           "object": "AstralShop/ALL/DyePack/ElectricRed10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10185": 10
@@ -3781,7 +3781,7 @@
         },
         "31990": {
           "object": "AstralShop/ALL/DyePack/Mushroom10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10174": 10
@@ -3792,7 +3792,7 @@
         },
         "31991": {
           "object": "AstralShop/ALL/DyePack/WildGrass10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10172": 10
@@ -3803,7 +3803,7 @@
         },
         "31992": {
           "object": "AstralShop/ALL/DyePack/RedGrape10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10165": 10
@@ -3814,7 +3814,7 @@
         },
         "31993": {
           "object": "AstralShop/ALL/DyePack/DarkChocolate10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10152": 10
@@ -3825,7 +3825,7 @@
         },
         "31994": {
           "object": "AstralShop/ALL/DyePack/ChocolateMousse10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31306": 10
@@ -3836,7 +3836,7 @@
         },
         "31995": {
           "object": "AstralShop/ALL/DyePack/WhimsicalRed10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "24146": 10
@@ -3847,7 +3847,7 @@
         },
         "31996": {
           "object": "AstralShop/ALL/DyePack/Seedberry10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31303": 10
@@ -3858,7 +3858,7 @@
         },
         "31997": {
           "object": "AstralShop/ALL/DyePack/Plumberry10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31304": 10
@@ -3869,7 +3869,7 @@
         },
         "32024": {
           "object": "AstralShop/ALL/DyePack/CenturiaRed10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28116": 10
@@ -3880,7 +3880,7 @@
         },
         "32025": {
           "object": "AstralShop/ALL/DyePack/CenturiaBlue10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28114": 10
@@ -3891,7 +3891,7 @@
         },
         "32027": {
           "object": "AstralShop/ALL/DyePack/CenturiaGreen10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28117": 10
@@ -3902,7 +3902,7 @@
         },
         "32026": {
           "object": "AstralShop/ALL/DyePack/CenturiaPurple10",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28115": 10
@@ -3913,7 +3913,7 @@
         },
         "31012": {
           "object": "AstralShop/ALL/DyeSingle/ChessBlack",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10161": 1
@@ -3924,7 +3924,7 @@
         },
         "31010": {
           "object": "AstralShop/ALL/DyeSingle/ChessWhite",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "26397": 1
@@ -3935,7 +3935,7 @@
         },
         "31808": {
           "object": "AstralShop/ALL/DyeSingle/GhastlyPurple",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31288": 1
@@ -3946,7 +3946,7 @@
         },
         "31809": {
           "object": "AstralShop/ALL/DyeSingle/GourdeousOrange",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31297": 1
@@ -3957,7 +3957,7 @@
         },
         "31810": {
           "object": "AstralShop/ALL/DyeSingle/StienGreen",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31298": 1
@@ -3968,7 +3968,7 @@
         },
         "32028": {
           "object": "AstralShop/ALL/DyeSingle/Autumn",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31299": 1
@@ -3979,7 +3979,7 @@
         },
         "32044": {
           "object": "AstralShop/ALL/DyeSingle/WarmGray",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10153": 1
@@ -3990,7 +3990,7 @@
         },
         "32043": {
           "object": "AstralShop/ALL/DyeSingle/SnowyBlue",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31300": 1
@@ -4001,7 +4001,7 @@
         },
         "32036": {
           "object": "AstralShop/ALL/DyeSingle/FrostfeteGold",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31301": 1
@@ -4012,7 +4012,7 @@
         },
         "32037": {
           "object": "AstralShop/ALL/DyeSingle/FrostfeteSilver",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31302": 1
@@ -4023,7 +4023,7 @@
         },
         "32038": {
           "object": "AstralShop/ALL/DyeSingle/Minty",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10169": 1
@@ -4034,7 +4034,7 @@
         },
         "32035": {
           "object": "AstralShop/ALL/DyeSingle/ElectricRed",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10185": 1
@@ -4045,7 +4045,7 @@
         },
         "32039": {
           "object": "AstralShop/ALL/DyeSingle/Mushroom",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10174": 1
@@ -4056,7 +4056,7 @@
         },
         "32046": {
           "object": "AstralShop/ALL/DyeSingle/WildGrass",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10172": 1
@@ -4067,7 +4067,7 @@
         },
         "32041": {
           "object": "AstralShop/ALL/DyeSingle/RedGrape",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10165": 1
@@ -4078,7 +4078,7 @@
         },
         "32034": {
           "object": "AstralShop/ALL/DyeSingle/DarkChocolate",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "10152": 1
@@ -4089,7 +4089,7 @@
         },
         "32033": {
           "object": "AstralShop/ALL/DyeSingle/ChocolateMousse",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31306": 1
@@ -4100,7 +4100,7 @@
         },
         "32045": {
           "object": "AstralShop/ALL/DyeSingle/WhimsicalRed",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "24146": 1
@@ -4111,7 +4111,7 @@
         },
         "32042": {
           "object": "AstralShop/ALL/DyeSingle/Seedberry",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31303": 1
@@ -4122,7 +4122,7 @@
         },
         "32040": {
           "object": "AstralShop/ALL/DyeSingle/Plumberry",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31304": 1
@@ -4133,7 +4133,7 @@
         },
         "32032": {
           "object": "AstralShop/ALL/DyeSingle/CenturiaRed",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28116": 1
@@ -4144,7 +4144,7 @@
         },
         "32029": {
           "object": "AstralShop/ALL/DyeSingle/CenturiaBlue",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28114": 1
@@ -4155,7 +4155,7 @@
         },
         "32030": {
           "object": "AstralShop/ALL/DyeSingle/CenturiaGreen",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28117": 1
@@ -4166,7 +4166,7 @@
         },
         "32031": {
           "object": "AstralShop/ALL/DyeSingle/CenturiaPurple",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28115": 1
@@ -4177,7 +4177,7 @@
         },
         "32102": {
           "object": "AstralShop/01/Clothing/FellGuardBracers",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30599": 1
@@ -4188,7 +4188,7 @@
         },
         "32099": {
           "object": "AstralShop/01/Clothing/FellGuardHelm",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30602": 1
@@ -4199,7 +4199,7 @@
         },
         "32100": {
           "object": "AstralShop/01/Clothing/FellGuardPauldrons",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30582": 1
@@ -4210,7 +4210,7 @@
         },
         "32101": {
           "object": "AstralShop/01/Clothing/FellGuardSpear",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30596": 1
@@ -4221,7 +4221,7 @@
         },
         "32098": {
           "object": "AstralShop/01/Clothing/LichGuardBracers",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30183": 1
@@ -4232,7 +4232,7 @@
         },
         "32093": {
           "object": "AstralShop/01/Clothing/LichGuardHelm",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30174": 1
@@ -4243,7 +4243,7 @@
         },
         "32096": {
           "object": "AstralShop/01/Clothing/LichGuardPauldrons",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30177": 1
@@ -4254,7 +4254,7 @@
         },
         "32097": {
           "object": "AstralShop/01/Clothing/LichGuardSpear",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30180": 1
@@ -4287,7 +4287,7 @@
         },
         "32110": {
           "object": "AstralShop/01/Furniture/MotifBathtub",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31482": 1
@@ -4298,7 +4298,7 @@
         },
         "32095": {
           "object": "AstralShop/01/Furniture/MotifBed",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31506": 1
@@ -4309,7 +4309,7 @@
         },
         "32108": {
           "object": "AstralShop/01/Furniture/MotifClock",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31488": 1
@@ -4320,7 +4320,7 @@
         },
         "32107": {
           "object": "AstralShop/01/Furniture/MotifCouch",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31491": 1
@@ -4331,7 +4331,7 @@
         },
         "32111": {
           "object": "AstralShop/01/Furniture/MotifCurtains",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31479": 1
@@ -4342,7 +4342,7 @@
         },
         "32109": {
           "object": "AstralShop/01/Furniture/MotifFoutain",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31485": 1
@@ -4353,7 +4353,7 @@
         },
         "32105": {
           "object": "AstralShop/01/Furniture/MotifFridge",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31497": 1
@@ -4364,7 +4364,7 @@
         },
         "32104": {
           "object": "AstralShop/01/Furniture/MotifSink",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31500": 1
@@ -4375,7 +4375,7 @@
         },
         "32103": {
           "object": "AstralShop/01/Furniture/MotifStove",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31503": 1
@@ -4386,7 +4386,7 @@
         },
         "32106": {
           "object": "AstralShop/01/Furniture/MotifTable",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31494": 1
@@ -4430,7 +4430,7 @@
         },
         "32120": {
           "object": "AstralShop/02/Clothing/CharmedArmband",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "22868": 1
@@ -4441,7 +4441,7 @@
         },
         "32119": {
           "object": "AstralShop/02/Clothing/CharmedBracelet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "22874": 1
@@ -4452,7 +4452,7 @@
         },
         "32121": {
           "object": "AstralShop/02/Clothing/CharmedGlasses",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "22871": 1
@@ -4463,7 +4463,7 @@
         },
         "32116": {
           "object": "AstralShop/02/Clothing/CharmedTotebag",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "22865": 1
@@ -4474,7 +4474,7 @@
         },
         "32124": {
           "object": "AstralShop/02/Clothing/GlowshroomBasket",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31110": 1
@@ -4485,7 +4485,7 @@
         },
         "32122": {
           "object": "AstralShop/02/Clothing/GlowshroomCrown",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31116": 1
@@ -4496,7 +4496,7 @@
         },
         "32123": {
           "object": "AstralShop/02/Clothing/GlowshroomSprouts",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31113": 1
@@ -4529,7 +4529,7 @@
         },
         "32125": {
           "object": "AstralShop/02/Furniture/MushroomBeanbag",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "24343": 1
@@ -4540,7 +4540,7 @@
         },
         "32128": {
           "object": "AstralShop/02/Furniture/MushroomBed",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "24349": 1
@@ -4551,7 +4551,7 @@
         },
         "32132": {
           "object": "AstralShop/02/Furniture/MushroomCanopy",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "24358": 1
@@ -4562,7 +4562,7 @@
         },
         "32118": {
           "object": "AstralShop/02/Furniture/MushroomChair",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "24340": 1
@@ -4573,7 +4573,7 @@
         },
         "32135": {
           "object": "AstralShop/02/Furniture/MushroomCookieJar",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "24367": 1
@@ -4584,7 +4584,7 @@
         },
         "32134": {
           "object": "AstralShop/02/Furniture/MushroomCookware",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "24364": 1
@@ -4595,7 +4595,7 @@
         },
         "32131": {
           "object": "AstralShop/02/Furniture/MushroomLog",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "24355": 1
@@ -4606,7 +4606,7 @@
         },
         "32133": {
           "object": "AstralShop/02/Furniture/MushroomPath",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "24361": 1
@@ -4617,7 +4617,7 @@
         },
         "32130": {
           "object": "AstralShop/02/Furniture/MushroomRug",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "24352": 1
@@ -4628,7 +4628,7 @@
         },
         "32129": {
           "object": "AstralShop/02/Furniture/MushroomShelf",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "24373": 1
@@ -4639,7 +4639,7 @@
         },
         "32126": {
           "object": "AstralShop/02/Furniture/MushroomTable",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "24346": 1
@@ -4650,7 +4650,7 @@
         },
         "32127": {
           "object": "AstralShop/02/Furniture/MushroomWallLamp",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "24370": 1
@@ -4694,7 +4694,7 @@
         },
         "32143": {
           "object": "AstralShop/03/Clothing/PromBoutonniere",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31055": 1
@@ -4705,7 +4705,7 @@
         },
         "32148": {
           "object": "AstralShop/03/Clothing/PromCorsage",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31126": 1
@@ -4716,7 +4716,7 @@
         },
         "32144": {
           "object": "AstralShop/03/Clothing/PromCrown",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31028": 1
@@ -4727,7 +4727,7 @@
         },
         "32149": {
           "object": "AstralShop/03/Clothing/PromDress",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31046": 1
@@ -4738,7 +4738,7 @@
         },
         "32147": {
           "object": "AstralShop/03/Clothing/PromTiara",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31119": 1
@@ -4749,7 +4749,7 @@
         },
         "32140": {
           "object": "AstralShop/03/Clothing/PromTopHat",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31131": 1
@@ -4760,7 +4760,7 @@
         },
         "32145": {
           "object": "AstralShop/03/Clothing/PromTux",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31136": 1
@@ -4771,7 +4771,7 @@
         },
         "32146": {
           "object": "AstralShop/03/Clothing/PromUpdo",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31101": 1
@@ -4804,7 +4804,7 @@
         },
         "32151": {
           "object": "AstralShop/03/Furniture/DinerBooth",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28451": 1
@@ -4815,7 +4815,7 @@
         },
         "32154": {
           "object": "AstralShop/03/Furniture/DinerClock",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28442": 1
@@ -4826,7 +4826,7 @@
         },
         "32156": {
           "object": "AstralShop/03/Furniture/DinerCondiments",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28448": 1
@@ -4837,7 +4837,7 @@
         },
         "32152": {
           "object": "AstralShop/03/Furniture/DinerCounter",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28460": 1
@@ -4848,7 +4848,7 @@
         },
         "32157": {
           "object": "AstralShop/03/Furniture/DinerLamp",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28436": 1
@@ -4859,7 +4859,7 @@
         },
         "32142": {
           "object": "AstralShop/03/Furniture/DinerSign",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28439": 1
@@ -4870,7 +4870,7 @@
         },
         "32153": {
           "object": "AstralShop/03/Furniture/DinerStool",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28454": 1
@@ -4881,7 +4881,7 @@
         },
         "32150": {
           "object": "AstralShop/03/Furniture/DinerTable",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28457": 1
@@ -4892,7 +4892,7 @@
         },
         "32155": {
           "object": "AstralShop/03/Furniture/DinerWallArt",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28445": 1
@@ -4936,7 +4936,7 @@
         },
         "32171": {
           "object": "AstralShop/04/Clothing/CircusCollar",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30858": 1
@@ -4947,7 +4947,7 @@
         },
         "32172": {
           "object": "AstralShop/04/Clothing/CircusEpaulettes",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30849": 1
@@ -4958,7 +4958,7 @@
         },
         "32170": {
           "object": "AstralShop/04/Clothing/CircusJugglingPins",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30861": 1
@@ -4969,7 +4969,7 @@
         },
         "32173": {
           "object": "AstralShop/04/Clothing/CircusLeggings",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30855": 1
@@ -4980,7 +4980,7 @@
         },
         "32169": {
           "object": "AstralShop/04/Clothing/CircusMask",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30852": 1
@@ -4991,7 +4991,7 @@
         },
         "32167": {
           "object": "AstralShop/04/Clothing/WhimsicalCuffs",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29845": 1
@@ -5002,7 +5002,7 @@
         },
         "32165": {
           "object": "AstralShop/04/Clothing/WhimsicalMask",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29839": 1
@@ -5013,7 +5013,7 @@
         },
         "32166": {
           "object": "AstralShop/04/Clothing/WhimsicalPocketWatch",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29848": 1
@@ -5024,7 +5024,7 @@
         },
         "32168": {
           "object": "AstralShop/04/Clothing/WhimsicalTailCloak",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29851": 1
@@ -5035,7 +5035,7 @@
         },
         "32162": {
           "object": "AstralShop/04/Clothing/WhimsicalTopHat",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29842": 1
@@ -5068,7 +5068,7 @@
         },
         "32181": {
           "object": "AstralShop/04/Furniture/OrnateAreaRug",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30724": 1
@@ -5079,7 +5079,7 @@
         },
         "32164": {
           "object": "AstralShop/04/Furniture/OrnateBed",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30699": 1
@@ -5090,7 +5090,7 @@
         },
         "32182": {
           "object": "AstralShop/04/Furniture/OrnateBookcase",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30726": 1
@@ -5101,7 +5101,7 @@
         },
         "32178": {
           "object": "AstralShop/04/Furniture/OrnateCarriage",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30714": 1
@@ -5112,7 +5112,7 @@
         },
         "32183": {
           "object": "AstralShop/04/Furniture/OrnateChaiseLounge",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30729": 1
@@ -5123,7 +5123,7 @@
         },
         "32186": {
           "object": "AstralShop/04/Furniture/OrnateClock",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31145": 1
@@ -5134,7 +5134,7 @@
         },
         "32177": {
           "object": "AstralShop/04/Furniture/OrnateDiningChair",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30712": 1
@@ -5145,7 +5145,7 @@
         },
         "32175": {
           "object": "AstralShop/04/Furniture/OrnateDiningTable",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30708": 1
@@ -5156,7 +5156,7 @@
         },
         "32187": {
           "object": "AstralShop/04/Furniture/OrnateFeast",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30738": 1
@@ -5167,7 +5167,7 @@
         },
         "32184": {
           "object": "AstralShop/04/Furniture/OrnateFireplace",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30732": 1
@@ -5178,7 +5178,7 @@
         },
         "32185": {
           "object": "AstralShop/04/Furniture/OrnateOttoman",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30735": 1
@@ -5189,7 +5189,7 @@
         },
         "32190": {
           "object": "AstralShop/04/Furniture/OrnatePainting",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30747": 1
@@ -5200,7 +5200,7 @@
         },
         "32188": {
           "object": "AstralShop/04/Furniture/OrnateScrolls",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30741": 1
@@ -5211,7 +5211,7 @@
         },
         "32192": {
           "object": "AstralShop/04/Furniture/OrnateTapestry",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30753": 1
@@ -5222,7 +5222,7 @@
         },
         "32179": {
           "object": "AstralShop/04/Furniture/OrnateToilet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30717": 1
@@ -5233,7 +5233,7 @@
         },
         "32180": {
           "object": "AstralShop/04/Furniture/OrnateTub",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30720": 1
@@ -5244,7 +5244,7 @@
         },
         "32174": {
           "object": "AstralShop/04/Furniture/OrnateVanity",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30702": 1
@@ -5255,7 +5255,7 @@
         },
         "32176": {
           "object": "AstralShop/04/Furniture/OrnateVanityChair",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30705": 1
@@ -5266,7 +5266,7 @@
         },
         "32189": {
           "object": "AstralShop/04/Furniture/OrnateWallSconce",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30744": 1
@@ -5277,7 +5277,7 @@
         },
         "32191": {
           "object": "AstralShop/04/Furniture/OrnateWindow",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30750": 1
@@ -5288,7 +5288,7 @@
         },
         "32194": {
           "object": "AstralShop/05/Clothing/PancakeTopHat",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31776": 1
@@ -5299,7 +5299,7 @@
         },
         "32197": {
           "object": "AstralShop/05/Clothing/CreamPuffPauldrons",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31764": 1
@@ -5310,7 +5310,7 @@
         },
         "32199": {
           "object": "AstralShop/05/Clothing/KiwiSword",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31770": 1
@@ -5321,7 +5321,7 @@
         },
         "32198": {
           "object": "AstralShop/05/Clothing/WaffleSlippers",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31767": 1
@@ -5332,7 +5332,7 @@
         },
         "32200": {
           "object": "AstralShop/05/Clothing/CottonCandyTail",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31758": 1
@@ -5365,7 +5365,7 @@
         },
         "32204": {
           "object": "AstralShop/06/Clothing/FellCollectionBoa",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29753": 1
@@ -5376,7 +5376,7 @@
         },
         "32207": {
           "object": "AstralShop/06/Clothing/FellCollectionCannon",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29744": 1
@@ -5387,7 +5387,7 @@
         },
         "32201": {
           "object": "AstralShop/06/Clothing/FellCollectionHat",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29750": 1
@@ -5398,7 +5398,7 @@
         },
         "32205": {
           "object": "AstralShop/06/Clothing/FellCollectionLeggings",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29747": 1
@@ -5409,7 +5409,7 @@
         },
         "32206": {
           "object": "AstralShop/06/Clothing/FellCollectionTail",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29756": 1
@@ -5420,7 +5420,7 @@
         },
         "32212": {
           "object": "AstralShop/06/Clothing/LichCollectionBoa",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29798": 1
@@ -5431,7 +5431,7 @@
         },
         "32208": {
           "object": "AstralShop/06/Clothing/LichCollectionCloak",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29775": 1
@@ -5442,7 +5442,7 @@
         },
         "32211": {
           "object": "AstralShop/06/Clothing/LichCollectionHat",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29778": 1
@@ -5453,7 +5453,7 @@
         },
         "32210": {
           "object": "AstralShop/06/Clothing/LichCollectionLeggings",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29804": 1
@@ -5464,7 +5464,7 @@
         },
         "32209": {
           "object": "AstralShop/06/Clothing/LichCollectionTail",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "29801": 1
@@ -5497,7 +5497,7 @@
         },
         "32219": {
           "object": "AstralShop/06/Furniture/FellActionFigure",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31605": 1
@@ -5508,7 +5508,7 @@
         },
         "32216": {
           "object": "AstralShop/06/Furniture/FellArtStation",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31599": 1
@@ -5519,7 +5519,7 @@
         },
         "32218": {
           "object": "AstralShop/06/Furniture/FellPaintSet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31602": 1
@@ -5530,7 +5530,7 @@
         },
         "32217": {
           "object": "AstralShop/06/Furniture/FellWallArt",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31584": 1
@@ -5541,7 +5541,7 @@
         },
         "32215": {
           "object": "AstralShop/06/Furniture/LichAlchemyStation",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31596": 1
@@ -5552,7 +5552,7 @@
         },
         "32213": {
           "object": "AstralShop/06/Furniture/LichBookcase",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31590": 1
@@ -5563,7 +5563,7 @@
         },
         "32203": {
           "object": "AstralShop/06/Furniture/LichChinaCabinet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31587": 1
@@ -5574,7 +5574,7 @@
         },
         "32214": {
           "object": "AstralShop/06/Furniture/LichTeacup",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31593": 1
@@ -5662,7 +5662,7 @@
         },
         "30986": {
           "object": "AstralShop/07/Clothing/CarnivalCollar",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27493": 1
@@ -5673,7 +5673,7 @@
         },
         "30988": {
           "object": "AstralShop/07/Clothing/CarnivalCuffs",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27531": 1
@@ -5684,7 +5684,7 @@
         },
         "30987": {
           "object": "AstralShop/07/Clothing/CarnivalHammer",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27490": 1
@@ -5695,7 +5695,7 @@
         },
         "30985": {
           "object": "AstralShop/07/Clothing/CarnivalMask",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27528": 1
@@ -5706,7 +5706,7 @@
         },
         "30989": {
           "object": "AstralShop/07/Clothing/CarnivalTailCharm",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27487": 1
@@ -5717,7 +5717,7 @@
         },
         "30992": {
           "object": "AstralShop/07/Clothing/NovusArmaments",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "25573": 1
@@ -5728,7 +5728,7 @@
         },
         "30991": {
           "object": "AstralShop/07/Clothing/NovusBuckler",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "25582": 1
@@ -5739,7 +5739,7 @@
         },
         "30993": {
           "object": "AstralShop/07/Clothing/NovusCrest",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "25585": 1
@@ -5750,7 +5750,7 @@
         },
         "30990": {
           "object": "AstralShop/07/Clothing/NovusMask",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "25579": 1
@@ -5761,7 +5761,7 @@
         },
         "30994": {
           "object": "AstralShop/07/Clothing/NovusPauldron",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "25576": 1
@@ -5794,7 +5794,7 @@
         },
         "31005": {
           "object": "AstralShop/07/Furniture/CarnivalBalloonDarts",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30526": 1
@@ -5805,7 +5805,7 @@
         },
         "30995": {
           "object": "AstralShop/07/Furniture/CarnivalDunkingBooth",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30511": 1
@@ -5816,7 +5816,7 @@
         },
         "31002": {
           "object": "AstralShop/07/Furniture/CarnivalFerrisWheel",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30517": 1
@@ -5827,7 +5827,7 @@
         },
         "31009": {
           "object": "AstralShop/07/Furniture/CarnivalFunhouseMirror",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30538": 1
@@ -5838,7 +5838,7 @@
         },
         "31008": {
           "object": "AstralShop/07/Furniture/CarnivalPlainBooth",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30535": 1
@@ -5849,7 +5849,7 @@
         },
         "31007": {
           "object": "AstralShop/07/Furniture/CarnivalPlushieBooth",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30532": 1
@@ -5860,7 +5860,7 @@
         },
         "31003": {
           "object": "AstralShop/07/Furniture/CarnivalRingToss",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30520": 1
@@ -5871,7 +5871,7 @@
         },
         "31006": {
           "object": "AstralShop/07/Furniture/CarnivalTable",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30529": 1
@@ -5882,7 +5882,7 @@
         },
         "31004": {
           "object": "AstralShop/07/Furniture/CarnivalTestStrengh",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30523": 1
@@ -5893,7 +5893,7 @@
         },
         "31001": {
           "object": "AstralShop/07/Furniture/CarnivalTreatCart",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30514": 1
@@ -5926,7 +5926,7 @@
         },
         "31697": {
           "object": "AstralShop/08/Clothing/AcademyBag",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27727": 1
@@ -5937,7 +5937,7 @@
         },
         "31698": {
           "object": "AstralShop/08/Clothing/AcademyBeret",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27639": 1
@@ -5948,7 +5948,7 @@
         },
         "31793": {
           "object": "AstralShop/08/Clothing/AcademyCravat",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27645": 1
@@ -5959,7 +5959,7 @@
         },
         "31699": {
           "object": "AstralShop/08/Clothing/AcademyCuffs",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27655": 1
@@ -5970,7 +5970,7 @@
         },
         "31700": {
           "object": "AstralShop/08/Clothing/AcademyTailDrape",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27691": 1
@@ -5981,7 +5981,7 @@
         },
         "31702": {
           "object": "AstralShop/08/Clothing/Bongos",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27537": 1
@@ -5992,7 +5992,7 @@
         },
         "31732": {
           "object": "AstralShop/08/Clothing/Clarinet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27558": 1
@@ -6003,7 +6003,7 @@
         },
         "31726": {
           "object": "AstralShop/08/Clothing/CongaDrum",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27549": 1
@@ -6014,7 +6014,7 @@
         },
         "31730": {
           "object": "AstralShop/08/Clothing/FrenchHorn",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27555": 1
@@ -6025,7 +6025,7 @@
         },
         "31703": {
           "object": "AstralShop/08/Clothing/Harp",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27540": 1
@@ -6036,7 +6036,7 @@
         },
         "31725": {
           "object": "AstralShop/08/Clothing/Maracas",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27546": 1
@@ -6047,7 +6047,7 @@
         },
         "31734": {
           "object": "AstralShop/08/Clothing/Saxaphone",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27561": 1
@@ -6058,7 +6058,7 @@
         },
         "31701": {
           "object": "AstralShop/08/Clothing/Sitar",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27534": 1
@@ -6069,7 +6069,7 @@
         },
         "31728": {
           "object": "AstralShop/08/Clothing/Trumpet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27552": 1
@@ -6080,7 +6080,7 @@
         },
         "31704": {
           "object": "AstralShop/08/Clothing/Violin",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27543": 1
@@ -6113,7 +6113,7 @@
         },
         "31735": {
           "object": "AstralShop/08/Furniture/DormBed",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28841": 1
@@ -6124,7 +6124,7 @@
         },
         "31744": {
           "object": "AstralShop/08/Furniture/DormBookshelf",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28844": 1
@@ -6135,7 +6135,7 @@
         },
         "31894": {
           "object": "AstralShop/08/Furniture/DormChair",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28847": 1
@@ -6146,7 +6146,7 @@
         },
         "31739": {
           "object": "AstralShop/08/Furniture/DormCloset",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28850": 1
@@ -6157,7 +6157,7 @@
         },
         "31745": {
           "object": "AstralShop/08/Furniture/DormClutter",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28853": 1
@@ -6168,7 +6168,7 @@
         },
         "31741": {
           "object": "AstralShop/08/Furniture/DormDesk",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28856": 1
@@ -6179,7 +6179,7 @@
         },
         "31740": {
           "object": "AstralShop/08/Furniture/DormHamper",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28859": 1
@@ -6190,7 +6190,7 @@
         },
         "31742": {
           "object": "AstralShop/08/Furniture/DormPoster",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28832": 1
@@ -6201,7 +6201,7 @@
         },
         "31743": {
           "object": "AstralShop/08/Furniture/DormRug",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28862": 1
@@ -6212,7 +6212,7 @@
         },
         "31746": {
           "object": "AstralShop/08/Furniture/DormShelves",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28835": 1
@@ -6223,7 +6223,7 @@
         },
         "31747": {
           "object": "AstralShop/08/Furniture/DormWindow",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "28838": 1
@@ -6267,7 +6267,7 @@
         },
         "31781": {
           "object": "AstralShop/09/Clothing/NightmareAmulet",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30232": 1
@@ -6278,7 +6278,7 @@
         },
         "31780": {
           "object": "AstralShop/09/Clothing/NightmareArmor",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30223": 1
@@ -6289,7 +6289,7 @@
         },
         "31782": {
           "object": "AstralShop/09/Clothing/NightmareGauntlets",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30229": 1
@@ -6300,7 +6300,7 @@
         },
         "31753": {
           "object": "AstralShop/09/Clothing/NightmareHelm",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30226": 1
@@ -6311,7 +6311,7 @@
         },
         "31783": {
           "object": "AstralShop/09/Clothing/NightmareWhisperer",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30235": 1
@@ -6322,7 +6322,7 @@
         },
         "31784": {
           "object": "AstralShop/09/Clothing/SwampMonsterCuffs",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31286": 1
@@ -6333,7 +6333,7 @@
         },
         "31789": {
           "object": "AstralShop/09/Clothing/SwampMonsterHead",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31139": 1
@@ -6344,7 +6344,7 @@
         },
         "31785": {
           "object": "AstralShop/09/Clothing/SwampMonsterMask",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31142": 1
@@ -6355,7 +6355,7 @@
         },
         "31786": {
           "object": "AstralShop/09/Clothing/SwampMonsterShoulders",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31283": 1
@@ -6366,7 +6366,7 @@
         },
         "31787": {
           "object": "AstralShop/09/Clothing/SwampMonsterTail",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31214": 1
@@ -6377,7 +6377,7 @@
         },
         "31788": {
           "object": "AstralShop/09/Clothing/SwampMonsterTailisman",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31211": 1
@@ -6410,7 +6410,7 @@
         },
         "31800": {
           "object": "AstralShop/09/Furniture/CubePlushie",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31509": 1
@@ -6421,7 +6421,7 @@
         },
         "31804": {
           "object": "AstralShop/09/Furniture/FaePlushie",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30678": 1
@@ -6432,7 +6432,7 @@
         },
         "31799": {
           "object": "AstralShop/09/Furniture/GiantKitewayPlushie",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31530": 1
@@ -6443,7 +6443,7 @@
         },
         "31803": {
           "object": "AstralShop/09/Furniture/PhoenixPlushie",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30675": 1
@@ -6454,7 +6454,7 @@
         },
         "31754": {
           "object": "AstralShop/09/Furniture/PlushBed",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31513": 1
@@ -6465,7 +6465,7 @@
         },
         "31795": {
           "object": "AstralShop/09/Furniture/PlushChair",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31518": 1
@@ -6476,7 +6476,7 @@
         },
         "31794": {
           "object": "AstralShop/09/Furniture/PlushCouch",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31515": 1
@@ -6487,7 +6487,7 @@
         },
         "31797": {
           "object": "AstralShop/09/Furniture/PlushLamp",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31524": 1
@@ -6498,7 +6498,7 @@
         },
         "31798": {
           "object": "AstralShop/09/Furniture/PlushPile",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31527": 1
@@ -6509,7 +6509,7 @@
         },
         "31796": {
           "object": "AstralShop/09/Furniture/PlushTable",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31522": 1
@@ -6520,7 +6520,7 @@
         },
         "31802": {
           "object": "AstralShop/09/Furniture/ShinigamiPlushie",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30672": 1
@@ -6531,7 +6531,7 @@
         },
         "31801": {
           "object": "AstralShop/09/Furniture/WerewolfPlushie",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30669": 1
@@ -6575,7 +6575,7 @@
         },
         "31851": {
           "object": "AstralShop/10/Clothing/ApothecaryBelt",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30083": 1
@@ -6586,7 +6586,7 @@
         },
         "31853": {
           "object": "AstralShop/10/Clothing/ApothecaryCuff",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30089": 1
@@ -6597,7 +6597,7 @@
         },
         "31852": {
           "object": "AstralShop/10/Clothing/ApothecaryHat",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30086": 1
@@ -6608,7 +6608,7 @@
         },
         "31848": {
           "object": "AstralShop/10/Clothing/ApothecaryNecklace",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30092": 1
@@ -6619,7 +6619,7 @@
         },
         "31857": {
           "object": "AstralShop/10/Clothing/GrimFaeCollar",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31773": 1
@@ -6630,7 +6630,7 @@
         },
         "31856": {
           "object": "AstralShop/10/Clothing/GrimFaeCuffs",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31779": 1
@@ -6641,7 +6641,7 @@
         },
         "31859": {
           "object": "AstralShop/10/Clothing/GrimFaeEpaulettes",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31738": 1
@@ -6652,7 +6652,7 @@
         },
         "31855": {
           "object": "AstralShop/10/Clothing/GrimFaeHood",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31654": 1
@@ -6663,7 +6663,7 @@
         },
         "31858": {
           "object": "AstralShop/10/Clothing/GrimFaeTailCharm",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31651": 1
@@ -6674,7 +6674,7 @@
         },
         "31854": {
           "object": "AstralShop/10/Clothing/GrimFaeWand",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31761": 1
@@ -6707,7 +6707,7 @@
         },
         "31860": {
           "object": "AstralShop/10/Furniture/PopcornCart",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27667": 1
@@ -6718,7 +6718,7 @@
         },
         "31868": {
           "object": "AstralShop/10/Furniture/SmallTheatreStage",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "14259": 1
@@ -6729,7 +6729,7 @@
         },
         "31867": {
           "object": "AstralShop/10/Furniture/SpilledConcessions",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "25457": 1
@@ -6740,7 +6740,7 @@
         },
         "31864": {
           "object": "AstralShop/10/Furniture/TheatreActionPoster",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27682": 1
@@ -6751,7 +6751,7 @@
         },
         "31861": {
           "object": "AstralShop/10/Furniture/TheatreCutrains",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27658": 1
@@ -6762,7 +6762,7 @@
         },
         "31863": {
           "object": "AstralShop/10/Furniture/TheatreFloorLight",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27779": 1
@@ -6773,7 +6773,7 @@
         },
         "31866": {
           "object": "AstralShop/10/Furniture/TheatreNoirPoster",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27697": 1
@@ -6784,7 +6784,7 @@
         },
         "31865": {
           "object": "AstralShop/10/Furniture/TheatreRomancePoster",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27694": 1
@@ -6795,7 +6795,7 @@
         },
         "31862": {
           "object": "AstralShop/10/Furniture/TheatreScreen",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27661": 1
@@ -6806,7 +6806,7 @@
         },
         "31850": {
           "object": "AstralShop/10/Furniture/TheatreSeating",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27664": 1
@@ -6850,7 +6850,7 @@
         },
         "31873": {
           "object": "AstralShop/11/Clothing/CozyBeanie",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31222": 1
@@ -6861,7 +6861,7 @@
         },
         "32048": {
           "object": "AstralShop/11/Clothing/CozyHood",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31219": 1
@@ -6872,7 +6872,7 @@
         },
         "32047": {
           "object": "AstralShop/11/Clothing/CozyLegWarmers",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31225": 1
@@ -6883,7 +6883,7 @@
         },
         "32049": {
           "object": "AstralShop/11/Clothing/CozyTailScarf",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31228": 1
@@ -6894,7 +6894,7 @@
         },
         "32050": {
           "object": "AstralShop/11/Clothing/NomadBeanie",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31642": 1
@@ -6905,7 +6905,7 @@
         },
         "32051": {
           "object": "AstralShop/11/Clothing/NomadMug",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31645": 1
@@ -6916,7 +6916,7 @@
         },
         "32052": {
           "object": "AstralShop/11/Clothing/NomadPack",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31639": 1
@@ -6927,7 +6927,7 @@
         },
         "32053": {
           "object": "AstralShop/11/Clothing/NomadTailLantern",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31648": 1
@@ -6960,7 +6960,7 @@
         },
         "32054": {
           "object": "AstralShop/11/Furniture/NomadBedRoll",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27500": 1
@@ -6971,7 +6971,7 @@
         },
         "32059": {
           "object": "AstralShop/11/Furniture/NomadBonfire",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27515": 1
@@ -6982,7 +6982,7 @@
         },
         "32061": {
           "object": "AstralShop/11/Furniture/NomadCamper",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27521": 1
@@ -6993,7 +6993,7 @@
         },
         "32057": {
           "object": "AstralShop/11/Furniture/NomadFeast",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27509": 1
@@ -7004,7 +7004,7 @@
         },
         "32060": {
           "object": "AstralShop/11/Furniture/NomadHotTub",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27518": 1
@@ -7015,7 +7015,7 @@
         },
         "32055": {
           "object": "AstralShop/11/Furniture/NomadLantern",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27503": 1
@@ -7026,7 +7026,7 @@
         },
         "32062": {
           "object": "AstralShop/11/Furniture/NomadRug",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27524": 1
@@ -7037,7 +7037,7 @@
         },
         "32058": {
           "object": "AstralShop/11/Furniture/NomadStarscope",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27512": 1
@@ -7048,7 +7048,7 @@
         },
         "32056": {
           "object": "AstralShop/11/Furniture/NomadTable",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27506": 1
@@ -7059,7 +7059,7 @@
         },
         "31875": {
           "object": "AstralShop/11/Furniture/NomadTent",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "27497": 1
@@ -7103,7 +7103,7 @@
         },
         "32071": {
           "object": "AstralShop/12/Clothing/FireDancerBatons",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31847": 1
@@ -7114,7 +7114,7 @@
         },
         "32067": {
           "object": "AstralShop/12/Clothing/FireDancerCrown",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31885": 1
@@ -7125,7 +7125,7 @@
         },
         "32072": {
           "object": "AstralShop/12/Clothing/FireDancerCuffs",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31888": 1
@@ -7136,7 +7136,7 @@
         },
         "32070": {
           "object": "AstralShop/12/Clothing/FireDancerMask",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31882": 1
@@ -7147,7 +7147,7 @@
         },
         "32073": {
           "object": "AstralShop/12/Clothing/FireDancerTailFlames",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31792": 1
@@ -7158,7 +7158,7 @@
         },
         "32074": {
           "object": "AstralShop/12/Clothing/RingleaderCap",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31239": 1
@@ -7169,7 +7169,7 @@
         },
         "32075": {
           "object": "AstralShop/12/Clothing/RingleaderEpaulettes",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31233": 1
@@ -7180,7 +7180,7 @@
         },
         "32077": {
           "object": "AstralShop/12/Clothing/RingleaderMustache",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31236": 1
@@ -7191,7 +7191,7 @@
         },
         "32076": {
           "object": "AstralShop/12/Clothing/RingleaderTailRings",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31242": 1
@@ -7224,7 +7224,7 @@
         },
         "32083": {
           "object": "AstralShop/12/Furniture/BlanketFort",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31551": 1
@@ -7235,7 +7235,7 @@
         },
         "32086": {
           "object": "AstralShop/12/Furniture/DragonPlushie",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30663": 1
@@ -7246,7 +7246,7 @@
         },
         "32087": {
           "object": "AstralShop/12/Furniture/JackalopePlushie",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30666": 1
@@ -7257,7 +7257,7 @@
         },
         "32088": {
           "object": "AstralShop/12/Furniture/KirinPlushie",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30681": 1
@@ -7268,7 +7268,7 @@
         },
         "32084": {
           "object": "AstralShop/12/Furniture/KitsunePlushie",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30657": 1
@@ -7279,7 +7279,7 @@
         },
         "32079": {
           "object": "AstralShop/12/Furniture/PillowFortArch",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31539": 1
@@ -7290,7 +7290,7 @@
         },
         "32078": {
           "object": "AstralShop/12/Furniture/PillowFortCorner",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31536": 1
@@ -7301,7 +7301,7 @@
         },
         "32069": {
           "object": "AstralShop/12/Furniture/PillowFortWall",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31533": 1
@@ -7312,7 +7312,7 @@
         },
         "32082": {
           "object": "AstralShop/12/Furniture/PillowInnards",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31548": 1
@@ -7323,7 +7323,7 @@
         },
         "32081": {
           "object": "AstralShop/12/Furniture/PillowLauncher",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31545": 1
@@ -7334,7 +7334,7 @@
         },
         "32080": {
           "object": "AstralShop/12/Furniture/PillowPile",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "31542": 1
@@ -7345,7 +7345,7 @@
         },
         "32085": {
           "object": "AstralShop/12/Furniture/SenriPlushie",
-          "stock": 1,
+          "stock": -1,
           "requiredLevel": -1,
           "items": {
             "30660": 1

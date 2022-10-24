@@ -70,7 +70,7 @@ import com.google.gson.JsonObject;
 
 public class Centuria {
 	// Update
-	public static final String SERVER_UPDATE_VERSION = "1.3.6.B1";
+	public static final String SERVER_UPDATE_VERSION = "1.4.0.B5";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/centuria";
 
 	// Configuration
@@ -88,6 +88,7 @@ public class Centuria {
 	public static boolean encryptGame = false;
 	public static boolean debugMode = false;
 	public static String discoveryAddress = "localhost";
+	public static String spawnBehaviour;
 
 	// Servers
 	private static ConnectiveHTTPServer apiServer;
@@ -125,7 +126,7 @@ public class Centuria {
 		System.out.println("                              Centuria                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                          Version 1.3.6.B1                          "); // not doing this
+		System.out.println("                          Version 1.4.0.B5                          "); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain
@@ -367,9 +368,10 @@ public class Centuria {
 							+ "allow-registration=true\n" + "give-all-avatars=false\n" + "give-all-mods=false\n"
 							+ "give-all-clothes=false\n" + "give-all-wings=false\n" + "give-all-sanctuary-types=false\n"
 							+ "give-all-furniture=false\n" + "give-all-currency=false\n" + "give-all-resources=false\n"
-							+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
-							+ "encrypt-game=false\n" + "debug-mode=false\n" + "\nvpn-user-whitelist=vpn-whitelist\n"
-							+ "vpn-ipv4-banlist=\n" + "vpn-ipv6-banlist=");
+							+ "server-spawn-behaviour=random\n" + "discovery-server-address=localhost\n"
+							+ "encrypt-api=false\n" + "encrypt-chat=true\n" + "encrypt-game=false\n"
+							+ "debug-mode=false\n" + "\nvpn-user-whitelist=vpn-whitelist\n" + "vpn-ipv4-banlist=\n"
+							+ "vpn-ipv6-banlist=");
 		}
 
 		// Parse properties
@@ -422,11 +424,14 @@ public class Centuria {
 				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
 		discoveryAddress = properties.getOrDefault("discovery-server-address", discoveryAddress);
 		debugMode = properties.getOrDefault("debug-mode", "false").equals("true");
+		spawnBehaviour = properties.getOrDefault("server-spawn-behaviour", "random");
+		if (spawnBehaviour == null)
+			spawnBehaviour = "random";
 		if (System.getProperty("debugMode", "false").equals("true"))
 			debugMode = true;
 
 		// Start the servers
-		Centuria.logger.info("Starting Emulated Feral API server...");
+		Centuria.logger.info("Starting API server on port " + Integer.parseInt(properties.get("api-port")) + "...");
 
 		//
 		// Start API server
@@ -495,7 +500,7 @@ public class Centuria {
 
 		//
 		// Start director server
-		Centuria.logger.info("Starting Emulated Feral Director server...");
+		Centuria.logger.info("Starting Director server on port " + Integer.parseInt(properties.get("director-port")) + "...");
 		directorServer = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("director-port")))
 				.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
 				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
@@ -505,7 +510,7 @@ public class Centuria {
 		//
 		// Load game server
 		ServerSocket sock;
-		Centuria.logger.info("Starting Emulated Feral Game server...");
+		Centuria.logger.info("Starting Game server on port " + Integer.parseInt(properties.get("game-port")) + "...");
 		if (encryptGame)
 			try {
 				sock = getContext(new File("keystore.jks"),
@@ -556,7 +561,7 @@ public class Centuria {
 
 		//
 		// Start chat server
-		Centuria.logger.info("Starting Emulated Feral Chat server...");
+		Centuria.logger.info("Starting Chat server on port " + Integer.parseInt(properties.get("chat-port")) + "...");
 		if (encryptChat)
 			try {
 				sock = getContext(new File("keystore.jks"),

@@ -1,5 +1,7 @@
 package org.asf.centuria.accounts;
 
+import org.asf.centuria.entities.players.Player;
+
 public abstract class LevelInfo {
 
 	/**
@@ -38,10 +40,38 @@ public abstract class LevelInfo {
 	public abstract int getLevelupXPCount();
 
 	/**
+	 * Removes xp from the player
+	 * 
+	 * @param xp XP to take
+	 */
+	public abstract void removeXP(int xp);
+
+	/**
 	 * Adds XP to the player
 	 * 
 	 * @param xp XP to give
 	 */
 	public abstract void addXP(int xp);
+
+	/**
+	 * Sets the player level
+	 * 
+	 * @param level Player level
+	 */
+	public abstract void setLevel(int level);
+
+	/**
+	 * Adds levels to the player
+	 * 
+	 * @param levels Levels to add
+	 */
+	public abstract void addLevel(int levels);
+
+	/**
+	 * Called to handle world join
+	 * 
+	 * @param player Player that joined the world
+	 */
+	public abstract void onWorldJoin(Player player);
 
 }
