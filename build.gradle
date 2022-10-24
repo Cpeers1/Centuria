@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = "1.4.0.B4"
+version = "1.4.0.B5"
 group = "org.asf.centuria"
 
 sourceCompatibility = '1.17'
