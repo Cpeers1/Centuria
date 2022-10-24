@@ -213,5 +213,14 @@
 				"type:filler"
 			]
 		}
+	],
+	"8632": [
+		{
+			"__NOTE__": "Quest: Total Wreckage",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
 	]
 }

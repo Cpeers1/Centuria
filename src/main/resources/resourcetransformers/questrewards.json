@@ -566,6 +566,33 @@
           "weight": 1
         }
       ]
+    },
+    "8632": {
+      "objectName": "QuestReward/TobogganNightmare",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q8632",
+          "itemId": "7819",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q8632": {
+      "objectName": "QuestReward/TobogganNightmare",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 70,
+          "maxCount": 80,
+          "weight": 1
+        }
+      ]
     }
   }
 }
