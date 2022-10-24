@@ -359,6 +359,13 @@ public class InteractionManager {
 								runBranches(plr, st.branches, "1", target, obj, state);
 						}
 
+					// Send state
+					QuestCommandPacket packet = new QuestCommandPacket();
+					packet.id = state.actorId;
+					packet.type = 1;
+					packet.params.add(Integer.toString(stateId + 1));
+					plr.client.sendPacket(packet);
+
 					break;
 				}
 				case "26": {
