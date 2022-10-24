@@ -10,6 +10,7 @@ New commands in 1.4:
  - giveBasicCurrency: command to give likes and star fragments in creative mode
 
 Fixes in 1.4:
+ - Implemented quest command 26 and 29 (allows venous shrews to spawn, note its still broken)
  - Fix issues with the social manager duplicating entries
  - Fixed shop issues (no more losing purchased items)
  - Fixed a bug that caused initial actions to not be synced (the bug would happen if someone logs in, a sitting player would not be sitting for the newly-logged-in player, fixed now)
@@ -19,7 +20,6 @@ Fixes in 1.4:
  - Overhaul player sync
  - Fix issue with the astrale shop stock
  - Fix issues with the starter pack
- - Potentially fixed broken interactions
 
 Changes in 1.4:
  - Removed the 10k lockpicks from creative mode (ruins gameplay)

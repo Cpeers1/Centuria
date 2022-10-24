@@ -22,6 +22,7 @@ import org.asf.centuria.interactions.modules.ShopkeeperModule;
 import org.asf.centuria.interactions.modules.linearobjects.LinearObjectHandler;
 import org.asf.centuria.interactions.modules.linearobjects.LockpickItemModule;
 import org.asf.centuria.packets.xt.gameserver.quests.QuestCommandPacket;
+import org.asf.centuria.util.RandomSelectorUtil;
 
 public class InteractionManager {
 
@@ -349,6 +350,41 @@ public class InteractionManager {
 
 					break;
 				}
+				case "26": {
+					// Run states (branch-level elevation)
+					String t = target;
+					if (!state.actorId.equals("0"))
+						t = state.actorId;
+					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+							"Running command: 26 (RUN STATES), actor: " + t + ", state: " + state.params[0]);
+					NetworkedObject obj = NetworkedObjects.getObject(t);
+					runBranches(plr, obj.stateInfo, state.params[0], t, obj, state);
+					break;
+				}
+				case "29": {
+					// Randomize
+					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+							"Running command: 29 (RANDOMIZE)");
+
+					// Find object
+					String t = target;
+					if (!state.actorId.equals("0"))
+						t = state.actorId;
+					NetworkedObject obj = NetworkedObjects.getObject(t);
+
+					// Build weight map
+					HashMap<String, Integer> weights = new HashMap<String, Integer>();
+					for (String st : state.branches.keySet()) {
+						weights.put(st, Integer.parseInt(st));
+					}
+
+					// Select branch
+					String branchID = RandomSelectorUtil.selectWeighted(weights);
+
+					// Run branch
+					runBranches(plr, state.branches, branchID, t, obj, state);
+					break;
+				}
 				default: {
 					// Log
 					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
@@ -374,7 +410,7 @@ public class InteractionManager {
 
 				// Check if it needs to be sent to the client
 				int cmdI = Integer.parseInt(state.command);
-				if (cmdI <= 20 || cmdI == 38 || cmdI == 81 || cmdI == 82) {
+				if ((cmdI <= 20 || cmdI == 38 || cmdI == 81 || cmdI == 82) && !state.command.equals("3")) {
 					// Build quest command
 					QuestCommandPacket packet = new QuestCommandPacket();
 					packet.id = state.actorId;
@@ -482,6 +518,36 @@ public class InteractionManager {
 
 				break;
 			}
+			case "26": {
+				// Run states (branch-level elevation)
+				String t = target;
+				if (!state.actorId.equals("0"))
+					t = state.actorId;
+				Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+						"Running command: 26 (BRANCH EVAL), actor: " + t + ", state: " + state.params[0]);
+				NetworkedObject obj = NetworkedObjects.getObject(t);
+
+				// Find module
+				boolean handled = false;
+				for (InteractionModule mod : modules) {
+					// Check if the interaction is not blocked
+					int v = mod.isDataRequestValid(plr, t, obj, Integer.parseInt(state.params[0]));
+					if (v != -1)
+						handled = true;
+					if (v == 0)
+						return;
+					else if (v == 1)
+						break;
+				}
+				if (!handled) {
+					if (Centuria.debugMode)
+						Centuria.logger.warn(MarkerManager.getMarker("INTERACTIONS"), "BRANCH EVAL for " + t
+								+ " did not have its validity checked by any interaction module!");
+				}
+
+				runBranches(plr, obj.stateInfo, state.params[0], t, obj, state);
+				break;
+			}
 			default: {
 				// Find module
 				boolean warn = true;
@@ -503,7 +569,7 @@ public class InteractionManager {
 
 			// Check if it needs to be sent to the client
 			int cmdI = Integer.parseInt(state.command);
-			if (cmdI <= 20 || cmdI == 38 || cmdI == 81 || cmdI == 82) {
+			if ((cmdI <= 20 || cmdI == 38 || cmdI == 81 || cmdI == 82) && !state.command.equals("3")) {
 				// Build quest command
 				QuestCommandPacket packet = new QuestCommandPacket();
 				packet.id = state.actorId;
