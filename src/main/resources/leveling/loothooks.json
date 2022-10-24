@@ -258,5 +258,14 @@
 				"type:filler"
 			]
 		}
+	],
+	"12007": [
+		{
+			"__NOTE__": "Quest: Mission: Mud Maneuver",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
 	]
 }

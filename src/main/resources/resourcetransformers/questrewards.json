@@ -701,6 +701,33 @@
           "weight": 1
         }
       ]
+    },
+    "12007": {
+      "objectName": "QuestReward/StickySituation",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q12007",
+          "itemId": "5261",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q12007": {
+      "objectName": "QuestReward/StickySituation",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 40,
+          "maxCount": 55,
+          "weight": 1
+        }
+      ]
     }
   }
 }
