@@ -669,8 +669,8 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
-          "minCount": 60,
-          "maxCount": 75,
+          "minCount": 50,
+          "maxCount": 65,
           "weight": 1
         }
       ]
