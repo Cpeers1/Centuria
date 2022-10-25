@@ -102,8 +102,8 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new RoomJoinPacket());
 		registerPacket(new RoomJoinPreviousPacket());
 		registerPacket(new RoomJoinTutorialPacket());
-		registerPacket(new MinigameJoin());
-		registerPacket(new MinigameMessage());
+		registerPacket(new MinigameJoinPacket());
+		registerPacket(new MinigameMessagePacket());
 		registerPacket(new ShopListPacket());
 		registerPacket(new ShopItemBuyRequestPacket());
 		registerPacket(new ItemUncraftPacket());

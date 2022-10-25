@@ -7,7 +7,7 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class MinigameCurrency implements IXtPacket<MinigameCurrency> {
+public class MinigameCurrencyPacket implements IXtPacket<MinigameCurrencyPacket> {
 
 	private static final String PACKET_ID = "mg";
 
@@ -16,8 +16,8 @@ public class MinigameCurrency implements IXtPacket<MinigameCurrency> {
 	public String UNK2 = "null";
 
 	@Override
-	public MinigameCurrency instantiate() {
-		return new MinigameCurrency();
+	public MinigameCurrencyPacket instantiate() {
+		return new MinigameCurrencyPacket();
 	}
 
 	@Override

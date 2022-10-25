@@ -6,21 +6,22 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
-import org.asf.centuria.minigames.TwiggleBuilders;
+import org.asf.centuria.minigames.AbstractMinigame;
+import org.asf.centuria.minigames.MinigameManager;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
 
-public class MinigameJoin implements IXtPacket<MinigameJoin> {
+public class MinigameJoinPacket implements IXtPacket<MinigameJoinPacket> {
 
 	private static final String PACKET_ID = "mj";
-	
-    public int MinigameID;
+
+	public int minigameID;
 	private boolean isMinigameSupported = false;
-	
+
 	@Override
-	public MinigameJoin instantiate() {
-		return new MinigameJoin();
+	public MinigameJoinPacket instantiate() {
+		return new MinigameJoinPacket();
 	}
 
 	@Override
@@ -30,7 +31,7 @@ public class MinigameJoin implements IXtPacket<MinigameJoin> {
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
-        MinigameID = reader.readInt();
+		minigameID = reader.readInt();
 	}
 
 	@Override
@@ -39,42 +40,41 @@ public class MinigameJoin implements IXtPacket<MinigameJoin> {
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		
+
 		// Log
 		if (Centuria.debugMode) {
-			System.out.println("[MINIGAME] [JOIN]  Client to server (MinigameID: " + MinigameID + ")");
+			System.out.println("[MINIGAME] [JOIN]  Client to server (MinigameID: " + minigameID + ")");
 		}
 
+		// Find and join minigame
 		Player plr = (Player) client.container;
-		
-		switch (MinigameID){
-			case 4111:
-				isMinigameSupported = true;
-				TwiggleBuilders.OnJoin(plr);
-				break;			
-		}
-		
-		if (isMinigameSupported){
-			//Set previous
+		AbstractMinigame game = MinigameManager.getGameFor(minigameID);
+		if (game != null) {
+			game = game.instantiate();
+			plr.currentGame = game;
+			isMinigameSupported = true;
+			game.onJoin(plr);
+
+			// Set previous
 			plr.previousLevelID = plr.levelID;
 			plr.previousLevelType = plr.levelType;
-			
+
 			// Assign room
 			plr.roomReady = true;
-			plr.levelID = MinigameID;
-			plr.room = "room_" + MinigameID;
+			plr.levelID = minigameID;
+			plr.room = "room_" + minigameID;
 			plr.levelType = 1;
 		}
-		
 
 		// Send response
 		RoomJoinPacket join = new RoomJoinPacket();
 		join.success = isMinigameSupported;
 		join.levelType = 1;
-		join.levelID = MinigameID;
+		join.levelID = minigameID;
 		client.sendPacket(join);
 
-		MinigameStart start = new MinigameStart();
+		// Start game
+		MinigameStartPacket start = new MinigameStartPacket();
 		client.sendPacket(start);
 
 		return true;

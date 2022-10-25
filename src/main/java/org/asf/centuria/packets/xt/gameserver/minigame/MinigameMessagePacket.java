@@ -8,18 +8,18 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.minigames.TwiggleBuilders;
+import org.asf.centuria.minigames.AbstractMinigame;
 
-public class MinigameMessage implements IXtPacket<MinigameMessage> {
+public class MinigameMessagePacket implements IXtPacket<MinigameMessagePacket> {
 
 	private static final String PACKET_ID = "mm";
 
-    public String command;
-    public String data;
+	public String command;
+	public String data;
 
 	@Override
-	public MinigameMessage instantiate() {
-		return new MinigameMessage();
+	public MinigameMessagePacket instantiate() {
+		return new MinigameMessagePacket();
 	}
 
 	@Override
@@ -29,12 +29,23 @@ public class MinigameMessage implements IXtPacket<MinigameMessage> {
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
-        command = reader.read();
+		command = reader.read();
 		data = reader.readRemaining();
 	}
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
+		// Log
+		if (Centuria.debugMode) {
+			System.out.println("[MINIGAME] [MESSAGE] Server to client (command: " + command + ")");
+		}
+
+		writer.writeInt(DATA_PREFIX); // padding
+
+		writer.writeString(command);
+		writer.writeString(data);
+
+		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
 	@Override
@@ -44,16 +55,13 @@ public class MinigameMessage implements IXtPacket<MinigameMessage> {
 
 		// Log
 		if (Centuria.debugMode) {
-			System.out.println(
-					"[MINIGAME] [MESSAGE] Client to server (command: " + command + ")");
+			System.out.println("[MINIGAME] [MESSAGE] Client to server (command: " + command + ")");
 		}
 
-		switch (plr.levelID) {
-			case 4111: {
-				TwiggleBuilders.HandleMessage(plr, command, data);
-				break;
-			}
-		}
+		// Find minigame
+		AbstractMinigame game = plr.currentGame;
+		if (game != null) // Handle if found
+			game.handleMessage(plr, this);
 
 		return true;
 	}
