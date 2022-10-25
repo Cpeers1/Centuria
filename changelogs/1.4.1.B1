@@ -1,0 +1,4 @@
+Fixes in 1.4.1:
+ - Fixed the interaction bug by adding a wait in loading (ik its sad but if i patch it in a different way there is a chance for all interactions to break)
+ - Rework part of the object spawning system to make it more widespread spawning
+ - Fix level manipulation commands

@@ -158,11 +158,11 @@ public class InteractionManager {
 				packet = new XtWriter();
 				packet.writeString("qcmd");
 				packet.writeString("-1"); // data prefix
-				packet.writeString("1"); // command
+				packet.writeString("1"); // command: set state
 				packet.writeString(id); // interaction ID
-				packet.writeString("0"); // unknown
-				packet.writeString("0"); // unknown
-				packet.writeString("1"); // unknown
+				packet.writeString("0"); // state param 0
+				packet.writeString("0"); // state param 1
+				packet.writeString("1"); // state param 2: set to substate 1
 				packet.writeString(""); // data suffix
 				player.client.sendPacket(packet.encode());
 			}

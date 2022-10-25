@@ -647,7 +647,7 @@ public class LevelManager extends LevelInfo {
 		}
 
 		// Basics
-		levelInfo.addProperty("totalXp", 0);
+		levelInfo.addProperty("totalXp", lUpXp);
 		levelInfo.addProperty("currentLevel", level);
 		levelInfo.addProperty("currentLevelXp", 0);
 		levelInfo.addProperty("currentLevelMaxXp", lUpXp);
