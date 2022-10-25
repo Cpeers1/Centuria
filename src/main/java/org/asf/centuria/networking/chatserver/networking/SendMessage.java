@@ -410,6 +410,7 @@ public class SendMessage extends AbstractChatPacket {
 			if (GameServer.hasPerm(permLevel, "admin")) {
 				commandMessages.add("addxp <amount> [\"<player>\"]");
 				commandMessages.add("addlevels <amount> [\"<player>\"]");
+				commandMessages.add("resetalllevels [confirm]");
 				commandMessages.add("tpm <levelDefID> [<levelType>]");
 				commandMessages.add("makeadmin \"<player>\"");
 				commandMessages.add("makemoderator \"<player>\"");
@@ -1632,9 +1633,8 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Take xp
 						try {
-							int xp = acc.getLevel().getCurrentXP();
-							acc.getLevel().removeXP(xp);
-							systemMessage("Removed " + xp + " XP from " + acc.getDisplayName() + ".", cmd, client);
+							acc.getLevel().resetLevelXP();
+							systemMessage("Resetted level XP of " + acc.getDisplayName() + ".", cmd, client);
 						} catch (Exception e) {
 							systemMessage("Error: " + e, cmd, client);
 						}
@@ -1690,33 +1690,53 @@ public class SendMessage extends AbstractChatPacket {
 							if (args.size() > 1) {
 								player = args.get(1);
 							}
-							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-							if (uuid == null) {
-								// Player not found
-								systemMessage("Specified account could not be located.", cmd, client);
-								return true;
-							}
-							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-							// Add xp
-							try {
-								int xp = Integer.parseInt(args.get(0));
-								if (xp < 0) {
-									systemMessage("Invalid XP amount: " + xp, cmd, client);
+							if (!player.equals("*")) {
+								String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+								if (uuid == null) {
+									// Player not found
+									systemMessage("Specified account could not be located.", cmd, client);
 									return true;
 								}
-								acc.getLevel().addXP(xp);
-								systemMessage("Given " + xp + " XP to " + acc.getDisplayName() + ".", cmd, client);
-							} catch (Exception e) {
-								systemMessage("Error: " + e, cmd, client);
-								e.printStackTrace();
+								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+								// Add xp
+								try {
+									int xp = Integer.parseInt(args.get(0));
+									if (xp < 0) {
+										systemMessage("Invalid XP amount: " + xp, cmd, client);
+										return true;
+									}
+									acc.getLevel().addXP(xp);
+									systemMessage("Given " + xp + " XP to " + acc.getDisplayName() + ".", cmd, client);
+								} catch (Exception e) {
+									systemMessage("Error: " + e, cmd, client);
+									e.printStackTrace();
+								}
+							} else {
+								final String cmdF = cmd;
+								AccountManager.getInstance().runForAllAccounts(acc -> {
+									// Add xp
+									try {
+										int xp = Integer.parseInt(args.get(0));
+										if (xp < 0) {
+											systemMessage("Invalid XP amount: " + xp, cmdF, client);
+										}
+										acc.getLevel().addXP(xp);
+										systemMessage("Given " + xp + " XP to " + acc.getDisplayName() + ".", cmdF,
+												client);
+									} catch (Exception e) {
+										systemMessage("Error: " + e, cmdF, client);
+										e.printStackTrace();
+									}
+								});
+								return true;
 							}
 
 							return true;
 						}
 					}
 					case "addlevels": {
-						// Add XP
+						// Add levels
 						// Parse arguments
 						if (GameServer.hasPerm(permLevel, "admin")) {
 							String player = client.getPlayer().getDisplayName();
@@ -1727,27 +1747,71 @@ public class SendMessage extends AbstractChatPacket {
 							if (args.size() > 1) {
 								player = args.get(1);
 							}
-							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-							if (uuid == null) {
-								// Player not found
-								systemMessage("Specified account could not be located.", cmd, client);
-								return true;
-							}
-							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-							// Take xp
-							try {
-								int levels = Integer.parseInt(args.get(0));
-								if (levels < 0) {
-									systemMessage("Invalid XP amount: " + levels, cmd, client);
+							if (!player.equals("*")) {
+								String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+								if (uuid == null) {
+									// Player not found
+									systemMessage("Specified account could not be located.", cmd, client);
 									return true;
 								}
-								acc.getLevel().addLevel(levels);
-								systemMessage("Given " + levels + " levels to " + acc.getDisplayName() + ".", cmd,
-										client);
-							} catch (Exception e) {
-								systemMessage("Error: " + e, cmd, client);
+								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+								// Add levels
+								try {
+									int levels = Integer.parseInt(args.get(0));
+									if (levels < 0) {
+										systemMessage("Invalid XP amount: " + levels, cmd, client);
+										return true;
+									}
+									acc.getLevel().addLevel(levels);
+									systemMessage("Given " + levels + " levels to " + acc.getDisplayName() + ".", cmd,
+											client);
+								} catch (Exception e) {
+									systemMessage("Error: " + e, cmd, client);
+								}
+							} else {
+								final String cmdF = cmd;
+								AccountManager.getInstance().runForAllAccounts(acc -> {
+									// Add levels
+									try {
+										int levels = Integer.parseInt(args.get(0));
+										if (levels < 0) {
+											systemMessage("Invalid XP amount: " + levels, cmdF, client);
+										}
+										acc.getLevel().addLevel(levels);
+										systemMessage("Given " + levels + " levels to " + acc.getDisplayName() + ".",
+												cmdF, client);
+									} catch (Exception e) {
+										systemMessage("Error: " + e, cmdF, client);
+									}
+								});
+								return true;
 							}
+
+							return true;
+						}
+					}
+					case "resetalllevels": {
+						// Reset all levels
+						// Parse arguments
+						if (GameServer.hasPerm(permLevel, "admin")) {
+							if (args.size() < 1 || !args.get(0).equals("confirm")) {
+								systemMessage(
+										"This command will wipe all xp of all players, are you sure you want to continue?\nAdd 'confirm' to the command to confirm your action.",
+										cmd, client);
+								return true;
+							}
+
+							final String cmdF = cmd;
+							AccountManager.getInstance().runForAllAccounts(acc -> {
+								// Reset level
+								try {
+									acc.getLevel().resetLevelXP();
+									systemMessage("Resetted level XP of " + acc.getDisplayName() + ".", cmdF, client);
+								} catch (Exception e) {
+									systemMessage("Error: " + e, cmdF, client);
+								}
+							});
 
 							return true;
 						}

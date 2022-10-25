@@ -1,5 +1,7 @@
 package org.asf.centuria.accounts;
 
+import java.util.function.Consumer;
+
 import org.asf.centuria.accounts.impl.FileBasedAccountManager;
 
 public abstract class AccountManager {
@@ -114,5 +116,12 @@ public abstract class AccountManager {
 	 * @return CenturiaAccount instance
 	 */
 	public abstract CenturiaAccount getAccount(String userID);
+
+	/**
+	 * Runs a action for all accounts
+	 * 
+	 * @param action Action to run
+	 */
+	public abstract void runForAllAccounts(Consumer<CenturiaAccount> action);
 
 }
