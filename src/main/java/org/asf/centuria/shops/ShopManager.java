@@ -402,8 +402,25 @@ public class ShopManager {
 		ShopInfo shop = shops.get(shopId);
 
 		// Check if the item is present
-		if (!shop.contents.containsKey(itemId))
+		if (!shop.contents.containsKey(itemId)) {
+			// Check enigma item
+			if (shop.enigmas.contains(itemId)) {
+				// Check if enigma is present in the inventory
+				if (player.getPlayerInventory().getAccessor().hasInventoryObject("7", Integer.parseInt(itemId))) {
+					JsonObject obj = player.getPlayerInventory().getAccessor().findInventoryObject("7",
+							Integer.parseInt(itemId));
+
+					// Check if its been unraveled
+					JsonObject data = obj.get("components").getAsJsonObject().get("Enigma").getAsJsonObject();
+					if (data.get("activated").getAsBoolean()) {
+						// Found it, return enigma
+						return shop.contents.get(itemId);
+					}
+				}
+			}
+
 			return null; // Item not recognized
+		}
 		ShopItem item = shop.contents.get(itemId);
 
 		// Check stock
