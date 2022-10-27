@@ -727,8 +727,6 @@ public class GameWhatTheHex extends AbstractMinigame {
 		pk.command = "spawnTile";
 		pk.data = wr.encode().substring(4);
 		player.client.sendPacket(pk);
-
-		// Check if the game should end
 	}
 
 	// Cyclone code to compress runes
