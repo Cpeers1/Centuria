@@ -404,18 +404,23 @@ public class ShopManager {
 		// Check if the item is present
 		if (!shop.contents.containsKey(itemId)) {
 			// Check enigma item
-			if (shop.enigmas.contains(itemId)) {
-				// Check if enigma is present in the inventory
-				if (player.getPlayerInventory().getAccessor().hasInventoryObject("7", Integer.parseInt(itemId))) {
-					JsonObject obj = player.getPlayerInventory().getAccessor().findInventoryObject("7",
-							Integer.parseInt(itemId));
+			for (String enigma : shop.enigmas) {
+				if (Integer.toString(
+						player.getPlayerInventory().getInspirationAccessor().getEnigmaResult(Integer.parseInt(enigma)))
+						.equals(itemId)) {
+					// Check if enigma is present in the inventory
+					if (player.getPlayerInventory().getAccessor().hasInventoryObject("7", Integer.parseInt(enigma))) {
+						JsonObject obj = player.getPlayerInventory().getAccessor().findInventoryObject("7",
+								Integer.parseInt(enigma));
 
-					// Check if its been unraveled
-					JsonObject data = obj.get("components").getAsJsonObject().get("Enigma").getAsJsonObject();
-					if (data.get("activated").getAsBoolean()) {
-						// Found it, return enigma
-						return shop.contents.get(itemId);
+						// Check if its been unraveled
+						JsonObject data = obj.get("components").getAsJsonObject().get("Enigma").getAsJsonObject();
+						if (data.get("activated").getAsBoolean()) {
+							// Found it, return enigma
+							return shop.contents.get(enigma);
+						}
 					}
+					break;
 				}
 			}
 
