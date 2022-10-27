@@ -396,26 +396,6 @@ public class GameWhatTheHex extends AbstractMinigame {
 			bomb = true;
 		}
 
-		// Send packet
-		XtWriter wr = new XtWriter();
-		wr.writeInt(ind); // index
-		wr.writeInt(x); // x
-		wr.writeInt(y); // y
-		// Level info
-		wr.writeInt(0);
-		wr.writeInt(powerUpProgress);
-		wr.writeInt(elements.get(0).currentProgress);
-		wr.writeInt(elements.get(1).currentProgress);
-		wr.writeInt(elements.get(2).currentProgress);
-		wr.writeInt(elements.get(0).level);
-		wr.writeInt(elements.get(1).level);
-		wr.writeInt(elements.get(2).level);
-		wr.writeInt(0);
-		MinigameMessagePacket pk = new MinigameMessagePacket();
-		pk.command = "placeTile";
-		pk.data = wr.encode().substring(4);
-		player.client.sendPacket(pk);
-
 		if (!bomb) {
 			// Place tiles in memory
 			switch (tile.rotation) {
@@ -581,10 +561,10 @@ public class GameWhatTheHex extends AbstractMinigame {
 				Centuria.logger.debug(MarkerManager.getMarker("WhatTheHex"), "Power-up meter: " + powerUpProgress);
 				if (powerUpProgress >= 100 && !activeBomb) {
 					// Spawn bomb
-					wr = new XtWriter();
+					XtWriter wr = new XtWriter();
 					wr.writeInt(-1);
 					spawnTiles(wr, 0, 1, new byte[] { (byte) 9 });
-					pk = new MinigameMessagePacket();
+					MinigameMessagePacket pk = new MinigameMessagePacket();
 					pk.command = "spawnTile";
 					pk.data = wr.encode().substring(4);
 					player.client.sendPacket(pk);
@@ -675,6 +655,26 @@ public class GameWhatTheHex extends AbstractMinigame {
 			powerUpProgress = 0;
 			activeBomb = false;
 		}
+
+		// Send packet
+		XtWriter wr = new XtWriter();
+		wr.writeInt(ind); // index
+		wr.writeInt(x); // x
+		wr.writeInt(y); // y
+		// Level info
+		wr.writeInt(0);
+		wr.writeInt(powerUpProgress);
+		wr.writeInt(elements.get(0).currentProgress);
+		wr.writeInt(elements.get(1).currentProgress);
+		wr.writeInt(elements.get(2).currentProgress);
+		wr.writeInt(elements.get(0).level);
+		wr.writeInt(elements.get(1).level);
+		wr.writeInt(elements.get(2).level);
+		wr.writeInt(0);
+		MinigameMessagePacket pk = new MinigameMessagePacket();
+		pk.command = "placeTile";
+		pk.data = wr.encode().substring(4);
+		player.client.sendPacket(pk);
 
 		// Spawn tile
 		wr = new XtWriter();

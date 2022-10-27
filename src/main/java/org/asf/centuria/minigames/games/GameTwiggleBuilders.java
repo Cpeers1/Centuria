@@ -9,6 +9,8 @@ import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigamePrizePacket;;
 
 public class GameTwiggleBuilders extends AbstractMinigame {
+	
+	private int currentLevel = 0;
 
 	@Override
 	public boolean canHandle(int levelID) {
@@ -27,6 +29,7 @@ public class GameTwiggleBuilders extends AbstractMinigame {
 		MinigameMessagePacket msg = new MinigameMessagePacket();
 		msg.command = "startLevel";
 		int level = rd.readInt();
+		currentLevel = level;
 
 		// TODO: mechanics
 
@@ -42,9 +45,11 @@ public class GameTwiggleBuilders extends AbstractMinigame {
 
 	@MinigameMessage("endLevel")
 	public void endLevel(Player plr, XtReader rd) {
+		// TODO: save
+		
+		// Inform the client its done
 		MinigameMessagePacket msg = new MinigameMessagePacket();
 		msg.command = "endLevel";
-
 		msg.data = "30";
 		plr.client.sendPacket(msg);
 	}
