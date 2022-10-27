@@ -12,6 +12,8 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.modules.ResourceCollectionModule;
 import org.asf.centuria.interactions.modules.resourcecollection.rewards.LootInfo;
+import org.asf.centuria.levelevents.LevelEvent;
+import org.asf.centuria.levelevents.LevelEventBus;
 import org.asf.centuria.minigames.AbstractMinigame;
 import org.asf.centuria.minigames.MinigameMessage;
 import org.asf.centuria.minigames.games.entities.whatthehex.WTHLevelInfo;
@@ -69,11 +71,11 @@ public class GameWhatTheHex extends AbstractMinigame {
 			throw new RuntimeException(e);
 		}
 
-		// Debug
-		if (Centuria.debugMode) {
-			WTHVis vis = new WTHVis();
-			new Thread(() -> vis.frame.setVisible(true)).start();
-		}
+//		// Debug
+//		if (Centuria.debugMode) {
+//			WTHVis vis = new WTHVis();
+//			new Thread(() -> vis.frame.setVisible(true)).start();
+//		}
 	}
 
 	public class Element {
@@ -170,6 +172,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 
 	private ArrayList<Element> elements = new ArrayList<Element>();
 	private Random rnd = new Random();
+	private int lastRandomInt = 0;
 
 	private RuneSet first;
 	private RuneSet second;
@@ -178,6 +181,9 @@ public class GameWhatTheHex extends AbstractMinigame {
 	private byte firstExtraRotation = 0;
 	private byte secondExtraRotation = 0;
 	private byte thirdExtraRotation = 0;
+
+	private int powerUpProgress = 0;
+	private boolean activeBomb = false;
 
 	// Doing it binary to conserve memory usage
 	public byte[] board = new byte[37];
@@ -208,7 +214,10 @@ public class GameWhatTheHex extends AbstractMinigame {
 	// Utility to make spawning easier
 	private RuneSet spawnTiles(XtWriter target) {
 		// Select rotation and count
-		return spawnTiles(target, rnd.nextInt(0, 12));
+		int i = rnd.nextInt(0, 12);
+		while (i == lastRandomInt)
+			i = rnd.nextInt(0, 12);
+		return spawnTiles(target, i);
 	}
 
 	// Spawn with type
@@ -323,6 +332,15 @@ public class GameWhatTheHex extends AbstractMinigame {
 			tile = third;
 			break;
 		}
+		case -1: {
+			// Bomb
+			rot = 0;
+			tile = new RuneSet();
+			tile.amount = 1;
+			tile.rotation = 0;
+			tile.types = new byte[] { (byte) 9 };
+			break;
+		}
 		}
 
 		Centuria.logger.debug(MarkerManager.getMarker("WhatTheHex"),
@@ -338,6 +356,11 @@ public class GameWhatTheHex extends AbstractMinigame {
 
 		// Handle the manual rotation
 		if (tile.types.length > 1 && rot > 0) {
+			// Check if it needs to be rotated backwards
+			boolean rotateBackwads = false;
+			if (tile.rotation == 7 || tile.rotation == 8)
+				rotateBackwads = true;
+
 			for (int i = 0; i < rot; i++) {
 				byte[] newTypes = new byte[tile.types.length];
 
@@ -345,9 +368,15 @@ public class GameWhatTheHex extends AbstractMinigame {
 					newTypes[1] = tile.types[0];
 					newTypes[0] = tile.types[1];
 				} else {
-					newTypes[0] = tile.types[1];
-					newTypes[1] = tile.types[2];
-					newTypes[2] = tile.types[0];
+					if (!rotateBackwads) {
+						newTypes[0] = tile.types[1];
+						newTypes[1] = tile.types[2];
+						newTypes[2] = tile.types[0];
+					} else {
+						newTypes[0] = tile.types[2];
+						newTypes[1] = tile.types[0];
+						newTypes[2] = tile.types[1];
+					}
 				}
 				tile.types = newTypes;
 			}
@@ -356,218 +385,15 @@ public class GameWhatTheHex extends AbstractMinigame {
 		// List of placed tile coordinates
 		ArrayList<Integer> placed = new ArrayList<Integer>();
 
-		// Check if its a cyclone
+		// Check if its a cyclone or bomb
+		boolean bomb = false;
 		boolean cyclone = false;
 		if (tile.types.length == 1 && tile.types[0] >= 5 && tile.types[0] <= 7) {
 			int elementID = tile.types[0] - 3;
 			tile.types[0] = (byte) elementID;
 			cyclone = true;
-		}
-
-		// Place tiles in memory
-		switch (tile.rotation) {
-		case 0: {
-			// Place single tile
-			board[this.getBoardIndex(x, y)] = tile.types[0];
-			placed.add(getBoardIndex(x, y));
-			break;
-		}
-		case 1: {
-			// Place double tile (rotation 1)
-			board[this.getBoardIndex(x, y)] = tile.types[0];
-			board[this.getBoardIndex(x, y + 1)] = tile.types[1];
-			placed.add(getBoardIndex(x, y));
-			placed.add(getBoardIndex(x, y + 1));
-			break;
-		}
-		case 2: {
-			// Place double tile (rotation 2)
-			board[this.getBoardIndex(x + 1, y)] = tile.types[1];
-			board[this.getBoardIndex(x, y)] = tile.types[0];
-			placed.add(getBoardIndex(x + 1, y));
-			placed.add(getBoardIndex(x, y));
-			break;
-		}
-		case 3: {
-			// Place double tile (rotation 3)
-			board[this.getBoardIndex(x, y)] = tile.types[0];
-			board[this.getBoardIndex(x + 1, y - 1)] = tile.types[1];
-			placed.add(getBoardIndex(x, y));
-			placed.add(getBoardIndex(x + 1, y - 1));
-			break;
-		}
-		case 4: {
-			// Place triple tile (rotation 1)
-			board[this.getBoardIndex(x, y + 1)] = tile.types[0];
-			board[this.getBoardIndex(x, y)] = tile.types[1];
-			board[this.getBoardIndex(x, y - 1)] = tile.types[2];
-			placed.add(getBoardIndex(x, y + 1));
-			placed.add(getBoardIndex(x, y));
-			placed.add(getBoardIndex(x, y - 1));
-			break;
-		}
-		case 5: {
-			// Place triple tile (rotation 2)
-			board[this.getBoardIndex(x + 1, y)] = tile.types[0];
-			board[this.getBoardIndex(x, y)] = tile.types[1];
-			board[this.getBoardIndex(x - 1, y)] = tile.types[2];
-			placed.add(getBoardIndex(x + 1, y));
-			placed.add(getBoardIndex(x, y));
-			placed.add(getBoardIndex(x - 1, y));
-			break;
-		}
-		case 6: {
-			// Place triple tile (rotation 3)
-			board[this.getBoardIndex(x - 1, y + 1)] = tile.types[0];
-			board[this.getBoardIndex(x, y)] = tile.types[1];
-			board[this.getBoardIndex(x + 1, y - 1)] = tile.types[2];
-			placed.add(getBoardIndex(x - 1, y + 1));
-			placed.add(getBoardIndex(x, y));
-			placed.add(getBoardIndex(x + 1, y - 1));
-			break;
-		}
-		case 7: {
-			// Place triple tile (rotation 4)
-			board[this.getBoardIndex(x - 1, y)] = tile.types[0];
-			board[this.getBoardIndex(x, y)] = tile.types[1];
-			board[this.getBoardIndex(x + 1, y - 1)] = tile.types[2];
-			placed.add(getBoardIndex(x - 1, y));
-			placed.add(getBoardIndex(x, y));
-			placed.add(getBoardIndex(x + 1, y - 1));
-			break;
-		}
-		case 8: {
-			// Place triple tile (rotation 5)
-			board[this.getBoardIndex(x - 1, y + 1)] = tile.types[0];
-			board[this.getBoardIndex(x, y)] = tile.types[1];
-			board[this.getBoardIndex(x + 1, y)] = tile.types[2];
-			placed.add(getBoardIndex(x - 1, y + 1));
-			placed.add(getBoardIndex(x, y));
-			placed.add(getBoardIndex(x + 1, y));
-			break;
-		}
-		case 9: {
-			// Place triple tile (rotation 6)
-			board[this.getBoardIndex(x + 1, y)] = tile.types[0];
-			board[this.getBoardIndex(x, y)] = tile.types[1];
-			board[this.getBoardIndex(x, y - 1)] = tile.types[2];
-			placed.add(getBoardIndex(x + 1, y));
-			placed.add(getBoardIndex(x, y));
-			placed.add(getBoardIndex(x, y - 1));
-			break;
-		}
-		case 10: {
-			// Place triple tile (rotation 7)
-			board[this.getBoardIndex(x - 1, y + 1)] = tile.types[0];
-			board[this.getBoardIndex(x, y)] = tile.types[1];
-			board[this.getBoardIndex(x, y - 1)] = tile.types[2];
-			placed.add(getBoardIndex(x - 1, y + 1));
-			placed.add(getBoardIndex(x, y));
-			placed.add(getBoardIndex(x, y - 1));
-			break;
-		}
-		case 11: {
-			// Place triple tile (rotation 8)
-			board[this.getBoardIndex(x, y + 1)] = tile.types[0];
-			board[this.getBoardIndex(x, y)] = tile.types[1];
-			board[this.getBoardIndex(x + 1, y - 1)] = tile.types[2];
-			placed.add(getBoardIndex(x, y + 1));
-			placed.add(getBoardIndex(x, y));
-			placed.add(getBoardIndex(x + 1, y - 1));
-			break;
-		}
-		}
-
-		if (!cyclone) {
-			// Check combos
-			int combos = 0;
-			boolean flame = false;
-			boolean flora = false;
-			boolean miasma = false;
-			for (int point : placed) {
-				int[] coordinates = getCoordinates(point);
-				int px = coordinates[0];
-				int py = coordinates[1];
-
-				// Check connecting tiles
-				int s = tileScore(px, py, new ArrayList<Integer>());
-
-				// Find element type
-				if (s > 0) {
-					switch (board[point]) {
-					case 2: {
-						flame = true;
-						break;
-					}
-					case 3: {
-						flora = true;
-						break;
-					}
-					case 4: {
-						miasma = true;
-						break;
-					}
-					}
-				}
-			}
-			if (flame || flora || miasma) {
-				combos = -1;
-				if (flame)
-					combos++;
-				if (flora)
-					combos++;
-				if (miasma)
-					combos++;
-			}
-
-			// Handle scores
-			for (int point : placed) {
-				int[] coordinates = getCoordinates(point);
-				int px = coordinates[0];
-				int py = coordinates[1];
-
-				// Check connecting tiles
-				int s = tileScore(px, py, new ArrayList<Integer>());
-
-				// Find element type
-				Element ele = elements.stream().filter(t -> t.elementID == board[point]).findFirst().get();
-
-				// Reward
-				if (ele != null) {
-					ele.currentProgress += s * (combos == 0 ? 1 : combos == 1 ? 2 : combos == 2 ? 4 : 1);
-					Centuria.logger.debug(MarkerManager.getMarker("WhatTheHex"),
-							"Element: " + elements.indexOf(ele) + ": " + ele.currentProgress);
-					while (ele.currentProgress >= ele.levelMax) {
-						int remaining = ele.currentProgress - ele.levelMax;
-
-						// Give reward
-						player.account.getPlayerInventory().getItemAccessor(player).add(ele.currencyRewardType,
-								ele.currencyRewardAmount);
-
-						// Send packet
-						MinigamePrizePacket p1 = new MinigamePrizePacket();
-						p1.given = true;
-						p1.itemDefId = Integer.toString(ele.currencyRewardType);
-						p1.itemCount = ele.currencyRewardAmount;
-						p1.prizeIndex1 = elements.indexOf(ele);
-						p1.prizeIndex2 = 0;
-						player.client.sendPacket(p1);
-
-						// Increase level
-						loadLevel(ele, ele.level + 1, player);
-
-						// Add remaining progress
-						ele.currentProgress = remaining;
-
-						// Add pending cyclone
-						ele.pendingCyclones++;
-					}
-				}
-			}
-		} else {
-			// Combine attached runes
-			cyclones[getBoardIndex(x, y)] = compressRunes(x, y, tile.types[0], new ArrayList<Integer>());
-			board[this.getBoardIndex(x, y)] = tile.types[0];
+		} else if (tile.types.length == 1 && tile.types[0] == 9) {
+			bomb = true;
 		}
 
 		// Send packet
@@ -576,9 +402,8 @@ public class GameWhatTheHex extends AbstractMinigame {
 		wr.writeInt(x); // x
 		wr.writeInt(y); // y
 		// Level info
-		// The client doesnt seem to truly use it so we arent implementing it
 		wr.writeInt(0);
-		wr.writeInt(0);
+		wr.writeInt(powerUpProgress);
 		wr.writeInt(elements.get(0).currentProgress);
 		wr.writeInt(elements.get(1).currentProgress);
 		wr.writeInt(elements.get(2).currentProgress);
@@ -590,6 +415,263 @@ public class GameWhatTheHex extends AbstractMinigame {
 		pk.command = "placeTile";
 		pk.data = wr.encode().substring(4);
 		player.client.sendPacket(pk);
+
+		if (!bomb) {
+			// Place tiles in memory
+			switch (tile.rotation) {
+			case 0: {
+				// Place single tile
+				board[this.getBoardIndex(x, y)] = tile.types[0];
+				placed.add(getBoardIndex(x, y));
+				break;
+			}
+			case 1: {
+				// Place double tile (rotation 1)
+				board[this.getBoardIndex(x, y)] = tile.types[0];
+				board[this.getBoardIndex(x, y + 1)] = tile.types[1];
+				placed.add(getBoardIndex(x, y));
+				placed.add(getBoardIndex(x, y + 1));
+				break;
+			}
+			case 2: {
+				// Place double tile (rotation 2)
+				board[this.getBoardIndex(x + 1, y)] = tile.types[1];
+				board[this.getBoardIndex(x, y)] = tile.types[0];
+				placed.add(getBoardIndex(x + 1, y));
+				placed.add(getBoardIndex(x, y));
+				break;
+			}
+			case 3: {
+				// Place double tile (rotation 3)
+				board[this.getBoardIndex(x, y)] = tile.types[0];
+				board[this.getBoardIndex(x + 1, y - 1)] = tile.types[1];
+				placed.add(getBoardIndex(x, y));
+				placed.add(getBoardIndex(x + 1, y - 1));
+				break;
+			}
+			case 4: {
+				// Place triple tile (rotation 1)
+				board[this.getBoardIndex(x, y + 1)] = tile.types[0];
+				board[this.getBoardIndex(x, y)] = tile.types[1];
+				board[this.getBoardIndex(x, y - 1)] = tile.types[2];
+				placed.add(getBoardIndex(x, y + 1));
+				placed.add(getBoardIndex(x, y));
+				placed.add(getBoardIndex(x, y - 1));
+				break;
+			}
+			case 5: {
+				// Place triple tile (rotation 2)
+				board[this.getBoardIndex(x + 1, y)] = tile.types[0];
+				board[this.getBoardIndex(x, y)] = tile.types[1];
+				board[this.getBoardIndex(x - 1, y)] = tile.types[2];
+				placed.add(getBoardIndex(x + 1, y));
+				placed.add(getBoardIndex(x, y));
+				placed.add(getBoardIndex(x - 1, y));
+				break;
+			}
+			case 6: {
+				// Place triple tile (rotation 3)
+				board[this.getBoardIndex(x - 1, y + 1)] = tile.types[0];
+				board[this.getBoardIndex(x, y)] = tile.types[1];
+				board[this.getBoardIndex(x + 1, y - 1)] = tile.types[2];
+				placed.add(getBoardIndex(x - 1, y + 1));
+				placed.add(getBoardIndex(x, y));
+				placed.add(getBoardIndex(x + 1, y - 1));
+				break;
+			}
+			case 7: {
+				// Place triple tile (rotation 4)
+				board[this.getBoardIndex(x - 1, y)] = tile.types[0];
+				board[this.getBoardIndex(x, y)] = tile.types[1];
+				board[this.getBoardIndex(x + 1, y - 1)] = tile.types[2];
+				placed.add(getBoardIndex(x - 1, y));
+				placed.add(getBoardIndex(x, y));
+				placed.add(getBoardIndex(x + 1, y - 1));
+				break;
+			}
+			case 8: {
+				// Place triple tile (rotation 5)
+				board[this.getBoardIndex(x - 1, y + 1)] = tile.types[0];
+				board[this.getBoardIndex(x, y)] = tile.types[1];
+				board[this.getBoardIndex(x + 1, y)] = tile.types[2];
+				placed.add(getBoardIndex(x - 1, y + 1));
+				placed.add(getBoardIndex(x, y));
+				placed.add(getBoardIndex(x + 1, y));
+				break;
+			}
+			case 9: {
+				// Place triple tile (rotation 6)
+				board[this.getBoardIndex(x + 1, y)] = tile.types[0];
+				board[this.getBoardIndex(x, y)] = tile.types[1];
+				board[this.getBoardIndex(x, y - 1)] = tile.types[2];
+				placed.add(getBoardIndex(x + 1, y));
+				placed.add(getBoardIndex(x, y));
+				placed.add(getBoardIndex(x, y - 1));
+				break;
+			}
+			case 10: {
+				// Place triple tile (rotation 7)
+				board[this.getBoardIndex(x - 1, y + 1)] = tile.types[0];
+				board[this.getBoardIndex(x, y)] = tile.types[1];
+				board[this.getBoardIndex(x, y - 1)] = tile.types[2];
+				placed.add(getBoardIndex(x - 1, y + 1));
+				placed.add(getBoardIndex(x, y));
+				placed.add(getBoardIndex(x, y - 1));
+				break;
+			}
+			case 11: {
+				// Place triple tile (rotation 8)
+				board[this.getBoardIndex(x, y + 1)] = tile.types[0];
+				board[this.getBoardIndex(x, y)] = tile.types[1];
+				board[this.getBoardIndex(x + 1, y - 1)] = tile.types[2];
+				placed.add(getBoardIndex(x, y + 1));
+				placed.add(getBoardIndex(x, y));
+				placed.add(getBoardIndex(x + 1, y - 1));
+				break;
+			}
+			}
+
+			if (!cyclone) {
+				// Check combos
+				int combos = 0;
+				boolean flame = false;
+				boolean flora = false;
+				boolean miasma = false;
+				for (int point : placed) {
+					int[] coordinates = getCoordinates(point);
+					int px = coordinates[0];
+					int py = coordinates[1];
+
+					// Check connecting tiles
+					int s = tileScore(px, py, new ArrayList<Integer>());
+
+					// Find element type
+					if (s > 0) {
+						switch (board[point]) {
+						case 2: {
+							flame = true;
+							break;
+						}
+						case 3: {
+							flora = true;
+							break;
+						}
+						case 4: {
+							miasma = true;
+							break;
+						}
+						}
+					}
+				}
+				if (flame || flora || miasma) {
+					combos = -1;
+					if (flame)
+						combos++;
+					if (flora)
+						combos++;
+					if (miasma)
+						combos++;
+				}
+
+				// Power-up meter
+				if (combos == 1)
+					powerUpProgress += 10;
+				else if (combos == 2)
+					powerUpProgress += 25;
+				Centuria.logger.debug(MarkerManager.getMarker("WhatTheHex"), "Power-up meter: " + powerUpProgress);
+				if (powerUpProgress >= 100 && !activeBomb) {
+					// Spawn bomb
+					wr = new XtWriter();
+					wr.writeInt(-1);
+					spawnTiles(wr, 0, 1, new byte[] { (byte) 9 });
+					pk = new MinigameMessagePacket();
+					pk.command = "spawnTile";
+					pk.data = wr.encode().substring(4);
+					player.client.sendPacket(pk);
+					powerUpProgress = 0;
+					activeBomb = true;
+				}
+
+				// Handle scores
+				for (int point : placed) {
+					int[] coordinates = getCoordinates(point);
+					int px = coordinates[0];
+					int py = coordinates[1];
+
+					// Check connecting tiles
+					int s = tileScore(px, py, new ArrayList<Integer>());
+
+					// Find element type
+					Element ele = elements.stream().filter(t -> t.elementID == board[point]).findFirst().get();
+
+					// Reward
+					if (ele != null) {
+						ele.currentProgress += s * (combos == 0 ? 1 : combos == 1 ? 2 : combos == 2 ? 4 : 1);
+						Centuria.logger.debug(MarkerManager.getMarker("WhatTheHex"),
+								"Element: " + elements.indexOf(ele) + ": " + ele.currentProgress);
+						while (ele.currentProgress >= ele.levelMax) {
+							int remaining = ele.currentProgress - ele.levelMax;
+
+							// Give reward
+							player.account.getPlayerInventory().getItemAccessor(player).add(ele.currencyRewardType,
+									ele.currencyRewardAmount);
+
+							// XP
+							LevelEventBus.dispatch(new LevelEvent("levelevents.minigames.whatthehex",
+									new String[] { "level:" + ele.level }, player));
+
+							// Send packet
+							MinigamePrizePacket p1 = new MinigamePrizePacket();
+							p1.given = true;
+							p1.itemDefId = Integer.toString(ele.currencyRewardType);
+							p1.itemCount = ele.currencyRewardAmount;
+							p1.prizeIndex1 = elements.indexOf(ele);
+							p1.prizeIndex2 = 0;
+							player.client.sendPacket(p1);
+
+							// Increase level
+							loadLevel(ele, ele.level + 1, player);
+
+							// Add remaining progress
+							ele.currentProgress = remaining;
+
+							// Add pending cyclone
+							ele.pendingCyclones++;
+						}
+					}
+				}
+			} else {
+				// Combine attached runes
+				cyclones[getBoardIndex(x, y)] = compressRunes(x, y, tile.types[0], new ArrayList<Integer>());
+				board[this.getBoardIndex(x, y)] = tile.types[0];
+			}
+		} else {
+			// Remove surrounding non-cyclone tiles
+			int p1 = getBoardIndex(x - 1, y);
+			int p2 = getBoardIndex(x - 1, y + 1);
+			int p3 = getBoardIndex(x, y - 1);
+			int p4 = getBoardIndex(x + 1, y - 1);
+			int p5 = getBoardIndex(x + 1, y);
+			int p6 = getBoardIndex(x, y + 1);
+
+			// Check each
+			if (p1 < 37 && cyclones[p1] == 0)
+				board[p1] = 0;
+			if (p2 < 37 && cyclones[p2] == 0)
+				board[p2] = 0;
+			if (p3 < 37 && cyclones[p3] == 0)
+				board[p3] = 0;
+			if (p4 < 37 && cyclones[p4] == 0)
+				board[p4] = 0;
+			if (p5 < 37 && cyclones[p5] == 0)
+				board[p5] = 0;
+			if (p6 < 37 && cyclones[p6] == 0)
+				board[p6] = 0;
+
+			// Reset
+			powerUpProgress = 0;
+			activeBomb = false;
+		}
 
 		// Spawn tile
 		wr = new XtWriter();
@@ -645,6 +727,8 @@ public class GameWhatTheHex extends AbstractMinigame {
 		pk.command = "spawnTile";
 		pk.data = wr.encode().substring(4);
 		player.client.sendPacket(pk);
+
+		// Check if the game should end
 	}
 
 	// Cyclone code to compress runes
@@ -738,6 +822,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 	public void startGame(Player player, XtReader rd) {
 		// Start game
 
+		powerUpProgress = 0;
 		board = new byte[board.length];
 		cyclones = new int[cyclones.length];
 		firstExtraRotation = 0;

@@ -1,4 +1,9 @@
 {
+	"levelevents.minigames.whatthehex": [
+		{
+			"xp": 15
+		}
+	],
 	"levelevents.harvest": [
 		{
 			"xp": 10,

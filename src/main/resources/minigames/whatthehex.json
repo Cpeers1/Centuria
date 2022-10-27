@@ -371,6 +371,66 @@
           "count": 75
         }
       }
+    },
+    {
+      "levelMax": 1800,
+      "rewards": {
+        "flame": {
+          "type": "item",
+          "id": "14500",
+          "count": 100
+        },
+        "flora": {
+          "type": "item",
+          "id": "14500",
+          "count": 100
+        },
+        "miasma": {
+          "type": "item",
+          "id": "14500",
+          "count": 100
+        }
+      }
+    },
+    {
+      "levelMax": 1800,
+      "rewards": {
+        "flame": {
+          "type": "item",
+          "id": "14500",
+          "count": 125
+        },
+        "flora": {
+          "type": "item",
+          "id": "14500",
+          "count": 125
+        },
+        "miasma": {
+          "type": "item",
+          "id": "14500",
+          "count": 125
+        }
+      }
+    },
+    {
+      "levelMax": 1800,
+      "rewards": {
+        "flame": {
+          "type": "item",
+          "id": "14500",
+          "count": 150
+        },
+        "flora": {
+          "type": "item",
+          "id": "14500",
+          "count": 150
+        },
+        "miasma": {
+          "type": "item",
+          "id": "14500",
+          "count": 150
+        }
+      }
     }
   ]
 }
