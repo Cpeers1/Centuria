@@ -647,6 +647,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 			}
 		} else {
 			// Remove surrounding non-cyclone tiles
+			int p = getBoardIndex(x, y);
 			int p1 = getBoardIndex(x - 1, y);
 			int p2 = getBoardIndex(x - 1, y + 1);
 			int p3 = getBoardIndex(x, y - 1);
@@ -655,6 +656,8 @@ public class GameWhatTheHex extends AbstractMinigame {
 			int p6 = getBoardIndex(x, y + 1);
 
 			// Check each
+			if (p < 37 && cyclones[p] == 0)
+				board[p] = 0;
 			if (p1 < 37 && cyclones[p1] == 0)
 				board[p1] = 0;
 			if (p2 < 37 && cyclones[p2] == 0)
