@@ -165,7 +165,8 @@ public class SendMessage extends AbstractChatPacket {
 		}
 
 		// Log
-		Centuria.logger.info("Chat: " + client.getPlayer().getDisplayName() + ": " + message);
+		if (!client.isRoomPrivate(room))
+			Centuria.logger.info("Chat: " + client.getPlayer().getDisplayName() + ": " + message);
 
 		// Increase ban counter
 		client.banCounter++;
