@@ -1,0 +1,13 @@
+# Gradle
+build/
+.gradle
+
+# Eclipse
+bin/
+.settings/
+.classpath
+.project
+
+# Run files
+server/
+Launch Centuria Server**.launch

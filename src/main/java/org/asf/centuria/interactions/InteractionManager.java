@@ -323,7 +323,8 @@ public class InteractionManager {
 							"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
 					// Check state
 					NetworkedObject obj = NetworkedObjects.getObject(t);
-					if (obj.stateInfo.containsKey(state.params[0])) {
+					if (obj.stateInfo.containsKey(state.params[0])
+							|| (obj.primaryObjectInfo != null && obj.primaryObjectInfo.type == 7)) {
 						plr.states.put(t, Integer.parseInt(state.params[0]));
 
 						// Build quest command
@@ -475,8 +476,19 @@ public class InteractionManager {
 						"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
 				// Check state
 				NetworkedObject obj = NetworkedObjects.getObject(t);
-				if (obj.stateInfo.containsKey(state.params[0]))
+				if (obj.stateInfo.containsKey(state.params[0])
+						|| (obj.primaryObjectInfo != null && obj.primaryObjectInfo.type == 7)) {
 					plr.states.put(t, Integer.parseInt(state.params[0]));
+
+					// Build quest command
+					QuestCommandPacket packet = new QuestCommandPacket();
+					packet.id = state.actorId;
+					packet.type = 1;
+					// Parameters
+					for (String param : state.params)
+						packet.params.add(param);
+					plr.client.sendPacket(packet);
+				}
 				break;
 			}
 			case "35":

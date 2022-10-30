@@ -1,10 +1,15 @@
 package org.asf.centuria.interactions;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.logging.log4j.MarkerManager;
+import org.asf.centuria.Centuria;
 import org.asf.centuria.interactions.dataobjects.LocationInfo;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.dataobjects.ObjectCollection;
@@ -12,6 +17,8 @@ import org.asf.centuria.interactions.dataobjects.ObjectInfo;
 import org.asf.centuria.interactions.dataobjects.PositionInfo;
 import org.asf.centuria.interactions.dataobjects.RotationInfo;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
+import org.asf.centuria.modules.ICenturiaModule;
+import org.asf.centuria.modules.ModuleManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.objects.ObjectDefinitionInitEvent;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
@@ -54,8 +61,14 @@ public class NetworkedObjects {
 				strm.close();
 				loadObjects(helper);
 			}
+
+			// Load module transformers
+			for (ICenturiaModule module : ModuleManager.getInstance().getAllModules()) {
+				loadTransformers(module.getClass());
+			}
 		} catch (IOException e) {
-			// This is very bad, should not start allow the server to continue otherwise things will break HARD
+			// This is very bad, should not start allow the server to continue otherwise
+			// things will break HARD
 			throw new RuntimeException(e);
 		}
 
@@ -64,6 +77,53 @@ public class NetworkedObjects {
 				.dispatchEvent(new ObjectDefinitionInitEvent(objects, levelOverrideMap, overrideMap, objectIdMap));
 
 		isReady = true;
+	}
+
+	private static void loadTransformers(Class<?> cls) {
+		URL source = cls.getProtectionDomain().getCodeSource().getLocation();
+
+		// Generate a base URL
+		String baseURL = "";
+		String fileName = "";
+		try {
+			File sourceFile = new File(source.toURI());
+			fileName = sourceFile.getName();
+			if (sourceFile.isDirectory()) {
+				baseURL = source + (source.toString().endsWith("/") ? "" : "/");
+			} else {
+				baseURL = "jar:" + source + "!/";
+			}
+		} catch (Exception e) {
+			return;
+		}
+
+		try {
+			// Find the transformer document
+			InputStream strm = new URL(baseURL + "objecttransformers/index.json").openStream();
+			JsonArray index = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonArray();
+			strm.close();
+
+			// Load all transformers
+			for (JsonElement ele : index) {
+				try {
+					// Find the transformer document
+					strm = new URL(baseURL + "objecttransformers/" + ele.getAsString()).openStream();
+					JsonObject transformer = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8"))
+							.getAsJsonObject();
+					strm.close();
+
+					// Load transformer
+					loadObjects(transformer);
+				} catch (Exception e) {
+					Centuria.logger.error(MarkerManager.getMarker("SHOPS"),
+							"Transformer failed to load: " + ele.getAsString() + " (" + fileName + ")", e);
+				}
+			}
+		} catch (Exception e) {
+			if (e instanceof FileNotFoundException)
+				return;
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static void loadObjects(JsonObject helper) {
