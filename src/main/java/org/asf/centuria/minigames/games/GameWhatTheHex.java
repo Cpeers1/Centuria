@@ -1141,6 +1141,13 @@ public class GameWhatTheHex extends AbstractMinigame {
 			value = var.value;
 		if (score > value) {
 			player.account.getPlayerInventory().getUserVarAccesor().setPlayerVarValue(4932, 0, score);
+
+			if (player.client != null && player.client.isConnected()) {
+				// Send to client
+				InventoryItemPacket pk = new InventoryItemPacket();
+				pk.item = player.account.getPlayerInventory().getItem("303");
+				player.client.sendPacket(pk);
+			}
 		}
 	}
 
