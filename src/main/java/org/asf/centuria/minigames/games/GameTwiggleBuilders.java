@@ -85,4 +85,8 @@ public class GameTwiggleBuilders extends AbstractMinigame {
 		return new GameTwiggleBuilders();
 	}
 
+	@Override
+	public void onExit(Player player) {
+	}
+
 }

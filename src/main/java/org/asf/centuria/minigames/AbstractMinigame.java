@@ -85,4 +85,11 @@ public abstract class AbstractMinigame {
 	 */
 	public abstract void onJoin(Player player);
 
+	/**
+	 * Called when a player leaves a minigame
+	 * 
+	 * @param player Player leaving the minigame
+	 */
+	public abstract void onExit(Player player);
+
 }

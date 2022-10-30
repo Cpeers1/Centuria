@@ -10,6 +10,7 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.interactions.modules.ResourceCollectionModule;
 import org.asf.centuria.interactions.modules.resourcecollection.rewards.LootInfo;
 import org.asf.centuria.levelevents.LevelEvent;
@@ -20,6 +21,7 @@ import org.asf.centuria.minigames.games.entities.whatthehex.WTHLevelInfo;
 import org.asf.centuria.minigames.games.entities.whatthehex.WTHRewardInfo;
 import org.asf.centuria.minigames.games.enums.whatthehex.RewardType;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameCurrencyPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigamePrizePacket;
@@ -29,7 +31,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+/**
+ * 
+ * What The Hex Server-side Implementation
+ * 
+ * @author Sky Swimmer
+ *
+ */
 public class GameWhatTheHex extends AbstractMinigame {
+
+	// Its a bit messy...
+	// Im not good with math, if this can be improved feel free
+	// Most of the mess is the gameover check
 
 	private static ArrayList<WTHLevelInfo> levels = new ArrayList<WTHLevelInfo>();
 
@@ -182,6 +195,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 	private byte secondExtraRotation = 0;
 	private byte thirdExtraRotation = 0;
 
+	private int score = 0;
 	private int powerUpProgress = 0;
 	private boolean activeBomb = false;
 
@@ -217,6 +231,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 		int i = rnd.nextInt(0, 12);
 		while (i == lastRandomInt)
 			i = rnd.nextInt(0, 12);
+		lastRandomInt = i;
 		return spawnTiles(target, i);
 	}
 
@@ -586,6 +601,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 
 					// Reward
 					if (ele != null) {
+						score += (combos == 0 ? 1 : combos == 1 ? 2 : combos == 2 ? 4 : 1);
 						ele.currentProgress += s * (combos == 0 ? 1 : combos == 1 ? 2 : combos == 2 ? 4 : 1);
 						Centuria.logger.debug(MarkerManager.getMarker("WhatTheHex"),
 								"Element: " + elements.indexOf(ele) + ": " + ele.currentProgress);
@@ -662,7 +678,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 		wr.writeInt(x); // x
 		wr.writeInt(y); // y
 		// Level info
-		wr.writeInt(0);
+		wr.writeInt(score);
 		wr.writeInt(powerUpProgress);
 		wr.writeInt(elements.get(0).currentProgress);
 		wr.writeInt(elements.get(1).currentProgress);
@@ -726,10 +742,179 @@ public class GameWhatTheHex extends AbstractMinigame {
 			break;
 		}
 		}
+
+		// Game over check
+		if (!activeBomb) {
+			if (!canPlace(first.rotation) && !canPlace(second.rotation) && !canPlace(third.rotation)) {
+				// Game over
+				pk = new MinigameMessagePacket();
+				pk.command = "gameOver";
+				pk.data = "";
+				player.client.sendPacket(pk);
+
+				// Save highscore
+				UserVarValue var = player.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(4932, 0);
+				int value = 0;
+				if (var != null)
+					value = var.value;
+				if (score > value) {
+					player.account.getPlayerInventory().getUserVarAccesor().setPlayerVarValue(4932, 0, score);
+
+					// Update client
+					InventoryItemPacket pkt = new InventoryItemPacket();
+					pkt.item = player.account.getPlayerInventory().getItem("303");
+					player.client.sendPacket(pkt);
+				}
+			}
+		}
+
 		pk = new MinigameMessagePacket();
 		pk.command = "spawnTile";
 		pk.data = wr.encode().substring(4);
 		player.client.sendPacket(pk);
+	}
+
+	private boolean canPlace(int rotation) {
+		for (int[] coordinates : boardIndex) {
+			if (canPlace(coordinates[0], coordinates[1], rotation))
+				return true;
+		}
+		return false;
+	}
+
+	private boolean canPlace(int x, int y, int rotation) {
+		switch (rotation) {
+		case 0: {
+			if (board[this.getBoardIndex(x, y)] != 0)
+				return false;
+			break;
+		}
+		case 1: {
+			if (this.getBoardIndex(x, y) >= 37 || this.getBoardIndex(x, y + 1) >= 37)
+				return false;
+			if (board[this.getBoardIndex(x, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y + 1)] != 0)
+				return false;
+			break;
+		}
+		case 2: {
+			if (this.getBoardIndex(x + 1, y) >= 37 || this.getBoardIndex(x, y) >= 37)
+				return false;
+			if (board[this.getBoardIndex(x + 1, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y)] != 0)
+				return false;
+			break;
+		}
+		case 3: {
+			if (this.getBoardIndex(x + 1, y - 1) >= 37 || this.getBoardIndex(x, y) >= 37)
+				return false;
+			if (board[this.getBoardIndex(x + 1, y - 1)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y)] != 0)
+				return false;
+			break;
+		}
+		case 4: {
+			if (this.getBoardIndex(x, y + 1) >= 37 || this.getBoardIndex(x, y) >= 37
+					|| this.getBoardIndex(x, y - 1) >= 37)
+				return false;
+			if (board[this.getBoardIndex(x, y + 1)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y - 1)] != 0)
+				return false;
+			break;
+		}
+		case 5: {
+			if (this.getBoardIndex(x + 1, y) >= 37 || this.getBoardIndex(x, y) >= 37
+					|| this.getBoardIndex(x - 1, y) >= 37)
+				return false;
+			if (board[this.getBoardIndex(x + 1, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x - 1, y)] != 0)
+				return false;
+			break;
+		}
+		case 6: {
+			if (this.getBoardIndex(x - 1, y + 1) >= 37 || this.getBoardIndex(x, y) >= 37
+					|| this.getBoardIndex(x + 1, y - 1) >= 37)
+				return false;
+			if (board[this.getBoardIndex(x - 1, y + 1)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x + 1, y - 1)] != 0)
+				return false;
+			break;
+		}
+		case 7: {
+			if (this.getBoardIndex(x - 1, y) >= 37 || this.getBoardIndex(x, y) >= 37
+					|| this.getBoardIndex(x + 1, y - 1) >= 37)
+				return false;
+			if (board[this.getBoardIndex(x - 1, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x + 1, y - 1)] != 0)
+				return false;
+			break;
+		}
+		case 8: {
+			if (this.getBoardIndex(x - 1, y + 1) >= 37 || this.getBoardIndex(x, y) >= 37
+					|| this.getBoardIndex(x + 1, y) >= 37)
+				return false;
+			if (board[this.getBoardIndex(x - 1, y + 1)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x + 1, y)] != 0)
+				return false;
+			break;
+		}
+		case 9: {
+			if (this.getBoardIndex(x + 1, y) >= 37 || this.getBoardIndex(x, y) >= 37
+					|| this.getBoardIndex(x, y - 1) >= 37)
+				return false;
+			if (board[this.getBoardIndex(x + 1, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y - 1)] != 0)
+				return false;
+			break;
+		}
+		case 10: {
+			if (this.getBoardIndex(x - 1, y + 1) >= 37 || this.getBoardIndex(x, y) >= 37
+					|| this.getBoardIndex(x, y - 1) >= 37)
+				return false;
+			if (board[this.getBoardIndex(x - 1, y + 1)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y - 1)] != 0)
+				return false;
+			break;
+		}
+		case 11: {
+			if (this.getBoardIndex(x, y + 1) >= 37 || this.getBoardIndex(x, y) >= 37
+					|| this.getBoardIndex(x + 1, y - 1) >= 37)
+				return false;
+			if (board[this.getBoardIndex(x, y + 1)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x + 1, y - 1)] != 0)
+				return false;
+			break;
+		}
+		}
+
+		return true;
 	}
 
 	// Cyclone code to compress runes
@@ -821,14 +1006,29 @@ public class GameWhatTheHex extends AbstractMinigame {
 
 	@MinigameMessage("startGame")
 	public void startGame(Player player, XtReader rd) {
-		// Start game
+		// Save highscore
+		UserVarValue var = player.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(4932, 0);
+		int value = 0;
+		if (var != null)
+			value = var.value;
+		if (score > value) {
+			player.account.getPlayerInventory().getUserVarAccesor().setPlayerVarValue(4932, 0, score);
 
+			// Update client
+			InventoryItemPacket pk = new InventoryItemPacket();
+			pk.item = player.account.getPlayerInventory().getItem("303");
+			player.client.sendPacket(pk);
+		}
+
+		// Start game
+		score = 0;
 		powerUpProgress = 0;
 		board = new byte[board.length];
 		cyclones = new int[cyclones.length];
 		firstExtraRotation = 0;
 		secondExtraRotation = 0;
 		thirdExtraRotation = 0;
+		activeBomb = false;
 
 		// Set up first level
 		elements.clear();
@@ -930,6 +1130,18 @@ public class GameWhatTheHex extends AbstractMinigame {
 	@Override
 	public AbstractMinigame instantiate() {
 		return new GameWhatTheHex();
+	}
+
+	@Override
+	public void onExit(Player player) {
+		// Save highscore
+		UserVarValue var = player.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(4932, 0);
+		int value = 0;
+		if (var != null)
+			value = var.value;
+		if (score > value) {
+			player.account.getPlayerInventory().getUserVarAccesor().setPlayerVarValue(4932, 0, score);
+		}
 	}
 
 }

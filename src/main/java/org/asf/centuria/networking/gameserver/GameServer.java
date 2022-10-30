@@ -453,6 +453,12 @@ public class GameServer extends BaseSmartfoxServer {
 			// Clear objects
 			plr.respawnItems.clear();
 
+			// End current game
+			if (plr.currentGame != null) {
+				plr.currentGame.onExit(plr);
+				plr.currentGame = null;
+			}
+
 			// Remove player character from all clients
 			for (Player player : getPlayers()) {
 				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
