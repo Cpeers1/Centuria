@@ -323,8 +323,12 @@ public class InteractionManager {
 							"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
 					// Check state
 					NetworkedObject obj = NetworkedObjects.getObject(t);
+
+					// Ignore the ugly patch for nucrystal life i cannot get it to work any other
+					// way
 					if (obj.stateInfo.containsKey(state.params[0])
-							|| (obj.primaryObjectInfo != null && obj.primaryObjectInfo.type == 7)) {
+							|| (obj.primaryObjectInfo != null && obj.primaryObjectInfo.type == 7
+									&& QuestManager.getActiveQuest(plr.account).equals("4487"))) {
 						if (obj.stateInfo.containsKey(state.params[0]))
 							plr.states.put(t, Integer.parseInt(state.params[0]));
 
@@ -477,8 +481,10 @@ public class InteractionManager {
 						"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
 				// Check state
 				NetworkedObject obj = NetworkedObjects.getObject(t);
+				// Ignore the ugly patch for nucrystal life i cannot get it to work any other way
 				if (obj.stateInfo.containsKey(state.params[0])
-						|| (obj.primaryObjectInfo != null && obj.primaryObjectInfo.type == 7)) {
+						|| (obj.primaryObjectInfo != null && obj.primaryObjectInfo.type == 7
+								&& QuestManager.getActiveQuest(plr.account).equals("4487"))) {
 					if (obj.stateInfo.containsKey(state.params[0]))
 						plr.states.put(t, Integer.parseInt(state.params[0]));
 
