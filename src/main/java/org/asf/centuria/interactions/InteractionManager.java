@@ -325,7 +325,8 @@ public class InteractionManager {
 					NetworkedObject obj = NetworkedObjects.getObject(t);
 					if (obj.stateInfo.containsKey(state.params[0])
 							|| (obj.primaryObjectInfo != null && obj.primaryObjectInfo.type == 7)) {
-						plr.states.put(t, Integer.parseInt(state.params[0]));
+						if (obj.stateInfo.containsKey(state.params[0]))
+							plr.states.put(t, Integer.parseInt(state.params[0]));
 
 						// Build quest command
 						QuestCommandPacket packet = new QuestCommandPacket();
@@ -478,7 +479,8 @@ public class InteractionManager {
 				NetworkedObject obj = NetworkedObjects.getObject(t);
 				if (obj.stateInfo.containsKey(state.params[0])
 						|| (obj.primaryObjectInfo != null && obj.primaryObjectInfo.type == 7)) {
-					plr.states.put(t, Integer.parseInt(state.params[0]));
+					if (obj.stateInfo.containsKey(state.params[0]))
+						plr.states.put(t, Integer.parseInt(state.params[0]));
 
 					// Build quest command
 					QuestCommandPacket packet = new QuestCommandPacket();
