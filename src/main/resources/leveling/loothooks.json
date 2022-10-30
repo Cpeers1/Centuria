@@ -267,5 +267,15 @@
 				"type:lore"
 			]
 		}
+	],
+	"8538": [
+		{
+			"__NOTE__": "Quest: Tundra Ghost",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore",
+				"type:lorefollowup"
+			]
+		}
 	]
 }
