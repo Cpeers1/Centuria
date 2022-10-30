@@ -110,6 +110,29 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			}
 		}
 		
+		// Send to tutorial if new
+		if (plr.account.isPlayerNew()) {
+			// Initialize interactions
+			InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
+
+			// XP init
+			if (plr.account.getLevel().isLevelAvailable() && !plr.account.isPlayerNew())
+				plr.account.getLevel().onWorldJoin(plr);
+
+			// Tutorial spawn
+			ObjectInfoAvatarLocalPacket res = new ObjectInfoAvatarLocalPacket();
+			res.x = 107.67;
+			res.y = 8.85;
+			res.z = -44.85;
+			res.rx = 0;
+			res.ry = 0.9171;
+			res.rz = -0;
+			res.rw = 0.3987;
+			client.sendPacket(res);
+
+			return true;
+		}
+
 		// Wait a bit so the client can catch up, to prevent broken interactions
 		try {
 			Thread.sleep(8000);
@@ -125,22 +148,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// XP init
 		if (plr.account.getLevel().isLevelAvailable() && !plr.account.isPlayerNew())
 			plr.account.getLevel().onWorldJoin(plr);
-
-		// Send to tutorial if new
-		if (plr.account.isPlayerNew()) {
-			// Tutorial spawn
-			ObjectInfoAvatarLocalPacket res = new ObjectInfoAvatarLocalPacket();
-			res.x = 107.67;
-			res.y = 8.85;
-			res.z = -44.85;
-			res.rx = 0;
-			res.ry = 0.9171;
-			res.rz = -0;
-			res.rw = 0.3987;
-			client.sendPacket(res);
-
-			return true;
-		}
 
 		// If there is a chat server connection, switch the chat to the new room to get
 		// around the chat room leave bug which causes players to see chat from other
