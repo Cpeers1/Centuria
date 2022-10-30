@@ -10,4 +10,5 @@ bin/
 
 # Run files
 server/
+libraries/
 Launch Centuria Server**.launch
