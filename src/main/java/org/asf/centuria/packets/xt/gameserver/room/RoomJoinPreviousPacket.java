@@ -11,7 +11,7 @@ import org.asf.centuria.packets.xt.IXtPacket;
 public class RoomJoinPreviousPacket implements IXtPacket<RoomJoinPreviousPacket> {
 
 	private static final String PACKET_ID = "rjp";
-	
+
 	@Override
 	public RoomJoinPreviousPacket instantiate() {
 		return new RoomJoinPreviousPacket();
@@ -32,11 +32,10 @@ public class RoomJoinPreviousPacket implements IXtPacket<RoomJoinPreviousPacket>
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		// Make the client load the tutorial
+		// Teleport back
 		Player plr = (Player) client.container;
-        plr.teleportToPreviousRoom();
+		plr.teleportToPreviousRoom();
 		return true;
 	}
 
 }
-

@@ -7,15 +7,15 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-public class MinigameStart implements IXtPacket<MinigameStart> {
+public class MinigameStartPacket implements IXtPacket<MinigameStartPacket> {
 
 	private static final String PACKET_ID = "ms";
 
 	public int UNK1 = 1;
 
 	@Override
-	public MinigameStart instantiate() {
-		return new MinigameStart();
+	public MinigameStartPacket instantiate() {
+		return new MinigameStartPacket();
 	}
 
 	@Override

@@ -1,0 +1,436 @@
+{
+  "Levels": [
+    {
+      "levelMax": 15,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "3938"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "3941"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "3944"
+        }
+      }
+    },
+    {
+      "levelMax": 50,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "3940"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "3942"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "3945"
+        }
+      }
+    },
+    {
+      "levelMax": 100,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "3939"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "3943"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "3937"
+        }
+      }
+    },
+    {
+      "levelMax": 150,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "4595"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "4615"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "4632"
+        }
+      }
+    },
+    {
+      "levelMax": 200,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "4599"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "4616"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "4633"
+        }
+      }
+    },
+    {
+      "levelMax": 300,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "4600"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "4617"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "4634"
+        }
+      }
+    },
+    {
+      "levelMax": 400,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "4601"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "4618"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "4635"
+        }
+      }
+    },
+    {
+      "levelMax": 500,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "4651"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "4619"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "4636"
+        }
+      }
+    },
+    {
+      "levelMax": 600,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "4602"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "4620"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "4637"
+        }
+      }
+    },
+    {
+      "levelMax": 700,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "4603"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "4621"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "4638"
+        }
+      }
+    },
+    {
+      "levelMax": 800,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "4604"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "4622"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "4639"
+        }
+      }
+    },
+    {
+      "levelMax": 900,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "4605"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "4623"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "4640"
+        }
+      }
+    },
+    {
+      "levelMax": 1000,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "4606"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "4624"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "4641"
+        }
+      }
+    },
+    {
+      "levelMax": 1100,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "4607"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "4625"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "4642"
+        }
+      }
+    },
+    {
+      "levelMax": 1200,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "4652"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "4626"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "4643"
+        }
+      }
+    },
+    {
+      "levelMax": 1300,
+      "rewards": {
+        "flame": {
+          "type": "loot",
+          "id": "4608"
+        },
+        "flora": {
+          "type": "loot",
+          "id": "4627"
+        },
+        "miasma": {
+          "type": "loot",
+          "id": "4644"
+        }
+      }
+    },
+    {
+      "levelMax": 1400,
+      "rewards": {
+        "flame": {
+          "type": "item",
+          "id": "14500",
+          "count": 10
+        },
+        "flora": {
+          "type": "item",
+          "id": "14500",
+          "count": 10
+        },
+        "miasma": {
+          "type": "item",
+          "id": "14500",
+          "count": 10
+        }
+      }
+    },
+    {
+      "levelMax": 1500,
+      "rewards": {
+        "flame": {
+          "type": "item",
+          "id": "14500",
+          "count": 25
+        },
+        "flora": {
+          "type": "item",
+          "id": "14500",
+          "count": 25
+        },
+        "miasma": {
+          "type": "item",
+          "id": "14500",
+          "count": 25
+        }
+      }
+    },
+    {
+      "levelMax": 1600,
+      "rewards": {
+        "flame": {
+          "type": "item",
+          "id": "14500",
+          "count": 45
+        },
+        "flora": {
+          "type": "item",
+          "id": "14500",
+          "count": 45
+        },
+        "miasma": {
+          "type": "item",
+          "id": "14500",
+          "count": 45
+        }
+      }
+    },
+    {
+      "levelMax": 1700,
+      "rewards": {
+        "flame": {
+          "type": "item",
+          "id": "14500",
+          "count": 50
+        },
+        "flora": {
+          "type": "item",
+          "id": "14500",
+          "count": 50
+        },
+        "miasma": {
+          "type": "item",
+          "id": "14500",
+          "count": 50
+        }
+      }
+    },
+    {
+      "levelMax": 1800,
+      "rewards": {
+        "flame": {
+          "type": "item",
+          "id": "14500",
+          "count": 75
+        },
+        "flora": {
+          "type": "item",
+          "id": "14500",
+          "count": 75
+        },
+        "miasma": {
+          "type": "item",
+          "id": "14500",
+          "count": 75
+        }
+      }
+    },
+    {
+      "levelMax": 1800,
+      "rewards": {
+        "flame": {
+          "type": "item",
+          "id": "14500",
+          "count": 100
+        },
+        "flora": {
+          "type": "item",
+          "id": "14500",
+          "count": 100
+        },
+        "miasma": {
+          "type": "item",
+          "id": "14500",
+          "count": 100
+        }
+      }
+    },
+    {
+      "levelMax": 1800,
+      "rewards": {
+        "flame": {
+          "type": "item",
+          "id": "14500",
+          "count": 125
+        },
+        "flora": {
+          "type": "item",
+          "id": "14500",
+          "count": 125
+        },
+        "miasma": {
+          "type": "item",
+          "id": "14500",
+          "count": 125
+        }
+      }
+    },
+    {
+      "levelMax": 1800,
+      "rewards": {
+        "flame": {
+          "type": "item",
+          "id": "14500",
+          "count": 150
+        },
+        "flora": {
+          "type": "item",
+          "id": "14500",
+          "count": 150
+        },
+        "miasma": {
+          "type": "item",
+          "id": "14500",
+          "count": 150
+        }
+      }
+    }
+  ]
+}

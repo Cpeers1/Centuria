@@ -9,7 +9,6 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 

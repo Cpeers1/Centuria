@@ -21,6 +21,7 @@ import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.groupobjects.GroupObject;
 import org.asf.centuria.interactions.modules.QuestManager;
+import org.asf.centuria.minigames.AbstractMinigame;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.gameserver.avatar.AvatarObjectInfoPacket;
@@ -82,6 +83,7 @@ public class Player {
 	public Quaternion lastRot = new Quaternion(0, 0, 0, 0);
 
 	public int lastAction;
+	public AbstractMinigame currentGame;
 
 	// Teleports
 	public String teleportDestination;
@@ -328,6 +330,12 @@ public class Player {
 			questStarted = false;
 			questObjectData.clear();
 			questObjective = 0;
+			
+			// End current game
+			if (currentGame != null) {
+				currentGame.onExit(this);
+				currentGame = null;
+			}
 
 			// Reset states
 			states.clear();
@@ -390,6 +398,12 @@ public class Player {
 			plr.questStarted = false;
 			plr.questObjectData.clear();
 			plr.questObjective = 0;
+
+			// End current game
+			if (currentGame != null) {
+				currentGame.onExit(plr);
+				currentGame = null;
+			}
 
 			// Reset states
 			states.clear();
@@ -467,6 +481,12 @@ public class Player {
 			plr.questObjectData.clear();
 			plr.questObjective = 0;
 
+			// End current game
+			if (currentGame != null) {
+				currentGame.onExit(plr);
+				currentGame = null;
+			}
+
 			// Reset states
 			states.clear();
 			stateObjects.clear();
@@ -496,6 +516,12 @@ public class Player {
 	public boolean teleportToPreviousRoom() {
 		try {
 			var plr = this;
+
+			// End current game
+			if (currentGame != null) {
+				currentGame.onExit(plr);
+				currentGame = null;
+			}
 
 			// Assign room
 			plr.roomReady = false;

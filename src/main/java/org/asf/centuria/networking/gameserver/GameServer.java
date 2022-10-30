@@ -102,8 +102,8 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new RoomJoinPacket());
 		registerPacket(new RoomJoinPreviousPacket());
 		registerPacket(new RoomJoinTutorialPacket());
-		registerPacket(new MinigameJoin());
-		registerPacket(new MinigameMessage());
+		registerPacket(new MinigameJoinPacket());
+		registerPacket(new MinigameMessagePacket());
 		registerPacket(new ShopListPacket());
 		registerPacket(new ShopItemBuyRequestPacket());
 		registerPacket(new ItemUncraftPacket());
@@ -452,6 +452,12 @@ public class GameServer extends BaseSmartfoxServer {
 
 			// Clear objects
 			plr.respawnItems.clear();
+
+			// End current game
+			if (plr.currentGame != null) {
+				plr.currentGame.onExit(plr);
+				plr.currentGame = null;
+			}
 
 			// Remove player character from all clients
 			for (Player player : getPlayers()) {
