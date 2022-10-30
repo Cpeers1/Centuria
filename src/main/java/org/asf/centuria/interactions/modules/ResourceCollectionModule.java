@@ -194,7 +194,7 @@ public class ResourceCollectionModule extends InteractionModule {
 				loadTransformers(module.getClass());
 			}
 
-			// Load level hooksa
+			// Load level hooks
 			strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("leveling/loothooks.json");
 			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
 			importLevelHooks(helper);
@@ -625,6 +625,8 @@ public class ResourceCollectionModule extends InteractionModule {
 				LootReward reward = info.reward;
 				if (reward.itemId != null) {
 					int count = info.count;
+
+					// Select items
 					String[] ids = player.account.getPlayerInventory().getItemAccessor(player)
 							.add(Integer.parseInt(reward.itemId), count);
 

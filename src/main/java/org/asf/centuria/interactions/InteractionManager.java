@@ -158,11 +158,11 @@ public class InteractionManager {
 				packet = new XtWriter();
 				packet.writeString("qcmd");
 				packet.writeString("-1"); // data prefix
-				packet.writeString("1"); // command
+				packet.writeString("1"); // command: set state
 				packet.writeString(id); // interaction ID
-				packet.writeString("0"); // unknown
-				packet.writeString("0"); // unknown
-				packet.writeString("1"); // unknown
+				packet.writeString("0"); // state param 0
+				packet.writeString("0"); // state param 1
+				packet.writeString("1"); // state param 2: set to substate 1
 				packet.writeString(""); // data suffix
 				player.client.sendPacket(packet.encode());
 			}
@@ -323,8 +323,14 @@ public class InteractionManager {
 							"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
 					// Check state
 					NetworkedObject obj = NetworkedObjects.getObject(t);
-					if (obj.stateInfo.containsKey(state.params[0])) {
-						plr.states.put(t, Integer.parseInt(state.params[0]));
+
+					// Ignore the ugly patch for nucrystal life i cannot get it to work any other
+					// way
+					if (obj.stateInfo.containsKey(state.params[0])
+							|| (obj.primaryObjectInfo != null && obj.primaryObjectInfo.type == 7
+									&& QuestManager.getActiveQuest(plr.account).equals("4487"))) {
+						if (obj.stateInfo.containsKey(state.params[0]))
+							plr.states.put(t, Integer.parseInt(state.params[0]));
 
 						// Build quest command
 						QuestCommandPacket packet = new QuestCommandPacket();
@@ -475,8 +481,22 @@ public class InteractionManager {
 						"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
 				// Check state
 				NetworkedObject obj = NetworkedObjects.getObject(t);
-				if (obj.stateInfo.containsKey(state.params[0]))
-					plr.states.put(t, Integer.parseInt(state.params[0]));
+				// Ignore the ugly patch for nucrystal life i cannot get it to work any other way
+				if (obj.stateInfo.containsKey(state.params[0])
+						|| (obj.primaryObjectInfo != null && obj.primaryObjectInfo.type == 7
+								&& QuestManager.getActiveQuest(plr.account).equals("4487"))) {
+					if (obj.stateInfo.containsKey(state.params[0]))
+						plr.states.put(t, Integer.parseInt(state.params[0]));
+
+					// Build quest command
+					QuestCommandPacket packet = new QuestCommandPacket();
+					packet.id = state.actorId;
+					packet.type = 1;
+					// Parameters
+					for (String param : state.params)
+						packet.params.add(param);
+					plr.client.sendPacket(packet);
+				}
 				break;
 			}
 			case "35":

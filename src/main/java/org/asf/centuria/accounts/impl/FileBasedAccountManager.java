@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -453,6 +454,21 @@ public class FileBasedAccountManager extends AccountManager {
 		}
 
 		return false;
+	}
+
+	@Override
+	public void runForAllAccounts(Consumer<CenturiaAccount> action) {
+		// Find all accounts
+		for (File accFile : new File("accounts").listFiles(t -> !t.isDirectory())) {
+			try {
+				UUID.fromString(accFile.getName());
+
+				// Run action
+				action.accept(getAccount(accFile.getName()));
+			} catch (Exception e) {
+				// Not a account file
+			}
+		}
 	}
 
 }

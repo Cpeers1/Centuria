@@ -99,7 +99,13 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 						"Syncing player " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
 			}
 		}
-
+		
+		// Wait a bit so the client can catch up, to prevent broken interactions
+		try {
+			Thread.sleep(8000);
+		} catch (InterruptedException e) {
+		}
+		
 		// Initialize interactions
 		InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
 

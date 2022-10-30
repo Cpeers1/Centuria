@@ -728,6 +728,33 @@
           "weight": 1
         }
       ]
+    },
+    "8538": {
+      "objectName": "QuestReward/TundraGhost",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q8538",
+          "itemId": "4478",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q8538": {
+      "objectName": "QuestReward/TundraGhost",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 80,
+          "maxCount": 100,
+          "weight": 1
+        }
+      ]
     }
   }
 }

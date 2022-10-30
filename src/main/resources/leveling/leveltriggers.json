@@ -39,8 +39,67 @@
 			]
 		},
 		{
-			"xp": 80,
-			"endHere": false,
+			"xp": 10,
+			"conditions": [
+				"type:dye",
+				"rarity:common",
+				"shop:astrale"
+			]
+		},
+		{
+			"xp": 25,
+			"conditions": [
+				"type:dye",
+				"rarity:cool",
+				"shop:astrale"
+			]
+		},
+		{
+			"xp": 40,
+			"conditions": [
+				"rarity:rare",
+				"type:dye",
+				"shop:astrale"
+			]
+		},
+		{
+			"xp": 50,
+			"conditions": [
+				"rarity:epic",
+				"type:dye",
+				"shop:astrale"
+			]
+		},
+		{
+			"xp": 12,
+			"conditions": [
+				"rarity:common",
+				"shop:astrale"
+			]
+		},
+		{
+			"xp": 28,
+			"conditions": [
+				"rarity:cool",
+				"shop:astrale"
+			]
+		},
+		{
+			"xp": 45,
+			"conditions": [
+				"rarity:rare",
+				"shop:astrale"
+			]
+		},
+		{
+			"xp": 55,
+			"conditions": [
+				"rarity:epic",
+				"shop:astrale"
+			]
+		},
+		{
+			"xp": 10,
 			"conditions": [
 				"shop:astrale"
 			]
@@ -104,7 +163,7 @@
 	],
 	"levelevents.enigmacreated": [
 		{
-			"xp": 450
+			"xp": 275
 		}
 	],
 	"levelevents.waystones": [
@@ -146,19 +205,19 @@
 			]
 		},
 		{
-			"xp": 50,
+			"xp": 60,
 			"conditions": [
 				"type:bronze"
 			]
 		},
 		{
-			"xp": 80,
+			"xp": 120,
 			"conditions": [
 				"type:silver"
 			]
 		},
 		{
-			"xp": 150,
+			"xp": 200,
 			"conditions": [
 				"type:gold"
 			]

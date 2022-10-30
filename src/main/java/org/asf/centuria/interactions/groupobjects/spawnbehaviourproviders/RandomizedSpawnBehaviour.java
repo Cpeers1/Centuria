@@ -201,7 +201,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			int remainingLockpickObjects = lockpicks.length;
 			int distanceBetweenLockpicks = (remainingLockpickObjects - lockpicksToSpawn);
 			distanceBetweenLockpicks = (int) ((100d / (double) remainingLockpickObjects)
-					* (double) distanceBetweenLockpicks) * 2;
+					* (double) distanceBetweenLockpicks);
 			for (int i = 0; i < lockpicksToSpawn && remainingLockpickObjects > 0; i++) {
 				while (true) {
 					GroupObject lockpick = RandomSelectorUtil.selectRandom(Stream.of(lockpicks).toList());
@@ -237,8 +237,8 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			// Select waystone paths
 			int remainingWaystonePaths = waystonePaths.length;
 			int distanceWaystonePaths = (remainingWaystonePaths - waystonePathsToSpawn);
-			distanceWaystonePaths = (int) ((100d / (double) remainingWaystonePaths) * (double) distanceWaystonePaths)
-					/ 2;
+			distanceWaystonePaths = (int) (((100d / (double) remainingWaystonePaths) * (double) distanceWaystonePaths)
+					* 1.5);
 			ArrayList<GroupObject> waystones = new ArrayList<GroupObject>();
 			for (int i = 0; i < waystonePathsToSpawn && remainingWaystonePaths > 0; i++) {
 				while (true) {
@@ -276,7 +276,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			// Select dig spots
 			int remainingDigspots = digspots.length;
 			int distanceDigspots = (remainingDigspots - digspotsToSpawn);
-			distanceDigspots = (int) ((100d / (double) remainingDigspots) * (double) distanceDigspots) / 2;
+			distanceDigspots = (int) ((100d / (double) remainingDigspots) * (double) distanceDigspots);
 			ArrayList<GroupObject> spawnedDigspots = new ArrayList<GroupObject>();
 			for (int i = 0; i < digspotsToSpawn && remainingDigspots > 0; i++) {
 				while (true) {
@@ -337,7 +337,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			// Select chests
 			int remainingChests = lockedChests.length;
 			int distanceChests = (remainingChests - chestsToSpawn);
-			distanceChests = (int) ((100d / (double) remainingChests) * (double) distanceChests) / 2;
+			distanceChests = (int) ((100d / (double) remainingChests) * (double) distanceChests);
 			ArrayList<GroupObject> chests = new ArrayList<GroupObject>();
 			for (int i = 0; i < chestsToSpawn && remainingChests > 0; i++) {
 				while (true) {

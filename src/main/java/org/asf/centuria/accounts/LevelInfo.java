@@ -74,4 +74,9 @@ public abstract class LevelInfo {
 	 */
 	public abstract void onWorldJoin(Player player);
 
+	/**
+	 * Resets the level xp of this player
+	 */
+	public abstract void resetLevelXP();
+
 }

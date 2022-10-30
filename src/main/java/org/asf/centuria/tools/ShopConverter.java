@@ -60,6 +60,7 @@ public class ShopConverter {
 
 		JsonObject uncrafting = new JsonObject();
 		LinkedHashMap<String, String> itemTypes = new LinkedHashMap<String, String>();
+		LinkedHashMap<String, String> enigmaMap = new LinkedHashMap<String, String>();
 		LinkedHashMap<String, HashMap<String, Integer>> costs = new LinkedHashMap<String, HashMap<String, Integer>>();
 		LinkedHashMap<String, HashMap<String, Integer>> eurekaItems = new LinkedHashMap<String, HashMap<String, Integer>>();
 
@@ -115,6 +116,9 @@ public class ShopConverter {
 					} else if (data.get("componentClass").getAsString().equals("ItemDefComponent")) {
 						data = data.get("componentJSON").getAsJsonObject();
 						itemTypes.put(lastID, data.get("itemType").getAsString());
+					} else if (data.get("componentClass").getAsString().equals("EnigmaDefComponent")) {
+						data = data.get("componentJSON").getAsJsonObject();
+						enigmaMap.put(lastID, data.get("itemDefID").getAsString());
 					}
 				}
 
@@ -219,51 +223,8 @@ public class ShopConverter {
 									String id = lI.getAsString();
 									if (costs.containsKey(id)
 											&& !objectNames.get(id).startsWith("AstralShop/ALL/SeasonPass/")) {
-										JsonObject costObj = new JsonObject();
-										costs.get(id).forEach((costId, amount) -> {
-											costObj.addProperty(costId, amount);
-										});
-
-										JsonObject itms = new JsonObject();
-										addItems(itms, id, bundles, 1);
-
-										JsonObject entry = new JsonObject();
-										entry.addProperty("object", objectNames.get(id));
-
-										if (lastID.equals("30549")) {
-											// Astrale shop
-											// Single-time purchases for avatars, body mods, sancs, enigmas and bundles
-											if (itms.size() != 1)
-												entry.addProperty("stock", 1);
-											else {
-												String type = itemTypes
-														.get(itms.keySet().toArray(t -> new String[t])[0]);
-												if (type.equals("1") || type.equals("2") || type.equals("10")
-														|| type.equals("7"))
-													entry.addProperty("stock", 1);
-												else
-													entry.addProperty("stock", -1);
-											}
-										} else {
-											// Other shop
-											// Set to -1 to disable
-											entry.addProperty("stock", -1);
-										}
-
-										entry.addProperty("requiredLevel", -1);
-										entry.add("items", itms);
-										entry.add("cost", costObj);
-
-										if (eurekaItems.containsKey(id) && !eurekaItems.get(id).isEmpty()) {
-											HashMap<String, Integer> itemChances = eurekaItems.get(id);
-											JsonObject chanceObj = new JsonObject();
-											itemChances.forEach((itmId, chance) -> {
-												chanceObj.addProperty(itmId, chance);
-											});
-											entry.add("eurekaItems", chanceObj);
-										}
-
-										items.add(id, entry);
+										addItem(items, lastID, id, id, costs, eurekaItems, itemTypes, objectNames,
+												bundles);
 									}
 								}
 
@@ -318,6 +279,7 @@ public class ShopConverter {
 										JsonObject shopInfo = new JsonObject();
 										shopInfo.addProperty("object", lastName);
 										shopInfo.addProperty("restockTime", -1);
+
 										if (data.has("shopContentDefID")
 												&& !data.get("shopContentDefID").getAsString().isEmpty()
 												&& !data.get("shopContentDefID").getAsString().equals("-1")) {
@@ -326,6 +288,22 @@ public class ShopConverter {
 												shopInfo.add("contents", contents.get(id));
 											else
 												shopInfo.add("contents", new JsonObject());
+											if (data.has("enigmaUnlockListDefID")
+													&& !data.get("enigmaUnlockListDefID").getAsString().isEmpty()
+													&& !data.get("enigmaUnlockListDefID").getAsString().equals("-1")) {
+												String id3 = data.get("enigmaUnlockListDefID").getAsString();
+												if (lists.containsKey(id3)) {
+													JsonArray enigmas = lists.get(id3);
+													if (enigmas.size() != 0) {
+														for (JsonElement ele2 : enigmas) {
+															String id2 = ele2.getAsString();
+															addItem(shopInfo.get("contents").getAsJsonObject(), "",
+																	enigmaMap.get(id2), id2, costs, eurekaItems,
+																	itemTypes, objectNames, bundles);
+														}
+													}
+												}
+											}
 										} else
 											shopInfo.add("contents", new JsonObject());
 										if (data.has("enigmaUnlockListDefID")
@@ -357,6 +335,55 @@ public class ShopConverter {
 		res.add("Uncrafting", uncrafting);
 
 		System.out.println(new Gson().newBuilder().setPrettyPrinting().create().toJson(res));
+	}
+
+	private static void addItem(JsonObject items, String lastID, String id, String oID,
+			LinkedHashMap<String, HashMap<String, Integer>> costs,
+			LinkedHashMap<String, HashMap<String, Integer>> eurekaItems, LinkedHashMap<String, String> itemTypes,
+			LinkedHashMap<String, String> objectNames, HashMap<String, HashMap<String, Integer>> bundles) {
+		JsonObject costObj = new JsonObject();
+		costs.get(id).forEach((costId, amount) -> {
+			costObj.addProperty(costId, amount);
+		});
+
+		JsonObject itms = new JsonObject();
+		addItems(itms, id, bundles, 1);
+
+		JsonObject entry = new JsonObject();
+		entry.addProperty("object", objectNames.get(id));
+
+		if (lastID.equals("30549")) {
+			// Astrale shop
+			// Single-time purchases for avatars, body mods, sancs, enigmas and bundles
+			if (itms.size() != 1)
+				entry.addProperty("stock", 1);
+			else {
+				String type = itemTypes.get(itms.keySet().toArray(t -> new String[t])[0]);
+				if (type.equals("1") || type.equals("2") || type.equals("10") || type.equals("7"))
+					entry.addProperty("stock", 1);
+				else
+					entry.addProperty("stock", -1);
+			}
+		} else {
+			// Other shop
+			// Set to -1 to disable
+			entry.addProperty("stock", -1);
+		}
+
+		entry.addProperty("requiredLevel", -1);
+		entry.add("items", itms);
+		entry.add("cost", costObj);
+
+		if (eurekaItems.containsKey(id) && !eurekaItems.get(id).isEmpty()) {
+			HashMap<String, Integer> itemChances = eurekaItems.get(id);
+			JsonObject chanceObj = new JsonObject();
+			itemChances.forEach((itmId, chance) -> {
+				chanceObj.addProperty(itmId, chance);
+			});
+			entry.add("eurekaItems", chanceObj);
+		}
+
+		items.add(oID, entry);
 	}
 
 	private static void addItems(JsonObject itms, String id, HashMap<String, HashMap<String, Integer>> bundles,

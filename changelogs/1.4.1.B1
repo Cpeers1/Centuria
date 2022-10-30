@@ -1,0 +1,21 @@
+Fixes in 1.4.1:
+ - Fix The NuCrystal Life quest
+ - Fix enigmas being uncraftable
+ - Fix object transformers not working for modules
+ - Fix dms being logged (no longer logged to server log to protect privacy, the logs are wiped weekly but still, wanted to prevent this)
+ - Fixed the interaction bug by adding a wait in loading (ik its sad but if i patch it in a different way there is a chance for all interactions to break)
+ - Rework part of the object spawning system to make it more widespread spawning
+ - Fix level manipulation commands
+ - Reworked the level curve
+ - Nerfed xp rewards
+ 
+Added Quests:
+ - Tundra Ghost
+
+
+NOTE: The level curve is still highly work-in-progress and might change again.
+Levels aren't lost but your current xp for levelup has been reset to make the curve take effect.
+
+The XP has been nerfed as we cannot add new content, we are very limited and have to make do with what we have.
+We are planning on new rewards but as gameplay cannot be changed its gonna be a tad harder than og's xp requirements.
+However we have reworked rewards to be more rewarding, if its too grindy we will work on xp again, tell us in the chats if you find its too hard.
