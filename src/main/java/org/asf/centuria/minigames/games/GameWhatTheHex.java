@@ -601,7 +601,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 
 					// Reward
 					if (ele != null) {
-						score += (combos == 0 ? 1 : combos == 1 ? 2 : combos == 2 ? 4 : 1);
+						score += s * (combos == 0 ? 1 : combos == 1 ? 2 : combos == 2 ? 4 : 1);
 						ele.currentProgress += s * (combos == 0 ? 1 : combos == 1 ? 2 : combos == 2 ? 4 : 1);
 						Centuria.logger.debug(MarkerManager.getMarker("WhatTheHex"),
 								"Element: " + elements.indexOf(ele) + ": " + ele.currentProgress);
