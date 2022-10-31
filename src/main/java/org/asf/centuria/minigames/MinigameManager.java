@@ -3,6 +3,7 @@ package org.asf.centuria.minigames;
 import java.util.ArrayList;
 
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.minigames.games.GameDoOrDye;
 import org.asf.centuria.minigames.games.GameTwiggleBuilders;
 import org.asf.centuria.minigames.games.GameWhatTheHex;
 
@@ -21,6 +22,7 @@ public class MinigameManager {
 		// Default minigames
 		registerMinigame(new GameWhatTheHex());
 		registerMinigame(new GameTwiggleBuilders());
+		registerMinigame(new GameDoOrDye());
 	}
 
 	/**
