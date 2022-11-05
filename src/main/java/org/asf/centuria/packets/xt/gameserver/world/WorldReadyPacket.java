@@ -76,19 +76,26 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			plr.teleportDestination = null;
 		}
 
+		// Remove players
+		GameServer srv = (GameServer) client.getServer();
+		for (Player player : srv.getPlayers()) {
+			if (player.room != null && plr.room != null && player.room.equals(plr.room) && player != plr) {
+				plr.destroyAt(player);
+			}
+		}
+
+		// Remove players
+		for (Player player : srv.getPlayers()) {
+			if (player.room != null && plr.room != null && player.room.equals(plr.room) && player != plr) {
+				player.destroyAt(plr);
+			}
+		}
+
 		// Initialize interaction memory
 		plr.account.getPlayerInventory().getInteractionMemory().prepareLevel(plr.pendingLevelID);
 
 		// Dispatch event
 		EventBus.getInstance().dispatchEvent(new LevelJoinEvent(plr.pendingLevelID, plr.pendingRoom, plr));
-
-		// Sync
-		GameServer srv = (GameServer) client.getServer();
-		for (Player player : srv.getPlayers()) {
-			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				plr.destroyAt(player);
-			}
-		}
 
 		// Debug
 		boolean runDebug = false;
@@ -109,12 +116,9 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 						"Syncing player " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
 			}
 		}
-		
+
 		// Send to tutorial if new
 		if (plr.account.isPlayerNew()) {
-			// Initialize interactions
-			InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
-
 			// XP init
 			if (plr.account.getLevel().isLevelAvailable() && !plr.account.isPlayerNew())
 				plr.account.getLevel().onWorldJoin(plr);
@@ -130,17 +134,20 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			res.rw = 0.3987;
 			client.sendPacket(res);
 
+			// Initialize interactions
+			InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
+
+			// Sync spawn
+			for (Player player : server.getPlayers()) {
+				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+					plr.syncTo(player);
+					Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
+							"Syncing spawn " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
+				}
+			}
+
 			return true;
 		}
-
-		// Wait a bit so the client can catch up, to prevent broken interactions
-		try {
-			Thread.sleep(8000);
-		} catch (InterruptedException e) {
-		}
-		
-		// Initialize interactions
-		InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
 
 		// Save changes
 		plr.account.getPlayerInventory().getInteractionMemory().saveTo(client);
@@ -171,6 +178,9 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Find spawn
 		if (!runDebug)
 			handleSpawn(teleportUUID, plr, client);
+
+		// Initialize interactions
+		InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
 
 		// Reset target
 		plr.targetPos = null;
