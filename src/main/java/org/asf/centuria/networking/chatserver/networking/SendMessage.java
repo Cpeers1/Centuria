@@ -1013,6 +1013,10 @@ public class SendMessage extends AbstractChatPacket {
 							systemMessage("Invalid value for argument: new-name: invalid characters", cmd, client);
 							return true;
 						}
+						
+						// Prevent old name from being used
+						AccountManager.getInstance().releaseDisplayName(oldName);
+						AccountManager.getInstance().lockDisplayName(oldName, "-1");
 
 						// Lock new name
 						AccountManager.getInstance().lockDisplayName(args.get(1), acc.getAccountID());

@@ -70,11 +70,16 @@ public class UpdateDisplayNameHandler extends HttpUploadProcessor {
 			}
 
 			// Save new name
+			boolean requiredRename = acc.isRenameRequired();
 			String oldName = acc.getDisplayName();
 			if (acc.updateDisplayName(newName)) {
-				if (!acc.isRenameRequired()) {
+				if (!requiredRename) {
 					// Unlock old name
 					manager.releaseDisplayName(oldName);
+				} else {
+					// Wipe uuid tag of old display name
+					manager.releaseDisplayName(oldName);
+					manager.lockDisplayName(oldName, "-1");
 				}
 
 				// Tell authorization to save password
