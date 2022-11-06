@@ -53,6 +53,7 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 		registerPacket(new PrefixedPacket());
 		registerPacket(new ProxiedRoomJoinPacket());
 		registerPacket(new ProxiedObjectUpdatePacket());
+		registerPacket(new ProxiedObjectInfoPacket());
 		registerPacket(new XTPacketProxy());
 	}
 
@@ -105,7 +106,6 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 					while (remoteClient.getSocket() != null) {
 						String data = readRawPacket(remoteClient);
 						try {
-							System.out.println("Proxying (from remote): " + data);
 							handlePacket(data, remoteClient);
 						} catch (Exception e) {
 							System.err.println("Exception: " + e);
@@ -207,7 +207,6 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 					remainingIL--;
 					
 					// Send
-					System.out.println("Proxying IL: " + packet);
 					localClient.sendPacket(packet);
 				}
 			}
@@ -217,7 +216,6 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 			
 			// Other packets
 			for (String packet : packets) {
-				System.out.println("Proxying (from remote): " + packet);
 				handlePacket(packet, remoteClient);
 			}
 		} catch (Exception e) {
