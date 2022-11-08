@@ -225,11 +225,6 @@ public class QuestManager extends InteractionModule {
 					return true;
 				}
 
-				// Check if its a npc and if the quest is locked
-				if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
-					return true;
-				}
-
 				// Load objects
 				String[] collections = NetworkedObjects
 						.getCollectionIdsForOverride(Integer.toString(quest.levelOverrideID));

@@ -114,10 +114,10 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 										+ "digspots-max=8\n"
 
 										// Minimal lockpick count
-										+ "lockpicks-min=16\n"
+										+ "lockpicks-min=11\n"
 
 										// Maximal lockpick count
-										+ "lockpicks-max=19\n"
+										+ "lockpicks-max=15\n"
 
 										// Minimal waystone path count
 										+ "waystone-paths-min=3\n"
@@ -182,8 +182,8 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			// Spawn lockpicks
 			//
 
-			int minLockpicks = Integer.parseInt(properties.getOrDefault("lockpicks-min", "16"));
-			int maxLockpicks = Integer.parseInt(properties.getOrDefault("lockpicks-max", "19"));
+			int minLockpicks = Integer.parseInt(properties.getOrDefault("lockpicks-min", "8"));
+			int maxLockpicks = Integer.parseInt(properties.getOrDefault("lockpicks-max", "11"));
 			int lockpicksToSpawn = rnd.nextInt(maxLockpicks + 1);
 			while (lockpicksToSpawn < minLockpicks)
 				lockpicksToSpawn = rnd.nextInt(maxLockpicks + 1);
