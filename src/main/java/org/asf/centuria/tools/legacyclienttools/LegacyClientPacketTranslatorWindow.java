@@ -233,9 +233,6 @@ public class LegacyClientPacketTranslatorWindow {
 					
 					// Game
 					try {
-						game = new TranslatorGameServer(Integer.parseInt(textField_2.getText()));
-						game.apiAddr = txtHttpsaerialworksddnsnet.getText();
-						game.remotePort = Integer.parseInt(textField.getText());
 						try {
 							InputStream strm = new URL(txtHttpaerialworksddnsnet.getText() + "/v1/bestGameServer").openStream();
 							String resp = new String(strm.readAllBytes());
@@ -244,7 +241,10 @@ public class LegacyClientPacketTranslatorWindow {
 							JsonObject obj = JsonParser.parseString(resp).getAsJsonObject();
 							if (!obj.has("smartfoxServer"))
 								throw new IOException();
+							game = new TranslatorGameServer(Integer.parseInt(textField_2.getText()));
 							game.directorAddr = txtHttpaerialworksddnsnet.getText();
+							game.apiAddr = txtHttpsaerialworksddnsnet.getText();
+							game.remotePort = Integer.parseInt(textField.getText());
 						} catch (Exception e2) {
 							JOptionPane.showMessageDialog(frmLegacyClientPacket, "Failed to contact the remote director server, please check the configuration.", "Error", JOptionPane.ERROR_MESSAGE);
 							director.stop();

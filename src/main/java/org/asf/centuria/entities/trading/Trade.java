@@ -184,7 +184,7 @@ public class Trade {
 	public void tradeExit(Player exitedPlayer) throws IOException {
 		TradeExitPacket tradeExitPacket = new TradeExitPacket();
 
-		if (exitedPlayer.account.getAccountID() == sourcePlayer.account.getAccountID()) {
+		if (exitedPlayer.account.getAccountID().equals(sourcePlayer.account.getAccountID())) {
 			targetPlayer.client.sendPacket(tradeExitPacket);
 
 			Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeExit] Server to client of player "
@@ -218,7 +218,7 @@ public class Trade {
 		tradeAddRemovePacket.quantity = quantity;
 		tradeAddRemovePacket.userId = player.account.getAccountID();
 
-		if (player.account.getAccountID() == sourcePlayer.account.getAccountID()) {
+		if (player.account.getAccountID().equals(sourcePlayer.account.getAccountID())) {
 			var itemToGive = itemsToGive.get(itemId);
 
 			if (itemToGive != null) {
@@ -272,7 +272,7 @@ public class Trade {
 		tradeAddRemovePacket.inboundQuantity = quantity;
 		tradeAddRemovePacket.userId = player.account.getAccountID();
 
-		if (player.account.getAccountID() == sourcePlayer.account.getAccountID()) {
+		if (player.account.getAccountID().equals(sourcePlayer.account.getAccountID())) {
 			var item = itemsToGive.get(itemId);
 			item.quantity -= quantity;
 			if (item.quantity <= 0) {
@@ -353,7 +353,7 @@ public class Trade {
 	 */
 	public void TradeReadyAccept(Player player) throws IOException {
 		// Switch the accept value for the player who accepted..
-		if (player.account.getAccountID() == sourcePlayer.account.getAccountID()) {
+		if (player.account.getAccountID().equals(sourcePlayer.account.getAccountID())) {
 			this.readyStatusSource = true;
 		} else {
 			this.readyStatusTarget = true;
@@ -365,7 +365,7 @@ public class Trade {
 			TradeReadyAcceptPacket tradeReadyAcceptPacket = new TradeReadyAcceptPacket();
 			tradeReadyAcceptPacket.outbound_Success = true;
 
-			if (player.account.getAccountID() == sourcePlayer.account.getAccountID()) {
+			if (player.account.getAccountID().equals(sourcePlayer.account.getAccountID())) {
 				tradeReadyAcceptPacket.outbound_WaitingForOtherPlayer = true;
 				sourcePlayer.client.sendPacket(tradeReadyAcceptPacket);
 				Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeReadyAccept] Server to client of player "
@@ -390,19 +390,35 @@ public class Trade {
 		tradeReadyAcceptPacket.outbound_WaitingForOtherPlayer = false;
 
 		for (var set : itemsToGive.entrySet()) {
-			// items to give are source player..
-			sourcePlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer)
-					.remove(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
-			targetPlayer.account.getPlayerInventory().getItemAccessor(targetPlayer)
-					.add(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
+			if (set.getValue().quantity > 1
+					|| set.getValue().item.get("components").getAsJsonObject().has("Quantity")) {
+				// items to give are source player..
+				sourcePlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer)
+						.remove(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
+				targetPlayer.account.getPlayerInventory().getItemAccessor(targetPlayer)
+						.add(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
+			} else {
+				// lets support clothing/furniture items
+				JsonObject itm = set.getValue().item;
+				sourcePlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer).remove(itm);
+				targetPlayer.account.getPlayerInventory().getItemAccessor(targetPlayer).add(itm);
+			}
 		}
 
 		for (var set : itemsToReceive.entrySet()) {
-			// items to receive are target player..
-			targetPlayer.account.getPlayerInventory().getItemAccessor(targetPlayer)
-					.remove(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
-			sourcePlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer)
-					.add(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
+			if (set.getValue().quantity > 1
+					|| set.getValue().item.get("components").getAsJsonObject().has("Quantity")) {
+				// items to receive are target player..
+				targetPlayer.account.getPlayerInventory().getItemAccessor(targetPlayer)
+						.remove(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
+				sourcePlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer)
+						.add(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
+			} else {
+				// lets support clothing/furniture items
+				JsonObject itm = set.getValue().item;
+				targetPlayer.account.getPlayerInventory().getItemAccessor(targetPlayer).remove(itm);
+				sourcePlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer).add(itm);
+			}
 		}
 
 		targetPlayer.client.sendPacket(tradeReadyAcceptPacket);

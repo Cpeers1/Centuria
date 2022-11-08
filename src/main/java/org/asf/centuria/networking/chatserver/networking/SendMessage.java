@@ -412,7 +412,7 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("addxp <amount> [\"<player>\"]");
 				commandMessages.add("addlevels <amount> [\"<player>\"]");
 				commandMessages.add("resetalllevels [confirm]");
-				commandMessages.add("tpm <levelDefID> [<levelType>]");
+				commandMessages.add("tpm <levelDefID> [<levelType>] [<player>]");
 				commandMessages.add("makeadmin \"<player>\"");
 				commandMessages.add("makemoderator \"<player>\"");
 				commandMessages.add("removeperms \"<player>\"");
@@ -1013,7 +1013,7 @@ public class SendMessage extends AbstractChatPacket {
 							systemMessage("Invalid value for argument: new-name: invalid characters", cmd, client);
 							return true;
 						}
-						
+
 						// Prevent old name from being used
 						AccountManager.getInstance().releaseDisplayName(oldName);
 						AccountManager.getInstance().lockDisplayName(oldName, "-1");
@@ -1551,8 +1551,24 @@ public class SendMessage extends AbstractChatPacket {
 								}
 
 								// Teleport
-								client.getPlayer().getOnlinePlayerInstance().teleportToRoom(Integer.valueOf(defID),
-										Integer.valueOf(type), -1, "room_" + defID, "");
+
+								// Find player
+								String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+								if (uuid == null) {
+									// Player not found
+									systemMessage("Specified account could not be located.", cmd, client);
+									return true;
+								}
+								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+								Player plr = acc.getOnlinePlayerInstance();
+								if (plr != null)
+									plr.teleportToRoom(Integer.valueOf(defID), Integer.valueOf(type), -1,
+											"room_" + defID, "");
+								else {
+									// Player not found
+									systemMessage("Specified player is not online.", cmd, client);
+									return true;
+								}
 							} catch (Exception e) {
 								e.printStackTrace();
 								systemMessage("Error: " + e, cmd, client);

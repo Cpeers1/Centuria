@@ -2,6 +2,7 @@ package org.asf.centuria.packets.xt.gameserver.world;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
@@ -26,6 +27,7 @@ import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameStartPacket;
 import org.asf.centuria.packets.xt.gameserver.object.ObjectInfoAvatarLocalPacket;
 import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
@@ -280,7 +282,11 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		JsonObject placementInfo = info.get("placementInfo").getAsJsonObject();
 		if (placementInfo.has("items")) {
 			JsonArray items = placementInfo.get("items").getAsJsonArray();
+			ArrayList<JsonElement> elements = new ArrayList<JsonElement>();
 			for (JsonElement ele : items) {
+				elements.add(ele);
+			}
+			for (JsonElement ele : elements) {
 				JsonObject furnitureInfo = ele.getAsJsonObject().get("components").getAsJsonObject().get("Placed")
 						.getAsJsonObject();
 
@@ -324,6 +330,30 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					Centuria.logger.debug(MarkerManager.getMarker("SANCTUARY"),
 							"[LOAD]  Server to client: load object (id: " + objId + ", type: furniture, defId: "
 									+ furnitureObject.get("defId").getAsString() + ")");
+				} else {
+					// Remove it
+					Centuria.logger.debug(MarkerManager.getMarker("SANCTUARY"),
+							"[LOAD]  Server to client: could not load object (id: " + objId
+									+ "): not in inventory, removing it...");
+					items.remove(ele.getAsJsonObject());
+				}
+			}
+			if (items.size() != elements.size()) {
+				// Save
+				inv.setItem("201", inv.getItem("201"));
+
+				// Send to client
+				Player oPlr = acc.getOnlinePlayerInstance();
+				if (oPlr != null) {
+					JsonArray arr = new JsonArray();
+					JsonObject sanctuaryInfo = acc.getPlayerInventory().getSanctuaryAccessor()
+							.getSanctuaryLook(acc.getActiveSanctuaryLook());
+					if (sanctuaryInfo == null)
+						sanctuaryInfo = acc.getPlayerInventory().getSanctuaryAccessor().getFirstSanctuaryLook();
+					arr.add(sanctuaryInfo);
+					InventoryItemPacket packet = new InventoryItemPacket();
+					packet.item = arr;
+					oPlr.client.sendPacket(packet);
 				}
 			}
 		}

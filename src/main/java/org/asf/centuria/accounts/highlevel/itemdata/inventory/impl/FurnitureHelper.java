@@ -23,14 +23,13 @@ public class FurnitureHelper extends AbstractInventoryInteractionHelper {
 			// Remove existing
 			inventory.getAccessor().removeInventoryObject(INV_TYPE,
 					object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString());
-
-			// Add to inventory
-			inventory.getItem(INV_TYPE).getAsJsonArray().add(object);
-
-			// Return object
-			return object;
 		}
-		return addOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt());
+
+		// Add to inventory
+		inventory.getItem(INV_TYPE).getAsJsonArray().add(object);
+
+		// Return object
+		return object;
 	}
 
 	@Override

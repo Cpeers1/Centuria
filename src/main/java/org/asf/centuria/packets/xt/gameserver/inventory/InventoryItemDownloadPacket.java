@@ -337,6 +337,9 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				JsonObject quantity = new JsonObject();
 				quantity.addProperty("quantity", (Centuria.giveAllCurrency ? 10000 : 2500));
 				components.add("Quantity", quantity);
+				JsonObject trade = new JsonObject();
+				trade.addProperty("isInTradeList", false);
+				components.add("Tradable", trade);
 				obj.add("components", components);
 				obj.addProperty("id", UUID.randomUUID().toString());
 				obj.addProperty("type", 104);
@@ -356,6 +359,9 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				JsonObject quantity = new JsonObject();
 				quantity.addProperty("quantity", (Centuria.giveAllCurrency ? 10000 : 0));
 				components.add("Quantity", quantity);
+				JsonObject trade = new JsonObject();
+				trade.addProperty("isInTradeList", false);
+				components.add("Tradable", trade);
 				obj.add("components", components);
 				obj.addProperty("id", UUID.randomUUID().toString());
 				obj.addProperty("type", 104);
@@ -375,6 +381,9 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				JsonObject quantity = new JsonObject();
 				quantity.addProperty("quantity", 0);
 				components.add("Quantity", quantity);
+				JsonObject trade = new JsonObject();
+				trade.addProperty("isInTradeList", false);
+				components.add("Tradable", trade);
 				obj.add("components", components);
 				obj.addProperty("id", UUID.randomUUID().toString());
 				obj.addProperty("type", 104);
@@ -382,6 +391,18 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				// Add entry
 				itm.add(obj);
 				changed = true;
+			}
+
+			// Check trade tags
+			for (JsonElement ele : itm) {
+				JsonObject obj = ele.getAsJsonObject();
+				JsonObject components = obj.get("components").getAsJsonObject();
+				if (!components.has("Tradable")) {
+					JsonObject trade = new JsonObject();
+					trade.addProperty("isInTradeList", false);
+					components.add("Tradable", trade);
+					changed = true;
+				}
 			}
 
 			// Creative mode
