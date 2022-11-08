@@ -26,6 +26,7 @@ import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.gameserver.avatar.AvatarObjectInfoPacket;
 import org.asf.centuria.packets.xt.gameserver.object.ObjectDeletePacket;
+import org.asf.centuria.packets.xt.gameserver.object.ObjectUpdatePacket;
 import org.asf.centuria.packets.xt.gameserver.relationship.RelationshipJumpToPlayerPacket;
 import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
 import org.asf.centuria.social.SocialManager;
@@ -80,6 +81,7 @@ public class Player {
 	public String respawn = null;
 
 	public Vector3 lastPos = new Vector3(0, -1000, 0);
+	public Vector3 lastHeading = new Vector3(0, -1000, 0);
 	public Quaternion lastRot = new Quaternion(0, 0, 0, 0);
 
 	public int lastAction;
@@ -649,6 +651,25 @@ public class Player {
 
 						// Send packet
 						client.sendPacket(join);
+					} else {
+						// Same room, sync player
+						ObjectUpdatePacket pkt = new ObjectUpdatePacket();
+						pkt.action = 0;
+						pkt.mode = 2;
+						pkt.targetUUID = player.account.getAccountID();
+						pkt.position = plr.lastPos;
+						pkt.rotation = plr.lastRot;
+						pkt.heading = plr.lastHeading;
+						pkt.time = System.currentTimeMillis() / 1000;
+
+						// Broadcast sync
+						GameServer srv = (GameServer) client.getServer();
+						for (Player p : srv.getPlayers()) {
+							if (p != player && p.room != null && p.room.equals(player.room)
+									&& (!player.ghostMode || p.hasModPerms)) {
+								p.client.sendPacket(pkt);
+							}
+						}
 					}
 					return true;
 				}
