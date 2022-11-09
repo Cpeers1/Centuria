@@ -2,16 +2,17 @@ package org.asf.centuria.playasnpcs;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.asf.centuria.accounts.highlevel.itemdata.item.ItemComponent;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.ICenturiaModule;
 import org.asf.centuria.modules.eventbus.EventListener;
 import org.asf.centuria.modules.events.chatcommands.ChatCommandEvent;
 import org.asf.centuria.modules.events.chatcommands.ModuleCommandSyntaxListEvent;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
+import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemRemovedPacket;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -55,6 +56,7 @@ public class PlayAsNpcs implements ICenturiaModule {
 	public void registerCommands(ModuleCommandSyntaxListEvent event) {
 		if (event.hasPermission("moderator")) {
 			event.addCommandSyntaxMessage("addnpcavatar <defid>");
+			event.addCommandSyntaxMessage("clearnpcavatars");
 		}
 	}
 
@@ -112,6 +114,36 @@ public class PlayAsNpcs implements ICenturiaModule {
 			pk.item = items;
 			plr.client.sendPacket(pk);
 			event.respond("Avatar added to inventory");
+		} else if (event.hasPermission("moderator") && event.getCommandID().equals("clearnpcavatars")) {
+			event.setHandled();
+
+			// Update inventory
+			Player plr = event.getAccount().getOnlinePlayerInstance();
+			ArrayList<String> removedItems = new ArrayList<String>();
+			ArrayList<JsonObject> removed = new ArrayList<JsonObject>();
+			JsonArray items = plr.account.getPlayerInventory().getItem("avatars").getAsJsonArray();
+			for (JsonElement ele : items) {
+				JsonObject avatar = ele.getAsJsonObject();
+				JsonObject info = avatar.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject()
+						.get("info").getAsJsonObject();
+				if (avatar.get("defId").getAsInt() == 8254) {
+					// Kitsune slot
+					if (info.get("actorClassDefID").getAsInt() != 1929) {
+						// Not a kitsune probably a npc so delete it
+						removed.add(avatar);
+						removedItems.add(avatar.get("id").getAsString());
+					}
+				}
+			}
+			for (JsonObject remove : removed)
+				items.remove(remove);
+			InventoryItemRemovedPacket pkt = new InventoryItemRemovedPacket();
+			pkt.items = removedItems.toArray(new String[0]);
+			event.getAccount().getOnlinePlayerInstance().client.sendPacket(pkt);
+
+			// Save
+			event.getAccount().getPlayerInventory().setItem("avatars", items);
+			event.respond("Avatars updated");
 		}
 	}
 
