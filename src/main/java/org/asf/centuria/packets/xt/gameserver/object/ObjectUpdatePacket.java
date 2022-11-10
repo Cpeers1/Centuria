@@ -70,7 +70,7 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 			rotation.y = reader.readDouble();
 			rotation.z = reader.readDouble();
 			rotation.w = reader.readDouble();
-			
+
 			// Read speed
 			speed = reader.readFloat();
 			break;
@@ -93,7 +93,7 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 			rotation.y = reader.readDouble();
 			rotation.z = reader.readDouble();
 			rotation.w = reader.readDouble();
-			
+
 			// Read speed
 			speed = reader.readFloat();
 
@@ -191,7 +191,7 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {
 			if (player != plr && player.room != null && player.room.equals(plr.room)
-					&& (!plr.ghostMode || player.hasModPerms)) {
+					&& (!plr.ghostMode || player.hasModPerms) && !player.disableSync) {
 				player.client.sendPacket(this);
 			}
 		}

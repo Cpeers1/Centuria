@@ -18,8 +18,6 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.sanctuaries.SanctuaryObjectData;
 import org.asf.centuria.enums.sanctuaries.SanctuaryObjectType;
 import org.asf.centuria.interactions.InteractionManager;
-import org.asf.centuria.minigames.AbstractMinigame;
-import org.asf.centuria.minigames.MinigameManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.levels.LevelJoinEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
@@ -28,9 +26,7 @@ import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
-import org.asf.centuria.packets.xt.gameserver.minigame.MinigameStartPacket;
 import org.asf.centuria.packets.xt.gameserver.object.ObjectInfoAvatarLocalPacket;
-import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
 import org.asf.centuria.packets.xt.gameserver.sanctuary.SanctuaryWorldObjectInfoPacket;
 
 import com.google.gson.JsonArray;
@@ -71,6 +67,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Load player
 		Player plr = (Player) client.container;
 		plr.respawnItems.clear();
+		plr.disableSync = false;
 
 		// Override teleport
 		if (plr.teleportDestination != null) {
@@ -99,15 +96,16 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Dispatch event
 		EventBus.getInstance().dispatchEvent(new LevelJoinEvent(plr.pendingLevelID, plr.pendingRoom, plr));
 
-		// Debug
-		boolean runDebug = false;
-		if (plr.levelID == 0 && Centuria.debugMode && System.getProperty("debugJoinLevel") != null) {
-			runDebug = true;
-		}
-
 		// Assign info
 		plr.room = plr.pendingRoom;
 		plr.levelID = plr.pendingLevelID;
+
+		// Minigame sync
+		if (plr.comingFromMinigame) {
+			plr.comingFromMinigame = false;
+			plr.targetPos = plr.lastPos;
+			plr.targetRot = plr.lastRot;
+		}
 
 		// Send all other players to the current player
 		GameServer server = (GameServer) client.getServer();
@@ -178,8 +176,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		}
 
 		// Find spawn
-		if (!runDebug)
-			handleSpawn(teleportUUID, plr, client);
+		handleSpawn(teleportUUID, plr, client);
 
 		// Initialize interactions
 		InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
@@ -227,51 +224,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// Mark as ready (for teleports etc)
 		plr.roomReady = true;
-
-		// Debug
-		if (runDebug) {
-			new Thread(() -> {
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
-
-				int oldL = plr.levelID;
-				int oldT = plr.levelType;
-				int levelID = Integer.parseInt(System.getProperty("debugJoinLevel"));
-				int levelType = Integer.parseInt(System.getProperty("debugLevelType", "0"));
-				if (levelType == 1) {
-					// Minigame
-					AbstractMinigame game = MinigameManager.getGameFor(levelID);
-					if (game != null) {
-						game = game.instantiate();
-						plr.currentGame = game;
-						game.onJoin(plr);
-
-						// Set previous
-						plr.previousLevelID = oldL;
-						plr.previousLevelType = oldT;
-
-						// Assign room
-						plr.roomReady = true;
-						plr.levelID = levelID;
-						plr.room = "room_" + levelID;
-						plr.levelType = 1;
-					}
-
-					// Send response
-					RoomJoinPacket join = new RoomJoinPacket();
-					join.success = true;
-					join.levelType = 1;
-					join.levelID = levelID;
-					client.sendPacket(join);
-
-					// Start game
-					MinigameStartPacket start = new MinigameStartPacket();
-					client.sendPacket(start);
-				}
-			}).start();
-		}
 
 		return true;
 	}

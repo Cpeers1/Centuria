@@ -50,20 +50,15 @@ public class MinigameJoinPacket implements IXtPacket<MinigameJoinPacket> {
 		Player plr = (Player) client.container;
 		AbstractMinigame game = MinigameManager.getGameFor(minigameID);
 		if (game != null) {
+			// Assign the game and disable sync
 			game = game.instantiate();
+			plr.disableSync = true;
+			plr.comingFromMinigame = true;
+			plr.previousRoom = plr.room;
+			plr.previousLevelID = plr.levelID;
 			plr.currentGame = game;
 			isMinigameSupported = true;
 			game.onJoin(plr);
-
-			// Set previous
-			plr.previousLevelID = plr.levelID;
-			plr.previousLevelType = plr.levelType;
-
-			// Assign room
-			plr.roomReady = true;
-			plr.levelID = minigameID;
-			plr.room = "room_" + minigameID;
-			plr.levelType = 1;
 		}
 
 		// Send response
@@ -71,6 +66,7 @@ public class MinigameJoinPacket implements IXtPacket<MinigameJoinPacket> {
 		join.success = isMinigameSupported;
 		join.levelType = 1;
 		join.levelID = minigameID;
+		join.roomIdentifier = "room_" + minigameID;
 		client.sendPacket(join);
 
 		// Start game
