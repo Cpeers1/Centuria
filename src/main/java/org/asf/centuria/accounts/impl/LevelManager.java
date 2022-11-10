@@ -53,7 +53,7 @@ public class LevelManager extends LevelInfo {
 				Files.writeString(levelConf.toPath(), "max-level=101\n"
 						+ "rewards=resource://leveling/levelrewards.json\n"
 						+ "triggers=resource://leveling/leveltriggers.json\n"
-						+ "level-curve-eval=(450 + ((level - 1) * 107) + ((totalxp / 100) - ((level - 1) * 24.7478463184)))\n");
+						+ "level-curve-eval=(450 + ((level - 1) * 107) + ((totalxp / 100) - ((level - 1) * 32.83662)))\n");
 			}
 
 			// Load config
@@ -73,7 +73,7 @@ public class LevelManager extends LevelInfo {
 			// Parse
 			maxLevel = Integer.valueOf(config.getOrDefault("max-level", "101"));
 			levelCurveEval = config.getOrDefault("level-curve-eval",
-					"(450 + ((level - 1) * 107) + ((totalxp / 100) - ((level - 1) * 24.7478463184)))");
+					"(450 + ((level - 1) * 107) + ((totalxp / 100) - ((level - 1) * 32.83662)))");
 
 			// Load rewards
 			JsonObject rewardsConf;

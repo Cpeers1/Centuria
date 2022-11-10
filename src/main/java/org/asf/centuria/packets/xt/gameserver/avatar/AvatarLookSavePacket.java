@@ -83,6 +83,7 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 					}
 				}
 			}
+			JsonArray update = new JsonArray();
 			if (lookObj != null) {
 				JsonObject ts = new JsonObject();
 				ts.addProperty("ts", System.currentTimeMillis());
@@ -98,6 +99,7 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 				components.add("Timestamp", ts);
 				components.add("AvatarLook", al);
 				components.add("Name", nm);
+				update.add(lookObj);
 			}
 			plr.account.getPlayerInventory().setItem("avatars", items);
 	
@@ -107,7 +109,7 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 	
 			// Update avatar object in client inventory
 			InventoryItemPacket pkt = new InventoryItemPacket();
-			pkt.item = items;
+			pkt.item = update;
 			client.sendPacket(pkt);
 	
 			// Sync

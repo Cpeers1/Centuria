@@ -94,6 +94,12 @@ public class GenericHelperWithQuantity extends AbstractInventoryInteractionHelpe
 
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, JsonObject object) {
+		if (!inventory.getAccessor().hasInventoryObject(inventoryId, object.get("id").getAsString())) {
+			// Add the item directly
+			inventory.getItem(inventoryId).getAsJsonArray().add(object);
+			inventory.setItem(inventoryId, inventory.getItem(inventoryId));
+			return object;
+		}
 		return addOne(inventory, object.get("defId").getAsInt());
 	}
 

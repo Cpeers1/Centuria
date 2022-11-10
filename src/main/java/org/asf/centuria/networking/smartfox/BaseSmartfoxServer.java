@@ -1,6 +1,7 @@
 package org.asf.centuria.networking.smartfox;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -267,7 +268,7 @@ public abstract class BaseSmartfoxServer {
 		return parsePacketPayload(data, packetType);
 	}
 
-	private <T extends ISmartfoxPacket> T parsePacketPayload(String packet, Class<T> packetType) throws IOException {
+	protected <T extends ISmartfoxPacket> T parsePacketPayload(String packet, Class<T> packetType) throws IOException {
 		// Find a packet
 		for (ISmartfoxPacket pkt : packets) {
 			if (pkt.canParse(packet) && packetType.isAssignableFrom(pkt.getClass())) {
@@ -318,12 +319,14 @@ public abstract class BaseSmartfoxServer {
 	 * @throws IOException If reading fails
 	 */
 	public String readRawPacket(SmartfoxClient smartfoxClient) throws IOException {
-		String payload = new String();
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		while (true) {
 			int b = smartfoxClient.input.read();
 			if (b == -1) {
 				throw new IOException("Stream closed");
 			} else if (b == 0) {
+				String payload = new String(buffer.toByteArray(), "UTF-8");
+				
 				// Solve for the XT issue
 				if (payload.startsWith("%xt|n%"))
 					payload = "%xt%" + payload.substring("%xt|n%".length());
@@ -340,7 +343,7 @@ public abstract class BaseSmartfoxServer {
 
 				return payload;
 			} else
-				payload += (char) b;
+				buffer.write(b);
 		}
 	}
 }

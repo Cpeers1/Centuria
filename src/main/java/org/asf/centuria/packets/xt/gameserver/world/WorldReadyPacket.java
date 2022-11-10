@@ -2,6 +2,7 @@ package org.asf.centuria.packets.xt.gameserver.world;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
@@ -17,8 +18,6 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.sanctuaries.SanctuaryObjectData;
 import org.asf.centuria.enums.sanctuaries.SanctuaryObjectType;
 import org.asf.centuria.interactions.InteractionManager;
-import org.asf.centuria.minigames.AbstractMinigame;
-import org.asf.centuria.minigames.MinigameManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.levels.LevelJoinEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
@@ -26,9 +25,8 @@ import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.centuria.packets.xt.gameserver.minigame.MinigameStartPacket;
+import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.object.ObjectInfoAvatarLocalPacket;
-import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
 import org.asf.centuria.packets.xt.gameserver.sanctuary.SanctuaryWorldObjectInfoPacket;
 
 import com.google.gson.JsonArray;
@@ -69,11 +67,27 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Load player
 		Player plr = (Player) client.container;
 		plr.respawnItems.clear();
+		plr.disableSync = false;
 
 		// Override teleport
 		if (plr.teleportDestination != null) {
 			teleportUUID = plr.teleportDestination;
 			plr.teleportDestination = null;
+		}
+
+		// Remove players
+		GameServer srv = (GameServer) client.getServer();
+		for (Player player : srv.getPlayers()) {
+			if (player.room != null && plr.room != null && player.room.equals(plr.room) && player != plr) {
+				plr.destroyAt(player);
+			}
+		}
+
+		// Remove players
+		for (Player player : srv.getPlayers()) {
+			if (player.room != null && plr.room != null && player.room.equals(plr.room) && player != plr) {
+				player.destroyAt(plr);
+			}
 		}
 
 		// Initialize interaction memory
@@ -82,23 +96,16 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Dispatch event
 		EventBus.getInstance().dispatchEvent(new LevelJoinEvent(plr.pendingLevelID, plr.pendingRoom, plr));
 
-		// Sync
-		GameServer srv = (GameServer) client.getServer();
-		for (Player player : srv.getPlayers()) {
-			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				plr.destroyAt(player);
-			}
-		}
-
-		// Debug
-		boolean runDebug = false;
-		if (plr.levelID == 0 && Centuria.debugMode && System.getProperty("debugJoinLevel") != null) {
-			runDebug = true;
-		}
-
 		// Assign info
 		plr.room = plr.pendingRoom;
 		plr.levelID = plr.pendingLevelID;
+
+		// Minigame sync
+		if (plr.comingFromMinigame) {
+			plr.comingFromMinigame = false;
+			plr.targetPos = plr.lastPos;
+			plr.targetRot = plr.lastRot;
+		}
 
 		// Send all other players to the current player
 		GameServer server = (GameServer) client.getServer();
@@ -109,12 +116,9 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 						"Syncing player " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
 			}
 		}
-		
+
 		// Send to tutorial if new
 		if (plr.account.isPlayerNew()) {
-			// Initialize interactions
-			InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
-
 			// XP init
 			if (plr.account.getLevel().isLevelAvailable() && !plr.account.isPlayerNew())
 				plr.account.getLevel().onWorldJoin(plr);
@@ -130,17 +134,20 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			res.rw = 0.3987;
 			client.sendPacket(res);
 
+			// Initialize interactions
+			InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
+
+			// Sync spawn
+			for (Player player : server.getPlayers()) {
+				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+					plr.syncTo(player);
+					Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
+							"Syncing spawn " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
+				}
+			}
+
 			return true;
 		}
-
-		// Wait a bit so the client can catch up, to prevent broken interactions
-		try {
-			Thread.sleep(8000);
-		} catch (InterruptedException e) {
-		}
-		
-		// Initialize interactions
-		InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
 
 		// Save changes
 		plr.account.getPlayerInventory().getInteractionMemory().saveTo(client);
@@ -169,8 +176,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		}
 
 		// Find spawn
-		if (!runDebug)
-			handleSpawn(teleportUUID, plr, client);
+		handleSpawn(teleportUUID, plr, client);
+
+		// Initialize interactions
+		InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
 
 		// Reset target
 		plr.targetPos = null;
@@ -216,51 +225,6 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Mark as ready (for teleports etc)
 		plr.roomReady = true;
 
-		// Debug
-		if (runDebug) {
-			new Thread(() -> {
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
-
-				int oldL = plr.levelID;
-				int oldT = plr.levelType;
-				int levelID = Integer.parseInt(System.getProperty("debugJoinLevel"));
-				int levelType = Integer.parseInt(System.getProperty("debugLevelType", "0"));
-				if (levelType == 1) {
-					// Minigame
-					AbstractMinigame game = MinigameManager.getGameFor(levelID);
-					if (game != null) {
-						game = game.instantiate();
-						plr.currentGame = game;
-						game.onJoin(plr);
-
-						// Set previous
-						plr.previousLevelID = oldL;
-						plr.previousLevelType = oldT;
-
-						// Assign room
-						plr.roomReady = true;
-						plr.levelID = levelID;
-						plr.room = "room_" + levelID;
-						plr.levelType = 1;
-					}
-
-					// Send response
-					RoomJoinPacket join = new RoomJoinPacket();
-					join.success = true;
-					join.levelType = 1;
-					join.levelID = levelID;
-					client.sendPacket(join);
-
-					// Start game
-					MinigameStartPacket start = new MinigameStartPacket();
-					client.sendPacket(start);
-				}
-			}).start();
-		}
-
 		return true;
 	}
 
@@ -270,7 +234,11 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		JsonObject placementInfo = info.get("placementInfo").getAsJsonObject();
 		if (placementInfo.has("items")) {
 			JsonArray items = placementInfo.get("items").getAsJsonArray();
+			ArrayList<JsonElement> elements = new ArrayList<JsonElement>();
 			for (JsonElement ele : items) {
+				elements.add(ele);
+			}
+			for (JsonElement ele : elements) {
 				JsonObject furnitureInfo = ele.getAsJsonObject().get("components").getAsJsonObject().get("Placed")
 						.getAsJsonObject();
 
@@ -314,6 +282,30 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					Centuria.logger.debug(MarkerManager.getMarker("SANCTUARY"),
 							"[LOAD]  Server to client: load object (id: " + objId + ", type: furniture, defId: "
 									+ furnitureObject.get("defId").getAsString() + ")");
+				} else {
+					// Remove it
+					Centuria.logger.debug(MarkerManager.getMarker("SANCTUARY"),
+							"[LOAD]  Server to client: could not load object (id: " + objId
+									+ "): not in inventory, removing it...");
+					items.remove(ele.getAsJsonObject());
+				}
+			}
+			if (items.size() != elements.size()) {
+				// Save
+				inv.setItem("201", inv.getItem("201"));
+
+				// Send to client
+				Player oPlr = acc.getOnlinePlayerInstance();
+				if (oPlr != null) {
+					JsonArray arr = new JsonArray();
+					JsonObject sanctuaryInfo = acc.getPlayerInventory().getSanctuaryAccessor()
+							.getSanctuaryLook(acc.getActiveSanctuaryLook());
+					if (sanctuaryInfo == null)
+						sanctuaryInfo = acc.getPlayerInventory().getSanctuaryAccessor().getFirstSanctuaryLook();
+					arr.add(sanctuaryInfo);
+					InventoryItemPacket packet = new InventoryItemPacket();
+					packet.item = arr;
+					oPlr.client.sendPacket(packet);
 				}
 			}
 		}

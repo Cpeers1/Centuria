@@ -79,13 +79,15 @@ public class TradeAddRemoveItemPacket implements IXtPacket<TradeAddRemoveItemPac
 
 		Player player = ((Player) client.container);
 		if (player.tradeEngagedIn != null) {
-			if (inboundIsAdding > 0) {
-				var accessor = player.account.getPlayerInventory().getAccessor();
-				var item = accessor.findInventoryObject(accessor.getInventoryIDOfItem(inboundItemInvId),
-						inboundItemInvId);
-				player.tradeEngagedIn.addItemToTrade(player, inboundItemInvId, item, inboundQuantity);
-			} else {
-				player.tradeEngagedIn.removeItemFromTrade(player, inboundItemInvId, inboundQuantity);
+			var accessor = player.account.getPlayerInventory().getAccessor();
+			if (accessor.getInventoryIDOfItem(inboundItemInvId) != null) {
+				if (inboundIsAdding > 0) {
+					var item = accessor.findInventoryObject(accessor.getInventoryIDOfItem(inboundItemInvId),
+							inboundItemInvId);
+					player.tradeEngagedIn.addItemToTrade(player, inboundItemInvId, item, inboundQuantity);
+				} else {
+					player.tradeEngagedIn.removeItemFromTrade(player, inboundItemInvId, inboundQuantity);
+				}
 			}
 		}
 		return true;

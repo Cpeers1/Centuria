@@ -26,6 +26,7 @@ import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.gameserver.avatar.AvatarObjectInfoPacket;
 import org.asf.centuria.packets.xt.gameserver.object.ObjectDeletePacket;
+import org.asf.centuria.packets.xt.gameserver.object.ObjectUpdatePacket;
 import org.asf.centuria.packets.xt.gameserver.relationship.RelationshipJumpToPlayerPacket;
 import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
 import org.asf.centuria.social.SocialManager;
@@ -72,6 +73,8 @@ public class Player {
 	public int previousLevelType = 0;
 	public int levelID = 0;
 	public int pendingLevelID = 0;
+	
+	public String previousRoom = "";
 	public int previousLevelID = 0;
 
 	public String pendingRoom = "0";
@@ -80,9 +83,12 @@ public class Player {
 	public String respawn = null;
 
 	public Vector3 lastPos = new Vector3(0, -1000, 0);
+	public Vector3 lastHeading = new Vector3(0, -1000, 0);
 	public Quaternion lastRot = new Quaternion(0, 0, 0, 0);
 
 	public int lastAction;
+	public boolean disableSync;
+	public boolean comingFromMinigame;
 	public AbstractMinigame currentGame;
 
 	// Teleports
@@ -111,7 +117,7 @@ public class Player {
 	}
 
 	public void syncTo(Player player) {
-		if (ghostMode && !player.hasModPerms)
+		if (ghostMode && !player.hasModPerms || player.disableSync)
 			return; // Ghosting
 
 		// Find avatar
@@ -330,7 +336,7 @@ public class Player {
 			questStarted = false;
 			questObjectData.clear();
 			questObjective = 0;
-			
+
 			// End current game
 			if (currentGame != null) {
 				currentGame.onExit(this);
@@ -526,12 +532,13 @@ public class Player {
 			// Assign room
 			plr.roomReady = false;
 			plr.pendingLevelID = plr.previousLevelID;
-			plr.pendingRoom = "room_" + plr.previousLevelID;
+			plr.pendingRoom = plr.previousRoom;
 			plr.levelType = plr.previousLevelType;
 
 			// Send response
 			RoomJoinPacket join = new RoomJoinPacket();
 			join.levelType = plr.levelType;
+			join.roomIdentifier = plr.pendingRoom;
 			join.levelID = plr.pendingLevelID;
 			client.sendPacket(join);
 
@@ -649,6 +656,25 @@ public class Player {
 
 						// Send packet
 						client.sendPacket(join);
+					} else {
+						// Same room, sync player
+						ObjectUpdatePacket pkt = new ObjectUpdatePacket();
+						pkt.action = 0;
+						pkt.mode = 2;
+						pkt.targetUUID = player.account.getAccountID();
+						pkt.position = plr.lastPos;
+						pkt.rotation = plr.lastRot;
+						pkt.heading = plr.lastHeading;
+						pkt.time = System.currentTimeMillis() / 1000;
+
+						// Broadcast sync
+						GameServer srv = (GameServer) client.getServer();
+						for (Player p : srv.getPlayers()) {
+							if (p != player && p.room != null && p.room.equals(player.room)
+									&& (!player.ghostMode || p.hasModPerms) && !p.disableSync) {
+								p.client.sendPacket(pkt);
+							}
+						}
 					}
 					return true;
 				}
