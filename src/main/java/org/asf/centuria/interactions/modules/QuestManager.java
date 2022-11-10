@@ -187,12 +187,6 @@ public class QuestManager extends InteractionModule {
 	public static boolean isNPC(NetworkedObject object) {
 		// Check commands, command 3 is dialogue so then its a NPC
 		for (ArrayList<StateInfo> states : object.stateInfo.values()) {
-			if (states.stream().anyMatch(t -> t.command.equals("3"))) {
-				// Make sure this is actually a NPC and not a item
-				if (object.subObjectInfo != null && object.subObjectInfo.defId == 0)
-					return false; // It is not
-				return true;
-			}
 			for (StateInfo state : states) {
 				for (ArrayList<StateInfo> sstates : state.branches.values()) {
 					for (StateInfo sstate : sstates) {
@@ -283,7 +277,7 @@ public class QuestManager extends InteractionModule {
 				// Check if its a npc and if the quest is locked
 				if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
 					// Inform the user
-					Centuria.systemMessage(player, "Cannot start quest\n\n" + ""
+					Centuria.systemMessage(player, "Quest not implemented yet\nRead the private message sent by the server for more info\n" + "\n"
 							+ "You have finished all quests that are currently in working order.\n"
 							+ "If development goes well, hopefully this quest and the two following it will become playable next week!\n\n"
 							+ "" + "Apologies for the inconvenience.\n" + " - Centuria Development Team", true);
