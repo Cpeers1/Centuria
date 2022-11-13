@@ -44,7 +44,6 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 		writer.writeString(outboundUserId); // user ID
 		writer.writeInt(tradeValidationType.value); // trade validation type
 		writer.writeBoolean(tradeValidationType == TradeValidationType.Success);
-		;
 		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
