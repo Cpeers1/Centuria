@@ -387,9 +387,9 @@ public class SendMessage extends AbstractChatPacket {
 		// Generate the command list
 		ArrayList<String> commandMessages = new ArrayList<String>();
 
-		if (Centuria.giveAllResources)
+		if (Centuria.giveAllResources || GameServer.hasPerm(permLevel, "admin"))
 			commandMessages.add("giveBasicMaterials");
-		if (Centuria.giveAllCurrency)
+		if (Centuria.giveAllCurrency || GameServer.hasPerm(permLevel, "admin"))
 			commandMessages.add("giveBasicCurrency");
 
 		if (GameServer.hasPerm(permLevel, "moderator")) {
@@ -461,7 +461,7 @@ public class SendMessage extends AbstractChatPacket {
 					return true;
 
 				if (cmdId.equals("givebasicmaterials")) {
-					if (Centuria.giveAllResources) {
+					if (Centuria.giveAllResources || GameServer.hasPerm(permLevel, "admin")) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
 
 						if (onlinePlayer != null) {
@@ -489,7 +489,7 @@ public class SendMessage extends AbstractChatPacket {
 						return true;
 					}
 				} else if (cmdId.equals("givebasiccurrency")) {
-					if (Centuria.giveAllCurrency) {
+					if (Centuria.giveAllCurrency || GameServer.hasPerm(permLevel, "admin")) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
 
 						if (onlinePlayer != null) {

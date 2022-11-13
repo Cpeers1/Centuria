@@ -101,7 +101,8 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 
 					// send IL
 					player.client.sendPacket(ilPacket);
-
+					
+					twiggleAccessor.clearTwiggleWork(twiggleInvId);
 					il = player.account.getPlayerInventory().getItem("110");
 					ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
@@ -141,7 +142,7 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 
 					// send IL
 					player.client.sendPacket(ilPacket);
-
+					twiggleAccessor.clearTwiggleWork(twiggleInvId);
 					il = player.account.getPlayerInventory().getItem("110");
 					ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
@@ -156,7 +157,6 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 				}
 			}
 
-			twiggleAccessor.clearTwiggleWork(twiggleInvId);
 			this.success = true;
 			player.client.sendPacket(this);
 
@@ -221,24 +221,17 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 		join.roomIdentifier = "sanctuary_" + sanctuaryOwner;
 		join.teleport = sanctuaryOwner;
 
-		if (isAllowed == true) {
+		if (isAllowed) {
 			// Sync
 			GameServer srv = (GameServer) client.getServer();
 			for (Player plr2 : srv.getPlayers()) {
-				if (plr2.room != null && player.room != null && player.room != null && plr2.room.equals(player.room)
-						&& plr2 != player) {
-					player.destroyAt(plr2);
+				if (plr2.room != null && player.room != null && player.room != null && plr2.room.equals(player.room)) {
+					plr2.teleportToSanctuary(sanctuaryOwner);
 				}
 			}
-
-			// Assign room
-			player.roomReady = false;
-			player.pendingLevelID = 1689;
-			player.pendingRoom = "sanctuary_" + sanctuaryOwner;
-			player.levelType = join.levelType;
-		}
-		// Send packet
-		client.sendPacket(join);
+		} else
+			// Send packet
+			client.sendPacket(join);
 	}
 
 }
