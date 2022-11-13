@@ -10,6 +10,7 @@ import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.enums.trading.TradeValidationType;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
+import org.asf.centuria.social.SocialManager;
 
 public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 
@@ -42,7 +43,8 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 		writer.writeInt(DATA_PREFIX); // Data prefix
 		writer.writeString(outboundUserId); // user ID
 		writer.writeInt(tradeValidationType.value); // trade validation type
-		writer.writeBoolean(tradeValidationType == TradeValidationType.Success);;
+		writer.writeBoolean(tradeValidationType == TradeValidationType.Success);
+		;
 		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
@@ -58,6 +60,21 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 		// Inbound user ID is the target player to trade
 		Player targetPlayer = AccountManager.getInstance().getAccount(inboundUserId).getOnlinePlayerInstance();
 		if (targetPlayer == null) {
+			// Fail
+			TradeInitiateFailPacket pk = new TradeInitiateFailPacket();
+			pk.player = inboundUserId;
+			pk.tradeValidationType = TradeValidationType.User_Not_Avail;
+			sourcePlayer.client.sendPacket(pk);
+			return true;
+		}
+
+		// Check privacy settings
+		int privSetting = 0;
+		if (targetPlayer.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17545, 0) != null)
+			privSetting = targetPlayer.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17545,
+					0).value;
+		if ((privSetting == 1 && !SocialManager.getInstance().getPlayerIsFollowing(targetPlayer.account.getAccountID(),
+				sourcePlayer.account.getAccountID())) || privSetting == 2) {
 			// Fail
 			TradeInitiateFailPacket pk = new TradeInitiateFailPacket();
 			pk.player = inboundUserId;
