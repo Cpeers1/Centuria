@@ -470,10 +470,12 @@ public class Centuria {
 		apiServer.registerProcessor(new UpdateDisplayNameHandler());
 		apiServer.registerProcessor(new DisplayNamesRequestHandler());
 		apiServer.registerProcessor(new RequestTokenHandler());
-		apiServer.registerProcessor(new FallbackAPIProcessor());
 
 		// Allow modules to register handlers
 		EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
+		
+		// Fallback
+		apiServer.registerProcessor(new FallbackAPIProcessor());
 
 		//
 		// Debug API
