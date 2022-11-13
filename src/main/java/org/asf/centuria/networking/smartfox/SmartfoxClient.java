@@ -1,118 +1,52 @@
 package org.asf.centuria.networking.smartfox;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-
 import org.asf.centuria.packets.smartfox.ISmartfoxPacket;
-import org.asf.centuria.util.TaskThread;
 
-public class SmartfoxClient {
-
-	private Socket client;
-	private BaseSmartfoxServer server;
-	InputStream input;
-	OutputStream output;
-
-	private TaskThread taskThread;
+public abstract class SmartfoxClient {
 
 	/**
 	 * Field for storing, eg. a player instance object
 	 */
 	public Object container;
 
-	public SmartfoxClient(Socket client, BaseSmartfoxServer server) {
-		this.client = client;
-		this.server = server;
-
-		taskThread = new TaskThread(client.toString());
-		taskThread.start();
-
-		try {
-			input = client.getInputStream();
-			output = client.getOutputStream();
-		} catch (IOException e) {
-		}
-	}
-
-	void stop() {
-		taskThread.stopCleanly();
-		client = null;
-	}
-
 	/**
-	 * Retrieves the client socket
+	 * Retrieves the client address
 	 * 
-	 * @return Socket instance
+	 * @return Client address string
 	 */
-	public Socket getSocket() {
-		return client;
-	}
+	public abstract String getAddress();
+	
+	/**
+	 * Cleanly stops the client
+	 */
+	protected abstract void stop();
 
 	/**
 	 * Checks if the client is still connected
 	 * 
 	 * @return True if the client is connected, false otherwise
 	 */
-	public boolean isConnected() {
-		return client != null;
-	}
+	public abstract boolean isConnected();
 
 	/**
 	 * Disconnects the client
 	 */
-	public void disconnect() {
-		taskThread.flush(3);
-		try {
-			if (client != null)
-				client.close();
-		} catch (IOException e) {
-		}
-		server.clientDisconnect(this);
-		stop();
-	}
+	public abstract void disconnect();
 
 	/**
 	 * Sends a packet to the client
 	 * 
 	 * @param packet Packet to send
 	 */
-	public void sendPacket(ISmartfoxPacket packet) {
-		taskThread.schedule(() -> {
-			try {
-				// Instantiate the packet and build
-				String content = packet.build();
-
-				// Send packet
-				byte[] payload = content.getBytes("UTF-8");
-				output.write(payload);
-				output.write(0);
-				output.flush();
-			} catch (Exception e) {
-			}
-		});
-	}
+	public abstract void sendPacket(ISmartfoxPacket packet);
 
 	/**
 	 * Sends a packet to the client
 	 * 
 	 * @param packet Raw packet to send
 	 */
-	public void sendPacket(String packet) {
-		taskThread.schedule(() -> {
-			try {
-				// Send packet
-				byte[] payload = packet.getBytes("UTF-8");
-				if (getSocket() == null)
-					return;
-				output.write(payload);
-				output.write(0);
-				output.flush();
-			} catch (Exception e) {
-			}
-		});
-	}
+	public abstract void sendPacket(String packet);
 
 	/**
 	 * Reads a single packet
@@ -122,27 +56,27 @@ public class SmartfoxClient {
 	 * @throws IOException If reading fails
 	 * @return ISmartfoxPacket instance or null
 	 */
-	public <T extends ISmartfoxPacket> T readPacket(Class<T> packetType) throws IOException {
-		return (T) server.<T>readPacket(this, packetType);
-	}
-
-	/**
-	 * Retrieves the server object
-	 * 
-	 * @return BaseSmartfoxServer instance
-	 */
-	public BaseSmartfoxServer getServer() {
-		return server;
-	}
+	public abstract <T extends ISmartfoxPacket> T readPacket(Class<T> packetType) throws IOException;
 
 	/**
 	 * Reads a single raw packet
 	 * 
 	 * @throws IOException If reading fails
 	 * @return Packet string
+	 * @throws IOException If reading fails
 	 */
-	public String readRawPacket() throws IOException {
-		return server.readRawPacket(this);
-	}
+	public abstract String readRawPacket() throws IOException;
+
+	/**
+	 * Retrieves the server object
+	 * 
+	 * @return BaseSmartfoxServer instance
+	 */
+	public abstract BaseSmartfoxServer getServer();
+
+	/**
+	 * Called to close the client
+	 */
+	protected abstract void closeClient();
 
 }

@@ -4,12 +4,15 @@ import java.io.IOException;
 
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
+import org.asf.centuria.enums.trading.TradeValidationType;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
 public class TradeInitiateFailPacket implements IXtPacket<TradeInitiateFailPacket> {
 
-	private static final String PACKET_ID = "tic"; // TODO: correct this packet
+	private static final String PACKET_ID = "tif";
+	public TradeValidationType tradeValidationType = null;
+	public String player;
 	
 	@Override
 	public TradeInitiateFailPacket instantiate() {
@@ -28,6 +31,8 @@ public class TradeInitiateFailPacket implements IXtPacket<TradeInitiateFailPacke
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		writer.writeInt(DATA_PREFIX); // Data prefix
+		writer.writeInt(tradeValidationType.value);
+		writer.writeString(player);
 		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 

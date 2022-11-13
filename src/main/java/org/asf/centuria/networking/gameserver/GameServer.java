@@ -2,8 +2,6 @@ package org.asf.centuria.networking.gameserver;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -31,6 +29,7 @@ import org.asf.centuria.modules.events.servers.GameServerStartupEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.smartfox.BaseSmartfoxServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
+import org.asf.centuria.networking.smartfox.SocketSmartfoxClient;
 import org.asf.centuria.packets.smartfox.ISmartfoxPacket;
 import org.asf.centuria.packets.xml.handshake.auth.ClientToServerAuthPacket;
 import org.asf.centuria.packets.xml.handshake.version.ClientToServerHandshake;
@@ -139,7 +138,6 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new TradeListPacket());
 		registerPacket(new TradeInitiatePacket());
 		registerPacket(new TradeInitiateCancelPacket());
-		registerPacket(new TradeInitiateFailPacket());
 		registerPacket(new TradeInitiateRejectPacket());
 		registerPacket(new TradeInitiateAcceptPacket());
 		registerPacket(new TradeExitPacket());
@@ -237,7 +235,7 @@ public class GameServer extends BaseSmartfoxServer {
 		}
 
 		// Check ban
-		if (isBanned(acc)) {
+		if (acc.isBanned()) {
 			Centuria.logger.info("User '" + acc.getDisplayName() + "' could not connect: user is banned.");
 
 			// Disconnect with error
@@ -248,7 +246,7 @@ public class GameServer extends BaseSmartfoxServer {
 		}
 
 		// Check ip ban
-		if (isIPBanned(client.getSocket(), acc, vpnIpsV4, vpnIpsV6, whitelistFile)) {
+		if (isIPBanned(client.getAddress(), acc, vpnIpsV4, vpnIpsV6, whitelistFile)) {
 			Centuria.logger.info("User '" + acc.getDisplayName() + "' could not connect: user is IP or VPN banned.");
 
 			// Disconnect silently
@@ -264,8 +262,7 @@ public class GameServer extends BaseSmartfoxServer {
 			ePlr.client.disconnect();
 
 		// Log the login attempt
-		Centuria.logger
-				.info("Login from IP: " + client.getSocket().getRemoteSocketAddress() + ": " + acc.getLoginName());
+		Centuria.logger.info("Login from IP: " + client.getAddress() + ": " + acc.getLoginName());
 
 		// Run module handshake code
 		AccountLoginEvent ev = new AccountLoginEvent(this, acc, client);
@@ -279,8 +276,28 @@ public class GameServer extends BaseSmartfoxServer {
 			return;
 		}
 
-		// Build Player object
+		// Send response
+		sendLoginResponse(client, auth, acc, 1, acc.isPlayerNew() ? 2 : 3);
+		sendPacket(client, "%xt%ulc%-1%");
+
+		// Add player
+		loginPlayer(acc, client);
+	}
+
+	/**
+	 * Adds players to the server (NOTE: if you are using this from a custom server
+	 * extension, make sure to have a custom account manager too, also note that
+	 * this might bug everything out if its not a player on disk, these setups are
+	 * allowed but NOT supported)
+	 * 
+	 * @param acc    Player account
+	 * @param client Player client
+	 * @return Player instance
+	 */
+	protected Player loginPlayer(CenturiaAccount acc, SmartfoxClient client) {
 		Player plr = new Player();
+
+		// Build Player object
 		if (acc.getPlayerInventory().containsItem("permissions")) {
 			String permLevel = acc.getPlayerInventory().getItem("permissions").getAsJsonObject().get("permissionLevel")
 					.getAsString();
@@ -297,13 +314,9 @@ public class GameServer extends BaseSmartfoxServer {
 		// Save player in the client object
 		client.container = plr;
 
-		// Send response
-		sendLoginResponse(client, auth, acc, 1, plr.account.isPlayerNew() ? 2 : 3);
-
 		// Initial login
-		Centuria.logger
-				.info("Player connected: " + plr.account.getLoginName() + " (as " + plr.account.getDisplayName() + ")");
-		sendPacket(client, "%xt%ulc%-1%");
+		Centuria.logger.info("Player connected: " + plr.account.getLoginName() + " (as " + plr.account.getDisplayName()
+				+ ", uuid: " + acc.getAccountID() + ")");
 
 		// Notify followers
 		if (SocialManager.getInstance().socialListExists(plr.account.getAccountID())) {
@@ -325,9 +338,91 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Dispatch join event
 		EventBus.getInstance().dispatchEvent(new PlayerJoinEvent(this, plr, acc, client));
+		return plr;
+	}
+
+	/**
+	 * Called to remove a player from the server after they logged out, not intended
+	 * for kicking
+	 * 
+	 * @param plr Player instance
+	 */
+	protected void playerLeft(Player plr) {
+		if (players.containsKey(plr.account.getAccountID())) {
+			players.remove(plr.account.getAccountID());
+			Centuria.logger.info("Player disconnected: " + plr.account.getLoginName() + " (was "
+					+ plr.account.getDisplayName() + ")");
+
+			// Dispatch leave event
+			EventBus.getInstance().dispatchEvent(new PlayerLeaveEvent(this, plr, plr.account, plr.client));
+		}
+
+		// Clear objects
+		plr.respawnItems.clear();
+
+		// End current game
+		if (plr.currentGame != null) {
+			plr.currentGame.onExit(plr);
+			plr.currentGame = null;
+		}
+
+		// Remove player character from all clients
+		for (Player player : getPlayers()) {
+			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+				plr.destroyAt(player);
+			}
+		}
+
+		// Disconnect from chat server
+		for (ChatClient cl : Centuria.chatServer.getClients()) {
+			if (cl.getPlayer().getAccountID().equals(plr.account.getAccountID())) {
+				Thread th = new Thread(() -> {
+					int i = 0;
+					while (cl.isConnected()) {
+						if (i == 3)
+							break;
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+						}
+						i++;
+					}
+
+					if (cl.isConnected())
+						cl.disconnect();
+				}, "Chat Client Cleanup: " + cl.getPlayer().getAccountID());
+				th.setDaemon(true);
+				th.start();
+				break;
+			}
+		}
+
+		// Notify followers
+		if (SocialManager.getInstance().socialListExists(plr.account.getAccountID())) {
+			// Find all followers
+			for (SocialEntry ent : SocialManager.getInstance().getFollowerPlayers(plr.account.getAccountID())) {
+				// Send online status update
+				Player player = getPlayer(ent.playerID);
+				if (player != null) {
+					RelationshipFollowOnlineStatusUpdatePacket res = new RelationshipFollowOnlineStatusUpdatePacket();
+					res.userUUID = plr.account.getAccountID();
+					res.playerOnlineStatus = OnlineStatus.Offline;
+					player.client.sendPacket(res);
+				}
+			}
+		}
 
 	}
 
+	/**
+	 * Sends a login response
+	 * 
+	 * @param client       Client
+	 * @param auth         Authentication packet
+	 * @param acc          Account thats logging in
+	 * @param statusCode   Status code
+	 * @param pendingFlags Pending flags value
+	 */
 	public void sendLoginResponse(SmartfoxClient client, ClientToServerAuthPacket auth, CenturiaAccount acc,
 			int statusCode, int pendingFlags) {
 		JsonObject response = new JsonObject();
@@ -349,23 +444,16 @@ public class GameServer extends BaseSmartfoxServer {
 		b.add("o", o);
 		response.add("b", b);
 		response.addProperty("t", "xt");
-
-		try {
-			sendPacket(client, response.toString());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		sendPacket(client, response.toString());
 		return;
 	}
 
 	// IP ban checks (both vpn block and ip banning)
-	public static boolean isIPBanned(Socket socket, CenturiaAccount acc, ArrayList<String> vpnIpsV4,
+	public static boolean isIPBanned(String address, CenturiaAccount acc, ArrayList<String> vpnIpsV4,
 			ArrayList<String> vpnIpsV6, String whitelistFile) throws IOException {
 
 		// Check ip ban
-		if (isIPBanned(socket))
+		if (isIPBanned(address))
 			return true;
 
 		// Check whitelisted accounts
@@ -380,18 +468,14 @@ public class GameServer extends BaseSmartfoxServer {
 		}
 
 		// Check VPN ban
-		if (isEndpointVPN(socket, vpnIpsV4, vpnIpsV6))
+		if (isEndpointVPN(address, vpnIpsV4, vpnIpsV6))
 			return true;
 
 		return false;
 	}
 
 	// VPN check
-	private static boolean isEndpointVPN(Socket socket, ArrayList<String> vpnIpsV4, ArrayList<String> vpnIpsV6) {
-		// get client's remote socket address
-		String address = socket.getRemoteSocketAddress().toString().substring(1).split(":")[0];
-		// String address = "185.62.206.20";
-
+	private static boolean isEndpointVPN(String address, ArrayList<String> vpnIpsV4, ArrayList<String> vpnIpsV6) {
 		ArrayList<String> vpnIpsToCheck = new ArrayList<String>();
 
 		// is the address ipv4, or ipv6? we don't need to loop through both
@@ -415,80 +499,15 @@ public class GameServer extends BaseSmartfoxServer {
 	}
 
 	// IP ban check
-	private static boolean isIPBanned(Socket socket) {
-		InetSocketAddress ip = (InetSocketAddress) socket.getRemoteSocketAddress();
-		InetAddress addr = ip.getAddress();
-		String ipaddr = addr.getHostAddress();
-
+	private static boolean isIPBanned(String ipaddr) {
 		return IpBanManager.getInstance().isIPBanned(ipaddr);
-	}
-
-	public boolean isBanned(CenturiaAccount acc) {
-		if (acc.getPlayerInventory().containsItem("penalty") && acc.getPlayerInventory().getItem("penalty")
-				.getAsJsonObject().get("type").getAsString().equals("ban")) {
-			JsonObject banInfo = acc.getPlayerInventory().getItem("penalty").getAsJsonObject();
-			if (banInfo.get("unbanTimestamp").getAsLong() == -1
-					|| banInfo.get("unbanTimestamp").getAsLong() > System.currentTimeMillis()) {
-				return true;
-			} else
-				acc.getPlayerInventory().deleteItem("penalty");
-		}
-
-		return false;
 	}
 
 	@Override
 	protected void clientDisconnect(SmartfoxClient client) {
 		if (client.container != null && client.container instanceof Player) {
 			Player plr = (Player) client.container;
-			if (players.containsKey(plr.account.getAccountID())) {
-				players.remove(plr.account.getAccountID());
-				Centuria.logger.info("Player disconnected: " + plr.account.getLoginName() + " (was "
-						+ plr.account.getDisplayName() + ")");
-
-				// Dispatch leave event
-				EventBus.getInstance().dispatchEvent(new PlayerLeaveEvent(this, plr, plr.account, client));
-			}
-
-			// Clear objects
-			plr.respawnItems.clear();
-
-			// End current game
-			if (plr.currentGame != null) {
-				plr.currentGame.onExit(plr);
-				plr.currentGame = null;
-			}
-
-			// Remove player character from all clients
-			for (Player player : getPlayers()) {
-				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-					plr.destroyAt(player);
-				}
-			}
-
-			// Disconnect from chat server
-			for (ChatClient cl : Centuria.chatServer.getClients()) {
-				if (cl.getPlayer().getAccountID().equals(plr.account.getAccountID())) {
-					Thread th = new Thread(() -> {
-						int i = 0;
-						while (cl.isConnected()) {
-							if (i == 3)
-								break;
-							try {
-								Thread.sleep(1000);
-							} catch (InterruptedException e) {
-							}
-							i++;
-						}
-
-						if (cl.isConnected())
-							cl.disconnect();
-					}, "Chat Client Cleanup: " + cl.getPlayer().getAccountID());
-					th.setDaemon(true);
-					th.start();
-					break;
-				}
-			}
+			playerLeft(plr);
 
 			// Check maintenance, exit server if noone is online during maintenance
 			if (maintenance && players.size() == 0) {
@@ -499,21 +518,6 @@ public class GameServer extends BaseSmartfoxServer {
 
 				// Exit
 				System.exit(0);
-			} else {
-				// Notify followers
-				if (SocialManager.getInstance().socialListExists(plr.account.getAccountID())) {
-					// Find all followers
-					for (SocialEntry ent : SocialManager.getInstance().getFollowerPlayers(plr.account.getAccountID())) {
-						// Send online status update
-						Player player = getPlayer(ent.playerID);
-						if (player != null) {
-							RelationshipFollowOnlineStatusUpdatePacket res = new RelationshipFollowOnlineStatusUpdatePacket();
-							res.userUUID = plr.account.getAccountID();
-							res.playerOnlineStatus = OnlineStatus.Offline;
-							client.sendPacket(res);
-						}
-					}
-				}
 			}
 		}
 	}
@@ -661,6 +665,11 @@ public class GameServer extends BaseSmartfoxServer {
 				continue;
 			}
 		}
+	}
+
+	@Override
+	protected SmartfoxClient createSocketClient(Socket client) {
+		return new SocketSmartfoxClient(client, this);
 	}
 
 }

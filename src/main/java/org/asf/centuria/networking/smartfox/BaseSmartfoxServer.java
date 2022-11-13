@@ -1,14 +1,9 @@
 package org.asf.centuria.networking.smartfox;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.zip.GZIPInputStream;
-
 import org.asf.centuria.Centuria;
 import org.asf.centuria.packets.smartfox.ISmartfoxPacket;
 
@@ -27,6 +22,14 @@ public abstract class BaseSmartfoxServer {
 		// Lock the registry
 		setupComplete = true;
 	}
+
+	/**
+	 * Called to create a socket smartfox client
+	 * 
+	 * @param client Client socket
+	 * @return AbstractAbstractSmartfoxClient instance
+	 */
+	protected abstract SmartfoxClient createSocketClient(Socket client);
 
 	/**
 	 * Registers the server packets (internal)
@@ -94,7 +97,7 @@ public abstract class BaseSmartfoxServer {
 	private void runClient(Socket clientSocket) {
 		// Start the client thread
 		Thread th = new Thread(() -> {
-			SmartfoxClient client = new SmartfoxClient(clientSocket, this);
+			SmartfoxClient client = createSocketClient(clientSocket);
 
 			// Non-debug
 			if (!Centuria.debugMode) {
@@ -103,7 +106,7 @@ public abstract class BaseSmartfoxServer {
 					startClient(client);
 
 					// Client loop
-					while (client.getSocket() != null) {
+					while (client.isConnected()) {
 						String data = readRawPacket(client);
 						try {
 							handle(data, client);
@@ -111,19 +114,12 @@ public abstract class BaseSmartfoxServer {
 							if (!(e instanceof IOException)) {
 								Centuria.logger.error("Connection died!", e);
 							}
-							try {
-								client.getSocket().close();
-							} catch (Exception e2) {
-							}
-							if (client.getSocket() != null) {
-								clientDisconnect(client);
-								client.stop();
-							}
+							client.closeClient();
 							return;
 						}
 					}
 
-					if (client.getSocket() != null) {
+					if (client.isConnected()) {
 						// Disconnected
 						clientDisconnect(client);
 						client.stop();
@@ -132,14 +128,7 @@ public abstract class BaseSmartfoxServer {
 					if (!(e instanceof IOException)) {
 						Centuria.logger.error("Connection died!", e);
 					}
-					try {
-						client.getSocket().close();
-					} catch (Exception e2) {
-					}
-					if (client.getSocket() != null) {
-						clientDisconnect(client);
-						client.stop();
-					}
+					client.closeClient();
 					return;
 				}
 			} else {
@@ -153,37 +142,23 @@ public abstract class BaseSmartfoxServer {
 				}
 
 				// Client loop
-				while (client.getSocket() != null) {
+				while (client.isConnected()) {
 					String data;
 					try {
 						data = readRawPacket(client);
 					} catch (IOException e1) {
-						try {
-							client.getSocket().close();
-						} catch (Exception e2) {
-						}
-						if (client.getSocket() != null) {
-							clientDisconnect(client);
-							client.stop();
-						}
+						client.closeClient();
 						return;
 					}
 					try {
 						handle(data, client);
 					} catch (IOException e) {
-						try {
-							client.getSocket().close();
-						} catch (Exception e2) {
-						}
-						if (client.getSocket() != null) {
-							clientDisconnect(client);
-							client.stop();
-						}
+						client.closeClient();
 						return;
 					}
 				}
 
-				if (client.getSocket() != null) {
+				if (client.isConnected()) {
 					// Disconnected
 					clientDisconnect(client);
 					client.stop();
@@ -194,7 +169,14 @@ public abstract class BaseSmartfoxServer {
 		th.start();
 	}
 
-	private void handle(String data, SmartfoxClient client) throws IOException {
+	/**
+	 * Packet handler (internal)
+	 * 
+	 * @param data   Packet data to handle
+	 * @param client Smartfox client
+	 * @throws IOException If handling fails
+	 */
+	protected void handle(String data, SmartfoxClient client) throws IOException {
 		if (!handlePacket(data, client)) {
 			// Allow debug mode to re-register packets
 			if (Centuria.debugMode) {
@@ -204,7 +186,7 @@ public abstract class BaseSmartfoxServer {
 				setupComplete = true;
 			}
 
-			System.err.println("Unhandled packet: client " + client.getSocket() + " sent: " + data);
+			System.err.println("Unhandled packet: client " + client.getAddress() + " sent: " + data);
 		}
 	}
 
@@ -231,43 +213,50 @@ public abstract class BaseSmartfoxServer {
 	/**
 	 * Sends a packet to a specific player
 	 *
-	 * @param smartfoxClient Player to send the packet to
-	 * @param packet         Packet to send
-	 * @throws IOException If transmission fails
+	 * @param client Player to send the packet to
+	 * @param packet Packet to send
 	 */
-	public void sendPacket(SmartfoxClient smartfoxClient, ISmartfoxPacket packet) throws IOException {
-		smartfoxClient.sendPacket(packet);
+	public void sendPacket(SmartfoxClient client, ISmartfoxPacket packet) {
+		client.sendPacket(packet);
 	}
 
 	/**
 	 * Sends a raw packet to a specific player
 	 *
-	 * @param smartfoxClient Player to send the packet to
-	 * @param packet         Packet to send
-	 * @throws IOException If transmission fails
+	 * @param client Player to send the packet to
+	 * @param packet Packet to send
 	 */
-	public void sendPacket(SmartfoxClient smartfoxClient, String packet) throws IOException {
-		smartfoxClient.sendPacket(packet);
+	public void sendPacket(SmartfoxClient client, String packet) {
+		client.sendPacket(packet);
 	}
 
 	/**
 	 * Reads a single packet from a client
 	 *
-	 * @param <T>            Packet return type
-	 * @param smartfoxClient Player to read from
-	 * @param packetType     Expected packet class
+	 * @param <T>                    Packet return type
+	 * @param AbstractSmartfoxClient Player to read from
+	 * @param packetType             Expected packet class
 	 * @return ISmartfoxPacket instance or null
 	 * @throws IOException If reading fails
 	 */
-	public <T extends ISmartfoxPacket> T readPacket(SmartfoxClient smartfoxClient, Class<T> packetType)
+	public <T extends ISmartfoxPacket> T readPacket(SmartfoxClient AbstractSmartfoxClient, Class<T> packetType)
 			throws IOException {
 		// Read data
-		String data = readRawPacket(smartfoxClient);
+		String data = readRawPacket(AbstractSmartfoxClient);
 
 		// Parse packet
 		return parsePacketPayload(data, packetType);
 	}
 
+	/**
+	 * Parses a packet
+	 * 
+	 * @param <T>        Packet type
+	 * @param packet     Raw packet
+	 * @param packetType Packet type
+	 * @return Packet instance or null
+	 * @throws IOException If parsing fails
+	 */
 	protected <T extends ISmartfoxPacket> T parsePacketPayload(String packet, Class<T> packetType) throws IOException {
 		// Find a packet
 		for (ISmartfoxPacket pkt : packets) {
@@ -314,36 +303,11 @@ public abstract class BaseSmartfoxServer {
 	/**
 	 * Reads a single raw packet
 	 *
-	 * @param smartfoxClient Client to read from
+	 * @param client Client to read from
 	 * @return Packet string
 	 * @throws IOException If reading fails
 	 */
-	public String readRawPacket(SmartfoxClient smartfoxClient) throws IOException {
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		while (true) {
-			int b = smartfoxClient.input.read();
-			if (b == -1) {
-				throw new IOException("Stream closed");
-			} else if (b == 0) {
-				String payload = new String(buffer.toByteArray(), "UTF-8");
-				
-				// Solve for the XT issue
-				if (payload.startsWith("%xt|n%"))
-					payload = "%xt%" + payload.substring("%xt|n%".length());
-
-				// Compression
-				if (payload.startsWith("$")) {
-					// Decompress packet
-					byte[] compressedData = Base64.getDecoder().decode(payload.substring(1));
-					GZIPInputStream dc = new GZIPInputStream(new ByteArrayInputStream(compressedData));
-					byte[] newData = dc.readAllBytes();
-					dc.close();
-					payload = new String(newData, "UTF-8");
-				}
-
-				return payload;
-			} else
-				buffer.write(b);
-		}
+	public String readRawPacket(SmartfoxClient client) throws IOException {
+		return client.readRawPacket();
 	}
 }

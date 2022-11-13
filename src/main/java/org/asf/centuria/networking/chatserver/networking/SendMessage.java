@@ -824,16 +824,9 @@ public class SendMessage extends AbstractChatPacket {
 							// Disconnect all with the given IP address (or attempt to)
 							for (Player plr : Centuria.gameServer.getPlayers()) {
 								// Get IP of player
-								try {
-									InetSocketAddress ip = (InetSocketAddress) plr.client.getSocket()
-											.getRemoteSocketAddress();
-									InetAddress addr = ip.getAddress();
-									String ipaddr = addr.getHostAddress();
-									if (ipaddr.equals(args.get(0))) {
-										// Ban player
-										plr.account.ban(client.getPlayer().getAccountID(), reason);
-									}
-								} catch (Exception e) {
+								if (plr.client.getAddress().equals(args.get(0))) {
+									// Ban player
+									plr.account.ban(client.getPlayer().getAccountID(), reason);
 								}
 							}
 

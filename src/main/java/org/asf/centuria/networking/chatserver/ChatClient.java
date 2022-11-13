@@ -2,6 +2,8 @@ package org.asf.centuria.networking.chatserver;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -146,13 +148,16 @@ public class ChatClient {
 		}
 
 		// Check bans
-		if (Centuria.gameServer.isBanned(acc)) {
+		if (acc.isBanned()) {
 			disconnect();
 			return;
 		}
 
 		// Check ip ban
-		if (GameServer.isIPBanned(client, acc, Centuria.gameServer.vpnIpsV4, Centuria.gameServer.vpnIpsV6,
+		InetSocketAddress ip = (InetSocketAddress) client.getRemoteSocketAddress();
+		InetAddress addr = ip.getAddress();
+		String ipaddr = addr.getHostAddress();
+		if (GameServer.isIPBanned(ipaddr, acc, Centuria.gameServer.vpnIpsV4, Centuria.gameServer.vpnIpsV6,
 				Centuria.gameServer.whitelistFile)) {
 			disconnect();
 			return;
@@ -199,7 +204,8 @@ public class ChatClient {
 
 	// Packet handling code
 	void handle(JsonObject packet) {
-		Centuria.logger.debug(MarkerManager.getMarker("CHAT"), "Client to server (user " + player.getDisplayName() + "): " + packet);
+		Centuria.logger.debug(MarkerManager.getMarker("CHAT"),
+				"Client to server (user " + player.getDisplayName() + "): " + packet);
 		if (!handlePacket(packet)) {
 			// Packet not found
 			// Allow debug mode to re-register packets
@@ -274,7 +280,8 @@ public class ChatClient {
 				client.getOutputStream().write(0x0a);
 				client.getOutputStream().write(0);
 				client.getOutputStream().flush();
-				Centuria.logger.debug(MarkerManager.getMarker("CHAT"), "Server to client (user " + player.getDisplayName() + "): " + packet);
+				Centuria.logger.debug(MarkerManager.getMarker("CHAT"),
+						"Server to client (user " + player.getDisplayName() + "): " + packet);
 			} catch (Exception e) {
 			}
 		});

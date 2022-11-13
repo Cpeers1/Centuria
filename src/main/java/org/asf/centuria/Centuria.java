@@ -473,7 +473,7 @@ public class Centuria {
 
 		// Allow modules to register handlers
 		EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
-		
+
 		// Fallback
 		apiServer.registerProcessor(new FallbackAPIProcessor());
 
@@ -502,7 +502,8 @@ public class Centuria {
 
 		//
 		// Start director server
-		Centuria.logger.info("Starting Director server on port " + Integer.parseInt(properties.get("director-port")) + "...");
+		Centuria.logger
+				.info("Starting Director server on port " + Integer.parseInt(properties.get("director-port")) + "...");
 		directorServer = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("director-port")))
 				.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
 				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
@@ -526,7 +527,13 @@ public class Centuria {
 			}
 		else
 			sock = new ServerSocket(Integer.parseInt(properties.get("game-port")), 0, InetAddress.getByName("0.0.0.0"));
-		gameServer = new GameServer(sock);
+		for (ICenturiaModule module : ModuleManager.getInstance().getAllModules()) {
+			gameServer = module.replaceGameServer(sock);
+			if (gameServer != null)
+				break;
+		}
+		if (gameServer == null)
+			gameServer = new GameServer(sock);
 
 		// Server settings
 		gameServer.whitelistFile = properties.get("vpn-user-whitelist");
@@ -578,7 +585,13 @@ public class Centuria {
 		else
 			sock = new ServerSocket(Integer.parseInt(properties.getOrDefault("chat-port", "6972")), 0,
 					InetAddress.getByName("0.0.0.0"));
-		chatServer = new ChatServer(sock);
+		for (ICenturiaModule module : ModuleManager.getInstance().getAllModules()) {
+			chatServer = module.replaceChatServer(sock);
+			if (chatServer != null)
+				break;
+		}
+		if (chatServer == null)
+			chatServer = new ChatServer(sock);
 		chatServer.start();
 
 		// Post-initialize modules
