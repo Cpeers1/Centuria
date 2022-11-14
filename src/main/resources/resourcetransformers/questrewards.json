@@ -890,6 +890,33 @@
           "weight": 1
         }
       ]
+    },
+    "12287": {
+      "objectName": "QuestReward/HermitCollect",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q12287",
+          "itemId": "3771",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q12287": {
+      "objectName": "QuestReward/HermitCollect",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 90,
+          "maxCount": 120,
+          "weight": 1
+        }
+      ]
     }
   }
 }

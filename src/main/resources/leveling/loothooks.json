@@ -322,5 +322,15 @@
 				"type:filler"
 			]
 		}
+	],
+	"12287": [
+		{
+			"__NOTE__": "Quest: An Especially Cold Case",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore",
+				"type:lorefollowup"
+			]
+		}
 	]
 }
