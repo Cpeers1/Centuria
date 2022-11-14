@@ -313,5 +313,14 @@
 				"type:filler"
 			]
 		}
+	],
+	"12405": [
+		{
+			"__NOTE__": "Quest: Pest Control",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
 	]
 }

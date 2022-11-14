@@ -863,6 +863,33 @@
           "weight": 1
         }
       ]
+    },
+    "12405": {
+      "objectName": "QuestReward/LocustInfestation",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q12405",
+          "itemId": "5264",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q12405": {
+      "objectName": "QuestReward/LocustInfestation",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 20,
+          "maxCount": 30,
+          "weight": 1
+        }
+      ]
     }
   }
 }
