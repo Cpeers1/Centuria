@@ -1,0 +1,20 @@
+Implemented:
+- Implemented trade privacy settings
+
+Added quests:
+- Pizza Parkour
+
+Fixes:
+- Fixed issues related to trading
+- Fixed the broken quest lock
+- Another attempt to improve interactions on the server tho noticed again some broken ones
+- Improve things related to displayname moderation
+- Improve minigame join/leave
+- Fix sync with player teleport
+- Fix trade not showing the correct errors
+
+Changes:
+- Buff the level curve to make it more easier to level in higher levels so its not a painful grind
+- Massive changes to the server API and module API
+- Nerf lockpick spawning
+

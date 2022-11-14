@@ -277,5 +277,14 @@
 				"type:lorefollowup"
 			]
 		}
+	],
+	"12377": [
+		{
+			"__NOTE__": "Quest: Pizza Parkour",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
 	]
 }

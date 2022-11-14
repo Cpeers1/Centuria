@@ -755,6 +755,33 @@
           "weight": 1
         }
       ]
+    },
+    "12377": {
+      "objectName": "QuestReward/PizzaDelivery",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q12377",
+          "itemId": "10876",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q12377": {
+      "objectName": "QuestReward/PizzaDelivery",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 10,
+          "maxCount": 20,
+          "weight": 1
+        }
+      ]
     }
   }
 }
