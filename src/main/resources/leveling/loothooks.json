@@ -304,5 +304,14 @@
 				"type:filler"
 			]
 		}
+	],
+	"12286": [
+		{
+			"__NOTE__": "Quest: Love's Labors Lacerated",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
 	]
 }

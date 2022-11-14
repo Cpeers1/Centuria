@@ -3,6 +3,9 @@ Implemented:
 
 Added quests:
 - Pizza Parkour
+- Picken Pick Up
+- Dry or Die
+- Love's Labors Lacerated
 
 Fixes:
 - Fixed issues related to trading
@@ -12,9 +15,9 @@ Fixes:
 - Improve minigame join/leave
 - Fix sync with player teleport
 - Fix trade not showing the correct errors
+- Fix sanctuary upgrades needing relogging to fully work
 
 Changes:
 - Buff the level curve to make it more easier to level in higher levels so its not a painful grind
 - Massive changes to the server API and module API
 - Nerf lockpick spawning
-

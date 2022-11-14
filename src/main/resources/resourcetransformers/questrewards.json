@@ -836,6 +836,33 @@
           "weight": 1
         }
       ]
+    },
+    "12286": {
+      "objectName": "QuestReward/ScratchTrees",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q12286",
+          "itemId": "11306",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q12286": {
+      "objectName": "QuestReward/ScratchTrees",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 50,
+          "maxCount": 60,
+          "weight": 1
+        }
+      ]
     }
   }
 }
