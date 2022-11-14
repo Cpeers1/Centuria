@@ -917,6 +917,33 @@
           "weight": 1
         }
       ]
+    },
+    "13913": {
+      "objectName": "QuestReward/BrodyRace",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q13913",
+          "itemId": "13315",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q13913": {
+      "objectName": "QuestReward/BrodyRace",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 20,
+          "maxCount": 30,
+          "weight": 1
+        }
+      ]
     }
   }
 }

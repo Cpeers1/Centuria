@@ -332,5 +332,14 @@
 				"type:lorefollowup"
 			]
 		}
+	],
+	"13913": [
+		{
+			"__NOTE__": "Quest: Brody's BroRace",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
 	]
 }
