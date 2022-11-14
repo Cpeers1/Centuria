@@ -929,4 +929,13 @@ public class ResourceCollectionModule extends InteractionModule {
 		return pState != -1;
 	}
 
+	/**
+	 * Retrieves an array of loot table ids
+	 * 
+	 * @return Array of loot table defids
+	 */
+	public static String[] getLootTableIds() {
+		return lootTables.keySet().toArray(t -> new String[t]);
+	}
+
 }

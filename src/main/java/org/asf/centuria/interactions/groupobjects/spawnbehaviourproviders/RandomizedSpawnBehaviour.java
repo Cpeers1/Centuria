@@ -102,10 +102,10 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 								"rotation-hours=3\n"
 
 										// Minimal chest count
-										+ "lockedchests-min=12\n"
+										+ "lockedchests-min=18\n"
 
 										// Maximal chest count
-										+ "lockedchests-max=15\n"
+										+ "lockedchests-max=20\n"
 
 										// Digspot minimal count
 										+ "digspots-min=6\n"
@@ -276,7 +276,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			// Select dig spots
 			int remainingDigspots = digspots.length;
 			int distanceDigspots = (remainingDigspots - digspotsToSpawn);
-			distanceDigspots = (int) ((100d / (double) remainingDigspots) * (double) distanceDigspots);
+			distanceDigspots = (int) (((100d / (double) remainingDigspots) * (double) distanceDigspots)/ 1.7d);
 			ArrayList<GroupObject> spawnedDigspots = new ArrayList<GroupObject>();
 			for (int i = 0; i < digspotsToSpawn && remainingDigspots > 0; i++) {
 				while (true) {
@@ -318,8 +318,8 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			// Spawn chests
 			//
 
-			int minChests = Integer.parseInt(properties.getOrDefault("lockedchests-min", "12"));
-			int maxChests = Integer.parseInt(properties.getOrDefault("lockedchests-max", "15"));
+			int minChests = Integer.parseInt(properties.getOrDefault("lockedchests-min", "18"));
+			int maxChests = Integer.parseInt(properties.getOrDefault("lockedchests-max", "20"));
 			int chestsToSpawn = rnd.nextInt(maxChests + 1);
 			while (chestsToSpawn < minChests)
 				chestsToSpawn = rnd.nextInt(maxChests + 1);
@@ -337,7 +337,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			// Select chests
 			int remainingChests = lockedChests.length;
 			int distanceChests = (remainingChests - chestsToSpawn);
-			distanceChests = (int) ((100d / (double) remainingChests) * (double) distanceChests);
+			distanceChests = (int) (((100d / (double) remainingChests) * (double) distanceChests) / 1.7d);
 			ArrayList<GroupObject> chests = new ArrayList<GroupObject>();
 			for (int i = 0; i < chestsToSpawn && remainingChests > 0; i++) {
 				while (true) {
