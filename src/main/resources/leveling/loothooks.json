@@ -286,5 +286,23 @@
 				"type:filler"
 			]
 		}
+	],
+	"12285": [
+		{
+			"__NOTE__": "Quest: Picken Pick Up",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"11871": [
+		{
+			"__NOTE__": "Quest: Dry or Die",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
 	]
 }
