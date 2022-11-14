@@ -944,6 +944,87 @@
           "weight": 1
         }
       ]
+    },
+    "13781": {
+      "objectName": "QuestReward/StatueRepair",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q13781",
+          "itemId": "15136",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q13781": {
+      "objectName": "QuestReward/StatueRepair",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 60,
+          "maxCount": 70,
+          "weight": 1
+        }
+      ]
+    },
+    "14244": {
+      "objectName": "QuestReward/PantsSequel",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "itemId": "14926",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q14244": {
+      "objectName": "QuestReward/PantsSequel",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q14244",
+          "itemId": "14500",
+          "minCount": 20,
+          "maxCount": 30,
+          "weight": 1
+        }
+      ]
+    },
+    "14067": {
+      "objectName": "QuestReward/PizzaDrones",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q14067",
+          "itemId": "14400",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q14067": {
+      "objectName": "QuestReward/PizzaDrones",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 30,
+          "maxCount": 40,
+          "weight": 1
+        }
+      ]
     }
   }
 }

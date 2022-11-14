@@ -341,5 +341,32 @@
 				"type:filler"
 			]
 		}
+	],
+	"13781": [
+		{
+			"__NOTE__": "Quest: Fountain Fix",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
+	],
+	"14244": [
+		{
+			"__NOTE__": "Quest: Pants' Birthday Surprise",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"14067": [
+		{
+			"__NOTE__": "Quest: Pie in the Sky",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
 	]
 }
