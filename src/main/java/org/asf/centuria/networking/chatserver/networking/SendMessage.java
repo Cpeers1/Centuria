@@ -429,7 +429,8 @@ public class SendMessage extends AbstractChatPacket {
 			}
 			commandMessages.add("staffroom");
 			commandMessages.add("listplayers");
-			commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
+			if (GameServer.hasPerm(permLevel, "admin") || Centuria.giveAllResources)
+				commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
 		}
 		commandMessages.add("questrewind <amount-of-quests-to-rewind>");
 
@@ -1867,7 +1868,7 @@ public class SendMessage extends AbstractChatPacket {
 						}
 					}
 					case "giveitem":
-						if (GameServer.hasPerm(permLevel, "admin")) {
+						if (GameServer.hasPerm(permLevel, "admin") || Centuria.giveAllResources) {
 							try {
 								int defID = 0;
 								int quantity = 1;

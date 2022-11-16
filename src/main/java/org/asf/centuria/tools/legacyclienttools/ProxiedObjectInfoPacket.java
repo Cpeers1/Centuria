@@ -128,7 +128,7 @@ public class ProxiedObjectInfoPacket implements IXtPacket<ProxiedObjectInfoPacke
 			wr.writeDouble(z);
 
 			// Rotation
-			wr.writeDouble(rx - 180);
+			wr.writeDouble(rx);
 			wr.writeDouble(ry);
 			wr.writeDouble(rz);
 			wr.writeDouble(rw + 180);

@@ -39,6 +39,7 @@ public class XTPacketProxy implements ISmartfoxPacket {
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
+		System.out.println("Proxy: " + data);
 		((SmartfoxClient)client.container).sendPacket(this);
 		return true;
 	}

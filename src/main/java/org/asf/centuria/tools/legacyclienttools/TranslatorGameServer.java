@@ -106,6 +106,7 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 					// Client loop
 					while (remoteClient.getSocket() != null) {
 						String data = readRawPacket(remoteClient);
+						System.out.println("Proxy: " + data);
 						try {
 							handlePacket(data, remoteClient);
 						} catch (Exception e) {

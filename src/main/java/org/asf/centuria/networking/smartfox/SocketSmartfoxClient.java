@@ -23,11 +23,6 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 
 	TaskThread taskThread;
 
-	/**
-	 * Field for storing, eg. a player instance object
-	 */
-	public Object container;
-
 	public SocketSmartfoxClient(Socket client, BaseSmartfoxServer server) {
 		this.client = client;
 		this.server = server;
