@@ -1873,7 +1873,7 @@ public class SendMessage extends AbstractChatPacket {
 								int defID = 0;
 								int quantity = 1;
 								String player = "";
-								String uuid = "";
+								String uuid = client.getPlayer().getAccountID();
 
 								if (args.size() < 1) {
 									systemMessage("Missing argument: itemDefId", cmd, client);
@@ -1881,7 +1881,6 @@ public class SendMessage extends AbstractChatPacket {
 								}
 
 								defID = Integer.valueOf(args.get(0));
-
 								if (args.size() == 2) {
 									quantity = Integer.valueOf(args.get(1));
 								}
@@ -1906,46 +1905,20 @@ public class SendMessage extends AbstractChatPacket {
 									return true;
 								}
 
-								// player case..
+								// find account
+								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
-								if (uuid.equals("")) {
-									// give item to the command sender..
+								// give item to the command sender..
+								var onlinePlayer = acc.getOnlinePlayerInstance();
+								var result = acc.getPlayerInventory().getItemAccessor(onlinePlayer).add(defID,
+										quantity);
 
-									var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
-
-									if (onlinePlayer != null) {
-										var result = client.getPlayer().getPlayerInventory()
-												.getItemAccessor(client.getPlayer().getOnlinePlayerInstance())
-												.add(defID, quantity);
-
-										// TODO: Check result
-										systemMessage("Gave " + client.getPlayer().getDisplayName() + " " + quantity
-												+ " of item " + defID + ".", cmd, client);
-										return true;
-									} else {
-										// TODO: support for giving offline players items.. somehow
-										systemMessage("Specified account does not appear to be online.", cmd, client);
-									}
-
-								} else {
-									var onlinePlayer = AccountManager.getInstance().getAccount(uuid)
-											.getOnlinePlayerInstance();
-
-									if (onlinePlayer != null) {
-										var result = onlinePlayer.account.getPlayerInventory()
-												.getItemAccessor(onlinePlayer).add(defID, quantity);
-
-										// TODO: Check result
-										systemMessage("Gave " + onlinePlayer.account.getDisplayName() + " " + quantity
-												+ " of item " + uuid + ".", cmd, client);
-										return true;
-									} else {
-										// TODO: support for giving offline players items.. somehow
-										systemMessage("Specified account does not appear to be online.", cmd, client);
-									}
-
-								}
-
+								if (result.length > 0)
+									systemMessage(
+											"Gave " + acc.getDisplayName() + " " + quantity + " of item " + defID + ".",
+											cmd, client);
+								else
+									systemMessage("Failed to add item.", cmd, client);
 								return true;
 							} catch (Exception e) {
 								systemMessage("Error: " + e, cmd, client);
