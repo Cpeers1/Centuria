@@ -1,11 +1,13 @@
 {
   "Resources": {
-  	"3446": {
+    "3446": {
       "objectName": "Harvesting/Swamp/SwpHP010/Octovenom",
       "lootType": "HARVEST",
       "lootTableId": 3433,
       "respawnSeconds": 120.0,
       "interactionsBeforeDespawn": 1
     }
-  }
+  },
+  "HarvestTables": {},
+  "LootTables": {}
 }

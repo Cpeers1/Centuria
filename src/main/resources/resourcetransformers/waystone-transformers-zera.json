@@ -1,0 +1,65 @@
+{
+  "Resources": {},
+  "HarvestTables": {},
+  "LootTables": {
+    "15798": {
+      "objectName": "EmergentGameplay/RockFlip/RewardsList",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "15802",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 30
+        },
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "15800",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "15801",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "8372",
+          "referencedTableId": null,
+          "minCount": 2,
+          "maxCount": 5,
+          "weight": 30
+        },
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "15804",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "15799",
+          "minCount": 15,
+          "maxCount": 30,
+          "weight": 5
+        }
+      ]
+    }
+  }
+}

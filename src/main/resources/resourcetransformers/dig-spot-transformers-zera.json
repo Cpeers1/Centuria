@@ -1,0 +1,65 @@
+{
+  "Resources": {},
+  "HarvestTables": {},
+  "LootTables": {
+    "15799": {
+      "objectName": "EmergentGameplay/DigSpot/RewardsList",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "15802",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 35
+        },
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "15800",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 30
+        },
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "15801",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 10
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "8372",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 35
+        },
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "15803",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "30585",
+          "minCount": 20,
+          "maxCount": 40,
+          "weight": 5
+        }
+      ]
+    }
+  }
+}
