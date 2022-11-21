@@ -55,6 +55,8 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 		registerPacket(new ProxiedRoomJoinPacket());
 		registerPacket(new ProxiedObjectUpdatePacket());
 		registerPacket(new ProxiedObjectInfoPacket());
+		registerPacket(new ProxiedAvatarLookGetPacket());
+		registerPacket(new ProxiedInventoryListPacket());
 		registerPacket(new XTPacketProxy());
 	}
 
@@ -209,7 +211,7 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 					remainingIL--;
 					
 					// Send
-					localClient.sendPacket(packet);
+					handlePacket(packet, remoteClient);
 				}
 			}
 			
