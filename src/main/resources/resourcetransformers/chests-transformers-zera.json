@@ -1,0 +1,3165 @@
+{
+  "Resources": {},
+  "HarvestTables": {},
+  "LootTables": {
+    "30585": {
+      "objectName": "TreasureChest/BloodTundra/Gold",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7822",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7831",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "9601",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14358",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17949",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "21297",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "18699",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "12471",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "8939",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "8242",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11173",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11161",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11176",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "9972",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "20677",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "18590",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7825",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "18575",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3765",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3467",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "9279",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11128",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11134",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11149",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "5286",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "12523",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "12517",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "13620",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17925",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "5934",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "18832",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "28466",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "15130",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7834",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7816",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7813",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7828",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7837",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "8438",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "8546",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "8547",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "8545",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "20628",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "20622",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10882",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6145",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14261",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7837",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "28544",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "28865",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "27336",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "27333",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "18835",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "23035",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "18702",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "13833",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "26542",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "13824",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11321",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "15122",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "12529",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "4831",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "23701",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "18838",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "28520",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "28517",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "28523",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11300",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "4947",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "7981",
+          "minCount": 60,
+          "maxCount": 70,
+          "weight": 1200
+        }
+      ]
+    },
+    "30588": {
+      "objectName": "TreasureChest/Forest/Gold",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "26087",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "26084",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10811",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10903",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "13623",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "12520",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "13417",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "13426",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "9273",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "27745",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11170",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11158",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11155",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11185",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "4830",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3767",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17922",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "9963",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "13324",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "13327",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "13318",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "18587",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "5283",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "5299",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "13411",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "13075",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "21130",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "21127",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "5267",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "4450",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "19760",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "28463",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "15179",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "15170",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "4946",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "4945",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10555",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "21337",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "24445",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10888",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10879",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11282",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3494",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "25622",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "26078",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "13839",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "9291",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "9288",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "13312",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "21133",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17931",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "27373",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "27730",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "9297",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11291",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14262",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11288",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "24433",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "9294",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "25819",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "8379",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "8390",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "8402",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "8383",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "25822",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "18904",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "4462",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "12385",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10581",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "30585",
+          "minCount": 45,
+          "maxCount": 55,
+          "weight": 1200
+        }
+      ]
+    },
+    "30589": {
+      "objectName": "TreasureChest/Swamp/Gold",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10951",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "15148",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11164",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "25284",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "12661",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "12667",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10558",
+          "referencedTableId": null,
+          "minCount": 0,
+          "maxCount": 0,
+          "weight": 0
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3766",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3772",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17937",
+          "referencedTableId": null,
+          "minCount": 0,
+          "maxCount": 0,
+          "weight": 0
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "5851",
+          "referencedTableId": null,
+          "minCount": 0,
+          "maxCount": 0,
+          "weight": 0
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "27591",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17901",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "2577",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3773",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11146",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11143",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11140",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11131",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10697",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "18574",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "9403",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "5906",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "21279",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "19611",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17940",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "9975",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "15163",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "21570",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11179",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11119",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11188",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11113",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "12549",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "12538",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "9969",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "4742",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 60
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10864",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "4481",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "26072",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "4829",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "28090",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14387",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14363",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "8404",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6177",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "28079",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "20668",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "23008",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "12664",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "12667",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "28703",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3764",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "13830",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "23038",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14899",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "26533",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11152",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17907",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "28469",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11116",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "11110",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "5491",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "20032",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 25
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "24801",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "30464",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "4434",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "30585",
+          "minCount": 55,
+          "maxCount": 65,
+          "weight": 1100
+        }
+      ]
+    },
+    "30584": {
+      "objectName": "TreasureChest/BloodTundra/Silver",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "453",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3479",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "447",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3481",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3477",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "1543",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "451",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "1129",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "381",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "1132",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "449",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3482",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "448",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3485",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17540",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17542",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10142",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10145",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10146",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10168",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10176",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17530",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "30585",
+          "minCount": 30,
+          "maxCount": 45,
+          "weight": 95
+        }
+      ]
+    },
+    "30587": {
+      "objectName": "TreasureChest/Forest/Silver",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7577",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7579",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7582",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7584",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7586",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7589",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7592",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7596",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7603",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7605",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7607",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7575",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7580",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7587",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7594",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7599",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7601",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17541",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17538",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10180",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10186",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "24145",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10151",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10531",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17537",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "30585",
+          "minCount": 20,
+          "maxCount": 28,
+          "weight": 90
+        }
+      ]
+    },
+    "30590": {
+      "objectName": "TreasureChest/Swamp/Silver",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6301",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6287",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "1134",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6289",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6293",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6305",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6288",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 65
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6303",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6285",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "310",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6304",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "1535",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6295",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "384",
+          "referencedTableId": null,
+          "minCount": 1,
+          "maxCount": 2,
+          "weight": 15
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10189",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17539",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "22601",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "22602",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10148",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10137",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10140",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "17531",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10183",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "10184",
+          "referencedTableId": null,
+          "minCount": 3,
+          "maxCount": 5,
+          "weight": 20
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "30585",
+          "minCount": 30,
+          "maxCount": 45,
+          "weight": 85
+        }
+      ]
+    },
+    "30583": {
+      "objectName": "TreasureChest/BloodTundra/Bronze",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7574",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7576",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7578",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7581",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7583",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7585",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7588",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7590",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7591",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7593",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7595",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7597",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7598",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7600",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7602",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7604",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7606",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "7608",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "2327",
+          "referencedTableId": null,
+          "minCount": 350,
+          "maxCount": 350,
+          "weight": 8
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "2327",
+          "referencedTableId": null,
+          "minCount": 500,
+          "maxCount": 500,
+          "weight": 2
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "30585",
+          "minCount": 15,
+          "maxCount": 20,
+          "weight": 85
+        }
+      ]
+    },
+    "30586": {
+      "objectName": "TreasureChest/Forest/Bronze",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6298",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6286",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6302",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6300",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6299",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6292",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6291",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6290",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6294",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "303",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6306",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3480",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6307",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6297",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "454",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "446",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3487",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "6296",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "2327",
+          "referencedTableId": null,
+          "minCount": 350,
+          "maxCount": 350,
+          "weight": 8
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "2327",
+          "referencedTableId": null,
+          "minCount": 500,
+          "maxCount": 500,
+          "weight": 2
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "30585",
+          "minCount": 10,
+          "maxCount": 15,
+          "weight": 85
+        }
+      ]
+    },
+    "30591": {
+      "objectName": "TreasureChest/Swamp/Bronze",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "1579",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "383",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3474",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "452",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3475",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "380",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "1131",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3486",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "1133",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "382",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3483",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3476",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "455",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "1130",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3484",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "450",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "1540",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "445",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "3478",
+          "referencedTableId": null,
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 90
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "2327",
+          "referencedTableId": null,
+          "minCount": 350,
+          "maxCount": 350,
+          "weight": 8
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "2327",
+          "referencedTableId": null,
+          "minCount": 500,
+          "maxCount": 500,
+          "weight": 2
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "30585",
+          "minCount": 16,
+          "maxCount": 18,
+          "weight": 75
+        }
+      ]
+    }
+  }
+}

@@ -1,13 +1,15 @@
 {
+  "Resources": {},
+  "HarvestTables": {},
   "LootTables": {
-  	"7981": {
+    "7981": {
       "objectName": "QuestReward/HatsAndHatNots",
       "rewards": [
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7981",
           "itemId": "3768",
+          "referencedTableId": "q7981",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -15,12 +17,13 @@
       ]
     },
     "q7981": {
-  	  "objectName": "QuestReward/HatsAndHatNots",
+      "objectName": "QuestReward/HatsAndHatNots",
       "rewards": [
         {
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 20,
           "maxCount": 25,
           "weight": 1
@@ -33,8 +36,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7324",
           "itemId": "5536",
+          "referencedTableId": "q7324",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -42,12 +45,13 @@
       ]
     },
     "q7324": {
-  	  "objectName": "QuestReward/ProveFishingSkills",
+      "objectName": "QuestReward/ProveFishingSkills",
       "rewards": [
         {
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 15,
           "maxCount": 25,
           "weight": 1
@@ -60,8 +64,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7984",
           "itemId": "10742",
+          "referencedTableId": "q7984",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -75,6 +79,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 55,
           "maxCount": 80,
           "weight": 1
@@ -87,8 +92,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7979",
           "itemId": "6940",
+          "referencedTableId": "q7979",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -102,6 +107,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 30,
           "maxCount": 40,
           "weight": 1
@@ -114,8 +120,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7325",
           "itemId": "5532",
+          "referencedTableId": "q7325",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -129,6 +135,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 20,
           "maxCount": 30,
           "weight": 1
@@ -141,8 +148,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q8536",
           "itemId": "10129",
+          "referencedTableId": "q8536",
           "minCount": 20,
           "maxCount": 20,
           "weight": 1
@@ -156,6 +163,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 60,
           "maxCount": 80,
           "weight": 1
@@ -168,8 +176,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q8539",
           "itemId": "10190",
+          "referencedTableId": "q8539",
           "minCount": 20,
           "maxCount": 20,
           "weight": 1
@@ -183,6 +191,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 30,
           "maxCount": 50,
           "weight": 1
@@ -195,8 +204,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7982",
           "itemId": "9300",
+          "referencedTableId": "q7982",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -210,6 +219,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 10,
           "maxCount": 20,
           "weight": 1
@@ -222,8 +232,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7326",
           "itemId": "5535",
+          "referencedTableId": "q7326",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -237,33 +247,35 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 30,
           "maxCount": 45,
           "weight": 1
         }
       ]
     },
-     "8185": {
+    "8185": {
       "objectName": "QuestReward/Snakes",
       "rewards": [
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q8185",
           "itemId": "11044",
+          "referencedTableId": "q8185",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
         }
       ]
     },
-     "q8185": {
+    "q8185": {
       "objectName": "QuestReward/Snakes",
       "rewards": [
         {
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 20,
           "maxCount": 35,
           "weight": 1
@@ -276,8 +288,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7980",
           "itemId": "10715",
+          "referencedTableId": "q7980",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -291,6 +303,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 30,
           "maxCount": 40,
           "weight": 1
@@ -303,14 +316,14 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7327",
           "itemId": "5538",
+          "referencedTableId": "q7327",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
         }
       ]
-    }, 
+    },
     "q7327": {
       "objectName": "QuestReward/EvictSuckers",
       "rewards": [
@@ -318,33 +331,35 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 20,
           "maxCount": 25,
           "weight": 1
         }
       ]
     },
- 	"8537": {
+    "8537": {
       "objectName": "QuestReward/LostPet",
       "rewards": [
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q8537",
           "itemId": "10578",
+          "referencedTableId": "q8537",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
         }
       ]
     },
- 	"q8537": {
+    "q8537": {
       "objectName": "QuestReward/LostPet",
       "rewards": [
         {
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 50,
           "maxCount": 80,
           "weight": 1
@@ -357,8 +372,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7983",
           "itemId": "10683",
+          "referencedTableId": "q7983",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -372,6 +387,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 80,
           "maxCount": 100,
           "weight": 1
@@ -384,8 +400,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7330",
           "itemId": "4433",
+          "referencedTableId": "q7330",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -399,6 +415,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 30,
           "maxCount": 50,
           "weight": 1
@@ -411,8 +428,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q8186",
           "itemId": "6010",
+          "referencedTableId": "q8186",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -426,33 +443,35 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 30,
           "maxCount": 50,
           "weight": 1
         }
       ]
     },
-     "7978": {
+    "7978": {
       "objectName": "QuestReward/AxeFavor",
       "rewards": [
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7978",
           "itemId": "9768",
+          "referencedTableId": "q7978",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
         }
       ]
     },
-     "q7978": {
+    "q7978": {
       "objectName": "QuestReward/AxeFavor",
       "rewards": [
         {
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 10,
           "maxCount": 20,
           "weight": 1
@@ -465,8 +484,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7328",
           "itemId": "5537",
+          "referencedTableId": "q7328",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -480,6 +499,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 40,
           "maxCount": 50,
           "weight": 1
@@ -492,8 +512,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q8724",
           "itemId": "6967",
+          "referencedTableId": "q8724",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -507,6 +527,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 60,
           "maxCount": 70,
           "weight": 1
@@ -519,21 +540,22 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7977",
           "itemId": "4948",
+          "referencedTableId": "q7977",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
         }
       ]
     },
- 	"q7977": {
+    "q7977": {
       "objectName": "QuestReward/BrendasAwakening",
       "rewards": [
         {
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 40,
           "maxCount": 50,
           "weight": 1
@@ -546,8 +568,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q7329",
           "itemId": "6022",
+          "referencedTableId": "q7329",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -561,6 +583,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 15,
           "maxCount": 20,
           "weight": 1
@@ -573,8 +596,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q8632",
           "itemId": "7819",
+          "referencedTableId": "q8632",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -588,6 +611,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 70,
           "maxCount": 80,
           "weight": 1
@@ -600,8 +624,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q11750",
           "itemId": "10867",
+          "referencedTableId": "q11750",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -615,6 +639,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 20,
           "maxCount": 35,
           "weight": 1
@@ -627,8 +652,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q11984",
           "itemId": "10955",
+          "referencedTableId": "q11984",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -642,6 +667,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 30,
           "maxCount": 45,
           "weight": 1
@@ -654,8 +680,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q8638",
           "itemId": "9276",
+          "referencedTableId": "q8638",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -669,6 +695,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 50,
           "maxCount": 65,
           "weight": 1
@@ -681,8 +708,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q11751",
           "itemId": "12484",
+          "referencedTableId": "q11751",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -696,6 +723,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 15,
           "maxCount": 25,
           "weight": 1
@@ -708,8 +736,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q12007",
           "itemId": "5261",
+          "referencedTableId": "q12007",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -723,6 +751,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 40,
           "maxCount": 55,
           "weight": 1
@@ -735,8 +764,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q8538",
           "itemId": "4478",
+          "referencedTableId": "q8538",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -750,6 +779,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 80,
           "maxCount": 100,
           "weight": 1
@@ -762,8 +792,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q12377",
           "itemId": "10876",
+          "referencedTableId": "q12377",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -777,6 +807,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 10,
           "maxCount": 20,
           "weight": 1
@@ -789,8 +820,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q12285",
           "itemId": "11285",
+          "referencedTableId": "q12285",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -804,6 +835,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 40,
           "maxCount": 50,
           "weight": 1
@@ -816,8 +848,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q11871",
           "itemId": "11303",
+          "referencedTableId": "q11871",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -831,6 +863,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 50,
           "maxCount": 60,
           "weight": 1
@@ -843,8 +876,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q12286",
           "itemId": "11306",
+          "referencedTableId": "q12286",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -858,6 +891,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 50,
           "maxCount": 60,
           "weight": 1
@@ -870,8 +904,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q12405",
           "itemId": "5264",
+          "referencedTableId": "q12405",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -885,6 +919,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 20,
           "maxCount": 30,
           "weight": 1
@@ -897,8 +932,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q12287",
           "itemId": "3771",
+          "referencedTableId": "q12287",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -912,6 +947,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 90,
           "maxCount": 120,
           "weight": 1
@@ -924,8 +960,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q13913",
           "itemId": "13315",
+          "referencedTableId": "q13913",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -939,6 +975,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 20,
           "maxCount": 30,
           "weight": 1
@@ -951,8 +988,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q13781",
           "itemId": "15136",
+          "referencedTableId": "q13781",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -966,6 +1003,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 60,
           "maxCount": 70,
           "weight": 1
@@ -978,8 +1016,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q14244",
           "itemId": "14926",
+          "referencedTableId": "q14244",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -992,8 +1030,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q14244",
           "itemId": "14500",
+          "referencedTableId": "q14244",
           "minCount": 20,
           "maxCount": 30,
           "weight": 1
@@ -1006,8 +1044,8 @@
         {
           "hasItem": true,
           "hasTableReference": true,
-          "referencedTableId": "q14067",
           "itemId": "14400",
+          "referencedTableId": "q14067",
           "minCount": 1,
           "maxCount": 1,
           "weight": 1
@@ -1021,6 +1059,7 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "referencedTableId": null,
           "minCount": 30,
           "maxCount": 40,
           "weight": 1
