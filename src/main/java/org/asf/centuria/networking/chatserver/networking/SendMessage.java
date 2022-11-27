@@ -17,6 +17,7 @@ import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.accounts.highlevel.ItemAccessor;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.entities.players.Player;
@@ -429,9 +430,14 @@ public class SendMessage extends AbstractChatPacket {
 			}
 			commandMessages.add("staffroom");
 			commandMessages.add("listplayers");
-			if (GameServer.hasPerm(permLevel, "admin") || Centuria.giveAllResources)
-				commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
 		}
+		if (Centuria.giveAllResources || Centuria.giveAllCurrency || Centuria.giveAllFurnitureItems
+				|| Centuria.giveAllClothes || (GameServer.hasPerm(permLevel, "admin")
+						|| (Centuria.giveAllResources && GameServer.hasPerm(permLevel, "moderator"))))
+			if (GameServer.hasPerm(permLevel, "moderator"))
+				commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
+			else
+				commandMessages.add("giveitem <itemDefId> [<quantity>]");
 		commandMessages.add("questrewind <amount-of-quests-to-rewind>");
 
 		// Add module commands
@@ -1924,9 +1930,84 @@ public class SendMessage extends AbstractChatPacket {
 								systemMessage("Error: " + e, cmd, client);
 								return true;
 							}
-						} else {
-							break;
 						}
+						break;
+					}
+				}
+
+				//
+				// User giveitem command
+				if (cmd.equals("giveitem")) {
+					try {
+						int defID = 0;
+						int quantity = 1;
+						String uuid = client.getPlayer().getAccountID();
+
+						if (args.size() < 1) {
+							systemMessage("Missing argument: itemDefId", cmd, client);
+							return true;
+						}
+
+						defID = Integer.valueOf(args.get(0));
+						if (args.size() == 2) {
+							quantity = Integer.valueOf(args.get(1));
+						}
+
+						// funny stuff check
+						if (quantity <= 0 || defID <= 0) {
+							systemMessage("You cannot give 0 or less quantity of/or an item ID of 0 or below.", cmd,
+									client);
+							return true;
+						}
+
+						// check max item limit (hardcoded 100 for creative mode)
+						int current = client.getPlayer().getPlayerInventory().getItemAccessor(null)
+								.getCountOfItem(defID);
+						if (quantity + current > 100) {
+							systemMessage("You cannot have more than 100 of a item via commands.", cmd, client);
+							return true;
+						}
+
+						// check item
+						if (ItemAccessor.getInventoryTypeOf(defID) == null
+								|| (!ItemAccessor.getInventoryTypeOf(defID).equals("100")
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("104")
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("111")
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("103")
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("102"))) {
+							systemMessage("Invalid item defID. Please make sure you can actually obtain this item.",
+									cmd, client);
+							return true;
+						}
+
+						// check perms and item type
+						if ((ItemAccessor.getInventoryTypeOf(defID).equals("100") && !Centuria.giveAllClothes)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("104") && !Centuria.giveAllCurrency)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("111") && !Centuria.giveAllClothes)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("103") && !Centuria.giveAllResources)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("102")
+										&& !Centuria.giveAllFurnitureItems)) {
+							systemMessage("Invalid item defID. Please make sure you can actually obtain this item.",
+									cmd, client);
+							return true;
+						}
+
+						// find account
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// give item to the command sender..
+						var onlinePlayer = acc.getOnlinePlayerInstance();
+						var result = acc.getPlayerInventory().getItemAccessor(onlinePlayer).add(defID, quantity);
+
+						if (result.length > 0)
+							systemMessage("Gave " + acc.getDisplayName() + " " + quantity + " of item " + defID + ".",
+									cmd, client);
+						else
+							systemMessage("Failed to add item.", cmd, client);
+						return true;
+					} catch (Exception e) {
+						systemMessage("Error: " + e, cmd, client);
+						return true;
 					}
 				}
 
