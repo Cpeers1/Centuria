@@ -13,6 +13,9 @@ Added quests:
 - Pants' Birthday Surprise
 - Pie in the Sky
 
+Added commands:
+- giveitem: allows for giving yourself items (limited to specific item types, and only a max of 100 before the command ceases to work)
+
 Fixes:
 - Fixed issues related to trading
 - Fixed the broken quest lock
