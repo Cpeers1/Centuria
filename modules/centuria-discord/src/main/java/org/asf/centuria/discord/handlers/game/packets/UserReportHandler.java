@@ -17,6 +17,8 @@ import org.asf.centuria.packets.xt.IXtPacket;
 import com.google.gson.JsonObject;
 
 import discord4j.common.util.Snowflake;
+import discord4j.core.object.component.ActionRow;
+import discord4j.core.object.component.Button;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.spec.MessageCreateSpec;
 
@@ -71,6 +73,9 @@ public class UserReportHandler implements IXtPacket<UserReportHandler> {
 					MessageCreateSpec.Builder msg = MessageCreateSpec.builder();
 					msg.content(srvMessage);
 					msg.addFile("report.txt", new ByteArrayInputStream(report.getBytes("UTF-8")));
+					msg.addComponent(ActionRow.of(
+							Button.success("reportreply/" + reporter.getAccountID() + "/tosender", "Send message to Report Sender"),
+							Button.success("reportreply/" + acc.getAccountID() + "/tosubject", "Send message to Report Subject")));
 
 					// Attempt to send message
 					try {

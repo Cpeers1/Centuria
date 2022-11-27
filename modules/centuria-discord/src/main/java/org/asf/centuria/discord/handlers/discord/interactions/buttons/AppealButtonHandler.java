@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 public class AppealButtonHandler {
 
 	/**
-	 * Handles the unlink button event
+	 * Handles the appeal button event
 	 * 
 	 * @param event   Button event
 	 * @param gateway Discord client

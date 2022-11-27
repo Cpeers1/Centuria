@@ -16,6 +16,8 @@ import org.asf.centuria.entities.players.Player;
 import com.google.gson.JsonObject;
 
 import discord4j.common.util.Snowflake;
+import discord4j.core.object.component.ActionRow;
+import discord4j.core.object.component.Button;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.spec.MessageCreateSpec;
 
@@ -62,6 +64,8 @@ public class FeedbackHandler implements IXtPacket<FeedbackHandler> {
 					MessageCreateSpec.Builder msg = MessageCreateSpec.builder();
 					msg.content(srvMessage);
 					msg.addFile("report.txt", new ByteArrayInputStream(report.getBytes("UTF-8")));
+					msg.addComponent(ActionRow
+							.of(Button.success("feedbackreply/" + reporter.getAccountID(), "Reply to feedback")));
 
 					// Attempt to send message
 					try {
