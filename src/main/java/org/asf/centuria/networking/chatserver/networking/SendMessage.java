@@ -1,9 +1,12 @@
 package org.asf.centuria.networking.chatserver.networking;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -47,6 +50,14 @@ public class SendMessage extends AbstractChatPacket {
 	private static ArrayList<String> alwaysfilterWords = new ArrayList<String>();
 
 	static {
+		reloadFilter();
+	}
+
+	private static void reloadFilter() {
+		muteWords.clear();
+		filterWords.clear();
+		alwaysfilterWords.clear();
+
 		// Load filter
 		try {
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
@@ -109,7 +120,88 @@ public class SendMessage extends AbstractChatPacket {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		// Load local filters
+		if (!new File("textfilter").exists()) {
+			new File("textfilter").mkdirs();
+			try {
+				Files.writeString(Path.of("textfilter/filter.txt"), "");
+				Files.writeString(Path.of("textfilter/alwaysfilter.txt"), "");
+				Files.writeString(Path.of("textfilter/instamute.txt"), "");
+			} catch (IOException e) {
+			}
+		}
+		try {
+			filterLastChange = Files.getLastModifiedTime(Path.of("textfilter/filter.txt")).toMillis();
+			alwaysFilterLastChange = Files.getLastModifiedTime(Path.of("textfilter/alwaysfilter.txt")).toMillis();
+			instaMuteLastChange = Files.getLastModifiedTime(Path.of("textfilter/instamute.txt")).toMillis();
+
+			// Load filter
+			try {
+				InputStream strm = new FileInputStream("textfilter/filter.txt");
+				String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+				for (String line : lines.split("\n")) {
+					if (line.isEmpty() || line.startsWith("#"))
+						continue;
+
+					String data = line.trim();
+					while (data.contains("  "))
+						data = data.replace("  ", "");
+
+					for (String word : data.split(";"))
+						filterWords.add(word.toLowerCase());
+				}
+				strm.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			// Load ban words
+			try {
+				InputStream strm = new FileInputStream("textfilter/instamute.txt");
+				String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+				for (String line : lines.split("\n")) {
+					if (line.isEmpty() || line.startsWith("#"))
+						continue;
+
+					String data = line.trim();
+					while (data.contains("  "))
+						data = data.replace("  ", "");
+
+					for (String word : data.split(";"))
+						muteWords.add(word.toLowerCase());
+				}
+				strm.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			// Load always filtered words
+			try {
+				InputStream strm = new FileInputStream("textfilter/alwaysfilter.txt");
+				String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+				for (String line : lines.split("\n")) {
+					if (line.isEmpty() || line.startsWith("#"))
+						continue;
+
+					String data = line.trim();
+					while (data.contains("  "))
+						data = data.replace("  ", "");
+
+					for (String word : data.split(";"))
+						alwaysfilterWords.add(word.toLowerCase());
+				}
+				strm.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
+		}
 	}
+
+	private static long filterLastChange;
+	private static long alwaysFilterLastChange;
+	private static long instaMuteLastChange;
 
 	private String message;
 	private String room;
@@ -155,7 +247,7 @@ public class SendMessage extends AbstractChatPacket {
 
 		// Chat commands
 		if (message.startsWith(">")) {
-			String cmd = message.substring(1).trim();
+			String cmd = message.substring(1).trim().toLowerCase();
 			if (handleCommand(cmd, client))
 				return true;
 		}
@@ -168,6 +260,21 @@ public class SendMessage extends AbstractChatPacket {
 		// Log
 		if (!client.isRoomPrivate(room))
 			Centuria.logger.info("Chat: " + client.getPlayer().getDisplayName() + ": " + message);
+
+		// Check times of the filter update
+		try {
+			long filterLastChange = Files.getLastModifiedTime(Path.of("textfilter/filter.txt")).toMillis();
+			long alwaysFilterLastChange = Files.getLastModifiedTime(Path.of("textfilter/alwaysfilter.txt")).toMillis();
+			long instaMuteLastChange = Files.getLastModifiedTime(Path.of("textfilter/instamute.txt")).toMillis();
+			if (SendMessage.filterLastChange != filterLastChange
+					|| SendMessage.alwaysFilterLastChange != alwaysFilterLastChange
+					|| SendMessage.instaMuteLastChange != instaMuteLastChange) {
+				// Reload
+				Centuria.logger.info("Updating chat filter...");
+				reloadFilter();
+			}
+		} catch (IOException e) {
+		}
 
 		// Increase ban counter
 		client.banCounter++;

@@ -1029,9 +1029,8 @@
       "rewards": [
         {
           "hasItem": true,
-          "hasTableReference": true,
+          "hasTableReference": false,
           "itemId": "14500",
-          "referencedTableId": "q14244",
           "minCount": 20,
           "maxCount": 30,
           "weight": 1
