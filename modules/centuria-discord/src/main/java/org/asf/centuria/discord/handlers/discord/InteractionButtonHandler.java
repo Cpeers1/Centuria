@@ -3,6 +3,7 @@ package org.asf.centuria.discord.handlers.discord;
 import org.asf.centuria.discord.handlers.discord.interactions.buttons.AppealButtonHandler;
 import org.asf.centuria.discord.handlers.discord.interactions.buttons.BasicDismissDeleteHandler;
 import org.asf.centuria.discord.handlers.discord.interactions.buttons.BasicDismissHandler;
+import org.asf.centuria.discord.handlers.discord.interactions.buttons.DownloadSingleplayerLauncherHandler;
 import org.asf.centuria.discord.handlers.discord.interactions.buttons.FeedbackReplyButtonHandler;
 import org.asf.centuria.discord.handlers.discord.interactions.buttons.ReportReplyButtonHandler;
 import org.asf.centuria.discord.handlers.discord.interactions.buttons.accountoptions.ConfirmDisable2fa;
@@ -98,6 +99,8 @@ public class InteractionButtonHandler {
 			return FeedbackReplyButtonHandler.handle(id, event, gateway);
 		} else if (id.startsWith("reportreply/") && id.split("/").length == 3) {
 			return ReportReplyButtonHandler.handle(id, event, gateway);
+		} else if (id.equals("downloadsingleplayerlauncher")) {
+			return DownloadSingleplayerLauncherHandler.handle(id, event, gateway);
 		}
 
 		// Default handler
