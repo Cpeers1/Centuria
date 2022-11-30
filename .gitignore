@@ -23,7 +23,8 @@ saves/
 
 # Research (due to copyright we cant share this, shoutout to rawaho/kiwido for helping with this)
 research/
-/clientmods/org.asf.centuria.client.plugin/lib/feral/UnityEngine.CoreModule.dll
+clientmods/org.asf.centuria.client.plugin/lib
+clientmods/org.asf.centuria.client.chartmod/lib
 
 update.list
 updater.jar

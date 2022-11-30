@@ -56,6 +56,7 @@ import org.asf.centuria.networking.chatserver.ChatServer;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.http.api.FallbackAPIProcessor;
 import org.asf.centuria.networking.http.api.AuthenticateHandler;
+import org.asf.centuria.networking.http.api.DisplayNameValidationHandler;
 import org.asf.centuria.networking.http.api.DisplayNamesRequestHandler;
 import org.asf.centuria.networking.http.api.RequestTokenHandler;
 import org.asf.centuria.networking.http.api.SettingsHandler;
@@ -462,6 +463,9 @@ public class Centuria {
 			apiServer = factory.build();
 		}
 
+		// Allow modules to register handlers
+		EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
+
 		// API processors
 		apiServer.registerProcessor(new UserHandler());
 		apiServer.registerProcessor(new XPDetailsHandler());
@@ -469,10 +473,8 @@ public class Centuria {
 		apiServer.registerProcessor(new AuthenticateHandler());
 		apiServer.registerProcessor(new UpdateDisplayNameHandler());
 		apiServer.registerProcessor(new DisplayNamesRequestHandler());
+		apiServer.registerProcessor(new DisplayNameValidationHandler());
 		apiServer.registerProcessor(new RequestTokenHandler());
-
-		// Allow modules to register handlers
-		EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
 
 		// Fallback
 		apiServer.registerProcessor(new FallbackAPIProcessor());
@@ -486,6 +488,9 @@ public class Centuria {
 					.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT);
 			var apiServer = factory.build();
 
+			// Allow modules to register handlers
+			EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
+
 			// API processors
 			apiServer.registerProcessor(new UserHandler());
 			apiServer.registerProcessor(new XPDetailsHandler());
@@ -493,11 +498,9 @@ public class Centuria {
 			apiServer.registerProcessor(new AuthenticateHandler());
 			apiServer.registerProcessor(new UpdateDisplayNameHandler());
 			apiServer.registerProcessor(new DisplayNamesRequestHandler());
+			apiServer.registerProcessor(new DisplayNameValidationHandler());
 			apiServer.registerProcessor(new RequestTokenHandler());
 			apiServer.registerProcessor(new FallbackAPIProcessor());
-
-			// Allow modules to register handlers
-			EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
 		}
 
 		//
