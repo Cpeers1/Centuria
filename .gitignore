@@ -25,6 +25,7 @@ saves/
 research/
 clientmods/org.asf.centuria.client.plugin/lib
 clientmods/org.asf.centuria.client.chartmod/lib
+clientmods/org.asf.centuria.client.chartmod/run
 
 update.list
 updater.jar
