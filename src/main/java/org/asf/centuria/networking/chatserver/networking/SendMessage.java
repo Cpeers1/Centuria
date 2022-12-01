@@ -1668,7 +1668,11 @@ public class SendMessage extends AbstractChatPacket {
 								// Teleport
 
 								// Find player
-								String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+								String player = client.getPlayer().getDisplayName();
+								if (args.size() >= 3) {
+									player = args.get(2);
+								}
+								String uuid = AccountManager.getInstance().getUserByDisplayName(player);
 								if (uuid == null) {
 									// Player not found
 									systemMessage("Specified account could not be located.", cmd, client);
