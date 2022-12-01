@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "org.asf.centuria.client.chartmod": {
+      "commandName": "Executable",
+      "executablePath": ".\\Fer.al.exe",
+      "workingDirectory": "run"
+    }
+  }
+}
