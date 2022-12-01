@@ -49,6 +49,14 @@ public class SendMessage extends AbstractChatPacket {
 	private static ArrayList<String> filterWords = new ArrayList<String>();
 	private static ArrayList<String> alwaysfilterWords = new ArrayList<String>();
 
+	public static String[] getInvalidWords() {
+		ArrayList<String> fullList = new ArrayList<String>();
+		fullList.addAll(muteWords);
+		fullList.addAll(filterWords);
+		fullList.addAll(alwaysfilterWords);
+		return fullList.toArray(t -> new String[t]);
+	}
+
 	static {
 		reloadFilter();
 	}
