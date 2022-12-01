@@ -32,7 +32,7 @@ namespace org.asf.centuria.client.plugin.Patches.AssemblyCSharp
 
             devBaseURL = config.Bind("Servers",
                 "DevBaseURL",
-                "https://content.dev.wildworks.systems/Feral/",
+                "http://stage-game-assets.fer.al/",
                 "DevBaseURL").Value;
 
             stageBaseURL = config.Bind("Servers",
