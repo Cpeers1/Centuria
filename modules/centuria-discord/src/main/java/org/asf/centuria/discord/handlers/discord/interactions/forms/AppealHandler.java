@@ -13,6 +13,8 @@ import com.google.gson.JsonObject;
 import discord4j.common.util.Snowflake;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.interaction.ModalSubmitInteractionEvent;
+import discord4j.core.object.component.ActionRow;
+import discord4j.core.object.component.Button;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.spec.MessageCreateSpec;
 import reactor.core.publisher.Mono;
@@ -93,7 +95,10 @@ public class AppealHandler {
 		}
 
 		// Reset and acknowledge
-		event.getMessage().get().edit().withComponents().subscribe();
+		event.getMessage().get().edit()
+				.withComponents(
+						ActionRow.of(Button.success("downloadsingleplayerlauncher", "Download singleplayer launcher")))
+				.subscribe();
 		return event.deferEdit();
 	}
 }

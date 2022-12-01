@@ -1,6 +1,7 @@
 {
+  "Resources": {},
   "HarvestTables": {
-	 "28510": {
+    "28510": {
       "objectName": "Pickup/Gliding/SkyJellyGlobal",
       "rewards": [
         {
@@ -46,5 +47,6 @@
         }
       ]
     }
-  }
+  },
+  "LootTables": {}
 }

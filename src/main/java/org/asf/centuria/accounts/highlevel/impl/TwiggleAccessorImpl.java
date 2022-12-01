@@ -45,110 +45,108 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 	@Override
 	public boolean removeTwiggle() {
 		var twiggleInv = getTwiggleInv();
-		
-		//find a twiggle that isn't working
+
+		// find a twiggle that isn't working
 		try {
-			
+
 			TwiggleItem selectedTwiggle = null;
-			for(var twiggle : twiggleInv)
-			{
+			for (var twiggle : twiggleInv) {
 				TwiggleItem twiggleItem = new TwiggleItem();
 				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
-	
-				if(twiggleItem.getTwiggleComponent().workType == TwiggleState.None)
-				{
+
+				if (twiggleItem.getTwiggleComponent().workType == TwiggleState.None) {
 					selectedTwiggle = twiggleItem;
 					break;
 				}
 			}
-			
-			if(selectedTwiggle == null)
+
+			if (selectedTwiggle == null)
 				return false;
-			
-			//remove it 
-			//TODO: BLAH bad bad 
+
+			// remove it
+			// TODO: BLAH bad bad
 			return removeTwiggle(selectedTwiggle.uuid);
-			
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
 
 	}
-	
+
 	@Override
 	public boolean removeTwiggle(String twiggleInvId) {
 		var twiggleInv = getTwiggleInv();
-		
+
 		try {
-			
+
 			JsonElement selectedTwiggleElement = null;
-			for(var twiggle : twiggleInv)
-			{
+			for (var twiggle : twiggleInv) {
 				TwiggleItem twiggleItem = new TwiggleItem();
 				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
-	
-				if(twiggleItem.getTwiggleComponent().workType == TwiggleState.None && twiggleItem.uuid == twiggleInvId)
-				{
+
+				if (twiggleItem.getTwiggleComponent().workType == TwiggleState.None
+						&& twiggleItem.uuid == twiggleInvId) {
 					selectedTwiggleElement = twiggle;
 					break;
 				}
 			}
-			
-			if(selectedTwiggleElement == null)
+
+			if (selectedTwiggleElement == null)
 				return false;
-			
-			//remove it 
+
+			// remove it
 			twiggleInv.remove(selectedTwiggleElement);
 			inventory.setItem(Integer.toString(InventoryType.Twiggle.invTypeId), twiggleInv);
-			
+
 			return true;
-			
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-
 
 	@Override
 	public TwiggleItem setTwiggleWork(TwiggleState workType, long workEndTime) {
 		var twiggleInv = getTwiggleInv();
-		
+
 		try {
-			
-			//Get the first nonworking twiggle
+
+			// Get the first nonworking twiggle
 			TwiggleItem selectedTwiggle = null;
 			int index = 0;
-			for(var twiggle : twiggleInv)
-			{
+			for (var twiggle : twiggleInv) {
 				TwiggleItem twiggleItem = new TwiggleItem();
 				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
-	
-				if(twiggleItem.getTwiggleComponent().workType == TwiggleState.None)
-				{
+
+				if (twiggleItem.getTwiggleComponent().workType == TwiggleState.None) {
 					selectedTwiggle = twiggleItem;
 					break;
 				}
-				
+
 				index++;
 			}
-			
-			if(selectedTwiggle == null) return null;
-			
-			//Set it to work
+
+			if (selectedTwiggle == null)
+				return null;
+
+			// Set it to work
 			selectedTwiggle.getTwiggleComponent().workType = workType;
 			selectedTwiggle.getTwiggleComponent().workEndTime = workEndTime;
-			
+
 			selectedTwiggle.getTimeStampComponent().stamp();
-			
-			//remove old twiggle item
+
+			// remove old twiggle item
 			twiggleInv.remove(index);
-			
-			//add new twiggle item
+
+			// add new twiggle item
 			twiggleInv.add(selectedTwiggle.toJsonObject());
-			
+
+			// save to disk
+			String invId = Integer.toString(InventoryType.Twiggle.invTypeId);
+			inventory.setItem(invId, inventory.getItem(invId));
+
 			return selectedTwiggle;
-			
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -156,45 +154,49 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 	}
 
 	@Override
-	public TwiggleItem setTwiggleWork(TwiggleState workType, long workEndTime, TwiggleWorkParameters twiggleWorkParameters) {
+	public TwiggleItem setTwiggleWork(TwiggleState workType, long workEndTime,
+			TwiggleWorkParameters twiggleWorkParameters) {
 		var twiggleInv = getTwiggleInv();
-		
+
 		try {
-			
-			//Get the first nonworking twiggle
+
+			// Get the first nonworking twiggle
 			TwiggleItem selectedTwiggle = null;
 			int index = 0;
-			for(var twiggle : twiggleInv)
-			{
+			for (var twiggle : twiggleInv) {
 				TwiggleItem twiggleItem = new TwiggleItem();
 				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
-	
-				if(twiggleItem.getTwiggleComponent().workType == TwiggleState.None)
-				{
+
+				if (twiggleItem.getTwiggleComponent().workType == TwiggleState.None) {
 					selectedTwiggle = twiggleItem;
 					break;
 				}
-				
+
 				index++;
 			}
-			
-			if(selectedTwiggle == null) return null;
-			
-			//Set it to work
+
+			if (selectedTwiggle == null)
+				return null;
+
+			// Set it to work
 			selectedTwiggle.getTwiggleComponent().workType = workType;
 			selectedTwiggle.getTwiggleComponent().workEndTime = workEndTime;
 			selectedTwiggle.getTwiggleComponent().twiggleWorkParams = twiggleWorkParameters;
-			
+
 			selectedTwiggle.getTimeStampComponent().stamp();
-			
-			//remove old twiggle item
+
+			// remove old twiggle item
 			twiggleInv.remove(index);
-			
-			//add new twiggle item
+
+			// add new twiggle item
 			twiggleInv.add(selectedTwiggle.toJsonObject());
-			
+
+			// save to disk
+			String invId = Integer.toString(InventoryType.Twiggle.invTypeId);
+			inventory.setItem(invId, inventory.getItem(invId));
+
 			return selectedTwiggle;
-			
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -205,18 +207,16 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 	public TwiggleItem[] getAllTwiggles() {
 		List<TwiggleItem> twiggles = new ArrayList<TwiggleItem>();
 		var twiggleInv = getTwiggleInv();
-		
-		try
-		{			
-			for(var twiggle : twiggleInv)
-			{
+
+		try {
+			for (var twiggle : twiggleInv) {
 				TwiggleItem twiggleItem = new TwiggleItem();
 				twiggleItem.fromJsonObject(twiggle.getAsJsonObject());
 				twiggles.add(twiggleItem);
 			}
-			
+
 			return (TwiggleItem[]) twiggles.toArray();
-			
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -224,16 +224,18 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 
 	@Override
 	public TwiggleItem getTwiggle(String twiggleInvId) {
-		var twiggleJsonObject = inventory.getAccessor().findInventoryObject(Integer.toString(InventoryType.Twiggle.invTypeId), twiggleInvId);
-		if(twiggleJsonObject == null) return null;
-		
-		try {		
-			
+		var twiggleJsonObject = inventory.getAccessor()
+				.findInventoryObject(Integer.toString(InventoryType.Twiggle.invTypeId), twiggleInvId);
+		if (twiggleJsonObject == null)
+			return null;
+
+		try {
+
 			TwiggleItem twiggleItem = new TwiggleItem();
 			twiggleItem.fromJsonObject(twiggleJsonObject);
-			
+
 			return twiggleItem;
-			
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -241,8 +243,28 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 
 	@Override
 	public TwiggleItem clearTwiggleWork(String twiggleInvId) {
-		//TODO
-		return null;
+		var twiggleInv = getTwiggleInv();
+		TwiggleItem selectedTwiggle = getTwiggle(twiggleInvId);
+
+		// Remove work
+		selectedTwiggle.getTwiggleComponent().workType = TwiggleState.None;
+		selectedTwiggle.getTwiggleComponent().workEndTime = 0;
+		selectedTwiggle.getTwiggleComponent().twiggleWorkParams = null;
+
+		selectedTwiggle.getTimeStampComponent().stamp();
+
+		// remove old twiggle item
+		twiggleInv.remove(inventory.getAccessor().findInventoryObject(Integer.toString(InventoryType.Twiggle.invTypeId),
+				twiggleInvId));
+
+		// add new twiggle item
+		twiggleInv.add(selectedTwiggle.toJsonObject());
+
+		// save to disk
+		String invId = Integer.toString(InventoryType.Twiggle.invTypeId);
+		inventory.setItem(invId, inventory.getItem(invId));
+
+		return selectedTwiggle;
 	}
 
 	@Override
@@ -252,7 +274,8 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 
 		var twigglesToAdd = DEFAULT_TWIGGLE_AMOUNT - twiggleInv.size();
 
-		if (twigglesToAdd <= 0) return;
+		if (twigglesToAdd <= 0)
+			return;
 
 		for (int i = 0; i < twigglesToAdd; i++) {
 			addNewTwiggle();
@@ -272,9 +295,8 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 
 		return twiggleItem;
 	}
-	
-	private JsonArray getTwiggleInv()
-	{
+
+	private JsonArray getTwiggleInv() {
 		String invId = Integer.toString(InventoryType.Twiggle.invTypeId);
 
 		// find Twiggle Inv
@@ -283,6 +305,5 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 
 		return inventory.getItem(invId).getAsJsonArray();
 	}
-
 
 }

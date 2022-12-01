@@ -28,8 +28,7 @@ public class LoginEventHandler implements IEventReceiver {
 	@EventListener
 	public void login(AccountLoginEvent event) {
 		// Load IP into a string object
-		String ip = ((InetSocketAddress) event.getClient().getSocket().getRemoteSocketAddress()).getAddress()
-				.getHostAddress();
+		String ip = event.getClient().getAddress();
 
 		// Check blocked IPs
 		if (UserIpBlockUtils.isBlocked(event.getAccount(), ip)) {
@@ -149,7 +148,7 @@ public class LoginEventHandler implements IEventReceiver {
 					owner.getPrivateChannel().block().createMessage(msg.build()).subscribe();
 
 					// Wait for confirmation
-					while (!cont.confirmed && event.getClient().getSocket() != null) {
+					while (!cont.confirmed && event.getClient().isConnected()) {
 						if (i >= boundary || cont.rejected) {
 							// Cancel login
 							event.getClient().container = oldCont;

@@ -10,6 +10,7 @@ import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.enums.trading.TradeValidationType;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
+import org.asf.centuria.social.SocialManager;
 
 public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 
@@ -19,9 +20,8 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 	public String inboundUserId;
 
 	// Outbound
-	public TradeValidationType tradeValidationType = null;
+	public TradeValidationType tradeValidationType = TradeValidationType.Success;
 	public String outboundUserId = null;
-	public Boolean success = null;
 
 	@Override
 	public TradeInitiatePacket instantiate() {
@@ -41,19 +41,9 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		writer.writeInt(DATA_PREFIX); // Data prefix
-
-		if (tradeValidationType != null) {
-			writer.writeInt(tradeValidationType.value); // trade validation type
-		}
-
-		if (outboundUserId != null) {
-			writer.writeString(outboundUserId); // user ID
-		}
-
-		if (success != null) {
-			writer.writeBoolean(success); // success
-		}
-
+		writer.writeString(outboundUserId); // user ID
+		writer.writeInt(tradeValidationType.value); // trade validation type
+		writer.writeBoolean(tradeValidationType == TradeValidationType.Success);
 		writer.writeString(DATA_SUFFIX); // Data suffix
 	}
 
@@ -70,7 +60,25 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 		Player targetPlayer = AccountManager.getInstance().getAccount(inboundUserId).getOnlinePlayerInstance();
 		if (targetPlayer == null) {
 			// Fail
-			client.sendPacket(new TradeInitiateFailPacket());
+			TradeInitiateFailPacket pk = new TradeInitiateFailPacket();
+			pk.player = inboundUserId;
+			pk.tradeValidationType = TradeValidationType.User_Not_Avail;
+			sourcePlayer.client.sendPacket(pk);
+			return true;
+		}
+
+		// Check privacy settings
+		int privSetting = 0;
+		if (targetPlayer.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17545, 0) != null)
+			privSetting = targetPlayer.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17545,
+					0).value;
+		if ((privSetting == 1 && !SocialManager.getInstance().getPlayerIsFollowing(targetPlayer.account.getAccountID(),
+				sourcePlayer.account.getAccountID())) || privSetting == 2) {
+			// Fail
+			TradeInitiateFailPacket pk = new TradeInitiateFailPacket();
+			pk.player = inboundUserId;
+			pk.tradeValidationType = TradeValidationType.User_Not_Avail;
+			sourcePlayer.client.sendPacket(pk);
 			return true;
 		}
 

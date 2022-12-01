@@ -3,6 +3,9 @@ package org.asf.centuria.discord.handlers.discord;
 import org.asf.centuria.discord.handlers.discord.interactions.buttons.AppealButtonHandler;
 import org.asf.centuria.discord.handlers.discord.interactions.buttons.BasicDismissDeleteHandler;
 import org.asf.centuria.discord.handlers.discord.interactions.buttons.BasicDismissHandler;
+import org.asf.centuria.discord.handlers.discord.interactions.buttons.DownloadSingleplayerLauncherHandler;
+import org.asf.centuria.discord.handlers.discord.interactions.buttons.FeedbackReplyButtonHandler;
+import org.asf.centuria.discord.handlers.discord.interactions.buttons.ReportReplyButtonHandler;
 import org.asf.centuria.discord.handlers.discord.interactions.buttons.accountoptions.ConfirmDisable2fa;
 import org.asf.centuria.discord.handlers.discord.interactions.buttons.accountoptions.ConfirmEnable2fa;
 import org.asf.centuria.discord.handlers.discord.interactions.buttons.accountoptions.Disable2fa;
@@ -92,6 +95,12 @@ public class InteractionButtonHandler {
 			return ConfirmEnable2fa.handle(id, event, gateway);
 		} else if (id.startsWith("createaccount/") && id.split("/").length == 3) {
 			return CreateAccountHandler.handle(id, event, gateway);
+		} else if (id.startsWith("feedbackreply/") && id.split("/").length == 2) {
+			return FeedbackReplyButtonHandler.handle(id, event, gateway);
+		} else if (id.startsWith("reportreply/") && id.split("/").length == 3) {
+			return ReportReplyButtonHandler.handle(id, event, gateway);
+		} else if (id.equals("downloadsingleplayerlauncher")) {
+			return DownloadSingleplayerLauncherHandler.handle(id, event, gateway);
 		}
 
 		// Default handler

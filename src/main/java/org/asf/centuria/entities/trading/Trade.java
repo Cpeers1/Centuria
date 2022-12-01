@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.enums.trading.TradeValidationType;
 import org.asf.centuria.packets.xt.gameserver.trade.*;
 
 import com.google.gson.JsonObject;
@@ -86,9 +87,10 @@ public class Trade {
 				|| sourcePlayer.roomReady == false || sourcePlayer.roomReady == false) {
 			// Players are already engaged in a trade, or arn't fully loaded yet.
 			Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeInitiateFailPacket] Server to client.");
-			TradeInitiateFailPacket tradeInitiateFailPacket = new TradeInitiateFailPacket();
-
-			sourcePlayer.client.sendPacket(tradeInitiateFailPacket);
+			TradeInitiateFailPacket pk = new TradeInitiateFailPacket();
+			pk.player = targetPlayer.account.getAccountID();
+			pk.tradeValidationType = TradeValidationType.User_Not_Avail;
+			sourcePlayer.client.sendPacket(pk);
 			return null;
 		}
 
@@ -105,7 +107,6 @@ public class Trade {
 
 		// Create new trade initiate packet for target player
 		TradeInitiatePacket tradeInitiatePacket = new TradeInitiatePacket();
-		tradeInitiatePacket.success = true;
 		tradeInitiatePacket.outboundUserId = sourcePlayer.account.getAccountID();
 
 		targetPlayer.client.sendPacket(tradeInitiatePacket);
@@ -113,11 +114,10 @@ public class Trade {
 				+ targetPlayer.account.getAccountID() + ": " + tradeInitiatePacket.build());
 
 		// Create trade initiate packet for source player
-		tradeInitiatePacket = new TradeInitiatePacket();
-		tradeInitiatePacket.success = true;
+		tradeInitiatePacket = new TradeInitiatePacket();	
+		tradeInitiatePacket.tradeValidationType = TradeValidationType.Success;
 		Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeInitiate] Server to client with ID "
 				+ sourcePlayer.account.getAccountID() + ": " + tradeInitiatePacket.build());
-
 		sourcePlayer.client.sendPacket(tradeInitiatePacket);
 
 		return newTrade;
@@ -389,6 +389,8 @@ public class Trade {
 		tradeReadyAcceptPacket.outbound_Success = true;
 		tradeReadyAcceptPacket.outbound_WaitingForOtherPlayer = false;
 
+		targetPlayer.client.sendPacket(tradeReadyAcceptPacket);
+		sourcePlayer.client.sendPacket(tradeReadyAcceptPacket);
 		for (var set : itemsToGive.entrySet()) {
 			if (set.getValue().quantity > 1
 					|| set.getValue().item.get("components").getAsJsonObject().has("Quantity")) {
@@ -420,10 +422,6 @@ public class Trade {
 				sourcePlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer).add(itm);
 			}
 		}
-
-		targetPlayer.client.sendPacket(tradeReadyAcceptPacket);
-		sourcePlayer.client.sendPacket(tradeReadyAcceptPacket);
-
 		targetPlayer.tradeEngagedIn = null;
 		sourcePlayer.tradeEngagedIn = null;
 	}

@@ -1,9 +1,12 @@
 package org.asf.centuria.networking.chatserver.networking;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,6 +20,7 @@ import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.accounts.highlevel.ItemAccessor;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.entities.players.Player;
@@ -45,7 +49,23 @@ public class SendMessage extends AbstractChatPacket {
 	private static ArrayList<String> filterWords = new ArrayList<String>();
 	private static ArrayList<String> alwaysfilterWords = new ArrayList<String>();
 
+	public static String[] getInvalidWords() {
+		ArrayList<String> fullList = new ArrayList<String>();
+		fullList.addAll(muteWords);
+		fullList.addAll(filterWords);
+		fullList.addAll(alwaysfilterWords);
+		return fullList.toArray(t -> new String[t]);
+	}
+
 	static {
+		reloadFilter();
+	}
+
+	private static void reloadFilter() {
+		muteWords.clear();
+		filterWords.clear();
+		alwaysfilterWords.clear();
+
 		// Load filter
 		try {
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
@@ -108,7 +128,88 @@ public class SendMessage extends AbstractChatPacket {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		// Load local filters
+		if (!new File("textfilter").exists()) {
+			new File("textfilter").mkdirs();
+			try {
+				Files.writeString(Path.of("textfilter/filter.txt"), "");
+				Files.writeString(Path.of("textfilter/alwaysfilter.txt"), "");
+				Files.writeString(Path.of("textfilter/instamute.txt"), "");
+			} catch (IOException e) {
+			}
+		}
+		try {
+			filterLastChange = Files.getLastModifiedTime(Path.of("textfilter/filter.txt")).toMillis();
+			alwaysFilterLastChange = Files.getLastModifiedTime(Path.of("textfilter/alwaysfilter.txt")).toMillis();
+			instaMuteLastChange = Files.getLastModifiedTime(Path.of("textfilter/instamute.txt")).toMillis();
+
+			// Load filter
+			try {
+				InputStream strm = new FileInputStream("textfilter/filter.txt");
+				String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+				for (String line : lines.split("\n")) {
+					if (line.isEmpty() || line.startsWith("#"))
+						continue;
+
+					String data = line.trim();
+					while (data.contains("  "))
+						data = data.replace("  ", "");
+
+					for (String word : data.split(";"))
+						filterWords.add(word.toLowerCase());
+				}
+				strm.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			// Load ban words
+			try {
+				InputStream strm = new FileInputStream("textfilter/instamute.txt");
+				String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+				for (String line : lines.split("\n")) {
+					if (line.isEmpty() || line.startsWith("#"))
+						continue;
+
+					String data = line.trim();
+					while (data.contains("  "))
+						data = data.replace("  ", "");
+
+					for (String word : data.split(";"))
+						muteWords.add(word.toLowerCase());
+				}
+				strm.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			// Load always filtered words
+			try {
+				InputStream strm = new FileInputStream("textfilter/alwaysfilter.txt");
+				String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+				for (String line : lines.split("\n")) {
+					if (line.isEmpty() || line.startsWith("#"))
+						continue;
+
+					String data = line.trim();
+					while (data.contains("  "))
+						data = data.replace("  ", "");
+
+					for (String word : data.split(";"))
+						alwaysfilterWords.add(word.toLowerCase());
+				}
+				strm.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
+		}
 	}
+
+	private static long filterLastChange;
+	private static long alwaysFilterLastChange;
+	private static long instaMuteLastChange;
 
 	private String message;
 	private String room;
@@ -154,7 +255,7 @@ public class SendMessage extends AbstractChatPacket {
 
 		// Chat commands
 		if (message.startsWith(">")) {
-			String cmd = message.substring(1).trim();
+			String cmd = message.substring(1).trim().toLowerCase();
 			if (handleCommand(cmd, client))
 				return true;
 		}
@@ -167,6 +268,21 @@ public class SendMessage extends AbstractChatPacket {
 		// Log
 		if (!client.isRoomPrivate(room))
 			Centuria.logger.info("Chat: " + client.getPlayer().getDisplayName() + ": " + message);
+
+		// Check times of the filter update
+		try {
+			long filterLastChange = Files.getLastModifiedTime(Path.of("textfilter/filter.txt")).toMillis();
+			long alwaysFilterLastChange = Files.getLastModifiedTime(Path.of("textfilter/alwaysfilter.txt")).toMillis();
+			long instaMuteLastChange = Files.getLastModifiedTime(Path.of("textfilter/instamute.txt")).toMillis();
+			if (SendMessage.filterLastChange != filterLastChange
+					|| SendMessage.alwaysFilterLastChange != alwaysFilterLastChange
+					|| SendMessage.instaMuteLastChange != instaMuteLastChange) {
+				// Reload
+				Centuria.logger.info("Updating chat filter...");
+				reloadFilter();
+			}
+		} catch (IOException e) {
+		}
 
 		// Increase ban counter
 		client.banCounter++;
@@ -387,9 +503,9 @@ public class SendMessage extends AbstractChatPacket {
 		// Generate the command list
 		ArrayList<String> commandMessages = new ArrayList<String>();
 
-		if (Centuria.giveAllResources)
+		if (Centuria.giveAllResources || GameServer.hasPerm(permLevel, "admin"))
 			commandMessages.add("giveBasicMaterials");
-		if (Centuria.giveAllCurrency)
+		if (Centuria.giveAllCurrency || GameServer.hasPerm(permLevel, "admin"))
 			commandMessages.add("giveBasicCurrency");
 
 		if (GameServer.hasPerm(permLevel, "moderator")) {
@@ -429,8 +545,14 @@ public class SendMessage extends AbstractChatPacket {
 			}
 			commandMessages.add("staffroom");
 			commandMessages.add("listplayers");
-			commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
 		}
+		if (Centuria.giveAllResources || Centuria.giveAllCurrency || Centuria.giveAllFurnitureItems
+				|| Centuria.giveAllClothes || (GameServer.hasPerm(permLevel, "admin")
+						|| (Centuria.giveAllResources && GameServer.hasPerm(permLevel, "moderator"))))
+			if (GameServer.hasPerm(permLevel, "moderator"))
+				commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
+			else
+				commandMessages.add("giveitem <itemDefId> [<quantity>]");
 		commandMessages.add("questrewind <amount-of-quests-to-rewind>");
 
 		// Add module commands
@@ -461,7 +583,7 @@ public class SendMessage extends AbstractChatPacket {
 					return true;
 
 				if (cmdId.equals("givebasicmaterials")) {
-					if (Centuria.giveAllResources) {
+					if (Centuria.giveAllResources || GameServer.hasPerm(permLevel, "admin")) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
 
 						if (onlinePlayer != null) {
@@ -489,7 +611,7 @@ public class SendMessage extends AbstractChatPacket {
 						return true;
 					}
 				} else if (cmdId.equals("givebasiccurrency")) {
-					if (Centuria.giveAllCurrency) {
+					if (Centuria.giveAllCurrency || GameServer.hasPerm(permLevel, "admin")) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
 
 						if (onlinePlayer != null) {
@@ -824,16 +946,9 @@ public class SendMessage extends AbstractChatPacket {
 							// Disconnect all with the given IP address (or attempt to)
 							for (Player plr : Centuria.gameServer.getPlayers()) {
 								// Get IP of player
-								try {
-									InetSocketAddress ip = (InetSocketAddress) plr.client.getSocket()
-											.getRemoteSocketAddress();
-									InetAddress addr = ip.getAddress();
-									String ipaddr = addr.getHostAddress();
-									if (ipaddr.equals(args.get(0))) {
-										// Ban player
-										plr.account.ban(client.getPlayer().getAccountID(), reason);
-									}
-								} catch (Exception e) {
+								if (plr.client.getAddress().equals(args.get(0))) {
+									// Ban player
+									plr.account.ban(client.getPlayer().getAccountID(), reason);
 								}
 							}
 
@@ -1874,12 +1989,12 @@ public class SendMessage extends AbstractChatPacket {
 						}
 					}
 					case "giveitem":
-						if (GameServer.hasPerm(permLevel, "admin")) {
+						if (GameServer.hasPerm(permLevel, "admin") || Centuria.giveAllResources) {
 							try {
 								int defID = 0;
 								int quantity = 1;
 								String player = "";
-								String uuid = "";
+								String uuid = client.getPlayer().getAccountID();
 
 								if (args.size() < 1) {
 									systemMessage("Missing argument: itemDefId", cmd, client);
@@ -1887,7 +2002,6 @@ public class SendMessage extends AbstractChatPacket {
 								}
 
 								defID = Integer.valueOf(args.get(0));
-
 								if (args.size() == 2) {
 									quantity = Integer.valueOf(args.get(1));
 								}
@@ -1912,54 +2026,103 @@ public class SendMessage extends AbstractChatPacket {
 									return true;
 								}
 
-								// player case..
+								// find account
+								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
-								if (uuid.equals("")) {
-									// give item to the command sender..
+								// give item to the command sender..
+								var onlinePlayer = acc.getOnlinePlayerInstance();
+								var result = acc.getPlayerInventory().getItemAccessor(onlinePlayer).add(defID,
+										quantity);
 
-									var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
-
-									if (onlinePlayer != null) {
-										var result = client.getPlayer().getPlayerInventory()
-												.getItemAccessor(client.getPlayer().getOnlinePlayerInstance())
-												.add(defID, quantity);
-
-										// TODO: Check result
-										systemMessage("Gave " + client.getPlayer().getDisplayName() + " " + quantity
-												+ " of item " + defID + ".", cmd, client);
-										return true;
-									} else {
-										// TODO: support for giving offline players items.. somehow
-										systemMessage("Specified account does not appear to be online.", cmd, client);
-									}
-
-								} else {
-									var onlinePlayer = AccountManager.getInstance().getAccount(uuid)
-											.getOnlinePlayerInstance();
-
-									if (onlinePlayer != null) {
-										var result = onlinePlayer.account.getPlayerInventory()
-												.getItemAccessor(onlinePlayer).add(defID, quantity);
-
-										// TODO: Check result
-										systemMessage("Gave " + onlinePlayer.account.getDisplayName() + " " + quantity
-												+ " of item " + uuid + ".", cmd, client);
-										return true;
-									} else {
-										// TODO: support for giving offline players items.. somehow
-										systemMessage("Specified account does not appear to be online.", cmd, client);
-									}
-
-								}
-
+								if (result.length > 0)
+									systemMessage(
+											"Gave " + acc.getDisplayName() + " " + quantity + " of item " + defID + ".",
+											cmd, client);
+								else
+									systemMessage("Failed to add item.", cmd, client);
 								return true;
 							} catch (Exception e) {
 								systemMessage("Error: " + e, cmd, client);
 								return true;
 							}
-						} else {
-							break;
 						}
+						break;
+					}
+				}
+
+				//
+				// User giveitem command
+				if (cmd.equals("giveitem")) {
+					try {
+						int defID = 0;
+						int quantity = 1;
+						String uuid = client.getPlayer().getAccountID();
+
+						if (args.size() < 1) {
+							systemMessage("Missing argument: itemDefId", cmd, client);
+							return true;
+						}
+
+						defID = Integer.valueOf(args.get(0));
+						if (args.size() == 2) {
+							quantity = Integer.valueOf(args.get(1));
+						}
+
+						// funny stuff check
+						if (quantity <= 0 || defID <= 0) {
+							systemMessage("You cannot give 0 or less quantity of/or an item ID of 0 or below.", cmd,
+									client);
+							return true;
+						}
+
+						// check max item limit (hardcoded 100 for creative mode)
+						int current = client.getPlayer().getPlayerInventory().getItemAccessor(null)
+								.getCountOfItem(defID);
+						if (quantity + current > 100) {
+							systemMessage("You cannot have more than 100 of a item via commands.", cmd, client);
+							return true;
+						}
+
+						// check item
+						if (ItemAccessor.getInventoryTypeOf(defID) == null
+								|| (!ItemAccessor.getInventoryTypeOf(defID).equals("100")
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("104")
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("111")
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("103")
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("102"))) {
+							systemMessage("Invalid item defID. Please make sure you can actually obtain this item.",
+									cmd, client);
+							return true;
+						}
+
+						// check perms and item type
+						if ((ItemAccessor.getInventoryTypeOf(defID).equals("100") && !Centuria.giveAllClothes)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("104") && !Centuria.giveAllCurrency)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("111") && !Centuria.giveAllClothes)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("103") && !Centuria.giveAllResources)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("102")
+										&& !Centuria.giveAllFurnitureItems)) {
+							systemMessage("Invalid item defID. Please make sure you can actually obtain this item.",
+									cmd, client);
+							return true;
+						}
+
+						// find account
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// give item to the command sender..
+						var onlinePlayer = acc.getOnlinePlayerInstance();
+						var result = acc.getPlayerInventory().getItemAccessor(onlinePlayer).add(defID, quantity);
+
+						if (result.length > 0)
+							systemMessage("Gave " + acc.getDisplayName() + " " + quantity + " of item " + defID + ".",
+									cmd, client);
+						else
+							systemMessage("Failed to add item.", cmd, client);
+						return true;
+					} catch (Exception e) {
+						systemMessage("Error: " + e, cmd, client);
+						return true;
 					}
 				}
 

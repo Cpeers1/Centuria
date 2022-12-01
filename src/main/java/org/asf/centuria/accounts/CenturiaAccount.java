@@ -1,8 +1,5 @@
 package org.asf.centuria.accounts;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-
 import org.asf.centuria.Centuria;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.ipbans.IpBanManager;
@@ -263,9 +260,7 @@ public abstract class CenturiaAccount {
 		Player plr = getOnlinePlayerInstance();
 		if (plr != null) {
 			// Apply IP ban
-			InetSocketAddress ip = (InetSocketAddress) plr.client.getSocket().getRemoteSocketAddress();
-			InetAddress addr = ip.getAddress();
-			String ipaddr = addr.getHostAddress();
+			String ipaddr = plr.client.getAddress();
 			IpBanManager manager = IpBanManager.getInstance();
 			if (!manager.isIPBanned(ipaddr))
 				manager.banIP(ipaddr);
@@ -276,15 +271,13 @@ public abstract class CenturiaAccount {
 			// Ban other users on the same IP, well, kick and prevent login and send dm
 			for (Player plr2 : Centuria.gameServer.getPlayers()) {
 				// Get IP of player
-				try {
-					InetSocketAddress ip2 = (InetSocketAddress) plr2.client.getSocket().getRemoteSocketAddress();
-					InetAddress addr2 = ip2.getAddress();
-					String ipaddr2 = addr2.getHostAddress();
-					if (ipaddr.equals(ipaddr2) && !plr2.account.getAccountID().equals(getAccountID())) {
-						// Ban
-						plr2.account.ban(issuer, reason + " [AUTOMATIC BAN DUE TO IP BAN OF " + getDisplayName() + "]");
-					}
-				} catch (Exception e) {
+				if (ipaddr.equals(plr2.client.getAddress()) && !plr2.account.getAccountID().equals(getAccountID())) {
+					// Ban
+					plr2.account.ban(issuer,
+							(reason == null
+									? "IP-ban of " + getDisplayName()
+											+ " triggered a ban as they are on the same network"
+									: reason + " [AUTOMATIC BAN DUE TO IP BAN OF " + getDisplayName() + "]"));
 				}
 			}
 

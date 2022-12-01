@@ -193,6 +193,7 @@ public class AccountOptionsMenuHandler {
 				addItemToZip(account.getPlayerInventory(), "8", invZip);
 				addItemToZip(account.getPlayerInventory(), "9", invZip);
 				addItemToZip(account.getPlayerInventory(), "avatars", invZip);
+				addItemToZip(account.getPlayerInventory(), "level", invZip);
 				invZip.close();
 				strm.close();
 			} catch (IOException e) {

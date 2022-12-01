@@ -1,0 +1,328 @@
+{
+  "Resources": {},
+  "HarvestTables": {},
+  "LootTables": {
+    "4629": {
+      "objectName": "CasualGame/Runes/Flora18",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "7087",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "4628",
+          "minCount": 45,
+          "maxCount": 45,
+          "weight": 1
+        }
+      ]
+    },
+    "4628": {
+      "objectName": "CasualGame/Runes/Flora17",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "7093",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "4605",
+          "minCount": 40,
+          "maxCount": 45,
+          "weight": 1
+        }
+      ]
+    },
+    "4605": {
+      "objectName": "CasualGame/Runes/Flame12",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "7076",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "4599",
+          "minCount": 10,
+          "maxCount": 15,
+          "weight": 1
+        }
+      ]
+    },
+    "4607": {
+      "objectName": "CasualGame/Runes/Flame14",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "7076",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "4599",
+          "minCount": 20,
+          "maxCount": 25,
+          "weight": 1
+        }
+      ]
+    },
+    "4627": {
+      "objectName": "CasualGame/Runes/Flora16",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "7087",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "4605",
+          "minCount": 30,
+          "maxCount": 30,
+          "weight": 1
+        }
+      ]
+    },
+    "4608": {
+      "objectName": "CasualGame/Runes/Flame16",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "7077",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "4599",
+          "minCount": 30,
+          "maxCount": 30,
+          "weight": 1
+        }
+      ]
+    },
+    "4609": {
+      "objectName": "CasualGame/Runes/Flame17",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "7077",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "4599",
+          "minCount": 40,
+          "maxCount": 45,
+          "weight": 1
+        }
+      ]
+    },
+    "4610": {
+      "objectName": "CasualGame/Runes/Flame18",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "7077",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "4599",
+          "minCount": 45,
+          "maxCount": 45,
+          "weight": 1
+        }
+      ]
+    },
+    "4625": {
+      "objectName": "CasualGame/Runes/Flora14",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "7092",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "4605",
+          "minCount": 20,
+          "maxCount": 25,
+          "weight": 1
+        }
+      ]
+    },
+    "4623": {
+      "objectName": "CasualGame/Runes/Flora12",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "itemId": "4740",
+          "referencedTableId": "7092",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "4605",
+          "minCount": 10,
+          "maxCount": 15,
+          "weight": 1
+        }
+      ]
+    },
+    "4640": {
+      "objectName": "CasualGame/Runes/Miasma12",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "7083",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "4629",
+          "minCount": 10,
+          "maxCount": 15,
+          "weight": 1
+        }
+      ]
+    },
+    "4644": {
+      "objectName": "CasualGame/Runes/Miasma16",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "7090",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "4629",
+          "minCount": 30,
+          "maxCount": 30,
+          "weight": 1
+        }
+      ]
+    },
+    "4645": {
+      "objectName": "CasualGame/Runes/Miasma17",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "7084",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "4629",
+          "minCount": 40,
+          "maxCount": 45,
+          "weight": 100
+        }
+      ]
+    },
+    "4646": {
+      "objectName": "CasualGame/Runes/Miasma18",
+      "rewards": [
+        {
+          "hasItem": false,
+          "hasTableReference": true,
+          "itemId": null,
+          "referencedTableId": "7090",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        },
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "referencedTableId": "4629",
+          "minCount": 45,
+          "maxCount": 45,
+          "weight": 100
+        }
+      ]
+    }
+  }
+}

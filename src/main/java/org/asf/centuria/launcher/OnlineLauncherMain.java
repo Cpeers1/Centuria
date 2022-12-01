@@ -74,7 +74,7 @@ public class OnlineLauncherMain {
 
 		frmCenturiaLauncher = new JFrame();
 		frmCenturiaLauncher.setResizable(false);
-		frmCenturiaLauncher.setTitle("Centuria Launcher");
+		frmCenturiaLauncher.setTitle("EmuFeral Online Launcher");
 		frmCenturiaLauncher.setBounds(100, 100, 651, 342);
 		frmCenturiaLauncher.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmCenturiaLauncher.setLocationRelativeTo(null);
@@ -101,7 +101,7 @@ public class OnlineLauncherMain {
 		panel_1.add(panel_2);
 		panel_2.setLayout(null);
 
-		JLabel lblNewLabel = new JLabel("Centuria Online");
+		JLabel lblNewLabel = new JLabel("EmuFeral Online");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -217,7 +217,7 @@ public class OnlineLauncherMain {
 						File modOut = new File("client/build/Fer.al_Data/sharedassets1.assets");
 						FileOutputStream os = new FileOutputStream(modOut);
 						InputStream is = new URL(
-								"https://aerialworks.ddns.net/extra/centuria/sharedassets1-online.assets").openStream();
+								"https://aerialworks.ddns.net/extra/emuferal/sharedassets1-online.assets").openStream();
 						is.transferTo(os);
 						os.close();
 						is.close();

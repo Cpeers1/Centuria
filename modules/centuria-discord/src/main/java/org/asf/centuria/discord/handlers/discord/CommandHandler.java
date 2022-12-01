@@ -127,8 +127,7 @@ public class CommandHandler {
 	 * @param guild   Guild it was run in
 	 * @param gateway Client
 	 */
-	public static Mono<?> handle(ApplicationCommandInteractionEvent event, Guild guild,
-			GatewayDiscordClient gateway) {
+	public static Mono<?> handle(ApplicationCommandInteractionEvent event, Guild guild, GatewayDiscordClient gateway) {
 		ApplicationCommandInteractionData data = (ApplicationCommandInteractionData) event.getInteraction().getData()
 				.data().get();
 		String command = data.name().get();
@@ -228,6 +227,21 @@ public class CommandHandler {
 					return Mono.empty();
 				}
 
+				// Check rank
+				if (acc.getPlayerInventory().containsItem("permissions")) {
+					if ((GameServer
+							.hasPerm(modacc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+									.get("permissionLevel").getAsString(), "developer")
+							&& !GameServer.hasPerm(permLevel, "developer"))
+							|| GameServer
+									.hasPerm(modacc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString(), "admin")
+									&& !GameServer.hasPerm(permLevel, "admin")) {
+						event.reply("**Error:** unable to moderate higher-ranking members.").block();
+						return Mono.empty();
+					}
+				}
+
 				// Kick
 				if (params.size() == 1) {
 					event.reply("Kicked player " + acc.getDisplayName()).block();
@@ -276,6 +290,21 @@ public class CommandHandler {
 					return Mono.empty();
 				}
 
+				// Check rank
+				if (acc.getPlayerInventory().containsItem("permissions")) {
+					if ((GameServer
+							.hasPerm(modacc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+									.get("permissionLevel").getAsString(), "developer")
+							&& !GameServer.hasPerm(permLevel, "developer"))
+							|| GameServer
+									.hasPerm(modacc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString(), "admin")
+									&& !GameServer.hasPerm(permLevel, "admin")) {
+						event.reply("**Error:** unable to moderate higher-ranking members.").block();
+						return Mono.empty();
+					}
+				}
+
 				// Ban
 				if (params.size() == 1) {
 					event.reply("Banned player " + acc.getDisplayName()).block();
@@ -322,6 +351,21 @@ public class CommandHandler {
 				if (acc.isBanned()) {
 					event.reply("**Error:** player is already banned.").block();
 					return Mono.empty();
+				}
+
+				// Check rank
+				if (acc.getPlayerInventory().containsItem("permissions")) {
+					if ((GameServer
+							.hasPerm(modacc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+									.get("permissionLevel").getAsString(), "developer")
+							&& !GameServer.hasPerm(permLevel, "developer"))
+							|| GameServer
+									.hasPerm(modacc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString(), "admin")
+									&& !GameServer.hasPerm(permLevel, "admin")) {
+						event.reply("**Error:** unable to moderate higher-ranking members.").block();
+						return Mono.empty();
+					}
 				}
 
 				// Tempban
@@ -373,6 +417,21 @@ public class CommandHandler {
 				if (!acc.isBanned() && !acc.isMuted()) {
 					event.reply("**Error:** player has no penalties.").block();
 					return Mono.empty();
+				}
+
+				// Check rank
+				if (acc.getPlayerInventory().containsItem("permissions")) {
+					if ((GameServer
+							.hasPerm(modacc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+									.get("permissionLevel").getAsString(), "developer")
+							&& !GameServer.hasPerm(permLevel, "developer"))
+							|| GameServer
+									.hasPerm(modacc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString(), "admin")
+									&& !GameServer.hasPerm(permLevel, "admin")) {
+						event.reply("**Error:** unable to moderate higher-ranking members.").block();
+						return Mono.empty();
+					}
 				}
 
 				// Pardon

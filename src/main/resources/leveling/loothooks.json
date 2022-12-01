@@ -277,5 +277,96 @@
 				"type:lorefollowup"
 			]
 		}
+	],
+	"12377": [
+		{
+			"__NOTE__": "Quest: Pizza Parkour",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"12285": [
+		{
+			"__NOTE__": "Quest: Picken Pick Up",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"11871": [
+		{
+			"__NOTE__": "Quest: Dry or Die",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"12286": [
+		{
+			"__NOTE__": "Quest: Love's Labors Lacerated",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"12405": [
+		{
+			"__NOTE__": "Quest: Pest Control",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"12287": [
+		{
+			"__NOTE__": "Quest: An Especially Cold Case",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore",
+				"type:lorefollowup"
+			]
+		}
+	],
+	"13913": [
+		{
+			"__NOTE__": "Quest: Brody's BroRace",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"13781": [
+		{
+			"__NOTE__": "Quest: Fountain Fix",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
+	],
+	"14244": [
+		{
+			"__NOTE__": "Quest: Pants' Birthday Surprise",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"14067": [
+		{
+			"__NOTE__": "Quest: Pie in the Sky",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
 	]
 }

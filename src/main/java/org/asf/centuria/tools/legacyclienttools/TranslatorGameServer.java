@@ -12,6 +12,7 @@ import java.util.Random;
 
 import org.asf.centuria.networking.smartfox.BaseSmartfoxServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
+import org.asf.centuria.networking.smartfox.SocketSmartfoxClient;
 import org.asf.centuria.packets.smartfox.ISmartfoxPacket;
 import org.asf.centuria.packets.xml.handshake.auth.ClientToServerAuthPacket;
 import org.asf.centuria.packets.xml.handshake.version.ClientToServerHandshake;
@@ -54,13 +55,15 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 		registerPacket(new ProxiedRoomJoinPacket());
 		registerPacket(new ProxiedObjectUpdatePacket());
 		registerPacket(new ProxiedObjectInfoPacket());
+		registerPacket(new ProxiedAvatarLookGetPacket());
+		registerPacket(new ProxiedInventoryListPacket());
 		registerPacket(new XTPacketProxy());
 	}
 
 	@Override
 	protected void startClient(SmartfoxClient client) throws IOException {
 		// Connect to the game server
-		SmartfoxClient remoteClient;
+		SocketSmartfoxClient remoteClient;
 		try {
 			InputStream strm = new URL(directorAddr + "/v1/bestGameServer").openStream();
 			String resp = new String(strm.readAllBytes());
@@ -68,7 +71,7 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 
 			JsonObject obj = JsonParser.parseString(resp).getAsJsonObject();
 			Socket remoteSock = new Socket(obj.get("smartfoxServer").getAsString(), remotePort);
-			remoteClient = new SmartfoxClient(remoteSock, this);
+			remoteClient = new SocketSmartfoxClient(remoteSock, this);
 		} catch (Exception e) {
 			// Fail
 			client.readPacket(ClientToServerHandshake.class);
@@ -105,6 +108,7 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 					// Client loop
 					while (remoteClient.getSocket() != null) {
 						String data = readRawPacket(remoteClient);
+						System.out.println("Proxy: " + data);
 						try {
 							handlePacket(data, remoteClient);
 						} catch (Exception e) {
@@ -207,7 +211,7 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 					remainingIL--;
 					
 					// Send
-					localClient.sendPacket(packet);
+					handlePacket(packet, remoteClient);
 				}
 			}
 			
@@ -307,6 +311,11 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 
 	@Override
 	protected void onStop() {
+	}
+
+	@Override
+	protected SmartfoxClient createSocketClient(Socket client) {
+		return new SocketSmartfoxClient(client, this);
 	}
 
 }

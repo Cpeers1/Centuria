@@ -45,7 +45,8 @@ public class ModerationHandlers implements IEventReceiver {
 					message = "You have been banned from our servers:\n`" + ev.getReason() + "`\n";
 				message += "\n";
 				if (ev.isPermanent()) {
-					message += "This is a permanent ban, you can attempt to appeal by pressing the button below.";
+					message += "This is a permanent ban, you can attempt to appeal by pressing the button below.\n"
+							+ "Due to this being a permanent ban, you receive a singleplayer launcher with your data. However note that you will not be able to play with others, multiplayer is completely disabled.";
 				} else
 					message += "This is a temporary ban, you cannot log on for " + ev.getDays() + " days.";
 
@@ -63,8 +64,10 @@ public class ModerationHandlers implements IEventReceiver {
 
 				// Appeal button (if permanent)
 				if (ev.isPermanent()) {
-					msg.addComponent(ActionRow.of(Button
-							.danger("appeal/" + userID + "/" + ev.getAccount().getAccountID(), "Appeal for pardon")));
+					msg.addComponent(ActionRow.of(
+							Button.danger("appeal/" + userID + "/" + ev.getAccount().getAccountID(),
+									"Appeal for pardon"),
+							Button.success("downloadsingleplayerlauncher", "Download singleplayer launcher")));
 				}
 
 				// Send response

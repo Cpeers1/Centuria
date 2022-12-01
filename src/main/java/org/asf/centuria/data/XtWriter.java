@@ -8,16 +8,18 @@ public class XtWriter {
 	private ArrayList<String> objects = new ArrayList<String>();
 
 	public String encode() {
+		boolean first = true;
 		String d = "%xt%";
 		for (String t : objects) {
-			if (d.length() != 4)
+			if (!first)
 				d += "%";
 			d += t;
+			first = false;
 		}
 		return d;
 
 	}
-	
+
 	@Override
 	public String toString() {
 		return encode();

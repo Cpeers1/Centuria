@@ -37,7 +37,7 @@ public class ChatServer {
 		registerPackets();
 	}
 
-	void registerPackets() {
+	protected void registerPackets() {
 		// Packet registry
 		registerPacket(new PingPacket());
 		registerPacket(new JoinRoomPacket());
@@ -93,7 +93,7 @@ public class ChatServer {
 	}
 
 	// Adds packets to the registry
-	private void registerPacket(AbstractChatPacket packet) {
+	protected void registerPacket(AbstractChatPacket packet) {
 		registry.add(packet);
 	}
 

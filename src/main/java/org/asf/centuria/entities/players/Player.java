@@ -635,6 +635,7 @@ public class Player {
 						join.levelType = plr.levelType;
 						join.levelID = plr.levelID;
 						join.roomIdentifier = plr.room;
+						join.teleport = plr.account.getAccountID();
 						player.teleportDestination = plr.account.getAccountID();
 						player.targetPos = new Vector3(plr.lastPos.x, plr.lastPos.y, plr.lastPos.z);
 						player.targetRot = new Quaternion(plr.lastRot.x, plr.lastRot.y, plr.lastRot.z, plr.lastRot.w);
