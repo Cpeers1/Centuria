@@ -1,8 +1,9 @@
 {
   "profiles": {
-    "org.asf.centuria.client.chartmod": {
+    "feraltweaks": {
       "commandName": "Executable",
       "executablePath": ".\\Fer.al.exe",
+      "commandLineArgs": "-logfile",
       "workingDirectory": "run"
     }
   }

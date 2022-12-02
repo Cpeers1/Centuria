@@ -9,9 +9,9 @@ namespace feraltweaks.Patches.AssemblyCSharp
 {
     public class UI_Window_ResetPasswordPatch
     {
-        [HarmonyPrefix]
+        [HarmonyPostfix]
         [HarmonyPatch(typeof(UI_Window_ResetPassword), "Setup")]
-        public static void Setup(ref UI_Window_ResetPassword __instance)
+        public static void Setup(string inEmail, ref UI_Window_ResetPassword __instance)
         {
             if (__instance._emailInput == null)
             {
@@ -46,6 +46,8 @@ namespace feraltweaks.Patches.AssemblyCSharp
                 if (PatchConfig.ContainsKey("UserNameMaxLength"))
                     __instance._emailInput.characterLimit = int.Parse(PatchConfig["UserNameMaxLength"]);
             }
+            __instance._emailInput.text = inEmail;
+            __instance._resetBtn.interactable = __instance.IsValidEmail();
         }
 
         [HarmonyPrefix]

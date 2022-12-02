@@ -31,11 +31,17 @@ namespace feraltweaks
             Harmony.CreateAndPatchAll(typeof(UI_Window_AccountCreationPatch));
             Harmony.CreateAndPatchAll(typeof(UI_Window_ChangeDisplayNamePatch));
             Harmony.CreateAndPatchAll(typeof(UI_Window_ResetPasswordPatch));
+            Harmony.CreateAndPatchAll(typeof(UI_Window_TradeItemQuantityPatch));
+            Harmony.CreateAndPatchAll(typeof(WWTcpClientPatch));
+            Harmony.CreateAndPatchAll(typeof(WindUpdraftPatch));
+            Harmony.CreateAndPatchAll(typeof(LoginLogoutPatches));
+            Harmony.CreateAndPatchAll(typeof(CoreBundleManager2Patch));
+            Harmony.CreateAndPatchAll(typeof(WorldObjectManagerPatch));
         }
 
         public static void WriteDefaultConfig()
         {
-            File.WriteAllText(Paths.ConfigPath + "/feraltweaks/settings.props", "AllowNonEmailUsernames=false\nFlexibleDisplayNames=false\nUserNameRegex=^[\\w%+\\.-]+@(?:[a-zA-Z0-9-]+[\\.{1}])+[a-zA-Z]{2,}$\nDisplayNameRegex=^[0-9A-Za-z\\-_. ]+\nUserNameMaxLength=320\nDisplayNameMaxLength=16\nTradeItemLimit=99\n");
+            File.WriteAllText(Paths.ConfigPath + "/feraltweaks/settings.props", "DisableUpdraftAudioSuppressor=false\nAllowNonEmailUsernames=false\nFlexibleDisplayNames=false\nUserNameRegex=^[\\w%+\\.-]+@(?:[a-zA-Z0-9-]+[\\.{1}])+[a-zA-Z]{2,}$\nDisplayNameRegex=^[0-9A-Za-z\\-_. ]+\nUserNameMaxLength=320\nDisplayNameMaxLength=16\nTradeItemLimit=99\n");
         }
     }
 }
