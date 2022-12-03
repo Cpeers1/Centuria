@@ -255,7 +255,7 @@ public class SendMessage extends AbstractChatPacket {
 
 		// Chat commands
 		if (message.startsWith(">")) {
-			String cmd = message.substring(1).trim().toLowerCase();
+			String cmd = message.substring(1).trim();
 			if (handleCommand(cmd, client))
 				return true;
 		}
