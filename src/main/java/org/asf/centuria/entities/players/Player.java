@@ -73,7 +73,7 @@ public class Player {
 	public int previousLevelType = 0;
 	public int levelID = 0;
 	public int pendingLevelID = 0;
-	
+
 	public String previousRoom = "";
 	public int previousLevelID = 0;
 
@@ -209,6 +209,11 @@ public class Player {
 				JsonObject sanctuaryInfo = sancOwner.getPlayerInventory().getSanctuaryAccessor()
 						.getSanctuaryLook(sancOwner.getActiveSanctuaryLook());
 				if (sanctuaryInfo == null)
+					isAllowed = false;
+
+				// Check block
+				if (SocialManager.getInstance().getPlayerIsBlocked(sancOwner.getAccountID(),
+						player.account.getAccountID())) 
 					isAllowed = false;
 			}
 
