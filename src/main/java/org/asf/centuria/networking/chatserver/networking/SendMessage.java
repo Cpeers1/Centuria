@@ -10,8 +10,11 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -28,6 +31,7 @@ import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
+import org.asf.centuria.modules.events.accounts.MiscModerationEvent;
 import org.asf.centuria.modules.events.chatcommands.ChatCommandEvent;
 import org.asf.centuria.modules.events.chatcommands.ModuleCommandSyntaxListEvent;
 import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
@@ -48,6 +52,9 @@ public class SendMessage extends AbstractChatPacket {
 	private static ArrayList<String> muteWords = new ArrayList<String>();
 	private static ArrayList<String> filterWords = new ArrayList<String>();
 	private static ArrayList<String> alwaysfilterWords = new ArrayList<String>();
+
+	public static ArrayList<String> clearanceCodes = new ArrayList<String>();
+	private static Random rnd = new Random();
 
 	public static String[] getInvalidWords() {
 		ArrayList<String> fullList = new ArrayList<String>();
@@ -533,6 +540,7 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("resetxp [\"<player>\"]");
 			commandMessages.add("takelevels <amount> [\"<player>\"]");
 			if (GameServer.hasPerm(permLevel, "admin")) {
+				commandMessages.add("generateclearancecode");
 				commandMessages.add("addxp <amount> [\"<player>\"]");
 				commandMessages.add("addlevels <amount> [\"<player>\"]");
 				commandMessages.add("resetalllevels [confirm]");
@@ -920,6 +928,31 @@ public class SendMessage extends AbstractChatPacket {
 						if (args.size() >= 2)
 							reason = args.get(1);
 
+						// Check clearance
+						if (!GameServer.hasPerm(permLevel, "admin")) {
+							// Check arguments
+							if (args.size() < 3) {
+								systemMessage(
+										"Error: clearance code required, please add a admin-issued clearance code to the command AFTER the reason for the IP ban.",
+										cmd, client);
+								return true;
+							}
+
+							// Check code
+							while (true) {
+								try {
+									if (clearanceCodes.contains(args.get(2))) {
+										clearanceCodes.remove(args.get(2));
+									} else {
+										systemMessage("Error: invalid clearance code.", cmd, client);
+										return true;
+									}
+									break;
+								} catch (ConcurrentModificationException e) {
+								}
+							}
+						}
+
 						// Find player
 						for (Player plr : Centuria.gameServer.getPlayers()) {
 							if (plr.account.getDisplayName().equals(args.get(0))) {
@@ -1011,6 +1044,31 @@ public class SendMessage extends AbstractChatPacket {
 						if (args.size() < 1) {
 							systemMessage("Missing argument: ip", cmd, client);
 							return true;
+						}
+
+						// Check clearance
+						if (!GameServer.hasPerm(permLevel, "admin")) {
+							// Check arguments
+							if (args.size() < 2) {
+								systemMessage(
+										"Error: clearance code required, please add a admin-issued clearance code to the command.",
+										cmd, client);
+								return true;
+							}
+
+							// Check code
+							while (true) {
+								try {
+									if (clearanceCodes.contains(args.get(1))) {
+										clearanceCodes.remove(args.get(1));
+									} else {
+										systemMessage("Error: invalid clearance code.", cmd, client);
+										return true;
+									}
+									break;
+								} catch (ConcurrentModificationException e) {
+								}
+							}
 						}
 
 						// Check ip ban
@@ -1220,10 +1278,42 @@ public class SendMessage extends AbstractChatPacket {
 							systemMessage(
 									"Teleport override disabled. The system will no longer ignore follower settings.",
 									cmd, client);
+							EventBus.getInstance().dispatchEvent(new MiscModerationEvent("tpoverride.disabled",
+									"Teleport Override Disabled", Map.of("Teleport override status", "Disabled"),
+									plr.account.getAccountID(), null));
 						} else {
+							// Check clearance
+							if (!GameServer.hasPerm(permLevel, "admin")) {
+								// Check arguments
+								if (args.size() < 1) {
+									systemMessage(
+											"Error: clearance code required, please add a admin-issued clearance code to the command.",
+											cmd, client);
+									return true;
+								}
+
+								// Check code
+								while (true) {
+									try {
+										if (clearanceCodes.contains(args.get(0))) {
+											clearanceCodes.remove(args.get(0));
+										} else {
+											systemMessage("Error: invalid clearance code.", cmd, client);
+											return true;
+										}
+										break;
+									} catch (ConcurrentModificationException e) {
+									}
+								}
+							}
+
 							plr.overrideTpLocks = true;
 							systemMessage("Teleport override enabled. The system will ignore follower settings.", cmd,
 									client);
+							EventBus.getInstance()
+									.dispatchEvent(new MiscModerationEvent("tpoverride.enabled",
+											"Teleport Override Enabled", Map.of("Teleport override status", "Enabled"),
+											plr.account.getAccountID(), null));
 						}
 						return true;
 					}
@@ -1245,7 +1335,35 @@ public class SendMessage extends AbstractChatPacket {
 							}
 
 							systemMessage("Ghost mode disabled. You are visible to everyone.", cmd, client);
+							EventBus.getInstance()
+									.dispatchEvent(new MiscModerationEvent("ghostmode.disabled", "Ghost Mode Disabled",
+											Map.of("Ghost mode status", "Disabled"), plr.account.getAccountID(), null));
 						} else {
+							// Check clearance
+							if (!GameServer.hasPerm(permLevel, "admin")) {
+								// Check arguments
+								if (args.size() < 1) {
+									systemMessage(
+											"Error: clearance code required, please add a admin-issued clearance code to the command.",
+											cmd, client);
+									return true;
+								}
+
+								// Check code
+								while (true) {
+									try {
+										if (clearanceCodes.contains(args.get(0))) {
+											clearanceCodes.remove(args.get(0));
+										} else {
+											systemMessage("Error: invalid clearance code.", cmd, client);
+											return true;
+										}
+										break;
+									} catch (ConcurrentModificationException e) {
+									}
+								}
+							}
+
 							plr.ghostMode = true;
 
 							// Spawn for everyone in room
@@ -1261,6 +1379,9 @@ public class SendMessage extends AbstractChatPacket {
 							}
 
 							systemMessage("Ghost mode enabled. You are now invisible to non-moderators.", cmd, client);
+							EventBus.getInstance()
+									.dispatchEvent(new MiscModerationEvent("ghostmode.enabled", "Ghost Mode Enabled",
+											Map.of("Ghost mode status", "Enabled"), plr.account.getAccountID(), null));
 						}
 
 						return true;
@@ -1268,6 +1389,49 @@ public class SendMessage extends AbstractChatPacket {
 
 					//
 					// Admin commands below
+					case "generateclearancecode": {
+						// Check perms
+						if (GameServer.hasPerm(permLevel, "admin")) {
+							long codeLong = rnd.nextLong();
+							String code = "";
+							while (true) {
+								while (codeLong < 10000)
+									codeLong = rnd.nextLong();
+								code = Long.toString(codeLong, 16);
+								try {
+									if (!clearanceCodes.contains(code))
+										break;
+								} catch (ConcurrentModificationException e) {
+								}
+								code = Long.toString(rnd.nextLong(), 16);
+							}
+							clearanceCodes.add(code);
+							EventBus.getInstance()
+									.dispatchEvent(new MiscModerationEvent("clearancecode.generated",
+											"Admin Clearance Code Generated", Map.of(),
+											client.getPlayer().getAccountID(), null));
+							systemMessage("Clearance code generated: " + code + "\nIt will expire in 2 minutes.", cmd,
+									client);
+							final String cFinal = code;
+							Thread th = new Thread(() -> {
+								for (int i = 0; i < 12000; i++) {
+									try {
+										if (!clearanceCodes.contains(cFinal))
+											return;
+									} catch (ConcurrentModificationException e) {
+									}
+									try {
+										Thread.sleep(10);
+									} catch (InterruptedException e) {
+									}
+								}
+								clearanceCodes.remove(cFinal);
+							}, "Clearance code expiry");
+							th.setDaemon(true);
+							th.start();
+							return true;
+						}
+					}
 					case "makeadmin": {
 						// Check perms
 						if (GameServer.hasPerm(permLevel, "admin")) {
