@@ -4,10 +4,11 @@ Security patches will not be shown in the changelogs but the rest will
 Client modding and quests have to be moved to 1.5.3 as this update is urgent
 
 
+
 Bugs fixed in 1.5.2:
 - Fixed a bug with emote sync causing rotation to face to north
 - Fix parsing issues with some commands
-- Repaired the discord bot's command handling, should be able to fix the feedback channel now so ingame feedback can be read again
+- Repaired the discord bot's command handling, should be able to fix the feedback channel now so ingame feedback can be read again by our staff
 - Fix blocking not working on direct sanctuary teleport
 Along with security things we cannot disclose
 
@@ -20,3 +21,8 @@ New API features:
 - Added a public player detail call to the api (only provides display name, player id, player level and active avatar)
 - Added a api call for refreshing a login token (for the upcoming launcher)
 - Added a api call for changing the account password (for the upcoming launcher)
+The api will hopefully be documented sometime in the future
+
+
+
+This update also resolves the issues with ingame feetback, so it is now being received again by our team

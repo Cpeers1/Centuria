@@ -29,6 +29,7 @@ public class MiscModerationEvent extends EventObject {
 		this.friendlyName = friendlyName;
 		this.issuerID = issuerID;
 		this.target = target;
+		this.details = details;
 	}
 
 	@Override

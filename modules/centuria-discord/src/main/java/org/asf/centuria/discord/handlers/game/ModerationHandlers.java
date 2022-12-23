@@ -10,6 +10,7 @@ import org.asf.centuria.modules.eventbus.IEventReceiver;
 import org.asf.centuria.modules.events.accounts.AccountBanEvent;
 import org.asf.centuria.modules.events.accounts.AccountMuteEvent;
 import org.asf.centuria.modules.events.accounts.AccountPardonEvent;
+import org.asf.centuria.modules.events.accounts.MiscModerationEvent;
 import org.asf.centuria.modules.events.accounts.AccountKickEvent;
 
 import com.google.gson.JsonObject;
@@ -23,6 +24,22 @@ import discord4j.core.spec.MessageCreateSpec;
 import discord4j.rest.util.Color;
 
 public class ModerationHandlers implements IEventReceiver {
+
+	@EventListener
+	public void handleMisc(MiscModerationEvent ev) {
+		String userID = null;
+		if (ev.getTarget() != null)
+			userID = LinkUtils.getDiscordAccountFrom(ev.getTarget());
+		String data = "";
+		for (String key : ev.getDetails().keySet()) {
+			if (!data.isEmpty())
+				data += "\n";
+			data += key + ": **" + ev.getDetails().get(key) + "**";
+		}
+		moderationLog(ev.getModerationEventTitle(), userID,
+				ev.getTarget() != null ? ev.getTarget().getDisplayName() : null,
+				ev.getTarget() != null ? ev.getTarget().getAccountID() : null, data, ev.getIssuer(), null);
+	}
 
 	@EventListener
 	public void handleBan(AccountBanEvent ev) {
@@ -86,7 +103,10 @@ public class ModerationHandlers implements IEventReceiver {
 		message += "Action: **" + type + "**";
 		if (data != null)
 			message += "\n" + data;
-		message += "\nAction reason: **" + (reason == null ? "Unspecified" : reason) + "**\n";
+		if (reason != null)
+			message += "\nAction reason: **" + reason + "**\n";
+		else if (data != null)
+			message += "\n";
 		String issuerStr = "**" + issuer + "**";
 		if (!issuerStr.equals("SYSTEM")) {
 			issuerStr = "`" + issuer + "`";
@@ -100,7 +120,8 @@ public class ModerationHandlers implements IEventReceiver {
 			}
 		}
 		message += "Action issuer: " + issuerStr + "\n";
-		message += "Affected player: `" + displayName + (userID != null ? "` (<@!" + userID + ">)" : "`") + "\n";
+		if (displayName != null)
+			message += "Affected player: `" + displayName + (userID != null ? "` (<@!" + userID + ">)" : "`") + "\n";
 		message += "Action was taken on: <t:" + (System.currentTimeMillis() / 1000) + ">";
 
 		// Send to all guild log channels
