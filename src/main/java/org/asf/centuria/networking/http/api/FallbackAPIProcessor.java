@@ -131,6 +131,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 							pkt.levelID = 820;
 							pkt.levelType = 0;
 							pkt.handle(plr.client);
+							Centuria.systemMessage(plr, "You were removed from this sanctuary");
 						}
 					}
 

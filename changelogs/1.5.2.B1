@@ -1,0 +1,16 @@
+This version is mostly a security fixup, though some things have been fixed
+Security patches will not be shown in the changelogs but the rest will
+
+Client modding and quests have to be moved to 1.5.3 as this update is urgent
+
+
+Bugs fixed in 1.5.2:
+- Fixed a bug with emote sync causing rotation to face to north
+- Fix parsing issues with some commands
+- Repaired the discord bot's command handling, should be able to fix the feedback channel now so ingame feedback can be read again
+- Fix blocking not working on direct sanctuary teleport
+Along with security things we cannot disclose
+
+New features in 1.5.2:
+- Blocking of players now prevents the blocked player seeing you
+- When a player is blocked while in your sanctuary, they will be sent back to city fera
