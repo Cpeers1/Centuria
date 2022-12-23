@@ -51,6 +51,57 @@ public class Player {
 	public boolean hasModPerms = false;
 
 	//
+	// Blocking and such (again, for sync)
+	//
+	public ArrayList<String> syncBlockedPlayers = new ArrayList<String>();
+
+	/**
+	 * Updates sync to hide/show blocked/unblocked players
+	 * 
+	 * @param targetPlayerID Target player
+	 * @param blocked        True if the player was blocked, false if unblocked
+	 */
+	public void updateSyncBlock(String targetPlayerID, boolean blocked) {
+		if (blocked) {
+			// Blocked
+
+			// Check permissions
+			CenturiaAccount blockedPlayer = AccountManager.getInstance().getAccount(targetPlayerID);
+
+			// Load permission level
+			String permLevel = "member";
+			if (blockedPlayer.getPlayerInventory().containsItem("permissions")) {
+				permLevel = blockedPlayer.getPlayerInventory().getItem("permissions").getAsJsonObject()
+						.get("permissionLevel").getAsString();
+			}
+			if (!GameServer.hasPerm(permLevel, "moderator") && !syncBlockedPlayers.contains(targetPlayerID)) {
+				// Block sync
+				syncBlockedPlayers.add(targetPlayerID);
+
+				// If the player is ingame, remove this player from them
+				Player plr = blockedPlayer.getOnlinePlayerInstance();
+				if (plr != null) {
+					destroyAt(plr);
+				}
+			}
+		} else {
+			// Unblocked
+			if (syncBlockedPlayers.contains(targetPlayerID)) {
+				syncBlockedPlayers.remove(targetPlayerID);
+
+				// Locate account
+				CenturiaAccount blockedPlayer = AccountManager.getInstance().getAccount(targetPlayerID);
+
+				// If the player is ingame, show this player to them
+				Player plr = blockedPlayer.getOnlinePlayerInstance();
+				if (plr != null && roomReady && plr.roomReady && plr.room.equals(room) && plr.levelID == levelID) {
+					syncTo(plr);
+				}
+			}
+		}
+	}
+
+	//
 	// Other fields
 	//
 
@@ -119,6 +170,10 @@ public class Player {
 	public void syncTo(Player player) {
 		if (ghostMode && !player.hasModPerms || player.disableSync)
 			return; // Ghosting
+
+		// Check block
+		if (!player.hasModPerms && this.syncBlockedPlayers.contains(player.account.getAccountID()))
+			return; // Do not sync to blocked players
 
 		// Find avatar
 		JsonArray items = account.getPlayerInventory().getItem("avatars").getAsJsonArray();
@@ -213,7 +268,7 @@ public class Player {
 
 				// Check block
 				if (SocialManager.getInstance().getPlayerIsBlocked(sancOwner.getAccountID(),
-						player.account.getAccountID())) 
+						player.account.getAccountID()))
 					isAllowed = false;
 			}
 

@@ -331,6 +331,23 @@ public class GameServer extends BaseSmartfoxServer {
 					client.sendPacket(res);
 				}
 			}
+
+			// Add blocked players
+			for (String id : SocialManager.getInstance().getBlockedPlayers(plr.account.getAccountID())) {
+				// Check permissions
+				CenturiaAccount blockedPlayer = AccountManager.getInstance().getAccount(id);
+
+				// Load permission level
+				String permLevel = "member";
+				if (blockedPlayer.getPlayerInventory().containsItem("permissions")) {
+					permLevel = blockedPlayer.getPlayerInventory().getItem("permissions").getAsJsonObject()
+							.get("permissionLevel").getAsString();
+				}
+				if (!GameServer.hasPerm(permLevel, "moderator")) {
+					// Block sync
+					plr.syncBlockedPlayers.add(id);
+				}
+			}
 		}
 
 		// Add player

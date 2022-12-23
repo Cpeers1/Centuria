@@ -438,8 +438,16 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Check if the source blocked this player, if so, prevent them form receiving
 						if (socialManager.getPlayerIsBlocked(client.getPlayer().getAccountID(),
-								cl.getPlayer().getAccountID()))
-							continue; // Blocked
+								cl.getPlayer().getAccountID())) {
+							// Check mod perms
+							String permLevel = "member";
+							if (cl.getPlayer().getPlayerInventory().containsItem("permissions")) {
+								permLevel = cl.getPlayer().getPlayerInventory().getItem("permissions").getAsJsonObject()
+										.get("permissionLevel").getAsString();
+							}
+							if (!GameServer.hasPerm(permLevel, "moderator"))
+								continue; // Blocked
+						}
 
 						// Send response
 						JsonObject res = new JsonObject();

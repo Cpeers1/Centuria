@@ -460,7 +460,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				// log details
 				if (Centuria.debugMode) {
 					System.err.println("[API] Unhandled Api Call: ( path:" + path + " ) ( method: " + method
-							+ " ) ( body: " + body + " )");
+							+ " ) ( body: " + new String(body, "UTF-8") + " )");
 				}
 
 				setResponseCode(400);

@@ -726,6 +726,8 @@ public class Centuria {
 	 * @param inDm    True for DM message, false otherwise
 	 */
 	public static void systemMessage(Player player, String message, boolean inDm) {
+		if (player == null)
+			return;
 		ChatClient client = chatServer.getClient(player.account.getAccountID());
 		if (client != null) {
 			if (inDm) {// && !client.isInRoom("SYSTEM")) {
