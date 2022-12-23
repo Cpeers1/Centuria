@@ -14,3 +14,9 @@ Along with security things we cannot disclose
 New features in 1.5.2:
 - Blocking of players now prevents the blocked player seeing you
 - When a player is blocked while in your sanctuary, they will be sent back to city fera
+
+New API features:
+- Added a public player list (shows the amount of players in the server and how many players are in a map, does not show names)
+- Added a public player detail call to the api (only provides display name, player id, player level and active avatar)
+- Added a api call for refreshing a login token (for the upcoming launcher)
+- Added a api call for changing the account password (for the upcoming launcher)
