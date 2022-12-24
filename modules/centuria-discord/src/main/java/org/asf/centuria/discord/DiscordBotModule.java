@@ -19,6 +19,8 @@ import org.asf.centuria.discord.handlers.game.LoginEventHandler;
 import org.asf.centuria.discord.handlers.game.ModerationHandlers;
 import org.asf.centuria.modules.ICenturiaModule;
 import org.asf.centuria.modules.eventbus.EventBus;
+import org.asf.centuria.modules.eventbus.EventListener;
+import org.asf.centuria.modules.events.accounts.AccountDeletionEvent;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -250,6 +252,12 @@ public class DiscordBotModule implements ICenturiaModule {
 	public void postInit() {
 		// Set as online
 		gateway.updatePresence(ClientPresence.of(Status.ONLINE, ClientActivity.listening(""))).block();
+	}
+
+	@EventListener
+	public void handleDeleteAccount(AccountDeletionEvent event) {
+		if (LinkUtils.isPairedWithDiscord(event.getAccount()))
+			LinkUtils.unpairAccount(event.getAccount(), null, false);
 	}
 
 }
