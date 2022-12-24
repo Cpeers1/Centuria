@@ -23,6 +23,10 @@
       <HintPath>lib\feral\UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>lib\feral\UnityEngine.UIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Il2Cppmscorlib">
       <HintPath>lib\feral\Il2Cppmscorlib.dll</HintPath>
       <Private>false</Private>
@@ -41,6 +45,10 @@
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>lib\feral\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Il2CppSystem">
+      <HintPath>lib\feral\Il2CppSystem.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

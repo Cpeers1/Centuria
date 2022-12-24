@@ -1,11 +1,17 @@
 package org.asf.centuria.discord.handlers.discord;
 
 import java.util.Arrays;
+import java.util.ConcurrentModificationException;
+import java.util.Map;
+import java.util.Random;
 
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.discord.DiscordBotModule;
 import org.asf.centuria.discord.LinkUtils;
+import org.asf.centuria.modules.eventbus.EventBus;
+import org.asf.centuria.modules.events.accounts.MiscModerationEvent;
+import org.asf.centuria.networking.chatserver.networking.SendMessage;
 import org.asf.centuria.networking.gameserver.GameServer;
 
 import discord4j.common.util.Snowflake;
@@ -24,6 +30,8 @@ import discord4j.rest.util.Permission;
 import reactor.core.publisher.Mono;
 
 public class CommandHandler {
+
+	private static Random rnd = new Random();
 
 	/**
 	 * The setup command
@@ -121,6 +129,15 @@ public class CommandHandler {
 	}
 
 	/**
+	 * The clearance code generation command
+	 */
+	public static ApplicationCommandOptionData generateClearanceCode() {
+		return ApplicationCommandOptionData.builder().name("generateclearancecode")
+				.description("Generates an admin clearance code")
+				.type(ApplicationCommandOption.Type.SUB_COMMAND.getValue()).build();
+	}
+
+	/**
 	 * Handles slash commands
 	 * 
 	 * @param event   Command event
@@ -135,6 +152,62 @@ public class CommandHandler {
 			// Right command, find the subcommand
 			String subCmd = data.options().get().get(0).name();
 			switch (subCmd) {
+			case "generateclearancecode": {
+				// Required permissions: mod (ingame)
+				CenturiaAccount modacc = LinkUtils
+						.getAccountByDiscordID(event.getInteraction().getUser().getId().asString());
+				if (modacc == null) {
+					event.reply("**Error:** You dont have a Centuria account linked to your Discord account").block();
+					return Mono.empty();
+				}
+
+				String permLevel = "member";
+				if (modacc.getPlayerInventory().containsItem("permissions")) {
+					permLevel = modacc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+							.get("permissionLevel").getAsString();
+				}
+				if (!GameServer.hasPerm(permLevel, "moderator")) {
+					event.reply("**Error:** no Centuria admin permissions.").block();
+					return Mono.empty();
+				}
+
+				// Handle
+				long codeLong = rnd.nextLong();
+				String code = "";
+				while (true) {
+					while (codeLong < 10000)
+						codeLong = rnd.nextLong();
+					code = Long.toString(codeLong, 16);
+					try {
+						if (!SendMessage.clearanceCodes.contains(code))
+							break;
+					} catch (ConcurrentModificationException e) {
+					}
+					code = Long.toString(rnd.nextLong(), 16);
+				}
+				SendMessage.clearanceCodes.add(code);
+				EventBus.getInstance().dispatchEvent(new MiscModerationEvent("clearancecode.generated",
+						"Admin Clearance Code Generated", Map.of(), modacc.getAccountID(), null));
+				event.reply("Clearance code generated: " + code + "\nIt will expire in 2 minutes.").block();
+				final String cFinal = code;
+				Thread th = new Thread(() -> {
+					for (int i = 0; i < 12000; i++) {
+						try {
+							if (!SendMessage.clearanceCodes.contains(cFinal))
+								return;
+						} catch (ConcurrentModificationException e) {
+						}
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+						}
+					}
+					SendMessage.clearanceCodes.remove(cFinal);
+				}, "Clearance code expiry");
+				th.setDaemon(true);
+				th.start();
+				break;
+			}
 			case "getdiscord": {
 				// Required permissions: mod (ingame)
 				CenturiaAccount modacc = LinkUtils

@@ -28,12 +28,52 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 			// Load manager
 			AccountManager manager = AccountManager.getInstance();
 
+			String id = null;
+
 			// Parse body
 			JsonObject login = JsonParser.parseString(new String(body, "UTF-8")).getAsJsonObject();
+			if (login.get("username").getAsString().equals("sys://fromtoken")) {
+				// Token-based autologin or just from a token
+				String token = login.get("password").getAsString();
 
-			// Locate account
-			String id = manager.authenticate(login.get("username").getAsString(),
-					login.get("password").getAsString().toCharArray());
+				// Parse token
+				if (token.isBlank()) {
+					this.setResponseCode(403);
+					this.setResponseMessage("Access denied");
+					return;
+				}
+
+				// Verify signature
+				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
+				String sig = token.split("\\.")[2];
+				if (!Centuria.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
+					this.setResponseCode(403);
+					this.setResponseMessage("Access denied");
+					return;
+				}
+
+				// Verify expiry
+				JsonObject jwtPl = JsonParser
+						.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+						.getAsJsonObject();
+				if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
+					this.setResponseCode(403);
+					this.setResponseMessage("Access denied");
+					return;
+				}
+
+				JsonObject payload = JsonParser
+						.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+						.getAsJsonObject();
+
+				// Find account
+				id = payload.get("uuid").getAsString();
+			} else {
+				// Locate account
+				id = manager.authenticate(login.get("username").getAsString(),
+						login.get("password").getAsString().toCharArray());
+
+			}
 
 			// Check existence
 			if (id == null) {
@@ -86,7 +126,8 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 			headers.addProperty("alg", "RS256");
 			headers.addProperty("kid", FallbackAPIProcessor.KeyID);
 			headers.addProperty("typ", "JWT");
-			String headerD = Base64.getUrlEncoder().encodeToString(headers.toString().getBytes("UTF-8"));
+			String headerD = Base64.getUrlEncoder().withoutPadding()
+					.encodeToString(headers.toString().getBytes("UTF-8"));
 
 			JsonObject payload = new JsonObject();
 			payload.addProperty("iat", System.currentTimeMillis() / 1000);
@@ -95,14 +136,15 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 			payload.addProperty("iss", "Centuria");
 			payload.addProperty("sub", "Centuria");
 			payload.addProperty("uuid", id);
-			String payloadD = Base64.getUrlEncoder().encodeToString(payload.toString().getBytes("UTF-8"));
+			String payloadD = Base64.getUrlEncoder().withoutPadding()
+					.encodeToString(payload.toString().getBytes("UTF-8"));
 
 			// Send response
 			JsonObject response = new JsonObject();
 			response.addProperty("uuid", id);
-			response.addProperty("refresh_token",
-					UUID.randomUUID() + "-" + UUID.randomUUID() + "-" + UUID.randomUUID());
-			response.addProperty("auth_token", headerD + "." + payloadD + "." + Base64.getUrlEncoder()
+			response.addProperty("refresh_token", headerD + "." + payloadD + "." + Base64.getUrlEncoder()
+					.withoutPadding().encodeToString(Centuria.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
+			response.addProperty("auth_token", headerD + "." + payloadD + "." + Base64.getUrlEncoder().withoutPadding()
 					.encodeToString(Centuria.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
 			response.addProperty("rename_required", !manager.hasPassword(id) || changeName || acc.isRenameRequired());
 			response.addProperty("rename_required_key", "");

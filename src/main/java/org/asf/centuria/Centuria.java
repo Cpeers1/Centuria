@@ -55,6 +55,7 @@ import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.ChatServer;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.http.api.FallbackAPIProcessor;
+import org.asf.centuria.networking.http.api.GameRegistrationHandler;
 import org.asf.centuria.networking.http.api.AuthenticateHandler;
 import org.asf.centuria.networking.http.api.DisplayNameValidationHandler;
 import org.asf.centuria.networking.http.api.DisplayNamesRequestHandler;
@@ -63,6 +64,12 @@ import org.asf.centuria.networking.http.api.SettingsHandler;
 import org.asf.centuria.networking.http.api.UpdateDisplayNameHandler;
 import org.asf.centuria.networking.http.api.UserHandler;
 import org.asf.centuria.networking.http.api.XPDetailsHandler;
+import org.asf.centuria.networking.http.api.custom.ChangePasswordHandler;
+import org.asf.centuria.networking.http.api.custom.ListPlayersHandler;
+import org.asf.centuria.networking.http.api.custom.LoginRefreshHandler;
+import org.asf.centuria.networking.http.api.custom.PlayerDataDownloadHandler;
+import org.asf.centuria.networking.http.api.custom.RegistrationHandler;
+import org.asf.centuria.networking.http.api.custom.UserDetailsHandler;
 import org.asf.centuria.networking.http.director.GameServerRequestHandler;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.ConnectiveServerFactory;
@@ -71,7 +78,7 @@ import com.google.gson.JsonObject;
 
 public class Centuria {
 	// Update
-	public static final String SERVER_UPDATE_VERSION = "1.5.1.B1";
+	public static final String SERVER_UPDATE_VERSION = "1.5.2.B1";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/centuria";
 
 	// Configuration
@@ -127,7 +134,7 @@ public class Centuria {
 		System.out.println("                              Centuria                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                          Version 1.5.1.B1                          "); // not doing this
+		System.out.println("                          Version 1.5.2.B1                          "); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain
@@ -475,6 +482,15 @@ public class Centuria {
 		apiServer.registerProcessor(new DisplayNamesRequestHandler());
 		apiServer.registerProcessor(new DisplayNameValidationHandler());
 		apiServer.registerProcessor(new RequestTokenHandler());
+		apiServer.registerProcessor(new GameRegistrationHandler());
+
+		// Custom API
+		apiServer.registerProcessor(new LoginRefreshHandler());
+		apiServer.registerProcessor(new ChangePasswordHandler());
+		apiServer.registerProcessor(new UserDetailsHandler());
+		apiServer.registerProcessor(new ListPlayersHandler());
+		apiServer.registerProcessor(new RegistrationHandler());
+		apiServer.registerProcessor(new PlayerDataDownloadHandler());
 
 		// Fallback
 		apiServer.registerProcessor(new FallbackAPIProcessor());
@@ -501,6 +517,15 @@ public class Centuria {
 			apiServer.registerProcessor(new DisplayNameValidationHandler());
 			apiServer.registerProcessor(new RequestTokenHandler());
 			apiServer.registerProcessor(new FallbackAPIProcessor());
+			apiServer.registerProcessor(new GameRegistrationHandler());
+
+			// Custom API
+			apiServer.registerProcessor(new LoginRefreshHandler());
+			apiServer.registerProcessor(new ChangePasswordHandler());
+			apiServer.registerProcessor(new UserDetailsHandler());
+			apiServer.registerProcessor(new ListPlayersHandler());
+			apiServer.registerProcessor(new RegistrationHandler());
+			apiServer.registerProcessor(new PlayerDataDownloadHandler());
 		}
 
 		//
@@ -726,6 +751,8 @@ public class Centuria {
 	 * @param inDm    True for DM message, false otherwise
 	 */
 	public static void systemMessage(Player player, String message, boolean inDm) {
+		if (player == null)
+			return;
 		ChatClient client = chatServer.getClient(player.account.getAccountID());
 		if (client != null) {
 			if (inDm) {// && !client.isInRoom("SYSTEM")) {

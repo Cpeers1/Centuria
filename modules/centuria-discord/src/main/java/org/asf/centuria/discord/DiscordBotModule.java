@@ -13,12 +13,15 @@ import org.asf.centuria.discord.handlers.discord.InteractionButtonHandler;
 import org.asf.centuria.discord.handlers.discord.InteractionModalHandler;
 import org.asf.centuria.discord.handlers.discord.InteractionSelectMenuHandler;
 import org.asf.centuria.discord.handlers.game.ModuleCommands;
+import org.asf.centuria.discord.handlers.registration.DiscordRegistrationHelper;
 import org.asf.centuria.discord.handlers.game.AnnouncementHandlers;
 import org.asf.centuria.discord.handlers.game.GamePacketHandlers;
 import org.asf.centuria.discord.handlers.game.LoginEventHandler;
 import org.asf.centuria.discord.handlers.game.ModerationHandlers;
 import org.asf.centuria.modules.ICenturiaModule;
 import org.asf.centuria.modules.eventbus.EventBus;
+import org.asf.centuria.modules.eventbus.EventListener;
+import org.asf.centuria.modules.events.accounts.AccountDeletionEvent;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -90,6 +93,9 @@ public class DiscordBotModule implements ICenturiaModule {
 		EventBus.getInstance().addEventReceiver(new AnnouncementHandlers());
 		EventBus.getInstance().addEventReceiver(new GamePacketHandlers());
 
+		// Init registration helper
+		DiscordRegistrationHelper.init();
+
 		// Disable default registration
 		Centuria.allowRegistration = false;
 
@@ -135,7 +141,7 @@ public class DiscordBotModule implements ICenturiaModule {
 					.addOption(CommandHandler.createAccountPanel()).addOption(CommandHandler.getAccountInfo())
 					.addOption(CommandHandler.getDiscordAccountInfo()).addOption(CommandHandler.kick())
 					.addOption(CommandHandler.ban()).addOption(CommandHandler.tempBan())
-					.addOption(CommandHandler.pardon()).build();
+					.addOption(CommandHandler.pardon()).addOption(CommandHandler.generateClearanceCode()).build();
 
 			// Connect
 			client.gateway().setEnabledIntents(IntentSet.of(Intent.GUILD_PRESENCES, Intent.GUILD_MESSAGES,
@@ -250,6 +256,12 @@ public class DiscordBotModule implements ICenturiaModule {
 	public void postInit() {
 		// Set as online
 		gateway.updatePresence(ClientPresence.of(Status.ONLINE, ClientActivity.listening(""))).block();
+	}
+
+	@EventListener
+	public void handleDeleteAccount(AccountDeletionEvent event) {
+		if (LinkUtils.isPairedWithDiscord(event.getAccount()))
+			LinkUtils.unpairAccount(event.getAccount(), null, false);
 	}
 
 }

@@ -23,7 +23,6 @@ namespace feraltweaks.Patches.AssemblyCSharp
         private class RecreatedWaiter
         {
             public long timestamp;
-            public bool running;
             public Action action;
         }
 

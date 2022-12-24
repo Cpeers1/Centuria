@@ -51,6 +51,57 @@ public class Player {
 	public boolean hasModPerms = false;
 
 	//
+	// Blocking and such (again, for sync)
+	//
+	public ArrayList<String> syncBlockedPlayers = new ArrayList<String>();
+
+	/**
+	 * Updates sync to hide/show blocked/unblocked players
+	 * 
+	 * @param targetPlayerID Target player
+	 * @param blocked        True if the player was blocked, false if unblocked
+	 */
+	public void updateSyncBlock(String targetPlayerID, boolean blocked) {
+		if (blocked) {
+			// Blocked
+
+			// Check permissions
+			CenturiaAccount blockedPlayer = AccountManager.getInstance().getAccount(targetPlayerID);
+
+			// Load permission level
+			String permLevel = "member";
+			if (blockedPlayer.getPlayerInventory().containsItem("permissions")) {
+				permLevel = blockedPlayer.getPlayerInventory().getItem("permissions").getAsJsonObject()
+						.get("permissionLevel").getAsString();
+			}
+			if (!GameServer.hasPerm(permLevel, "moderator") && !syncBlockedPlayers.contains(targetPlayerID)) {
+				// Block sync
+				syncBlockedPlayers.add(targetPlayerID);
+
+				// If the player is ingame, remove this player from them
+				Player plr = blockedPlayer.getOnlinePlayerInstance();
+				if (plr != null) {
+					destroyAt(plr);
+				}
+			}
+		} else {
+			// Unblocked
+			if (syncBlockedPlayers.contains(targetPlayerID)) {
+				syncBlockedPlayers.remove(targetPlayerID);
+
+				// Locate account
+				CenturiaAccount blockedPlayer = AccountManager.getInstance().getAccount(targetPlayerID);
+
+				// If the player is ingame, show this player to them
+				Player plr = blockedPlayer.getOnlinePlayerInstance();
+				if (plr != null && roomReady && plr.roomReady && plr.room.equals(room) && plr.levelID == levelID) {
+					syncTo(plr);
+				}
+			}
+		}
+	}
+
+	//
 	// Other fields
 	//
 
@@ -73,7 +124,7 @@ public class Player {
 	public int previousLevelType = 0;
 	public int levelID = 0;
 	public int pendingLevelID = 0;
-	
+
 	public String previousRoom = "";
 	public int previousLevelID = 0;
 
@@ -119,6 +170,10 @@ public class Player {
 	public void syncTo(Player player) {
 		if (ghostMode && !player.hasModPerms || player.disableSync)
 			return; // Ghosting
+
+		// Check block
+		if (!player.hasModPerms && this.syncBlockedPlayers.contains(player.account.getAccountID()))
+			return; // Do not sync to blocked players
 
 		// Find avatar
 		JsonArray items = account.getPlayerInventory().getItem("avatars").getAsJsonArray();
@@ -210,92 +265,11 @@ public class Player {
 						.getSanctuaryLook(sancOwner.getActiveSanctuaryLook());
 				if (sanctuaryInfo == null)
 					isAllowed = false;
-			}
 
-			// Build room join
-			RoomJoinPacket join = new RoomJoinPacket();
-			join.success = isAllowed;
-			join.levelType = 2;
-			join.levelID = 1689;
-			join.roomIdentifier = "sanctuary_" + sanctuaryOwner;
-			join.teleport = sanctuaryOwner;
-
-			if (isAllowed) {
-				// Sync
-				GameServer srv = (GameServer) client.getServer();
-				for (Player plr2 : srv.getPlayers()) {
-					if (plr2.room != null && player.room != null && player.room != null && plr2.room.equals(player.room)
-							&& plr2 != player) {
-						player.destroyAt(plr2);
-					}
-				}
-
-				// Assign room
-				player.roomReady = false;
-				player.pendingLevelID = 1689;
-				player.pendingRoom = "sanctuary_" + sanctuaryOwner;
-				player.levelType = join.levelType;
-			} else {
-				client.sendPacket(join);
-				return false;
-			}
-
-			// Send packet
-			client.sendPacket(join);
-
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			client.sendPacket(new RoomJoinPacket().markAsFailed());
-			return false;
-		}
-	}
-
-	/**
-	 * Attempts to teleport the player to another player's sanctuary, targeting a
-	 * player to teleport to.
-	 * 
-	 * @param sanctuaryOwner The owner of the sanctuary.
-	 * @param targetedPlayer the player targeted to teleport to.
-	 * @return If the join was a success or not.
-	 */
-	private boolean teleportToSanctuary(String sanctuaryOwner, Player targetedPlayer) {
-		try {
-			boolean isAllowed = true;
-
-			// Load player object
-			Player player = this;
-
-			// Find owner
-			CenturiaAccount sancOwner = AccountManager.getInstance().getAccount(sanctuaryOwner);
-			if (!sancOwner.getPlayerInventory().containsItem("201")) {
-				Player plr = sancOwner.getOnlinePlayerInstance();
-				if (plr != null)
-					plr.activeSanctuaryLook = sancOwner.getActiveSanctuaryLook();
-			}
-
-			// Check owner
-			boolean isOwner = player.account.getAccountID().equals(sanctuaryOwner);
-
-			if (!isOwner) {
-				// Load privacy settings
-				int privSetting = 0;
-				UserVarValue val = sancOwner.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
-				if (val != null)
-					privSetting = val.value;
-
-				// Verify access
-				if (privSetting == 2) {
-					// Nobody
+				// Check block
+				if (!player.overrideTpLocks && SocialManager.getInstance().getPlayerIsBlocked(sancOwner.getAccountID(),
+						player.account.getAccountID()))
 					isAllowed = false;
-				} else if (privSetting == 1) {
-					// Followers
-					// Check if the owner follows the current player
-					if (!SocialManager.getInstance().getPlayerIsFollowing(sanctuaryOwner,
-							player.account.getAccountID())) {
-						isAllowed = false;
-					}
-				}
 			}
 
 			// Build room join
@@ -321,36 +295,10 @@ public class Player {
 				player.pendingLevelID = 1689;
 				player.pendingRoom = "sanctuary_" + sanctuaryOwner;
 				player.levelType = join.levelType;
-				player.teleportDestination = targetedPlayer.account.getAccountID();
-				player.targetPos = new Vector3(targetedPlayer.lastPos.x, targetedPlayer.lastPos.y,
-						targetedPlayer.lastPos.z);
-				player.targetRot = new Quaternion(targetedPlayer.lastRot.x, targetedPlayer.lastRot.y,
-						targetedPlayer.lastRot.z, targetedPlayer.lastRot.w);
 			} else {
 				client.sendPacket(join);
 				return false;
 			}
-
-			// Reset quest data
-			questProgress = 0;
-			questStarted = false;
-			questObjectData.clear();
-			questObjective = 0;
-
-			// End current game
-			if (currentGame != null) {
-				currentGame.onExit(this);
-				currentGame = null;
-			}
-
-			// Reset states
-			states.clear();
-			stateObjects.clear();
-			interactions.clear();
-			groupOjects.clear();
-
-			// Clear respawn items
-			respawnItems.clear();
 
 			// Send packet
 			client.sendPacket(join);
@@ -361,7 +309,6 @@ public class Player {
 			client.sendPacket(new RoomJoinPacket().markAsFailed());
 			return false;
 		}
-
 	}
 
 	/**

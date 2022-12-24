@@ -79,6 +79,11 @@ public class DisplayNamesRequestHandler extends HttpUploadProcessor {
 					d.addProperty("display_name", acc.getDisplayName());
 					d.addProperty("uuid", id);
 					found.add(d);
+				} else if (id.startsWith("plaintext:")) {
+					JsonObject d = new JsonObject();
+					d.addProperty("display_name", id.substring("plaintext:".length()));
+					d.addProperty("uuid", id);
+					found.add(d);
 				} else {
 					unrecognized.add(id);
 				}

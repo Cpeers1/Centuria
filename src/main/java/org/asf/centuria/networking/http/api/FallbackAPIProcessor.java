@@ -14,6 +14,7 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
 import org.asf.centuria.social.SocialEntry;
 import org.asf.centuria.social.SocialManager;
 import org.asf.rats.ConnectiveHTTPServer;
@@ -49,7 +50,8 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				headers.addProperty("alg", "RS256");
 				headers.addProperty("kid", KeyID);
 				headers.addProperty("typ", "JWT");
-				String headerD = Base64.getUrlEncoder().encodeToString(headers.toString().getBytes("UTF-8"));
+				String headerD = Base64.getUrlEncoder().withoutPadding()
+						.encodeToString(headers.toString().getBytes("UTF-8"));
 
 				JsonObject payload = new JsonObject();
 				payload.addProperty("iat", System.currentTimeMillis() / 1000);
@@ -57,12 +59,13 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				payload.addProperty("jti", UUID.randomUUID().toString());
 				payload.addProperty("iss", "Centuria");
 				payload.addProperty("sub", "Centuria");
-				String payloadD = Base64.getUrlEncoder().encodeToString(payload.toString().getBytes("UTF-8"));
+				String payloadD = Base64.getUrlEncoder().withoutPadding()
+						.encodeToString(payload.toString().getBytes("UTF-8"));
 
 				// Send response
 				JsonObject response = new JsonObject();
 				response.addProperty("autorization_key", headerD + "." + payloadD + "." + Base64.getUrlEncoder()
-						.encodeToString(Centuria.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
+						.withoutPadding().encodeToString(Centuria.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
 				setBody(response.toString());
 			} else if (path.startsWith("/r/block/")) {
 				// Find account
@@ -118,6 +121,19 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 
 					// add player is blocked.
 					socialListManager.setBlockedPlayer(sourcePlayerID, targetPlayerID, true);
+
+					// if the player is in the sanc, BOOT THEM OUT
+					CenturiaAccount targetAcc = AccountManager.getInstance().getAccount(targetPlayerID);
+					if (targetAcc != null) {
+						Player plr = targetAcc.getOnlinePlayerInstance();
+						if (plr != null && plr.levelType == 2 && plr.room.equals("sanctuary_" + sourcePlayerID)) {
+							RoomJoinPacket pkt = new RoomJoinPacket();
+							pkt.levelID = 820;
+							pkt.levelType = 0;
+							pkt.handle(plr.client);
+							Centuria.systemMessage(plr, "You were removed from this sanctuary");
+						}
+					}
 
 					if (Centuria.debugMode) {
 						System.out.println("[API] [r/block] [" + method + "] | Processed block Request ");
@@ -447,7 +463,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				// log details
 				if (Centuria.debugMode) {
 					System.err.println("[API] Unhandled Api Call: ( path:" + path + " ) ( method: " + method
-							+ " ) ( body: " + body + " )");
+							+ " ) ( body: " + new String(body, "UTF-8") + " )");
 				}
 
 				setResponseCode(400);

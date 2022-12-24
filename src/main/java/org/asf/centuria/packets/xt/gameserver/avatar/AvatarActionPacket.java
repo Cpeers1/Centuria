@@ -8,6 +8,7 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
+import org.asf.centuria.packets.xt.gameserver.object.ObjectUpdatePacket;
 
 public class AvatarActionPacket implements IXtPacket<AvatarActionPacket> {
 
@@ -39,81 +40,74 @@ public class AvatarActionPacket implements IXtPacket<AvatarActionPacket> {
 		// Avatar action
 		Player plr = (Player) client.container;
 
-		XtWriter pk = new XtWriter();
-		pk.writeString("ou");
-		pk.writeInt(DATA_PREFIX); // Data prefix
-		pk.writeString(plr.account.getAccountID());
-		pk.writeInt(4);
-		pk.writeLong(System.currentTimeMillis() / 1000);
-		pk.writeDouble(plr.lastPos.x);
-		pk.writeDouble(plr.lastPos.y);
-		pk.writeDouble(plr.lastPos.z);
-		pk.writeString("0");
-		pk.writeDouble(plr.lastRot.x);
-		pk.writeDouble(plr.lastRot.y);
-		pk.writeDouble(plr.lastRot.z);
-		pk.writeString("0");
-		pk.writeString("0");
-		pk.writeString("0");
-		pk.writeDouble(plr.lastRot.w);
+		int actionId = 0;
 		switch (action) {
 		case "8930": { // Sleep
-			plr.lastAction = 40;
+			actionId = 40;
 			break;
 		}
 		case "9108": { // Tired
-			plr.lastAction = 41;
+			actionId = 41;
 			break;
 		}
 		case "9116": { // Sit
-			plr.lastAction = 60;
+			actionId = 60;
 			break;
 		}
 		case "9121": { // Mad
-			plr.lastAction = 70;
+			actionId = 70;
 			break;
 		}
 		case "9122": { // Excite
-			plr.lastAction = 80;
+			actionId = 80;
 			break;
 		}
 		case "9143": { // Sad
-			plr.lastAction = 180;
+			actionId = 180;
 			break;
 		}
 		case "9151": { // Flex
-			plr.lastAction = 200;
+			actionId = 200;
 			break;
 		}
 		case "9190": { // Play
-			plr.lastAction = 210;
+			actionId = 210;
 			break;
 		}
 		case "9147": { // Scared
-			plr.lastAction = 190;
+			actionId = 190;
 			break;
 		}
 		case "9139": { // Eat
-			plr.lastAction = 170;
+			actionId = 170;
 			break;
 		}
 		case "9131": { // Yes
-			plr.lastAction = 110;
+			actionId = 110;
 			break;
 		}
 		case "9135": { // No
-			plr.lastAction = 120;
+			actionId = 120;
 			break;
 		}
 		}
-		pk.writeInt(plr.lastAction);
-		pk.writeString(DATA_SUFFIX); // Data suffix
+		plr.lastAction = actionId;
+
+		// Create packet
+		ObjectUpdatePacket pkt = new ObjectUpdatePacket();
+		pkt.action = actionId;
+		pkt.id = plr.account.getAccountID();
+		pkt.mode = 4;
+		pkt.position = plr.lastPos;
+		pkt.rotation = plr.lastRot;
+		pkt.time = System.currentTimeMillis();
+		pkt.speed = 20;
 
 		// Broadcast sync
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				player.client.sendPacket(pk.encode());
+				player.client.sendPacket(pkt);
 			}
 		}
 

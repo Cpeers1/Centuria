@@ -93,7 +93,7 @@ public class InteractionButtonHandler {
 			return Enable2fa.handle(id, event, gateway);
 		} else if (id.startsWith("confirmenable2fa/") && id.split("/").length == 3) {
 			return ConfirmEnable2fa.handle(id, event, gateway);
-		} else if (id.startsWith("createaccount/") && id.split("/").length == 3) {
+		} else if (id.startsWith("createaccount/") && id.split("/").length >= 3) {
 			return CreateAccountHandler.handle(id, event, gateway);
 		} else if (id.startsWith("feedbackreply/") && id.split("/").length == 2) {
 			return FeedbackReplyButtonHandler.handle(id, event, gateway);

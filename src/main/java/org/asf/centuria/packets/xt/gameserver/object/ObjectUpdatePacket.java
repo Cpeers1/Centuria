@@ -191,7 +191,8 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 		GameServer srv = (GameServer) client.getServer();
 		for (Player player : srv.getPlayers()) {
 			if (player != plr && player.room != null && player.room.equals(plr.room)
-					&& (!plr.ghostMode || player.hasModPerms) && !player.disableSync) {
+					&& (!plr.ghostMode || player.hasModPerms) && !player.disableSync
+					&& (!plr.syncBlockedPlayers.contains(player.account.getAccountID()) || player.hasModPerms)) {
 				player.client.sendPacket(this);
 			}
 		}

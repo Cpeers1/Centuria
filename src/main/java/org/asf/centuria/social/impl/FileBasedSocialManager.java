@@ -12,6 +12,9 @@ import java.util.TimeZone;
 
 import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
+import org.asf.centuria.accounts.AccountManager;
+import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.social.SocialEntry;
 import org.asf.centuria.social.SocialManager;
 
@@ -313,6 +316,13 @@ public class FileBasedSocialManager extends SocialManager {
 				// create a new entry for this player
 				socialList.add(targetPlayerID, createNewPlayerEntry(false, false, blocked, false));
 			}
+			
+			// add/remove from ingame player
+			CenturiaAccount acc = AccountManager.getInstance().getAccount(sourcePlayerID);
+			Player plr = acc.getOnlinePlayerInstance();
+			if (plr != null) {
+				plr.updateSyncBlock(targetPlayerID, blocked);
+			}
 
 			saveToDisk(sourcePlayerID, socialList);
 		} catch (IOException e) {
@@ -513,6 +523,30 @@ public class FileBasedSocialManager extends SocialManager {
 		newEntry.addProperty(playerEntryBlockedPropertyName, blocked);
 
 		return newEntry;
+	}
+
+	@Override
+	public String[] getBlockedPlayers(String sourcePlayerID) {
+		if (!socialListExists(sourcePlayerID))
+			throw new IllegalArgumentException("Social list not found");
+
+		try {
+			// Parse social list
+			JsonObject socialList = parseFriendList(sourcePlayerID);
+
+			// Locate blocked players
+			ArrayList<String> ids = new ArrayList<String>();
+			for (var ele : socialList.entrySet()) {
+				if (ele.getValue().getAsJsonObject().get(playerEntryBlockedPropertyName).getAsBoolean()) {
+					ids.add(ele.getKey());
+				}
+			}
+			return ids.toArray(t -> new String[t]);
+		} catch (IOException e) {
+			if (activeIDs.contains(sourcePlayerID))
+				activeIDs.remove(sourcePlayerID);
+			throw new RuntimeException(e);
+		}
 	}
 
 }
