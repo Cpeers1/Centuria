@@ -306,6 +306,10 @@ public class RegistrationHandler extends HttpUploadProcessor {
 
 					response.addProperty("status", "success");
 					response.addProperty("account_id", accountID);
+
+					// Call helper post registration
+					helper.postRegistration(manager.getAccount(accountID), accountID, displayName,
+							request.get("verification_payload").getAsJsonObject());
 				} else {
 					// Set error
 					if (result.error == null)
@@ -342,7 +346,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 					response.addProperty("error", result.error);
 					response.addProperty("error_message", result.errorMessage);
 					this.setResponseCode(400);
-					this.setResponseMessage("Bad request");					
+					this.setResponseMessage("Bad request");
 				}
 			}
 

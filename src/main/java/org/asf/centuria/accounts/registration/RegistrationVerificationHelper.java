@@ -2,6 +2,8 @@ package org.asf.centuria.accounts.registration;
 
 import java.util.ArrayList;
 
+import org.asf.centuria.accounts.CenturiaAccount;
+
 import com.google.gson.JsonObject;
 
 public abstract class RegistrationVerificationHelper {
@@ -50,5 +52,16 @@ public abstract class RegistrationVerificationHelper {
 	 * @return Verification result
 	 */
 	public abstract RegistrationVerificationResult verify(String loginName, String displayName, JsonObject payload);
+
+	/**
+	 * Called after an account was successfully registered
+	 * 
+	 * @param account     Account that was registered
+	 * @param loginName   Account login name
+	 * @param displayName Account display name
+	 * @param payload     Verification payload
+	 */
+	public abstract void postRegistration(CenturiaAccount account, String loginName, String displayName,
+			JsonObject payload);
 
 }

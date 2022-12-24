@@ -13,6 +13,7 @@ import org.asf.centuria.discord.handlers.discord.InteractionButtonHandler;
 import org.asf.centuria.discord.handlers.discord.InteractionModalHandler;
 import org.asf.centuria.discord.handlers.discord.InteractionSelectMenuHandler;
 import org.asf.centuria.discord.handlers.game.ModuleCommands;
+import org.asf.centuria.discord.handlers.registration.DiscordRegistrationHelper;
 import org.asf.centuria.discord.handlers.game.AnnouncementHandlers;
 import org.asf.centuria.discord.handlers.game.GamePacketHandlers;
 import org.asf.centuria.discord.handlers.game.LoginEventHandler;
@@ -91,6 +92,9 @@ public class DiscordBotModule implements ICenturiaModule {
 		EventBus.getInstance().addEventReceiver(new LoginEventHandler());
 		EventBus.getInstance().addEventReceiver(new AnnouncementHandlers());
 		EventBus.getInstance().addEventReceiver(new GamePacketHandlers());
+
+		// Init registration helper
+		DiscordRegistrationHelper.init();
 
 		// Disable default registration
 		Centuria.allowRegistration = false;
