@@ -55,6 +55,7 @@ import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.ChatServer;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.http.api.FallbackAPIProcessor;
+import org.asf.centuria.networking.http.api.GameRegistrationHandler;
 import org.asf.centuria.networking.http.api.AuthenticateHandler;
 import org.asf.centuria.networking.http.api.DisplayNameValidationHandler;
 import org.asf.centuria.networking.http.api.DisplayNamesRequestHandler;
@@ -481,6 +482,7 @@ public class Centuria {
 		apiServer.registerProcessor(new DisplayNamesRequestHandler());
 		apiServer.registerProcessor(new DisplayNameValidationHandler());
 		apiServer.registerProcessor(new RequestTokenHandler());
+		apiServer.registerProcessor(new GameRegistrationHandler());
 
 		// Custom API
 		apiServer.registerProcessor(new LoginRefreshHandler());
@@ -515,6 +517,7 @@ public class Centuria {
 			apiServer.registerProcessor(new DisplayNameValidationHandler());
 			apiServer.registerProcessor(new RequestTokenHandler());
 			apiServer.registerProcessor(new FallbackAPIProcessor());
+			apiServer.registerProcessor(new GameRegistrationHandler());
 
 			// Custom API
 			apiServer.registerProcessor(new LoginRefreshHandler());
