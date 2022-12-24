@@ -284,9 +284,8 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 					RegistrationVerificationHelper helper = RegistrationVerificationHelper.getByMethod(helperID);
 					if (helper == null) {
 						// Reply with error
-						response.addProperty("status", "failure");
-						response.addProperty("error", "invalid_verification_method");
-						response.addProperty("error_message", "Verification method unsupported.");
+						response.addProperty("error",
+								"Unable to verify with that name. Please use a different login name format.");
 						setBody(response.toString());
 						this.setResponseCode(400);
 						this.setResponseMessage("Bad request");
@@ -337,6 +336,8 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 
 						// Call helper post registration
 						helper.postRegistration(manager.getAccount(accountID), accountID, displayName, verifyPayload);
+						setBody(response.toString());
+						return;
 					} else {
 						// Set error
 						switch (result.status) {
@@ -364,8 +365,17 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 						response.addProperty("error_message", result.errorMessage);
 						this.setResponseCode(400);
 						this.setResponseMessage("Bad request");
+						setBody(response.toString());
+						return;
 					}
 				}
+				// Reply with error
+				response.addProperty("error",
+						"Unable to verify with that name. Please use a different login name format.");
+				setBody(response.toString());
+				this.setResponseCode(400);
+				this.setResponseMessage("Bad request");
+				return;
 			}
 
 			// Send response
