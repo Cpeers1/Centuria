@@ -18,11 +18,6 @@ public class LoginRefreshHandler extends HttpUploadProcessor {
 	public void process(String contentType, Socket client, String method) {
 		try {
 			Centuria.logger.info("API CALL: " + getRequest().path);
-			if (!getRequest().method.equalsIgnoreCase("post")) {
-				this.setResponseCode(400);
-				this.setResponseMessage("Bad request");
-				return;
-			}
 
 			// Load manager
 			AccountManager manager = AccountManager.getInstance();
@@ -122,9 +117,6 @@ public class LoginRefreshHandler extends HttpUploadProcessor {
 			response.addProperty("auth_token", headerD + "." + payloadD + "." + Base64.getUrlEncoder().withoutPadding()
 					.encodeToString(Centuria.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
 			response.addProperty("rename_required", !manager.hasPassword(id) || changeName || acc.isRenameRequired());
-			response.addProperty("rename_required_key", "");
-			response.addProperty("email_update_required", false);
-			response.addProperty("email_update_required_key", "");
 			setBody(response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);

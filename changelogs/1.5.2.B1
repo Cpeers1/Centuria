@@ -22,6 +22,7 @@ New API features:
 - Added a api call for refreshing a login token (for the upcoming launcher)
 - Added a api call for changing the account password (for the upcoming launcher)
 - Added a Registration API (for the upcoming website and launcher)
+- Added a player data retrieval API
 The api will hopefully be documented sometime in the future
 
 
