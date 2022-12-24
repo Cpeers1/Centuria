@@ -21,6 +21,7 @@ New API features:
 - Added a public player detail call to the api (only provides display name, player id, player level and active avatar)
 - Added a api call for refreshing a login token (for the upcoming launcher)
 - Added a api call for changing the account password (for the upcoming launcher)
+- Added a Registration API (for the upcoming website and launcher)
 The api will hopefully be documented sometime in the future
 
 

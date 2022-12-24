@@ -66,6 +66,7 @@ import org.asf.centuria.networking.http.api.XPDetailsHandler;
 import org.asf.centuria.networking.http.api.custom.ChangePasswordHandler;
 import org.asf.centuria.networking.http.api.custom.ListPlayersHandler;
 import org.asf.centuria.networking.http.api.custom.LoginRefreshHandler;
+import org.asf.centuria.networking.http.api.custom.RegistrationHandler;
 import org.asf.centuria.networking.http.api.custom.UserDetailsHandler;
 import org.asf.centuria.networking.http.director.GameServerRequestHandler;
 import org.asf.rats.ConnectiveHTTPServer;
@@ -485,6 +486,7 @@ public class Centuria {
 		apiServer.registerProcessor(new ChangePasswordHandler());
 		apiServer.registerProcessor(new UserDetailsHandler());
 		apiServer.registerProcessor(new ListPlayersHandler());
+		apiServer.registerProcessor(new RegistrationHandler());
 
 		// Fallback
 		apiServer.registerProcessor(new FallbackAPIProcessor());
@@ -517,6 +519,7 @@ public class Centuria {
 			apiServer.registerProcessor(new ChangePasswordHandler());
 			apiServer.registerProcessor(new UserDetailsHandler());
 			apiServer.registerProcessor(new ListPlayersHandler());
+			apiServer.registerProcessor(new RegistrationHandler());
 		}
 
 		//
