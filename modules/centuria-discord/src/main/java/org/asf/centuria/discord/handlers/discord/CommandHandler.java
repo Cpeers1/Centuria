@@ -166,7 +166,7 @@ public class CommandHandler {
 					permLevel = modacc.getPlayerInventory().getItem("permissions").getAsJsonObject()
 							.get("permissionLevel").getAsString();
 				}
-				if (!GameServer.hasPerm(permLevel, "moderator")) {
+				if (!GameServer.hasPerm(permLevel, "admin")) {
 					event.reply("**Error:** no Centuria admin permissions.").block();
 					return Mono.empty();
 				}
