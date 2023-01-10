@@ -35,10 +35,8 @@ public class RegisterAccountHandler {
 			// Build form
 			InteractionPresentModalSpec.Builder modal = InteractionPresentModalSpec.builder();
 			modal.title("Register for " + DiscordBotModule.getServerName());
-			modal.addComponent(ActionRow
-					.of(TextInput.small("accountname", "Account login name", 3, 320).required().prefilled("")));
-			modal.addComponent(ActionRow
-					.of(TextInput.small("displayname", "Ingame display name", 2, 16).required().prefilled("")));
+			modal.addComponent(ActionRow.of(TextInput.small("accountname", "Account login name", 3, 320).required()));
+			modal.addComponent(ActionRow.of(TextInput.small("displayname", "Ingame display name", 2, 16).required()));
 			modal.addComponent(
 					ActionRow.of(TextInput.small("enable2fa", "Enable 2-factor authentication? (yes/no)", 2, 3)
 							.required(false).prefilled("No")));
