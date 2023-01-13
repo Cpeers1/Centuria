@@ -28,7 +28,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class OnlineLauncherMain {
 
@@ -134,7 +137,15 @@ public class OnlineLauncherMain {
 				// Check for client updates
 				try {
 					// Download client ini
-					InputStream strm = new URL("https://download.fer.al/win64/launcher.ini").openStream();
+					String launcherUrl = "https://download.fer.al/win64/launcher.ini";
+
+					// Check OS
+					if (System.getProperty("os.name").toLowerCase().contains("darwin")
+							|| System.getProperty("os.name").toLowerCase().contains("mac")) {
+						launcherUrl = "https://download.fer.al/osx/launcher.ini";
+					}
+
+					InputStream strm = new URL(launcherUrl).openStream();
 					String propFile = new String(strm.readAllBytes(), "UTF-8").trim().replace("\r", "");
 					strm.close();
 
@@ -203,7 +214,13 @@ public class OnlineLauncherMain {
 						} catch (InvocationTargetException | InterruptedException e) {
 						}
 
-						unzip7z(tmpOut, new File("client"), progressBar);
+						// Check OS
+						if (System.getProperty("os.name").toLowerCase().contains("darwin")
+								|| System.getProperty("os.name").toLowerCase().contains("mac")) {
+							unZip(tmpOut, new File("client"), progressBar); // OSX
+						} else {
+							unzip7z(tmpOut, new File("client"), progressBar); // Windows or linux
+						}
 
 						// Apply modifications
 						try {
@@ -215,6 +232,13 @@ public class OnlineLauncherMain {
 						} catch (InvocationTargetException | InterruptedException e) {
 						}
 						File modOut = new File("client/build/Fer.al_Data/sharedassets1.assets");
+
+						// Check OS
+						if (System.getProperty("os.name").toLowerCase().contains("darwin")
+								|| System.getProperty("os.name").toLowerCase().contains("mac")) {
+							modOut = new File("client/build/Fer.al.app/Contents/Resources/Data/sharedassets1.assets"); // MacOS
+						}
+
 						FileOutputStream os = new FileOutputStream(modOut);
 						InputStream is = new URL(
 								"https://aerialworks.ddns.net/extra/emuferal/sharedassets1-online.assets").openStream();
@@ -228,7 +252,15 @@ public class OnlineLauncherMain {
 				} catch (IOException e) {
 				}
 
-				File client = new File("client/build/Fer.al.exe");
+				File client;
+
+				// Check OS
+				if (System.getProperty("os.name").toLowerCase().contains("darwin")
+						|| System.getProperty("os.name").toLowerCase().contains("mac")) {
+					client = new File("client/build/Fer.al.app/Contents/MacOS/Feral"); // MacOS
+				} else {
+					client = new File("client/build/Fer.al.exe"); // Linux or Windows
+				}
 				if (!client.exists()) {
 					JOptionPane.showMessageDialog(null, "Failed to download the fer.al client!", "Download Failure",
 							JOptionPane.ERROR_MESSAGE);
@@ -247,7 +279,15 @@ public class OnlineLauncherMain {
 				SwingUtilities.invokeLater(() -> {
 					frmCenturiaLauncher.dispose();
 				});
-				ProcessBuilder builder = new ProcessBuilder(client.getAbsolutePath());
+				ProcessBuilder builder;
+
+				// Check OS
+				if (System.getProperty("os.name").toLowerCase().contains("win")
+						|| System.getProperty("os.name").toLowerCase().contains("darwin")
+						|| System.getProperty("os.name").toLowerCase().contains("mac"))
+					builder = new ProcessBuilder(client.getAbsolutePath()); // Windows or MacOS
+				else
+					builder = new ProcessBuilder("wine", client.getAbsolutePath()); // Linux, need wine
 				try {
 					builder.start().waitFor();
 				} catch (InterruptedException e) {
@@ -285,6 +325,62 @@ public class OnlineLauncherMain {
 		// extract
 		while (true) {
 			SevenZArchiveEntry ent = archive.getNextEntry();
+			if (ent == null)
+				break;
+
+			if (ent.isDirectory()) {
+				new File(output, ent.getName()).mkdirs();
+			} else {
+				File out = new File(output, ent.getName());
+				if (out.getParentFile() != null && !out.getParentFile().exists())
+					out.getParentFile().mkdirs();
+				FileOutputStream os = new FileOutputStream(out);
+				InputStream is = archive.getInputStream(ent);
+				is.transferTo(os);
+				is.close();
+				os.close();
+			}
+
+			SwingUtilities.invokeLater(() -> {
+				bar.setValue(bar.getValue() + 1);
+			});
+		}
+
+		// finish progress
+		SwingUtilities.invokeLater(() -> {
+			bar.setValue(bar.getValue() + 1);
+		});
+		archive.close();
+	}
+
+	private void unZip(File input, File output, JProgressBar bar) throws IOException {
+		output.mkdirs();
+
+		// count entries
+		ZipFile archive = new ZipFile(input);
+		int count = 0;
+		Enumeration<? extends ZipEntry> en = archive.entries();
+		while (en.hasMoreElements()) {
+			en.nextElement();
+			count++;
+		}
+		archive.close();
+
+		// prepare and log
+		archive = new ZipFile(input);
+		en = archive.entries();
+		try {
+			int fcount = count;
+			SwingUtilities.invokeAndWait(() -> {
+				bar.setMaximum(fcount);
+				bar.setValue(0);
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+		}
+
+		// extract
+		while (en.hasMoreElements()) {
+			ZipEntry ent = en.nextElement();
 			if (ent == null)
 				break;
 
