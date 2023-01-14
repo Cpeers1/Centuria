@@ -50,7 +50,7 @@ public class LinearObjectHandler extends InteractionModule {
 					InteractionManager.getActiveSpawnBehaviour().onCollect(player, st.params[2]);
 
 					// Log
-					Centuria.logger.info(MarkerManager.getMarker("EXANSE OBJECTS"),
+					Centuria.logger.info(MarkerManager.getMarker("EXPANSE OBJECTS"),
 							"Player " + player.account.getDisplayName() + " unlocked object " + object.objectName + " ("
 									+ id + ")");
 					break;
@@ -64,7 +64,7 @@ public class LinearObjectHandler extends InteractionModule {
 						player.account.getPlayerInventory().getCurrencyAccessor().removeLockpicks(player.client, 1);
 
 						// Log
-						Centuria.logger.info(MarkerManager.getMarker("EXANSE OBJECTS"),
+						Centuria.logger.info(MarkerManager.getMarker("EXPANSE OBJECTS"),
 								"Player " + player.account.getDisplayName()
 										+ " broke a lockpick while interacting with a locked chest.");
 						break;
