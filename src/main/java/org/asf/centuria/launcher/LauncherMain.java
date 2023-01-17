@@ -401,9 +401,11 @@ public class LauncherMain {
 
 				// Check OS
 				if (System.getProperty("os.name").toLowerCase().contains("win")
-						|| System.getProperty("os.name").toLowerCase().contains("darwin")
+						&& !System.getProperty("os.name").toLowerCase().contains("darwin"))
+					builder = new ProcessBuilder(client.getAbsolutePath()); // Windows
+				else if (System.getProperty("os.name").toLowerCase().contains("darwin")
 						|| System.getProperty("os.name").toLowerCase().contains("mac"))
-					builder = new ProcessBuilder(client.getAbsolutePath()); // Windows or MacOS
+					builder = new ProcessBuilder("open", "-n", client.getAbsolutePath()); // MacOS
 				else
 					builder = new ProcessBuilder("wine", client.getAbsolutePath()); // Linux, need wine
 				try {
