@@ -33,14 +33,8 @@ public class JoinRoomPacket extends AbstractChatPacket {
 	@Override
 	public boolean handle(ChatClient cCl) {
 		// Find client
-		ChatClient client = null;
-		for (ChatClient cl : cCl.getServer().getClients()) {
-			if (cl.getPlayer().getAccountID().equals(participant)) {
-				client = cl;
-				break;
-			}
-		}
-		if (client == null)
+		ChatClient client = cCl;
+		if (!participant.equals(client.getPlayer().getAccountID()))
 			return true;
 
 		// Check if its a dm

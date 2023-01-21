@@ -10,13 +10,15 @@ import com.google.gson.JsonObject;
 
 /**
  * 
- * Login Event - used to implement custom handshakes.
+ * Early Login Event - used to implement custom handshakes, called before
+ * handling bans and other security checks.
  * 
+ * @since Beta 1.5.3
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("accounts.login")
-public class AccountLoginEvent extends EventObject {
+@EventPath("accounts.prelogin")
+public class AccountPreloginEvent extends EventObject {
 
 	private GameServer server;
 	private SmartfoxClient client;
@@ -24,11 +26,7 @@ public class AccountLoginEvent extends EventObject {
 	private JsonObject params;
 	private int status = 1;
 
-	public AccountLoginEvent(GameServer server, CenturiaAccount account, SmartfoxClient client) {
-		this(server, account, client, new JsonObject());
-	}
-
-	public AccountLoginEvent(GameServer server, CenturiaAccount account, SmartfoxClient client, JsonObject params) {
+	public AccountPreloginEvent(GameServer server, CenturiaAccount account, SmartfoxClient client, JsonObject params) {
 		this.client = client;
 		this.account = account;
 		this.server = server;
@@ -37,14 +35,13 @@ public class AccountLoginEvent extends EventObject {
 
 	@Override
 	public String eventPath() {
-		return "accounts.login";
+		return "accounts.prelogin";
 	}
 
 	/**
 	 * Retrieves the login response parameters, typically empty, used to add
 	 * information to the login response message.
 	 * 
-	 * @since Beta 1.5.3
 	 * @return Login response parameters
 	 */
 	public JsonObject getLoginResponseParameters() {

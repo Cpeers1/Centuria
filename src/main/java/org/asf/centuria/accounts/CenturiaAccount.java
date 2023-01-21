@@ -314,6 +314,8 @@ public abstract class CenturiaAccount {
 	public void ban(String issuer, String reason) {
 		// Ban the player
 		JsonObject banInfo = new JsonObject();
+		if (reason != null)
+			banInfo.addProperty("reason", reason);
 		banInfo.addProperty("type", "ban");
 		banInfo.addProperty("unbanTimestamp", -1);
 		getPlayerInventory().setItem("penalty", banInfo);
@@ -386,6 +388,8 @@ public abstract class CenturiaAccount {
 	public void tempban(int days, String issuer, String reason) {
 		// Ban the player
 		JsonObject banInfo = new JsonObject();
+		if (reason != null)
+			banInfo.addProperty("reason", reason);
 		banInfo.addProperty("type", "ban");
 		banInfo.addProperty("unbanTimestamp", System.currentTimeMillis() + (days * 24 * 60 * 60 * 1000));
 		getPlayerInventory().setItem("penalty", banInfo);
@@ -456,6 +460,8 @@ public abstract class CenturiaAccount {
 
 		// Apply mute
 		JsonObject muteInfo = new JsonObject();
+		if (reason != null)
+			muteInfo.addProperty("reason", reason);
 		muteInfo.addProperty("type", "mute");
 		muteInfo.addProperty("unmuteTimestamp", System.currentTimeMillis() + (minutes * 60 * 1000)
 				+ (hours * 60 * 60 * 1000) + (days * 24 * 60 * 60 * 1000));

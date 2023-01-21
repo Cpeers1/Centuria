@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "org.asf.centuria.client.plu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "org.asf.centuria.client.patcher", "org.asf.centuria.client.patcher\org.asf.centuria.client.patcher.csproj", "{361AF5DD-BDEE-48F0-B12E-1367264BA9E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "feraltweaks", "feraltweaks\feraltweaks.csproj", "{4C26CD27-32AC-4D9B-B0CC-977B9BAE6BA4}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,10 +25,6 @@ Global
 		{1C074A83-A8F9-40C7-A74B-29FFF334C1B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C074A83-A8F9-40C7-A74B-29FFF334C1B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C074A83-A8F9-40C7-A74B-29FFF334C1B7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C26CD27-32AC-4D9B-B0CC-977B9BAE6BA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C26CD27-32AC-4D9B-B0CC-977B9BAE6BA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C26CD27-32AC-4D9B-B0CC-977B9BAE6BA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4C26CD27-32AC-4D9B-B0CC-977B9BAE6BA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
