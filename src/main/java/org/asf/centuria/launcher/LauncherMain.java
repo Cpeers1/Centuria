@@ -358,7 +358,7 @@ public class LauncherMain {
 				// Check OS
 				if (System.getProperty("os.name").toLowerCase().contains("darwin")
 						|| System.getProperty("os.name").toLowerCase().contains("mac")) {
-					client = new File("client/build/Fer.al.app/Contents/MacOS/Feral"); // MacOS
+					client = new File("client/build/Fer.al.app"); // MacOS
 				} else {
 					client = new File("client/build/Fer.al.exe"); // Linux or Windows
 				}

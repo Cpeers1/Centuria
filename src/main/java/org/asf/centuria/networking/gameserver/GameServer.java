@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.TimeZone;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
@@ -22,6 +25,7 @@ import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.AccountLoginEvent;
+import org.asf.centuria.modules.events.accounts.AccountPreloginEvent;
 import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
 import org.asf.centuria.modules.events.players.PlayerJoinEvent;
 import org.asf.centuria.modules.events.players.PlayerLeaveEvent;
@@ -205,6 +209,19 @@ public class GameServer extends BaseSmartfoxServer {
 			return;
 		}
 
+		// Allow modules to add parameter fields
+		JsonObject params = new JsonObject();
+		AccountPreloginEvent evt = new AccountPreloginEvent(this, acc, client, params);
+		EventBus.getInstance().dispatchEvent(evt);
+		if (evt.isHandled() && evt.getStatus() != 1) {
+			sendLoginResponse(client, auth, acc, evt.getStatus(), 0, evt.getLoginResponseParameters());
+
+			Centuria.logger.info("Login failure: " + acc.getLoginName() + ": module terminated login process with code "
+					+ evt.getStatus());
+			client.disconnect();
+			return;
+		}
+
 		// If under maintenance, send error
 		if (maintenance) {
 			boolean lockout = true;
@@ -219,7 +236,7 @@ public class GameServer extends BaseSmartfoxServer {
 			}
 
 			if (lockout || shutdown) {
-				sendLoginResponse(client, auth, acc, -16, 0);
+				sendLoginResponse(client, auth, acc, -16, 0, params);
 
 				client.disconnect();
 				return;
@@ -228,7 +245,7 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// If the client is out of date, send error
 		if (badClient) {
-			sendLoginResponse(client, auth, acc, -24, 0);
+			sendLoginResponse(client, auth, acc, -24, 0, params);
 
 			client.disconnect();
 			return;
@@ -236,10 +253,29 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Check ban
 		if (acc.isBanned()) {
+			JsonObject banInfo = acc.getPlayerInventory().getItem("penalty").getAsJsonObject();
+			if (banInfo.get("unbanTimestamp").getAsLong() != -1) {
+				SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+				f.setTimeZone(TimeZone.getTimeZone("UTC"));
+				if (!banInfo.has("reason")) {
+					params.addProperty("errorMessage",
+							"\nThis account is currently suspended and may not log in at this time.\n\n"
+									+ "Note that this is a temporary ban, you can play again at: "
+									+ f.format(new Timestamp(banInfo.get("unbanTimestamp").getAsLong())));
+				} else {
+					params.addProperty("errorMessage",
+							"\nTemporarily suspended until "
+									+ f.format(new Timestamp(banInfo.get("unbanTimestamp").getAsLong())) + "\n\n"
+									+ "Reason: " + banInfo.get("reason").getAsString());
+				}
+			} else if (banInfo.has("reason"))
+				params.addProperty("errorMessage",
+						"\nThis account is currently suspended and may not log in at this time.\n\n" + "Reason: "
+								+ banInfo.get("reason").getAsString());
 			Centuria.logger.info("User '" + acc.getDisplayName() + "' could not connect: user is banned.");
 
 			// Disconnect with error
-			sendLoginResponse(client, auth, acc, -15, 0);
+			sendLoginResponse(client, auth, acc, -15, 0, params);
 
 			client.disconnect();
 			return;
@@ -247,10 +283,12 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Check ip ban
 		if (isIPBanned(client.getAddress(), acc, vpnIpsV4, vpnIpsV6, whitelistFile)) {
+			params.addProperty("errorMessage",
+					"This server does not allow the use of a VPN, please disable it and try again.");
 			Centuria.logger.info("User '" + acc.getDisplayName() + "' could not connect: user is IP or VPN banned.");
 
 			// Disconnect silently
-			sendLoginResponse(client, auth, acc, 1, 0);
+			sendLoginResponse(client, auth, acc, 1, 0, params);
 
 			client.disconnect();
 			return;
@@ -265,10 +303,10 @@ public class GameServer extends BaseSmartfoxServer {
 		Centuria.logger.info("Login from IP: " + client.getAddress() + ": " + acc.getLoginName());
 
 		// Run module handshake code
-		AccountLoginEvent ev = new AccountLoginEvent(this, acc, client);
+		AccountLoginEvent ev = new AccountLoginEvent(this, acc, client, params);
 		EventBus.getInstance().dispatchEvent(ev);
 		if (ev.isHandled() && ev.getStatus() != 1) {
-			sendLoginResponse(client, auth, acc, ev.getStatus(), 0);
+			sendLoginResponse(client, auth, acc, ev.getStatus(), 0, ev.getLoginResponseParameters());
 
 			Centuria.logger.info("Login failure: " + acc.getLoginName() + ": module terminated login process with code "
 					+ ev.getStatus());
@@ -277,7 +315,7 @@ public class GameServer extends BaseSmartfoxServer {
 		}
 
 		// Send response
-		sendLoginResponse(client, auth, acc, 1, acc.isPlayerNew() ? 2 : 3);
+		sendLoginResponse(client, auth, acc, 1, acc.isPlayerNew() ? 2 : 3, new JsonObject());
 		sendPacket(client, "%xt%ulc%-1%");
 
 		// Add player
@@ -439,16 +477,16 @@ public class GameServer extends BaseSmartfoxServer {
 	 * @param acc          Account thats logging in
 	 * @param statusCode   Status code
 	 * @param pendingFlags Pending flags value
+	 * @param params       Parameter object
 	 */
 	public void sendLoginResponse(SmartfoxClient client, ClientToServerAuthPacket auth, CenturiaAccount acc,
-			int statusCode, int pendingFlags) {
+			int statusCode, int pendingFlags, JsonObject params) {
 		JsonObject response = new JsonObject();
 		JsonObject b = new JsonObject();
 		b.addProperty("r", auth.rField);
 		JsonObject o = new JsonObject();
 		o.addProperty("statusId", statusCode);
 		o.addProperty("_cmd", "login");
-		JsonObject params = new JsonObject();
 		params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
 		params.addProperty("pendingFlags", pendingFlags);
 		params.addProperty("activeLookId", acc.getActiveLook());

@@ -2,6 +2,7 @@ package org.asf.centuria;
 
 import org.asf.centuria.modules.ICenturiaModule;
 import org.asf.centuria.modules.eventbus.EventListener;
+import org.asf.centuria.modules.events.accounts.AccountPreloginEvent;
 import org.asf.centuria.modules.events.chatcommands.ChatCommandEvent;
 import org.asf.centuria.modules.events.chatcommands.ModuleCommandSyntaxListEvent;
 import org.asf.centuria.modules.events.interactions.InteractionSuccessEvent;
@@ -30,6 +31,10 @@ public class TestModule implements ICenturiaModule {
 
 	@EventListener
 	public void interactionSuccess(InteractionSuccessEvent event) {
+	}
+
+	@EventListener
+	public void prelogin(AccountPreloginEvent event) {
 	}
 
 	@EventListener
