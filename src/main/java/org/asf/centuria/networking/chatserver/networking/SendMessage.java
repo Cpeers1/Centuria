@@ -2240,7 +2240,7 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						defID = Integer.valueOf(args.get(0));
-						if (args.size() == 2) {
+						if (args.size() >= 2) {
 							quantity = Integer.valueOf(args.get(1));
 						}
 
