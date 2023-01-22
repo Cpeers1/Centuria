@@ -766,6 +766,31 @@ public class ItemAccessor {
 	}
 
 	/**
+	 * Checks if a item is quantity-based or not
+	 * 
+	 * @since Beta 1.5.3
+	 * @param defID Item DefID
+	 * @return True if quantity-based, false otherwise
+	 */
+	public boolean isQuantityBased(int defID) {
+		// Find definition
+		ItemInfo info = definitions.get(Integer.toString(defID));
+		if (info == null)
+			return false;
+
+		// Check if the inventory is present
+		if (!inventory.containsItem(info.inventory))
+			return false;
+
+		// Find inventory
+		if (!inventoryTypeMap.containsKey(info.inventory))
+			return false;
+		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
+
+		return container.inventoryType == InventoryStorageType.QUANTITY_BASED;
+	}
+
+	/**
 	 * Retrieves the quantity of the given item currently in the player's inventory
 	 * 
 	 * @param defID Item defID to retrieve the count of

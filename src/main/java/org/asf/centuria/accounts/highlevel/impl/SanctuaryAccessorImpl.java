@@ -512,16 +512,8 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			// update as with client modding we can increase the limit, load it from the
 			// player data if overridden
 			int limit = FALLBACK_ITEM_LIMIT;
-			if (inventory.containsItem("savesettings")) {
-				// get the limit override if present
-				// we will keep this in the same place as gamemode information
-
-				JsonObject saveSettings = inventory.getItem("savesettings").getAsJsonObject();
-				if (saveSettings.has("sanctuaryLimitOverride")) {
-					// Load limit
-					limit = saveSettings.get("savesettings").getAsInt();
-				}
-			}
+			if (inventory.getSaveSettings().sanctuaryLimitOverride != -1)
+				limit = inventory.getSaveSettings().sanctuaryLimitOverride;
 
 			if (itemsArray.size() + 1 > limit) {
 				// can't add this object

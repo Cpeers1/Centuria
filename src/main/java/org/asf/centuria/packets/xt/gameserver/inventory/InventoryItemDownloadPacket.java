@@ -103,7 +103,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		}
 
 		if (slot.equals("1")) {
-			if (Centuria.giveAllMods) {
+			if (inv.getSaveSettings().giveAllMods) {
 				// All body mods
 				String[] mods = new String[] { "9808", "9807", "9806", "9805", "9804", "9803", "9802", "9801", "9800",
 						"9799", "9754", "9741", "9740", "9739", "9719", "9660", "9659", "9658", "9657", "9656", "7553",
@@ -149,7 +149,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		}
 
 		// Clothing and dyes
-		if (Centuria.giveAllClothes) {
+		if (inv.getSaveSettings().giveAllClothes) {
 			if (slot.equals("111")) {
 				// Give all dyes (80 of each)
 				String[] dyes = new String[] { "6255", "6254", "6253", "6252", "6251", "435", "434", "433", "432",
@@ -207,7 +207,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		}
 
 		// Resources
-		if (slot.equals("103") && Centuria.giveAllResources) {
+		if (slot.equals("103") && inv.getSaveSettings().giveAllResources) {
 			// Give all resources
 			String[] ids = ItemAccessor.getItemDefinitionsIn(slot);
 			for (String id : ids) {
@@ -219,7 +219,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 		}
 
 		// Furniture
-		if (slot.equals("102") && Centuria.giveAllFurnitureItems) {
+		if (slot.equals("102") && inv.getSaveSettings().giveAllFurnitureItems) {
 			// Scan furniturehelper and give all furniture
 			try {
 				// Load helper
@@ -279,7 +279,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				}
 
 				// Looks
-				if (Centuria.giveAllSanctuaryTypes) {
+				if (inv.getSaveSettings().giveAllSanctuaryTypes) {
 					// Give missing sanctuary types
 					int[] sanctuaryTypes = new int[] { 9588, 12632, 12637, 12964, 21273, 23627, 24122, 25414, 26065,
 							28431, 9760, 9764 };
@@ -335,7 +335,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				obj.addProperty("defId", 2327);
 				JsonObject components = new JsonObject();
 				JsonObject quantity = new JsonObject();
-				quantity.addProperty("quantity", (Centuria.giveAllCurrency ? 10000 : 2500));
+				quantity.addProperty("quantity", (inv.getSaveSettings().giveAllCurrency ? 10000 : 2500));
 				components.add("Quantity", quantity);
 				JsonObject trade = new JsonObject();
 				trade.addProperty("isInTradeList", false);
@@ -357,7 +357,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				obj.addProperty("defId", 14500);
 				JsonObject components = new JsonObject();
 				JsonObject quantity = new JsonObject();
-				quantity.addProperty("quantity", (Centuria.giveAllCurrency ? 10000 : 0));
+				quantity.addProperty("quantity", (inv.getSaveSettings().giveAllCurrency ? 10000 : 0));
 				components.add("Quantity", quantity);
 				JsonObject trade = new JsonObject();
 				trade.addProperty("isInTradeList", false);
@@ -406,7 +406,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			}
 
 			// Creative mode
-			if (Centuria.giveAllCurrency) {
+			if (inv.getSaveSettings().giveAllCurrency) {
 				// Add 10k if 0
 				if (inv.getCurrencyAccessor().getLikes() <= 100) {
 					inv.getCurrencyAccessor().setLikesDirectly(10000);

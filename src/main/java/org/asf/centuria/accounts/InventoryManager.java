@@ -31,7 +31,7 @@ public class InventoryManager {
 
 	public static void buildInventory(Player plr, PlayerInventory inv) {
 		// Check if wings, mods and clothing is disabled
-		if (!Centuria.giveAllMods && !Centuria.giveAllWings) {
+		if (!inv.getSaveSettings().giveAllMods && !inv.getSaveSettings().giveAllWings) {
 			// Save item 2 as empty item
 			inv.setItem("2", new JsonArray());
 		}
@@ -44,7 +44,7 @@ public class InventoryManager {
 		inv.getItemAccessor(null).add(25458);
 
 		// Build avatars
-		if (Centuria.giveAllAvatars) {
+		if (inv.getSaveSettings().giveAllAvatars) {
 			// Unlock all avatars
 			inv.getAvatarAccessor().unlockAvatarSpecies("Kitsune");
 			inv.getAvatarAccessor().unlockAvatarSpecies("Senri");

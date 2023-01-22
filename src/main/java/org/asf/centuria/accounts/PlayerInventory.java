@@ -110,7 +110,7 @@ public abstract class PlayerInventory {
 	public CurrencyAccessor getCurrencyAccessor() {
 		return cAccessor;
 	}
-	
+
 	/**
 	 * Retrieves the high-level inspiration accessor
 	 * 
@@ -119,7 +119,7 @@ public abstract class PlayerInventory {
 	public InspirationAccessor getInspirationAccessor() {
 		return inAccessor;
 	}
-	
+
 	/**
 	 * Retrieves the high-level user var accessor
 	 * 
@@ -128,7 +128,7 @@ public abstract class PlayerInventory {
 	public UserVarAccessor getUserVarAccesor() {
 		return uAccessor;
 	}
-	
+
 	/**
 	 * Retrieves the high-level twiggle accessor
 	 * 
@@ -178,4 +178,16 @@ public abstract class PlayerInventory {
 	 * @return True if the item is present, false otherwise
 	 */
 	public abstract boolean containsItem(String itemID);
+
+	/**
+	 * Retrieves player data save settings
+	 * 
+	 * @return SaveSettings instance
+	 */
+	public abstract SaveSettings getSaveSettings();
+	
+	/**
+	 * Writes save settings to disk
+	 */
+	public abstract void writeSaveSettings();
 }
