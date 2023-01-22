@@ -25,7 +25,7 @@ import com.google.gson.JsonSyntaxException;
 public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	private static JsonObject helper;
 
-	private static final int ITEM_LIMIT = 250;
+	private static final int FALLBACK_ITEM_LIMIT = 250;
 
 	static {
 		// Load helper
@@ -508,7 +508,22 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		} else {
 			// adding a new item
 			// check if we hit item limit
-			if (itemsArray.size() + 1 > ITEM_LIMIT) {
+
+			// update as with client modding we can increase the limit, load it from the
+			// player data if overridden
+			int limit = FALLBACK_ITEM_LIMIT;
+			if (inventory.containsItem("savesettings")) {
+				// get the limit override if present
+				// we will keep this in the same place as gamemode information
+
+				JsonObject saveSettings = inventory.getItem("savesettings").getAsJsonObject();
+				if (saveSettings.has("sanctuaryLimitOverride")) {
+					// Load limit
+					limit = saveSettings.get("savesettings").getAsInt();
+				}
+			}
+
+			if (itemsArray.size() + 1 > limit) {
 				// can't add this object
 				return false;
 			}
