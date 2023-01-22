@@ -58,7 +58,8 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 
 		// Inbound user ID is the target player to trade
 		Player targetPlayer = AccountManager.getInstance().getAccount(inboundUserId).getOnlinePlayerInstance();
-		if (targetPlayer == null) {
+		if (targetPlayer == null || !sourcePlayer.account.getPlayerInventory().getSaveSettings().tradeLockID
+				.equals(targetPlayer.account.getPlayerInventory().getSaveSettings().tradeLockID)) {
 			// Fail
 			TradeInitiateFailPacket pk = new TradeInitiateFailPacket();
 			pk.player = inboundUserId;
