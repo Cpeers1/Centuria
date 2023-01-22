@@ -63,6 +63,15 @@ public abstract class CenturiaAccount {
 	public abstract boolean updateDisplayName(String name);
 
 	/**
+	 * Changes the login name
+	 * 
+	 * @since Beta 1.5.3
+	 * @param name Account login name
+	 * @return True if successful, false otherwise
+	 */
+	public abstract boolean updateLoginName(String name);
+
+	/**
 	 * Retrieves the player inventory
 	 *
 	 * @return PlayerInventory instance

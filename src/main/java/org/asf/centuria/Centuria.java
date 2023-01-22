@@ -64,7 +64,10 @@ import org.asf.centuria.networking.http.api.SettingsHandler;
 import org.asf.centuria.networking.http.api.UpdateDisplayNameHandler;
 import org.asf.centuria.networking.http.api.UserHandler;
 import org.asf.centuria.networking.http.api.XPDetailsHandler;
+import org.asf.centuria.networking.http.api.custom.ChangeDisplayNameHandler;
+import org.asf.centuria.networking.http.api.custom.ChangeLoginNameHandler;
 import org.asf.centuria.networking.http.api.custom.ChangePasswordHandler;
+import org.asf.centuria.networking.http.api.custom.DeleteAccountHandler;
 import org.asf.centuria.networking.http.api.custom.ListPlayersHandler;
 import org.asf.centuria.networking.http.api.custom.LoginRefreshHandler;
 import org.asf.centuria.networking.http.api.custom.PlayerDataDownloadHandler;
@@ -487,6 +490,9 @@ public class Centuria {
 		// Custom API
 		apiServer.registerProcessor(new LoginRefreshHandler());
 		apiServer.registerProcessor(new ChangePasswordHandler());
+		apiServer.registerProcessor(new ChangeDisplayNameHandler());
+		apiServer.registerProcessor(new ChangeLoginNameHandler());
+		apiServer.registerProcessor(new DeleteAccountHandler());
 		apiServer.registerProcessor(new UserDetailsHandler());
 		apiServer.registerProcessor(new ListPlayersHandler());
 		apiServer.registerProcessor(new RegistrationHandler());
@@ -515,6 +521,7 @@ public class Centuria {
 			apiServer.registerProcessor(new UpdateDisplayNameHandler());
 			apiServer.registerProcessor(new DisplayNamesRequestHandler());
 			apiServer.registerProcessor(new DisplayNameValidationHandler());
+			apiServer.registerProcessor(new DeleteAccountHandler());
 			apiServer.registerProcessor(new RequestTokenHandler());
 			apiServer.registerProcessor(new FallbackAPIProcessor());
 			apiServer.registerProcessor(new GameRegistrationHandler());
@@ -522,6 +529,8 @@ public class Centuria {
 			// Custom API
 			apiServer.registerProcessor(new LoginRefreshHandler());
 			apiServer.registerProcessor(new ChangePasswordHandler());
+			apiServer.registerProcessor(new ChangeDisplayNameHandler());
+			apiServer.registerProcessor(new ChangeLoginNameHandler());
 			apiServer.registerProcessor(new UserDetailsHandler());
 			apiServer.registerProcessor(new ListPlayersHandler());
 			apiServer.registerProcessor(new RegistrationHandler());

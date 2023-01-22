@@ -125,6 +125,7 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 					addItemToZip(acc.getPlayerInventory(), "9", invZip);
 					addItemToZip(acc.getPlayerInventory(), "avatars", invZip);
 					addItemToZip(acc.getPlayerInventory(), "level", invZip);
+					addItemToZip(acc.getPlayerInventory(), "savesettings", invZip);
 					invZip.close();
 					strm.close();
 				} catch (IOException e) {
