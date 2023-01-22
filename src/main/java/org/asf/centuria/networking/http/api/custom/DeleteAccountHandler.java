@@ -1,42 +1,21 @@
 package org.asf.centuria.networking.http.api.custom;
 
-import java.io.ByteArrayOutputStream;
 import java.net.Socket;
 import java.util.Base64;
-
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
-import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.processors.HttpUploadProcessor;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class ChangePasswordHandler extends HttpUploadProcessor {
+public class DeleteAccountHandler extends HttpUploadProcessor {
+
 	@Override
 	public void process(String contentType, Socket client, String method) {
 		try {
 			Centuria.logger.info("API CALL: " + getRequest().path);
-			if (!getRequest().method.equalsIgnoreCase("post")) {
-				this.setResponseCode(400);
-				this.setResponseMessage("Bad request");
-				return;
-			}
-
-			// Parse body
-			ByteArrayOutputStream strm = new ByteArrayOutputStream();
-			ConnectiveHTTPServer.transferRequestBody(getHeaders(), getRequestBodyStream(), strm);
-			byte[] body = strm.toByteArray();
-			strm.close();
-
-			// Parse body
-			JsonObject request = JsonParser.parseString(new String(body, "UTF-8")).getAsJsonObject();
-			if (!request.has("password")) {
-				this.setResponseCode(400);
-				this.setResponseMessage("Bad request");
-				return;
-			}
 
 			// Load manager
 			AccountManager manager = AccountManager.getInstance();
@@ -98,14 +77,12 @@ public class ChangePasswordHandler extends HttpUploadProcessor {
 				return;
 			}
 
-			// Change password
-			AccountManager.getInstance().updatePassword(id, request.get("password").getAsString().toCharArray());
-
 			// Send response
+			acc.deleteAccount();
 			JsonObject response = new JsonObject();
 			response.addProperty("status", "success");
 			response.addProperty("uuid", id);
-			response.addProperty("updated", true);
+			response.addProperty("deleted", true);
 			setBody(response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);
@@ -121,12 +98,12 @@ public class ChangePasswordHandler extends HttpUploadProcessor {
 
 	@Override
 	public HttpUploadProcessor createNewInstance() {
-		return new ChangePasswordHandler();
+		return new DeleteAccountHandler();
 	}
 
 	@Override
 	public String path() {
-		return "/centuria/changepassword";
+		return "/centuria/deleteaccount";
 	}
 
 }

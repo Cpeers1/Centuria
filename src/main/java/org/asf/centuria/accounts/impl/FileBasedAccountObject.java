@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
@@ -146,6 +147,47 @@ public class FileBasedAccountObject extends CenturiaAccount {
 	}
 
 	@Override
+	public boolean updateLoginName(String username) {
+		// Check name validity
+		if (!username.matches("^[A-Za-z0-9@._#]+$") || username.contains(".cred")
+				|| !username.matches(".*[A-Za-z0-9]+.*") || username.isBlank() || username.length() > 320
+				|| AccountManager.getInstance().getUserByLoginName(username) != null)
+			return false;
+
+		// Prevent blacklisted names from being used
+		for (String name : nameBlacklist) {
+			if (username.equalsIgnoreCase(name))
+				return false;
+		}
+
+		// Prevent banned and filtered words
+		for (String word : username.split(" ")) {
+			if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				return false;
+			}
+
+			if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				return false;
+			}
+		}
+
+		// Set login name
+		File f = new File("accounts/" + username);
+		if (f.exists())
+			return false;
+		try {
+			Centuria.logger
+					.info("Set login name of " + userUUID + " to " + username + " (old name was " + loginName + ")");
+			loginName = username;
+			Files.writeString(new File("accounts/" + userUUID).toPath(),
+					userUUID + "\n" + loginName + "\n" + isNew + "\n" + displayName + "\n" + userID);
+		} catch (IOException e) {
+		}
+
+		return false;
+	}
+
+	@Override
 	public boolean updateDisplayName(String name) {
 		// Check validity
 		if (!name.matches("^[0-9A-Za-z\\-_. ]+") || name.length() > 16 || name.length() < 2)
@@ -173,6 +215,10 @@ public class FileBasedAccountObject extends CenturiaAccount {
 			new File("accounts/" + userUUID + ".requirechangename").delete();
 
 		try {
+			// Log
+			Centuria.logger.info(MarkerManager.getMarker("Accounts"),
+					"Display name changed of " + loginName + ": " + displayName + " -> " + name);
+
 			// Store the name
 			displayName = name;
 
@@ -335,7 +381,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 		new File("accounts/" + loginName).delete();
 
 		// Kick online player first
-		kick("Account deletion");
+		kick("Account deletion in progress");
 
 		// Delete account file
 		new File("accounts/" + userUUID).delete();
@@ -410,7 +456,8 @@ public class FileBasedAccountObject extends CenturiaAccount {
 		}
 
 		// Log
-		Centuria.logger.info("Account deleted: " + getLoginName());
+		Centuria.logger.info("Account deleted: " + getAccountID() + ", login name: " + getLoginName()
+				+ ", display name: " + getDisplayName());
 
 		// Delete inventory
 		inv.delete();

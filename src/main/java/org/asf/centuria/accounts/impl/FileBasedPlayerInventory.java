@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 
 import org.asf.centuria.accounts.PlayerInventory;
+import org.asf.centuria.accounts.SaveSettings;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -16,9 +17,16 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 
 	private String id;
 	private HashMap<String, JsonElement> cache = new HashMap<String, JsonElement>();
+	private SaveSettings settings;
 
 	public FileBasedPlayerInventory(String userID) {
 		id = userID;
+
+		// Load save settings
+		settings = new SaveSettings();
+		if (containsItem("savesettings"))
+			settings.load(getItem("savesettings").getAsJsonObject());
+		
 
 		// Data fixer
 		if (!new File("inventories/" + id + "/fixed").exists())
@@ -147,6 +155,16 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 			file.delete();
 		}
 		dir.delete();
+	}
+
+	@Override
+	public SaveSettings getSaveSettings() {
+		return settings;
+	}
+
+	@Override
+	public void writeSaveSettings() {
+		setItem("savesettings", settings.writeToObject());
 	}
 
 }

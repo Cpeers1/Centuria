@@ -32,6 +32,7 @@ import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.MiscModerationEvent;
+import org.asf.centuria.modules.events.chat.ChatMessageEvent;
 import org.asf.centuria.modules.events.chatcommands.ChatCommandEvent;
 import org.asf.centuria.modules.events.chatcommands.ModuleCommandSyntaxListEvent;
 import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
@@ -260,16 +261,22 @@ public class SendMessage extends AbstractChatPacket {
 		// Clean message
 		message = message.trim();
 
+		// Check content
+		if (message.isBlank()) {
+			return true; // ignore chat
+		}
+
+		// Fire event
+		ChatMessageEvent evt = new ChatMessageEvent(client.getServer(), client.getPlayer(), client, message);
+		EventBus.getInstance().dispatchEvent(evt);
+		if (evt.isCancelled())
+			return true; // Cancelled
+
 		// Chat commands
 		if (message.startsWith(">")) {
 			String cmd = message.substring(1).trim();
 			if (handleCommand(cmd, client))
 				return true;
-		}
-
-		// Check content
-		if (message.isBlank()) {
-			return true; // ignore chat
 		}
 
 		// Log
@@ -518,9 +525,11 @@ public class SendMessage extends AbstractChatPacket {
 		// Generate the command list
 		ArrayList<String> commandMessages = new ArrayList<String>();
 
-		if (Centuria.giveAllResources || GameServer.hasPerm(permLevel, "admin"))
+		if (client.getPlayer().getPlayerInventory().getSaveSettings().giveAllResources
+				|| GameServer.hasPerm(permLevel, "admin"))
 			commandMessages.add("giveBasicMaterials");
-		if (Centuria.giveAllCurrency || GameServer.hasPerm(permLevel, "admin"))
+		if (client.getPlayer().getPlayerInventory().getSaveSettings().giveAllCurrency
+				|| GameServer.hasPerm(permLevel, "admin"))
 			commandMessages.add("giveBasicCurrency");
 
 		if (GameServer.hasPerm(permLevel, "moderator")) {
@@ -562,9 +571,13 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("staffroom");
 			commandMessages.add("listplayers");
 		}
-		if (Centuria.giveAllResources || Centuria.giveAllCurrency || Centuria.giveAllFurnitureItems
-				|| Centuria.giveAllClothes || (GameServer.hasPerm(permLevel, "admin")
-						|| (Centuria.giveAllResources && GameServer.hasPerm(permLevel, "moderator"))))
+		if (client.getPlayer().getPlayerInventory().getSaveSettings().giveAllResources
+				|| client.getPlayer().getPlayerInventory().getSaveSettings().giveAllCurrency
+				|| client.getPlayer().getPlayerInventory().getSaveSettings().giveAllFurnitureItems
+				|| client.getPlayer().getPlayerInventory().getSaveSettings().giveAllClothes
+				|| (GameServer.hasPerm(permLevel, "admin")
+						|| (client.getPlayer().getPlayerInventory().getSaveSettings().giveAllResources
+								&& GameServer.hasPerm(permLevel, "moderator"))))
 			if (GameServer.hasPerm(permLevel, "moderator"))
 				commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
 			else
@@ -599,7 +612,8 @@ public class SendMessage extends AbstractChatPacket {
 					return true;
 
 				if (cmdId.equals("givebasicmaterials")) {
-					if (Centuria.giveAllResources || GameServer.hasPerm(permLevel, "admin")) {
+					if (client.getPlayer().getPlayerInventory().getSaveSettings().giveAllResources
+							|| GameServer.hasPerm(permLevel, "admin")) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
 
 						if (onlinePlayer != null) {
@@ -627,7 +641,8 @@ public class SendMessage extends AbstractChatPacket {
 						return true;
 					}
 				} else if (cmdId.equals("givebasiccurrency")) {
-					if (Centuria.giveAllCurrency || GameServer.hasPerm(permLevel, "admin")) {
+					if (client.getPlayer().getPlayerInventory().getSaveSettings().giveAllCurrency
+							|| GameServer.hasPerm(permLevel, "admin")) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
 
 						if (onlinePlayer != null) {
@@ -2165,7 +2180,8 @@ public class SendMessage extends AbstractChatPacket {
 						}
 					}
 					case "giveitem":
-						if (GameServer.hasPerm(permLevel, "admin") || Centuria.giveAllResources) {
+						if (GameServer.hasPerm(permLevel, "admin")
+								|| client.getPlayer().getPlayerInventory().getSaveSettings().giveAllResources) {
 							try {
 								int defID = 0;
 								int quantity = 1;
@@ -2178,7 +2194,7 @@ public class SendMessage extends AbstractChatPacket {
 								}
 
 								defID = Integer.valueOf(args.get(0));
-								if (args.size() == 2) {
+								if (args.size() >= 2) {
 									quantity = Integer.valueOf(args.get(1));
 								}
 
@@ -2240,7 +2256,7 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						defID = Integer.valueOf(args.get(0));
-						if (args.size() == 2) {
+						if (args.size() >= 2) {
 							quantity = Integer.valueOf(args.get(1));
 						}
 
@@ -2254,8 +2270,9 @@ public class SendMessage extends AbstractChatPacket {
 						// check max item limit (hardcoded 100 for creative mode)
 						int current = client.getPlayer().getPlayerInventory().getItemAccessor(null)
 								.getCountOfItem(defID);
-						if (quantity + current > 100) {
-							systemMessage("You cannot have more than 100 of a item via commands.", cmd, client);
+						if (!client.getPlayer().getPlayerInventory().getItemAccessor(null).isQuantityBased(defID)
+								&& quantity + current > 100) {
+							systemMessage("You cannot have more than 100 of that item via commands.", cmd, client);
 							return true;
 						}
 
@@ -2272,12 +2289,16 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						// check perms and item type
-						if ((ItemAccessor.getInventoryTypeOf(defID).equals("100") && !Centuria.giveAllClothes)
-								|| (ItemAccessor.getInventoryTypeOf(defID).equals("104") && !Centuria.giveAllCurrency)
-								|| (ItemAccessor.getInventoryTypeOf(defID).equals("111") && !Centuria.giveAllClothes)
-								|| (ItemAccessor.getInventoryTypeOf(defID).equals("103") && !Centuria.giveAllResources)
-								|| (ItemAccessor.getInventoryTypeOf(defID).equals("102")
-										&& !Centuria.giveAllFurnitureItems)) {
+						if ((ItemAccessor.getInventoryTypeOf(defID).equals("100")
+								&& !client.getPlayer().getPlayerInventory().getSaveSettings().giveAllClothes)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("104")
+										&& !client.getPlayer().getPlayerInventory().getSaveSettings().giveAllCurrency)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("111")
+										&& !client.getPlayer().getPlayerInventory().getSaveSettings().giveAllClothes)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("103")
+										&& !client.getPlayer().getPlayerInventory().getSaveSettings().giveAllResources)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("102") && !client.getPlayer()
+										.getPlayerInventory().getSaveSettings().giveAllFurnitureItems)) {
 							systemMessage("Invalid item defID. Please make sure you can actually obtain this item.",
 									cmd, client);
 							return true;

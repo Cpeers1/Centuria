@@ -217,7 +217,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 			if (manager.getUserByLoginName(accountName) != null) {
 				// Reply with error
 				response.addProperty("status", "failure");
-				response.addProperty("error", "display_name_in_use");
+				response.addProperty("error", "login_name_in_use");
 				response.addProperty("error_message", "Selected login name is already in use.");
 				setBody(response.toString());
 				this.setResponseCode(400);

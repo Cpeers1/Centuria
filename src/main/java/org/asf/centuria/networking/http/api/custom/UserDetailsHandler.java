@@ -62,6 +62,7 @@ public class UserDetailsHandler extends HttpUploadProcessor {
 			response.addProperty("uuid", id);
 			response.addProperty("display_name", acc.getDisplayName());
 			response.addProperty("current_level", acc.getLevel().getLevel());
+			response.add("current_save_settings", acc.getPlayerInventory().getSaveSettings().writeToObject());
 			response.add("active_look",
 					acc.getPlayerInventory().getAccessor().findInventoryObject("avatars", acc.getActiveLook())
 							.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject());

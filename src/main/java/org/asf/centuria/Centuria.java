@@ -64,7 +64,10 @@ import org.asf.centuria.networking.http.api.SettingsHandler;
 import org.asf.centuria.networking.http.api.UpdateDisplayNameHandler;
 import org.asf.centuria.networking.http.api.UserHandler;
 import org.asf.centuria.networking.http.api.XPDetailsHandler;
+import org.asf.centuria.networking.http.api.custom.ChangeDisplayNameHandler;
+import org.asf.centuria.networking.http.api.custom.ChangeLoginNameHandler;
 import org.asf.centuria.networking.http.api.custom.ChangePasswordHandler;
+import org.asf.centuria.networking.http.api.custom.DeleteAccountHandler;
 import org.asf.centuria.networking.http.api.custom.ListPlayersHandler;
 import org.asf.centuria.networking.http.api.custom.LoginRefreshHandler;
 import org.asf.centuria.networking.http.api.custom.PlayerDataDownloadHandler;
@@ -84,14 +87,14 @@ public class Centuria {
 	// Configuration
 	public static Logger logger;
 	public static boolean allowRegistration = true;
-	public static boolean giveAllAvatars = true;
-	public static boolean giveAllMods = true;
-	public static boolean giveAllClothes = true;
-	public static boolean giveAllWings = true;
-	public static boolean giveAllFurnitureItems = true;
-	public static boolean giveAllSanctuaryTypes = true;
-	public static boolean giveAllCurrency = true;
-	public static boolean giveAllResources = true;
+	public static boolean defaultGiveAllAvatars = true;
+	public static boolean defaultGiveAllMods = true;
+	public static boolean defaultGiveAllClothes = true;
+	public static boolean defaultGiveAllWings = true;
+	public static boolean defaultGiveAllFurnitureItems = true;
+	public static boolean defaultGiveAllSanctuaryTypes = true;
+	public static boolean defaultGiveAllCurrency = true;
+	public static boolean defaultGiveAllResources = true;
 	public static boolean encryptChat = false;
 	public static boolean encryptGame = false;
 	public static boolean debugMode = false;
@@ -418,14 +421,14 @@ public class Centuria {
 
 		// Load properties into memory
 		allowRegistration = properties.getOrDefault("allow-registration", "true").equals("true");
-		giveAllAvatars = properties.getOrDefault("give-all-avatars", "true").equals("true");
-		giveAllMods = properties.getOrDefault("give-all-mods", "true").equals("true");
-		giveAllClothes = properties.getOrDefault("give-all-clothes", "true").equals("true");
-		giveAllWings = properties.getOrDefault("give-all-wings", "true").equals("true");
-		giveAllSanctuaryTypes = properties.getOrDefault("give-all-sanctuary-types", "true").equals("true");
-		giveAllFurnitureItems = properties.getOrDefault("give-all-furniture", "true").equals("true");
-		giveAllResources = properties.getOrDefault("give-all-resources", "true").equals("true");
-		giveAllCurrency = properties.getOrDefault("give-all-currency", "true").equals("true");
+		defaultGiveAllAvatars = properties.getOrDefault("give-all-avatars", "true").equals("true");
+		defaultGiveAllMods = properties.getOrDefault("give-all-mods", "true").equals("true");
+		defaultGiveAllClothes = properties.getOrDefault("give-all-clothes", "true").equals("true");
+		defaultGiveAllWings = properties.getOrDefault("give-all-wings", "true").equals("true");
+		defaultGiveAllSanctuaryTypes = properties.getOrDefault("give-all-sanctuary-types", "true").equals("true");
+		defaultGiveAllFurnitureItems = properties.getOrDefault("give-all-furniture", "true").equals("true");
+		defaultGiveAllResources = properties.getOrDefault("give-all-resources", "true").equals("true");
+		defaultGiveAllCurrency = properties.getOrDefault("give-all-currency", "true").equals("true");
 		encryptChat = properties.getOrDefault("encrypt-chat", "false").equals("true")
 				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
 		encryptGame = properties.getOrDefault("encrypt-game", "false").equals("true")
@@ -487,6 +490,9 @@ public class Centuria {
 		// Custom API
 		apiServer.registerProcessor(new LoginRefreshHandler());
 		apiServer.registerProcessor(new ChangePasswordHandler());
+		apiServer.registerProcessor(new ChangeDisplayNameHandler());
+		apiServer.registerProcessor(new ChangeLoginNameHandler());
+		apiServer.registerProcessor(new DeleteAccountHandler());
 		apiServer.registerProcessor(new UserDetailsHandler());
 		apiServer.registerProcessor(new ListPlayersHandler());
 		apiServer.registerProcessor(new RegistrationHandler());
@@ -515,6 +521,7 @@ public class Centuria {
 			apiServer.registerProcessor(new UpdateDisplayNameHandler());
 			apiServer.registerProcessor(new DisplayNamesRequestHandler());
 			apiServer.registerProcessor(new DisplayNameValidationHandler());
+			apiServer.registerProcessor(new DeleteAccountHandler());
 			apiServer.registerProcessor(new RequestTokenHandler());
 			apiServer.registerProcessor(new FallbackAPIProcessor());
 			apiServer.registerProcessor(new GameRegistrationHandler());
@@ -522,6 +529,8 @@ public class Centuria {
 			// Custom API
 			apiServer.registerProcessor(new LoginRefreshHandler());
 			apiServer.registerProcessor(new ChangePasswordHandler());
+			apiServer.registerProcessor(new ChangeDisplayNameHandler());
+			apiServer.registerProcessor(new ChangeLoginNameHandler());
 			apiServer.registerProcessor(new UserDetailsHandler());
 			apiServer.registerProcessor(new ListPlayersHandler());
 			apiServer.registerProcessor(new RegistrationHandler());

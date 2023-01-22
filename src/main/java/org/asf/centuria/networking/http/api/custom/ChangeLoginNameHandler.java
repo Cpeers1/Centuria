@@ -3,17 +3,23 @@ package org.asf.centuria.networking.http.api.custom;
 import java.io.ByteArrayOutputStream;
 import java.net.Socket;
 import java.util.Base64;
+import java.util.stream.Stream;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.networking.chatserver.networking.SendMessage;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.processors.HttpUploadProcessor;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class ChangePasswordHandler extends HttpUploadProcessor {
+public class ChangeLoginNameHandler extends HttpUploadProcessor {
+
+	private static String[] nameBlacklist = new String[] { "kit", "kitsendragn", "kitsendragon", "fera", "fero",
+			"wwadmin", "ayli", "komodorihero", "wwsam", "blinky", "fer.ocity" };
+
 	@Override
 	public void process(String contentType, Socket client, String method) {
 		try {
@@ -32,7 +38,7 @@ public class ChangePasswordHandler extends HttpUploadProcessor {
 
 			// Parse body
 			JsonObject request = JsonParser.parseString(new String(body, "UTF-8")).getAsJsonObject();
-			if (!request.has("password")) {
+			if (!request.has("new_login_name")) {
 				this.setResponseCode(400);
 				this.setResponseMessage("Bad request");
 				return;
@@ -98,12 +104,63 @@ public class ChangePasswordHandler extends HttpUploadProcessor {
 				return;
 			}
 
-			// Change password
-			AccountManager.getInstance().updatePassword(id, request.get("password").getAsString().toCharArray());
+			// Prepare response
+			JsonObject response = new JsonObject();
+
+			// Check if the name is in use
+			String newName = payload.get("new_login_name").getAsString();
+			if (manager.getAccount(newName) != null) {
+				response.addProperty("status", "failure");
+				response.addProperty("error", "login_name_in_use");
+				response.addProperty("error_message", "Selected login name is already in use.");
+				return; // Name is in use
+			}
+
+			// Save new name
+			String oldName = acc.getLoginName();
+			if (acc.updateLoginName(newName)) {
+				// Wipe lock
+				manager.releaseLoginName(oldName);
+			} else {
+				if (!newName.matches("^[A-Za-z0-9@._#]+$") || newName.contains(".cred")
+						|| !newName.matches(".*[A-Za-z0-9]+.*") || newName.isBlank() || newName.length() > 320) {
+					// Reply with error
+					response.addProperty("status", "failure");
+					response.addProperty("error", "invalid_login_name");
+					response.addProperty("error_message", "Invalid login name.");
+					setBody(response.toString());
+					return;
+				}
+
+				// Prevent blacklisted names from being used
+				for (String nm : nameBlacklist) {
+					if (newName.equalsIgnoreCase(nm)) {
+						response.addProperty("status", "failure");
+						response.addProperty("error", "invalid_login_name");
+						response.addProperty("error_message",
+								"Invalid login name: this name may not be used as it may not be appropriate.");
+						setBody(response.toString());
+						return;
+					}
+				}
+
+				// Prevent banned and filtered words
+				for (String word : newName.split(" ")) {
+					if (Stream.of(SendMessage.getInvalidWords())
+							.anyMatch(t -> t.toLowerCase().equals(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase()))) {
+						response.addProperty("status", "failure");
+						response.addProperty("error", "invald_login_name");
+						response.addProperty("error_message",
+								"Invalid login name: this name may not be used as it may not be appropriate.");
+						setBody(response.toString());
+						return;
+					}
+				}
+			}
 
 			// Send response
-			JsonObject response = new JsonObject();
 			response.addProperty("status", "success");
+			response.addProperty("login_name", acc.getLoginName());
 			response.addProperty("uuid", id);
 			response.addProperty("updated", true);
 			setBody(response.toString());
@@ -121,12 +178,12 @@ public class ChangePasswordHandler extends HttpUploadProcessor {
 
 	@Override
 	public HttpUploadProcessor createNewInstance() {
-		return new ChangePasswordHandler();
+		return new ChangeLoginNameHandler();
 	}
 
 	@Override
 	public String path() {
-		return "/centuria/changepassword";
+		return "/centuria/updateloginname";
 	}
 
 }

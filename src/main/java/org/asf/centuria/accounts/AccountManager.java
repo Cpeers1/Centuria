@@ -69,6 +69,14 @@ public abstract class AccountManager {
 	public abstract boolean lockDisplayName(String displayName, String userID);
 
 	/**
+	 * Releases a login name lock
+	 * 
+	 * @since Beta 1.5.3
+	 * @param name Login name to unlock
+	 */
+	public abstract void releaseLoginName(String name);
+
+	/**
 	 * Registers accounts
 	 * 
 	 * @param username Account login name

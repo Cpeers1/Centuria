@@ -15,6 +15,8 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.modules.eventbus.EventBus;
+import org.asf.centuria.modules.events.chat.ChatLoginEvent;
 import org.asf.centuria.networking.chatserver.networking.AbstractChatPacket;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.util.TaskThread;
@@ -31,6 +33,35 @@ public class ChatClient {
 	private CenturiaAccount player;
 	private ArrayList<String> rooms = new ArrayList<String>();
 	private HashMap<String, Boolean> privateChat = new HashMap<String, Boolean>();
+
+	private ArrayList<Object> objects = new ArrayList<Object>();
+
+	/**
+	 * Retrieves objects from the connection container, used to store information in clients.
+	 * 
+	 * @since Beta 1.5.3
+	 * @param type Object type
+	 * @return Object instance or null
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T getObject(Class<T> type) {
+		for (Object obj : objects) {
+			if (type.isAssignableFrom(obj.getClass()))
+				return (T) obj;
+		}
+		return null;
+	}
+
+	/**
+	 * Adds objects to the connection container, used to store information in clients.
+	 * 
+	 * @since Beta 1.5.3
+	 * @param obj Object to add
+	 */
+	public void addObject(Object obj) {
+		if (getObject(obj.getClass()) == null)
+			objects.add(obj);
+	}
 
 	// Anti-hack
 	public int banCounter = 0;
@@ -125,6 +156,15 @@ public class ChatClient {
 		CenturiaAccount acc = AccountManager.getInstance().getAccount(payload.get("uuid").getAsString());
 		if (acc == null) {
 			disconnect();
+			return;
+		}
+
+		// Remove sensitive info and fire event
+		handshakeStart.remove("auth_token");
+		ChatLoginEvent evt = new ChatLoginEvent(server, acc, this, handshakeStart);
+		EventBus.getInstance().dispatchEvent(evt);
+		if (evt.isCancelled()) {
+			disconnect(); // Cancelled
 			return;
 		}
 

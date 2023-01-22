@@ -21,6 +21,8 @@ import java.util.function.Consumer;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import org.apache.logging.log4j.MarkerManager;
+import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -300,6 +302,10 @@ public class FileBasedAccountManager extends AccountManager {
 			// Dispatch event
 			EventBus.getInstance().dispatchEvent(new AccountRegistrationEvent(getAccount(id)));
 
+			// Log
+			Centuria.logger.info(MarkerManager.getMarker("Accounts"),
+					"Account registered: " + id + ", login name: " + username);
+
 			// Return account ID
 			return id;
 		} catch (IOException e) {
@@ -469,6 +475,17 @@ public class FileBasedAccountManager extends AccountManager {
 				// Not a account file
 			}
 		}
+	}
+
+	@Override
+	public void releaseLoginName(String username) {
+		// Check name validity
+		if (!username.matches("^[A-Za-z0-9@._#]+$") || username.contains(".cred")
+				|| !username.matches(".*[A-Za-z0-9]+.*") || username.isBlank() || username.length() > 320)
+			return;
+		File f = new File("accounts/" + username);
+		if (f.exists())
+			f.delete();
 	}
 
 }
