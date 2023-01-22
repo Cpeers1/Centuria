@@ -32,6 +32,7 @@ import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.MiscModerationEvent;
+import org.asf.centuria.modules.events.chat.ChatMessageEvent;
 import org.asf.centuria.modules.events.chatcommands.ChatCommandEvent;
 import org.asf.centuria.modules.events.chatcommands.ModuleCommandSyntaxListEvent;
 import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
@@ -260,16 +261,22 @@ public class SendMessage extends AbstractChatPacket {
 		// Clean message
 		message = message.trim();
 
+		// Check content
+		if (message.isBlank()) {
+			return true; // ignore chat
+		}
+
+		// Fire event
+		ChatMessageEvent evt = new ChatMessageEvent(client.getServer(), client.getPlayer(), client, message);
+		EventBus.getInstance().dispatchEvent(evt);
+		if (evt.isCancelled())
+			return true; // Cancelled
+
 		// Chat commands
 		if (message.startsWith(">")) {
 			String cmd = message.substring(1).trim();
 			if (handleCommand(cmd, client))
 				return true;
-		}
-
-		// Check content
-		if (message.isBlank()) {
-			return true; // ignore chat
 		}
 
 		// Log
