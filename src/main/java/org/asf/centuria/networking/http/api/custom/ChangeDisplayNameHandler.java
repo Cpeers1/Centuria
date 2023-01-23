@@ -91,7 +91,7 @@ public class ChangeDisplayNameHandler extends HttpUploadProcessor {
 			// Check existence
 			if (id == null) {
 				// Invalid details
-				this.setBody("{\"error\":\"invalid_credential\"}");
+				this.setBody("text/json", "{\"error\":\"invalid_credential\"}");
 				this.setResponseCode(422);
 				return;
 			}
@@ -134,7 +134,7 @@ public class ChangeDisplayNameHandler extends HttpUploadProcessor {
 					response.addProperty("status", "failure");
 					response.addProperty("error", "invalid_display_name");
 					response.addProperty("error_message", "Invalid display name.");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					return;
 				}
 
@@ -145,7 +145,7 @@ public class ChangeDisplayNameHandler extends HttpUploadProcessor {
 						response.addProperty("error", "invalid_display_name");
 						response.addProperty("error_message",
 								"Invalid display name: this name may not be used as it may not be appropriate.");
-						setBody(response.toString());
+						setBody("text/json", response.toString());
 						return;
 					}
 				}
@@ -158,7 +158,7 @@ public class ChangeDisplayNameHandler extends HttpUploadProcessor {
 						response.addProperty("error", "invalid_display_name");
 						response.addProperty("error_message",
 								"Invalid display name: this name may not be used as it may not be appropriate.");
-						setBody(response.toString());
+						setBody("text/json", response.toString());
 						return;
 					}
 				}
@@ -169,7 +169,7 @@ public class ChangeDisplayNameHandler extends HttpUploadProcessor {
 			response.addProperty("name", acc.getDisplayName());
 			response.addProperty("uuid", id);
 			response.addProperty("updated", true);
-			setBody(response.toString());
+			setBody("text/json", response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");

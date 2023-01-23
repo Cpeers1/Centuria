@@ -71,7 +71,7 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 			// Check existence
 			if (id == null) {
 				// Invalid details
-				this.setBody("{\"error\":\"invalid_account\"}");
+				this.setBody("text/json", "{\"error\":\"invalid_account\"}");
 				this.setResponseCode(422);
 				return;
 			}
@@ -88,7 +88,7 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 			String path = getRequest().path.substring(path().length());
 			if (path.isEmpty()) {
 				// Invalid request
-				this.setBody("{\"error\":\"missing_item\"}");
+				this.setBody("text/json", "{\"error\":\"missing_item\"}");
 				this.setResponseCode(400);
 				this.setResponseMessage("Bad request");
 				return;
@@ -138,12 +138,12 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 			} else {
 				if (!acc.getSaveSpecificInventory().containsItem(path)) {
 					// Invalid request
-					this.setBody("{\"error\":\"item_not_found\"}");
+					this.setBody("text/json", "{\"error\":\"item_not_found\"}");
 					this.setResponseCode(404);
 					this.setResponseMessage("Not found");
 					return;
 				} else {
-					this.setBody("application/json", acc.getSaveSpecificInventory().getItem(path).toString());
+					this.setBody("text/json", acc.getSaveSpecificInventory().getItem(path).toString());
 				}
 			}
 		} catch (Exception e) {

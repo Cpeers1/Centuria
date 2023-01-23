@@ -88,7 +88,7 @@ public class SaveManagerHandler extends HttpUploadProcessor {
 			// Check existence
 			if (id == null) {
 				// Invalid details
-				this.setBody("{\"error\":\"invalid_credential\"}");
+				this.setBody("text/json", "{\"error\":\"invalid_credential\"}");
 				this.setResponseCode(422);
 				return;
 			}
@@ -112,14 +112,14 @@ public class SaveManagerHandler extends HttpUploadProcessor {
 					acc.migrateSaveDataToManagedMode();
 					response.addProperty("status", "success");
 					response.addProperty("migrated", true);
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					return;
 				}
 				response.addProperty("status", "failure");
 				response.addProperty("error", "save_data_unmanaged");
 				response.addProperty("error_message",
 						"Running in unmanaged save data mode, please migrate to managed mode before using the save manager.");
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 				this.setResponseCode(400);
 				this.setResponseMessage("Bad request");
 				return;
@@ -133,7 +133,7 @@ public class SaveManagerHandler extends HttpUploadProcessor {
 					response.addProperty("status", "failure");
 					response.addProperty("error", "missing_argument");
 					response.addProperty("error_message", "Missing required argument.");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					break;
@@ -143,7 +143,7 @@ public class SaveManagerHandler extends HttpUploadProcessor {
 					response.addProperty("status", "failure");
 					response.addProperty("error", "invalid_save");
 					response.addProperty("error_message", "Invalid save name.");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					break;
@@ -170,14 +170,14 @@ public class SaveManagerHandler extends HttpUploadProcessor {
 				response.addProperty("status", "failure");
 				response.addProperty("error", "unknown_command");
 				response.addProperty("error_message", "Unknown command.");
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 				this.setResponseCode(400);
 				this.setResponseMessage("Bad request");
 				break;
 			}
 			}
 
-			setBody(response.toString());
+			setBody("text/json", response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");

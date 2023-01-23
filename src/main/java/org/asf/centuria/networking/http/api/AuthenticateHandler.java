@@ -80,7 +80,7 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 				// Check if registration is enabled, if not, prevent login
 				if (!Centuria.allowRegistration || Centuria.gameServer.maintenance) {
 					// Invalid details
-					this.setBody("{\"error\":\"invalid_credential\"}");
+					this.setBody("text/json", "{\"error\":\"invalid_credential\"}");
 					this.setResponseCode(422);
 					return;
 				}
@@ -89,7 +89,7 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 				id = manager.register(login.get("username").getAsString());
 				if (id == null) {
 					// Invalid details
-					this.setBody("{\"error\":\"invalid_credential\"}");
+					this.setBody("text/json", "{\"error\":\"invalid_credential\"}");
 					this.setResponseCode(422);
 					return;
 				}
@@ -150,7 +150,7 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 			response.addProperty("rename_required_key", "");
 			response.addProperty("email_update_required", false);
 			response.addProperty("email_update_required_key", "");
-			setBody(response.toString());
+			setBody("text/json", response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");

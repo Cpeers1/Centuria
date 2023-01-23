@@ -102,7 +102,7 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 				if (accountName.equalsIgnoreCase(name)) {
 					// Reply with error
 					response.addProperty("error", "invalid_username");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					return;
@@ -114,7 +114,7 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 				if (displayName.equalsIgnoreCase(name)) {
 					// Reply with error
 					response.addProperty("error", "display_name_sift_rejected");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					return;
@@ -126,7 +126,7 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 				if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 					// Reply with error
 					response.addProperty("error", "invalid_username");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					return;
@@ -135,7 +135,7 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 				if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 					// Reply with error
 					response.addProperty("error", "invalid_username");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					return;
@@ -147,7 +147,7 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 				if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 					// Reply with error
 					response.addProperty("error", "display_name_sift_rejected");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					return;
@@ -156,7 +156,7 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 				if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 					// Reply with error
 					response.addProperty("error", "display_name_sift_rejected");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					return;
@@ -169,7 +169,7 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 					|| accountName.length() > 320) {
 				// Reply with error
 				response.addProperty("error", "invalid_username");
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 				this.setResponseCode(400);
 				this.setResponseMessage("Bad request");
 				return;
@@ -179,7 +179,7 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 			if (!displayName.matches("^[0-9A-Za-z\\-_. ]+") || displayName.length() > 16 || displayName.length() < 2) {
 				// Reply with error
 				response.addProperty("error", "display_name_invalid_format");
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 				this.setResponseCode(400);
 				this.setResponseMessage("Bad request");
 				return;
@@ -189,7 +189,7 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 			if (manager.getUserByLoginName(accountName) != null) {
 				// Reply with error
 				response.addProperty("error", "username_already_exists");
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 				this.setResponseCode(400);
 				this.setResponseMessage("Bad request");
 				return;
@@ -199,7 +199,7 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 			if (manager.isDisplayNameInUse(displayName)) {
 				// Reply with error
 				response.addProperty("error", "display_name_already_taken");
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 				this.setResponseCode(400);
 				this.setResponseMessage("Bad request");
 				return;
@@ -286,7 +286,7 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 						// Reply with error
 						response.addProperty("error",
 								"Unable to verify with that name. Please use a different login name format.");
-						setBody(response.toString());
+						setBody("text/json", response.toString());
 						this.setResponseCode(400);
 						this.setResponseMessage("Bad request");
 						return;
@@ -336,7 +336,7 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 
 						// Call helper post registration
 						helper.postRegistration(manager.getAccount(accountID), accountID, displayName, verifyPayload);
-						setBody(response.toString());
+						setBody("text/json", response.toString());
 						return;
 					} else {
 						// Set error
@@ -365,21 +365,21 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 						response.addProperty("error_message", result.errorMessage);
 						this.setResponseCode(400);
 						this.setResponseMessage("Bad request");
-						setBody(response.toString());
+						setBody("text/json", response.toString());
 						return;
 					}
 				}
 				// Reply with error
 				response.addProperty("error",
 						"Unable to verify with that name. Please use a different login name format.");
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 				this.setResponseCode(400);
 				this.setResponseMessage("Bad request");
 				return;
 			}
 
 			// Send response
-			setBody(response.toString());
+			setBody("text/json", response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");

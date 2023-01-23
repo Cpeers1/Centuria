@@ -70,7 +70,7 @@ public class UserDetailsHandler extends HttpUploadProcessor {
 			response.add("active_look",
 					acc.getSaveSpecificInventory().getAccessor().findInventoryObject("avatars", acc.getActiveLook())
 							.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject());
-			setBody(response.toString());
+			setBody("text/json", response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");

@@ -91,7 +91,7 @@ public class ChangeLoginNameHandler extends HttpUploadProcessor {
 			// Check existence
 			if (id == null) {
 				// Invalid details
-				this.setBody("{\"error\":\"invalid_credential\"}");
+				this.setBody("text/json", "{\"error\":\"invalid_credential\"}");
 				this.setResponseCode(422);
 				return;
 			}
@@ -128,7 +128,7 @@ public class ChangeLoginNameHandler extends HttpUploadProcessor {
 					response.addProperty("status", "failure");
 					response.addProperty("error", "invalid_login_name");
 					response.addProperty("error_message", "Invalid login name.");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					return;
 				}
 
@@ -139,7 +139,7 @@ public class ChangeLoginNameHandler extends HttpUploadProcessor {
 						response.addProperty("error", "invalid_login_name");
 						response.addProperty("error_message",
 								"Invalid login name: this name may not be used as it may not be appropriate.");
-						setBody(response.toString());
+						setBody("text/json", response.toString());
 						return;
 					}
 				}
@@ -152,7 +152,7 @@ public class ChangeLoginNameHandler extends HttpUploadProcessor {
 						response.addProperty("error", "invald_login_name");
 						response.addProperty("error_message",
 								"Invalid login name: this name may not be used as it may not be appropriate.");
-						setBody(response.toString());
+						setBody("text/json", response.toString());
 						return;
 					}
 				}
@@ -163,7 +163,7 @@ public class ChangeLoginNameHandler extends HttpUploadProcessor {
 			response.addProperty("login_name", acc.getLoginName());
 			response.addProperty("uuid", id);
 			response.addProperty("updated", true);
-			setBody(response.toString());
+			setBody("text/json", response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");

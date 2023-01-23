@@ -1,6 +1,5 @@
 package org.asf.centuria.networking.http.api;
 
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 
 import org.asf.centuria.Centuria;
@@ -21,10 +20,7 @@ public class RequestTokenHandler extends HttpUploadProcessor {
 		JsonObject res = new JsonObject();
 		res.addProperty("challenge", challenge);
 		res.addProperty("iv", iv);
-		try {
-			this.setBody(res.toString().getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-		}
+		this.setBody("text/json", res.toString());
 	}
 
 	@Override

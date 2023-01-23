@@ -66,7 +66,7 @@ public class LoginRefreshHandler extends HttpUploadProcessor {
 			// Check existence
 			if (id == null) {
 				// Invalid details
-				this.setBody("{\"error\":\"invalid_credential\"}");
+				this.setBody("text/json", "{\"error\":\"invalid_credential\"}");
 				this.setResponseCode(422);
 				return;
 			}
@@ -117,7 +117,7 @@ public class LoginRefreshHandler extends HttpUploadProcessor {
 			response.addProperty("auth_token", headerD + "." + payloadD + "." + Base64.getUrlEncoder().withoutPadding()
 					.encodeToString(Centuria.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
 			response.addProperty("rename_required", !manager.hasPassword(id) || changeName || acc.isRenameRequired());
-			setBody(response.toString());
+			setBody("text/json", response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");

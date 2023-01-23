@@ -77,7 +77,7 @@ public class XPDetailsHandler extends HttpUploadProcessor {
 			// Send response
 			response.add("found", found);
 			response.add("not_found", req);
-			setBody(response.toString());
+			setBody("text/json", response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");

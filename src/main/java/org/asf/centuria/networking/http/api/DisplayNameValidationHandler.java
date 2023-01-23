@@ -29,13 +29,13 @@ public class DisplayNameValidationHandler extends HttpUploadProcessor {
 			JsonObject response = new JsonObject();
 			if (manager.getUserByDisplayName(name) != null) {
 				response.addProperty("error", "display_name_already_taken");
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 				return;
 			}
 
 			if (!name.matches("^[0-9A-Za-z\\-_. ]+") || name.length() > 16 || name.length() < 2) {
 				response.addProperty("error", "display_name_invalid_format");
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 				return;
 			}
 
@@ -43,7 +43,7 @@ public class DisplayNameValidationHandler extends HttpUploadProcessor {
 			for (String nm : nameBlacklist) {
 				if (name.equalsIgnoreCase(nm)) {
 					response.addProperty("error", "display_name_sift_rejected");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					return;
 				}
 			}
@@ -53,14 +53,14 @@ public class DisplayNameValidationHandler extends HttpUploadProcessor {
 				if (Stream.of(SendMessage.getInvalidWords())
 						.anyMatch(t -> t.toLowerCase().equals(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase()))) {
 					response.addProperty("error", "display_name_sift_rejected");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					return;
 				}
 			}
 
 			// Send response
 			response.addProperty("success", true);
-			setBody(response.toString());
+			setBody("text/json", response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");
