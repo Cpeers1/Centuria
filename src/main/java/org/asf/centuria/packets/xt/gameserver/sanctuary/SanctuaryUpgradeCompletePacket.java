@@ -54,7 +54,7 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 			// need to use the twiggle to find out what was worked on
 
 			var player = (Player) client.container;
-			var twiggleAccessor = player.account.getPlayerInventory().getTwiggleAccesor();
+			var twiggleAccessor = player.account.getSaveSpecificInventory().getTwiggleAccesor();
 
 			var twiggleItem = twiggleAccessor.getTwiggle(twiggleInvId);
 
@@ -76,26 +76,26 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 
 			if (twiggleItem.getTwiggleComponent().twiggleWorkParams.stage != null) {
 				// its a stage upgrade
-				var didSucceed = player.account.getPlayerInventory().getSanctuaryAccessor().upgradeSanctuaryToStage(
+				var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor().upgradeSanctuaryToStage(
 						twiggleItem.getTwiggleComponent().twiggleWorkParams.classItemInvId,
 						twiggleItem.getTwiggleComponent().twiggleWorkParams.stage);
 
 				if (didSucceed) {
-					var il = player.account.getPlayerInventory().getItem("201");
+					var il = player.account.getSaveSpecificInventory().getItem("201");
 					var ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
 					// send IL
 					player.client.sendPacket(ilPacket);
 
-					il = player.account.getPlayerInventory().getItem("5");
+					il = player.account.getSaveSpecificInventory().getItem("5");
 					ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
 					// send IL
 					player.client.sendPacket(ilPacket);
 
-					il = player.account.getPlayerInventory().getItem("10");
+					il = player.account.getSaveSpecificInventory().getItem("10");
 					ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
@@ -103,7 +103,7 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 					player.client.sendPacket(ilPacket);
 					
 					twiggleAccessor.clearTwiggleWork(twiggleInvId);
-					il = player.account.getPlayerInventory().getItem("110");
+					il = player.account.getSaveSpecificInventory().getItem("110");
 					ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
@@ -117,33 +117,33 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 				}
 			} else if (twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex != null) {
 				// its a stage upgrade
-				var didSucceed = player.account.getPlayerInventory().getSanctuaryAccessor().enlargenSanctuaryRooms(
+				var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor().enlargenSanctuaryRooms(
 						twiggleItem.getTwiggleComponent().twiggleWorkParams.classItemInvId,
 						twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex);
 
 				if (didSucceed) {
-					var il = player.account.getPlayerInventory().getItem("201");
+					var il = player.account.getSaveSpecificInventory().getItem("201");
 					var ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
 					// send IL
 					player.client.sendPacket(ilPacket);
 
-					il = player.account.getPlayerInventory().getItem("5");
+					il = player.account.getSaveSpecificInventory().getItem("5");
 					ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
 					// send IL
 					player.client.sendPacket(ilPacket);
 
-					il = player.account.getPlayerInventory().getItem("10");
+					il = player.account.getSaveSpecificInventory().getItem("10");
 					ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
 					// send IL
 					player.client.sendPacket(ilPacket);
 					twiggleAccessor.clearTwiggleWork(twiggleInvId);
-					il = player.account.getPlayerInventory().getItem("110");
+					il = player.account.getSaveSpecificInventory().getItem("110");
 					ilPacket = new InventoryItemPacket();
 					ilPacket.item = il;
 
@@ -181,7 +181,7 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 
 		// Find owner
 		CenturiaAccount sancOwner = AccountManager.getInstance().getAccount(sanctuaryOwner);
-		if (!sancOwner.getPlayerInventory().containsItem("201")) {
+		if (!sancOwner.getSaveSpecificInventory().containsItem("201")) {
 			Player plr = sancOwner.getOnlinePlayerInstance();
 			if (plr != null)
 				plr.activeSanctuaryLook = sancOwner.getActiveSanctuaryLook();
@@ -193,7 +193,7 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 		if (!isOwner) {
 			// Load privacy settings
 			int privSetting = 0;
-			UserVarValue val = sancOwner.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
+			UserVarValue val = sancOwner.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
 			if (val != null)
 				privSetting = val.value;
 

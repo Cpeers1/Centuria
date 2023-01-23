@@ -50,7 +50,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		Player plr = (Player) client.container;
-		PlayerInventory inv = plr.account.getPlayerInventory();
+		PlayerInventory inv = plr.account.getSaveSpecificInventory();
 
 		// Log
 		Centuria.logger.debug(MarkerManager.getMarker("ITEMREQUEST"), "Client to server (type: " + slot + ")");
@@ -297,7 +297,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 					inv.getSanctuaryAccessor().addExtraSanctuarySlot();
 
 				// Active sanc look
-				if (plr.account.getPlayerInventory().getSanctuaryAccessor()
+				if (plr.account.getSaveSpecificInventory().getSanctuaryAccessor()
 						.getSanctuaryLook(plr.account.getActiveSanctuaryLook()) == null) {
 					plr.activeSanctuaryLook = inv.getSanctuaryAccessor().getFirstSanctuaryLook().get("id")
 							.getAsString();
@@ -450,7 +450,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				inv.setItem(slot, item);
 			} else {
 				// Fix broken quest progression
-				JsonObject progressionMap = plr.account.getPlayerInventory().getAccessor()
+				JsonObject progressionMap = plr.account.getSaveSpecificInventory().getAccessor()
 						.findInventoryObject("311", 22781).get("components").getAsJsonObject()
 						.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
 				JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
@@ -459,7 +459,8 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				if (completedQuests.contains("25287")) {
 					// Fix
 					arr.remove(completedQuests.indexOf("25287"));
-					plr.account.getPlayerInventory().setItem("311", plr.account.getPlayerInventory().getItem("311"));
+					plr.account.getSaveSpecificInventory().setItem("311",
+							plr.account.getSaveSpecificInventory().getItem("311"));
 					item = inv.getItem("311");
 					inv.setItem(slot, item);
 				}

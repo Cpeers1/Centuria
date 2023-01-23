@@ -77,6 +77,7 @@ import org.asf.centuria.networking.http.director.GameServerRequestHandler;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.ConnectiveServerFactory;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 public class Centuria {
@@ -86,6 +87,7 @@ public class Centuria {
 
 	// Configuration
 	public static Logger logger;
+	public static boolean defaultUseManagedSaves = false;
 	public static boolean allowRegistration = true;
 	public static boolean defaultGiveAllAvatars = true;
 	public static boolean defaultGiveAllMods = true;
@@ -379,10 +381,10 @@ public class Centuria {
 							+ "allow-registration=true\n" + "give-all-avatars=false\n" + "give-all-mods=false\n"
 							+ "give-all-clothes=false\n" + "give-all-wings=false\n" + "give-all-sanctuary-types=false\n"
 							+ "give-all-furniture=false\n" + "give-all-currency=false\n" + "give-all-resources=false\n"
-							+ "server-spawn-behaviour=random\n" + "discovery-server-address=localhost\n"
-							+ "encrypt-api=false\n" + "encrypt-chat=true\n" + "encrypt-game=false\n"
-							+ "debug-mode=false\n" + "\nvpn-user-whitelist=vpn-whitelist\n" + "vpn-ipv4-banlist=\n"
-							+ "vpn-ipv6-banlist=");
+							+ "server-spawn-behaviour=random\ndefault-save-behaviour=single\n"
+							+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
+							+ "encrypt-game=false\n" + "debug-mode=false\n" + "\nvpn-user-whitelist=vpn-whitelist\n"
+							+ "vpn-ipv4-banlist=\n" + "vpn-ipv6-banlist=");
 		}
 
 		// Parse properties
@@ -436,10 +438,53 @@ public class Centuria {
 		discoveryAddress = properties.getOrDefault("discovery-server-address", discoveryAddress);
 		debugMode = properties.getOrDefault("debug-mode", "false").equals("true");
 		spawnBehaviour = properties.getOrDefault("server-spawn-behaviour", "random");
+		defaultUseManagedSaves = properties.getOrDefault("default-save-behaviour", "single").equals("managed");
 		if (spawnBehaviour == null)
 			spawnBehaviour = "random";
 		if (System.getProperty("debugMode", "false").equals("true"))
 			debugMode = true;
+
+		// Create default save settings if needed
+		File defaultSaveSettingsFile = new File("savemanager.json");
+		if (!defaultSaveSettingsFile.exists()) {
+			JsonObject defaultSaveSettings = new JsonObject();
+
+			// Create settings and deduct from server config
+			String defaultSaveName = "default";
+			if (defaultGiveAllAvatars && defaultGiveAllMods && defaultGiveAllWings && defaultGiveAllSanctuaryTypes) {
+				defaultSaveName = "creative";
+			} else if (!defaultGiveAllAvatars && !defaultGiveAllMods && !defaultGiveAllClothes && !defaultGiveAllWings
+					&& !defaultGiveAllSanctuaryTypes && !defaultGiveAllFurnitureItems && !defaultGiveAllResources
+					&& !defaultGiveAllCurrency) {
+				defaultSaveName = "experience";
+			}
+
+			// Create save array
+			JsonObject saves = new JsonObject();
+			JsonObject save = new JsonObject();
+			save.addProperty("sanctuaryLimitOverride", -1);
+			save.addProperty("giveAllAvatars", defaultGiveAllAvatars);
+			save.addProperty("giveAllClothes", defaultGiveAllClothes);
+			save.addProperty("giveAllMods", defaultGiveAllMods);
+			save.addProperty("giveAllWings", defaultGiveAllWings);
+			save.addProperty("giveAllFurnitureItems", defaultGiveAllFurnitureItems);
+			save.addProperty("giveAllSanctuaryTypes", defaultGiveAllSanctuaryTypes);
+			save.addProperty("giveAllCurrency", defaultGiveAllCurrency);
+			save.addProperty("giveAllResources", defaultGiveAllResources);
+			saves.add(defaultSaveName, save);
+
+			// Set basics
+			defaultSaveSettings.addProperty("defaultSaveName", defaultSaveName);
+			defaultSaveSettings.addProperty("migrationSaveName", defaultSaveName);
+			defaultSaveSettings.add("saves", saves);
+
+			try {
+				Files.writeString(defaultSaveSettingsFile.toPath(),
+						new Gson().newBuilder().setPrettyPrinting().create().toJson(defaultSaveSettings));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
 
 		// Start the servers
 		Centuria.logger.info("Starting API server on port " + Integer.parseInt(properties.get("api-port")) + "...");

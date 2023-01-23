@@ -25,9 +25,16 @@ import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.accounts.PlayerInventory;
+import org.asf.centuria.accounts.SaveManager;
+import org.asf.centuria.accounts.SaveSettings;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.AccountRegistrationEvent;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 public class FileBasedAccountManager extends AccountManager {
 
@@ -298,6 +305,46 @@ public class FileBasedAccountManager extends AccountManager {
 			Files.writeString(uf.toPath(), id + "\n" + username);
 			Files.writeString(new File("accounts/" + id).toPath(),
 					id + "\n" + username + "\ntrue\n" + username + "\n" + lastAccountID);
+
+			// Managed save mode if enabled
+			if (Centuria.defaultUseManagedSaves) {
+				// Create managed save data
+
+				// First create a save manifest
+				PlayerInventory sharedInv = new FileBasedPlayerInventory(id, "");
+				sharedInv.setItem("savemanifest", new JsonObject());
+
+				// Load save manager
+				SaveManager manager = new FileBasedSaveManager(sharedInv, getAccount(id));
+
+				// Find default save settings
+				JsonObject defaultSaveSettings;
+				try {
+					defaultSaveSettings = JsonParser.parseString(Files.readString(Path.of("savemanager.json")))
+							.getAsJsonObject();
+				} catch (JsonSyntaxException | IOException e) {
+					sharedInv.deleteItem("savemanifest");
+					manager = null;
+					throw new RuntimeException(e);
+				}
+
+				// Create default save
+				String defaultSaveName = defaultSaveSettings.get("defaultSaveName").getAsString();
+				JsonObject defaultSettings = defaultSaveSettings.get("saves").getAsJsonObject().get(defaultSaveName)
+						.getAsJsonObject();
+				if (!manager.createSave(defaultSaveName) || !manager.switchSave(defaultSaveName)) {
+					sharedInv.deleteItem("savemanifest");
+					manager = null;
+					throw new RuntimeException("Save creation failure");
+				}
+
+				// Write settings
+				PlayerInventory inv = new FileBasedPlayerInventory(id, manager.getCurrentActiveSave());
+				SaveSettings settings = inv.getSaveSettings();
+				defaultSettings.addProperty("tradeLockID", defaultSaveName);
+				settings.load(defaultSettings);
+				inv.writeSaveSettings();
+			}
 
 			// Dispatch event
 			EventBus.getInstance().dispatchEvent(new AccountRegistrationEvent(getAccount(id)));

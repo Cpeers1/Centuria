@@ -227,8 +227,8 @@ public class GameServer extends BaseSmartfoxServer {
 			boolean lockout = true;
 
 			// Check permissions
-			if (acc.getPlayerInventory().containsItem("permissions")) {
-				String permLevel = acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+			if (acc.getSaveSharedInventory().containsItem("permissions")) {
+				String permLevel = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 						.get("permissionLevel").getAsString();
 				if (hasPerm(permLevel, "moderator")) {
 					lockout = false;
@@ -253,7 +253,7 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Check ban
 		if (acc.isBanned()) {
-			JsonObject banInfo = acc.getPlayerInventory().getItem("penalty").getAsJsonObject();
+			JsonObject banInfo = acc.getSaveSharedInventory().getItem("penalty").getAsJsonObject();
 			if (banInfo.get("unbanTimestamp").getAsLong() != -1) {
 				SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 				f.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -336,9 +336,9 @@ public class GameServer extends BaseSmartfoxServer {
 		Player plr = new Player();
 
 		// Build Player object
-		if (acc.getPlayerInventory().containsItem("permissions")) {
-			String permLevel = acc.getPlayerInventory().getItem("permissions").getAsJsonObject().get("permissionLevel")
-					.getAsString();
+		if (acc.getSaveSharedInventory().containsItem("permissions")) {
+			String permLevel = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+					.get("permissionLevel").getAsString();
 			plr.hasModPerms = GameServer.hasPerm(permLevel, "moderator");
 		}
 		plr.client = client;
@@ -377,8 +377,8 @@ public class GameServer extends BaseSmartfoxServer {
 
 				// Load permission level
 				String permLevel = "member";
-				if (blockedPlayer.getPlayerInventory().containsItem("permissions")) {
-					permLevel = blockedPlayer.getPlayerInventory().getItem("permissions").getAsJsonObject()
+				if (blockedPlayer.getSaveSharedInventory().containsItem("permissions")) {
+					permLevel = blockedPlayer.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 							.get("permissionLevel").getAsString();
 				}
 				if (!GameServer.hasPerm(permLevel, "moderator")) {

@@ -56,7 +56,7 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Buy item
 		Player plr = (Player) client.container;
-		ItemAccessor acc = plr.account.getPlayerInventory().getItemAccessor(plr);
+		ItemAccessor acc = plr.account.getSaveSpecificInventory().getItemAccessor(plr);
 
 		// Find item
 		ShopItem itm = ShopManager.getShopItemInfo(plr.account, shopType, item, count);
@@ -154,7 +154,7 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 				// Look slots
 
 				// Add the slot
-				plr.account.getPlayerInventory().getAvatarAccessor().addExtraLookSlot();
+				plr.account.getSaveSpecificInventory().getAvatarAccessor().addExtraLookSlot();
 
 				// Create fake update
 				String slotID = UUID.randomUUID().toString();
@@ -181,16 +181,16 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 
 				// Send look update
 				pk = new InventoryItemPacket();
-				pk.item = plr.account.getPlayerInventory().getItem("avatars");
+				pk.item = plr.account.getSaveSpecificInventory().getItem("avatars");
 				client.sendPacket(pk);
 
 				// Save ID so the astrale shop wont freeze
 				ids = new String[] { slotID };
 
 				// Save items
-				for (String itmTS : plr.account.getPlayerInventory().getAccessor().getItemsToSave())
-					plr.account.getPlayerInventory().setItem(itmTS, plr.account.getPlayerInventory().getItem(itmTS));
-				plr.account.getPlayerInventory().getAccessor().completedSave();
+				for (String itmTS : plr.account.getSaveSpecificInventory().getAccessor().getItemsToSave())
+					plr.account.getSaveSpecificInventory().setItem(itmTS, plr.account.getSaveSpecificInventory().getItem(itmTS));
+				plr.account.getSaveSpecificInventory().getAccessor().completedSave();
 			}
 			for (String itemId : ids) {
 				BoughtItemInfo i = new BoughtItemInfo();

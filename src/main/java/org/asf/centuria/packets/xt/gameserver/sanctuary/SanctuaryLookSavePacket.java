@@ -55,12 +55,12 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 
 		// save active look into that slot
 
-		plr.account.getPlayerInventory().getSanctuaryAccessor().saveSanctuaryLookToSlot(plr.activeSanctuaryLook,
+		plr.account.getSaveSpecificInventory().getSanctuaryAccessor().saveSanctuaryLookToSlot(plr.activeSanctuaryLook,
 				lookSlotId, lookSlotName);
 
 		// send an il response
 
-		var il = plr.account.getPlayerInventory().getItem("201");
+		var il = plr.account.getSaveSpecificInventory().getItem("201");
 		var ilPacket = new InventoryItemPacket();
 		ilPacket.item = il;
 
@@ -73,7 +73,7 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Server to client IL: " + ilPacket.build());
 		}
 
-		il = plr.account.getPlayerInventory().getItem("5");
+		il = plr.account.getSaveSpecificInventory().getItem("5");
 		ilPacket = new InventoryItemPacket();
 		ilPacket.item = il;
 
@@ -86,7 +86,7 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Server to client IL: " + ilPacket.build());
 		}
 
-		il = plr.account.getPlayerInventory().getItem("6");
+		il = plr.account.getSaveSpecificInventory().getItem("6");
 		ilPacket = new InventoryItemPacket();
 		ilPacket.item = il;
 
@@ -99,7 +99,7 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Server to client IL: " + ilPacket.build());
 		}
 
-		il = plr.account.getPlayerInventory().getItem("10");
+		il = plr.account.getSaveSpecificInventory().getItem("10");
 		ilPacket = new InventoryItemPacket();
 		ilPacket.item = il;
 

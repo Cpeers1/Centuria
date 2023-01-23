@@ -226,14 +226,14 @@ public class ShopManager {
 	 */
 	public static int getPurchaseCount(CenturiaAccount player, String shopId, String itemId) {
 		// Check inventory object
-		if (!player.getPlayerInventory().containsItem("purchaselog") || !shops.containsKey(shopId)) {
+		if (!player.getSaveSpecificInventory().containsItem("purchaselog") || !shops.containsKey(shopId)) {
 			// Add item so it caches and stops freezing up
-			player.getPlayerInventory().setItem("purchaselog", new JsonObject());
+			player.getSaveSpecificInventory().setItem("purchaselog", new JsonObject());
 			return 0;
 		}
 
 		// Find item
-		JsonObject log = player.getPlayerInventory().getItem("purchaselog").getAsJsonObject();
+		JsonObject log = player.getSaveSpecificInventory().getItem("purchaselog").getAsJsonObject();
 		if (log.has(shopId)) {
 			JsonObject shopLog = log.get(shopId).getAsJsonObject();
 
@@ -249,7 +249,7 @@ public class ShopManager {
 					log.remove(shopId);
 
 					// Save data
-					player.getPlayerInventory().setItem("purchaselog", log);
+					player.getSaveSpecificInventory().setItem("purchaselog", log);
 
 					// Return 0 as the shop has been restocked
 					return 0;
@@ -292,7 +292,8 @@ public class ShopManager {
 					boolean hasItems = true;
 					for (String itm : item.items.keySet()) {
 						String inv = ItemAccessor.getInventoryTypeOf(Integer.parseInt(itm));
-						if (!player.getPlayerInventory().getAccessor().hasInventoryObject(inv, Integer.parseInt(itm))) {
+						if (!player.getSaveSpecificInventory().getAccessor().hasInventoryObject(inv,
+								Integer.parseInt(itm))) {
 							hasItems = false;
 						}
 					}
@@ -325,15 +326,15 @@ public class ShopManager {
 		// Enigma items
 		for (String enigma : shop.enigmas) {
 			// Add enigma if present in the inventory
-			if (player.getPlayerInventory().getAccessor().hasInventoryObject("7", Integer.parseInt(enigma))) {
-				JsonObject obj = player.getPlayerInventory().getAccessor().findInventoryObject("7",
+			if (player.getSaveSpecificInventory().getAccessor().hasInventoryObject("7", Integer.parseInt(enigma))) {
+				JsonObject obj = player.getSaveSpecificInventory().getAccessor().findInventoryObject("7",
 						Integer.parseInt(enigma));
 
 				// Check if its been unraveled
 				JsonObject data = obj.get("components").getAsJsonObject().get("Enigma").getAsJsonObject();
 				if (data.get("activated").getAsBoolean())
 					// Add it
-					items.add(Integer.toString(player.getPlayerInventory().getInspirationAccessor()
+					items.add(Integer.toString(player.getSaveSpecificInventory().getInspirationAccessor()
 							.getEnigmaResult(Integer.parseInt(enigma))));
 			}
 		}
@@ -359,8 +360,8 @@ public class ShopManager {
 		ArrayList<String> items = new ArrayList<String>();
 		shop.enigmas.forEach(enigma -> {
 			// Add enigma if present in the inventory
-			if (player.getPlayerInventory().getAccessor().hasInventoryObject("7", Integer.parseInt(enigma))) {
-				JsonObject obj = player.getPlayerInventory().getAccessor().findInventoryObject("7",
+			if (player.getSaveSpecificInventory().getAccessor().hasInventoryObject("7", Integer.parseInt(enigma))) {
+				JsonObject obj = player.getSaveSpecificInventory().getAccessor().findInventoryObject("7",
 						Integer.parseInt(enigma));
 
 				// Check if its been unraveled
@@ -405,12 +406,12 @@ public class ShopManager {
 		if (!shop.contents.containsKey(itemId)) {
 			// Check enigma item
 			for (String enigma : shop.enigmas) {
-				if (Integer.toString(
-						player.getPlayerInventory().getInspirationAccessor().getEnigmaResult(Integer.parseInt(enigma)))
-						.equals(itemId)) {
+				if (Integer.toString(player.getSaveSpecificInventory().getInspirationAccessor()
+						.getEnigmaResult(Integer.parseInt(enigma))).equals(itemId)) {
 					// Check if enigma is present in the inventory
-					if (player.getPlayerInventory().getAccessor().hasInventoryObject("7", Integer.parseInt(enigma))) {
-						JsonObject obj = player.getPlayerInventory().getAccessor().findInventoryObject("7",
+					if (player.getSaveSpecificInventory().getAccessor().hasInventoryObject("7",
+							Integer.parseInt(enigma))) {
+						JsonObject obj = player.getSaveSpecificInventory().getAccessor().findInventoryObject("7",
 								Integer.parseInt(enigma));
 
 						// Check if its been unraveled
@@ -437,7 +438,8 @@ public class ShopManager {
 				boolean hasItems = true;
 				for (String itm : item.items.keySet()) {
 					String inv = ItemAccessor.getInventoryTypeOf(Integer.parseInt(itm));
-					if (!player.getPlayerInventory().getAccessor().hasInventoryObject(inv, Integer.parseInt(itm))) {
+					if (!player.getSaveSpecificInventory().getAccessor().hasInventoryObject(inv,
+							Integer.parseInt(itm))) {
 						hasItems = false;
 					}
 				}
@@ -481,10 +483,10 @@ public class ShopManager {
 
 		// Find log item
 		JsonObject log;
-		if (!player.getPlayerInventory().containsItem("purchaselog"))
+		if (!player.getSaveSpecificInventory().containsItem("purchaselog"))
 			log = new JsonObject();
 		else
-			log = player.getPlayerInventory().getItem("purchaselog").getAsJsonObject();
+			log = player.getSaveSpecificInventory().getItem("purchaselog").getAsJsonObject();
 
 		JsonObject shopLog;
 		if (!log.has(shopId)) {
@@ -507,7 +509,7 @@ public class ShopManager {
 		}
 
 		// Save log
-		player.getPlayerInventory().setItem("purchaselog", log);
+		player.getSaveSpecificInventory().setItem("purchaselog", log);
 	}
 
 	/**

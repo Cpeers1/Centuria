@@ -57,7 +57,7 @@ public class UserTutorialCompletedPacket implements IXtPacket<UserTutorialComple
 		plr.account.finishedTutorial();
 
 		// Save avatar to inventory
-		JsonArray items = plr.account.getPlayerInventory().getItem("avatars").getAsJsonArray();
+		JsonArray items = plr.account.getSaveSpecificInventory().getItem("avatars").getAsJsonArray();
 		JsonObject lookObj = null;
 		for (JsonElement itm : items) {
 			if (itm.isJsonObject()) {
@@ -84,7 +84,7 @@ public class UserTutorialCompletedPacket implements IXtPacket<UserTutorialComple
 			components.add("Name", nm);
 			lookObj.add("components", components);
 		}
-		plr.account.getPlayerInventory().setItem("avatars", items);
+		plr.account.getSaveSpecificInventory().setItem("avatars", items);
 
 		// Prevent double save
 		plr.pendingLookID = null;

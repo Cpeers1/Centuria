@@ -74,8 +74,8 @@ public class ShopkeeperModule extends InteractionModule {
 
 				// Unlock enigmas
 				for (String enigma : enigmas) {
-					JsonObject enigmaData = player.account.getPlayerInventory().getAccessor().findInventoryObject("7",
-							enigma);
+					JsonObject enigmaData = player.account.getSaveSpecificInventory().getAccessor()
+							.findInventoryObject("7", enigma);
 
 					// Set as unraveled
 					JsonObject data = enigmaData.get("components").getAsJsonObject().get("Enigma").getAsJsonObject();
@@ -83,7 +83,8 @@ public class ShopkeeperModule extends InteractionModule {
 					data.addProperty("activated", true);
 
 					// Save
-					player.account.getPlayerInventory().setItem("7", player.account.getPlayerInventory().getItem("7"));
+					player.account.getSaveSpecificInventory().setItem("7",
+							player.account.getSaveSpecificInventory().getItem("7"));
 
 					// Send to player
 					JsonArray lst = new JsonArray();

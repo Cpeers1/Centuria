@@ -104,9 +104,9 @@ public class QuestManager extends InteractionModule {
 		}
 		for (int i = 0; i < 2; i++) {
 			try {
-				JsonObject progressionMap = player.getPlayerInventory().getAccessor().findInventoryObject("311", 22781)
-						.get("components").getAsJsonObject().get("SocialExpanseLinearGenericQuestsCompletion")
-						.getAsJsonObject();
+				JsonObject progressionMap = player.getSaveSpecificInventory().getAccessor()
+						.findInventoryObject("311", 22781).get("components").getAsJsonObject()
+						.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
 				JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
 				ArrayList<String> completedQuests = new ArrayList<String>();
 				arr.forEach(t -> completedQuests.add(t.getAsString()));
@@ -120,14 +120,14 @@ public class QuestManager extends InteractionModule {
 				return null;
 			} catch (Exception e) {
 				// Damaged container, lets reset it
-				JsonObject oldObj = player.getPlayerInventory().getAccessor().removeInventoryObject("311", 22781);
+				JsonObject oldObj = player.getSaveSpecificInventory().getAccessor().removeInventoryObject("311", 22781);
 
 				// Build entry
 				JsonObject questObject = new JsonObject();
 				questObject.add("completedQuests", new JsonArray());
 
 				// Save and send to the client
-				player.getPlayerInventory().getAccessor().createInventoryObject("311", 22781,
+				player.getSaveSpecificInventory().getAccessor().createInventoryObject("311", 22781,
 						new ItemComponent("SocialExpanseLinearGenericQuestsCompletion", questObject));
 				var plr = player.getOnlinePlayerInstance();
 				if (plr != null) {
@@ -137,7 +137,7 @@ public class QuestManager extends InteractionModule {
 						plr.client.sendPacket(pkR);
 					}
 					InventoryItemPacket pk = new InventoryItemPacket();
-					pk.item = player.getPlayerInventory().getAccessor().findInventoryObject("311", 22781);
+					pk.item = player.getSaveSpecificInventory().getAccessor().findInventoryObject("311", 22781);
 					plr.client.sendPacket(pk);
 				}
 			}
@@ -266,7 +266,7 @@ public class QuestManager extends InteractionModule {
 					if (object.primaryObjectInfo != null && object.primaryObjectInfo.type == 31
 							&& object.subObjectInfo != null && object.subObjectInfo.defId == 3432) {
 						// Ignore unless there have been 3 harvests
-						int harvested = player.account.getPlayerInventory().getInteractionMemory()
+						int harvested = player.account.getSaveSpecificInventory().getInteractionMemory()
 								.getLastHarvestCount(player.levelID, id);
 						if (harvested + 1 < 3) {
 							return false;
@@ -277,10 +277,12 @@ public class QuestManager extends InteractionModule {
 				// Check if its a npc and if the quest is locked
 				if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
 					// Inform the user
-					Centuria.systemMessage(player, "Quest not implemented yet\nRead the private message sent by the server for more info\n" + "\n"
-							+ "You have finished all quests that are currently in working order.\n"
-							+ "If development goes well, hopefully this quest and the two following it will become playable next week!\n\n"
-							+ "" + "Apologies for the inconvenience.\n" + " - Centuria Development Team", true);
+					Centuria.systemMessage(player,
+							"Quest not implemented yet\nRead the private message sent by the server for more info\n"
+									+ "\n" + "You have finished all quests that are currently in working order.\n"
+									+ "If development goes well, hopefully this quest and the two following it will become playable next week!\n\n"
+									+ "" + "Apologies for the inconvenience.\n" + " - Centuria Development Team",
+							true);
 
 					// Block running the interaction
 					player.states.put(id, -1);
@@ -519,7 +521,7 @@ public class QuestManager extends InteractionModule {
 
 				// Finish quest
 				if (player.levelID != 25280) {
-					JsonObject obj = player.account.getPlayerInventory().getAccessor().findInventoryObject("311",
+					JsonObject obj = player.account.getSaveSpecificInventory().getAccessor().findInventoryObject("311",
 							22781);
 					JsonObject progressionMap = obj.get("components").getAsJsonObject()
 							.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
@@ -527,8 +529,8 @@ public class QuestManager extends InteractionModule {
 					arr.add(quest.defID);
 
 					// Save and create inventory update
-					player.account.getPlayerInventory().setItem("311",
-							player.account.getPlayerInventory().getItem("311"));
+					player.account.getSaveSpecificInventory().setItem("311",
+							player.account.getSaveSpecificInventory().getItem("311"));
 					JsonArray update = new JsonArray();
 					update.add(obj);
 

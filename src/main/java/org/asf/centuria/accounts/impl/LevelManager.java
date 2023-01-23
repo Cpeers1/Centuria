@@ -210,58 +210,58 @@ public class LevelManager extends LevelInfo {
 		levelInfo.addProperty("currentLevelMaxXp", levelUpCount);
 
 		// Save
-		account.getPlayerInventory().setItem("level", levelInfo);
+		account.getSaveSpecificInventory().setItem("level", levelInfo);
 	}
 
 	@Override
 	public int getLevel() {
 		// Retrieve level object
-		if (!account.getPlayerInventory().containsItem("level")) {
+		if (!account.getSaveSpecificInventory().containsItem("level")) {
 			// Create object
 			createLevelObject();
 		}
 
 		// Retrieve level
-		JsonObject level = account.getPlayerInventory().getItem("level").getAsJsonObject();
+		JsonObject level = account.getSaveSpecificInventory().getItem("level").getAsJsonObject();
 		return level.get("currentLevel").getAsInt();
 	}
 
 	@Override
 	public int getTotalXP() {
 		// Retrieve level object
-		if (!account.getPlayerInventory().containsItem("level")) {
+		if (!account.getSaveSpecificInventory().containsItem("level")) {
 			// Create object
 			createLevelObject();
 		}
 
 		// Retrieve total xp
-		JsonObject level = account.getPlayerInventory().getItem("level").getAsJsonObject();
+		JsonObject level = account.getSaveSpecificInventory().getItem("level").getAsJsonObject();
 		return level.get("totalXp").getAsInt();
 	}
 
 	@Override
 	public int getCurrentXP() {
 		// Retrieve level object
-		if (!account.getPlayerInventory().containsItem("level")) {
+		if (!account.getSaveSpecificInventory().containsItem("level")) {
 			// Create object
 			createLevelObject();
 		}
 
 		// Retrieve current xp
-		JsonObject level = account.getPlayerInventory().getItem("level").getAsJsonObject();
+		JsonObject level = account.getSaveSpecificInventory().getItem("level").getAsJsonObject();
 		return level.get("currentLevelXp").getAsInt();
 	}
 
 	@Override
 	public int getLevelupXPCount() {
 		// Retrieve level object
-		if (!account.getPlayerInventory().containsItem("level")) {
+		if (!account.getSaveSpecificInventory().containsItem("level")) {
 			// Create object
 			createLevelObject();
 		}
 
 		// Retrieve current max xp
-		JsonObject level = account.getPlayerInventory().getItem("level").getAsJsonObject();
+		JsonObject level = account.getSaveSpecificInventory().getItem("level").getAsJsonObject();
 		return level.get("currentLevelMaxXp").getAsInt();
 	}
 
@@ -270,11 +270,11 @@ public class LevelManager extends LevelInfo {
 		Centuria.logger.debug(MarkerManager.getMarker("LEVELING"), "Add xp: " + xp);
 
 		// Retrieve level object
-		if (!account.getPlayerInventory().containsItem("level")) {
+		if (!account.getSaveSpecificInventory().containsItem("level")) {
 			// Create object
 			createLevelObject();
 		}
-		JsonObject level = account.getPlayerInventory().getItem("level").getAsJsonObject();
+		JsonObject level = account.getSaveSpecificInventory().getItem("level").getAsJsonObject();
 		int tXP = getTotalXP();
 		int cL = getLevel();
 		int cLUP = getLevelupXPCount();
@@ -302,7 +302,7 @@ public class LevelManager extends LevelInfo {
 			level.remove("currentLevelXp");
 			level.addProperty("totalXp", tXP + xp);
 			level.addProperty("currentLevelXp", cXP + xp);
-			account.getPlayerInventory().setItem("level", level);
+			account.getSaveSpecificInventory().setItem("level", level);
 
 			// Add new level
 			packet.current = new XpUpdatePacket.Level();
@@ -361,7 +361,7 @@ public class LevelManager extends LevelInfo {
 			if (levelUpCount > 15000)
 				levelUpCount = 15000;
 			level.addProperty("currentLevelMaxXp", levelUpCount);
-			account.getPlayerInventory().setItem("level", level);
+			account.getSaveSpecificInventory().setItem("level", level);
 
 			// Add new level
 			packet.current = new XpUpdatePacket.Level();
@@ -443,7 +443,7 @@ public class LevelManager extends LevelInfo {
 			}
 
 			// Add item
-			String[] objects = account.getPlayerInventory().getItemAccessor(account.getOnlinePlayerInstance())
+			String[] objects = account.getSaveSpecificInventory().getItemAccessor(account.getOnlinePlayerInstance())
 					.add(lvl.levelUpRewardDefId, lvl.levelUpRewardQuantity);
 			if (account.getOnlinePlayerInstance() != null) {
 				if (objects.length == 0) {
@@ -453,7 +453,7 @@ public class LevelManager extends LevelInfo {
 					// Default to likes
 					lvl.levelUpRewardDefId = 2327;
 					lvl.levelUpRewardQuantity = 100;
-					objects = account.getPlayerInventory().getItemAccessor(account.getOnlinePlayerInstance())
+					objects = account.getSaveSpecificInventory().getItemAccessor(account.getOnlinePlayerInstance())
 							.add(lvl.levelUpRewardDefId, lvl.levelUpRewardQuantity);
 				}
 				String objID = objects[0];
@@ -465,7 +465,7 @@ public class LevelManager extends LevelInfo {
 				gift.addProperty("giftItemDefId", lvl.levelUpRewardDefId);
 				gift.addProperty("count", lvl.levelUpRewardQuantity);
 				gift.addProperty("giftItemType",
-						account.getPlayerInventory().getAccessor().getInventoryIDOfItem(objID));
+						account.getSaveSpecificInventory().getAccessor().getInventoryIDOfItem(objID));
 				gift.addProperty("fromId", -1);
 				gift.addProperty("uuid", objID);
 
@@ -596,7 +596,7 @@ public class LevelManager extends LevelInfo {
 		levelInfo.addProperty("currentLevelMaxXp", getLevelupXPCount());
 
 		// Save
-		account.getPlayerInventory().setItem("level", levelInfo);
+		account.getSaveSpecificInventory().setItem("level", levelInfo);
 
 		// Add new level
 		packet.current = new XpUpdatePacket.Level();
@@ -656,7 +656,7 @@ public class LevelManager extends LevelInfo {
 		levelInfo.addProperty("currentLevelMaxXp", lUpXp);
 
 		// Save
-		account.getPlayerInventory().setItem("level", levelInfo);
+		account.getSaveSpecificInventory().setItem("level", levelInfo);
 
 		// Add new level
 		packet.current = new XpUpdatePacket.Level();
@@ -741,7 +741,7 @@ public class LevelManager extends LevelInfo {
 		levelInfo.addProperty("currentLevelMaxXp", lUpXp);
 
 		// Save
-		account.getPlayerInventory().setItem("level", levelInfo);
+		account.getSaveSpecificInventory().setItem("level", levelInfo);
 
 		// Add new level
 		packet.current = new XpUpdatePacket.Level();

@@ -67,7 +67,7 @@ public class InventoryItemInspirationCombinePacket implements IXtPacket<Inventor
 			System.out.println("[INVENTORY] [UPDATE]  Client to server: Combine Inspirations using ids" + ids);
 		}
 
-		result = plr.account.getPlayerInventory().getInspirationAccessor().combineInspirations(inspirationIds, plr);
+		result = plr.account.getSaveSpecificInventory().getInspirationAccessor().combineInspirations(inspirationIds, plr);
 		if (result.combineStatus == InspirationCombineStatus.Successful) {
 			// Add xp
 			EventInfo ev = new EventInfo();

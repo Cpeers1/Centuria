@@ -68,7 +68,7 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		Player plr = (Player) client.container;
-		PlayerInventory inv = plr.account.getPlayerInventory();
+		PlayerInventory inv = plr.account.getSaveSpecificInventory();
 
 		// Find clothing item
 		if (inv.getClothingAccessor().getClothingData(itemID) != null) {

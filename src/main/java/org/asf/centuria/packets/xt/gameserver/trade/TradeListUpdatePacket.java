@@ -47,12 +47,12 @@ public class TradeListUpdatePacket implements IXtPacket<TradeListUpdatePacket> {
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		Player plr = (Player) client.container;
-		PlayerInventory inv = plr.account.getPlayerInventory();
+		PlayerInventory inv = plr.account.getSaveSpecificInventory();
 
 		// Find inventory ID
 		String invType = inv.getAccessor().getInventoryIDOfItem(itemID);
 
-		//TODO: Refactor this into something else
+		// TODO: Refactor this into something else
 		// Handle packet
 		if (invType != null) {
 			// Find object

@@ -74,7 +74,7 @@ public class TradeListPacket implements IXtPacket<TradeListPacket> {
 		if (targetPlayer == null) {
 			// Offline so do it manually
 			try {
-				tradeListItems = AccountManager.getInstance().getAccount(targetPlayerId).getPlayerInventory()
+				tradeListItems = AccountManager.getInstance().getAccount(targetPlayerId).getSaveSpecificInventory()
 						.getItemAccessor(targetPlayer).loadTradeList();
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e) {

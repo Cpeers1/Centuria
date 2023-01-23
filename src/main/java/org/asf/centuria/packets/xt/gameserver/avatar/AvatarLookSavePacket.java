@@ -23,7 +23,7 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 	private String lookID;
 	private String lookName;
 	private String lookData;
-	private boolean success; 
+	private boolean success;
 
 	@Override
 	public AvatarLookSavePacket instantiate() {
@@ -56,23 +56,23 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Avatar save
-		try
-		{
+		try {
 			Player plr = (Player) client.container;
 
 			// Log
 			if (Centuria.debugMode) {
-				System.out.println("[AVATAREDITOR] [SAVELOOK]  Client to server (look: " + lookID + ", name: " + lookName + ")");
+				System.out.println(
+						"[AVATAREDITOR] [SAVELOOK]  Client to server (look: " + lookID + ", name: " + lookName + ")");
 			}
-	
+
 			// Parse avatar
 			JsonObject lookData = JsonParser.parseString(this.lookData).getAsJsonObject();
-	
+
 			// Save look file to look database
 			plr.activeLook = lookID;
-	
+
 			// Save avatar to inventory
-			JsonArray items = plr.account.getPlayerInventory().getItem("avatars").getAsJsonArray();
+			JsonArray items = plr.account.getSaveSpecificInventory().getItem("avatars").getAsJsonArray();
 			JsonObject lookObj = null;
 			for (JsonElement itm : items) {
 				if (itm.isJsonObject()) {
@@ -101,17 +101,17 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 				components.add("Name", nm);
 				update.add(lookObj);
 			}
-			plr.account.getPlayerInventory().setItem("avatars", items);
-	
+			plr.account.getSaveSpecificInventory().setItem("avatars", items);
+
 			// Prevent double save
 			plr.pendingLookID = null;
 			plr.pendingLookDefID = 8254;
-	
+
 			// Update avatar object in client inventory
 			InventoryItemPacket pkt = new InventoryItemPacket();
 			pkt.item = update;
 			client.sendPacket(pkt);
-	
+
 			// Sync
 			GameServer srv = (GameServer) client.getServer();
 			for (Player player : srv.getPlayers()) {
@@ -119,13 +119,11 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 					plr.syncTo(player);
 				}
 			}
-			
+
 			// Send response
 			success = true;
 			client.sendPacket(this);
-		} 
-		catch(Exception exception)
-		{
+		} catch (Exception exception) {
 			System.out.println("[AVATAREDITOR] [SAVELOOK] Exception Caught: ");
 			exception.printStackTrace();
 
@@ -133,7 +131,7 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 			client.sendPacket(this);
 		}
 
-		return true; 
+		return true;
 	}
 
 }

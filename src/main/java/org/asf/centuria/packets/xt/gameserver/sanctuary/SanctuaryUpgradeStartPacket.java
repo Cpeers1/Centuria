@@ -65,17 +65,17 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 			// Work is of type 'WorkingSanctuary'
 
 			var player = (Player) client.container;
-			var twiggleAccessor = player.account.getPlayerInventory().getTwiggleAccesor();
+			var twiggleAccessor = player.account.getSaveSpecificInventory().getTwiggleAccesor();
 			boolean isStageUpgrade = false;
 
 			TwiggleItem updatedTwiggle = null;
-			var classItemInvId = player.account.getPlayerInventory().getSanctuaryAccessor()
+			var classItemInvId = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
 					.getSanctuaryLook(player.account.getActiveSanctuaryLook()).get("components").getAsJsonObject()
 					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject().get("classInvId")
 					.getAsString();
 
 			// If the stage has gone up, its a stage upgrade
-			if (stage > player.account.getPlayerInventory().getSanctuaryAccessor()
+			if (stage > player.account.getSaveSpecificInventory().getSanctuaryAccessor()
 					.getCurrentSanctuaryStage(classItemInvId)) {
 				TwiggleWorkParameters workParams = new TwiggleWorkParameters();
 				workParams.classItemInvId = classItemInvId;
@@ -89,7 +89,7 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 			else {
 				boolean nonMatchingElement = false;
 				int nonMatchingElementIndex = 0;
-				JsonArray expansionArray = player.account.getPlayerInventory().getSanctuaryAccessor()
+				JsonArray expansionArray = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
 						.getExpandedRooms(classItemInvId);
 
 				for (int i = 0; i < enlargedAreaIndexes.size() && i < expansionArray.size(); i++) {
@@ -124,14 +124,14 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 					var map = SanctuaryWorkCalculator.getCostForStageUp(stage);
 
 					for (var item : map.entrySet()) {
-						player.account.getPlayerInventory().getItemAccessor(player).remove(item.getKey(),
+						player.account.getSaveSpecificInventory().getItemAccessor(player).remove(item.getKey(),
 								item.getValue());
 					}
 				} else {
 					var map = SanctuaryWorkCalculator.getCostForEnlargen(expansionIndex);
 
 					for (var item : map.entrySet()) {
-						player.account.getPlayerInventory().getItemAccessor(player).remove(item.getKey(),
+						player.account.getSaveSpecificInventory().getItemAccessor(player).remove(item.getKey(),
 								item.getValue());
 					}
 				}

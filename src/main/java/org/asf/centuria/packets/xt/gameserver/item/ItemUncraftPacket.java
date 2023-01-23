@@ -52,7 +52,7 @@ public class ItemUncraftPacket implements IXtPacket<ItemUncraftPacket> {
 		// Uncraft item
 		success = true;
 		Player plr = (Player) client.container;
-		PlayerInventory inv = plr.account.getPlayerInventory();
+		PlayerInventory inv = plr.account.getSaveSpecificInventory();
 
 		// Find item
 		String invId = inv.getAccessor().getInventoryIDOfItem(itemId);

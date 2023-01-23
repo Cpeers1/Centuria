@@ -25,7 +25,7 @@ public class LockpickItemModule extends InteractionModule {
 	@Override
 	public boolean handleInteractionSuccess(Player player, String id, NetworkedObject object, int state) {
 		// Add lockpick
-		player.account.getPlayerInventory().getCurrencyAccessor().addLockpicks(player.client, 1);
+		player.account.getSaveSpecificInventory().getCurrencyAccessor().addLockpicks(player.client, 1);
 		return false;
 	}
 

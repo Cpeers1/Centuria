@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -13,6 +14,9 @@ import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.LevelInfo;
 import org.asf.centuria.accounts.PlayerInventory;
+import org.asf.centuria.accounts.SaveManager;
+import org.asf.centuria.accounts.SaveMode;
+import org.asf.centuria.accounts.SaveSettings;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -32,7 +36,9 @@ public class FileBasedAccountObject extends CenturiaAccount {
 	private String userUUID;
 	private String loginName;
 	private String displayName;
-	private FileBasedPlayerInventory inv;
+	private SaveManager manager;
+	private FileBasedPlayerInventory sharedInv;
+	private FileBasedPlayerInventory mainInv;
 	private JsonObject privacy;
 	private LevelInfo level;
 	private long lastLogin = -1;
@@ -96,12 +102,25 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 		// Find existing inventory
 		Player old = getOnlinePlayerInstance();
-		if (old == null || !(old.account.getPlayerInventory() instanceof FileBasedPlayerInventory)) {
-			// Load inventory
-			inv = new FileBasedPlayerInventory(userUUID);
+		if (old == null || !(old.account.getSaveSharedInventory() instanceof FileBasedPlayerInventory)
+				|| !(old.account.getSaveSpecificInventory() instanceof FileBasedPlayerInventory)) {
+			// Load inventories
+			sharedInv = new FileBasedPlayerInventory(userUUID, "");
+			SaveMode mode = getSaveMode();
+			if (mode == SaveMode.SINGLE)
+				mainInv = sharedInv;
+			else {
+				// Load save manager
+				manager = new FileBasedSaveManager(sharedInv, this);
+				mainInv = new FileBasedPlayerInventory(userUUID, manager.getCurrentActiveSave());
+			}
+
 		} else {
 			// Use the existing inventory object
-			inv = (FileBasedPlayerInventory) old.account.getPlayerInventory();
+			sharedInv = (FileBasedPlayerInventory) old.account.getSaveSharedInventory();
+			mainInv = (FileBasedPlayerInventory) old.account.getSaveSpecificInventory();
+			if (old.account.getSaveMode() == SaveMode.MANAGED)
+				manager = old.account.getSaveManager();
 		}
 
 		// Load login timestamp
@@ -131,6 +150,8 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 	@Override
 	public boolean isPlayerNew() {
+		if (getSaveMode() == SaveMode.MANAGED)
+			return !mainInv.containsItem("finishedtutorial");
 		return isNew;
 	}
 
@@ -144,6 +165,10 @@ public class FileBasedAccountObject extends CenturiaAccount {
 					userUUID + "\n" + loginName + "\n" + isNew + "\n" + displayName + "\n" + userID);
 		} catch (IOException e) {
 		}
+
+		// Managed save mode
+		if (getSaveMode() == SaveMode.MANAGED)
+			mainInv.setItem("finishedtutorial", new JsonObject());
 	}
 
 	@Override
@@ -229,11 +254,6 @@ public class FileBasedAccountObject extends CenturiaAccount {
 		} catch (IOException e) {
 		}
 		return false;
-	}
-
-	@Override
-	public PlayerInventory getPlayerInventory() {
-		return inv;
 	}
 
 	@Override
@@ -416,9 +436,9 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 		// Delete DMs
 		DMManager manager = DMManager.getInstance();
-		if (getPlayerInventory().containsItem("dms")) {
+		if (getSaveSharedInventory().containsItem("dms")) {
 			// Loop through all DMs and close them
-			JsonObject dms = getPlayerInventory().getItem("dms").getAsJsonObject();
+			JsonObject dms = getSaveSharedInventory().getItem("dms").getAsJsonObject();
 			for (String userID : dms.keySet()) {
 				// Load DM id
 				String dmID = dms.get(userID).getAsString();
@@ -430,9 +450,10 @@ public class FileBasedAccountObject extends CenturiaAccount {
 					CenturiaAccount otherAccount = AccountManager.getInstance().getAccount(participant);
 					if (otherAccount != null) {
 						// Find DMs
-						if (otherAccount.getPlayerInventory().containsItem("dms")) {
+						if (otherAccount.getSaveSharedInventory().containsItem("dms")) {
 							// Load dm from player
-							JsonObject otherDMs = otherAccount.getPlayerInventory().getItem("dms").getAsJsonObject();
+							JsonObject otherDMs = otherAccount.getSaveSharedInventory().getItem("dms")
+									.getAsJsonObject();
 
 							// Find DM
 							for (String plr : otherDMs.keySet()) {
@@ -444,7 +465,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 							}
 
 							// Save DM object
-							otherAccount.getPlayerInventory().setItem("dms", dms);
+							otherAccount.getSaveSharedInventory().setItem("dms", dms);
 						}
 					}
 				}
@@ -452,7 +473,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 				// Delete DM
 				manager.deleteDM(dmID);
 			}
-			getPlayerInventory().setItem("dms", dms);
+			getSaveSharedInventory().setItem("dms", dms);
 		}
 
 		// Log
@@ -460,7 +481,8 @@ public class FileBasedAccountObject extends CenturiaAccount {
 				+ ", display name: " + getDisplayName());
 
 		// Delete inventory
-		inv.delete();
+		mainInv.delete();
+		sharedInv.delete();
 	}
 
 	private void deleteDir(File dir) {
@@ -474,6 +496,121 @@ public class FileBasedAccountObject extends CenturiaAccount {
 			file.delete();
 		}
 		dir.delete();
+	}
+
+	@Override
+	public SaveManager getSaveManager() throws IllegalArgumentException {
+		if (manager == null)
+			throw new IllegalArgumentException("Not running through managed save data");
+		return null;
+	}
+
+	@Override
+	public SaveMode getSaveMode() {
+		return sharedInv.containsItem("savemanifest") ? SaveMode.MANAGED : SaveMode.SINGLE;
+	}
+
+	@Override
+	public PlayerInventory getSaveSharedInventory() {
+		return sharedInv;
+	}
+
+	@Override
+	public PlayerInventory getSaveSpecificInventory() {
+		return mainInv;
+	}
+
+	@Override
+	public void migrateSaveDataToManagedMode() throws IllegalArgumentException {
+		if (getSaveMode() == SaveMode.MANAGED)
+			throw new IllegalArgumentException("Already using managed save data");
+
+		// Kick the player
+		kick("Account data migration in progress");
+
+		// Log
+		Centuria.logger.info("Account save migration started: " + getAccountID() + ", login name: " + getLoginName()
+				+ ", display name: " + getDisplayName());
+
+		// Migrate all data
+		// This... will be very tricky
+		// First create a save manifest
+		sharedInv.setItem("savemanifest", new JsonObject());
+
+		// Load save manager
+		manager = new FileBasedSaveManager(sharedInv, this);
+
+		// Find default save settings
+		JsonObject defaultSaveSettings;
+		try {
+			defaultSaveSettings = JsonParser.parseString(Files.readString(Path.of("savemanager.json")))
+					.getAsJsonObject();
+		} catch (JsonSyntaxException | IOException e) {
+			sharedInv.deleteItem("savemanifest");
+			manager = null;
+			throw new RuntimeException(e);
+		}
+
+		// Create default save
+		String defaultSaveName = defaultSaveSettings.get("migrationSaveName").getAsString();
+		JsonObject defaultSettings = defaultSaveSettings.get("saves").getAsJsonObject().get(defaultSaveName)
+				.getAsJsonObject();
+		if (!manager.createSave(defaultSaveName) || !manager.switchSave(defaultSaveName)) {
+			sharedInv.deleteItem("savemanifest");
+			manager = null;
+			throw new RuntimeException("Save creation failure");
+		}
+
+		// Write settings
+		PlayerInventory inv = new FileBasedPlayerInventory(userUUID, manager.getCurrentActiveSave());
+		SaveSettings settings = inv.getSaveSettings();
+		defaultSettings.addProperty("tradeLockID", defaultSaveName);
+		settings.load(defaultSettings);
+		inv.writeSaveSettings();
+
+		// Migrate player data
+		migrateItem(sharedInv, "1", inv);
+		migrateItem(sharedInv, "10", inv);
+		migrateItem(sharedInv, "100", inv);
+		migrateItem(sharedInv, "102", inv);
+		migrateItem(sharedInv, "104", inv);
+		migrateItem(sharedInv, "105", inv);
+		migrateItem(sharedInv, "110", inv);
+		migrateItem(sharedInv, "111", inv);
+		migrateItem(sharedInv, "2", inv);
+		migrateItem(sharedInv, "201", inv);
+		migrateItem(sharedInv, "3", inv);
+		migrateItem(sharedInv, "103", inv);
+		migrateItem(sharedInv, "300", inv);
+		migrateItem(sharedInv, "302", inv);
+		migrateItem(sharedInv, "303", inv);
+		migrateItem(sharedInv, "304", inv);
+		migrateItem(sharedInv, "311", inv);
+		migrateItem(sharedInv, "4", inv);
+		migrateItem(sharedInv, "400", inv);
+		migrateItem(sharedInv, "5", inv);
+		migrateItem(sharedInv, "6", inv);
+		migrateItem(sharedInv, "7", inv);
+		migrateItem(sharedInv, "8", inv);
+		migrateItem(sharedInv, "9", inv);
+		migrateItem(sharedInv, "avatars", inv);
+		migrateItem(sharedInv, "level", inv);
+		migrateItem(sharedInv, "purchaselog", inv);
+		inv.setItem("finishedtutorial", new JsonObject());
+
+		// Switch over the inventory container
+		mainInv = new FileBasedPlayerInventory(userUUID, manager.getCurrentActiveSave());
+
+		// Log
+		Centuria.logger.info("Account save migration finished: " + getAccountID() + ", login name: " + getLoginName()
+				+ ", display name: " + getDisplayName());
+	}
+
+	private void migrateItem(FileBasedPlayerInventory sharedInv, String itm, PlayerInventory inv) {
+		if (sharedInv.containsItem(itm)) {
+			inv.setItem(itm, sharedInv.getItem(itm));
+			sharedInv.deleteItem(itm);
+		}
 	}
 
 }

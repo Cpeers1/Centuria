@@ -100,32 +100,33 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 					ZipOutputStream invZip = new ZipOutputStream(strm);
 
 					// Add all inventory objects
-					addItemToZip(acc.getPlayerInventory(), "1", invZip);
-					addItemToZip(acc.getPlayerInventory(), "10", invZip);
-					addItemToZip(acc.getPlayerInventory(), "100", invZip);
-					addItemToZip(acc.getPlayerInventory(), "102", invZip);
-					addItemToZip(acc.getPlayerInventory(), "104", invZip);
-					addItemToZip(acc.getPlayerInventory(), "105", invZip);
-					addItemToZip(acc.getPlayerInventory(), "110", invZip);
-					addItemToZip(acc.getPlayerInventory(), "111", invZip);
-					addItemToZip(acc.getPlayerInventory(), "2", invZip);
-					addItemToZip(acc.getPlayerInventory(), "201", invZip);
-					addItemToZip(acc.getPlayerInventory(), "3", invZip);
-					addItemToZip(acc.getPlayerInventory(), "300", invZip);
-					addItemToZip(acc.getPlayerInventory(), "302", invZip);
-					addItemToZip(acc.getPlayerInventory(), "303", invZip);
-					addItemToZip(acc.getPlayerInventory(), "304", invZip);
-					addItemToZip(acc.getPlayerInventory(), "311", invZip);
-					addItemToZip(acc.getPlayerInventory(), "4", invZip);
-					addItemToZip(acc.getPlayerInventory(), "400", invZip);
-					addItemToZip(acc.getPlayerInventory(), "5", invZip);
-					addItemToZip(acc.getPlayerInventory(), "6", invZip);
-					addItemToZip(acc.getPlayerInventory(), "7", invZip);
-					addItemToZip(acc.getPlayerInventory(), "8", invZip);
-					addItemToZip(acc.getPlayerInventory(), "9", invZip);
-					addItemToZip(acc.getPlayerInventory(), "avatars", invZip);
-					addItemToZip(acc.getPlayerInventory(), "level", invZip);
-					addItemToZip(acc.getPlayerInventory(), "savesettings", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "1", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "10", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "100", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "102", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "104", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "103", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "105", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "110", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "111", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "2", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "201", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "3", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "300", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "302", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "303", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "304", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "311", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "4", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "400", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "5", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "6", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "7", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "8", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "9", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "avatars", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "level", invZip);
+					addItemToZip(acc.getSaveSpecificInventory(), "savesettings", invZip);
 					invZip.close();
 					strm.close();
 				} catch (IOException e) {
@@ -135,14 +136,14 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 				getResponse().setHeader("Content-Length", Integer.toString(strm.toByteArray().length), false);
 				return;
 			} else {
-				if (!acc.getPlayerInventory().containsItem(path)) {
+				if (!acc.getSaveSpecificInventory().containsItem(path)) {
 					// Invalid request
 					this.setBody("{\"error\":\"item_not_found\"}");
 					this.setResponseCode(404);
 					this.setResponseMessage("Not found");
 					return;
 				} else {
-					this.setBody("application/json", acc.getPlayerInventory().getItem(path).toString());
+					this.setBody("application/json", acc.getSaveSpecificInventory().getItem(path).toString());
 				}
 			}
 		} catch (Exception e) {

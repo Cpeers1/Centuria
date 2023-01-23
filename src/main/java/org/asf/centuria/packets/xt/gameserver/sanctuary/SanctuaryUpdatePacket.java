@@ -142,19 +142,19 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 		// updates
 		for (var item : additions.keySet()) {
-			additions.replace(item, plr.account.getPlayerInventory().getSanctuaryAccessor().addSanctuaryObject(item.objectId, item.objectInfo,
-					plr.activeSanctuaryLook));
+			additions.replace(item, plr.account.getSaveSpecificInventory().getSanctuaryAccessor()
+					.addSanctuaryObject(item.objectId, item.objectInfo, plr.activeSanctuaryLook));
 		}
 
 		// removals
 		for (var item : removals) {
-			plr.account.getPlayerInventory().getSanctuaryAccessor().removeSanctuaryObject(item,
+			plr.account.getSaveSpecificInventory().getSanctuaryAccessor().removeSanctuaryObject(item,
 					plr.activeSanctuaryLook);
 		}
 
 		// room updates
 
-		houseInv = plr.account.getPlayerInventory().getSanctuaryAccessor()
+		houseInv = plr.account.getSaveSpecificInventory().getSanctuaryAccessor()
 				.updateSanctuaryRoomData(plr.activeSanctuaryLook, roomChanges.toArray(new RoomInfoObject[0]));
 
 		// uhh yeah ok
@@ -163,7 +163,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		XtWriter writer = null;
 
 		if (additions.size() > 0 || removals.size() > 0) {
-			var il = plr.account.getPlayerInventory().getItem("201");
+			var il = plr.account.getSaveSpecificInventory().getItem("201");
 			var ilPacket = new InventoryItemPacket();
 			ilPacket.item = il;
 
@@ -175,7 +175,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		}
 
 		if (roomChanges.size() > 0) {
-			var il = plr.account.getPlayerInventory().getItem("5");
+			var il = plr.account.getSaveSpecificInventory().getItem("5");
 			var ilPacket = new InventoryItemPacket();
 			ilPacket.item = il;
 
@@ -202,20 +202,17 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 		try {
 			for (var updateSet : additions.entrySet()) {
-				
-				if(updateSet.getValue())
-				{
+
+				if (updateSet.getValue()) {
 					var update = updateSet.getKey();
 					var owner = (Player) client.container;
-					var furnItem = owner.account.getPlayerInventory().getFurnitureAccessor()
+					var furnItem = owner.account.getSaveSpecificInventory().getFurnitureAccessor()
 							.getFurnitureData(update.objectId);
-					
-					
 
 					// now do an OI packet
 					for (Player player : ((GameServer) client.getServer()).getPlayers()) {
 						if (player.room != null && player.room.equals("sanctuary_" + owner.account.getAccountID())) {
-							
+
 							// Send packet
 							SanctuaryWorldObjectInfoPacket packet = new SanctuaryWorldObjectInfoPacket();
 
@@ -227,9 +224,12 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 							// Object info
 							packet.lastMove = new WorldObjectMoveNodeData();
 							packet.lastMove.positionInfo = new WorldObjectPositionInfo(
-									update.objectInfo.positionInfo.position.x, update.objectInfo.positionInfo.position.y,
-									update.objectInfo.positionInfo.position.z, update.objectInfo.positionInfo.rotation.x,
-									update.objectInfo.positionInfo.rotation.y, update.objectInfo.positionInfo.rotation.z,
+									update.objectInfo.positionInfo.position.x,
+									update.objectInfo.positionInfo.position.y,
+									update.objectInfo.positionInfo.position.z,
+									update.objectInfo.positionInfo.rotation.x,
+									update.objectInfo.positionInfo.rotation.y,
+									update.objectInfo.positionInfo.rotation.z,
 									update.objectInfo.positionInfo.rotation.w);
 							packet.lastMove.velocity = new Velocity();
 							packet.lastMove.serverTime = System.currentTimeMillis() / 1000;
@@ -238,7 +238,8 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 							packet.objectType = SanctuaryObjectType.Furniture;
 							// Only send json if its not the owner
-							packet.writeFurnitureInfo = !player.account.getAccountID().equals(owner.account.getAccountID());
+							packet.writeFurnitureInfo = !player.account.getAccountID()
+									.equals(owner.account.getAccountID());
 							packet.funitureObject = furnItem;
 							packet.sancObjectInfo = update.objectInfo;
 
@@ -250,11 +251,9 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 										"[SANCTUARY] [UPDATE] Server to client: load object (" + packet.build() + ")");
 							}
 						}
-					}					
-				}
-				else
-				{
-					//item limit, don't spawn the item.
+					}
+				} else {
+					// item limit, don't spawn the item.
 				}
 
 			}

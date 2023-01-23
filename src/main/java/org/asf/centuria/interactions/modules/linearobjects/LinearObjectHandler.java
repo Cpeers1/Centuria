@@ -61,7 +61,8 @@ public class LinearObjectHandler extends InteractionModule {
 					switch (st.params[1]) {
 					case "2": {
 						Centuria.logger.debug("Group object use lockpick");
-						player.account.getPlayerInventory().getCurrencyAccessor().removeLockpicks(player.client, 1);
+						player.account.getSaveSpecificInventory().getCurrencyAccessor().removeLockpicks(player.client,
+								1);
 
 						// Log
 						Centuria.logger.info(MarkerManager.getMarker("EXPANSE OBJECTS"),

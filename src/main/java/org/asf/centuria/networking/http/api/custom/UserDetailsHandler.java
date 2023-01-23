@@ -5,6 +5,7 @@ import java.net.Socket;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.accounts.SaveMode;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.processors.HttpUploadProcessor;
 
@@ -62,9 +63,12 @@ public class UserDetailsHandler extends HttpUploadProcessor {
 			response.addProperty("uuid", id);
 			response.addProperty("display_name", acc.getDisplayName());
 			response.addProperty("current_level", acc.getLevel().getLevel());
-			response.add("current_save_settings", acc.getPlayerInventory().getSaveSettings().writeToObject());
+			response.addProperty("save_mode", acc.getSaveMode().toString());
+			if (acc.getSaveMode() == SaveMode.MANAGED)
+				response.addProperty("active_save", acc.getSaveManager().getCurrentActiveSave());
+			response.add("current_save_settings", acc.getSaveSpecificInventory().getSaveSettings().writeToObject());
 			response.add("active_look",
-					acc.getPlayerInventory().getAccessor().findInventoryObject("avatars", acc.getActiveLook())
+					acc.getSaveSpecificInventory().getAccessor().findInventoryObject("avatars", acc.getActiveLook())
 							.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject());
 			setBody(response.toString());
 		} catch (Exception e) {

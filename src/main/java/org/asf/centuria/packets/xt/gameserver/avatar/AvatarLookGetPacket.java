@@ -45,10 +45,10 @@ public class AvatarLookGetPacket implements IXtPacket<AvatarLookGetPacket> {
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Find avatar
 		CenturiaAccount account = AccountManager.getInstance().getAccount(accountID);
-		if (account == null || !account.getPlayerInventory().containsItem("avatars"))
+		if (account == null || !account.getSaveSpecificInventory().containsItem("avatars"))
 			return true; // Account not found
 
-		JsonArray items = account.getPlayerInventory().getItem("avatars").getAsJsonArray();
+		JsonArray items = account.getSaveSpecificInventory().getItem("avatars").getAsJsonArray();
 		JsonObject lookObj = null;
 		for (JsonElement itm : items) {
 			if (itm.isJsonObject()) {
