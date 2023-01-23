@@ -2,6 +2,8 @@ package org.asf.centuria.networking.http.api.custom;
 
 import java.io.ByteArrayOutputStream;
 import java.net.Socket;
+import java.util.Base64;
+
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
@@ -63,10 +65,70 @@ public class UserDetailsHandler extends HttpUploadProcessor {
 			response.addProperty("uuid", id);
 			response.addProperty("display_name", acc.getDisplayName());
 			response.addProperty("current_level", acc.getLevel().getLevel());
-			response.addProperty("save_mode", acc.getSaveMode().toString());
-			if (acc.getSaveMode() == SaveMode.MANAGED)
-				response.addProperty("active_save", acc.getSaveManager().getCurrentActiveSave());
-			response.add("current_save_settings", acc.getSaveSpecificInventory().getSaveSettings().writeToObject());
+
+			// Sensitive fields
+			// Check authorization
+			boolean isSelf = false;
+			if (getRequest().headers.containsKey("Authorization")) {
+				// Parse JWT payload
+				String token = this.getHeader("Authorization").substring("Bearer ".length());
+				if (!token.isBlank()) {
+					// Verify signature
+					String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
+					String sig = token.split("\\.")[2];
+					if (!Centuria.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
+						this.setResponseCode(403);
+						this.setResponseMessage("Access denied");
+						return;
+					}
+
+					// Verify expiry
+					JsonObject jwtPl = JsonParser
+							.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+							.getAsJsonObject();
+					if (jwtPl.has("exp") && jwtPl.get("exp").getAsLong() >= System.currentTimeMillis() / 1000) {
+						JsonObject payload = JsonParser
+								.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
+								.getAsJsonObject();
+
+						// Find account
+						String accId = payload.get("uuid").getAsString();
+						if (accId.equals(id))
+							isSelf = true;
+					}
+				}
+			}
+			if (isSelf) {
+				response.addProperty("save_mode", acc.getSaveMode().toString());
+				if (acc.isMuted() || acc.isBanned()) {
+					// Include penalty information
+					JsonObject penaltyObj = new JsonObject();
+					penaltyObj.addProperty("type", acc.isMuted() ? "mute" : "ban");
+					response.add("penalty", penaltyObj);
+
+					// Check temporary ban/mute
+					JsonObject penalty = acc.getSaveSharedInventory().getItem("penalty").getAsJsonObject();
+					if (acc.isMuted() && penalty.get("unmuteTimestamp").getAsLong() != -1) {
+						penaltyObj.addProperty("is_temporary", true);
+						penaltyObj.addProperty("penalty_end_time", penalty.get("unmuteTimestamp").getAsLong());
+					} else if (acc.isBanned() && penalty.get("unbanTimestamp").getAsLong() != -1) {
+						penaltyObj.addProperty("is_temporary", true);
+						penaltyObj.addProperty("penalty_end_time", penalty.get("unbanTimestamp").getAsLong());
+					} else {
+						penaltyObj.addProperty("isTemporary", false);
+					}
+
+					// Add reason
+					if (penalty.has("reason")) {
+						penaltyObj.addProperty("has_reason", true);
+						penaltyObj.addProperty("reason", penalty.get("reason").getAsString());
+					} else
+						penaltyObj.addProperty("has_reason", false);
+				}
+				if (acc.getSaveMode() == SaveMode.MANAGED)
+					response.addProperty("active_save", acc.getSaveManager().getCurrentActiveSave());
+				response.add("current_save_settings", acc.getSaveSpecificInventory().getSaveSettings().writeToObject());
+			}
 			response.add("active_look",
 					acc.getSaveSpecificInventory().getAccessor().findInventoryObject("avatars", acc.getActiveLook())
 							.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject());
