@@ -99,6 +99,8 @@ public class UserDetailsHandler extends HttpUploadProcessor {
 				}
 			}
 			if (isSelf) {
+				response.addProperty("last_login_time", acc.getLastLoginTime());
+				response.addProperty("is_online", acc.getOnlinePlayerInstance() != null);
 				response.addProperty("save_mode", acc.getSaveMode().toString());
 				if (acc.isMuted() || acc.isBanned()) {
 					// Include penalty information
