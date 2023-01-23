@@ -552,24 +552,34 @@ public class FileBasedAccountObject extends CenturiaAccount {
 			throw new RuntimeException(e);
 		}
 
-		// Create default save
+		// Create saves
 		String defaultSaveName = defaultSaveSettings.get("migrationSaveName").getAsString();
-		JsonObject defaultSettings = defaultSaveSettings.get("saves").getAsJsonObject().get(defaultSaveName)
-				.getAsJsonObject();
-		if (!manager.createSave(defaultSaveName) || !manager.switchSave(defaultSaveName)) {
+		for (String saveName : defaultSaveSettings.get("saves").getAsJsonObject().keySet()) {
+			JsonObject saveSettings = defaultSaveSettings.get("saves").getAsJsonObject().get(saveName)
+					.getAsJsonObject();
+			if (!manager.createSave(saveName)) {
+				sharedInv.deleteItem("savemanifest");
+				manager = null;
+				throw new RuntimeException("Save creation failure");
+			}
+
+			// Write settings
+			PlayerInventory inv = new FileBasedPlayerInventory(userUUID, saveName);
+			SaveSettings settings = inv.getSaveSettings();
+			saveSettings.addProperty("tradeLockID", saveName);
+			settings.load(saveSettings);
+			inv.writeSaveSettings();
+		}
+
+		// Switch save
+		if (!manager.switchSave(defaultSaveName)) {
 			sharedInv.deleteItem("savemanifest");
 			manager = null;
 			throw new RuntimeException("Save creation failure");
 		}
 
-		// Write settings
-		PlayerInventory inv = new FileBasedPlayerInventory(userUUID, manager.getCurrentActiveSave());
-		SaveSettings settings = inv.getSaveSettings();
-		defaultSettings.addProperty("tradeLockID", defaultSaveName);
-		settings.load(defaultSettings);
-		inv.writeSaveSettings();
-
 		// Migrate player data
+		PlayerInventory inv = new FileBasedPlayerInventory(userUUID, defaultSaveName);
 		migrateItem(sharedInv, "1", inv);
 		migrateItem(sharedInv, "10", inv);
 		migrateItem(sharedInv, "100", inv);
