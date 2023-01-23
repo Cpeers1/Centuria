@@ -37,8 +37,6 @@ Build the project:
 ./gradlew build
 ```
 
-<br/>
-
 ## After building
 After building, you can find the compiled server in `build/Installations`, you can run the server by starting `centuria` (either the shell or batch script depending on your OS)
 
