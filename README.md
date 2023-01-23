@@ -45,7 +45,7 @@ After building, you can find the compiled server in `build/Installations`, you c
 <br/>
 
 ## Note about self-hosted servers
-Due to the lack of a easy-to-use launcher, hosting a server yourself may prove difficult. You will need to edit `Fer.al_Data/sharedassets1.assets` and swap out the server endpoints, however this can be quite difficult. You can obtain a localhost sharedassets patch from the [AerialWorks Centuria Server](https://aerialworks.ddns.net/emuferal/sharedassets1.assets).
+Due to the lack of a easy-to-use launcher, hosting a server yourself may prove difficult. You will need to edit your client's `Fer.al_Data/sharedassets1.assets` and swap out the server endpoints, however this can be tricky, you may run into string length issues. You can obtain a localhost sharedassets patch from the [AerialWorks Centuria Server](https://aerialworks.ddns.net/emuferal/sharedassets1.assets).
 
 <br/>
 
