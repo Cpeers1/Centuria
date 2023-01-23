@@ -3,6 +3,7 @@ Changes in 1.5.3.B1:
 - Made it that items that have a quantity tag can be given infinitely via giveitem
 - Fixed the admin giveitem command not using the quantity argument
 - Added trade security for multi-gamemode servers: trade lock ID in savesettings allows blocking of cross-mode trading
+- Overhauled player data to support mode switching
 - Fix log typo
 
 New features:
