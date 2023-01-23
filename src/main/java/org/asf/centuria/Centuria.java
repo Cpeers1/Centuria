@@ -72,6 +72,7 @@ import org.asf.centuria.networking.http.api.custom.ListPlayersHandler;
 import org.asf.centuria.networking.http.api.custom.LoginRefreshHandler;
 import org.asf.centuria.networking.http.api.custom.PlayerDataDownloadHandler;
 import org.asf.centuria.networking.http.api.custom.RegistrationHandler;
+import org.asf.centuria.networking.http.api.custom.SaveManagerHandler;
 import org.asf.centuria.networking.http.api.custom.UserDetailsHandler;
 import org.asf.centuria.networking.http.director.GameServerRequestHandler;
 import org.asf.rats.ConnectiveHTTPServer;
@@ -542,6 +543,7 @@ public class Centuria {
 		apiServer.registerProcessor(new ListPlayersHandler());
 		apiServer.registerProcessor(new RegistrationHandler());
 		apiServer.registerProcessor(new PlayerDataDownloadHandler());
+		apiServer.registerProcessor(new SaveManagerHandler());
 
 		// Fallback
 		apiServer.registerProcessor(new FallbackAPIProcessor());
@@ -566,9 +568,7 @@ public class Centuria {
 			apiServer.registerProcessor(new UpdateDisplayNameHandler());
 			apiServer.registerProcessor(new DisplayNamesRequestHandler());
 			apiServer.registerProcessor(new DisplayNameValidationHandler());
-			apiServer.registerProcessor(new DeleteAccountHandler());
 			apiServer.registerProcessor(new RequestTokenHandler());
-			apiServer.registerProcessor(new FallbackAPIProcessor());
 			apiServer.registerProcessor(new GameRegistrationHandler());
 
 			// Custom API
@@ -576,10 +576,15 @@ public class Centuria {
 			apiServer.registerProcessor(new ChangePasswordHandler());
 			apiServer.registerProcessor(new ChangeDisplayNameHandler());
 			apiServer.registerProcessor(new ChangeLoginNameHandler());
+			apiServer.registerProcessor(new DeleteAccountHandler());
 			apiServer.registerProcessor(new UserDetailsHandler());
 			apiServer.registerProcessor(new ListPlayersHandler());
 			apiServer.registerProcessor(new RegistrationHandler());
 			apiServer.registerProcessor(new PlayerDataDownloadHandler());
+			apiServer.registerProcessor(new SaveManagerHandler());
+
+			// Fallback
+			apiServer.registerProcessor(new FallbackAPIProcessor());
 		}
 
 		//

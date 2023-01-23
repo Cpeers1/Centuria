@@ -109,11 +109,6 @@ public class FileBasedAccountObject extends CenturiaAccount {
 			SaveMode mode = getSaveMode();
 			if (mode == SaveMode.SINGLE)
 				mainInv = sharedInv;
-			else {
-				// Load save manager
-				manager = new FileBasedSaveManager(sharedInv, this);
-				mainInv = new FileBasedPlayerInventory(userUUID, manager.getCurrentActiveSave());
-			}
 
 		} else {
 			// Use the existing inventory object
@@ -121,6 +116,12 @@ public class FileBasedAccountObject extends CenturiaAccount {
 			mainInv = (FileBasedPlayerInventory) old.account.getSaveSpecificInventory();
 			if (old.account.getSaveMode() == SaveMode.MANAGED)
 				manager = old.account.getSaveManager();
+		}
+
+		// Load manager
+		if (manager == null && getSaveMode() == SaveMode.MANAGED) {
+			manager = new FileBasedSaveManager(sharedInv, this);
+			mainInv = new FileBasedPlayerInventory(userUUID, manager.getCurrentActiveSave());
 		}
 
 		// Load login timestamp
@@ -502,7 +503,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 	public SaveManager getSaveManager() throws IllegalArgumentException {
 		if (manager == null)
 			throw new IllegalArgumentException("Not running through managed save data");
-		return null;
+		return manager;
 	}
 
 	@Override
