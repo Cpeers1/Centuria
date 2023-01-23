@@ -41,7 +41,8 @@ public class Player {
 	private ArrayList<Object> objects = new ArrayList<Object>();
 
 	/**
-	 * Retrieves objects from the connection container, used to store information in clients.
+	 * Retrieves objects from the connection container, used to store information in
+	 * clients.
 	 * 
 	 * @since Beta 1.5.3
 	 * @param type Object type
@@ -57,7 +58,8 @@ public class Player {
 	}
 
 	/**
-	 * Adds objects to the connection container, used to store information in clients.
+	 * Adds objects to the connection container, used to store information in
+	 * clients.
 	 * 
 	 * @since Beta 1.5.3
 	 * @param obj Object to add
@@ -99,8 +101,8 @@ public class Player {
 
 			// Load permission level
 			String permLevel = "member";
-			if (blockedPlayer.getPlayerInventory().containsItem("permissions")) {
-				permLevel = blockedPlayer.getPlayerInventory().getItem("permissions").getAsJsonObject()
+			if (blockedPlayer.getSaveSharedInventory().containsItem("permissions")) {
+				permLevel = blockedPlayer.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 						.get("permissionLevel").getAsString();
 			}
 			if (!GameServer.hasPerm(permLevel, "moderator") && !syncBlockedPlayers.contains(targetPlayerID)) {
@@ -205,7 +207,7 @@ public class Player {
 			return; // Do not sync to blocked players
 
 		// Find avatar
-		JsonArray items = account.getPlayerInventory().getItem("avatars").getAsJsonArray();
+		JsonArray items = account.getSaveSpecificInventory().getItem("avatars").getAsJsonArray();
 		JsonObject lookObj = null;
 		for (JsonElement itm : items) {
 			if (itm.isJsonObject()) {
@@ -260,7 +262,7 @@ public class Player {
 
 			// Find owner
 			CenturiaAccount sancOwner = AccountManager.getInstance().getAccount(sanctuaryOwner);
-			if (!sancOwner.getPlayerInventory().containsItem("201")) {
+			if (!sancOwner.getSaveSpecificInventory().containsItem("201")) {
 				Player plr = sancOwner.getOnlinePlayerInstance();
 				if (plr != null)
 					plr.activeSanctuaryLook = sancOwner.getActiveSanctuaryLook();
@@ -272,7 +274,7 @@ public class Player {
 			if (!isOwner) {
 				// Load privacy settings
 				int privSetting = 0;
-				UserVarValue val = sancOwner.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
+				UserVarValue val = sancOwner.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
 				if (val != null)
 					privSetting = val.value;
 
@@ -290,7 +292,7 @@ public class Player {
 				}
 
 				// Check sanc existence
-				JsonObject sanctuaryInfo = sancOwner.getPlayerInventory().getSanctuaryAccessor()
+				JsonObject sanctuaryInfo = sancOwner.getSaveSpecificInventory().getSanctuaryAccessor()
 						.getSanctuaryLook(sancOwner.getActiveSanctuaryLook());
 				if (sanctuaryInfo == null)
 					isAllowed = false;
@@ -549,7 +551,8 @@ public class Player {
 								|| (player.overrideTpLocks && player.hasModPerms))) {
 					// Load privacy settings
 					int privSetting = 0;
-					UserVarValue val = plr.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17546, 0);
+					UserVarValue val = plr.account.getSaveSpecificInventory().getUserVarAccesor()
+							.getPlayerVarValue(17546, 0);
 					if (val != null)
 						privSetting = val.value;
 
@@ -580,7 +583,7 @@ public class Player {
 							String sanctuaryOwner = plr.room.substring("sanctuary_".length());
 							// Find owner
 							CenturiaAccount sancOwner = AccountManager.getInstance().getAccount(sanctuaryOwner);
-							if (!sancOwner.getPlayerInventory().containsItem("201")) {
+							if (!sancOwner.getSaveSpecificInventory().containsItem("201")) {
 								Player plr2 = sancOwner.getOnlinePlayerInstance();
 								if (plr2 != null)
 									plr2.activeSanctuaryLook = sancOwner.getActiveSanctuaryLook();
@@ -592,7 +595,8 @@ public class Player {
 							if (!isOwner && (!player.overrideTpLocks || !player.hasModPerms)) {
 								// Load privacy settings
 								privSetting = 0;
-								val = sancOwner.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
+								val = sancOwner.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(17544,
+										0);
 								if (val != null)
 									privSetting = val.value;
 
@@ -685,7 +689,7 @@ public class Player {
 	 */
 	public List<InventoryItem> getTradeList() {
 		try {
-			return this.account.getPlayerInventory().getItemAccessor(this).loadTradeList();
+			return this.account.getSaveSpecificInventory().getItemAccessor(this).loadTradeList();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

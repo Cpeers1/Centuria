@@ -310,9 +310,10 @@ public class SendMessage extends AbstractChatPacket {
 
 		// Check mute
 		CenturiaAccount acc = client.getPlayer();
-		if (!client.isRoomPrivate(room) && acc.getPlayerInventory().containsItem("penalty") && acc.getPlayerInventory()
-				.getItem("penalty").getAsJsonObject().get("type").getAsString().equals("mute")) {
-			JsonObject banInfo = acc.getPlayerInventory().getItem("penalty").getAsJsonObject();
+		if (!client.isRoomPrivate(room) && acc.getSaveSharedInventory().containsItem("penalty")
+				&& acc.getSaveSharedInventory().getItem("penalty").getAsJsonObject().get("type").getAsString()
+						.equals("mute")) {
+			JsonObject banInfo = acc.getSaveSharedInventory().getItem("penalty").getAsJsonObject();
 			if (banInfo.get("unmuteTimestamp").getAsLong() == -1
 					|| banInfo.get("unmuteTimestamp").getAsLong() > System.currentTimeMillis()) {
 				// Time format
@@ -400,7 +401,7 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Load filter settings
 						int filterSetting = 0;
-						UserVarValue val = cl.getPlayer().getPlayerInventory().getUserVarAccesor()
+						UserVarValue val = cl.getPlayer().getSaveSpecificInventory().getUserVarAccesor()
 								.getPlayerVarValue(9362, 0);
 						if (val != null)
 							filterSetting = val.value;
@@ -455,9 +456,9 @@ public class SendMessage extends AbstractChatPacket {
 								cl.getPlayer().getAccountID())) {
 							// Check mod perms
 							String permLevel = "member";
-							if (cl.getPlayer().getPlayerInventory().containsItem("permissions")) {
-								permLevel = cl.getPlayer().getPlayerInventory().getItem("permissions").getAsJsonObject()
-										.get("permissionLevel").getAsString();
+							if (cl.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+								permLevel = cl.getPlayer().getSaveSharedInventory().getItem("permissions")
+										.getAsJsonObject().get("permissionLevel").getAsString();
 							}
 							if (!GameServer.hasPerm(permLevel, "moderator"))
 								continue; // Blocked
@@ -517,18 +518,18 @@ public class SendMessage extends AbstractChatPacket {
 	private boolean handleCommand(String cmd, ChatClient client) {
 		// Load permission level
 		String permLevel = "member";
-		if (client.getPlayer().getPlayerInventory().containsItem("permissions")) {
-			permLevel = client.getPlayer().getPlayerInventory().getItem("permissions").getAsJsonObject()
+		if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+			permLevel = client.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 					.get("permissionLevel").getAsString();
 		}
 
 		// Generate the command list
 		ArrayList<String> commandMessages = new ArrayList<String>();
 
-		if (client.getPlayer().getPlayerInventory().getSaveSettings().giveAllResources
+		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
 				|| GameServer.hasPerm(permLevel, "admin"))
 			commandMessages.add("giveBasicMaterials");
-		if (client.getPlayer().getPlayerInventory().getSaveSettings().giveAllCurrency
+		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllCurrency
 				|| GameServer.hasPerm(permLevel, "admin"))
 			commandMessages.add("giveBasicCurrency");
 
@@ -571,12 +572,12 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("staffroom");
 			commandMessages.add("listplayers");
 		}
-		if (client.getPlayer().getPlayerInventory().getSaveSettings().giveAllResources
-				|| client.getPlayer().getPlayerInventory().getSaveSettings().giveAllCurrency
-				|| client.getPlayer().getPlayerInventory().getSaveSettings().giveAllFurnitureItems
-				|| client.getPlayer().getPlayerInventory().getSaveSettings().giveAllClothes
+		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllCurrency
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllFurnitureItems
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllClothes
 				|| (GameServer.hasPerm(permLevel, "admin")
-						|| (client.getPlayer().getPlayerInventory().getSaveSettings().giveAllResources
+						|| (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
 								&& GameServer.hasPerm(permLevel, "moderator"))))
 			if (GameServer.hasPerm(permLevel, "moderator"))
 				commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
@@ -612,12 +613,12 @@ public class SendMessage extends AbstractChatPacket {
 					return true;
 
 				if (cmdId.equals("givebasicmaterials")) {
-					if (client.getPlayer().getPlayerInventory().getSaveSettings().giveAllResources
+					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
 							|| GameServer.hasPerm(permLevel, "admin")) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
 
 						if (onlinePlayer != null) {
-							var accessor = client.getPlayer().getPlayerInventory().getItemAccessor(onlinePlayer);
+							var accessor = client.getPlayer().getSaveSpecificInventory().getItemAccessor(onlinePlayer);
 
 							accessor.add(6691, 1000);
 							accessor.add(6692, 1000);
@@ -641,12 +642,12 @@ public class SendMessage extends AbstractChatPacket {
 						return true;
 					}
 				} else if (cmdId.equals("givebasiccurrency")) {
-					if (client.getPlayer().getPlayerInventory().getSaveSettings().giveAllCurrency
+					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllCurrency
 							|| GameServer.hasPerm(permLevel, "admin")) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
 
 						if (onlinePlayer != null) {
-							var accessor = client.getPlayer().getPlayerInventory().getCurrencyAccessor();
+							var accessor = client.getPlayer().getSaveSpecificInventory().getCurrencyAccessor();
 
 							accessor.addLikes(onlinePlayer.client, 1000);
 							accessor.addStarFragments(onlinePlayer.client, 1000);
@@ -690,8 +691,8 @@ public class SendMessage extends AbstractChatPacket {
 					}
 
 					// Rewind quests
-					JsonObject obj = client.getPlayer().getPlayerInventory().getAccessor().findInventoryObject("311",
-							22781);
+					JsonObject obj = client.getPlayer().getSaveSpecificInventory().getAccessor()
+							.findInventoryObject("311", 22781);
 					JsonObject progressionMap = obj.get("components").getAsJsonObject()
 							.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
 					JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
@@ -700,8 +701,8 @@ public class SendMessage extends AbstractChatPacket {
 					}
 
 					// Save
-					client.getPlayer().getPlayerInventory().setItem("311",
-							client.getPlayer().getPlayerInventory().getItem("311"));
+					client.getPlayer().getSaveSpecificInventory().setItem("311",
+							client.getPlayer().getSaveSpecificInventory().getItem("311"));
 					systemMessage("Success! Rewinded your quest log, '"
 							+ QuestManager.getQuest(QuestManager.getActiveQuest(client.getPlayer())).name
 							+ "' is now your active quest! Please log out and log back in to complete the process.",
@@ -815,14 +816,13 @@ public class SendMessage extends AbstractChatPacket {
 						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
 						// Check rank
-						if (acc.getPlayerInventory().containsItem("permissions")) {
+						if (acc.getSaveSharedInventory().containsItem("permissions")) {
 							if ((GameServer
-									.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+									.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 											.get("permissionLevel").getAsString(), "developer")
 									&& !GameServer.hasPerm(permLevel, "developer"))
-									|| GameServer
-											.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-													.get("permissionLevel").getAsString(), "admin")
+									|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+											.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
 											&& !GameServer.hasPerm(permLevel, "admin")) {
 								systemMessage("Unable to mute higher-ranking users.", cmd, client);
 								return true;
@@ -830,7 +830,7 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						// Check if banned
-						if (acc.getPlayerInventory().containsItem("penalty") && acc.getPlayerInventory()
+						if (acc.getSaveSharedInventory().containsItem("penalty") && acc.getSaveSharedInventory()
 								.getItem("penalty").getAsJsonObject().get("type").getAsString().equals("ban")) {
 							// Check ban
 							systemMessage("Specified account is banned.", cmd, client);
@@ -873,14 +873,13 @@ public class SendMessage extends AbstractChatPacket {
 						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
 						// Check rank
-						if (acc.getPlayerInventory().containsItem("permissions")) {
+						if (acc.getSaveSharedInventory().containsItem("permissions")) {
 							if ((GameServer
-									.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+									.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 											.get("permissionLevel").getAsString(), "developer")
 									&& !GameServer.hasPerm(permLevel, "developer"))
-									|| GameServer
-											.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-													.get("permissionLevel").getAsString(), "admin")
+									|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+											.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
 											&& !GameServer.hasPerm(permLevel, "admin")) {
 								systemMessage("Unable to ban higher-ranking users.", cmd, client);
 								return true;
@@ -913,14 +912,13 @@ public class SendMessage extends AbstractChatPacket {
 							reason = args.get(1);
 
 						// Check rank
-						if (acc.getPlayerInventory().containsItem("permissions")) {
+						if (acc.getSaveSharedInventory().containsItem("permissions")) {
 							if ((GameServer
-									.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+									.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 											.get("permissionLevel").getAsString(), "developer")
 									&& !GameServer.hasPerm(permLevel, "developer"))
-									|| GameServer
-											.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-													.get("permissionLevel").getAsString(), "admin")
+									|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+											.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
 											&& !GameServer.hasPerm(permLevel, "admin")) {
 								systemMessage("Unable to ban higher-ranking users.", cmd, client);
 								return true;
@@ -972,12 +970,13 @@ public class SendMessage extends AbstractChatPacket {
 						for (Player plr : Centuria.gameServer.getPlayers()) {
 							if (plr.account.getDisplayName().equals(args.get(0))) {
 								// Check rank
-								if (plr.account.getPlayerInventory().containsItem("permissions")) {
-									if ((GameServer.hasPerm(plr.account.getPlayerInventory().getItem("permissions")
-											.getAsJsonObject().get("permissionLevel").getAsString(), "developer")
-											&& !GameServer.hasPerm(permLevel, "developer"))
+								if (plr.account.getSaveSharedInventory().containsItem("permissions")) {
+									if ((GameServer.hasPerm(
+											plr.account.getSaveSharedInventory().getItem("permissions")
+													.getAsJsonObject().get("permissionLevel").getAsString(),
+											"developer") && !GameServer.hasPerm(permLevel, "developer"))
 											|| GameServer.hasPerm(
-													plr.account.getPlayerInventory().getItem("permissions")
+													plr.account.getSaveSharedInventory().getItem("permissions")
 															.getAsJsonObject().get("permissionLevel").getAsString(),
 													"admin") && !GameServer.hasPerm(permLevel, "admin")) {
 										systemMessage("Unable to ban higher-ranking users.", cmd, client);
@@ -1117,14 +1116,13 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						// Check rank
-						if (acc.getPlayerInventory().containsItem("permissions")) {
+						if (acc.getSaveSharedInventory().containsItem("permissions")) {
 							if ((GameServer
-									.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+									.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 											.get("permissionLevel").getAsString(), "developer")
 									&& !GameServer.hasPerm(permLevel, "developer"))
-									|| GameServer
-											.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-													.get("permissionLevel").getAsString(), "admin")
+									|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+											.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
 											&& !GameServer.hasPerm(permLevel, "admin")) {
 								systemMessage("Unable to pardon higher-ranking users.", cmd, client);
 								return true;
@@ -1182,14 +1180,13 @@ public class SendMessage extends AbstractChatPacket {
 						String oldName = acc.getDisplayName();
 
 						// Check rank
-						if (acc.getPlayerInventory().containsItem("permissions")) {
+						if (acc.getSaveSharedInventory().containsItem("permissions")) {
 							if ((GameServer
-									.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+									.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 											.get("permissionLevel").getAsString(), "developer")
 									&& !GameServer.hasPerm(permLevel, "developer"))
-									|| GameServer
-											.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
-													.get("permissionLevel").getAsString(), "admin")
+									|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+											.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
 											&& !GameServer.hasPerm(permLevel, "admin")) {
 								systemMessage("Unable to rename higher-ranking users.", cmd, client);
 								return true;
@@ -1237,12 +1234,13 @@ public class SendMessage extends AbstractChatPacket {
 						for (Player plr : Centuria.gameServer.getPlayers()) {
 							if (plr.account.getDisplayName().equals(args.get(0))) {
 								// Check rank
-								if (plr.account.getPlayerInventory().containsItem("permissions")) {
-									if ((GameServer.hasPerm(plr.account.getPlayerInventory().getItem("permissions")
-											.getAsJsonObject().get("permissionLevel").getAsString(), "developer")
-											&& !GameServer.hasPerm(permLevel, "developer"))
+								if (plr.account.getSaveSharedInventory().containsItem("permissions")) {
+									if ((GameServer.hasPerm(
+											plr.account.getSaveSharedInventory().getItem("permissions")
+													.getAsJsonObject().get("permissionLevel").getAsString(),
+											"developer") && !GameServer.hasPerm(permLevel, "developer"))
 											|| GameServer.hasPerm(
-													plr.account.getPlayerInventory().getItem("permissions")
+													plr.account.getSaveSharedInventory().getItem("permissions")
 															.getAsJsonObject().get("permissionLevel").getAsString(),
 													"admin") && !GameServer.hasPerm(permLevel, "admin")) {
 										systemMessage("Unable to kick higher-ranking users.", cmd, client);
@@ -1261,12 +1259,13 @@ public class SendMessage extends AbstractChatPacket {
 						for (ChatClient cl : client.getServer().getClients())
 							if (cl.getPlayer().getDisplayName().equals(args.get(0))) {
 								// Check rank
-								if (cl.getPlayer().getPlayerInventory().containsItem("permissions")) {
-									if ((GameServer.hasPerm(cl.getPlayer().getPlayerInventory().getItem("permissions")
-											.getAsJsonObject().get("permissionLevel").getAsString(), "developer")
-											&& !GameServer.hasPerm(permLevel, "developer"))
+								if (cl.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+									if ((GameServer.hasPerm(
+											cl.getPlayer().getSaveSharedInventory().getItem("permissions")
+													.getAsJsonObject().get("permissionLevel").getAsString(),
+											"developer") && !GameServer.hasPerm(permLevel, "developer"))
 											|| GameServer.hasPerm(
-													cl.getPlayer().getPlayerInventory().getItem("permissions")
+													cl.getPlayer().getSaveSharedInventory().getItem("permissions")
 															.getAsJsonObject().get("permissionLevel").getAsString(),
 													"admin") && !GameServer.hasPerm(permLevel, "admin")) {
 										systemMessage("Unable to kick higher-ranking users.", cmd, client);
@@ -1466,23 +1465,23 @@ public class SendMessage extends AbstractChatPacket {
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
 							// Make admin
-							if (!acc.getPlayerInventory().containsItem("permissions"))
-								acc.getPlayerInventory().setItem("permissions", new JsonObject());
-							if (!acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+							if (!acc.getSaveSharedInventory().containsItem("permissions"))
+								acc.getSaveSharedInventory().setItem("permissions", new JsonObject());
+							if (!acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 									.has("permissionLevel"))
-								acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+								acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 										.remove("permissionLevel");
-							acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+							acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 									.addProperty("permissionLevel", "admin");
-							acc.getPlayerInventory().setItem("permissions",
-									acc.getPlayerInventory().getItem("permissions"));
+							acc.getSaveSharedInventory().setItem("permissions",
+									acc.getSaveSharedInventory().getItem("permissions"));
 
 							// Find online player
 							for (ChatClient plr : client.getServer().getClients()) {
 								if (plr.getPlayer().getDisplayName().equals(args.get(0))) {
 									// Update inventory
-									plr.getPlayer().getPlayerInventory().setItem("permissions",
-											acc.getPlayerInventory().getItem("permissions"));
+									plr.getPlayer().getSaveSharedInventory().setItem("permissions",
+											acc.getSaveSharedInventory().getItem("permissions"));
 									break;
 								}
 							}
@@ -1513,23 +1512,23 @@ public class SendMessage extends AbstractChatPacket {
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
 							// Make moderator
-							if (!acc.getPlayerInventory().containsItem("permissions"))
-								acc.getPlayerInventory().setItem("permissions", new JsonObject());
-							if (!acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+							if (!acc.getSaveSharedInventory().containsItem("permissions"))
+								acc.getSaveSharedInventory().setItem("permissions", new JsonObject());
+							if (!acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 									.has("permissionLevel"))
-								acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+								acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 										.remove("permissionLevel");
-							acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+							acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 									.addProperty("permissionLevel", "moderator");
-							acc.getPlayerInventory().setItem("permissions",
-									acc.getPlayerInventory().getItem("permissions"));
+							acc.getSaveSharedInventory().setItem("permissions",
+									acc.getSaveSharedInventory().getItem("permissions"));
 
 							// Find online player
 							for (ChatClient plr : client.getServer().getClients()) {
 								if (plr.getPlayer().getDisplayName().equals(args.get(0))) {
 									// Update inventory
-									plr.getPlayer().getPlayerInventory().setItem("permissions",
-											acc.getPlayerInventory().getItem("permissions"));
+									plr.getPlayer().getSaveSharedInventory().setItem("permissions",
+											acc.getSaveSharedInventory().getItem("permissions"));
 									break;
 								}
 							}
@@ -1560,23 +1559,23 @@ public class SendMessage extends AbstractChatPacket {
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
 							// Take permissions away
-							if (acc.getPlayerInventory().containsItem("permissions")) {
+							if (acc.getSaveSharedInventory().containsItem("permissions")) {
 								if (GameServer
-										.hasPerm(acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+										.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 												.get("permissionLevel").getAsString(), "developer")
 										&& !GameServer.hasPerm(permLevel, "developer")) {
 									systemMessage("Unable to remove permissions from higher-ranking users.", cmd,
 											client);
 									return true;
 								}
-								acc.getPlayerInventory().deleteItem("permissions");
+								acc.getSaveSharedInventory().deleteItem("permissions");
 							}
 
 							// Find online player
 							for (ChatClient plr : client.getServer().getClients()) {
 								if (plr.getPlayer().getDisplayName().equals(args.get(0))) {
 									// Update inventory
-									plr.getPlayer().getPlayerInventory().deleteItem("permissions");
+									plr.getPlayer().getSaveSharedInventory().deleteItem("permissions");
 									break;
 								}
 							}
@@ -1585,7 +1584,7 @@ public class SendMessage extends AbstractChatPacket {
 							for (Player plr : Centuria.gameServer.getPlayers()) {
 								if (plr.account.getDisplayName().equals(args.get(0))) {
 									// Update inventory
-									plr.account.getPlayerInventory().deleteItem("permissions");
+									plr.account.getSaveSharedInventory().deleteItem("permissions");
 									plr.hasModPerms = false;
 									break;
 								}
@@ -1714,9 +1713,9 @@ public class SendMessage extends AbstractChatPacket {
 
 							// Disconnect everyone but the staff
 							for (Player plr : Centuria.gameServer.getPlayers()) {
-								if (!plr.account.getPlayerInventory().containsItem("permissions")
+								if (!plr.account.getSaveSharedInventory().containsItem("permissions")
 										|| !GameServer.hasPerm(
-												plr.account.getPlayerInventory().getItem("permissions")
+												plr.account.getSaveSharedInventory().getItem("permissions")
 														.getAsJsonObject().get("permissionLevel").getAsString(),
 												"moderator"))
 									plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
@@ -1725,9 +1724,9 @@ public class SendMessage extends AbstractChatPacket {
 							// Wait a bit
 							int i = 0;
 							while (Stream.of(Centuria.gameServer.getPlayers())
-									.filter(plr -> !plr.account.getPlayerInventory().containsItem("permissions")
+									.filter(plr -> !plr.account.getSaveSharedInventory().containsItem("permissions")
 											|| !GameServer.hasPerm(
-													plr.account.getPlayerInventory().getItem("permissions")
+													plr.account.getSaveSharedInventory().getItem("permissions")
 															.getAsJsonObject().get("permissionLevel").getAsString(),
 													"moderator"))
 									.findFirst().isPresent()) {
@@ -1741,9 +1740,9 @@ public class SendMessage extends AbstractChatPacket {
 								}
 							}
 							for (Player plr : Centuria.gameServer.getPlayers()) {
-								if (!plr.account.getPlayerInventory().containsItem("permissions")
+								if (!plr.account.getSaveSharedInventory().containsItem("permissions")
 										|| !GameServer.hasPerm(
-												plr.account.getPlayerInventory().getItem("permissions")
+												plr.account.getSaveSharedInventory().getItem("permissions")
 														.getAsJsonObject().get("permissionLevel").getAsString(),
 												"moderator")) {
 									// Disconnect from the game server
@@ -1806,23 +1805,23 @@ public class SendMessage extends AbstractChatPacket {
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
 							// Make developer
-							if (!acc.getPlayerInventory().containsItem("permissions"))
-								acc.getPlayerInventory().setItem("permissions", new JsonObject());
-							if (!acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+							if (!acc.getSaveSharedInventory().containsItem("permissions"))
+								acc.getSaveSharedInventory().setItem("permissions", new JsonObject());
+							if (!acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 									.has("permissionLevel"))
-								acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+								acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 										.remove("permissionLevel");
-							acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+							acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 									.addProperty("permissionLevel", "developer");
-							acc.getPlayerInventory().setItem("permissions",
-									acc.getPlayerInventory().getItem("permissions"));
+							acc.getSaveSharedInventory().setItem("permissions",
+									acc.getSaveSharedInventory().getItem("permissions"));
 
 							// Find online player
 							for (ChatClient plr : client.getServer().getClients()) {
 								if (plr.getPlayer().getDisplayName().equals(args.get(0))) {
 									// Update inventory
-									plr.getPlayer().getPlayerInventory().setItem("permissions",
-											acc.getPlayerInventory().getItem("permissions"));
+									plr.getPlayer().getSaveSharedInventory().setItem("permissions",
+											acc.getSaveSharedInventory().getItem("permissions"));
 									break;
 								}
 							}
@@ -2181,7 +2180,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "giveitem":
 						if (GameServer.hasPerm(permLevel, "admin")
-								|| client.getPlayer().getPlayerInventory().getSaveSettings().giveAllResources) {
+								|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources) {
 							try {
 								int defID = 0;
 								int quantity = 1;
@@ -2223,7 +2222,7 @@ public class SendMessage extends AbstractChatPacket {
 
 								// give item to the command sender..
 								var onlinePlayer = acc.getOnlinePlayerInstance();
-								var result = acc.getPlayerInventory().getItemAccessor(onlinePlayer).add(defID,
+								var result = acc.getSaveSpecificInventory().getItemAccessor(onlinePlayer).add(defID,
 										quantity);
 
 								if (result.length > 0)
@@ -2268,9 +2267,9 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						// check max item limit (hardcoded 100 for creative mode)
-						int current = client.getPlayer().getPlayerInventory().getItemAccessor(null)
+						int current = client.getPlayer().getSaveSpecificInventory().getItemAccessor(null)
 								.getCountOfItem(defID);
-						if (!client.getPlayer().getPlayerInventory().getItemAccessor(null).isQuantityBased(defID)
+						if (!client.getPlayer().getSaveSpecificInventory().getItemAccessor(null).isQuantityBased(defID)
 								&& quantity + current > 100) {
 							systemMessage("You cannot have more than 100 of that item via commands.", cmd, client);
 							return true;
@@ -2290,15 +2289,15 @@ public class SendMessage extends AbstractChatPacket {
 
 						// check perms and item type
 						if ((ItemAccessor.getInventoryTypeOf(defID).equals("100")
-								&& !client.getPlayer().getPlayerInventory().getSaveSettings().giveAllClothes)
-								|| (ItemAccessor.getInventoryTypeOf(defID).equals("104")
-										&& !client.getPlayer().getPlayerInventory().getSaveSettings().giveAllCurrency)
-								|| (ItemAccessor.getInventoryTypeOf(defID).equals("111")
-										&& !client.getPlayer().getPlayerInventory().getSaveSettings().giveAllClothes)
-								|| (ItemAccessor.getInventoryTypeOf(defID).equals("103")
-										&& !client.getPlayer().getPlayerInventory().getSaveSettings().giveAllResources)
+								&& !client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllClothes)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("104") && !client.getPlayer()
+										.getSaveSpecificInventory().getSaveSettings().giveAllCurrency)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("111") && !client.getPlayer()
+										.getSaveSpecificInventory().getSaveSettings().giveAllClothes)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("103") && !client.getPlayer()
+										.getSaveSpecificInventory().getSaveSettings().giveAllResources)
 								|| (ItemAccessor.getInventoryTypeOf(defID).equals("102") && !client.getPlayer()
-										.getPlayerInventory().getSaveSettings().giveAllFurnitureItems)) {
+										.getSaveSpecificInventory().getSaveSettings().giveAllFurnitureItems)) {
 							systemMessage("Invalid item defID. Please make sure you can actually obtain this item.",
 									cmd, client);
 							return true;
@@ -2309,7 +2308,7 @@ public class SendMessage extends AbstractChatPacket {
 
 						// give item to the command sender..
 						var onlinePlayer = acc.getOnlinePlayerInstance();
-						var result = acc.getPlayerInventory().getItemAccessor(onlinePlayer).add(defID, quantity);
+						var result = acc.getSaveSpecificInventory().getItemAccessor(onlinePlayer).add(defID, quantity);
 
 						if (result.length > 0)
 							systemMessage("Gave " + acc.getDisplayName() + " " + quantity + " of item " + defID + ".",

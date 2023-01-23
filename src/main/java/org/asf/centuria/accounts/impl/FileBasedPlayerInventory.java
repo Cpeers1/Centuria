@@ -18,23 +18,29 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 	private String id;
 	private HashMap<String, JsonElement> cache = new HashMap<String, JsonElement>();
 	private SaveSettings settings;
+	private String prefix = "";
 
-	public FileBasedPlayerInventory(String userID) {
+	public FileBasedPlayerInventory(String userID, String save) {
 		id = userID;
+
+		// Create directories
+		if (!new File("inventories/" + id + "/" + save).exists()) {
+			new File("inventories/" + id + "/" + save).mkdirs();
+		}
 
 		// Load save settings
 		settings = new SaveSettings();
+		prefix = "/" + save;
 		if (containsItem("savesettings"))
 			settings.load(getItem("savesettings").getAsJsonObject());
-		
 
 		// Data fixer
-		if (!new File("inventories/" + id + "/fixed").exists())
+		if (!new File("inventories/" + id + "/" + save + "/fixed").exists())
 			return;
 
 		// Reset lockpicks
 		if (getAccessor().findInventoryObject("104", 8372) == null) {
-			new File("inventories/" + id + "/fixed").delete();
+			new File("inventories/" + id + "/" + save + "/fixed").delete();
 			return;
 		}
 		JsonObject obj = getAccessor().findInventoryObject("104", 8372).get("components").getAsJsonObject()
@@ -43,7 +49,7 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 		obj.addProperty("quantity", 0);
 		setItem("104", getItem("104"));
 
-		new File("inventories/" + id + "/fixed").delete();
+		new File("inventories/" + id + "/" + save + "/fixed").delete();
 	}
 
 	@Override
@@ -54,7 +60,7 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 		if (cache.containsKey(itemID))
 			return true;
 
-		return new File("inventories/" + id + "/" + itemID + ".json").exists();
+		return new File("inventories/" + id + prefix + "/" + itemID + ".json").exists();
 	}
 
 	@Override
@@ -65,9 +71,9 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 		if (cache.containsKey(itemID))
 			return cache.get(itemID);
 
-		if (new File("inventories/" + id + "/" + itemID + ".json").exists()) {
+		if (new File("inventories/" + id + prefix + "/" + itemID + ".json").exists()) {
 			try {
-				String json = Files.readString(Path.of("inventories/" + id + "/" + itemID + ".json"));
+				String json = Files.readString(Path.of("inventories/" + id + prefix + "/" + itemID + ".json"));
 				JsonElement ele = JsonParser.parseString(json);
 				cache.put(itemID, ele);
 
@@ -96,10 +102,7 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 
 		cache.put(itemID, itemData);
 		try {
-			if (!new File("inventories/" + id).exists()) {
-				new File("inventories/" + id).mkdirs();
-			}
-			Files.writeString(Path.of("inventories/" + id + "/" + itemID + ".json"), itemData.toString());
+			Files.writeString(Path.of("inventories/" + id + prefix + "/" + itemID + ".json"), itemData.toString());
 
 			// Load into accessor cache
 			if (itemData.isJsonArray()) {
@@ -136,15 +139,15 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 				});
 			}
 		}
-		if (new File("inventories/" + id + "/" + itemID + ".json").exists())
-			new File("inventories/" + id + "/" + itemID + ".json").delete();
+		if (new File("inventories/" + id + prefix + "/" + itemID + ".json").exists())
+			new File("inventories/" + id + prefix + "/" + itemID + ".json").delete();
 	}
 
 	/**
 	 * Deletes the inventory from disk
 	 */
 	public void delete() {
-		deleteDir(new File("inventories/" + id));
+		deleteDir(new File("inventories/" + id + prefix));
 	}
 
 	private void deleteDir(File dir) {

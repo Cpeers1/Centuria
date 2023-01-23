@@ -60,7 +60,7 @@ public class SettingsSetPacket implements IXtPacket<SettingsSetPacket> {
 
 		var player = (Player) client.container;
 
-		var varAccessor = new UserVarAccessorImpl(player.account.getPlayerInventory());
+		var varAccessor = new UserVarAccessorImpl(player.account.getSaveSpecificInventory());
 		var output = varAccessor.setPlayerVarValue(varDefId, index, value);
 
 		var outputInv = new JsonArray();

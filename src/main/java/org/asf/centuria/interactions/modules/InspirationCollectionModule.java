@@ -84,7 +84,7 @@ public class InspirationCollectionModule extends InteractionModule {
 			if (!defId.matches("^[0-9]+$"))
 				return false;
 
-			var inspirationAccessor = player.account.getPlayerInventory().getInspirationAccessor();
+			var inspirationAccessor = player.account.getSaveSpecificInventory().getInspirationAccessor();
 			if (!inspirationAccessor.hasInspiration(Integer.valueOf(defId))) {
 				// Add inspiration
 				inspirationAccessor.addInspiration(Integer.valueOf(defId));
@@ -128,7 +128,7 @@ public class InspirationCollectionModule extends InteractionModule {
 			}
 
 			// Update inventory
-			var il = player.account.getPlayerInventory().getItem("8");
+			var il = player.account.getSaveSpecificInventory().getItem("8");
 			var ilPacket = new InventoryItemPacket();
 			ilPacket.item = il;
 

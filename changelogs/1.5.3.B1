@@ -1,0 +1,27 @@
+Changes in 1.5.3.B1:
+- Switched gamemode configurations to user data so that it will be possible to have experience and creative on the same server
+- Made it that items that have a quantity tag can be given infinitely via giveitem
+- Fixed the admin giveitem command not using the quantity argument
+- Added trade security for multi-gamemode servers: trade lock ID in savesettings allows blocking of cross-mode trading
+- Overhauled player data to support mode switching
+- Fix log typo
+
+New features:
+- Changing of login names is now fully supported in the program API
+- Added a way to change the sanctuary item limit (client modding utility)
+- Added error message fields to login errors (needs a compatible client mod for it to work)
+- Ban reasons are now saved to disk so they can be read by modules
+
+Web API changes:
+- Allow API to change display name and login names
+- Account deletion is now possible via the web API
+- Added save settings to the getuser API function
+- Added a save management API
+
+Module API changes:
+- New event: ChatLoginEvent
+- New event: ChatMessageEvent
+- New event: AccountPreloginEvent
+- Updated event: AccountLoginEvent: can now access login parameters to add eg. custom error messages
+
+Note that a lot of this update is related to the technical side of the server software, apologies for the complicated stuff in the changelog.

@@ -58,7 +58,8 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 
 		// Inbound user ID is the target player to trade
 		Player targetPlayer = AccountManager.getInstance().getAccount(inboundUserId).getOnlinePlayerInstance();
-		if (targetPlayer == null) {
+		if (targetPlayer == null || !sourcePlayer.account.getSaveSpecificInventory().getSaveSettings().tradeLockID
+				.equals(targetPlayer.account.getSaveSpecificInventory().getSaveSettings().tradeLockID)) {
 			// Fail
 			TradeInitiateFailPacket pk = new TradeInitiateFailPacket();
 			pk.player = inboundUserId;
@@ -69,8 +70,8 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 
 		// Check privacy settings
 		int privSetting = 0;
-		if (targetPlayer.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17545, 0) != null)
-			privSetting = targetPlayer.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(17545,
+		if (targetPlayer.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(17545, 0) != null)
+			privSetting = targetPlayer.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(17545,
 					0).value;
 		if ((privSetting == 1 && !SocialManager.getInstance().getPlayerIsFollowing(targetPlayer.account.getAccountID(),
 				sourcePlayer.account.getAccountID())) || privSetting == 2) {

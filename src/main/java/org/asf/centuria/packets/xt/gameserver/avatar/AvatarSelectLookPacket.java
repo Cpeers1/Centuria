@@ -15,7 +15,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class AvatarSelectLookPacket implements IXtPacket<AvatarSelectLookPacket> {
-	
+
 	private static final String PACKET_ID = "als";
 
 	private String lookID;
@@ -65,7 +65,7 @@ public class AvatarSelectLookPacket implements IXtPacket<AvatarSelectLookPacket>
 		plr.account.setActiveLook(plr.activeLook);
 
 		// Assign the defID
-		JsonArray items = plr.account.getPlayerInventory().getItem("avatars").getAsJsonArray();
+		JsonArray items = plr.account.getSaveSpecificInventory().getItem("avatars").getAsJsonArray();
 		JsonObject lookObj = null;
 		for (JsonElement itm : items) {
 			if (itm.isJsonObject()) {

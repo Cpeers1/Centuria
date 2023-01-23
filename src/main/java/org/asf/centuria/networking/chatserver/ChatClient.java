@@ -173,8 +173,8 @@ public class ChatClient {
 			boolean lockout = true;
 
 			// Check permissions
-			if (acc.getPlayerInventory().containsItem("permissions")) {
-				String permLevel = acc.getPlayerInventory().getItem("permissions").getAsJsonObject()
+			if (acc.getSaveSharedInventory().containsItem("permissions")) {
+				String permLevel = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 						.get("permissionLevel").getAsString();
 				if (GameServer.hasPerm(permLevel, "moderator")) {
 					lockout = false;
@@ -228,8 +228,8 @@ public class ChatClient {
 		Centuria.logger.info("Player " + getPlayer().getDisplayName() + " connected to the chat server.");
 
 		// Load DMs into memory
-		if (getPlayer().getPlayerInventory().containsItem("dms")) {
-			JsonObject dms = getPlayer().getPlayerInventory().getItem("dms").getAsJsonObject();
+		if (getPlayer().getSaveSharedInventory().containsItem("dms")) {
+			JsonObject dms = getPlayer().getSaveSharedInventory().getItem("dms").getAsJsonObject();
 			for (String user : dms.keySet()) {
 				joinRoom(dms.get(user).getAsString(), true);
 			}

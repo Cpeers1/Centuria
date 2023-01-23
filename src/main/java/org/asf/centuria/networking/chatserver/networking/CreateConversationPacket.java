@@ -101,9 +101,9 @@ public class CreateConversationPacket extends AbstractChatPacket {
 		// Open DM for all participants
 		for (CenturiaAccount participant : members) {
 			// Load info
-			if (!participant.getPlayerInventory().containsItem("dms"))
-				participant.getPlayerInventory().setItem("dms", new JsonObject());
-			JsonObject dms = participant.getPlayerInventory().getItem("dms").getAsJsonObject();
+			if (!participant.getSaveSharedInventory().containsItem("dms"))
+				participant.getSaveSharedInventory().setItem("dms", new JsonObject());
+			JsonObject dms = participant.getSaveSharedInventory().getItem("dms").getAsJsonObject();
 
 			// Save DM info
 			for (CenturiaAccount mem : members) {
@@ -113,7 +113,7 @@ public class CreateConversationPacket extends AbstractChatPacket {
 					dms.addProperty(mem.getAccountID(), dmID);
 				}
 			}
-			participant.getPlayerInventory().setItem("dms", dms);
+			participant.getSaveSharedInventory().setItem("dms", dms);
 
 			// Find online player
 			for (ChatClient plr : client.getServer().getClients()) {
@@ -169,9 +169,9 @@ public class CreateConversationPacket extends AbstractChatPacket {
 		// Open DM for all participants
 		for (CenturiaAccount participant : members) {
 			// Load info
-			if (!participant.getPlayerInventory().containsItem("dms"))
-				participant.getPlayerInventory().setItem("dms", new JsonObject());
-			JsonObject dms = participant.getPlayerInventory().getItem("dms").getAsJsonObject();
+			if (!participant.getSaveSharedInventory().containsItem("dms"))
+				participant.getSaveSharedInventory().setItem("dms", new JsonObject());
+			JsonObject dms = participant.getSaveSharedInventory().getItem("dms").getAsJsonObject();
 
 			// Save DM info
 			for (CenturiaAccount mem : members) {
@@ -181,7 +181,7 @@ public class CreateConversationPacket extends AbstractChatPacket {
 					dms.addProperty(mem.getAccountID(), dmID);
 				}
 			}
-			participant.getPlayerInventory().setItem("dms", dms);
+			participant.getSaveSharedInventory().setItem("dms", dms);
 
 			// Find online player
 			for (ChatClient plr : client.getServer().getClients()) {

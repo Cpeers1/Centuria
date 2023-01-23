@@ -47,9 +47,9 @@ public class OpenDMPacket extends AbstractChatPacket {
 
 		// Load data
 		DMManager manager = DMManager.getInstance();
-		if (!client.getPlayer().getPlayerInventory().containsItem("dms"))
-			client.getPlayer().getPlayerInventory().setItem("dms", new JsonObject());
-		JsonObject dms = client.getPlayer().getPlayerInventory().getItem("dms").getAsJsonObject();
+		if (!client.getPlayer().getSaveSharedInventory().containsItem("dms"))
+			client.getPlayer().getSaveSharedInventory().setItem("dms", new JsonObject());
+		JsonObject dms = client.getPlayer().getSaveSharedInventory().getItem("dms").getAsJsonObject();
 
 		// Find DM
 		if (dms.has(participant) && manager.dmExists(dms.get(participant).getAsString())) {

@@ -395,15 +395,15 @@ public class Trade {
 			if (set.getValue().quantity > 1
 					|| set.getValue().item.get("components").getAsJsonObject().has("Quantity")) {
 				// items to give are source player..
-				sourcePlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer)
+				sourcePlayer.account.getSaveSpecificInventory().getItemAccessor(sourcePlayer)
 						.remove(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
-				targetPlayer.account.getPlayerInventory().getItemAccessor(targetPlayer)
+				targetPlayer.account.getSaveSpecificInventory().getItemAccessor(targetPlayer)
 						.add(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
 			} else {
 				// lets support clothing/furniture items
 				JsonObject itm = set.getValue().item;
-				sourcePlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer).remove(itm);
-				targetPlayer.account.getPlayerInventory().getItemAccessor(targetPlayer).add(itm);
+				sourcePlayer.account.getSaveSpecificInventory().getItemAccessor(sourcePlayer).remove(itm);
+				targetPlayer.account.getSaveSpecificInventory().getItemAccessor(targetPlayer).add(itm);
 			}
 		}
 
@@ -411,15 +411,15 @@ public class Trade {
 			if (set.getValue().quantity > 1
 					|| set.getValue().item.get("components").getAsJsonObject().has("Quantity")) {
 				// items to receive are target player..
-				targetPlayer.account.getPlayerInventory().getItemAccessor(targetPlayer)
+				targetPlayer.account.getSaveSpecificInventory().getItemAccessor(targetPlayer)
 						.remove(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
-				sourcePlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer)
+				sourcePlayer.account.getSaveSpecificInventory().getItemAccessor(sourcePlayer)
 						.add(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
 			} else {
 				// lets support clothing/furniture items
 				JsonObject itm = set.getValue().item;
-				targetPlayer.account.getPlayerInventory().getItemAccessor(targetPlayer).remove(itm);
-				sourcePlayer.account.getPlayerInventory().getItemAccessor(sourcePlayer).add(itm);
+				targetPlayer.account.getSaveSpecificInventory().getItemAccessor(targetPlayer).remove(itm);
+				sourcePlayer.account.getSaveSpecificInventory().getItemAccessor(sourcePlayer).add(itm);
 			}
 		}
 		targetPlayer.tradeEngagedIn = null;

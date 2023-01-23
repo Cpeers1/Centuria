@@ -609,8 +609,8 @@ public class GameWhatTheHex extends AbstractMinigame {
 							int remaining = ele.currentProgress - ele.levelMax;
 
 							// Give reward
-							player.account.getPlayerInventory().getItemAccessor(player).add(ele.currencyRewardType,
-									ele.currencyRewardAmount);
+							player.account.getSaveSpecificInventory().getItemAccessor(player)
+									.add(ele.currencyRewardType, ele.currencyRewardAmount);
 
 							// XP
 							LevelEventBus.dispatch(new LevelEvent("levelevents.minigames.whatthehex",
@@ -753,16 +753,17 @@ public class GameWhatTheHex extends AbstractMinigame {
 				player.client.sendPacket(pk);
 
 				// Save highscore
-				UserVarValue var = player.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(4932, 0);
+				UserVarValue var = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(4932,
+						0);
 				int value = 0;
 				if (var != null)
 					value = var.value;
 				if (score > value) {
-					player.account.getPlayerInventory().getUserVarAccesor().setPlayerVarValue(4932, 0, score);
+					player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(4932, 0, score);
 
 					// Update client
 					InventoryItemPacket pkt = new InventoryItemPacket();
-					pkt.item = player.account.getPlayerInventory().getItem("303");
+					pkt.item = player.account.getSaveSpecificInventory().getItem("303");
 					player.client.sendPacket(pkt);
 				}
 			}
@@ -1007,16 +1008,16 @@ public class GameWhatTheHex extends AbstractMinigame {
 	@MinigameMessage("startGame")
 	public void startGame(Player player, XtReader rd) {
 		// Save highscore
-		UserVarValue var = player.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(4932, 0);
+		UserVarValue var = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(4932, 0);
 		int value = 0;
 		if (var != null)
 			value = var.value;
 		if (score > value) {
-			player.account.getPlayerInventory().getUserVarAccesor().setPlayerVarValue(4932, 0, score);
+			player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(4932, 0, score);
 
 			// Update client
 			InventoryItemPacket pk = new InventoryItemPacket();
-			pk.item = player.account.getPlayerInventory().getItem("303");
+			pk.item = player.account.getSaveSpecificInventory().getItem("303");
 			player.client.sendPacket(pk);
 		}
 
@@ -1135,17 +1136,17 @@ public class GameWhatTheHex extends AbstractMinigame {
 	@Override
 	public void onExit(Player player) {
 		// Save highscore
-		UserVarValue var = player.account.getPlayerInventory().getUserVarAccesor().getPlayerVarValue(4932, 0);
+		UserVarValue var = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(4932, 0);
 		int value = 0;
 		if (var != null)
 			value = var.value;
 		if (score > value) {
-			player.account.getPlayerInventory().getUserVarAccesor().setPlayerVarValue(4932, 0, score);
+			player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(4932, 0, score);
 
 			if (player.client != null && player.client.isConnected()) {
 				// Send to client
 				InventoryItemPacket pk = new InventoryItemPacket();
-				pk.item = player.account.getPlayerInventory().getItem("303");
+				pk.item = player.account.getSaveSpecificInventory().getItem("303");
 				player.client.sendPacket(pk);
 			}
 		}

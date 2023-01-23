@@ -91,7 +91,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		}
 
 		// Initialize interaction memory
-		plr.account.getPlayerInventory().getInteractionMemory().prepareLevel(plr.pendingLevelID);
+		plr.account.getSaveSpecificInventory().getInteractionMemory().prepareLevel(plr.pendingLevelID);
 
 		// Dispatch event
 		EventBus.getInstance().dispatchEvent(new LevelJoinEvent(plr.pendingLevelID, plr.pendingRoom, plr));
@@ -150,7 +150,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		}
 
 		// Save changes
-		plr.account.getPlayerInventory().getInteractionMemory().saveTo(client);
+		plr.account.getSaveSpecificInventory().getInteractionMemory().saveTo(client);
 
 		// XP init
 		if (plr.account.getLevel().isLevelAvailable() && !plr.account.isPlayerNew())
@@ -202,10 +202,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			CenturiaAccount acc = AccountManager.getInstance().getAccount(ownerID);
 
 			// Find active sanctuary object
-			JsonObject sanctuaryInfo = acc.getPlayerInventory().getSanctuaryAccessor()
+			JsonObject sanctuaryInfo = acc.getSaveSpecificInventory().getSanctuaryAccessor()
 					.getSanctuaryLook(acc.getActiveSanctuaryLook());
 			if (sanctuaryInfo == null)
-				sanctuaryInfo = acc.getPlayerInventory().getSanctuaryAccessor().getFirstSanctuaryLook();
+				sanctuaryInfo = acc.getSaveSpecificInventory().getSanctuaryAccessor().getFirstSanctuaryLook();
 
 			// Find the ID
 			String id = sanctuaryInfo.get("id").getAsString();
@@ -219,7 +219,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 					.get("info").getAsJsonObject();
 
 			// Load sanctuary
-			loadSanctuary(id, info, plr, acc, acc.getPlayerInventory(), client);
+			loadSanctuary(id, info, plr, acc, acc.getSaveSpecificInventory(), client);
 		}
 
 		// Mark as ready (for teleports etc)
@@ -298,10 +298,10 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 				Player oPlr = acc.getOnlinePlayerInstance();
 				if (oPlr != null) {
 					JsonArray arr = new JsonArray();
-					JsonObject sanctuaryInfo = acc.getPlayerInventory().getSanctuaryAccessor()
+					JsonObject sanctuaryInfo = acc.getSaveSpecificInventory().getSanctuaryAccessor()
 							.getSanctuaryLook(acc.getActiveSanctuaryLook());
 					if (sanctuaryInfo == null)
-						sanctuaryInfo = acc.getPlayerInventory().getSanctuaryAccessor().getFirstSanctuaryLook();
+						sanctuaryInfo = acc.getSaveSpecificInventory().getSanctuaryAccessor().getFirstSanctuaryLook();
 					arr.add(sanctuaryInfo);
 					InventoryItemPacket packet = new InventoryItemPacket();
 					packet.item = arr;

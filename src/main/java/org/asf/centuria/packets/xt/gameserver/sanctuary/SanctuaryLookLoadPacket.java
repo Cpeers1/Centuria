@@ -54,8 +54,8 @@ public class SanctuaryLookLoadPacket implements IXtPacket<SanctuaryLookLoadPacke
 
 		// Load into active look
 		// retooling the save function here to just target the active look slot
-		plr.account.getPlayerInventory().getSanctuaryAccessor().saveSanctuaryLookToSlot(lookId, plr.activeSanctuaryLook,
-				"");
+		plr.account.getSaveSpecificInventory().getSanctuaryAccessor().saveSanctuaryLookToSlot(lookId,
+				plr.activeSanctuaryLook, "");
 
 		// Respond with switch packet and rejoin
 		plr.client.sendPacket(this);

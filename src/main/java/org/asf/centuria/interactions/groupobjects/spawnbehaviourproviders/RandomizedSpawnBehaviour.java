@@ -276,7 +276,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			// Select dig spots
 			int remainingDigspots = digspots.length;
 			int distanceDigspots = (remainingDigspots - digspotsToSpawn);
-			distanceDigspots = (int) (((100d / (double) remainingDigspots) * (double) distanceDigspots)/ 1.7d);
+			distanceDigspots = (int) (((100d / (double) remainingDigspots) * (double) distanceDigspots) / 1.7d);
 			ArrayList<GroupObject> spawnedDigspots = new ArrayList<GroupObject>();
 			for (int i = 0; i < digspotsToSpawn && remainingDigspots > 0; i++) {
 				while (true) {
@@ -401,9 +401,9 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 		GroupObjectRotation rot = rotations.get(levelID);
 		return rot.objects.stream().filter(t -> {
 			// Check if its still valid in this rotation
-			if (plr.account.getPlayerInventory().getInteractionMemory().hasTreasureBeenUnlocked(levelID,
+			if (plr.account.getSaveSpecificInventory().getInteractionMemory().hasTreasureBeenUnlocked(levelID,
 					rot.mapping.getOrDefault(t.id, t.id))) {
-				long lastUnlock = plr.account.getPlayerInventory().getInteractionMemory()
+				long lastUnlock = plr.account.getSaveSpecificInventory().getInteractionMemory()
 						.getLastTreasureUnlockTime(levelID, rot.mapping.getOrDefault(t.id, t.id));
 				if (lastUnlock < System.currentTimeMillis() + (rotationHours * 60 * 60 * 1000) || lastUnlock < rot.time)
 					return false;
@@ -415,7 +415,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 	@Override
 	public void onCollect(Player player, String id) {
 		// Mark as collected
-		player.account.getPlayerInventory().getInteractionMemory().unlocked(player.levelID, id);
+		player.account.getSaveSpecificInventory().getInteractionMemory().unlocked(player.levelID, id);
 	}
 
 }

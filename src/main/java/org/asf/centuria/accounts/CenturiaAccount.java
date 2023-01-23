@@ -1,6 +1,7 @@
 package org.asf.centuria.accounts;
 
 import org.asf.centuria.Centuria;
+import org.asf.centuria.accounts.impl.SelectiveInventory;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -75,8 +76,57 @@ public abstract class CenturiaAccount {
 	 * Retrieves the player inventory
 	 *
 	 * @return PlayerInventory instance
+	 * @deprecated No longer supported, this will use a prioritizing selective save
+	 *             inventory (chooses shared if its present there and falls back to
+	 *             save specific) to manage player data and has a change of failure.
+	 *             Use getSaveSharedInventory() and getSaveSpecificInventory()
+	 *             instead.
 	 */
-	public abstract PlayerInventory getPlayerInventory();
+	@Deprecated
+	public PlayerInventory getPlayerInventory() {
+		return new SelectiveInventory(this);
+	}
+
+	/**
+	 * Retrieves the shared inventory (inventory that exists across all saves,
+	 * should be used for things that MUST persist across all saves such as critical
+	 * data)
+	 * 
+	 * @return PlayerInventory instance
+	 */
+	public abstract PlayerInventory getSaveSharedInventory();
+
+	/**
+	 * Retrieves the save-specific inventory (inventories specific to a single save,
+	 * should be used for content)
+	 * 
+	 * @return PlayerInventory instance
+	 */
+	public abstract PlayerInventory getSaveSpecificInventory();
+
+	/**
+	 * Retrieves the save manager
+	 * 
+	 * @return SaveManager instance
+	 * @throws IllegalArgumentException if the save data is not stored in managed
+	 *                                  mode
+	 */
+	public abstract SaveManager getSaveManager() throws IllegalArgumentException;
+
+	/**
+	 * Retrieves the current save mode
+	 * 
+	 * @return SaveMode value
+	 */
+	public abstract SaveMode getSaveMode();
+
+	/**
+	 * Migrates save data to managed mode
+	 * 
+	 * @throws IllegalArgumentException If the data is already stored in managed
+	 *                                  mode
+	 */
+	public abstract void migrateSaveDataToManagedMode() throws IllegalArgumentException;
 
 	/**
 	 * Retrieves or creates the account privacy settings
@@ -327,7 +377,7 @@ public abstract class CenturiaAccount {
 			banInfo.addProperty("reason", reason);
 		banInfo.addProperty("type", "ban");
 		banInfo.addProperty("unbanTimestamp", -1);
-		getPlayerInventory().setItem("penalty", banInfo);
+		getSaveSharedInventory().setItem("penalty", banInfo);
 
 		// Find online player
 		Player plr = getOnlinePlayerInstance();
@@ -401,7 +451,7 @@ public abstract class CenturiaAccount {
 			banInfo.addProperty("reason", reason);
 		banInfo.addProperty("type", "ban");
 		banInfo.addProperty("unbanTimestamp", System.currentTimeMillis() + (days * 24 * 60 * 60 * 1000));
-		getPlayerInventory().setItem("penalty", banInfo);
+		getSaveSharedInventory().setItem("penalty", banInfo);
 
 		// Find online player
 		Player plr = getOnlinePlayerInstance();
@@ -474,7 +524,7 @@ public abstract class CenturiaAccount {
 		muteInfo.addProperty("type", "mute");
 		muteInfo.addProperty("unmuteTimestamp", System.currentTimeMillis() + (minutes * 60 * 1000)
 				+ (hours * 60 * 60 * 1000) + (days * 24 * 60 * 60 * 1000));
-		getPlayerInventory().setItem("penalty", muteInfo);
+		getSaveSharedInventory().setItem("penalty", muteInfo);
 
 		// Sync online player
 		Player plr = getOnlinePlayerInstance();
@@ -528,8 +578,8 @@ public abstract class CenturiaAccount {
 			wasPardoned = true;
 
 		// Remove penalties
-		if (getPlayerInventory().containsItem("penalty"))
-			getPlayerInventory().deleteItem("penalty");
+		if (getSaveSharedInventory().containsItem("penalty"))
+			getSaveSharedInventory().deleteItem("penalty");
 
 		// Sync online player
 		Player plr = getOnlinePlayerInstance();
@@ -562,14 +612,14 @@ public abstract class CenturiaAccount {
 	 * @return True if banned, false otherwise
 	 */
 	public boolean isBanned() {
-		if (getPlayerInventory().containsItem("penalty")
-				&& getPlayerInventory().getItem("penalty").getAsJsonObject().get("type").getAsString().equals("ban")) {
-			JsonObject banInfo = getPlayerInventory().getItem("penalty").getAsJsonObject();
+		if (getSaveSharedInventory().containsItem("penalty") && getSaveSharedInventory().getItem("penalty")
+				.getAsJsonObject().get("type").getAsString().equals("ban")) {
+			JsonObject banInfo = getSaveSharedInventory().getItem("penalty").getAsJsonObject();
 			if (banInfo.get("unbanTimestamp").getAsLong() == -1
 					|| banInfo.get("unbanTimestamp").getAsLong() > System.currentTimeMillis()) {
 				return true;
 			} else
-				getPlayerInventory().deleteItem("penalty");
+				getSaveSharedInventory().deleteItem("penalty");
 		}
 
 		return false;
@@ -581,14 +631,14 @@ public abstract class CenturiaAccount {
 	 * @return True if muted, false otherwise
 	 */
 	public boolean isMuted() {
-		if (getPlayerInventory().containsItem("penalty")
-				&& getPlayerInventory().getItem("penalty").getAsJsonObject().get("type").getAsString().equals("mute")) {
-			JsonObject muteInfo = getPlayerInventory().getItem("penalty").getAsJsonObject();
+		if (getSaveSharedInventory().containsItem("penalty") && getSaveSharedInventory().getItem("penalty")
+				.getAsJsonObject().get("type").getAsString().equals("mute")) {
+			JsonObject muteInfo = getSaveSharedInventory().getItem("penalty").getAsJsonObject();
 			if (muteInfo.get("unmuteTimestamp").getAsLong() == -1
 					|| muteInfo.get("unmuteTimestamp").getAsLong() > System.currentTimeMillis()) {
 				return true;
 			} else
-				getPlayerInventory().deleteItem("penalty");
+				getSaveSharedInventory().deleteItem("penalty");
 		}
 
 		return false;

@@ -1,5 +1,6 @@
 package org.asf.centuria;
 
+import org.asf.centuria.accounts.SaveMode;
 import org.asf.centuria.modules.ICenturiaModule;
 import org.asf.centuria.modules.eventbus.EventListener;
 import org.asf.centuria.modules.events.accounts.AccountPreloginEvent;
@@ -40,6 +41,7 @@ public class TestModule implements ICenturiaModule {
 	@EventListener
 	public void registerCommands(ModuleCommandSyntaxListEvent event) {
 		event.addCommandSyntaxMessage("test");
+		event.addCommandSyntaxMessage("migrate");
 	}
 
 	@EventListener
@@ -47,6 +49,14 @@ public class TestModule implements ICenturiaModule {
 		if (event.getCommandID().equals("test")) {
 			event.respond("Test 123");
 			Centuria.systemMessage(event.getAccount().getOnlinePlayerInstance(), "test", true);
+		} else if (event.getCommandID().equals("migrate")) {
+			if (event.getAccount().getSaveMode() == SaveMode.MANAGED) {
+				event.respond("Already using managed data");
+				return;
+			}
+			
+			event.getAccount().getOnlinePlayerInstance().client.sendPacket("%xt%mod:ft%-1%disconnect%Disconnected%Account data migration in progress%Log out%");
+			event.getAccount().migrateSaveDataToManagedMode();
 		}
 	}
 
