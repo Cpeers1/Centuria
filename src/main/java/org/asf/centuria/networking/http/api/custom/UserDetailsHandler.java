@@ -1,6 +1,8 @@
 package org.asf.centuria.networking.http.api.custom;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.util.Base64;
 
@@ -8,9 +10,12 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.SaveMode;
+import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.processors.HttpUploadProcessor;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -99,6 +104,41 @@ public class UserDetailsHandler extends HttpUploadProcessor {
 				}
 			}
 			if (isSelf) {
+				String species = "Kitsune";
+				// Find current species
+				String lookID = acc.getActiveLook();
+				if (acc.getSaveSpecificInventory().containsItem("avatars")) {
+					// Find avatar
+					JsonArray looks = acc.getSaveSpecificInventory().getItem("avatars").getAsJsonArray();
+					for (JsonElement lookEle : looks) {
+						JsonObject look = lookEle.getAsJsonObject();
+						if (look.get("id").getAsString().equals(lookID)) {
+							// Found the avatar, lets find the species
+							String defId = look.get("defId").getAsString();
+
+							// Load avatar helper
+							try {
+								InputStream strm2 = InventoryItemDownloadPacket.class.getClassLoader()
+										.getResourceAsStream("defaultitems/avatarhelper.json");
+								JsonObject helper = JsonParser.parseString(new String(strm2.readAllBytes(), "UTF-8"))
+										.getAsJsonObject().get("Avatars").getAsJsonObject();
+								strm2.close();
+								for (String aSpecies : helper.keySet()) {
+									String aDefID = helper.get(aSpecies).getAsJsonObject().get("defId").getAsString();
+									if (aDefID.equals(defId)) {
+										// Found the species
+										species = aSpecies;
+										break;
+									}
+								}
+							} catch (IOException e) {
+							}
+							break;
+						}
+					}
+				}
+				
+				response.addProperty("avatar_species", species);
 				response.addProperty("last_login_time", acc.getLastLoginTime());
 				response.addProperty("is_online", acc.getOnlinePlayerInstance() != null);
 				response.addProperty("save_mode", acc.getSaveMode().toString());
