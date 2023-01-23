@@ -16,6 +16,7 @@ Web API changes:
 - Allow API to change display name and login names
 - Account deletion is now possible via the web API
 - Added save settings to the getuser API function
+- Added a save management API
 
 Module API changes:
 - New event: ChatLoginEvent
