@@ -15,7 +15,7 @@ import org.asf.centuria.networking.chatserver.ChatServer;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("chat.message")
+@EventPath("chat.broadcast")
 public class ChatMessageBroadcastEvent extends EventObject {
 
 	private ChatServer server;
@@ -36,7 +36,7 @@ public class ChatMessageBroadcastEvent extends EventObject {
 
 	@Override
 	public String eventPath() {
-		return "chat.message";
+		return "chat.broadcast";
 	}
 
 	/**
