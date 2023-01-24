@@ -38,8 +38,6 @@ import com.google.gson.JsonObject;
 @SuppressWarnings("unused")
 public class Player {
 
-	private ArrayList<Object> objects = new ArrayList<Object>();
-
 	/**
 	 * Retrieves objects from the connection container, used to store information in
 	 * clients.
@@ -48,13 +46,8 @@ public class Player {
 	 * @param type Object type
 	 * @return Object instance or null
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> T getObject(Class<T> type) {
-		for (Object obj : objects) {
-			if (type.isAssignableFrom(obj.getClass()))
-				return (T) obj;
-		}
-		return null;
+		return client.getObject(type);
 	}
 
 	/**
@@ -65,8 +58,7 @@ public class Player {
 	 * @param obj Object to add
 	 */
 	public void addObject(Object obj) {
-		if (getObject(obj.getClass()) == null)
-			objects.add(obj);
+		client.addObject(obj);
 	}
 
 	//
