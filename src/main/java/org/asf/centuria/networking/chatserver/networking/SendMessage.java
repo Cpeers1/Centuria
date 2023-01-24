@@ -31,7 +31,9 @@ import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
+import org.asf.centuria.modules.events.accounts.AccountDisconnectEvent;
 import org.asf.centuria.modules.events.accounts.MiscModerationEvent;
+import org.asf.centuria.modules.events.accounts.AccountDisconnectEvent.DisconnectType;
 import org.asf.centuria.modules.events.chat.ChatMessageBroadcastEvent;
 import org.asf.centuria.modules.events.chat.ChatMessageReceivedEvent;
 import org.asf.centuria.modules.events.chatcommands.ChatCommandEvent;
@@ -1727,8 +1729,13 @@ public class SendMessage extends AbstractChatPacket {
 										|| !GameServer.hasPerm(
 												plr.account.getSaveSharedInventory().getItem("permissions")
 														.getAsJsonObject().get("permissionLevel").getAsString(),
-												"moderator"))
+												"moderator")) {
+									// Dispatch event
+									EventBus.getInstance().dispatchEvent(
+											new AccountDisconnectEvent(plr.account, null, DisconnectType.MAINTENANCE));
+
 									plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
+								}
 							}
 
 							// Wait a bit

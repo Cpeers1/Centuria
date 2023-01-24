@@ -6,9 +6,11 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.AccountBanEvent;
+import org.asf.centuria.modules.events.accounts.AccountDisconnectEvent;
 import org.asf.centuria.modules.events.accounts.AccountKickEvent;
 import org.asf.centuria.modules.events.accounts.AccountMuteEvent;
 import org.asf.centuria.modules.events.accounts.AccountPardonEvent;
+import org.asf.centuria.modules.events.accounts.AccountDisconnectEvent.DisconnectType;
 import org.asf.centuria.networking.chatserver.ChatClient;
 
 import com.google.gson.JsonObject;
@@ -279,6 +281,10 @@ public abstract class CenturiaAccount {
 			Centuria.logger.info("Kicked " + getDisplayName() + ": " + (reason == null ? "Unspecified reason" : reason)
 					+ " (issued by " + issuerNm + ")");
 
+			// Dispatch event
+			EventBus.getInstance()
+					.dispatchEvent(new AccountDisconnectEvent(plr.account, reason, DisconnectType.KICKED));
+
 			// Kick the player
 			plr.client.sendPacket("%xt%ua%-1%4086%");
 			try {
@@ -388,6 +394,10 @@ public abstract class CenturiaAccount {
 		}
 
 		if (plr != null) {
+			// Dispatch event
+			EventBus.getInstance()
+					.dispatchEvent(new AccountDisconnectEvent(plr.account, reason, DisconnectType.BANNED));
+
 			// Kick the player
 			plr.client.sendPacket("%xt%ua%-1%3561%");
 			try {
@@ -456,6 +466,10 @@ public abstract class CenturiaAccount {
 		// Find online player
 		Player plr = getOnlinePlayerInstance();
 		if (plr != null) {
+			// Dispatch event
+			EventBus.getInstance()
+					.dispatchEvent(new AccountDisconnectEvent(plr.account, reason, DisconnectType.BANNED));
+			
 			// Kick the player
 			plr.client.sendPacket("%xt%ua%-1%3561%");
 			try {
