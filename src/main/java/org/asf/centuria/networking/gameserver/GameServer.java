@@ -179,6 +179,7 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Load token
 		String token = auth.pword;
+		auth.pword = null; // Keep it away from modules
 
 		// Verify signature
 		String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
@@ -211,7 +212,7 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Allow modules to add parameter fields
 		JsonObject params = new JsonObject();
-		AccountPreloginEvent evt = new AccountPreloginEvent(this, acc, client, params);
+		AccountPreloginEvent evt = new AccountPreloginEvent(this, acc, client, params, auth);
 		EventBus.getInstance().dispatchEvent(evt);
 		if (evt.isHandled() && evt.getStatus() != 1) {
 			sendLoginResponse(client, auth, acc, evt.getStatus(), 0, evt.getLoginResponseParameters());

@@ -5,6 +5,7 @@ import org.asf.centuria.modules.eventbus.EventObject;
 import org.asf.centuria.modules.eventbus.EventPath;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
+import org.asf.centuria.packets.xml.handshake.auth.ClientToServerAuthPacket;
 
 import com.google.gson.JsonObject;
 
@@ -23,19 +24,30 @@ public class AccountPreloginEvent extends EventObject {
 	private GameServer server;
 	private SmartfoxClient client;
 	private CenturiaAccount account;
+	private ClientToServerAuthPacket authPacket;
 	private JsonObject params;
 	private int status = 1;
 
-	public AccountPreloginEvent(GameServer server, CenturiaAccount account, SmartfoxClient client, JsonObject params) {
+	public AccountPreloginEvent(GameServer server, CenturiaAccount account, SmartfoxClient client, JsonObject params, ClientToServerAuthPacket authPacket) {
 		this.client = client;
 		this.account = account;
 		this.server = server;
 		this.params = params;
+		this.authPacket = authPacket;
 	}
 
 	@Override
 	public String eventPath() {
 		return "accounts.prelogin";
+	}
+	
+	/**
+	 * Retrieves the authentication packet (without token)
+	 * 
+	 * @return ClientToServerAuthPacket instance
+	 */
+	public ClientToServerAuthPacket getAuthPacket() {
+		return authPacket;
 	}
 
 	/**
