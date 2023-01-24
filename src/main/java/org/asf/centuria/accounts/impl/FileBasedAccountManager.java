@@ -324,26 +324,32 @@ public class FileBasedAccountManager extends AccountManager {
 							.getAsJsonObject();
 				} catch (JsonSyntaxException | IOException e) {
 					sharedInv.deleteItem("savemanifest");
-					manager = null;
 					throw new RuntimeException(e);
 				}
 
-				// Create default save
-				String defaultSaveName = defaultSaveSettings.get("defaultSaveName").getAsString();
-				JsonObject defaultSettings = defaultSaveSettings.get("saves").getAsJsonObject().get(defaultSaveName)
-						.getAsJsonObject();
-				if (!manager.createSave(defaultSaveName) || !manager.switchSave(defaultSaveName)) {
-					sharedInv.deleteItem("savemanifest");
-					manager = null;
-					throw new RuntimeException("Save creation failure");
+				// Create saves
+				String defaultSaveName = defaultSaveSettings.get("migrationSaveName").getAsString();
+				for (String saveName : defaultSaveSettings.get("saves").getAsJsonObject().keySet()) {
+					JsonObject saveSettings = defaultSaveSettings.get("saves").getAsJsonObject().get(saveName)
+							.getAsJsonObject();
+					if (!manager.createSave(saveName)) {
+						sharedInv.deleteItem("savemanifest");
+						throw new RuntimeException("Save creation failure");
+					}
+
+					// Write settings
+					PlayerInventory inv = new FileBasedPlayerInventory(id, saveName);
+					SaveSettings settings = inv.getSaveSettings();
+					saveSettings.addProperty("tradeLockID", saveName);
+					settings.load(saveSettings);
+					inv.writeSaveSettings();
 				}
 
-				// Write settings
-				PlayerInventory inv = new FileBasedPlayerInventory(id, manager.getCurrentActiveSave());
-				SaveSettings settings = inv.getSaveSettings();
-				defaultSettings.addProperty("tradeLockID", defaultSaveName);
-				settings.load(defaultSettings);
-				inv.writeSaveSettings();
+				// Switch save
+				if (!manager.switchSave(defaultSaveName)) {
+					sharedInv.deleteItem("savemanifest");
+					throw new RuntimeException("Save creation failure");
+				}
 			}
 
 			// Dispatch event

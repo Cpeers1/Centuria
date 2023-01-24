@@ -32,7 +32,8 @@ import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.MiscModerationEvent;
-import org.asf.centuria.modules.events.chat.ChatMessageEvent;
+import org.asf.centuria.modules.events.chat.ChatMessageBroadcastEvent;
+import org.asf.centuria.modules.events.chat.ChatMessageReceivedEvent;
 import org.asf.centuria.modules.events.chatcommands.ChatCommandEvent;
 import org.asf.centuria.modules.events.chatcommands.ModuleCommandSyntaxListEvent;
 import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
@@ -267,7 +268,8 @@ public class SendMessage extends AbstractChatPacket {
 		}
 
 		// Fire event
-		ChatMessageEvent evt = new ChatMessageEvent(client.getServer(), client.getPlayer(), client, message);
+		ChatMessageReceivedEvent evt = new ChatMessageReceivedEvent(client.getServer(), client.getPlayer(), client,
+				message, room);
 		EventBus.getInstance().dispatchEvent(evt);
 		if (evt.isCancelled())
 			return true; // Cancelled
@@ -366,6 +368,14 @@ public class SendMessage extends AbstractChatPacket {
 		}
 		message = newMessage;
 
+		// Fire event
+		ChatMessageBroadcastEvent evt2 = new ChatMessageBroadcastEvent(client.getServer(), client.getPlayer(), client,
+				message, room);
+		EventBus.getInstance().dispatchEvent(evt2);
+		if (evt2.isCancelled())
+			return true; // Cancelled
+
+		// Check room
 		if (client.isInRoom(room)) {
 			// Time format
 			SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");

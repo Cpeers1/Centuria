@@ -111,7 +111,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 					response.addProperty("error", "invalid_login_name");
 					response.addProperty("error_message",
 							"Invalid login name: this name may not be used as it may not be appropriate.");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					return;
@@ -126,7 +126,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 					response.addProperty("error", "invalid_display_name");
 					response.addProperty("error_message",
 							"Invalid display name: this name may not be used as it may not be appropriate.");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					return;
@@ -141,7 +141,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 					response.addProperty("error", "invalid_login_name");
 					response.addProperty("error_message",
 							"Invalid login name: this name may not be used as it may not be appropriate.");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					return;
@@ -153,7 +153,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 					response.addProperty("error", "invalid_login_name");
 					response.addProperty("error_message",
 							"Invalid login name: this name may not be used as it may not be appropriate.");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					return;
@@ -168,7 +168,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 					response.addProperty("error", "invalid_display_name");
 					response.addProperty("error_message",
 							"Invalid display name: this name may not be used as it may not be appropriate.");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					return;
@@ -180,7 +180,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 					response.addProperty("error", "invalid_display_name");
 					response.addProperty("error_message",
 							"Invalid display name: this name may not be used as it may not be appropriate.");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					return;
@@ -195,7 +195,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 				response.addProperty("status", "failure");
 				response.addProperty("error", "invalid_login_name");
 				response.addProperty("error_message", "Invalid login name.");
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 				this.setResponseCode(400);
 				this.setResponseMessage("Bad request");
 				return;
@@ -207,7 +207,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 				response.addProperty("status", "failure");
 				response.addProperty("error", "invalid_display_name");
 				response.addProperty("error_message", "Invalid display name.");
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 				this.setResponseCode(400);
 				this.setResponseMessage("Bad request");
 				return;
@@ -219,7 +219,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 				response.addProperty("status", "failure");
 				response.addProperty("error", "login_name_in_use");
 				response.addProperty("error_message", "Selected login name is already in use.");
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 				this.setResponseCode(400);
 				this.setResponseMessage("Bad request");
 				return;
@@ -231,7 +231,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 				response.addProperty("status", "failure");
 				response.addProperty("error", "display_name_in_use");
 				response.addProperty("error_message", "Selected display name is already in use.");
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 				this.setResponseCode(400);
 				this.setResponseMessage("Bad request");
 				return;
@@ -266,7 +266,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 					response.addProperty("status", "failure");
 					response.addProperty("error", "missing_verification");
 					response.addProperty("error_message", "This server requires registration verification.");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					return;
@@ -280,7 +280,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 					response.addProperty("status", "failure");
 					response.addProperty("error", "invalid_verification_method");
 					response.addProperty("error_message", "Verification method unsupported.");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					this.setResponseCode(400);
 					this.setResponseMessage("Bad request");
 					return;
@@ -351,7 +351,7 @@ public class RegistrationHandler extends HttpUploadProcessor {
 			}
 
 			// Send response
-			setBody(response.toString());
+			setBody("text/json", response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");

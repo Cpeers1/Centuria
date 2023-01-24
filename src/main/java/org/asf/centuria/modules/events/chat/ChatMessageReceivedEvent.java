@@ -8,26 +8,30 @@ import org.asf.centuria.networking.chatserver.ChatServer;
 
 /**
  * 
- * Chat Message Event - fired when a player sends a chat message.
+ * Chat Message Event - fired when a player sends a chat message, fired before
+ * it is passed on to other players.
  * 
  * @since Beta 1.5.3
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
 @EventPath("chat.message")
-public class ChatMessageEvent extends EventObject {
+public class ChatMessageReceivedEvent extends EventObject {
 
 	private ChatServer server;
 	private ChatClient client;
 	private CenturiaAccount account;
 	private String message;
+	private String conversation;
 	private boolean cancel;
 
-	public ChatMessageEvent(ChatServer server, CenturiaAccount account, ChatClient client, String message) {
+	public ChatMessageReceivedEvent(ChatServer server, CenturiaAccount account, ChatClient client, String message,
+			String conversation) {
 		this.client = client;
 		this.account = account;
 		this.server = server;
 		this.message = message;
+		this.conversation = conversation;
 	}
 
 	@Override
@@ -41,6 +45,15 @@ public class ChatMessageEvent extends EventObject {
 	public void cancel() {
 		cancel = true;
 		setHandled();
+	}
+
+	/**
+	 * Retrieves the conversation ID
+	 * 
+	 * @return Conversation room ID
+	 */
+	public String getConversationId() {
+		return conversation;
 	}
 
 	/**

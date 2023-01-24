@@ -91,7 +91,7 @@ public class DisplayNamesRequestHandler extends HttpUploadProcessor {
 
 			response.add("found", found);
 			response.add("not_found", (unrecognized.size() == 0 ? null : unrecognized));
-			setBody(response.toString());
+			setBody("text/json", response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");

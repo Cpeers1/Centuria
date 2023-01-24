@@ -85,7 +85,7 @@ public class ChangePasswordHandler extends HttpUploadProcessor {
 			// Check existence
 			if (id == null) {
 				// Invalid details
-				this.setBody("{\"error\":\"invalid_credential\"}");
+				this.setBody("text/json", "{\"error\":\"invalid_credential\"}");
 				this.setResponseCode(422);
 				return;
 			}
@@ -106,7 +106,7 @@ public class ChangePasswordHandler extends HttpUploadProcessor {
 			response.addProperty("status", "success");
 			response.addProperty("uuid", id);
 			response.addProperty("updated", true);
-			setBody(response.toString());
+			setBody("text/json", response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");

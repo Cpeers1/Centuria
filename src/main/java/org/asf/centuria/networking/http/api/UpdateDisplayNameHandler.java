@@ -72,7 +72,7 @@ public class UpdateDisplayNameHandler extends HttpUploadProcessor {
 			// Check if the name is in use
 			if (manager.isDisplayNameInUse(newName) && !manager.getUserByDisplayName(newName).equals(acc.getAccountID())
 					|| (manager.isDisplayNameInUse(newName) && acc.isRenameRequired())) {
-				setBody("application/json", "{\"error\":\"display_name_already_taken\"}");
+				setBody("text/json", "{\"error\":\"display_name_already_taken\"}");
 				return; // Name is in use
 			}
 
@@ -95,7 +95,7 @@ public class UpdateDisplayNameHandler extends HttpUploadProcessor {
 				JsonObject response = new JsonObject();
 				if (!newName.matches("^[0-9A-Za-z\\-_. ]+") || newName.length() > 16 || newName.length() < 2) {
 					response.addProperty("error", "display_name_invalid_format");
-					setBody(response.toString());
+					setBody("text/json", response.toString());
 					return;
 				}
 
@@ -103,7 +103,7 @@ public class UpdateDisplayNameHandler extends HttpUploadProcessor {
 				for (String nm : nameBlacklist) {
 					if (newName.equalsIgnoreCase(nm)) {
 						response.addProperty("error", "display_name_sift_rejected");
-						setBody(response.toString());
+						setBody("text/json", response.toString());
 						return;
 					}
 				}
@@ -113,7 +113,7 @@ public class UpdateDisplayNameHandler extends HttpUploadProcessor {
 					if (Stream.of(SendMessage.getInvalidWords())
 							.anyMatch(t -> t.toLowerCase().equals(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase()))) {
 						response.addProperty("error", "display_name_sift_rejected");
-						setBody(response.toString());
+						setBody("text/json", response.toString());
 						return;
 					}
 				}

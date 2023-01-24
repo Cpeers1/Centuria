@@ -69,7 +69,7 @@ public class UserHandler extends HttpUploadProcessor {
 			response.add("privacy", privacy);
 			response.addProperty("username", acc.getLoginName());
 			response.addProperty("uuid", acc.getAccountID());
-			setBody(response.toString());
+			setBody("text/json", response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");

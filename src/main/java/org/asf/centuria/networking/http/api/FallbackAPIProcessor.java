@@ -66,7 +66,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				JsonObject response = new JsonObject();
 				response.addProperty("autorization_key", headerD + "." + payloadD + "." + Base64.getUrlEncoder()
 						.withoutPadding().encodeToString(Centuria.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 			} else if (path.startsWith("/r/block/")) {
 				// Find account
 				CenturiaAccount acc = verifyAndGetAcc(manager);
@@ -115,7 +115,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 						// error
 						setResponseCode(200);
 						setResponseMessage("No Content");
-						setBody("{\"error\":\"already_blocked\"}");
+						setBody("text/json", "{\"error\":\"already_blocked\"}");
 						return;
 					}
 
@@ -164,7 +164,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 						// error
 						setResponseCode(200);
 						setResponseMessage("No Content");
-						setBody("{\"error\":\"not_blocked\"}");
+						setBody("text/json", "{\"error\":\"not_blocked\"}");
 						return;
 					}
 
@@ -181,7 +181,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				}
 				}
 
-				setBody(response.toString());
+				setBody("text/json", response.toString());
 			} else if (path.startsWith("/r/follow/")) {
 
 				// Find account
@@ -217,7 +217,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 						// error
 						setResponseCode(200);
 						setResponseMessage("No Content");
-						setBody("{\"error\":\"already_following\"}");
+						setBody("text/json", "{\"error\":\"already_following\"}");
 						return;
 					}
 
@@ -226,7 +226,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 						// error
 						setResponseCode(200);
 						setResponseMessage("No Content");
-						setBody("{\"error\":\"limit_reached\"}");
+						setBody("text/json", "{\"error\":\"limit_reached\"}");
 						return;
 					}
 
@@ -250,7 +250,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 						// error
 						setResponseCode(200);
 						setResponseMessage("No Content");
-						setBody("{\"error\":\"not_following\"}");
+						setBody("text/json", "{\"error\":\"not_following\"}");
 						return;
 					}
 
@@ -325,7 +325,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				}
 
 				// send response packet
-				setBody(jsonArray.toString());
+				setBody("text/json", jsonArray.toString());
 
 				// log interaction details
 				if (Centuria.debugMode) {
@@ -389,7 +389,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				}
 
 				// send response packet
-				setBody(jsonArray.toString());
+				setBody("text/json", jsonArray.toString());
 
 				// log interaction details
 				if (Centuria.debugMode) {
@@ -467,7 +467,8 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				}
 
 				setResponseCode(400);
-				setBody("{}");
+				setResponseMessage("Bad Request");
+				setBody("text/json", "{}");
 			}
 		} catch (Exception e) {
 			if (Centuria.debugMode) {
