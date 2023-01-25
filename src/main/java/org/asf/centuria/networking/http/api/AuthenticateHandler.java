@@ -131,21 +131,30 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 
 			JsonObject payload = new JsonObject();
 			payload.addProperty("iat", System.currentTimeMillis() / 1000);
-			payload.addProperty("exp", (System.currentTimeMillis() / 1000) + (2 * 24 * 60 * 60));
 			payload.addProperty("jti", UUID.randomUUID().toString());
 			payload.addProperty("iss", "Centuria");
 			payload.addProperty("sub", "Centuria");
 			payload.addProperty("uuid", id);
-			String payloadD = Base64.getUrlEncoder().withoutPadding()
-					.encodeToString(payload.toString().getBytes("UTF-8"));
 
-			// Send response
+			// Prepare response
 			JsonObject response = new JsonObject();
 			response.addProperty("uuid", id);
+
+			// Generate refresh token
+			payload.addProperty("exp", (System.currentTimeMillis() / 1000) + (30 * 24 * 60 * 60));
+			String payloadD = Base64.getUrlEncoder().withoutPadding()
+					.encodeToString(payload.toString().getBytes("UTF-8"));
 			response.addProperty("refresh_token", headerD + "." + payloadD + "." + Base64.getUrlEncoder()
 					.withoutPadding().encodeToString(Centuria.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
+
+			// Generate auth token
+			payload.addProperty("exp", (System.currentTimeMillis() / 1000) + (2 * 24 * 60 * 60));
+			payload.addProperty("acs", "gameplay");
+			payloadD = Base64.getUrlEncoder().withoutPadding().encodeToString(payload.toString().getBytes("UTF-8"));
 			response.addProperty("auth_token", headerD + "." + payloadD + "." + Base64.getUrlEncoder().withoutPadding()
 					.encodeToString(Centuria.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
+
+			// Add other fields
 			response.addProperty("rename_required", !manager.hasPassword(id) || changeName || acc.isRenameRequired());
 			response.addProperty("rename_required_key", "");
 			response.addProperty("email_update_required", false);

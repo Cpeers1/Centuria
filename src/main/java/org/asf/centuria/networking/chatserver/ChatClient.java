@@ -37,7 +37,8 @@ public class ChatClient {
 	private ArrayList<Object> objects = new ArrayList<Object>();
 
 	/**
-	 * Retrieves objects from the connection container, used to store information in clients.
+	 * Retrieves objects from the connection container, used to store information in
+	 * clients.
 	 * 
 	 * @since Beta 1.5.3
 	 * @param type Object type
@@ -53,7 +54,8 @@ public class ChatClient {
 	}
 
 	/**
-	 * Adds objects to the connection container, used to store information in clients.
+	 * Adds objects to the connection container, used to store information in
+	 * clients.
 	 * 
 	 * @since Beta 1.5.3
 	 * @param obj Object to add
@@ -151,6 +153,12 @@ public class ChatClient {
 		JsonObject payload = JsonParser
 				.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
 				.getAsJsonObject();
+
+		// Verify access
+		if (!payload.has("acs") || !payload.get("acs").getAsString().equals("gameplay")) {
+			disconnect();
+			return;
+		}
 
 		// Locate account
 		CenturiaAccount acc = AccountManager.getInstance().getAccount(payload.get("uuid").getAsString());
