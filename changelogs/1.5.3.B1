@@ -6,6 +6,7 @@ Changes in 1.5.3.B1:
 - Added trade security for multi-gamemode servers: trade lock ID in savesettings allows blocking of cross-mode trading
 - Overhauled player data to support mode switching
 - Added a moderator command to remove items (for those stuck with too much of a item, you can contact staff now)
+- Nerfed XP rewards
 - Fix log typo
 
 New features:
