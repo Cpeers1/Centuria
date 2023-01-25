@@ -561,6 +561,7 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("takexp <amount> [\"<player>\"]");
 			commandMessages.add("resetxp [\"<player>\"]");
 			commandMessages.add("takelevels <amount> [\"<player>\"]");
+			commandMessages.add("takeitem <itemDefId> [<quantity>] [<player>]");
 			if (GameServer.hasPerm(permLevel, "admin")) {
 				commandMessages.add("generateclearancecode");
 				commandMessages.add("addxp <amount> [\"<player>\"]");
@@ -2192,6 +2193,66 @@ public class SendMessage extends AbstractChatPacket {
 								systemMessage("Error: " + e, cmd, client);
 							}
 
+							return true;
+						}
+					}
+					case "takeitem": {
+						try {
+							int defID = 0;
+							int quantity = 1;
+							String player = "";
+							String uuid = client.getPlayer().getAccountID();
+
+							if (args.size() < 1) {
+								systemMessage("Missing argument: itemDefId", cmd, client);
+								return true;
+							}
+
+							defID = Integer.valueOf(args.get(0));
+							if (args.size() >= 2) {
+								quantity = Integer.valueOf(args.get(1));
+							}
+
+							if (args.size() >= 3) {
+								player = args.get(2);
+
+								// check existence of player
+
+								uuid = AccountManager.getInstance().getUserByDisplayName(player);
+								if (uuid == null) {
+									// Player not found
+									systemMessage("Specified account could not be located.", cmd, client);
+									return true;
+								}
+							}
+
+							// funny stuff check
+							if (quantity <= 0 || defID <= 0) {
+								systemMessage("You cannot remove 0 or less quantity of/or an item ID of 0 or below.",
+										cmd, client);
+								return true;
+							}
+
+							// find account
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// give item to the command sender..
+							var onlinePlayer = acc.getOnlinePlayerInstance();
+							var result = acc.getSaveSpecificInventory().getItemAccessor(onlinePlayer).remove(defID,
+									quantity);
+
+							if (result)
+								systemMessage(
+										"Removed " + acc.getDisplayName() + " " + quantity + " of item " + defID
+												+ ", remaining: "
+												+ acc.getSaveSpecificInventory().getItemAccessor(onlinePlayer)
+														.getCountOfItem(defID),
+										cmd, client);
+							else
+								systemMessage("Failed to remove item.", cmd, client);
+							return true;
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
 							return true;
 						}
 					}
