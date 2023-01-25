@@ -1,7 +1,7 @@
 {
 	"levelevents.minigames.whatthehex": [
 		{
-			"xp": 15
+			"xp": 8
 		}
 	],
 	"levelevents.harvest": [
@@ -12,13 +12,13 @@
 			]
 		},
 		{
-			"xp": 15,
+			"xp": 12,
 			"conditions": [
 				"rarity:cool"
 			]
 		},		
 		{
-			"xp": 30,
+			"xp": 15,
 			"conditions": [
 				"rarity:rare"
 			]
@@ -110,7 +110,7 @@
 			]
 		},
 		{
-			"xp": 150,
+			"xp": 120,
 			"endHere": false,
 			"conditions": [
 				"eureka:true"
@@ -168,12 +168,12 @@
 	],
 	"levelevents.enigmacreated": [
 		{
-			"xp": 275
+			"xp": 250
 		}
 	],
 	"levelevents.waystones": [
 		{
-			"xp": 140
+			"xp": 50
 		}
 	],
 	"levelevents.digspots": [
@@ -190,13 +190,13 @@
 			]
 		},		
 		{
-			"xp": 80,
+			"xp": 60,
 			"conditions": [
 				"rarity:rare"
 			]
 		},		
 		{
-			"xp": 120,
+			"xp": 100,
 			"conditions": [
 				"rarity:epic"
 			]
@@ -216,13 +216,13 @@
 			]
 		},
 		{
-			"xp": 120,
+			"xp": 100,
 			"conditions": [
 				"type:silver"
 			]
 		},
 		{
-			"xp": 200,
+			"xp": 150,
 			"conditions": [
 				"type:gold"
 			]
@@ -230,62 +230,62 @@
 	],
 	"levelevents.quests": [
 		{
-			"xp": 120,
+			"xp": 100,
 			"conditions": [
 				"type:filler",
 				"map:bloodtundra"
 			]
 		},
 		{
-			"xp": 100,
+			"xp": 80,
 			"conditions": [
 				"type:filler"
 			]
 		},
 		{
-			"xp": 320,
-			"conditions": [
-				"type:lorefollowup",
-				"map:bloodtundra"
-			]
-		},
-		{
-			"xp": 250,
-			"conditions": [
-				"type:lore",
-				"map:bloodtundra"
-			]
-		},
-		{
-			"xp": 300,
-			"conditions": [
-				"type:lorefollowup",
-				"map:lakeroot"
-			]
-		},
-		{
-			"xp": 230,
-			"conditions": [
-				"type:lore",
-				"map:lakeroot"
-			]
-		},
-		{
-			"xp": 310,
-			"conditions": [
-				"type:lorefollowup",
-				"map:mugmyre"
-			]
-		},
-		{
 			"xp": 220,
 			"conditions": [
+				"type:lorefollowup",
+				"map:bloodtundra"
+			]
+		},
+		{
+			"xp": 180,
+			"conditions": [
+				"type:lore",
+				"map:bloodtundra"
+			]
+		},
+		{
+			"xp": 200,
+			"conditions": [
+				"type:lorefollowup",
+				"map:lakeroot"
+			]
+		},
+		{
+			"xp": 170,
+			"conditions": [
+				"type:lore",
+				"map:lakeroot"
+			]
+		},
+		{
+			"xp": 210,
+			"conditions": [
+				"type:lorefollowup",
+				"map:mugmyre"
+			]
+		},
+		{
+			"xp": 175,
+			"conditions": [
 				"type:lore",
 				"map:mugmyre"
 			]
 		},
 		{
-			"xp": 100
+			"xp": 80
 		}
 	]
 }
