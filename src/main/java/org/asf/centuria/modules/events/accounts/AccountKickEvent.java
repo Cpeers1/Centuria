@@ -6,7 +6,7 @@ import org.asf.centuria.modules.eventbus.EventPath;
 
 /**
  * 
- * Pardon Event - called on account pardon
+ * Kick Event - called on account kick
  * 
  * @author Sky Swimmer - AerialWorks Software Foundation
  *

@@ -147,4 +147,63 @@ public class FileBasedDMManager extends DMManager {
 			new File("dms/" + UUID.fromString(dmID) + ".json").delete();
 	}
 
+	@Override
+	public void addParticipant(String dmID, String participant) {
+		try {
+			// Parse DM
+			FileReader reader = new FileReader("dms/" + UUID.fromString(dmID) + ".json");
+			JsonObject dm = JsonParser.parseReader(reader).getAsJsonObject();
+			JsonArray data = dm.get("participants").getAsJsonArray();
+			reader.close();
+
+			// Add participant
+			data.add(participant);
+
+			// Save to disk
+			while (activeIDs.contains(dmID))
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					break;
+				}
+			activeIDs.add(dmID);
+			Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
+			activeIDs.remove(dmID);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void removeParticipant(String dmID, String participant) {
+		try {
+			// Parse DM
+			FileReader reader = new FileReader("dms/" + UUID.fromString(dmID) + ".json");
+			JsonObject dm = JsonParser.parseReader(reader).getAsJsonObject();
+			JsonArray data = dm.get("participants").getAsJsonArray();
+			reader.close();
+
+			// Remove participant
+			for (JsonElement ele : data) {
+				if (ele.getAsString().equals(participant)) {
+					data.remove(ele);
+					break;
+				}
+			}
+
+			// Save to disk
+			while (activeIDs.contains(dmID))
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					break;
+				}
+			activeIDs.add(dmID);
+			Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
+			activeIDs.remove(dmID);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }

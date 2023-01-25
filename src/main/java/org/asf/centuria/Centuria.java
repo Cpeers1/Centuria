@@ -46,6 +46,8 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.ICenturiaModule;
 import org.asf.centuria.modules.ModuleManager;
 import org.asf.centuria.modules.eventbus.EventBus;
+import org.asf.centuria.modules.events.accounts.AccountDisconnectEvent;
+import org.asf.centuria.modules.events.accounts.AccountDisconnectEvent.DisconnectType;
 import org.asf.centuria.modules.events.servers.APIServerStartupEvent;
 import org.asf.centuria.modules.events.servers.DirectorServerStartupEvent;
 import org.asf.centuria.modules.events.updates.ServerUpdateCompletionEvent;
@@ -349,6 +351,9 @@ public class Centuria {
 			}
 		}
 		for (Player plr : Centuria.gameServer.getPlayers()) {
+			// Dispatch event
+			EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account, "Server has been shut down.", DisconnectType.SERVER_SHUTDOWN));
+			
 			plr.client.disconnect();
 		}
 
@@ -814,7 +819,7 @@ public class Centuria {
 			return;
 		ChatClient client = chatServer.getClient(player.account.getAccountID());
 		if (client != null) {
-			if (inDm) {// && !client.isInRoom("SYSTEM")) {
+			if (inDm && !client.isInRoom("SYSTEM")) {
 				// Build response
 				JsonObject res = new JsonObject();
 				res.addProperty("eventId", "conversations.openPrivate");
