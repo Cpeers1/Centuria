@@ -24,6 +24,24 @@ public abstract class DMManager {
 	public abstract void openDM(String dmID, String[] participants);
 
 	/**
+	 * Adds DM participants
+	 * 
+	 * @since Beta 1.5.3
+	 * @param dmID        Conversation ID
+	 * @param participant Participant to add
+	 */
+	public abstract void addParticipant(String dmID, String participant);
+
+	/**
+	 * Removes DM participants
+	 * 
+	 * @since Beta 1.5.3
+	 * @param dmID        Conversation ID
+	 * @param participant Participant to remove
+	 */
+	public abstract void removeParticipant(String dmID, String participant);
+
+	/**
 	 * Checks if a specific DM is saved on disk
 	 * 
 	 * @param dmID Conversation ID

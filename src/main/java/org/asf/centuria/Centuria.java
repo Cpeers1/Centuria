@@ -819,7 +819,7 @@ public class Centuria {
 			return;
 		ChatClient client = chatServer.getClient(player.account.getAccountID());
 		if (client != null) {
-			if (inDm) {// && !client.isInRoom("SYSTEM")) {
+			if (inDm && !client.isInRoom("SYSTEM")) {
 				// Build response
 				JsonObject res = new JsonObject();
 				res.addProperty("eventId", "conversations.openPrivate");
