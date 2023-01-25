@@ -1064,6 +1064,168 @@
           "weight": 1
         }
       ]
+    },
+    "14157": {
+      "objectName": "QuestReward/TimeForSomeGrub",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q14157",
+          "itemId": "14896",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q14157": {
+      "objectName": "QuestReward/TimeForSomeGrub",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14896",
+          "minCount": 15,
+          "maxCount": 20,
+          "weight": 1
+        }
+      ]
+    },
+    "14156": {
+      "objectName": "QuestReward/CaptainCluck",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q14156",
+          "itemId": "14011",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q14156": {
+      "objectName": "QuestReward/CaptainCluck",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 80,
+          "maxCount": 100,
+          "weight": 1
+        }
+      ]
+    },
+    "13747": {
+      "objectName": "QuestReward/Seagulls",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q13747",
+          "itemId": "13648",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q13747": {
+      "objectName": "QuestReward/Seagulls",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 20,
+          "maxCount": 35,
+          "weight": 1
+        }
+      ]
+    },
+    "14019": {
+      "objectName": "QuestReward/BouquetOfBells",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q14019",
+          "itemId": "15142",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q14019": {
+      "objectName": "QuestReward/BouquetOfBells",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 5,
+          "maxCount": 10,
+          "weight": 1
+        }
+      ]
+    },
+    "13076": {
+      "objectName": "QuestReward/WashedUp",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q13076",
+          "itemId": "14258",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q13076": {
+      "objectName": "QuestReward/WashedUp",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 40,
+          "maxCount": 50,
+          "weight": 1
+        }
+      ]
+    },
+    "14196": {
+      "objectName": "QuestReward/HatsBigDay",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q14196",
+          "itemId": "13321",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q14196": {
+      "objectName": "QuestReward/HatsBigDay",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 30,
+          "maxCount": 60,
+          "weight": 1
+        }
+      ]
     }
   }
 }

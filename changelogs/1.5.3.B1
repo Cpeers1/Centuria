@@ -27,4 +27,12 @@ Module API changes:
 - New event: AccountPreloginEvent
 - Updated event: AccountLoginEvent: can now access login parameters to add eg. custom error messages
 
+Added quests:
+- Time for Some Grub
+- Captain Cluck
+- Chaos from Above
+- Bouquet of Bells
+- Washed Up
+- Hat's Day Out
+
 Note that a lot of this update is related to the technical side of the server software, apologies for the complicated stuff in the changelog.

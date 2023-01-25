@@ -562,6 +562,7 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("resetxp [\"<player>\"]");
 			commandMessages.add("takelevels <amount> [\"<player>\"]");
 			commandMessages.add("takeitem <itemDefId> [<quantity>] [<player>]");
+			commandMessages.add("questskip [<amount>] [<player>]");
 			if (GameServer.hasPerm(permLevel, "admin")) {
 				commandMessages.add("generateclearancecode");
 				commandMessages.add("addxp <amount> [\"<player>\"]");
@@ -2196,6 +2197,57 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 					}
+					case "questskip": {
+						// Skips quests
+						int count = 1;
+						if (args.size() > 0)
+							try {
+								count = Integer.parseInt(args.get(0));
+							} catch (Exception e) {
+								return true;
+							}
+
+						// Parse arguments
+						String player = client.getPlayer().getDisplayName();
+						if (args.size() > 1) {
+							player = args.get(1);
+						}
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Send packet
+						try {
+							if (acc.getOnlinePlayerInstance() == null) {
+								systemMessage("Error: player not online", cmd, client);
+								return true;
+							}
+							if (QuestManager.getActiveQuest(acc) == null) {
+								systemMessage("Error: no further quests", cmd, client);
+								return true;
+							}
+							int c = 0;
+							for (int i = 0; i < count; i++) {
+								c++;
+								if (!QuestManager.finishQuest(acc.getOnlinePlayerInstance(),
+										Integer.parseInt(QuestManager.getActiveQuest(acc))))
+									break;
+							}
+							systemMessage(
+									"Skipped " + c + " quests, now at: "
+											+ QuestManager
+													.getQuest(QuestManager.getActiveQuest(client.getPlayer())).name,
+									cmd, client);
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
+						}
+
+						return true;
+					}
 					case "takeitem": {
 						try {
 							int defID = 0;
@@ -2244,9 +2296,8 @@ public class SendMessage extends AbstractChatPacket {
 							if (result)
 								systemMessage(
 										"Removed " + acc.getDisplayName() + " " + quantity + " of item " + defID
-												+ ", remaining: "
-												+ acc.getSaveSpecificInventory().getItemAccessor(onlinePlayer)
-														.getCountOfItem(defID),
+												+ ", remaining: " + acc.getSaveSpecificInventory()
+														.getItemAccessor(onlinePlayer).getCountOfItem(defID),
 										cmd, client);
 							else
 								systemMessage("Failed to remove item.", cmd, client);

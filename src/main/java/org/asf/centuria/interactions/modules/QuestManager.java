@@ -36,7 +36,7 @@ public class QuestManager extends InteractionModule {
 	// The quest to refuse running
 	// This will be the quest after the 3rd released each week
 	// Ignored in debug mode
-	public int questLock = 14134; // Time for Some Grub, locked to prevent broken quests breaking the server
+	public int questLock = 16965; // Lost Shoes, locked to prevent broken quests breaking the server
 
 	private static String firstQuest = "7537";
 	private static LinkedHashMap<String, String> questMap = new LinkedHashMap<String, String>();
@@ -521,31 +521,40 @@ public class QuestManager extends InteractionModule {
 
 				// Finish quest
 				if (player.levelID != 25280) {
-					JsonObject obj = player.account.getSaveSpecificInventory().getAccessor().findInventoryObject("311",
-							22781);
-					JsonObject progressionMap = obj.get("components").getAsJsonObject()
-							.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
-					JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
-					arr.add(quest.defID);
-
-					// Save and create inventory update
-					player.account.getSaveSpecificInventory().setItem("311",
-							player.account.getSaveSpecificInventory().getItem("311"));
-					JsonArray update = new JsonArray();
-					update.add(obj);
-
-					// Send packet
-					InventoryItemPacket pkt = new InventoryItemPacket();
-					pkt.item = update;
-					player.client.sendPacket(pkt);
+					finishQuest(player, quest.defID);
+				} else {
+					// Send completion
+					QuestGenericLinearQuestCompletePacket comp = new QuestGenericLinearQuestCompletePacket();
+					comp.questID = quest.defID;
+					player.client.sendPacket(comp);
 				}
-
-				// Send completion
-				QuestGenericLinearQuestCompletePacket comp = new QuestGenericLinearQuestCompletePacket();
-				comp.questID = quest.defID;
-				player.client.sendPacket(comp);
 			}
 		}
+	}
+
+	public static boolean finishQuest(Player player, int quest) {
+		JsonObject obj = player.account.getSaveSpecificInventory().getAccessor().findInventoryObject("311", 22781);
+		JsonObject progressionMap = obj.get("components").getAsJsonObject()
+				.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
+		JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
+		arr.add(quest);
+
+		// Save and create inventory update
+		player.account.getSaveSpecificInventory().setItem("311",
+				player.account.getSaveSpecificInventory().getItem("311"));
+		JsonArray update = new JsonArray();
+		update.add(obj);
+
+		// Send packet
+		InventoryItemPacket pkt = new InventoryItemPacket();
+		pkt.item = update;
+		player.client.sendPacket(pkt);
+
+		// Send completion
+		QuestGenericLinearQuestCompletePacket comp = new QuestGenericLinearQuestCompletePacket();
+		comp.questID = quest;
+		player.client.sendPacket(comp);
+		return getActiveQuest(player.account) != null;
 	}
 
 	@Override
