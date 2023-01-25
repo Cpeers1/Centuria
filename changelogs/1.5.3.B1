@@ -1,4 +1,5 @@
 Changes in 1.5.3.B1:
+- Changed the way authentication worked slightly, its a bit more secure and now allows for players to remain logged in via refresh tokens while preventing non-gameplay tokens from being used to log into the server
 - Switched gamemode configurations to user data so that it will be possible to have experience and creative on the same server
 - Made it that items that have a quantity tag can be given infinitely via giveitem
 - Fixed the admin giveitem command not using the quantity argument
