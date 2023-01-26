@@ -178,8 +178,8 @@ public class Player {
 	public ArrayList<String> interactions = new ArrayList<String>();
 	public ArrayList<GroupObject> groupOjects = new ArrayList<GroupObject>();
 	public HashMap<String, Integer> states = new HashMap<String, Integer>();
+	public HashMap<Integer, Integer> taskProgress = new HashMap<Integer, Integer>();
 	public HashMap<String, ArrayList<StateInfo>> stateObjects = new HashMap<String, ArrayList<StateInfo>>();
-	public HashMap<String, Integer> questObjectData = new HashMap<String, Integer>();
 	public boolean questStarted = false;
 	public int questObjective = 0;
 
@@ -370,9 +370,9 @@ public class Player {
 			plr.levelType = levelType;
 
 			// Reset quest data
+			plr.taskProgress.clear();
 			plr.questProgress = 0;
 			plr.questStarted = false;
-			plr.questObjectData.clear();
 			plr.questObjective = 0;
 
 			// End current game
@@ -452,9 +452,9 @@ public class Player {
 			plr.respawnItems.clear();
 
 			// Reset quest data
+			plr.taskProgress.clear();
 			plr.questProgress = 0;
 			plr.questStarted = false;
-			plr.questObjectData.clear();
 			plr.questObjective = 0;
 
 			// End current game

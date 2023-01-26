@@ -1,7 +1,6 @@
 package org.asf.centuria.interactions.modules;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.asf.centuria.entities.players.Player;
@@ -64,7 +63,7 @@ public class InspirationCollectionModule extends InteractionModule {
 	public int isDataRequestValid(Player player, String id, NetworkedObject object, int state) {
 		if (canHandle(player, id, object)) {
 			object.stateInfo
-					.forEach((k, states) -> states.forEach(t -> handleCommand(player, id, object, t, null, null)));
+					.forEach((k, states) -> states.forEach(t -> handleCommand(player, id, object, t, null)));
 			return 0; // We handled it now
 		}
 		return -1;
@@ -72,11 +71,10 @@ public class InspirationCollectionModule extends InteractionModule {
 	}
 
 	@Override
-	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo stateInfo,
-			StateInfo parent, HashMap<String, Object> memory) {
+	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo stateInfo, StateInfo parent) {
 		// add inspiration to inventory?
 		// get inspiration ID from commands
-
+		
 		if (stateInfo.command.equals("84") && canHandle(player, id, object)) {
 			// get the third argument
 

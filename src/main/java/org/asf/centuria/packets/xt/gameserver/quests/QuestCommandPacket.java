@@ -3,6 +3,7 @@ package org.asf.centuria.packets.xt.gameserver.quests;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
@@ -30,6 +31,7 @@ public class QuestCommandPacket implements IXtPacket<QuestCommandPacket> {
 		writer.writeString(id); // object id
 		params.forEach(t -> writer.writeString(t)); // parameters
 		writer.writeString(""); // data suffix
+		Centuria.logger.debug("QCMD sent: " + writer.encode());
 	}
 
 	@Override

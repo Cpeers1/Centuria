@@ -11,7 +11,6 @@ import org.asf.centuria.interactions.modules.InteractionModule;
 import org.asf.centuria.packets.xt.gameserver.quests.QuestCommandPacket;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class LinearObjectHandler extends InteractionModule {
@@ -29,8 +28,7 @@ public class LinearObjectHandler extends InteractionModule {
 	}
 
 	@Override
-	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo st, StateInfo parent,
-			HashMap<String, Object> memory) {
+	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo st, StateInfo parent) {
 		if (canHandle(player, id, object)) {
 			// Log commands
 			String args = "";
@@ -155,7 +153,7 @@ public class LinearObjectHandler extends InteractionModule {
 				args = args.substring(2);
 			Centuria.logger.debug("Group object interaction command: " + id + ", state: " + state + ", command: "
 					+ st.command + ", args: " + args);
-			handleCommand(player, id, object, st, null, null);
+			handleCommand(player, id, object, st, null);
 		}
 
 		return false;

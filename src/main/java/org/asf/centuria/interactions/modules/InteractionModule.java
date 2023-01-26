@@ -1,6 +1,5 @@
 package org.asf.centuria.interactions.modules;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.asf.centuria.entities.players.Player;
@@ -78,11 +77,9 @@ public abstract class InteractionModule {
 	 * @param object  Object that was interacted with
 	 * @param command Command state
 	 * @param parent  Parent command state
-	 * @param memory Interaction memory
 	 * @return True if the command was handled, false otherwise
 	 */
-	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo command, StateInfo parent,
-			HashMap<String, Object> memory) {
+	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo command, StateInfo parent) {
 		return false;
 	}
 
