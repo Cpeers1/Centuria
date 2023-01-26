@@ -14,6 +14,7 @@ New features:
 - Added a way to change the sanctuary item limit (client modding utility)
 - Added error message fields to login errors (needs a compatible client mod for it to work)
 - Ban reasons are now saved to disk so they can be read by modules
+- Implemented daily tasks (still need to implement the locks)
 
 Web API changes:
 - Allow API to change display name and login names
@@ -31,12 +32,10 @@ Added quests:
 - Time for Some Grub
 - Captain Cluck
 - Chaos from Above
-- Bouquet of Bells (BUGGED)
+- Bouquet of Bells
 - Washed Up
 - Hat's Day Out
-- Glass Eye Gone (BUGGED)
-- Snowbold Warfare (BUGGED, missing minimap blips)
-* BUGGED means that the quest will complete but doesnt fully function as intended
-* Its mostly harvest trackers that are broken presently, they partially work but can cause unexpected behaviour ending quests prematurely, while all dialogue plays, progression can bug and minimap blips can be missing
+- Glass Eye Gone
+- Snowbold Warfare
 
 Note that a lot of this update is related to the technical side of the server software, apologies for the complicated stuff in the changelog.

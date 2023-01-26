@@ -411,7 +411,7 @@ public class InteractionManager {
 					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
 							"Running command: 13 (run states): " + state.params[0]);
 					if (obj.stateInfo.containsKey(state.params[0]))
-						runStates(obj.stateInfo.get(state.params[0]), plr, obj, t);
+						runBranches(plr, obj.stateInfo, state.params[0], t, obj, state);
 
 					break;
 				}
