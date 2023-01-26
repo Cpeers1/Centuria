@@ -419,6 +419,24 @@
 			"__NOTE__": "Quest: Hat's Day Out",
 			"event": "levelevents.quests",
 			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"14037": [
+		{
+			"__NOTE__": "Quest: Glass Eye Gone",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"13988": [
+		{
+			"__NOTE__": "Quest: Snowbold Warfare",
+			"event": "levelevents.quests",
+			"tags": [
 				"type:lore"
 			]
 		}

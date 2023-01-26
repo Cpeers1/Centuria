@@ -1163,10 +1163,16 @@
           "isLastObjective": false,
           "tasks": [
             {
-              "targetProgress": 20
+              "targetProgress": 20,
+              "harvestTrackers": {
+              	"7681": "4e715165-46d0-4f37-8c38-a38bc36dfb93"
+              }
             },
             {
-              "targetProgress": 10
+              "targetProgress": 10,
+              "harvestTrackers": {
+              	"7680": "03fbbe1b-57e0-4382-bb49-a1dec48f2910"
+              }
             }
           ]
         },
@@ -2797,7 +2803,10 @@
           "isLastObjective": false,
           "tasks": [
             {
-              "targetProgress": 1
+              "targetProgress": 1,
+              "harvestTrackers": {
+              	"3429": "eeab20f6-fb5a-4f82-a603-8f78b51cd521"
+              }
             }
           ]
         },

@@ -1226,6 +1226,60 @@
           "weight": 1
         }
       ]
+    },
+    "14037": {
+      "objectName": "QuestReward/GlassEye",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q14037",
+          "itemId": "14257",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q14037": {
+      "objectName": "QuestReward/GlassEye",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 10,
+          "maxCount": 30,
+          "weight": 1
+        }
+      ]
+    },
+    "13988": {
+      "objectName": "QuestReward/ZomboldApocalypse",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q13988",
+          "itemId": "13818",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q13988": {
+      "objectName": "QuestReward/ZomboldApocalypse",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 70,
+          "maxCount": 80,
+          "weight": 1
+        }
+      ]
     }
   }
 }
