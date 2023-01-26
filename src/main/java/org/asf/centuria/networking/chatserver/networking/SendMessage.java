@@ -810,7 +810,7 @@ public class SendMessage extends AbstractChatPacket {
 						int days = 0;
 						try {
 							if (args.size() >= 4)
-								hours = Integer.valueOf(args.get(3));
+								days = Integer.valueOf(args.get(3));
 						} catch (Exception e) {
 							systemMessage("Invalid value for argument: days", cmd, client);
 							return true;
