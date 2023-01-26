@@ -357,7 +357,7 @@ public class SendMessage extends AbstractChatPacket {
 				} else {
 					// Public chat
 					Centuria.systemMessage(gameClient,
-							"You have been automatically muted for violating the emulator rules, mute will last 30 minutes.\\nReason: illegal word in chat.");
+							"You have been automatically muted for violating the emulator rules, mute will last 30 minutes.\nReason: illegal word in chat.");
 				}
 
 				return true;
