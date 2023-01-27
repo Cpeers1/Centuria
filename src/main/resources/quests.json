@@ -3464,7 +3464,7 @@
           "isLastObjective": false,
           "tasks": [
             {
-              "targetProgress": 2,
+              "targetProgress": 1,
 			  "harvestTrackers": {
 				  "3432": "46e8d393-d912-4508-936e-3adb97459307"
 			  }
