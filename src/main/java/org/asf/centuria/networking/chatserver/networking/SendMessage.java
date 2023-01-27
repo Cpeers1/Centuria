@@ -1478,6 +1478,17 @@ public class SendMessage extends AbstractChatPacket {
 							}
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
+							// Check
+							if (acc.getSaveSharedInventory().containsItem("permissions")) {
+								if (GameServer
+										.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+												.get("permissionLevel").getAsString(), "developer")
+										&& !GameServer.hasPerm(permLevel, "developer")) {
+									systemMessage("Unable to demote higher-ranking users.", cmd, client);
+									return true;
+								}
+							}
+
 							// Make admin
 							if (!acc.getSaveSharedInventory().containsItem("permissions"))
 								acc.getSaveSharedInventory().setItem("permissions", new JsonObject());
@@ -1524,6 +1535,17 @@ public class SendMessage extends AbstractChatPacket {
 								return true;
 							}
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// Check
+							if (acc.getSaveSharedInventory().containsItem("permissions")) {
+								if (GameServer
+										.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+												.get("permissionLevel").getAsString(), "developer")
+										&& !GameServer.hasPerm(permLevel, "developer")) {
+									systemMessage("Unable to demote higher-ranking users.", cmd, client);
+									return true;
+								}
+							}
 
 							// Make moderator
 							if (!acc.getSaveSharedInventory().containsItem("permissions"))
