@@ -357,7 +357,7 @@ public class SendMessage extends AbstractChatPacket {
 				} else {
 					// Public chat
 					Centuria.systemMessage(gameClient,
-							"You have been automatically muted for violating the emulator rules, mute will last 30 minutes.\\nReason: illegal word in chat.");
+							"You have been automatically muted for violating the emulator rules, mute will last 30 minutes.\nReason: illegal word in chat.");
 				}
 
 				return true;
@@ -561,6 +561,8 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("takexp <amount> [\"<player>\"]");
 			commandMessages.add("resetxp [\"<player>\"]");
 			commandMessages.add("takelevels <amount> [\"<player>\"]");
+			commandMessages.add("takeitem <itemDefId> [<quantity>] [<player>]");
+			commandMessages.add("questskip [<amount>] [<player>]");
 			if (GameServer.hasPerm(permLevel, "admin")) {
 				commandMessages.add("generateclearancecode");
 				commandMessages.add("addxp <amount> [\"<player>\"]");
@@ -808,7 +810,7 @@ public class SendMessage extends AbstractChatPacket {
 						int days = 0;
 						try {
 							if (args.size() >= 4)
-								hours = Integer.valueOf(args.get(3));
+								days = Integer.valueOf(args.get(3));
 						} catch (Exception e) {
 							systemMessage("Invalid value for argument: days", cmd, client);
 							return true;
@@ -2192,6 +2194,116 @@ public class SendMessage extends AbstractChatPacket {
 								systemMessage("Error: " + e, cmd, client);
 							}
 
+							return true;
+						}
+					}
+					case "questskip": {
+						// Skips quests
+						int count = 1;
+						if (args.size() > 0)
+							try {
+								count = Integer.parseInt(args.get(0));
+							} catch (Exception e) {
+								return true;
+							}
+
+						// Parse arguments
+						String player = client.getPlayer().getDisplayName();
+						if (args.size() > 1) {
+							player = args.get(1);
+						}
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Send packet
+						try {
+							if (acc.getOnlinePlayerInstance() == null) {
+								systemMessage("Error: player not online", cmd, client);
+								return true;
+							}
+							if (QuestManager.getActiveQuest(acc) == null) {
+								systemMessage("Error: no further quests", cmd, client);
+								return true;
+							}
+							int c = 0;
+							for (int i = 0; i < count; i++) {
+								c++;
+								if (!QuestManager.finishQuest(acc.getOnlinePlayerInstance(),
+										Integer.parseInt(QuestManager.getActiveQuest(acc))))
+									break;
+							}
+							systemMessage(
+									"Skipped " + c + " quests, now at: "
+											+ QuestManager
+													.getQuest(QuestManager.getActiveQuest(client.getPlayer())).name,
+									cmd, client);
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
+						}
+
+						return true;
+					}
+					case "takeitem": {
+						try {
+							int defID = 0;
+							int quantity = 1;
+							String player = "";
+							String uuid = client.getPlayer().getAccountID();
+
+							if (args.size() < 1) {
+								systemMessage("Missing argument: itemDefId", cmd, client);
+								return true;
+							}
+
+							defID = Integer.valueOf(args.get(0));
+							if (args.size() >= 2) {
+								quantity = Integer.valueOf(args.get(1));
+							}
+
+							if (args.size() >= 3) {
+								player = args.get(2);
+
+								// check existence of player
+
+								uuid = AccountManager.getInstance().getUserByDisplayName(player);
+								if (uuid == null) {
+									// Player not found
+									systemMessage("Specified account could not be located.", cmd, client);
+									return true;
+								}
+							}
+
+							// funny stuff check
+							if (quantity <= 0 || defID <= 0) {
+								systemMessage("You cannot remove 0 or less quantity of/or an item ID of 0 or below.",
+										cmd, client);
+								return true;
+							}
+
+							// find account
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// give item to the command sender..
+							var onlinePlayer = acc.getOnlinePlayerInstance();
+							var result = acc.getSaveSpecificInventory().getItemAccessor(onlinePlayer).remove(defID,
+									quantity);
+
+							if (result)
+								systemMessage(
+										"Removed " + acc.getDisplayName() + " " + quantity + " of item " + defID
+												+ ", remaining: " + acc.getSaveSpecificInventory()
+														.getItemAccessor(onlinePlayer).getCountOfItem(defID),
+										cmd, client);
+							else
+								systemMessage("Failed to remove item.", cmd, client);
+							return true;
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
 							return true;
 						}
 					}

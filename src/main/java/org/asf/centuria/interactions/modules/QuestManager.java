@@ -23,7 +23,6 @@ import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPac
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemRemovedPacket;
 import org.asf.centuria.packets.xt.gameserver.quests.QuestCommandPacket;
-import org.asf.centuria.packets.xt.gameserver.quests.QuestCommandVTPacket;
 import org.asf.centuria.packets.xt.gameserver.quests.QuestGenericLinearQuestCompletePacket;
 
 import com.google.gson.JsonArray;
@@ -36,7 +35,7 @@ public class QuestManager extends InteractionModule {
 	// The quest to refuse running
 	// This will be the quest after the 3rd released each week
 	// Ignored in debug mode
-	public int questLock = 14134; // Time for Some Grub, locked to prevent broken quests breaking the server
+	public int questLock = 15106; // Ultimate Refreshment, locked to prevent broken quests breaking the server
 
 	private static String firstQuest = "7537";
 	private static LinkedHashMap<String, String> questMap = new LinkedHashMap<String, String>();
@@ -293,7 +292,6 @@ public class QuestManager extends InteractionModule {
 						&& object.subObjectInfo != null) {
 					// Check for harvest trackers
 					QuestObjective objective = quest.objectives.get(player.questObjective);
-					int taskID = 0;
 					for (QuestTask task : objective.tasks) {
 						if (task.harvestTrackers.containsKey(Integer.toString(object.subObjectInfo.defId))) {
 							// Harvest tracker
@@ -301,30 +299,12 @@ public class QuestManager extends InteractionModule {
 
 							// Find tracker and state
 							NetworkedObject tracker = NetworkedObjects.getObject(trackerID);
-
-							// Find object references
-							for (ArrayList<StateInfo> states : tracker.stateInfo.values()) {
-								for (StateInfo stt : states) {
-									for (ArrayList<StateInfo> branches : stt.branches.values()) {
-										for (StateInfo stt2 : branches) {
-											if (stt2.command.equals("13")) {
-												updateCounter(stt2.actorId, task, objective, quest, player, taskID,
-														player.questObjective, id, object, stt);
-											}
-										}
-									}
-								}
-							}
-							for (ArrayList<StateInfo> states : tracker.stateInfo.values()) {
-								for (StateInfo stt : states) {
-									if (stt.command.equals("13")) {
-										updateCounter(stt.actorId, task, objective, quest, player, taskID,
-												player.questObjective, id, object, stt);
-									}
-								}
-							}
+							int stateId = player.states.getOrDefault(trackerID, 1);
+							if (!tracker.stateInfo.containsKey(Integer.toString(stateId)))
+								stateId = Integer.parseInt(tracker.stateInfo.keySet().toArray(t -> new String[t])[0]);
+							InteractionManager.runBranches(player, tracker.stateInfo, Integer.toString(stateId),
+									trackerID, tracker, null);
 						}
-						taskID++;
 					}
 				}
 			}
@@ -342,7 +322,7 @@ public class QuestManager extends InteractionModule {
 
 	@Override
 	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo stateInfo,
-			StateInfo parent, HashMap<String, Object> memory) {
+			StateInfo parent) {
 		if (canHandle(player, id, object) && parent != null) {
 			String activeQuest = getActiveQuest(player.account);
 			if (activeQuest != null) {
@@ -373,7 +353,7 @@ public class QuestManager extends InteractionModule {
 						if (!player.questStarted) {
 							player.questStarted = true;
 							player.questProgress = 0;
-							player.questObjectData.clear();
+							player.taskProgress.clear();
 
 							// Update objects
 							reloadObjects(player, quest);
@@ -385,12 +365,6 @@ public class QuestManager extends InteractionModule {
 						return true;
 					}
 
-					case "13": {
-						// Reference
-						memory.put("ref", stateInfo.actorId);
-						return true;
-					}
-
 					case "20": {
 						// Quest task update
 						if (player.questStarted) {
@@ -398,21 +372,8 @@ public class QuestManager extends InteractionModule {
 							int taskID = Integer.parseInt(stateInfo.params[2]);
 							QuestTask task = objective.tasks.get(taskID);
 
-							// Find counter
-							String counterID = memory.getOrDefault("ref", parent.actorId).toString();
-							if (!memory.containsKey("ref")) {
-								// Fuck you wildworks, messed up branch order!
-								for (StateInfo st : player.stateObjects.get(id)) {
-									if (st.command.equals("13")) {
-										counterID = st.actorId;
-										break;
-									}
-								}
-							}
-
 							// Update
-							updateCounter(counterID, task, objective, quest, player, taskID, objectiveID, id, object,
-									stateInfo);
+							updateQuest(task, objective, quest, player, taskID, objectiveID, id, object, stateInfo);
 						}
 						return true;
 					}
@@ -424,72 +385,34 @@ public class QuestManager extends InteractionModule {
 		return false;
 	}
 
-	private void updateCounter(String counterID, QuestTask task, QuestObjective objective, QuestDefinition quest,
-			Player player, int taskID, int objectiveID, String id, NetworkedObject object, StateInfo stateInfo) {
-		if (counterID.equals("0"))
-			return; // Fuck this
-		// Find max and current progress
-		int cur = player.questObjectData.getOrDefault(counterID, 0);
-		int rem = task.targetProgress - cur;
-
+	private void updateQuest(QuestTask task, QuestObjective objective, QuestDefinition quest, Player player, int taskID,
+			int objectiveID, String id, NetworkedObject object, StateInfo stateInfo) {
 		// Update
-		rem--;
-		cur++;
-		player.questObjectData.put(counterID, cur);
 		player.questProgress++;
 
-		// Send packet
-		QuestCommandVTPacket cmd = new QuestCommandVTPacket();
-		cmd.type = 1;
-		cmd.id = counterID;
-		cmd.params.add(Integer.toString(rem));
-		cmd.params.add("0");
-		cmd.params.add("0");
-		player.client.sendPacket(cmd);
-
-		// Send counter update packet
-		QuestCommandPacket qcmd = new QuestCommandPacket();
-		qcmd.type = 20;
-		qcmd.id = "-1";
-		qcmd.params.add(Integer.toString(taskID));
-		qcmd.params.add(Integer.toString(cur));
-		player.client.sendPacket(qcmd);
-
-		// Check objective for branch commands
+		// Get max
 		int max = 0;
 		for (QuestTask tsk : objective.tasks) {
 			max += tsk.targetProgress;
 		}
-		if (player.questProgress >= max) {
-			// Handle quest command 13
-			var obj = NetworkedObjects.getObject(counterID);
-			String state = Integer.toString(player.states.getOrDefault(counterID, 0));
-			if (obj.stateInfo.containsKey(state)) {
-				for (StateInfo st : obj.stateInfo.get(state)) {
-					if (st.command.equals("13")) {
-						var o = NetworkedObjects.getObject(st.actorId);
-						if (o != null && o.stateInfo.containsKey(st.params[0])) {
-							InteractionManager.runBranches(player, o.stateInfo, st.params[0], id, object, stateInfo);
-						}
-					}
-				}
-			}
-		}
 
-		// Check progress
-		if (rem <= 0) {
-			// Done, run branches of the counter
-			var obj = NetworkedObjects.getObject(counterID);
-			InteractionManager.runBranches(player, obj.stateInfo,
-					Integer.toString(player.states.getOrDefault(counterID, 0)), id, object, stateInfo);
-		}
+		// Set task progress
+		player.taskProgress.put(taskID, player.taskProgress.getOrDefault(taskID, 0) + 1);
+
+		// Send progress update
+		QuestCommandPacket qcmd = new QuestCommandPacket();
+		qcmd.type = 20;
+		qcmd.id = "-1";
+		qcmd.params.add(Integer.toString(taskID));
+		qcmd.params.add(Integer.toString(player.taskProgress.get(taskID)));
+		player.client.sendPacket(qcmd);
 
 		// Check objective
 		if (player.questProgress >= max) {
 			// Next objective
 			player.questProgress = 0;
-			player.questObjectData.clear();
 			player.questObjective++;
+			player.taskProgress.clear();
 			objectiveID++;
 
 			// Send packet
@@ -521,31 +444,40 @@ public class QuestManager extends InteractionModule {
 
 				// Finish quest
 				if (player.levelID != 25280) {
-					JsonObject obj = player.account.getSaveSpecificInventory().getAccessor().findInventoryObject("311",
-							22781);
-					JsonObject progressionMap = obj.get("components").getAsJsonObject()
-							.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
-					JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
-					arr.add(quest.defID);
-
-					// Save and create inventory update
-					player.account.getSaveSpecificInventory().setItem("311",
-							player.account.getSaveSpecificInventory().getItem("311"));
-					JsonArray update = new JsonArray();
-					update.add(obj);
-
-					// Send packet
-					InventoryItemPacket pkt = new InventoryItemPacket();
-					pkt.item = update;
-					player.client.sendPacket(pkt);
+					finishQuest(player, quest.defID);
+				} else {
+					// Send completion
+					QuestGenericLinearQuestCompletePacket comp = new QuestGenericLinearQuestCompletePacket();
+					comp.questID = quest.defID;
+					player.client.sendPacket(comp);
 				}
-
-				// Send completion
-				QuestGenericLinearQuestCompletePacket comp = new QuestGenericLinearQuestCompletePacket();
-				comp.questID = quest.defID;
-				player.client.sendPacket(comp);
 			}
 		}
+	}
+
+	public static boolean finishQuest(Player player, int quest) {
+		JsonObject obj = player.account.getSaveSpecificInventory().getAccessor().findInventoryObject("311", 22781);
+		JsonObject progressionMap = obj.get("components").getAsJsonObject()
+				.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
+		JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
+		arr.add(quest);
+
+		// Save and create inventory update
+		player.account.getSaveSpecificInventory().setItem("311",
+				player.account.getSaveSpecificInventory().getItem("311"));
+		JsonArray update = new JsonArray();
+		update.add(obj);
+
+		// Send packet
+		InventoryItemPacket pkt = new InventoryItemPacket();
+		pkt.item = update;
+		player.client.sendPacket(pkt);
+
+		// Send completion
+		QuestGenericLinearQuestCompletePacket comp = new QuestGenericLinearQuestCompletePacket();
+		comp.questID = quest;
+		player.client.sendPacket(comp);
+		return getActiveQuest(player.account) != null;
 	}
 
 	@Override
@@ -593,47 +525,6 @@ public class QuestManager extends InteractionModule {
 					cmd.params.add(Integer.toString(player.questObjective));
 					cmd.params.add("1");
 					cmd.params.add("1");
-					player.client.sendPacket(cmd);
-
-					// Add objects
-					obj.stateInfo.forEach((k, v) -> {
-						v.forEach(t -> {
-							if (t.command.equals("3")) {
-								t.branches.forEach((k2, v2) -> {
-									v2.forEach(t2 -> {
-										// Check if its a quest object
-										if (t2.command.equals("1") && !t2.actorId.equals("0")) {
-											try {
-												// Save object to memory
-												player.questObjectData.put(t2.actorId, 0);
-											} catch (Exception e) {
-												// Not a valid object
-											}
-										}
-									});
-								});
-							}
-						});
-					});
-				}
-			}
-		}
-
-		// Update quest objective objects
-		for (String colID : collections) {
-			ObjectCollection objs = NetworkedObjects.getObjects(colID);
-			for (String key : objs.objects.keySet()) {
-				NetworkedObject obj = objs.objects.get(key);
-
-				// Update quest objective objects
-				if (obj.primaryObjectInfo.type == 7 && obj.primaryObjectInfo.defId == 0
-						&& player.questObjectData.containsKey(key)) {
-					QuestCommandVTPacket cmd = new QuestCommandVTPacket();
-					cmd.type = 1;
-					cmd.id = key;
-					cmd.params.add(Integer.toString(player.questObjectData.get(cmd.id)));
-					cmd.params.add("0");
-					cmd.params.add("0");
 					player.client.sendPacket(cmd);
 				}
 			}

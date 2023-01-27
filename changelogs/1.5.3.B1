@@ -1,9 +1,12 @@
 Changes in 1.5.3.B1:
+- Changed the way authentication worked slightly, its a bit more secure and now allows for players to remain logged in
 - Switched gamemode configurations to user data so that it will be possible to have experience and creative on the same server
 - Made it that items that have a quantity tag can be given infinitely via giveitem
 - Fixed the admin giveitem command not using the quantity argument
 - Added trade security for multi-gamemode servers: trade lock ID in savesettings allows blocking of cross-mode trading
 - Overhauled player data to support mode switching
+- Added a moderator command to remove items
+- Nerfed XP rewards
 - Fix log typo
 
 New features:
@@ -11,6 +14,7 @@ New features:
 - Added a way to change the sanctuary item limit (client modding utility)
 - Added error message fields to login errors (needs a compatible client mod for it to work)
 - Ban reasons are now saved to disk so they can be read by modules
+- Implemented daily tasks (still need to implement the locks)
 
 Web API changes:
 - Allow API to change display name and login names
@@ -23,5 +27,15 @@ Module API changes:
 - New event: ChatMessageEvent
 - New event: AccountPreloginEvent
 - Updated event: AccountLoginEvent: can now access login parameters to add eg. custom error messages
+
+Added quests:
+- Time for Some Grub
+- Captain Cluck
+- Chaos from Above
+- Bouquet of Bells
+- Washed Up
+- Hat's Day Out
+- Glass Eye Gone
+- Snowbold Warfare
 
 Note that a lot of this update is related to the technical side of the server software, apologies for the complicated stuff in the changelog.

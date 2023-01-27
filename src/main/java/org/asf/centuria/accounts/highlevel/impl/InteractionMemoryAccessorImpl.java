@@ -155,24 +155,21 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 		}
 		return 0;
 	}
-	
+
 	@Override
-	public void resetHarvestCount(int levelID, String itemID)
-	{
+	public void resetHarvestCount(int levelID, String itemID) {
 		// Check level existence
 		if (inventory.getAccessor().hasInventoryObject("304", levelID)) {
-
 			// Check item
 			JsonObject container = resourceContainerJson(levelID, "SocialExpanseInteractable", "interactions");
 			if (container.has(itemID)) {
 				// update harvest count
 				var obj = container.get(itemID).getAsJsonObject();
-				
-				if(obj.has("numHarvests"))
-				{
+
+				if (obj.has("numHarvests")) {
 					obj.remove("numHarvests");
 				}
-				
+
 				obj.addProperty("numHarvests", 0);
 			}
 

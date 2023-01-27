@@ -22,6 +22,7 @@ import org.asf.centuria.interactions.modules.ShopkeeperModule;
 import org.asf.centuria.interactions.modules.linearobjects.LinearObjectHandler;
 import org.asf.centuria.interactions.modules.linearobjects.LockpickItemModule;
 import org.asf.centuria.packets.xt.gameserver.quests.QuestCommandPacket;
+import org.asf.centuria.packets.xt.gameserver.quests.QuestCommandVTPacket;
 import org.asf.centuria.util.RandomSelectorUtil;
 
 public class InteractionManager {
@@ -309,7 +310,6 @@ public class InteractionManager {
 			NetworkedObject object, StateInfo parent) {
 		// Handle branch commands
 		if (branches.containsKey(id)) {
-			HashMap<String, Object> memory = new HashMap<String, Object>();
 			var states = branches.get(id);
 			plr.stateObjects.put(target, states);
 			for (StateInfo state : states) {
@@ -324,16 +324,24 @@ public class InteractionManager {
 					// Check state
 					NetworkedObject obj = NetworkedObjects.getObject(t);
 
-					// Ignore the ugly patch for nucrystal life i cannot get it to work any other
-					// way
-					if (obj.stateInfo.containsKey(state.params[0])
-							|| (obj.primaryObjectInfo != null && obj.primaryObjectInfo.type == 7
-									&& QuestManager.getActiveQuest(plr.account).equals("4487"))) {
-						if (obj.stateInfo.containsKey(state.params[0]))
-							plr.states.put(t, Integer.parseInt(state.params[0]));
+					// Check validity
+					if (obj.stateInfo.containsKey(state.params[0])) {
+						plr.states.put(t, Integer.parseInt(state.params[0]));
 
 						// Build quest command
 						QuestCommandPacket packet = new QuestCommandPacket();
+						packet.id = state.actorId;
+						packet.type = 1;
+						// Parameters
+						for (String param : state.params)
+							packet.params.add(param);
+						plr.client.sendPacket(packet);
+					} else if (obj.primaryObjectInfo.type == 7) {
+						// Counter variable
+						plr.states.put(t, Integer.parseInt(state.params[0]));
+
+						// Build quest command
+						QuestCommandVTPacket packet = new QuestCommandVTPacket();
 						packet.id = state.actorId;
 						packet.type = 1;
 						// Parameters
@@ -374,6 +382,39 @@ public class InteractionManager {
 
 					break;
 				}
+				case "13": {
+					// Run other states and decrease counter
+					String t = target;
+					if (!state.actorId.equals("0"))
+						t = state.actorId;
+
+					// Find target
+					NetworkedObject obj = NetworkedObjects.getObject(t);
+
+					// Check counter
+					if (obj.primaryObjectInfo.type == 7) {
+						if (plr.states.getOrDefault(t, 0) > 0) {
+							Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+									"Running command: 13 (decrease counter): " + (plr.states.get(t) - 1));
+							plr.states.put(t, plr.states.get(t) - 1);
+							QuestCommandVTPacket pkt = new QuestCommandVTPacket();
+							pkt.id = t;
+							pkt.type = 1;
+							pkt.params.add(plr.states.get(t).toString());
+							plr.client.sendPacket(pkt);
+							if (plr.states.getOrDefault(t, 0) > 0)
+								break;
+						}
+					}
+
+					// Find state
+					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+							"Running command: 13 (run states): " + state.params[0]);
+					if (obj.stateInfo.containsKey(state.params[0]))
+						runBranches(plr, obj.stateInfo, state.params[0], t, obj, state);
+
+					break;
+				}
 				case "26": {
 					// Run states (branch-level elevation)
 					String t = target;
@@ -383,6 +424,22 @@ public class InteractionManager {
 							"Running command: 26 (RUN STATES), actor: " + t + ", state: " + state.params[0]);
 					NetworkedObject obj = NetworkedObjects.getObject(t);
 					runBranches(plr, obj.stateInfo, state.params[0], t, obj, state);
+					break;
+				}
+				case "52": {
+					// Set state and run branches???
+					// I fr expect this implementation to come back and bite me in the future
+					// But i cant figure this quest command out
+					String t = target;
+					if (!state.actorId.equals("0"))
+						t = state.actorId;
+
+					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+							"Running command: 52 (SET STATE AND RUN BRANCHES), actor: " + t + ", state: "
+									+ state.params[0]);
+					plr.states.put(t, Integer.parseInt(state.params[0]));
+					for (String branch : state.branches.keySet())
+						runBranches(plr, state.branches, branch, target, object, state);
 					break;
 				}
 				case "29": {
@@ -418,7 +475,7 @@ public class InteractionManager {
 					boolean warn = true;
 					for (InteractionModule mod : modules) {
 						// Run interaction
-						if (mod.handleCommand(plr, target, object, state, parent, memory)) {
+						if (mod.handleCommand(plr, target, object, state, parent)) {
 							warn = false;
 							break;
 						}
@@ -458,7 +515,6 @@ public class InteractionManager {
 	 * @param target Interaction ID
 	 */
 	public static void runStates(ArrayList<StateInfo> states, Player plr, NetworkedObject object, String target) {
-		HashMap<String, Object> memory = new HashMap<String, Object>();
 		for (StateInfo state : states) {
 			// Log commands
 			String args = "";
@@ -481,15 +537,25 @@ public class InteractionManager {
 						"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
 				// Check state
 				NetworkedObject obj = NetworkedObjects.getObject(t);
-				// Ignore the ugly patch for nucrystal life i cannot get it to work any other way
-				if (obj.stateInfo.containsKey(state.params[0])
-						|| (obj.primaryObjectInfo != null && obj.primaryObjectInfo.type == 7
-								&& QuestManager.getActiveQuest(plr.account).equals("4487"))) {
-					if (obj.stateInfo.containsKey(state.params[0]))
-						plr.states.put(t, Integer.parseInt(state.params[0]));
+
+				// Check validity
+				if (obj.stateInfo.containsKey(state.params[0])) {
+					plr.states.put(t, Integer.parseInt(state.params[0]));
 
 					// Build quest command
 					QuestCommandPacket packet = new QuestCommandPacket();
+					packet.id = state.actorId;
+					packet.type = 1;
+					// Parameters
+					for (String param : state.params)
+						packet.params.add(param);
+					plr.client.sendPacket(packet);
+				} else if (obj.primaryObjectInfo.type == 7) {
+					// Counter variable
+					plr.states.put(t, Integer.parseInt(state.params[0]));
+
+					// Build quest command
+					QuestCommandVTPacket packet = new QuestCommandVTPacket();
 					packet.id = state.actorId;
 					packet.type = 1;
 					// Parameters
@@ -517,27 +583,41 @@ public class InteractionManager {
 					pk.writeString(param);
 				pk.writeString(""); // Data suffix
 				plr.client.sendPacket(pk.encode());
+				Centuria.logger.debug("QCMD sent: " + pk.encode());
 				break;
 			case "41":
 				// Not allowed
 				break;
 			case "13": {
-				// Run other states (MIGHT BE BUGGY)
-				Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-						"Running command: 13 (run states): " + state.params[0]);
+				// Run other states and decrease counter
 				String t = target;
 				if (!state.actorId.equals("0"))
 					t = state.actorId;
-				Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-						"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
 
 				// Find target
 				NetworkedObject obj = NetworkedObjects.getObject(t);
 
-				// Find state
-				if (obj.stateInfo.containsKey(state.params[0])) {
-					runStates(obj.stateInfo.get(state.params[0]), plr, obj, t);
+				// Check counter
+				if (obj.primaryObjectInfo.type == 7) {
+					if (plr.states.getOrDefault(t, 0) > 0) {
+						Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+								"Running command: 13 (decrease counter): " + (plr.states.get(t) - 1));
+						plr.states.put(t, plr.states.get(t) - 1);
+						QuestCommandVTPacket pkt = new QuestCommandVTPacket();
+						pkt.id = t;
+						pkt.type = 1;
+						pkt.params.add(plr.states.get(t).toString());
+						plr.client.sendPacket(pkt);
+						if (plr.states.getOrDefault(t, 0) > 0)
+							break;
+					}
 				}
+
+				// Find state
+				Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+						"Running command: 13 (run states): " + state.params[0]);
+				if (obj.stateInfo.containsKey(state.params[0]))
+					runStates(obj.stateInfo.get(state.params[0]), plr, obj, t);
 
 				break;
 			}
@@ -592,7 +672,7 @@ public class InteractionManager {
 				boolean warn = true;
 				for (InteractionModule mod : modules) {
 					// Run interaction
-					if (mod.handleCommand(plr, target, object, state, null, memory)) {
+					if (mod.handleCommand(plr, target, object, state, null)) {
 						warn = false;
 						break;
 					}

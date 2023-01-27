@@ -368,5 +368,77 @@
 				"type:filler"
 			]
 		}
+	],
+	"14157": [
+		{
+			"__NOTE__": "Quest: Time for Some Grub",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"14156": [
+		{
+			"__NOTE__": "Quest: Captain Cluck",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
+	],
+	"13747":  [
+		{
+			"__NOTE__": "Quest: Chaos from Above",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"14019":  [
+		{
+			"__NOTE__": "Quest: Bouquet of Bells",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"13076": [
+		{
+			"__NOTE__": "Quest: Washed Up",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
+	],
+	"14196": [
+		{
+			"__NOTE__": "Quest: Hat's Day Out",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"14037": [
+		{
+			"__NOTE__": "Quest: Glass Eye Gone",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:filler"
+			]
+		}
+	],
+	"13988": [
+		{
+			"__NOTE__": "Quest: Snowbold Warfare",
+			"event": "levelevents.quests",
+			"tags": [
+				"type:lore"
+			]
+		}
 	]
 }

@@ -203,6 +203,12 @@ public class GameServer extends BaseSmartfoxServer {
 				.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
 				.getAsJsonObject();
 
+		// Verify access
+		if (!payload.has("acs") || !payload.get("acs").getAsString().equals("gameplay")) {
+			client.disconnect();
+			return;
+		}
+
 		// Locate account
 		CenturiaAccount acc = AccountManager.getInstance().getAccount(payload.get("uuid").getAsString());
 		if (acc == null) {
