@@ -1,11 +1,11 @@
 Changes in 1.5.3.B1:
-- Changed the way authentication worked slightly, its a bit more secure and now allows for players to remain logged in via refresh tokens while preventing non-gameplay tokens from being used to log into the server
+- Changed the way authentication worked slightly, its a bit more secure and now allows for players to remain logged in
 - Switched gamemode configurations to user data so that it will be possible to have experience and creative on the same server
 - Made it that items that have a quantity tag can be given infinitely via giveitem
 - Fixed the admin giveitem command not using the quantity argument
 - Added trade security for multi-gamemode servers: trade lock ID in savesettings allows blocking of cross-mode trading
 - Overhauled player data to support mode switching
-- Added a moderator command to remove items (for those stuck with too much of a item, you can contact staff now)
+- Added a moderator command to remove items
 - Nerfed XP rewards
 - Fix log typo
 
