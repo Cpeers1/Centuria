@@ -207,6 +207,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 			loginName = username;
 			Files.writeString(new File("accounts/" + userUUID).toPath(),
 					userUUID + "\n" + loginName + "\n" + isNew + "\n" + displayName + "\n" + userID);
+			return true;
 		} catch (IOException e) {
 		}
 
