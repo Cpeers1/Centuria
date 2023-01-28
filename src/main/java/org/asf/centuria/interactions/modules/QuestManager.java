@@ -259,6 +259,20 @@ public class QuestManager extends InteractionModule {
 					|| (player.levelID == 9687 && quest.questLocation == 1)
 					|| (player.levelID == 2364 && quest.questLocation == 2)
 					|| (player.levelID == 25280 && quest.questLocation == -1)) {
+				if (player.levelID == 25280) {
+					// Tutorial
+					// Check if its a queenstone
+					if (object.primaryObjectInfo != null && object.primaryObjectInfo.type == 31
+							&& object.subObjectInfo != null && object.subObjectInfo.defId == 3432) {
+						// Ignore unless there have been 3 harvests
+						int harvested = player.account.getSaveSpecificInventory().getInteractionMemory()
+								.getLastHarvestCount(player.levelID, id);
+						if (harvested + 1 < 3) {
+							return false;
+						}
+					}
+				}
+
 				// Check if its a npc and if the quest is locked
 				if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
 					// Inform the user

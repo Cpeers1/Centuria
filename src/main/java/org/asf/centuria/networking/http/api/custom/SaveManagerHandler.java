@@ -150,6 +150,7 @@ public class SaveManagerHandler extends HttpUploadProcessor {
 				}
 				response.addProperty("status", "success");
 				response.addProperty("active", acc.getSaveManager().getCurrentActiveSave());
+				acc.kickDirect("SYSTEM", "Save data switched");
 				break;
 			}
 			case "getactive": {

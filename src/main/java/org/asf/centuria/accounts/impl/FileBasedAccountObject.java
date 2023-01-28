@@ -293,6 +293,18 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 	@Override
 	public String getActiveLook() {
+		if (getSaveMode() == SaveMode.MANAGED) {
+			JsonObject looks = new JsonObject();
+			if (mainInv.containsItem("activelooks"))
+				looks = mainInv.getItem("activelooks").getAsJsonObject();
+			else {
+				looks.addProperty("activeLook", UUID.randomUUID().toString());
+				looks.addProperty("activeSanctuaryLook", UUID.randomUUID().toString());
+				mainInv.setItem("activelooks", looks);
+			}
+			return looks.get("activeLook").getAsString();
+		}
+
 		// Looks
 		File lookFiles = new File("accounts/" + userUUID + ".looks");
 		lookFiles.mkdirs();
@@ -314,6 +326,18 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 	@Override
 	public String getActiveSanctuaryLook() {
+		if (getSaveMode() == SaveMode.MANAGED) {
+			JsonObject looks = new JsonObject();
+			if (mainInv.containsItem("activelooks"))
+				looks = mainInv.getItem("activelooks").getAsJsonObject();
+			else {
+				looks.addProperty("activeLook", UUID.randomUUID().toString());
+				looks.addProperty("activeSanctuaryLook", UUID.randomUUID().toString());
+				mainInv.setItem("activelooks", looks);
+			}
+			return looks.get("activeSanctuaryLook").getAsString();
+		}
+
 		// Sanctuary looks
 		File sLookFiles = new File("accounts/" + userUUID + ".sanctuary.looks");
 		sLookFiles.mkdirs();
@@ -335,6 +359,17 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 	@Override
 	public void setActiveLook(String lookID) {
+		if (getSaveMode() == SaveMode.MANAGED) {
+			JsonObject looks = new JsonObject();
+			if (mainInv.containsItem("activelooks"))
+				looks = mainInv.getItem("activelooks").getAsJsonObject();
+			else {
+				looks.addProperty("activeSanctuaryLook", UUID.randomUUID().toString());
+			}
+			looks.addProperty("activeLook", lookID);
+			mainInv.setItem("activelooks", looks);
+			return;
+		}
 		try {
 			File activeLookFileC = new File("accounts/" + userUUID + ".looks/active.look");
 			Files.writeString(activeLookFileC.toPath(), lookID);
@@ -344,6 +379,17 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 	@Override
 	public void setActiveSanctuaryLook(String lookID) {
+		if (getSaveMode() == SaveMode.MANAGED) {
+			JsonObject looks = new JsonObject();
+			if (mainInv.containsItem("activelooks"))
+				looks = mainInv.getItem("activelooks").getAsJsonObject();
+			else {
+				looks.addProperty("activeLook", UUID.randomUUID().toString());
+			}
+			looks.addProperty("activeSanctuaryLook", lookID);
+			mainInv.setItem("activelooks", looks);
+			return;
+		}
 		try {
 			File activeSLookFileC = new File("accounts/" + userUUID + ".sanctuary.looks/active.look");
 			Files.writeString(activeSLookFileC.toPath(), lookID);
@@ -535,6 +581,10 @@ public class FileBasedAccountObject extends CenturiaAccount {
 		Centuria.logger.info("Account save migration started: " + getAccountID() + ", login name: " + getLoginName()
 				+ ", display name: " + getDisplayName());
 
+		// Get looks
+		String sancLook = getActiveSanctuaryLook();
+		String look = getActiveLook();
+
 		// Migrate all data
 		// This... will be very tricky
 		// First create a save manifest
@@ -613,6 +663,10 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 		// Switch over the inventory container
 		mainInv = new FileBasedPlayerInventory(userUUID, manager.getCurrentActiveSave());
+
+		// Set active looks
+		setActiveLook(look);
+		setActiveSanctuaryLook(sancLook);
 
 		// Log
 		Centuria.logger.info("Account save migration finished: " + getAccountID() + ", login name: " + getLoginName()

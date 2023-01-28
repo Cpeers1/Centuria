@@ -85,7 +85,7 @@ import com.google.gson.JsonObject;
 
 public class Centuria {
 	// Update
-	public static final String SERVER_UPDATE_VERSION = "1.5.3.B1";
+	public static final String SERVER_UPDATE_VERSION = "1.5.4.B1";
 	public static final String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/centuria";
 
 	// Configuration
@@ -142,7 +142,7 @@ public class Centuria {
 		System.out.println("                              Centuria                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                          Version 1.5.3.B1                          "); // not doing this
+		System.out.println("                          Version 1.5.4.B1                          "); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain
@@ -352,8 +352,9 @@ public class Centuria {
 		}
 		for (Player plr : Centuria.gameServer.getPlayers()) {
 			// Dispatch event
-			EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account, "Server has been shut down.", DisconnectType.SERVER_SHUTDOWN));
-			
+			EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account, "Server has been shut down.",
+					DisconnectType.SERVER_SHUTDOWN));
+
 			plr.client.disconnect();
 		}
 
