@@ -52,6 +52,7 @@ public class UserTutorialCompletedPacket implements IXtPacket<UserTutorialComple
 
 		// Save look file to look database
 		plr.activeLook = plr.pendingLookID;
+		plr.account.setActiveLook(plr.activeLook);
 
 		// Mark tutorial as finished
 		plr.account.finishedTutorial();

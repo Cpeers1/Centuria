@@ -70,6 +70,7 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 
 			// Save look file to look database
 			plr.activeLook = lookID;
+			plr.account.setActiveLook(plr.activeLook);
 
 			// Save avatar to inventory
 			JsonArray items = plr.account.getSaveSpecificInventory().getItem("avatars").getAsJsonArray();
