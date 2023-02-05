@@ -7,21 +7,36 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.enums.minigames.CodeColor;
 import org.asf.centuria.minigames.AbstractMinigame;
 import org.asf.centuria.minigames.MinigameMessage;
+import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameCurrencyPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigamePrizePacket;
+import org.asf.centuria.util.CombinationSum;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 public class GameDoOrDye extends AbstractMinigame {
 
     public int level;
     public ArrayList<CodeColor> solution = new ArrayList<>();
     public ArrayList<CodeColor> dyesOnScreen = new ArrayList<>();
+    public ArrayList<CodeColor> availableDyes = new ArrayList<>();
+    public int startingIngredientCount;
     public int scorePerIngredient;
-    public boolean multipleGuesses = false;
+    public boolean multipleGuesses;
 
     
     @Override
@@ -45,50 +60,66 @@ public class GameDoOrDye extends AbstractMinigame {
 		//Deserialize
         level = rd.readInt();
 
-        ArrayList<CodeColor> availableDyes = new ArrayList<>();
-        int startingIngredientCount = 0;
+        //reset
+        availableDyes.clear();
         solution.clear();
-
-        switch (level+1){
-            case 1:
-                Collections.addAll(solution, CodeColor.Cyan, CodeColor.Red);
-                Collections.addAll(availableDyes, CodeColor.Cyan, CodeColor.Red);
-                startingIngredientCount = 12;
-                scorePerIngredient = 7;
-                break;
-            case 2:
-                Collections.addAll(solution, CodeColor.Purple, CodeColor.Red);
-                Collections.addAll(availableDyes, CodeColor.Purple, CodeColor.Red);
-                startingIngredientCount = 5;
-                scorePerIngredient = 10;
-                break;
-            case 3:
-                Collections.addAll(solution, CodeColor.Red, CodeColor.Yellow);
-                Collections.addAll(availableDyes, CodeColor.Red, CodeColor.Yellow, CodeColor.Purple);
-                startingIngredientCount = 9;
-                scorePerIngredient = 6;
-                break;
-            case 4:
-                Collections.addAll(solution, CodeColor.Green, CodeColor.Brown);
-                Collections.addAll(availableDyes, CodeColor.Green, CodeColor.Brown);
-                startingIngredientCount = 4;
-                scorePerIngredient = 8;
-                break;
-            case 5:
-                Collections.addAll(solution, CodeColor.Cyan, CodeColor.Purple, CodeColor.Brown);
-                Collections.addAll(availableDyes, CodeColor.Cyan, CodeColor.Purple, CodeColor.Brown);
-                startingIngredientCount = 12;
-                scorePerIngredient = 7;
-                break;
-        }
-
         dyesOnScreen.clear();
+        multipleGuesses = false;
+        
+        //load level def from json
+        try {
+            InputStream strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("dod_levels.json");
+			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonArray().get(level).getAsJsonObject();
+            strm.close();
+
+            int codeLength = helper.get("codeLength").getAsInt();
+            int colors = helper.get("colors").getAsInt();
+            boolean allowRepeatColors = helper.get("allowRepeatColors").getAsBoolean();
+            startingIngredientCount = helper.get("startingIngredientCount").getAsInt();
+            scorePerIngredient = helper.get("scorePerIngredient").getAsInt();
+
+            //load available dyes from sum
+            int[] arr = {1,2,4,8,16,32,64,128,256};
+            List<List<Integer>> result = new ArrayList<>(); 
+            result = CombinationSum.Sum(arr, colors);
+            List<Integer> finalResult = result.get(0);
+
+            for(int i=0; i < finalResult.size(); i++) {
+                CodeColor color = CodeColor.valueOf(finalResult.get(i));
+                availableDyes.add(color);
+            }
+
+            //generate solution
+            if (allowRepeatColors){
+                for (int i = 0; i < codeLength; i++) {
+                    int index = (int)(Math.random() * codeLength);
+                    solution.add(availableDyes.get(index));
+                }
+            }
+            else{
+                ArrayList<CodeColor> used = new ArrayList<CodeColor>();
+                while (solution.size() < codeLength) {
+                    int index = (int)(Math.random() * codeLength);
+                    if (used.contains(availableDyes.get(index)) == false){
+                        solution.add(availableDyes.get(index));
+                        used.add(availableDyes.get(index));
+                    }
+                }
+            }
+        }
+        catch (IOException e){
+        }
+        
+        //add to screen
         for (int i = 0; i < availableDyes.size(); i++) {
             for (int y = 0; y < startingIngredientCount; y++) {
                 dyesOnScreen.add(availableDyes.get(i));
             }
         }
-        Centuria.logger.info(dyesOnScreen.toString());
+        
+        Centuria.logger.debug("on screen "+ dyesOnScreen.toString());
+        Centuria.logger.debug("solution "+ solution.toString());
+        
 
         MinigameMessagePacket msg = new MinigameMessagePacket();
 		msg.command = "startLevel";
@@ -107,7 +138,7 @@ public class GameDoOrDye extends AbstractMinigame {
             CodeColor color = CodeColor.valueOf(rd.readInt());
             sequence.add(color);
         }
-        Centuria.logger.info("time:" + levelTimer + " code:" + sequence.toString());
+        Centuria.logger.debug("time:" + levelTimer + " code:" + sequence.toString());
 
         //Handle
 
@@ -136,9 +167,6 @@ public class GameDoOrDye extends AbstractMinigame {
         if (!dyesOnScreen.containsAll(solution)){
             lose = true;
         }
-        if (!win & !lose){
-            multipleGuesses = true;
-        }
 
         //Send hint
         XtWriter wr = new XtWriter();
@@ -149,14 +177,24 @@ public class GameDoOrDye extends AbstractMinigame {
         pk.data = wr.encode().substring(4);
         plr.client.sendPacket(pk);
 
-        Centuria.logger.info("CorrectPositions:" + correctPositons + " WrongPositions:" + wrongPositions);
-        Centuria.logger.info(dyesOnScreen.toString());
+        Centuria.logger.debug("CorrectPositions:" + correctPositons + " WrongPositions:" + wrongPositions);
+        Centuria.logger.debug(dyesOnScreen.toString());
+        
+        if (lose & !win) {
+            XtWriter wr2 = new XtWriter();
+            wr2.writeInt(solution.size()); // length
+            solution.forEach((n) -> wr2.writeInt(n.getValue())); //code
+
+            MinigameMessagePacket pk2 = new MinigameMessagePacket();
+            pk2.command = "endLevelLose";
+            pk2.data = wr2.encode().substring(4);
+            plr.client.sendPacket(pk2);
+        }
         
         if (win){
             //Calculate score
             int ingredientScore = dyesOnScreen.size() * scorePerIngredient;
             int firstGuessBonus = multipleGuesses ? 0 : 100;
-            int totalScore = ingredientScore + firstGuessBonus;
             
             //Save progress (broken)
             // String data = "%xt%zs%9101%" + level + "%" + totalScore + "%";
@@ -174,15 +212,8 @@ public class GameDoOrDye extends AbstractMinigame {
             plr.client.sendPacket(pk1);
         }
 
-        if (lose) {
-            XtWriter wr2 = new XtWriter();
-            wr2.writeInt(solution.size()); // length
-            solution.forEach((n) -> wr2.writeInt(n.getValue())); //code
-
-            MinigameMessagePacket pk2 = new MinigameMessagePacket();
-            pk2.command = "endLevelLose";
-            pk2.data = wr2.encode().substring(4);
-            plr.client.sendPacket(pk2);
+        if (!lose & !win){
+            multipleGuesses = true;
         }
         
     }
@@ -191,5 +222,8 @@ public class GameDoOrDye extends AbstractMinigame {
 	public AbstractMinigame instantiate() {
 		return new GameDoOrDye();
 	}
+    
+    
+
 
 }
