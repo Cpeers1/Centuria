@@ -408,7 +408,12 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 
-			return userVarComponent.getUserVarValue(index);
+			try{
+				return userVarComponent.getUserVarValue(index);
+			}
+			catch (IndexOutOfBoundsException e){
+				return null;
+			}
 		} catch (Exception exception) {
 			throw new RuntimeException(exception);
 		}

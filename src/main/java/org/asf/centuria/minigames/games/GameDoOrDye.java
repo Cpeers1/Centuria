@@ -1,32 +1,26 @@
 package org.asf.centuria.minigames.games;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.enums.minigames.CodeColor;
 import org.asf.centuria.minigames.AbstractMinigame;
 import org.asf.centuria.minigames.MinigameMessage;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameCurrencyPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
-import org.asf.centuria.packets.xt.gameserver.minigame.MinigamePrizePacket;
 import org.asf.centuria.util.CombinationSum;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 
 public class GameDoOrDye extends AbstractMinigame {
 
@@ -68,7 +62,7 @@ public class GameDoOrDye extends AbstractMinigame {
         
         //load level def from json
         try {
-            InputStream strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("dod_levels.json");
+            InputStream strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("minigames/dod_levels.json");
 			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonArray().get(level).getAsJsonObject();
             strm.close();
 
@@ -106,6 +100,7 @@ public class GameDoOrDye extends AbstractMinigame {
                     }
                 }
             }
+            Centuria.logger.debug("solution: " + solution);
         }
         catch (IOException e){
         }
@@ -149,19 +144,28 @@ public class GameDoOrDye extends AbstractMinigame {
             }
         }
         
-        //Get correct and wrong positions
+        //Right ingredient right order
         int correctPositons = 0;
         for(int i = 0; i < sequence.size(); i++) {
             if (sequence.get(i).equals(solution.get(i))){
                 correctPositons++;
             }
         }
-        int wrongPositions = sequence.size() - correctPositons;
+
+        //Right ingredient wrong order
+        int wrongPositions = 0;
+        for(int i = 0; i < sequence.size(); i++) {
+            if (!(sequence.get(i).equals(solution.get(i))) && solution.contains(sequence.get(i))){
+                wrongPositions++;
+            }
+        }
+
         //Check if win
         boolean win = false;
-        if (wrongPositions == 0){
+        if (sequence.equals(solution)){
             win = true;
         }
+
         //Check if lose
         boolean lose = false;
         if (!dyesOnScreen.containsAll(solution)){
@@ -192,18 +196,41 @@ public class GameDoOrDye extends AbstractMinigame {
         }
         
         if (win){
+            // Unlock level
+            UserVarValue unlock = plr.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(9100, 0);
+            int value = 0;
+            if (unlock != null){
+                value = unlock.value;
+            }
+            if (level > value) {
+                plr.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(9100, 0, level);
+		    }
+            
             //Calculate score
             int ingredientScore = dyesOnScreen.size() * scorePerIngredient;
             int firstGuessBonus = multipleGuesses ? 0 : 100;
+            int lastIngredientBonus = lose ? 100 : 0;
+            int totalScore = ingredientScore + firstGuessBonus + lastIngredientBonus;
             
-            //Save progress (broken)
-            // String data = "%xt%zs%9101%" + level + "%" + totalScore + "%";
-		    // plr.client.getServer().handlePacket(data, plr.client);
+            //Save score
+            UserVarValue var = plr.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(9101, level);
+            int value2 = 0;
+            if (var != null){
+                value2 = var.value;
+            }
+            if (totalScore > value2) {
+                plr.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(9101, level, totalScore);
+		    }
+            // Update client
+            InventoryItemPacket pkt = new InventoryItemPacket();
+            pkt.item = plr.account.getSaveSpecificInventory().getItem("303");
+            plr.client.sendPacket(pkt);
             
+            //Send win
             XtWriter wr1 = new XtWriter();
             wr1.writeInt(ingredientScore); // IngredientScore
             wr1.writeInt(0); // TimeScore
-            wr1.writeInt(0); // LastIngredientBonus
+            wr1.writeInt(lastIngredientBonus); // LastIngredientBonus
             wr1.writeInt(firstGuessBonus); //firstGuessBonus
             wr1.writeString("null"); //?
             MinigameMessagePacket pk1 = new MinigameMessagePacket();
