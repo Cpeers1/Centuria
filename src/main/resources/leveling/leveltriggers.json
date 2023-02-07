@@ -4,6 +4,11 @@
 			"xp": 8
 		}
 	],
+	"levelevents.minigames.doordye": [
+		{
+			"xp": 10
+		}
+	],
 	"levelevents.harvest": [
 		{
 			"xp": 10,

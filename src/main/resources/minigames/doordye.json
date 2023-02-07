@@ -1,5176 +1,2404 @@
-[
-		{
-			"name": "Level 1",
-			"codeLength": 2,
-			"colors": 65,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 12,
-			"scorePerIngredient": 7,
-			"timerScoreThresholds": [
-				{
-					"seconds": 6,
-					"pointsPerSecond": 8
-				},
-				{
-					"seconds": 10,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 18,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 25,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 14,
-			"twoStarScore": 135,
-			"threeStarScore": 150
-		},
-		{
-			"name": "Level 2",
-			"codeLength": 2,
-			"colors": 33,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 5,
-			"scorePerIngredient": 10,
-			"timerScoreThresholds": [
-				{
-					"seconds": 10,
-					"pointsPerSecond": 10
-				},
-				{
-					"seconds": 15,
-					"pointsPerSecond": 9
-				},
-				{
-					"seconds": 20,
-					"pointsPerSecond": 8
-				},
-				{
-					"seconds": 25,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 32,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 35,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 20,
-			"twoStarScore": 145,
-			"threeStarScore": 160
-		},
-		{
-			"name": "Level 3",
-			"codeLength": 2,
-			"colors": 35,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 9,
-			"scorePerIngredient": 6,
-			"timerScoreThresholds": [
-				{
-					"seconds": 8,
-					"pointsPerSecond": 12
-				},
-				{
-					"seconds": 15,
-					"pointsPerSecond": 9
-				},
-				{
-					"seconds": 23,
-					"pointsPerSecond": 8
-				},
-				{
-					"seconds": 35,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 2
-				}
-			],
-			"oneStarScore": 12,
-			"twoStarScore": 180,
-			"threeStarScore": 250
-		},
-		{
-			"name": "Level 4",
-			"codeLength": 2,
-			"colors": 24,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 4,
-			"scorePerIngredient": 8,
-			"timerScoreThresholds": [
-				{
-					"seconds": 8,
-					"pointsPerSecond": 10
-				},
-				{
-					"seconds": 14,
-					"pointsPerSecond": 9
-				},
-				{
-					"seconds": 20,
-					"pointsPerSecond": 7
-				},
-				{
-					"seconds": 32,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 16,
-			"twoStarScore": 120,
-			"threeStarScore": 140
-		},
-		{
-			"name": "Level 5",
-			"codeLength": 3,
-			"colors": 112,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 12,
-			"scorePerIngredient": 7,
-			"timerScoreThresholds": [
-				{
-					"seconds": 8,
-					"pointsPerSecond": 10
-				},
-				{
-					"seconds": 15,
-					"pointsPerSecond": 9
-				},
-				{
-					"seconds": 22,
-					"pointsPerSecond": 7
-				},
-				{
-					"seconds": 35,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 42,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 21,
-			"twoStarScore": 135,
-			"threeStarScore": 285
-		},
-		{
-			"name": "Level 6",
-			"codeLength": 2,
-			"colors": 5,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 8,
-			"scorePerIngredient": 8,
-			"timerScoreThresholds": [
-				{
-					"seconds": 14,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 20,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 36,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 75,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 180,
-			"threeStarScore": 220
-		},
-		{
-			"name": "Level 7",
-			"codeLength": 3,
-			"colors": 22,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 10,
-			"scorePerIngredient": 8,
-			"timerScoreThresholds": [
-				{
-					"seconds": 12,
-					"pointsPerSecond": 10
-				},
-				{
-					"seconds": 22,
-					"pointsPerSecond": 8
-				},
-				{
-					"seconds": 35,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 42,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 24,
-			"twoStarScore": 125,
-			"threeStarScore": 260
-		},
-		{
-			"name": "Level 8",
-			"codeLength": 2,
-			"colors": 46,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 16,
-			"scorePerIngredient": 6,
-			"timerScoreThresholds": [
-				{
-					"seconds": 14,
-					"pointsPerSecond": 9
-				},
-				{
-					"seconds": 23,
-					"pointsPerSecond": 7
-				},
-				{
-					"seconds": 30,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 42,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 75,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 12,
-			"twoStarScore": 315,
-			"threeStarScore": 420
-		},
-		{
-			"name": "Level 9",
-			"codeLength": 2,
-			"colors": 130,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 7,
-			"scorePerIngredient": 8,
-			"timerScoreThresholds": [
-				{
-					"seconds": 16,
-					"pointsPerSecond": 9
-				},
-				{
-					"seconds": 23,
-					"pointsPerSecond": 8
-				},
-				{
-					"seconds": 32,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 55,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 70,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 180,
-			"threeStarScore": 220
-		},
-		{
-			"name": "Level 10",
-			"codeLength": 3,
-			"colors": 48,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 6,
-			"scorePerIngredient": 8,
-			"timerScoreThresholds": [
-				{
-					"seconds": 18,
-					"pointsPerSecond": 9
-				},
-				{
-					"seconds": 25,
-					"pointsPerSecond": 8
-				},
-				{
-					"seconds": 36,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 90,
-			"threeStarScore": 215
-		},
-		{
-			"name": "Level 11",
-			"codeLength": 2,
-			"colors": 87,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 25,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 18,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 29,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 42,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 55,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 75,
-					"pointsPerSecond": 1
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 10
-				}
-			],
-			"oneStarScore": 6,
-			"twoStarScore": 880,
-			"threeStarScore": 940
-		},
-		{
-			"name": "Level 12",
-			"codeLength": 2,
-			"colors": 180,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 14,
-			"scorePerIngredient": 7,
-			"timerScoreThresholds": [
-				{
-					"seconds": 16,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 28,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 35,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 42,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 55,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 14,
-			"twoStarScore": 380,
-			"threeStarScore": 410
-		},
-		{
-			"name": "Level 13",
-			"codeLength": 2,
-			"colors": 5,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 6,
-			"scorePerIngredient": 8,
-			"timerScoreThresholds": [
-				{
-					"seconds": 16,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 23,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 35,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 135,
-			"threeStarScore": 155
-		},
-		{
-			"name": "Level 14",
-			"codeLength": 2,
-			"colors": 7,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 10,
-			"scorePerIngredient": 8,
-			"timerScoreThresholds": [
-				{
-					"seconds": 16,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 24,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 35,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 48,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 230,
-			"threeStarScore": 310
-		},
-		{
-			"name": "Level 15",
-			"codeLength": 2,
-			"colors": 39,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 12,
-			"scorePerIngredient": 9,
-			"timerScoreThresholds": [
-				{
-					"seconds": 18,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 25,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 30,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 40,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 50,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 9,
-			"twoStarScore": 320,
-			"threeStarScore": 480
-		},
-		{
-			"name": "Level 16",
-			"codeLength": 2,
-			"colors": 55,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 20,
-			"scorePerIngredient": 5,
-			"timerScoreThresholds": [
-				{
-					"seconds": 20,
-					"pointsPerSecond": 7
-				},
-				{
-					"seconds": 32,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 58,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 75,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 10,
-			"twoStarScore": 460,
-			"threeStarScore": 645
-		},
-		{
-			"name": "Level 17",
-			"codeLength": 2,
-			"colors": 200,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 8,
-			"scorePerIngredient": 5,
-			"timerScoreThresholds": [
-				{
-					"seconds": 16,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 23,
-					"pointsPerSecond": 10
-				},
-				{
-					"seconds": 30,
-					"pointsPerSecond": 10
-				},
-				{
-					"seconds": 42,
-					"pointsPerSecond": 10
-				},
-				{
-					"seconds": 50,
-					"pointsPerSecond": 10
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 10,
-			"twoStarScore": 320,
-			"threeStarScore": 420
-		},
-		{
-			"name": "Level 18",
-			"codeLength": 4,
-			"colors": 192,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 20,
-			"scorePerIngredient": 5,
-			"timerScoreThresholds": [
-				{
-					"seconds": 20,
-					"pointsPerSecond": 8
-				},
-				{
-					"seconds": 35,
-					"pointsPerSecond": 7
-				},
-				{
-					"seconds": 48,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 64,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 80,
-					"pointsPerSecond": 1
-				},
-				{
-					"seconds": 80,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 5,
-			"twoStarScore": 215,
-			"threeStarScore": 345
-		},
-		{
-			"name": "Level 19",
-			"codeLength": 2,
-			"colors": 6,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 5,
-			"scorePerIngredient": 6,
-			"timerScoreThresholds": [
-				{
-					"seconds": 16,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 22,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 35,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 42,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 50,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 6,
-			"twoStarScore": 120,
-			"threeStarScore": 170
-		},
-		{
-			"name": "Level 20",
-			"codeLength": 3,
-			"colors": 22,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 6,
-			"scorePerIngredient": 6,
-			"timerScoreThresholds": [
-				{
-					"seconds": 20,
-					"pointsPerSecond": 7
-				},
-				{
-					"seconds": 32,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 53,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 65,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 80,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 18,
-			"twoStarScore": 115,
-			"threeStarScore": 260
-		},
-		{
-			"name": "Level 21",
-			"codeLength": 3,
-			"colors": 54,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 30,
-			"scorePerIngredient": 5,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 8
-				},
-				{
-					"seconds": 58,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 63,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 75,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 85,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 5,
-			"twoStarScore": 430,
-			"threeStarScore": 815
-		},
-		{
-			"name": "Level 22",
-			"codeLength": 4,
-			"colors": 169,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 26,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 48,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 56,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 70,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 16,
-			"twoStarScore": 385,
-			"threeStarScore": 520
-		},
-		{
-			"name": "Level 23",
-			"codeLength": 2,
-			"colors": 31,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 14,
-			"scorePerIngredient": 7,
-			"timerScoreThresholds": [
-				{
-					"seconds": 28,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 37,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 52,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 70,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 14,
-			"twoStarScore": 395,
-			"threeStarScore": 600
-		},
-		{
-			"name": "Level 24",
-			"codeLength": 2,
-			"colors": 34,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 4,
-			"scorePerIngredient": 5,
-			"timerScoreThresholds": [
-				{
-					"seconds": 16,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 22,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 30,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 5,
-			"twoStarScore": 80,
-			"threeStarScore": 150
-		},
-		{
-			"name": "Level 25",
-			"codeLength": 3,
-			"colors": 20,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 9,
-			"scorePerIngredient": 7,
-			"timerScoreThresholds": [
-				{
-					"seconds": 18,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 25,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 32,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 7,
-			"twoStarScore": 105,
-			"threeStarScore": 190
-		},
-		{
-			"name": "Level 26",
-			"codeLength": 2,
-			"colors": 52,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 9,
-			"scorePerIngredient": 7,
-			"timerScoreThresholds": [
-				{
-					"seconds": 16,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 23,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 32,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 7,
-			"twoStarScore": 150,
-			"threeStarScore": 280
-		},
-		{
-			"name": "Level 27",
-			"codeLength": 2,
-			"colors": 107,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 15,
-			"scorePerIngredient": 6,
-			"timerScoreThresholds": [
-				{
-					"seconds": 30,
-					"pointsPerSecond": 7
-				},
-				{
-					"seconds": 42,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 55,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 63,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 75,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 6,
-			"twoStarScore": 380,
-			"threeStarScore": 690
-		},
-		{
-			"name": "Level 28",
-			"codeLength": 3,
-			"colors": 23,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 25,
-			"scorePerIngredient": 6,
-			"timerScoreThresholds": [
-				{
-					"seconds": 32,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 48,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 56,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 70,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 18,
-			"twoStarScore": 550,
-			"threeStarScore": 790
-		},
-		{
-			"name": "Level 29",
-			"codeLength": 4,
-			"colors": 57,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 20,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 7
-				},
-				{
-					"seconds": 65,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 115,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 12,
-			"twoStarScore": 280,
-			"threeStarScore": 710
-		},
-		{
-			"name": "Level 30",
-			"codeLength": 6,
-			"colors": 15,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 70,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 6
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 145,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 175,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 190,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 3,
-			"twoStarScore": 840,
-			"threeStarScore": 1135
-		},
-		{
-			"name": "Level 31",
-			"codeLength": 3,
-			"colors": 146,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 18,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 22,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 35,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 42,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 50,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 220,
-			"threeStarScore": 290
-		},
-		{
-			"name": "Level 32",
-			"codeLength": 3,
-			"colors": 9,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 8,
-			"scorePerIngredient": 5,
-			"timerScoreThresholds": [
-				{
-					"seconds": 14,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 25,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 32,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 40,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 5,
-			"twoStarScore": 125,
-			"threeStarScore": 150
-		},
-		{
-			"name": "Level 33",
-			"codeLength": 2,
-			"colors": 63,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 16,
-			"scorePerIngredient": 5,
-			"timerScoreThresholds": [
-				{
-					"seconds": 22,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 30,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 38,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 80,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 10,
-			"twoStarScore": 435,
-			"threeStarScore": 510
-		},
-		{
-			"name": "Level 34",
-			"codeLength": 2,
-			"colors": 191,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 20,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 25,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 32,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 490,
-			"threeStarScore": 595
-		},
-		{
-			"name": "Level 35",
-			"codeLength": 3,
-			"colors": 50,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 5,
-			"scorePerIngredient": 5,
-			"timerScoreThresholds": [
-				{
-					"seconds": 16,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 25,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 33,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 46,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 15,
-			"twoStarScore": 90,
-			"threeStarScore": 145
-		},
-		{
-			"name": "Level 36",
-			"codeLength": 5,
-			"colors": 5,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 25,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 25,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 36,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 85,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 3,
-			"twoStarScore": 145,
-			"threeStarScore": 230
-		},
-		{
-			"name": "Level 37",
-			"codeLength": 4,
-			"colors": 18,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 18,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 23,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 35,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 42,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 54,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 75,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 120,
-			"threeStarScore": 210
-		},
-		{
-			"name": "Level 38",
-			"codeLength": 2,
-			"colors": 126,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 18,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 18,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 25,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 36,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 48,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 375,
-			"threeStarScore": 460
-		},
-		{
-			"name": "Level 39",
-			"codeLength": 2,
-			"colors": 254,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 18,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 72,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 95,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 145,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 550,
-			"threeStarScore": 760
-		},
-		{
-			"name": "Level 40",
-			"codeLength": 6,
-			"colors": 255,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 60,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 90,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 210,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 300,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 24,
-			"twoStarScore": 1550,
-			"threeStarScore": 2200
-		},
-		{
-			"name": "Level 41",
-			"codeLength": 2,
-			"colors": 7,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 6,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 14,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 25,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 36,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 6,
-			"twoStarScore": 90,
-			"threeStarScore": 135
-		},
-		{
-			"name": "Level 42",
-			"codeLength": 3,
-			"colors": 88,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 4,
-			"scorePerIngredient": 5,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 150,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 15,
-			"twoStarScore": 240,
-			"threeStarScore": 510
-		},
-		{
-			"name": "Level 43",
-			"codeLength": 2,
-			"colors": 255,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 20,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 35,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 115,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 640,
-			"threeStarScore": 920
-		},
-		{
-			"name": "Level 44",
-			"codeLength": 3,
-			"colors": 116,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 20,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 150,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 415,
-			"threeStarScore": 680
-		},
-		{
-			"name": "Level 45",
-			"codeLength": 2,
-			"colors": 255,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 25,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 35,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 50,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 65,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 720,
-			"threeStarScore": 960
-		},
-		{
-			"name": "Level 46",
-			"codeLength": 4,
-			"colors": 80,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 16,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 22,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 52,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 72,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 170,
-			"threeStarScore": 220
-		},
-		{
-			"name": "Level 47",
-			"codeLength": 3,
-			"colors": 42,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 14,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 25,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 32,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 48,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 110,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 220,
-			"threeStarScore": 270
-		},
-		{
-			"name": "Level 48",
-			"codeLength": 3,
-			"colors": 213,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 35,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 62,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 78,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 12,
-			"twoStarScore": 760,
-			"threeStarScore": 890
-		},
-		{
-			"name": "Level 49",
-			"codeLength": 4,
-			"colors": 210,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 18,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 80,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 145,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 12,
-			"twoStarScore": 330,
-			"threeStarScore": 410
-		},
-		{
-			"name": "Level 50",
-			"codeLength": 6,
-			"colors": 160,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 11,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 24,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 36,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 65,
-			"threeStarScore": 175
-		},
-		{
-			"name": "Level 51",
-			"codeLength": 4,
-			"colors": 145,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 30,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 40,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 75,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 110,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 3,
-			"twoStarScore": 310,
-			"threeStarScore": 510
-		},
-		{
-			"name": "Level 52",
-			"codeLength": 3,
-			"colors": 110,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 30,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 22,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 35,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 48,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 3,
-			"twoStarScore": 410,
-			"threeStarScore": 510
-		},
-		{
-			"name": "Level 53",
-			"codeLength": 3,
-			"colors": 126,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 25,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 30,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 80,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 540,
-			"threeStarScore": 780
-		},
-		{
-			"name": "Level 54",
-			"codeLength": 2,
-			"colors": 195,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 8,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 16,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 25,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 33,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 180,
-			"threeStarScore": 260
-		},
-		{
-			"name": "Level 55",
-			"codeLength": 3,
-			"colors": 207,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 35,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 22,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 35,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 55,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 70,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 9,
-			"twoStarScore": 690,
-			"threeStarScore": 785
-		},
-		{
-			"name": "Level 56",
-			"codeLength": 4,
-			"colors": 61,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 40,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 150,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 12,
-			"twoStarScore": 590,
-			"threeStarScore": 870
-		},
-		{
-			"name": "Level 57",
-			"codeLength": 2,
-			"colors": 199,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 13,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 30,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 340,
-			"threeStarScore": 580
-		},
-		{
-			"name": "Level 58",
-			"codeLength": 3,
-			"colors": 7,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 13,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 32,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 80,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 3,
-			"twoStarScore": 130,
-			"threeStarScore": 280
-		},
-		{
-			"name": "Level 59",
-			"codeLength": 2,
-			"colors": 255,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 22,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 25,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 40,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 680,
-			"threeStarScore": 830
-		},
-		{
-			"name": "Level 60",
-			"codeLength": 2,
-			"colors": 248,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 3,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 24,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 38,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 50,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 80,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 105,
-			"threeStarScore": 260
-		},
-		{
-			"name": "Level 61",
-			"codeLength": 3,
-			"colors": 254,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 35,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 9,
-			"twoStarScore": 790,
-			"threeStarScore": 1005
-		},
-		{
-			"name": "Level 62",
-			"codeLength": 2,
-			"colors": 228,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 6,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 25,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 40,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 2
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 110,
-			"threeStarScore": 275
-		},
-		{
-			"name": "Level 63",
-			"codeLength": 3,
-			"colors": 255,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 40,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 25,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 40,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 9,
-			"twoStarScore": 950,
-			"threeStarScore": 1100
-		},
-		{
-			"name": "Level 64",
-			"codeLength": 5,
-			"colors": 52,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 45,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 70,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 3,
-			"twoStarScore": 380,
-			"threeStarScore": 645
-		},
-		{
-			"name": "Level 65",
-			"codeLength": 4,
-			"colors": 15,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 35,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 70,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 730,
-			"threeStarScore": 920
-		},
-		{
-			"name": "Level 66",
-			"codeLength": 4,
-			"colors": 33,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 15,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 35,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 72,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 280,
-			"threeStarScore": 345
-		},
-		{
-			"name": "Level 67",
-			"codeLength": 4,
-			"colors": 125,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 45,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 70,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 200,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 12,
-			"twoStarScore": 790,
-			"threeStarScore": 1050
-		},
-		{
-			"name": "Level 68",
-			"codeLength": 2,
-			"colors": 255,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 16,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 710,
-			"threeStarScore": 990
-		},
-		{
-			"name": "Level 69",
-			"codeLength": 5,
-			"colors": 215,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 50,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 90,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 150,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 260,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 350,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 20,
-			"twoStarScore": 1210,
-			"threeStarScore": 1680
-		},
-		{
-			"name": "Level 70",
-			"codeLength": 3,
-			"colors": 255,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 6,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 75,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 110,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 260,
-			"threeStarScore": 535
-		},
-		{
-			"name": "Level 71",
-			"codeLength": 3,
-			"colors": 127,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 40,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 70,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 105,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 130,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 200,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 1020,
-			"threeStarScore": 1320
-		},
-		{
-			"name": "Level 72",
-			"codeLength": 4,
-			"colors": 61,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 35,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 150,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 710,
-			"threeStarScore": 910
-		},
-		{
-			"name": "Level 73",
-			"codeLength": 2,
-			"colors": 230,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 13,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 22,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 40,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 52,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 360,
-			"threeStarScore": 435
-		},
-		{
-			"name": "Level 74",
-			"codeLength": 5,
-			"colors": 145,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 35,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 150,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 590,
-			"threeStarScore": 710
-		},
-		{
-			"name": "Level 75",
-			"codeLength": 2,
-			"colors": 190,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 12,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 25,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 130,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 395,
-			"threeStarScore": 480
-		},
-		{
-			"name": "Level 76",
-			"codeLength": 6,
-			"colors": 245,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 40,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 80,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 310,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 24,
-			"twoStarScore": 1050,
-			"threeStarScore": 1350
-		},
-		{
-			"name": "Level 77",
-			"codeLength": 4,
-			"colors": 255,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 45,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 55,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 16,
-			"twoStarScore": 1450,
-			"threeStarScore": 1800
-		},
-		{
-			"name": "Level 78",
-			"codeLength": 6,
-			"colors": 176,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 60,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 50,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 125,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 810,
-			"threeStarScore": 975
-		},
-		{
-			"name": "Level 79",
-			"codeLength": 4,
-			"colors": 177,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 30,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 44,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 110,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 710,
-			"threeStarScore": 945
-		},
-		{
-			"name": "Level 80",
-			"codeLength": 6,
-			"colors": 255,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 8,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 130,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 24,
-			"twoStarScore": 190,
-			"threeStarScore": 420
-		},
-		{
-			"name": "Level 81",
-			"codeLength": 3,
-			"colors": 31,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 32,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 25,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 200,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 12,
-			"twoStarScore": 780,
-			"threeStarScore": 1010
-		},
-		{
-			"name": "Level 82",
-			"codeLength": 5,
-			"colors": 247,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 45,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 150,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 20,
-			"twoStarScore": 1260,
-			"threeStarScore": 1385
-		},
-		{
-			"name": "Level 83",
-			"codeLength": 5,
-			"colors": 54,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 40,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 80,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 710,
-			"threeStarScore": 980
-		},
-		{
-			"name": "Level 84",
-			"codeLength": 2,
-			"colors": 126,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 14,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 25,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 40,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 55,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 75,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 380,
-			"threeStarScore": 510
-		},
-		{
-			"name": "Level 85",
-			"codeLength": 4,
-			"colors": 245,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 40,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 70,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 960,
-			"threeStarScore": 1140
-		},
-		{
-			"name": "Level 86",
-			"codeLength": 2,
-			"colors": 255,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 18,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 25,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 65,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 690,
-			"threeStarScore": 810
-		},
-		{
-			"name": "Level 87",
-			"codeLength": 6,
-			"colors": 254,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 50,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 240,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 300,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 24,
-			"twoStarScore": 1360,
-			"threeStarScore": 1580
-		},
-		{
-			"name": "Level 88",
-			"codeLength": 4,
-			"colors": 255,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 35,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 150,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 16,
-			"twoStarScore": 1220,
-			"threeStarScore": 1410
-		},
-		{
-			"name": "Level 89",
-			"codeLength": 2,
-			"colors": 127,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 20,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 20,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 32,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 590,
-			"threeStarScore": 675
-		},
-		{
-			"name": "Level 90",
-			"codeLength": 4,
-			"colors": 54,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 7,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 75,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 200,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 175,
-			"threeStarScore": 420
-		},
-		{
-			"name": "Level 91",
-			"codeLength": 3,
-			"colors": 179,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 40,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 35,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 50,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 80,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 880,
-			"threeStarScore": 1030
-		},
-		{
-			"name": "Level 92",
-			"codeLength": 4,
-			"colors": 191,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 40,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 150,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 1170,
-			"threeStarScore": 1395
-		},
-		{
-			"name": "Level 93",
-			"codeLength": 3,
-			"colors": 255,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 30,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 80,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 102,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 980,
-			"threeStarScore": 1160
-		},
-		{
-			"name": "Level 94",
-			"codeLength": 5,
-			"colors": 118,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 45,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 90,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 220,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 300,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 3,
-			"twoStarScore": 710,
-			"threeStarScore": 1100
-		},
-		{
-			"name": "Level 95",
-			"codeLength": 4,
-			"colors": 245,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 35,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 150,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 16,
-			"twoStarScore": 830,
-			"threeStarScore": 1160
-		},
-		{
-			"name": "Level 96",
-			"codeLength": 6,
-			"colors": 253,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 48,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 120,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 360,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 420,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 18,
-			"twoStarScore": 960,
-			"threeStarScore": 1690
-		},
-		{
-			"name": "Level 97",
-			"codeLength": 5,
-			"colors": 255,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 42,
-			"scorePerIngredient": 2,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 2000,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 200,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 10,
-			"twoStarScore": 1020,
-			"threeStarScore": 2790
-		},
-		{
-			"name": "Level 98",
-			"codeLength": 2,
-			"colors": 254,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 4,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 30,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 135,
-			"threeStarScore": 380
-		},
-		{
-			"name": "Level 99",
-			"codeLength": 4,
-			"colors": 255,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 40,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 210,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 3,
-			"twoStarScore": 1195,
-			"threeStarScore": 1420
-		},
-		{
-			"name": "Level 100",
-			"codeLength": 4,
-			"colors": 127,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 4,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 16,
-			"twoStarScore": 310,
-			"threeStarScore": 730
-		},
-		{
-			"name": "Level 101",
-			"codeLength": 2,
-			"colors": 65,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 3,
-			"scorePerIngredient": 1,
-			"timerScoreThresholds": [
-				{
-					"seconds": 30,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 50,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 80,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 2,
-			"twoStarScore": 90,
-			"threeStarScore": 210
-		},
-		{
-			"name": "Level 102",
-			"codeLength": 5,
-			"colors": 255,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 40,
-			"scorePerIngredient": 2,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 10,
-			"twoStarScore": 580,
-			"threeStarScore": 1015
-		},
-		{
-			"name": "Level 103",
-			"codeLength": 4,
-			"colors": 63,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 30,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 80,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 670,
-			"threeStarScore": 1030
-		},
-		{
-			"name": "Level 104",
-			"codeLength": 3,
-			"colors": 67,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 11,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 50,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 70,
-					"pointsPerSecond": 43
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 150,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 9,
-			"twoStarScore": 710,
-			"threeStarScore": 1060
-		},
-		{
-			"name": "Level 105",
-			"codeLength": 3,
-			"colors": 91,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 30,
-			"scorePerIngredient": 2,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 6,
-			"twoStarScore": 605,
-			"threeStarScore": 890
-		},
-		{
-			"name": "Level 106",
-			"codeLength": 2,
-			"colors": 255,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 15,
-			"scorePerIngredient": 2,
-			"timerScoreThresholds": [
-				{
-					"seconds": 40,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 65,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 360,
-			"threeStarScore": 460
-		},
-		{
-			"name": "Level 107",
-			"codeLength": 6,
-			"colors": 123,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 38,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 18,
-			"twoStarScore": 520,
-			"threeStarScore": 1030
-		},
-		{
-			"name": "Level 108",
-			"codeLength": 4,
-			"colors": 123,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 38,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 12,
-			"twoStarScore": 705,
-			"threeStarScore": 1050
-		},
-		{
-			"name": "Level 109",
-			"codeLength": 3,
-			"colors": 255,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 35,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 220,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 9,
-			"twoStarScore": 910,
-			"threeStarScore": 1300
-		},
-		{
-			"name": "Level 110",
-			"codeLength": 5,
-			"colors": 123,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 70,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 220,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 310,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 1700,
-			"threeStarScore": 2060
-		},
-		{
-			"name": "Level 111",
-			"codeLength": 4,
-			"colors": 92,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 14,
-			"scorePerIngredient": 2,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 2,
-			"twoStarScore": 440,
-			"threeStarScore": 675
-		},
-		{
-			"name": "Level 112",
-			"codeLength": 5,
-			"colors": 14,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 33,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 70,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 200,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 3,
-			"twoStarScore": 560,
-			"threeStarScore": 640
-		},
-		{
-			"name": "Level 113",
-			"codeLength": 3,
-			"colors": 13,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 5,
-			"scorePerIngredient": 2,
-			"timerScoreThresholds": [
-				{
-					"seconds": 30,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 3
-				}
-			],
-			"oneStarScore": 6,
-			"twoStarScore": 180,
-			"threeStarScore": 360
-		},
-		{
-			"name": "Level 114",
-			"codeLength": 4,
-			"colors": 94,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 38,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 0
-				}
-			],
-			"oneStarScore": 12,
-			"twoStarScore": 480,
-			"threeStarScore": 845
-		},
-		{
-			"name": "Level 115",
-			"codeLength": 4,
-			"colors": 95,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 30,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 12,
-			"twoStarScore": 725,
-			"threeStarScore": 950
-		},
-		{
-			"name": "Level 116",
-			"codeLength": 2,
-			"colors": 78,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 5,
-			"scorePerIngredient": 1,
-			"timerScoreThresholds": [
-				{
-					"seconds": 25,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 50,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 2,
-			"twoStarScore": 160,
-			"threeStarScore": 270
-		},
-		{
-			"name": "Level 117",
-			"codeLength": 4,
-			"colors": 255,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 38,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 3,
-			"twoStarScore": 820,
-			"threeStarScore": 1080
-		},
-		{
-			"name": "Level 118",
-			"codeLength": 4,
-			"colors": 170,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 16,
-			"scorePerIngredient": 2,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 200,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 540,
-			"threeStarScore": 630
-		},
-		{
-			"name": "Level 119",
-			"codeLength": 6,
-			"colors": 136,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 10,
-			"scorePerIngredient": 2,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 2,
-			"twoStarScore": 510,
-			"threeStarScore": 705
-		},
-		{
-			"name": "Level 120",
-			"codeLength": 6,
-			"colors": 91,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 75,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 1410,
-			"threeStarScore": 1840
-		},
-		{
-			"name": "Level 121",
-			"codeLength": 5,
-			"colors": 95,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 45,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 210,
-					"pointsPerSecond": 2
-				}
-			],
-			"oneStarScore": 15,
-			"twoStarScore": 930,
-			"threeStarScore": 1240
-		},
-		{
-			"name": "Level 122",
-			"codeLength": 4,
-			"colors": 75,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 23,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 40,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 490,
-			"threeStarScore": 690
-		},
-		{
-			"name": "Level 123",
-			"codeLength": 4,
-			"colors": 95,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 65,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 1240,
-			"threeStarScore": 2020
-		},
-		{
-			"name": "Level 124",
-			"codeLength": 3,
-			"colors": 158,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 28,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 9,
-			"twoStarScore": 415,
-			"threeStarScore": 670
-		},
-		{
-			"name": "Level 125",
-			"codeLength": 3,
-			"colors": 218,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 28,
-			"scorePerIngredient": 2,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 6,
-			"twoStarScore": 310,
-			"threeStarScore": 500
-		},
-		{
-			"name": "Level 126",
-			"codeLength": 3,
-			"colors": 255,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 32,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 40,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 200,
-					"pointsPerSecond": 2
-				}
-			],
-			"oneStarScore": 16,
-			"twoStarScore": 970,
-			"threeStarScore": 1375
-		},
-		{
-			"name": "Level 127",
-			"codeLength": 3,
-			"colors": 226,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 19,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 40,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 3,
-			"twoStarScore": 220,
-			"threeStarScore": 360
-		},
-		{
-			"name": "Level 128",
-			"codeLength": 4,
-			"colors": 255,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 33,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 12,
-			"twoStarScore": 880,
-			"threeStarScore": 1200
-		},
-		{
-			"name": "Level 129",
-			"codeLength": 4,
-			"colors": 79,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 36,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 12,
-			"twoStarScore": 640,
-			"threeStarScore": 810
-		},
-		{
-			"name": "Level 130",
-			"codeLength": 5,
-			"colors": 223,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 82,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 1330,
-			"threeStarScore": 2650
-		},
-		{
-			"name": "Level 131",
-			"codeLength": 3,
-			"colors": 47,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 38,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 3,
-			"twoStarScore": 680,
-			"threeStarScore": 900
-		},
-		{
-			"name": "Level 132",
-			"codeLength": 3,
-			"colors": 255,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 28,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 40,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 16,
-			"twoStarScore": 720,
-			"threeStarScore": 900
-		},
-		{
-			"name": "Level 133",
-			"codeLength": 3,
-			"colors": 90,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 24,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 40,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 80,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 12,
-			"twoStarScore": 440,
-			"threeStarScore": 710
-		},
-		{
-			"name": "Level 134",
-			"codeLength": 5,
-			"colors": 127,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 42,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 20,
-			"twoStarScore": 990,
-			"threeStarScore": 1610
-		},
-		{
-			"name": "Level 135",
-			"codeLength": 6,
-			"colors": 255,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 85,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 70,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 310,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 21,
-			"twoStarScore": 2250,
-			"threeStarScore": 3035
-		},
-		{
-			"name": "Level 136",
-			"codeLength": 4,
-			"colors": 61,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 33,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 3,
-			"twoStarScore": 680,
-			"threeStarScore": 990
-		},
-		{
-			"name": "Level 137",
-			"codeLength": 4,
-			"colors": 75,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 15,
-			"scorePerIngredient": 2,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 8,
-			"twoStarScore": 380,
-			"threeStarScore": 650
-		},
-		{
-			"name": "Level 138",
-			"codeLength": 4,
-			"colors": 255,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 35,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 50,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 130,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 3,
-			"twoStarScore": 680,
-			"threeStarScore": 990
-		},
-		{
-			"name": "Level 139",
-			"codeLength": 3,
-			"colors": 59,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 36,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 50,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 790,
-			"threeStarScore": 1080
-		},
-		{
-			"name": "Level 140",
-			"codeLength": 6,
-			"colors": 95,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 80,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 1550,
-			"threeStarScore": 2195
-		},
-		{
-			"name": "Level 141",
-			"codeLength": 5,
-			"colors": 123,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 43,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 20,
-			"twoStarScore": 990,
-			"threeStarScore": 1420
-		},
-		{
-			"name": "Level 142",
-			"codeLength": 6,
-			"colors": 75,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 60,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 70,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 890,
-			"threeStarScore": 1390
-		},
-		{
-			"name": "Level 143",
-			"codeLength": 3,
-			"colors": 46,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 23,
-			"scorePerIngredient": 2,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 6,
-			"twoStarScore": 380,
-			"threeStarScore": 545
-		},
-		{
-			"name": "Level 144",
-			"codeLength": 3,
-			"colors": 93,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 27,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 9,
-			"twoStarScore": 670,
-			"threeStarScore": 1010
-		},
-		{
-			"name": "Level 145",
-			"codeLength": 4,
-			"colors": 58,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 20,
-			"scorePerIngredient": 2,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 2,
-			"twoStarScore": 420,
-			"threeStarScore": 760
-		},
-		{
-			"name": "Level 146",
-			"codeLength": 3,
-			"colors": 255,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 30,
-			"scorePerIngredient": 3,
-			"timerScoreThresholds": [
-				{
-					"seconds": 45,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 90,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 9,
-			"twoStarScore": 740,
-			"threeStarScore": 1015
-		},
-		{
-			"name": "Level 147",
-			"codeLength": 2,
-			"colors": 90,
-			"allowRepeatColors": false,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 4,
-			"scorePerIngredient": 2,
-			"timerScoreThresholds": [
-				{
-					"seconds": 25,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 45,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 120,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 185,
-			"threeStarScore": 300
-		},
-		{
-			"name": "Level 148",
-			"codeLength": 4,
-			"colors": 219,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 55,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 140,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 270,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 1100,
-			"threeStarScore": 1810
-		},
-		{
-			"name": "Level 149",
-			"codeLength": 6,
-			"colors": 96,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 9,
-			"scorePerIngredient": 2,
-			"timerScoreThresholds": [
-				{
-					"seconds": 30,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 60,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 180,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 2,
-			"twoStarScore": 210,
-			"threeStarScore": 300
-		},
-		{
-			"name": "Level 150",
-			"codeLength": 6,
-			"colors": 127,
-			"allowRepeatColors": true,
-			"allowEmpty": false,
-			"tryCount": 0,
-			"startingIngredientCount": 90,
-			"scorePerIngredient": 4,
-			"timerScoreThresholds": [
-				{
-					"seconds": 60,
-					"pointsPerSecond": 5
-				},
-				{
-					"seconds": 100,
-					"pointsPerSecond": 4
-				},
-				{
-					"seconds": 160,
-					"pointsPerSecond": 3
-				},
-				{
-					"seconds": 220,
-					"pointsPerSecond": 2
-				},
-				{
-					"seconds": 300,
-					"pointsPerSecond": 1
-				}
-			],
-			"oneStarScore": 4,
-			"twoStarScore": 2150,
-			"threeStarScore": 2865
-		}
-	]
+{
+  "Levels": [
+    {
+      "name": "Level 1",
+      "length": 2,
+      "colors": 65,
+      "allowRepeat": false,
+      "ingredientCount": 12,
+      "score": 7,
+      "oneStarScore": 14,
+      "twoStarScore": 135,
+      "threeStarScore": 150,
+      "reward": [
+        6592,
+        6593,
+        6594
+      ]
+    },
+    {
+      "name": "Level 2",
+      "length": 2,
+      "colors": 33,
+      "allowRepeat": false,
+      "ingredientCount": 5,
+      "score": 10,
+      "oneStarScore": 20,
+      "twoStarScore": 145,
+      "threeStarScore": 160,
+      "reward": [
+        6592,
+        6593,
+        6594
+      ]
+    },
+    {
+      "name": "Level 3",
+      "length": 2,
+      "colors": 35,
+      "allowRepeat": false,
+      "ingredientCount": 9,
+      "score": 6,
+      "oneStarScore": 12,
+      "twoStarScore": 180,
+      "threeStarScore": 250,
+      "reward": [
+        6592,
+        6593,
+        6594
+      ]
+    },
+    {
+      "name": "Level 4",
+      "length": 2,
+      "colors": 24,
+      "allowRepeat": false,
+      "ingredientCount": 4,
+      "score": 8,
+      "oneStarScore": 16,
+      "twoStarScore": 120,
+      "threeStarScore": 140,
+      "reward": [
+        6592,
+        6593,
+        6594
+      ]
+    },
+    {
+      "name": "Level 5",
+      "length": 3,
+      "colors": 112,
+      "allowRepeat": false,
+      "ingredientCount": 12,
+      "score": 7,
+      "oneStarScore": 21,
+      "twoStarScore": 135,
+      "threeStarScore": 285,
+      "reward": [
+        6592,
+        6593,
+        6594
+      ]
+    },
+    {
+      "name": "Level 6",
+      "length": 2,
+      "colors": 5,
+      "allowRepeat": true,
+      "ingredientCount": 8,
+      "score": 8,
+      "oneStarScore": 8,
+      "twoStarScore": 180,
+      "threeStarScore": 220,
+      "reward": [
+        6592,
+        6593,
+        6594
+      ]
+    },
+    {
+      "name": "Level 7",
+      "length": 3,
+      "colors": 22,
+      "allowRepeat": false,
+      "ingredientCount": 10,
+      "score": 8,
+      "oneStarScore": 24,
+      "twoStarScore": 125,
+      "threeStarScore": 260,
+      "reward": [
+        6592,
+        6593,
+        6594
+      ]
+    },
+    {
+      "name": "Level 8",
+      "length": 2,
+      "colors": 46,
+      "allowRepeat": false,
+      "ingredientCount": 16,
+      "score": 6,
+      "oneStarScore": 12,
+      "twoStarScore": 315,
+      "threeStarScore": 420,
+      "reward": [
+        6592,
+        6593,
+        6594
+      ]
+    },
+    {
+      "name": "Level 9",
+      "length": 2,
+      "colors": 130,
+      "allowRepeat": true,
+      "ingredientCount": 7,
+      "score": 8,
+      "oneStarScore": 8,
+      "twoStarScore": 180,
+      "threeStarScore": 220,
+      "reward": [
+        6592,
+        6593,
+        6594
+      ]
+    },
+    {
+      "name": "Level 10",
+      "length": 3,
+      "colors": 48,
+      "allowRepeat": true,
+      "ingredientCount": 6,
+      "score": 8,
+      "oneStarScore": 8,
+      "twoStarScore": 90,
+      "threeStarScore": 215,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 11",
+      "length": 2,
+      "colors": 87,
+      "allowRepeat": false,
+      "ingredientCount": 25,
+      "score": 3,
+      "oneStarScore": 6,
+      "twoStarScore": 880,
+      "threeStarScore": 940,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 12",
+      "length": 2,
+      "colors": 180,
+      "allowRepeat": false,
+      "ingredientCount": 14,
+      "score": 7,
+      "oneStarScore": 14,
+      "twoStarScore": 380,
+      "threeStarScore": 410,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 13",
+      "length": 2,
+      "colors": 5,
+      "allowRepeat": true,
+      "ingredientCount": 6,
+      "score": 8,
+      "oneStarScore": 8,
+      "twoStarScore": 135,
+      "threeStarScore": 155,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 14",
+      "length": 2,
+      "colors": 7,
+      "allowRepeat": true,
+      "ingredientCount": 10,
+      "score": 8,
+      "oneStarScore": 8,
+      "twoStarScore": 230,
+      "threeStarScore": 310,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 15",
+      "length": 2,
+      "colors": 39,
+      "allowRepeat": true,
+      "ingredientCount": 12,
+      "score": 9,
+      "oneStarScore": 9,
+      "twoStarScore": 320,
+      "threeStarScore": 480,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 16",
+      "length": 2,
+      "colors": 55,
+      "allowRepeat": false,
+      "ingredientCount": 20,
+      "score": 5,
+      "oneStarScore": 10,
+      "twoStarScore": 460,
+      "threeStarScore": 645,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 17",
+      "length": 2,
+      "colors": 200,
+      "allowRepeat": false,
+      "ingredientCount": 8,
+      "score": 5,
+      "oneStarScore": 10,
+      "twoStarScore": 320,
+      "threeStarScore": 420,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 18",
+      "length": 4,
+      "colors": 192,
+      "allowRepeat": true,
+      "ingredientCount": 20,
+      "score": 5,
+      "oneStarScore": 5,
+      "twoStarScore": 215,
+      "threeStarScore": 345,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 19",
+      "length": 2,
+      "colors": 6,
+      "allowRepeat": true,
+      "ingredientCount": 5,
+      "score": 6,
+      "oneStarScore": 6,
+      "twoStarScore": 120,
+      "threeStarScore": 170,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 20",
+      "length": 3,
+      "colors": 22,
+      "allowRepeat": false,
+      "ingredientCount": 6,
+      "score": 6,
+      "oneStarScore": 18,
+      "twoStarScore": 115,
+      "threeStarScore": 260,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 21",
+      "length": 3,
+      "colors": 54,
+      "allowRepeat": false,
+      "ingredientCount": 30,
+      "score": 5,
+      "oneStarScore": 5,
+      "twoStarScore": 430,
+      "threeStarScore": 815,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 22",
+      "length": 4,
+      "colors": 169,
+      "allowRepeat": false,
+      "ingredientCount": 26,
+      "score": 4,
+      "oneStarScore": 16,
+      "twoStarScore": 385,
+      "threeStarScore": 520,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 23",
+      "length": 2,
+      "colors": 31,
+      "allowRepeat": false,
+      "ingredientCount": 14,
+      "score": 7,
+      "oneStarScore": 14,
+      "twoStarScore": 395,
+      "threeStarScore": 600,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 24",
+      "length": 2,
+      "colors": 34,
+      "allowRepeat": true,
+      "ingredientCount": 4,
+      "score": 5,
+      "oneStarScore": 5,
+      "twoStarScore": 80,
+      "threeStarScore": 150,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 25",
+      "length": 3,
+      "colors": 20,
+      "allowRepeat": true,
+      "ingredientCount": 9,
+      "score": 7,
+      "oneStarScore": 7,
+      "twoStarScore": 105,
+      "threeStarScore": 190,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 26",
+      "length": 2,
+      "colors": 52,
+      "allowRepeat": true,
+      "ingredientCount": 9,
+      "score": 7,
+      "oneStarScore": 7,
+      "twoStarScore": 150,
+      "threeStarScore": 280,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 27",
+      "length": 2,
+      "colors": 107,
+      "allowRepeat": true,
+      "ingredientCount": 15,
+      "score": 6,
+      "oneStarScore": 6,
+      "twoStarScore": 380,
+      "threeStarScore": 690,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 28",
+      "length": 3,
+      "colors": 23,
+      "allowRepeat": false,
+      "ingredientCount": 25,
+      "score": 6,
+      "oneStarScore": 18,
+      "twoStarScore": 550,
+      "threeStarScore": 790,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 29",
+      "length": 4,
+      "colors": 57,
+      "allowRepeat": false,
+      "ingredientCount": 20,
+      "score": 3,
+      "oneStarScore": 12,
+      "twoStarScore": 280,
+      "threeStarScore": 710,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 30",
+      "length": 6,
+      "colors": 15,
+      "allowRepeat": true,
+      "ingredientCount": 70,
+      "score": 3,
+      "oneStarScore": 3,
+      "twoStarScore": 840,
+      "threeStarScore": 1135,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 31",
+      "length": 3,
+      "colors": 146,
+      "allowRepeat": true,
+      "ingredientCount": 18,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 220,
+      "threeStarScore": 290,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 32",
+      "length": 3,
+      "colors": 9,
+      "allowRepeat": true,
+      "ingredientCount": 8,
+      "score": 5,
+      "oneStarScore": 5,
+      "twoStarScore": 125,
+      "threeStarScore": 150,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 33",
+      "length": 2,
+      "colors": 63,
+      "allowRepeat": false,
+      "ingredientCount": 16,
+      "score": 5,
+      "oneStarScore": 10,
+      "twoStarScore": 435,
+      "threeStarScore": 510,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 34",
+      "length": 2,
+      "colors": 191,
+      "allowRepeat": false,
+      "ingredientCount": 20,
+      "score": 4,
+      "oneStarScore": 8,
+      "twoStarScore": 490,
+      "threeStarScore": 595,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 35",
+      "length": 3,
+      "colors": 50,
+      "allowRepeat": false,
+      "ingredientCount": 5,
+      "score": 5,
+      "oneStarScore": 15,
+      "twoStarScore": 90,
+      "threeStarScore": 145,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 36",
+      "length": 5,
+      "colors": 5,
+      "allowRepeat": true,
+      "ingredientCount": 25,
+      "score": 3,
+      "oneStarScore": 3,
+      "twoStarScore": 145,
+      "threeStarScore": 230,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 37",
+      "length": 4,
+      "colors": 18,
+      "allowRepeat": true,
+      "ingredientCount": 18,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 120,
+      "threeStarScore": 210,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 38",
+      "length": 2,
+      "colors": 126,
+      "allowRepeat": true,
+      "ingredientCount": 18,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 375,
+      "threeStarScore": 460,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 39",
+      "length": 2,
+      "colors": 254,
+      "allowRepeat": true,
+      "ingredientCount": 18,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 550,
+      "threeStarScore": 760,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 40",
+      "length": 6,
+      "colors": 255,
+      "allowRepeat": false,
+      "ingredientCount": 60,
+      "score": 4,
+      "oneStarScore": 24,
+      "twoStarScore": 1550,
+      "threeStarScore": 2200,
+      "reward": [
+        6596,
+        6597,
+        5086
+      ]
+    },
+    {
+      "name": "Level 41",
+      "length": 2,
+      "colors": 7,
+      "allowRepeat": false,
+      "ingredientCount": 6,
+      "score": 3,
+      "oneStarScore": 6,
+      "twoStarScore": 90,
+      "threeStarScore": 135,
+      "reward": [
+        7145,
+        7146,
+        7147
+      ]
+    },
+    {
+      "name": "Level 42",
+      "length": 3,
+      "colors": 88,
+      "allowRepeat": false,
+      "ingredientCount": 4,
+      "score": 5,
+      "oneStarScore": 15,
+      "twoStarScore": 240,
+      "threeStarScore": 510,
+      "reward": [
+        7145,
+        7146,
+        7147
+      ]
+    },
+    {
+      "name": "Level 43",
+      "length": 2,
+      "colors": 255,
+      "allowRepeat": false,
+      "ingredientCount": 20,
+      "score": 4,
+      "oneStarScore": 8,
+      "twoStarScore": 640,
+      "threeStarScore": 920,
+      "reward": [
+        7145,
+        7146,
+        7147
+      ]
+    },
+    {
+      "name": "Level 44",
+      "length": 3,
+      "colors": 116,
+      "allowRepeat": true,
+      "ingredientCount": 20,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 415,
+      "threeStarScore": 680,
+      "reward": [
+        7145,
+        7146,
+        7147
+      ]
+    },
+    {
+      "name": "Level 45",
+      "length": 2,
+      "colors": 255,
+      "allowRepeat": true,
+      "ingredientCount": 25,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 720,
+      "threeStarScore": 960,
+      "reward": [
+        7145,
+        7146,
+        7147
+      ]
+    },
+    {
+      "name": "Level 46",
+      "length": 4,
+      "colors": 80,
+      "allowRepeat": true,
+      "ingredientCount": 16,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 170,
+      "threeStarScore": 220,
+      "reward": [
+        7145,
+        7146,
+        7147
+      ]
+    },
+    {
+      "name": "Level 47",
+      "length": 3,
+      "colors": 42,
+      "allowRepeat": true,
+      "ingredientCount": 14,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 220,
+      "threeStarScore": 270,
+      "reward": [
+        7145,
+        7146,
+        7147
+      ]
+    },
+    {
+      "name": "Level 48",
+      "length": 3,
+      "colors": 213,
+      "allowRepeat": false,
+      "ingredientCount": 35,
+      "score": 4,
+      "oneStarScore": 12,
+      "twoStarScore": 760,
+      "threeStarScore": 890,
+      "reward": [
+        7145,
+        7146,
+        7147
+      ]
+    },
+    {
+      "name": "Level 49",
+      "length": 4,
+      "colors": 210,
+      "allowRepeat": false,
+      "ingredientCount": 18,
+      "score": 3,
+      "oneStarScore": 12,
+      "twoStarScore": 330,
+      "threeStarScore": 410,
+      "reward": [
+        7145,
+        7146,
+        7147
+      ]
+    },
+    {
+      "name": "Level 50",
+      "length": 6,
+      "colors": 160,
+      "allowRepeat": true,
+      "ingredientCount": 11,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 65,
+      "threeStarScore": 175,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 51",
+      "length": 4,
+      "colors": 145,
+      "allowRepeat": true,
+      "ingredientCount": 30,
+      "score": 3,
+      "oneStarScore": 3,
+      "twoStarScore": 310,
+      "threeStarScore": 510,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 52",
+      "length": 3,
+      "colors": 110,
+      "allowRepeat": true,
+      "ingredientCount": 30,
+      "score": 3,
+      "oneStarScore": 3,
+      "twoStarScore": 410,
+      "threeStarScore": 510,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 53",
+      "length": 3,
+      "colors": 126,
+      "allowRepeat": true,
+      "ingredientCount": 25,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 540,
+      "threeStarScore": 780,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 54",
+      "length": 2,
+      "colors": 195,
+      "allowRepeat": false,
+      "ingredientCount": 8,
+      "score": 4,
+      "oneStarScore": 8,
+      "twoStarScore": 180,
+      "threeStarScore": 260,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 55",
+      "length": 3,
+      "colors": 207,
+      "allowRepeat": false,
+      "ingredientCount": 35,
+      "score": 3,
+      "oneStarScore": 9,
+      "twoStarScore": 690,
+      "threeStarScore": 785,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 56",
+      "length": 4,
+      "colors": 61,
+      "allowRepeat": false,
+      "ingredientCount": 40,
+      "score": 3,
+      "oneStarScore": 12,
+      "twoStarScore": 590,
+      "threeStarScore": 870,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 57",
+      "length": 2,
+      "colors": 199,
+      "allowRepeat": true,
+      "ingredientCount": 13,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 340,
+      "threeStarScore": 580,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 58",
+      "length": 3,
+      "colors": 7,
+      "allowRepeat": true,
+      "ingredientCount": 13,
+      "score": 3,
+      "oneStarScore": 3,
+      "twoStarScore": 130,
+      "threeStarScore": 280,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 59",
+      "length": 2,
+      "colors": 255,
+      "allowRepeat": true,
+      "ingredientCount": 22,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 680,
+      "threeStarScore": 830,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 60",
+      "length": 2,
+      "colors": 248,
+      "allowRepeat": false,
+      "ingredientCount": 3,
+      "score": 4,
+      "oneStarScore": 8,
+      "twoStarScore": 105,
+      "threeStarScore": 260,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 61",
+      "length": 3,
+      "colors": 254,
+      "allowRepeat": false,
+      "ingredientCount": 35,
+      "score": 3,
+      "oneStarScore": 9,
+      "twoStarScore": 790,
+      "threeStarScore": 1005,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 62",
+      "length": 2,
+      "colors": 228,
+      "allowRepeat": false,
+      "ingredientCount": 6,
+      "score": 4,
+      "oneStarScore": 8,
+      "twoStarScore": 110,
+      "threeStarScore": 275,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 63",
+      "length": 3,
+      "colors": 255,
+      "allowRepeat": false,
+      "ingredientCount": 40,
+      "score": 3,
+      "oneStarScore": 9,
+      "twoStarScore": 950,
+      "threeStarScore": 1100,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 64",
+      "length": 5,
+      "colors": 52,
+      "allowRepeat": true,
+      "ingredientCount": 45,
+      "score": 3,
+      "oneStarScore": 3,
+      "twoStarScore": 380,
+      "threeStarScore": 645,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 65",
+      "length": 4,
+      "colors": 15,
+      "allowRepeat": true,
+      "ingredientCount": 35,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 730,
+      "threeStarScore": 920,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 66",
+      "length": 4,
+      "colors": 33,
+      "allowRepeat": true,
+      "ingredientCount": 15,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 280,
+      "threeStarScore": 345,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 67",
+      "length": 4,
+      "colors": 125,
+      "allowRepeat": false,
+      "ingredientCount": 45,
+      "score": 3,
+      "oneStarScore": 12,
+      "twoStarScore": 790,
+      "threeStarScore": 1050,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 68",
+      "length": 2,
+      "colors": 255,
+      "allowRepeat": false,
+      "ingredientCount": 16,
+      "score": 4,
+      "oneStarScore": 8,
+      "twoStarScore": 710,
+      "threeStarScore": 990,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 69",
+      "length": 5,
+      "colors": 215,
+      "allowRepeat": false,
+      "ingredientCount": 50,
+      "score": 4,
+      "oneStarScore": 20,
+      "twoStarScore": 1210,
+      "threeStarScore": 1680,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 70",
+      "length": 3,
+      "colors": 255,
+      "allowRepeat": true,
+      "ingredientCount": 6,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 260,
+      "threeStarScore": 535,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 71",
+      "length": 3,
+      "colors": 127,
+      "allowRepeat": true,
+      "ingredientCount": 40,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 1020,
+      "threeStarScore": 1320,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 72",
+      "length": 4,
+      "colors": 61,
+      "allowRepeat": true,
+      "ingredientCount": 35,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 710,
+      "threeStarScore": 910,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 73",
+      "length": 2,
+      "colors": 230,
+      "allowRepeat": true,
+      "ingredientCount": 13,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 360,
+      "threeStarScore": 435,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 74",
+      "length": 5,
+      "colors": 145,
+      "allowRepeat": true,
+      "ingredientCount": 35,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 590,
+      "threeStarScore": 710,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 75",
+      "length": 2,
+      "colors": 190,
+      "allowRepeat": false,
+      "ingredientCount": 12,
+      "score": 4,
+      "oneStarScore": 8,
+      "twoStarScore": 395,
+      "threeStarScore": 480,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 76",
+      "length": 6,
+      "colors": 245,
+      "allowRepeat": false,
+      "ingredientCount": 40,
+      "score": 4,
+      "oneStarScore": 24,
+      "twoStarScore": 1050,
+      "threeStarScore": 1350,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 77",
+      "length": 4,
+      "colors": 255,
+      "allowRepeat": false,
+      "ingredientCount": 45,
+      "score": 4,
+      "oneStarScore": 16,
+      "twoStarScore": 1450,
+      "threeStarScore": 1800,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 78",
+      "length": 6,
+      "colors": 176,
+      "allowRepeat": true,
+      "ingredientCount": 60,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 810,
+      "threeStarScore": 975,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 79",
+      "length": 4,
+      "colors": 177,
+      "allowRepeat": true,
+      "ingredientCount": 30,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 710,
+      "threeStarScore": 945,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 80",
+      "length": 6,
+      "colors": 255,
+      "allowRepeat": false,
+      "ingredientCount": 8,
+      "score": 4,
+      "oneStarScore": 24,
+      "twoStarScore": 190,
+      "threeStarScore": 420,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 81",
+      "length": 3,
+      "colors": 31,
+      "allowRepeat": false,
+      "ingredientCount": 32,
+      "score": 4,
+      "oneStarScore": 12,
+      "twoStarScore": 780,
+      "threeStarScore": 1010,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 82",
+      "length": 5,
+      "colors": 247,
+      "allowRepeat": false,
+      "ingredientCount": 45,
+      "score": 4,
+      "oneStarScore": 20,
+      "twoStarScore": 1260,
+      "threeStarScore": 1385,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 83",
+      "length": 5,
+      "colors": 54,
+      "allowRepeat": true,
+      "ingredientCount": 40,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 710,
+      "threeStarScore": 980,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 84",
+      "length": 2,
+      "colors": 126,
+      "allowRepeat": true,
+      "ingredientCount": 14,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 380,
+      "threeStarScore": 510,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 85",
+      "length": 4,
+      "colors": 245,
+      "allowRepeat": true,
+      "ingredientCount": 40,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 960,
+      "threeStarScore": 1140,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 86",
+      "length": 2,
+      "colors": 255,
+      "allowRepeat": true,
+      "ingredientCount": 18,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 690,
+      "threeStarScore": 810,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 87",
+      "length": 6,
+      "colors": 254,
+      "allowRepeat": false,
+      "ingredientCount": 50,
+      "score": 4,
+      "oneStarScore": 24,
+      "twoStarScore": 1360,
+      "threeStarScore": 1580,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 88",
+      "length": 4,
+      "colors": 255,
+      "allowRepeat": false,
+      "ingredientCount": 35,
+      "score": 4,
+      "oneStarScore": 16,
+      "twoStarScore": 1220,
+      "threeStarScore": 1410,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 89",
+      "length": 2,
+      "colors": 127,
+      "allowRepeat": false,
+      "ingredientCount": 20,
+      "score": 4,
+      "oneStarScore": 8,
+      "twoStarScore": 590,
+      "threeStarScore": 675,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 90",
+      "length": 4,
+      "colors": 54,
+      "allowRepeat": true,
+      "ingredientCount": 7,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 175,
+      "threeStarScore": 420,
+      "reward": [
+        7149,
+        7150,
+        7151
+      ]
+    },
+    {
+      "name": "Level 91",
+      "length": 3,
+      "colors": 179,
+      "allowRepeat": true,
+      "ingredientCount": 40,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 880,
+      "threeStarScore": 1030,
+      "reward": [
+        7153,
+        7154,
+        7155
+      ]
+    },
+    {
+      "name": "Level 92",
+      "length": 4,
+      "colors": 191,
+      "allowRepeat": true,
+      "ingredientCount": 40,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 1170,
+      "threeStarScore": 1395,
+      "reward": [
+        7153,
+        7154,
+        7155
+      ]
+    },
+    {
+      "name": "Level 93",
+      "length": 3,
+      "colors": 255,
+      "allowRepeat": true,
+      "ingredientCount": 30,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 980,
+      "threeStarScore": 1160,
+      "reward": [
+        7153,
+        7154,
+        7155
+      ]
+    },
+    {
+      "name": "Level 94",
+      "length": 5,
+      "colors": 118,
+      "allowRepeat": true,
+      "ingredientCount": 45,
+      "score": 3,
+      "oneStarScore": 3,
+      "twoStarScore": 710,
+      "threeStarScore": 1100,
+      "reward": [
+        7153,
+        7154,
+        7155
+      ]
+    },
+    {
+      "name": "Level 95",
+      "length": 4,
+      "colors": 245,
+      "allowRepeat": false,
+      "ingredientCount": 35,
+      "score": 4,
+      "oneStarScore": 16,
+      "twoStarScore": 830,
+      "threeStarScore": 1160,
+      "reward": [
+        7153,
+        7154,
+        7155
+      ]
+    },
+    {
+      "name": "Level 96",
+      "length": 6,
+      "colors": 253,
+      "allowRepeat": false,
+      "ingredientCount": 48,
+      "score": 3,
+      "oneStarScore": 18,
+      "twoStarScore": 960,
+      "threeStarScore": 1690,
+      "reward": [
+        7153,
+        7154,
+        7155
+      ]
+    },
+    {
+      "name": "Level 97",
+      "length": 5,
+      "colors": 255,
+      "allowRepeat": false,
+      "ingredientCount": 42,
+      "score": 2,
+      "oneStarScore": 10,
+      "twoStarScore": 1020,
+      "threeStarScore": 2790,
+      "reward": [
+        7153,
+        7154,
+        7155
+      ]
+    },
+    {
+      "name": "Level 98",
+      "length": 2,
+      "colors": 254,
+      "allowRepeat": true,
+      "ingredientCount": 4,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 135,
+      "threeStarScore": 380,
+      "reward": [
+        7153,
+        7154,
+        7155
+      ]
+    },
+    {
+      "name": "Level 99",
+      "length": 4,
+      "colors": 255,
+      "allowRepeat": true,
+      "ingredientCount": 40,
+      "score": 3,
+      "oneStarScore": 3,
+      "twoStarScore": 1195,
+      "threeStarScore": 1420,
+      "reward": [
+        7153,
+        7154,
+        7155
+      ]
+    },
+    {
+      "name": "Level 100",
+      "length": 4,
+      "colors": 127,
+      "allowRepeat": false,
+      "ingredientCount": 4,
+      "score": 4,
+      "oneStarScore": 16,
+      "twoStarScore": 310,
+      "threeStarScore": 730,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 101",
+      "length": 2,
+      "colors": 65,
+      "allowRepeat": false,
+      "ingredientCount": 3,
+      "score": 1,
+      "oneStarScore": 2,
+      "twoStarScore": 90,
+      "threeStarScore": 210,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 102",
+      "length": 5,
+      "colors": 255,
+      "allowRepeat": true,
+      "ingredientCount": 40,
+      "score": 2,
+      "oneStarScore": 10,
+      "twoStarScore": 580,
+      "threeStarScore": 1015,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 103",
+      "length": 4,
+      "colors": 63,
+      "allowRepeat": false,
+      "ingredientCount": 30,
+      "score": 3,
+      "oneStarScore": 4,
+      "twoStarScore": 670,
+      "threeStarScore": 1030,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 104",
+      "length": 3,
+      "colors": 67,
+      "allowRepeat": true,
+      "ingredientCount": 11,
+      "score": 3,
+      "oneStarScore": 9,
+      "twoStarScore": 710,
+      "threeStarScore": 1060,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 105",
+      "length": 3,
+      "colors": 91,
+      "allowRepeat": false,
+      "ingredientCount": 30,
+      "score": 2,
+      "oneStarScore": 6,
+      "twoStarScore": 605,
+      "threeStarScore": 890,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 106",
+      "length": 2,
+      "colors": 255,
+      "allowRepeat": false,
+      "ingredientCount": 15,
+      "score": 2,
+      "oneStarScore": 4,
+      "twoStarScore": 360,
+      "threeStarScore": 460,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 107",
+      "length": 6,
+      "colors": 123,
+      "allowRepeat": false,
+      "ingredientCount": 38,
+      "score": 3,
+      "oneStarScore": 18,
+      "twoStarScore": 520,
+      "threeStarScore": 1030,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 108",
+      "length": 4,
+      "colors": 123,
+      "allowRepeat": false,
+      "ingredientCount": 38,
+      "score": 3,
+      "oneStarScore": 12,
+      "twoStarScore": 705,
+      "threeStarScore": 1050,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 109",
+      "length": 3,
+      "colors": 255,
+      "allowRepeat": false,
+      "ingredientCount": 35,
+      "score": 3,
+      "oneStarScore": 9,
+      "twoStarScore": 910,
+      "threeStarScore": 1300,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 110",
+      "length": 5,
+      "colors": 123,
+      "allowRepeat": true,
+      "ingredientCount": 70,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 1700,
+      "threeStarScore": 2060,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 111",
+      "length": 4,
+      "colors": 92,
+      "allowRepeat": true,
+      "ingredientCount": 14,
+      "score": 2,
+      "oneStarScore": 2,
+      "twoStarScore": 440,
+      "threeStarScore": 675,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 112",
+      "length": 5,
+      "colors": 14,
+      "allowRepeat": true,
+      "ingredientCount": 33,
+      "score": 3,
+      "oneStarScore": 3,
+      "twoStarScore": 560,
+      "threeStarScore": 640,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 113",
+      "length": 3,
+      "colors": 13,
+      "allowRepeat": false,
+      "ingredientCount": 5,
+      "score": 2,
+      "oneStarScore": 6,
+      "twoStarScore": 180,
+      "threeStarScore": 360,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 114",
+      "length": 4,
+      "colors": 94,
+      "allowRepeat": false,
+      "ingredientCount": 38,
+      "score": 3,
+      "oneStarScore": 12,
+      "twoStarScore": 480,
+      "threeStarScore": 845,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 115",
+      "length": 4,
+      "colors": 95,
+      "allowRepeat": false,
+      "ingredientCount": 30,
+      "score": 3,
+      "oneStarScore": 12,
+      "twoStarScore": 725,
+      "threeStarScore": 950,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 116",
+      "length": 2,
+      "colors": 78,
+      "allowRepeat": false,
+      "ingredientCount": 5,
+      "score": 1,
+      "oneStarScore": 2,
+      "twoStarScore": 160,
+      "threeStarScore": 270,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 117",
+      "length": 4,
+      "colors": 255,
+      "allowRepeat": true,
+      "ingredientCount": 38,
+      "score": 3,
+      "oneStarScore": 3,
+      "twoStarScore": 820,
+      "threeStarScore": 1080,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 118",
+      "length": 4,
+      "colors": 170,
+      "allowRepeat": false,
+      "ingredientCount": 16,
+      "score": 2,
+      "oneStarScore": 8,
+      "twoStarScore": 540,
+      "threeStarScore": 630,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 119",
+      "length": 6,
+      "colors": 136,
+      "allowRepeat": true,
+      "ingredientCount": 10,
+      "score": 2,
+      "oneStarScore": 2,
+      "twoStarScore": 510,
+      "threeStarScore": 705,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 120",
+      "length": 6,
+      "colors": 91,
+      "allowRepeat": true,
+      "ingredientCount": 75,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 1410,
+      "threeStarScore": 1840,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 121",
+      "length": 5,
+      "colors": 95,
+      "allowRepeat": false,
+      "ingredientCount": 45,
+      "score": 3,
+      "oneStarScore": 15,
+      "twoStarScore": 930,
+      "threeStarScore": 1240,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 122",
+      "length": 4,
+      "colors": 75,
+      "allowRepeat": true,
+      "ingredientCount": 23,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 490,
+      "threeStarScore": 690,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 123",
+      "length": 4,
+      "colors": 95,
+      "allowRepeat": true,
+      "ingredientCount": 65,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 1240,
+      "threeStarScore": 2020,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 124",
+      "length": 3,
+      "colors": 158,
+      "allowRepeat": false,
+      "ingredientCount": 28,
+      "score": 3,
+      "oneStarScore": 9,
+      "twoStarScore": 415,
+      "threeStarScore": 670,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 125",
+      "length": 3,
+      "colors": 218,
+      "allowRepeat": false,
+      "ingredientCount": 28,
+      "score": 2,
+      "oneStarScore": 6,
+      "twoStarScore": 310,
+      "threeStarScore": 500,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 126",
+      "length": 3,
+      "colors": 255,
+      "allowRepeat": false,
+      "ingredientCount": 32,
+      "score": 4,
+      "oneStarScore": 16,
+      "twoStarScore": 970,
+      "threeStarScore": 1375,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 127",
+      "length": 3,
+      "colors": 226,
+      "allowRepeat": true,
+      "ingredientCount": 19,
+      "score": 3,
+      "oneStarScore": 3,
+      "twoStarScore": 220,
+      "threeStarScore": 360,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 128",
+      "length": 4,
+      "colors": 255,
+      "allowRepeat": false,
+      "ingredientCount": 33,
+      "score": 3,
+      "oneStarScore": 12,
+      "twoStarScore": 880,
+      "threeStarScore": 1200,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 129",
+      "length": 4,
+      "colors": 79,
+      "allowRepeat": false,
+      "ingredientCount": 36,
+      "score": 3,
+      "oneStarScore": 12,
+      "twoStarScore": 640,
+      "threeStarScore": 810,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 130",
+      "length": 5,
+      "colors": 223,
+      "allowRepeat": true,
+      "ingredientCount": 82,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 1330,
+      "threeStarScore": 2650,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 131",
+      "length": 3,
+      "colors": 47,
+      "allowRepeat": true,
+      "ingredientCount": 38,
+      "score": 3,
+      "oneStarScore": 3,
+      "twoStarScore": 680,
+      "threeStarScore": 900,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 132",
+      "length": 3,
+      "colors": 255,
+      "allowRepeat": true,
+      "ingredientCount": 28,
+      "score": 3,
+      "oneStarScore": 16,
+      "twoStarScore": 720,
+      "threeStarScore": 900,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 133",
+      "length": 3,
+      "colors": 90,
+      "allowRepeat": false,
+      "ingredientCount": 24,
+      "score": 4,
+      "oneStarScore": 12,
+      "twoStarScore": 440,
+      "threeStarScore": 710,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 134",
+      "length": 5,
+      "colors": 127,
+      "allowRepeat": false,
+      "ingredientCount": 42,
+      "score": 4,
+      "oneStarScore": 20,
+      "twoStarScore": 990,
+      "threeStarScore": 1610,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 135",
+      "length": 6,
+      "colors": 255,
+      "allowRepeat": false,
+      "ingredientCount": 85,
+      "score": 4,
+      "oneStarScore": 21,
+      "twoStarScore": 2250,
+      "threeStarScore": 3035,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 136",
+      "length": 4,
+      "colors": 61,
+      "allowRepeat": true,
+      "ingredientCount": 33,
+      "score": 3,
+      "oneStarScore": 3,
+      "twoStarScore": 680,
+      "threeStarScore": 990,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 137",
+      "length": 4,
+      "colors": 75,
+      "allowRepeat": false,
+      "ingredientCount": 15,
+      "score": 2,
+      "oneStarScore": 8,
+      "twoStarScore": 380,
+      "threeStarScore": 650,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 138",
+      "length": 4,
+      "colors": 255,
+      "allowRepeat": true,
+      "ingredientCount": 35,
+      "score": 3,
+      "oneStarScore": 3,
+      "twoStarScore": 680,
+      "threeStarScore": 990,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 139",
+      "length": 3,
+      "colors": 59,
+      "allowRepeat": true,
+      "ingredientCount": 36,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 790,
+      "threeStarScore": 1080,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 140",
+      "length": 6,
+      "colors": 95,
+      "allowRepeat": true,
+      "ingredientCount": 80,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 1550,
+      "threeStarScore": 2195,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 141",
+      "length": 5,
+      "colors": 123,
+      "allowRepeat": false,
+      "ingredientCount": 43,
+      "score": 4,
+      "oneStarScore": 20,
+      "twoStarScore": 990,
+      "threeStarScore": 1420,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 142",
+      "length": 6,
+      "colors": 75,
+      "allowRepeat": true,
+      "ingredientCount": 60,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 890,
+      "threeStarScore": 1390,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 143",
+      "length": 3,
+      "colors": 46,
+      "allowRepeat": false,
+      "ingredientCount": 23,
+      "score": 2,
+      "oneStarScore": 6,
+      "twoStarScore": 380,
+      "threeStarScore": 545,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 144",
+      "length": 3,
+      "colors": 93,
+      "allowRepeat": false,
+      "ingredientCount": 27,
+      "score": 3,
+      "oneStarScore": 9,
+      "twoStarScore": 670,
+      "threeStarScore": 1010,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 145",
+      "length": 4,
+      "colors": 58,
+      "allowRepeat": true,
+      "ingredientCount": 20,
+      "score": 2,
+      "oneStarScore": 2,
+      "twoStarScore": 420,
+      "threeStarScore": 760,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 146",
+      "length": 3,
+      "colors": 255,
+      "allowRepeat": false,
+      "ingredientCount": 30,
+      "score": 3,
+      "oneStarScore": 9,
+      "twoStarScore": 740,
+      "threeStarScore": 1015,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 147",
+      "length": 2,
+      "colors": 90,
+      "allowRepeat": false,
+      "ingredientCount": 4,
+      "score": 2,
+      "oneStarScore": 4,
+      "twoStarScore": 185,
+      "threeStarScore": 300,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 148",
+      "length": 4,
+      "colors": 219,
+      "allowRepeat": true,
+      "ingredientCount": 55,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 1100,
+      "threeStarScore": 1810,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 149",
+      "length": 6,
+      "colors": 96,
+      "allowRepeat": true,
+      "ingredientCount": 9,
+      "score": 2,
+      "oneStarScore": 2,
+      "twoStarScore": 210,
+      "threeStarScore": 300,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    },
+    {
+      "name": "Level 150",
+      "length": 6,
+      "colors": 127,
+      "allowRepeat": true,
+      "ingredientCount": 90,
+      "score": 4,
+      "oneStarScore": 4,
+      "twoStarScore": 2150,
+      "threeStarScore": 2865,
+      "reward": [
+        7157,
+        7158,
+        7159
+      ]
+    }
+  ]
+}
