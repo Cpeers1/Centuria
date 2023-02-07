@@ -37,7 +37,9 @@ public abstract class AbstractInventoryInteractionHelper {
 	public JsonObject[] addMultiple(PlayerInventory inventory, int defID, int count) {
 		ArrayList<JsonObject> items = new ArrayList<JsonObject>();
 		for (int i = 0; i < count; i++) {
-			items.add(addOne(inventory, defID));
+			JsonObject res = addOne(inventory, defID);
+			if (res != null)
+				items.add(res);
 		}
 		return items.toArray(t -> new JsonObject[t]);
 	}
@@ -70,11 +72,11 @@ public abstract class AbstractInventoryInteractionHelper {
 	 */
 	public String[] removeMultiple(PlayerInventory inventory, int defID, int count) {
 		String[] uuids = new String[count];
-		
+
 		for (int i = 0; i < count; i++) {
 			uuids[i] = this.removeOne(inventory, defID);
 		}
-		
+
 		return uuids;
 	}
 
