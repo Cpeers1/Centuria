@@ -123,6 +123,9 @@ public class FileBasedDMManager extends DMManager {
 
 	@Override
 	public String[] getDMParticipants(String dmID) {
+		if (!dmExists(dmID))
+			throw new IllegalArgumentException("DM not found");
+
 		ArrayList<String> participants = new ArrayList<String>();
 		try {
 			// Parse DM
@@ -149,6 +152,9 @@ public class FileBasedDMManager extends DMManager {
 
 	@Override
 	public void addParticipant(String dmID, String participant) {
+		if (!dmExists(dmID))
+			throw new IllegalArgumentException("DM not found");
+
 		try {
 			// Parse DM
 			FileReader reader = new FileReader("dms/" + UUID.fromString(dmID) + ".json");
@@ -176,6 +182,9 @@ public class FileBasedDMManager extends DMManager {
 
 	@Override
 	public void removeParticipant(String dmID, String participant) {
+		if (!dmExists(dmID))
+			throw new IllegalArgumentException("DM not found");
+
 		try {
 			// Parse DM
 			FileReader reader = new FileReader("dms/" + UUID.fromString(dmID) + ".json");

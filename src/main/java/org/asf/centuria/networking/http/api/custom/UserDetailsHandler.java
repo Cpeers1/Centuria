@@ -137,7 +137,7 @@ public class UserDetailsHandler extends HttpUploadProcessor {
 						}
 					}
 				}
-				
+
 				response.addProperty("avatar_species", species);
 				response.addProperty("last_login_time", acc.getLastLoginTime());
 				response.addProperty("is_online", acc.getOnlinePlayerInstance() != null);
@@ -171,9 +171,11 @@ public class UserDetailsHandler extends HttpUploadProcessor {
 					response.addProperty("active_save", acc.getSaveManager().getCurrentActiveSave());
 				response.add("current_save_settings", acc.getSaveSpecificInventory().getSaveSettings().writeToObject());
 			}
-			response.add("active_look",
-					acc.getSaveSpecificInventory().getAccessor().findInventoryObject("avatars", acc.getActiveLook())
-							.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject());
+			JsonObject obj = acc.getSaveSpecificInventory().getAccessor().findInventoryObject("avatars",
+					acc.getActiveLook());
+			if (obj != null)
+				response.add("active_look",
+						obj.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject());
 			setBody("text/json", response.toString());
 		} catch (Exception e) {
 			setResponseCode(500);

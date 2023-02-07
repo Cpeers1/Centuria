@@ -284,7 +284,11 @@ public class ShopManager {
 		// Create list of items
 		ArrayList<String> items = new ArrayList<String>();
 		shop.contents.forEach((id, item) -> {
-			if (item.stock != -1) {
+			// Skip enigma IDs
+			if (shop.enigmas.contains(id))
+				return;
+			
+			if (item.stock != -1) {				
 				// Check mode
 				if (item.stock == 1 && shop.restockTime == -1) {
 					// Only add if not in the player inventory
