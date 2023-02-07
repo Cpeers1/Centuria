@@ -84,7 +84,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 			throw new RuntimeException(e);
 		}
 
-//		// Debug
+		// Debug
 //		if (Centuria.debugMode) {
 //			WTHVis vis = new WTHVis();
 //			new Thread(() -> vis.frame.setVisible(true)).start();
@@ -228,10 +228,33 @@ public class GameWhatTheHex extends AbstractMinigame {
 	// Utility to make spawning easier
 	private RuneSet spawnTiles(XtWriter target) {
 		// Select rotation and count
-		int i = rnd.nextInt(0, 12);
+		int i = rnd.nextInt(0, 14);
 		while (i == lastRandomInt)
-			i = rnd.nextInt(0, 12);
+			i = rnd.nextInt(0, 14);
 		lastRandomInt = i;
+
+		// -2 = flora (single)
+		// -1 = miasma (single)
+		// 0 = flame (single)
+
+		// 1 = flora (top), flame (bottom)
+		// 2 = flora (top right), flame (bottom left)
+		// 3 = flame (top left), flora (bottom right)
+
+		// 4 = flora (top), flame (middle), miasma (bottom)
+		// 5 = flora (top right), flame (middle), miasma (bottom left)
+		// 6 = flora (top left), flame (middle), miasma (bottom right)
+
+		// 7 = flora (left), flame (middle top), miasma (right)
+		// 8 = flora (left), flame (middle bottom), miasma (right)
+
+		// 9 = flora (right), flame (middle), miasma (bottom)
+		// 10 = flora (left), flame (middle), miasma (bottom)
+
+		// 11 = flora (top), flame (middle), miasma (bottom right)
+		// 12 = flora (top), flame (middle), miasma (bottom left)
+		// 13 = flora (top), miasma (right), flame (bottom)
+
 		return spawnTiles(target, i);
 	}
 
@@ -239,15 +262,24 @@ public class GameWhatTheHex extends AbstractMinigame {
 	private RuneSet spawnTiles(XtWriter target, int type) {
 		// Select rotation and count
 		int count = 0;
-		if (type >= 4 && type < 12)
+		if (type >= 4 && type <= 13)
 			count = 3;
 		else if (type >= 1)
 			count = 2;
 		else
 			count = 1;
 		byte[] types = new byte[count];
-		for (int i = 0; i < count; i++) {
-			types[i] = (byte) (i + 2);
+		if (count == 3) {
+			for (int i = 0; i < count; i++) {
+				types[i] = (byte) (i + 2);
+			}
+		} else if (count == 2) {
+			types[0] = (byte) rnd.nextInt(2, 5);
+			types[1] = (byte) rnd.nextInt(2, 5);
+			while (types[1] == types[0])
+				types[1] = (byte) rnd.nextInt(2, 5);
+		} else {
+			types[0] = (byte) rnd.nextInt(2, 5);
 		}
 
 		return spawnTiles(target, type, count, types);
@@ -522,6 +554,26 @@ public class GameWhatTheHex extends AbstractMinigame {
 				placed.add(getBoardIndex(x, y + 1));
 				placed.add(getBoardIndex(x, y));
 				placed.add(getBoardIndex(x + 1, y - 1));
+				break;
+			}
+			case 12: {
+				// Place triple tile (rotation 9)
+				board[this.getBoardIndex(x, y + 1)] = tile.types[0];
+				board[this.getBoardIndex(x, y)] = tile.types[1];
+				board[this.getBoardIndex(x - 1, y)] = tile.types[2];
+				placed.add(getBoardIndex(x, y + 1));
+				placed.add(getBoardIndex(x, y));
+				placed.add(getBoardIndex(x - 1, y));
+				break;
+			}
+			case 13: {
+				// Place triple tile (rotation 10)
+				board[this.getBoardIndex(x, y + 1)] = tile.types[0];
+				board[this.getBoardIndex(x, y)] = tile.types[1];
+				board[this.getBoardIndex(x + 1, y)] = tile.types[2];
+				placed.add(getBoardIndex(x, y + 1));
+				placed.add(getBoardIndex(x, y));
+				placed.add(getBoardIndex(x + 1, y));
 				break;
 			}
 			}
@@ -913,6 +965,30 @@ public class GameWhatTheHex extends AbstractMinigame {
 				return false;
 			break;
 		}
+		case 12: {
+			if (this.getBoardIndex(x, y + 1) >= 37 || this.getBoardIndex(x, y) >= 37
+					|| this.getBoardIndex(x - 1, y) >= 37)
+				return false;
+			if (board[this.getBoardIndex(x, y + 1)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x - 1, y)] != 0)
+				return false;
+			break;
+		}
+		case 13: {
+			if (this.getBoardIndex(x, y + 1) >= 37 || this.getBoardIndex(x, y) >= 37
+					|| this.getBoardIndex(x + 1, y) >= 37)
+				return false;
+			if (board[this.getBoardIndex(x, y + 1)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x, y)] != 0)
+				return false;
+			if (board[this.getBoardIndex(x + 1, y)] != 0)
+				return false;
+			break;
+		}
 		}
 
 		return true;
@@ -1061,7 +1137,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 	private void loadLevel(Element element, int level, Player player) {
 		// Find level
 		WTHLevelInfo lv = null;
-		if (level - 1 > levels.size()) {
+		if (level - 1 >= levels.size()) {
 			// Fallback
 			lv = levels.get(levels.size() - 1);
 		} else {
