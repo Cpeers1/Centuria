@@ -10,6 +10,13 @@
       "oneStarScore": 14,
       "twoStarScore": 135,
       "threeStarScore": 150,
+      "timeBonus": {
+        "6": 8,
+        "10": 6,
+        "18": 4,
+        "25": 2,
+        "60": 1
+      },
       "reward": [
         6592,
         6593,
@@ -26,6 +33,15 @@
       "oneStarScore": 20,
       "twoStarScore": 145,
       "threeStarScore": 160,
+      "timeBonus": {
+        "10": 10,
+        "15": 9,
+        "20": 8,
+        "25": 6,
+        "32": 4,
+        "35": 2,
+        "60": 1
+      },
       "reward": [
         6592,
         6593,
@@ -42,6 +58,13 @@
       "oneStarScore": 12,
       "twoStarScore": 180,
       "threeStarScore": 250,
+      "timeBonus": {
+        "8": 12,
+        "15": 9,
+        "23": 8,
+        "35": 5,
+        "60": 2
+      },
       "reward": [
         6592,
         6593,
@@ -58,6 +81,13 @@
       "oneStarScore": 16,
       "twoStarScore": 120,
       "threeStarScore": 140,
+      "timeBonus": {
+        "8": 10,
+        "14": 9,
+        "20": 7,
+        "32": 4,
+        "60": 1
+      },
       "reward": [
         6592,
         6593,
@@ -74,6 +104,14 @@
       "oneStarScore": 21,
       "twoStarScore": 135,
       "threeStarScore": 285,
+      "timeBonus": {
+        "8": 10,
+        "15": 9,
+        "22": 7,
+        "35": 4,
+        "42": 3,
+        "60": 1
+      },
       "reward": [
         6592,
         6593,
@@ -90,6 +128,13 @@
       "oneStarScore": 8,
       "twoStarScore": 180,
       "threeStarScore": 220,
+      "timeBonus": {
+        "14": 6,
+        "20": 5,
+        "36": 3,
+        "60": 2,
+        "75": 1
+      },
       "reward": [
         6592,
         6593,
@@ -106,6 +151,13 @@
       "oneStarScore": 24,
       "twoStarScore": 125,
       "threeStarScore": 260,
+      "timeBonus": {
+        "12": 10,
+        "22": 8,
+        "35": 6,
+        "42": 3,
+        "60": 1
+      },
       "reward": [
         6592,
         6593,
@@ -122,6 +174,14 @@
       "oneStarScore": 12,
       "twoStarScore": 315,
       "threeStarScore": 420,
+      "timeBonus": {
+        "14": 9,
+        "23": 7,
+        "30": 6,
+        "42": 4,
+        "60": 2,
+        "75": 1
+      },
       "reward": [
         6592,
         6593,
@@ -138,6 +198,14 @@
       "oneStarScore": 8,
       "twoStarScore": 180,
       "threeStarScore": 220,
+      "timeBonus": {
+        "16": 9,
+        "23": 8,
+        "32": 6,
+        "45": 4,
+        "55": 2,
+        "70": 1
+      },
       "reward": [
         6592,
         6593,
@@ -154,6 +222,13 @@
       "oneStarScore": 8,
       "twoStarScore": 90,
       "threeStarScore": 215,
+      "timeBonus": {
+        "18": 9,
+        "25": 8,
+        "36": 5,
+        "45": 3,
+        "60": 1
+      },
       "reward": [
         6596,
         6597,
@@ -170,6 +245,14 @@
       "oneStarScore": 6,
       "twoStarScore": 880,
       "threeStarScore": 940,
+      "timeBonus": {
+        "18": 6,
+        "29": 5,
+        "42": 4,
+        "55": 3,
+        "75": 1,
+        "120": 10
+      },
       "reward": [
         6596,
         6597,
@@ -186,6 +269,14 @@
       "oneStarScore": 14,
       "twoStarScore": 380,
       "threeStarScore": 410,
+      "timeBonus": {
+        "16": 6,
+        "28": 5,
+        "35": 4,
+        "42": 3,
+        "55": 2,
+        "60": 1
+      },
       "reward": [
         6596,
         6597,
@@ -202,6 +293,13 @@
       "oneStarScore": 8,
       "twoStarScore": 135,
       "threeStarScore": 155,
+      "timeBonus": {
+        "16": 6,
+        "23": 5,
+        "35": 4,
+        "45": 2,
+        "60": 1
+      },
       "reward": [
         6596,
         6597,
@@ -218,6 +316,13 @@
       "oneStarScore": 8,
       "twoStarScore": 230,
       "threeStarScore": 310,
+      "timeBonus": {
+        "16": 6,
+        "24": 5,
+        "35": 4,
+        "48": 3,
+        "60": 1
+      },
       "reward": [
         6596,
         6597,
@@ -234,6 +339,14 @@
       "oneStarScore": 9,
       "twoStarScore": 320,
       "threeStarScore": 480,
+      "timeBonus": {
+        "18": 6,
+        "25": 5,
+        "30": 4,
+        "40": 3,
+        "50": 2,
+        "60": 1
+      },
       "reward": [
         6596,
         6597,
@@ -250,6 +363,13 @@
       "oneStarScore": 10,
       "twoStarScore": 460,
       "threeStarScore": 645,
+      "timeBonus": {
+        "20": 7,
+        "32": 6,
+        "45": 5,
+        "58": 3,
+        "75": 1
+      },
       "reward": [
         6596,
         6597,
@@ -266,6 +386,14 @@
       "oneStarScore": 10,
       "twoStarScore": 320,
       "threeStarScore": 420,
+      "timeBonus": {
+        "16": 5,
+        "23": 10,
+        "30": 10,
+        "42": 10,
+        "50": 10,
+        "60": 1
+      },
       "reward": [
         6596,
         6597,
@@ -282,6 +410,13 @@
       "oneStarScore": 5,
       "twoStarScore": 215,
       "threeStarScore": 345,
+      "timeBonus": {
+        "20": 8,
+        "35": 7,
+        "48": 5,
+        "64": 3,
+        "80": 1
+      },
       "reward": [
         6596,
         6597,
@@ -298,6 +433,14 @@
       "oneStarScore": 6,
       "twoStarScore": 120,
       "threeStarScore": 170,
+      "timeBonus": {
+        "16": 6,
+        "22": 5,
+        "35": 4,
+        "42": 3,
+        "50": 2,
+        "60": 1
+      },
       "reward": [
         6596,
         6597,
@@ -314,6 +457,14 @@
       "oneStarScore": 18,
       "twoStarScore": 115,
       "threeStarScore": 260,
+      "timeBonus": {
+        "20": 7,
+        "32": 6,
+        "45": 5,
+        "53": 4,
+        "65": 2,
+        "80": 1
+      },
       "reward": [
         6596,
         6597,
@@ -330,6 +481,14 @@
       "oneStarScore": 5,
       "twoStarScore": 430,
       "threeStarScore": 815,
+      "timeBonus": {
+        "45": 8,
+        "58": 6,
+        "63": 5,
+        "75": 4,
+        "85": 2,
+        "100": 1
+      },
       "reward": [
         6596,
         6597,
@@ -346,6 +505,13 @@
       "oneStarScore": 16,
       "twoStarScore": 385,
       "threeStarScore": 520,
+      "timeBonus": {
+        "48": 5,
+        "56": 4,
+        "70": 3,
+        "90": 2,
+        "120": 1
+      },
       "reward": [
         6596,
         6597,
@@ -362,6 +528,14 @@
       "oneStarScore": 14,
       "twoStarScore": 395,
       "threeStarScore": 600,
+      "timeBonus": {
+        "28": 6,
+        "37": 5,
+        "45": 4,
+        "52": 3,
+        "70": 2,
+        "100": 1
+      },
       "reward": [
         6596,
         6597,
@@ -378,6 +552,13 @@
       "oneStarScore": 5,
       "twoStarScore": 80,
       "threeStarScore": 150,
+      "timeBonus": {
+        "16": 5,
+        "22": 4,
+        "30": 3,
+        "45": 2,
+        "60": 1
+      },
       "reward": [
         6596,
         6597,
@@ -394,6 +575,13 @@
       "oneStarScore": 7,
       "twoStarScore": 105,
       "threeStarScore": 190,
+      "timeBonus": {
+        "18": 6,
+        "25": 5,
+        "32": 4,
+        "45": 3,
+        "60": 1
+      },
       "reward": [
         6596,
         6597,
@@ -410,6 +598,13 @@
       "oneStarScore": 7,
       "twoStarScore": 150,
       "threeStarScore": 280,
+      "timeBonus": {
+        "16": 6,
+        "23": 5,
+        "32": 4,
+        "45": 3,
+        "60": 1
+      },
       "reward": [
         6596,
         6597,
@@ -426,6 +621,14 @@
       "oneStarScore": 6,
       "twoStarScore": 380,
       "threeStarScore": 690,
+      "timeBonus": {
+        "30": 7,
+        "42": 6,
+        "55": 5,
+        "63": 4,
+        "75": 3,
+        "90": 1
+      },
       "reward": [
         6596,
         6597,
@@ -442,6 +645,14 @@
       "oneStarScore": 18,
       "twoStarScore": 550,
       "threeStarScore": 790,
+      "timeBonus": {
+        "32": 6,
+        "48": 5,
+        "56": 4,
+        "70": 3,
+        "90": 2,
+        "120": 1
+      },
       "reward": [
         6596,
         6597,
@@ -458,6 +669,14 @@
       "oneStarScore": 12,
       "twoStarScore": 280,
       "threeStarScore": 710,
+      "timeBonus": {
+        "45": 7,
+        "65": 6,
+        "90": 5,
+        "115": 4,
+        "140": 3,
+        "180": 1
+      },
       "reward": [
         6596,
         6597,
@@ -474,6 +693,14 @@
       "oneStarScore": 3,
       "twoStarScore": 840,
       "threeStarScore": 1135,
+      "timeBonus": {
+        "60": 6,
+        "90": 5,
+        "120": 4,
+        "145": 3,
+        "175": 2,
+        "190": 1
+      },
       "reward": [
         6596,
         6597,
@@ -490,6 +717,13 @@
       "oneStarScore": 4,
       "twoStarScore": 220,
       "threeStarScore": 290,
+      "timeBonus": {
+        "22": 5,
+        "35": 4,
+        "42": 3,
+        "50": 2,
+        "60": 1
+      },
       "reward": [
         6596,
         6597,
@@ -506,6 +740,13 @@
       "oneStarScore": 5,
       "twoStarScore": 125,
       "threeStarScore": 150,
+      "timeBonus": {
+        "14": 5,
+        "25": 4,
+        "32": 3,
+        "40": 2,
+        "60": 1
+      },
       "reward": [
         6596,
         6597,
@@ -522,6 +763,13 @@
       "oneStarScore": 10,
       "twoStarScore": 435,
       "threeStarScore": 510,
+      "timeBonus": {
+        "22": 5,
+        "30": 4,
+        "38": 3,
+        "45": 2,
+        "80": 1
+      },
       "reward": [
         6596,
         6597,
@@ -538,6 +786,13 @@
       "oneStarScore": 8,
       "twoStarScore": 490,
       "threeStarScore": 595,
+      "timeBonus": {
+        "25": 5,
+        "32": 4,
+        "45": 3,
+        "60": 2,
+        "90": 1
+      },
       "reward": [
         6596,
         6597,
@@ -554,6 +809,13 @@
       "oneStarScore": 15,
       "twoStarScore": 90,
       "threeStarScore": 145,
+      "timeBonus": {
+        "16": 5,
+        "25": 4,
+        "33": 3,
+        "46": 2,
+        "60": 1
+      },
       "reward": [
         6596,
         6597,
@@ -570,6 +832,13 @@
       "oneStarScore": 3,
       "twoStarScore": 145,
       "threeStarScore": 230,
+      "timeBonus": {
+        "25": 5,
+        "36": 4,
+        "45": 3,
+        "60": 2,
+        "85": 1
+      },
       "reward": [
         6596,
         6597,
@@ -586,6 +855,13 @@
       "oneStarScore": 4,
       "twoStarScore": 120,
       "threeStarScore": 210,
+      "timeBonus": {
+        "23": 5,
+        "35": 4,
+        "42": 3,
+        "54": 2,
+        "75": 1
+      },
       "reward": [
         6596,
         6597,
@@ -602,6 +878,13 @@
       "oneStarScore": 4,
       "twoStarScore": 375,
       "threeStarScore": 460,
+      "timeBonus": {
+        "18": 5,
+        "25": 4,
+        "36": 3,
+        "48": 2,
+        "60": 1
+      },
       "reward": [
         6596,
         6597,
@@ -618,6 +901,13 @@
       "oneStarScore": 4,
       "twoStarScore": 550,
       "threeStarScore": 760,
+      "timeBonus": {
+        "45": 5,
+        "60": 4,
+        "72": 3,
+        "95": 2,
+        "145": 1
+      },
       "reward": [
         6596,
         6597,
@@ -634,6 +924,13 @@
       "oneStarScore": 24,
       "twoStarScore": 1550,
       "threeStarScore": 2200,
+      "timeBonus": {
+        "90": 5,
+        "120": 4,
+        "180": 3,
+        "210": 2,
+        "300": 1
+      },
       "reward": [
         6596,
         6597,
@@ -650,6 +947,13 @@
       "oneStarScore": 6,
       "twoStarScore": 90,
       "threeStarScore": 135,
+      "timeBonus": {
+        "14": 5,
+        "25": 4,
+        "36": 3,
+        "45": 2,
+        "60": 1
+      },
       "reward": [
         7145,
         7146,
@@ -666,6 +970,13 @@
       "oneStarScore": 15,
       "twoStarScore": 240,
       "threeStarScore": 510,
+      "timeBonus": {
+        "60": 5,
+        "90": 4,
+        "120": 3,
+        "150": 2,
+        "180": 1
+      },
       "reward": [
         7145,
         7146,
@@ -682,6 +993,13 @@
       "oneStarScore": 8,
       "twoStarScore": 640,
       "threeStarScore": 920,
+      "timeBonus": {
+        "35": 5,
+        "60": 4,
+        "115": 3,
+        "140": 2,
+        "160": 1
+      },
       "reward": [
         7145,
         7146,
@@ -698,6 +1016,13 @@
       "oneStarScore": 4,
       "twoStarScore": 415,
       "threeStarScore": 680,
+      "timeBonus": {
+        "60": 5,
+        "90": 4,
+        "120": 3,
+        "150": 2,
+        "180": 1
+      },
       "reward": [
         7145,
         7146,
@@ -714,6 +1039,13 @@
       "oneStarScore": 4,
       "twoStarScore": 720,
       "threeStarScore": 960,
+      "timeBonus": {
+        "35": 5,
+        "50": 4,
+        "65": 3,
+        "90": 2,
+        "120": 1
+      },
       "reward": [
         7145,
         7146,
@@ -730,6 +1062,13 @@
       "oneStarScore": 4,
       "twoStarScore": 170,
       "threeStarScore": 220,
+      "timeBonus": {
+        "22": 5,
+        "45": 4,
+        "52": 3,
+        "72": 2,
+        "90": 1
+      },
       "reward": [
         7145,
         7146,
@@ -746,6 +1085,13 @@
       "oneStarScore": 4,
       "twoStarScore": 220,
       "threeStarScore": 270,
+      "timeBonus": {
+        "25": 5,
+        "32": 4,
+        "48": 3,
+        "60": 2,
+        "110": 1
+      },
       "reward": [
         7145,
         7146,
@@ -762,6 +1108,13 @@
       "oneStarScore": 12,
       "twoStarScore": 760,
       "threeStarScore": 890,
+      "timeBonus": {
+        "45": 5,
+        "62": 4,
+        "78": 3,
+        "90": 2,
+        "120": 1
+      },
       "reward": [
         7145,
         7146,
@@ -778,6 +1131,13 @@
       "oneStarScore": 12,
       "twoStarScore": 330,
       "threeStarScore": 410,
+      "timeBonus": {
+        "45": 5,
+        "60": 4,
+        "80": 3,
+        "120": 2,
+        "145": 1
+      },
       "reward": [
         7145,
         7146,
@@ -794,6 +1154,13 @@
       "oneStarScore": 4,
       "twoStarScore": 65,
       "threeStarScore": 175,
+      "timeBonus": {
+        "24": 5,
+        "36": 4,
+        "45": 3,
+        "60": 2,
+        "120": 1
+      },
       "reward": [
         7149,
         7150,
@@ -810,6 +1177,13 @@
       "oneStarScore": 3,
       "twoStarScore": 310,
       "threeStarScore": 510,
+      "timeBonus": {
+        "40": 5,
+        "60": 4,
+        "75": 3,
+        "110": 2,
+        "160": 1
+      },
       "reward": [
         7149,
         7150,
@@ -826,6 +1200,13 @@
       "oneStarScore": 3,
       "twoStarScore": 410,
       "threeStarScore": 510,
+      "timeBonus": {
+        "22": 5,
+        "35": 4,
+        "48": 3,
+        "60": 2,
+        "120": 1
+      },
       "reward": [
         7149,
         7150,
@@ -842,6 +1223,13 @@
       "oneStarScore": 4,
       "twoStarScore": 540,
       "threeStarScore": 780,
+      "timeBonus": {
+        "30": 5,
+        "45": 4,
+        "60": 3,
+        "80": 2,
+        "120": 1
+      },
       "reward": [
         7149,
         7150,
@@ -858,6 +1246,13 @@
       "oneStarScore": 8,
       "twoStarScore": 180,
       "threeStarScore": 260,
+      "timeBonus": {
+        "16": 5,
+        "25": 4,
+        "33": 3,
+        "45": 2,
+        "120": 1
+      },
       "reward": [
         7149,
         7150,
@@ -874,6 +1269,13 @@
       "oneStarScore": 9,
       "twoStarScore": 690,
       "threeStarScore": 785,
+      "timeBonus": {
+        "22": 5,
+        "35": 4,
+        "55": 3,
+        "70": 2,
+        "160": 1
+      },
       "reward": [
         7149,
         7150,
@@ -890,6 +1292,13 @@
       "oneStarScore": 12,
       "twoStarScore": 590,
       "threeStarScore": 870,
+      "timeBonus": {
+        "60": 5,
+        "90": 4,
+        "120": 3,
+        "150": 2,
+        "180": 1
+      },
       "reward": [
         7149,
         7150,
@@ -906,6 +1315,13 @@
       "oneStarScore": 4,
       "twoStarScore": 340,
       "threeStarScore": 580,
+      "timeBonus": {
+        "30": 5,
+        "45": 4,
+        "60": 3,
+        "120": 2,
+        "180": 1
+      },
       "reward": [
         7149,
         7150,
@@ -922,6 +1338,12 @@
       "oneStarScore": 3,
       "twoStarScore": 130,
       "threeStarScore": 280,
+      "timeBonus": {
+        "32": 4,
+        "60": 3,
+        "80": 2,
+        "120": 1
+      },
       "reward": [
         7149,
         7150,
@@ -938,6 +1360,13 @@
       "oneStarScore": 4,
       "twoStarScore": 680,
       "threeStarScore": 830,
+      "timeBonus": {
+        "25": 5,
+        "40": 4,
+        "60": 3,
+        "90": 2,
+        "120": 1
+      },
       "reward": [
         7149,
         7150,
@@ -954,6 +1383,13 @@
       "oneStarScore": 8,
       "twoStarScore": 105,
       "threeStarScore": 260,
+      "timeBonus": {
+        "24": 5,
+        "38": 4,
+        "50": 3,
+        "80": 2,
+        "120": 1
+      },
       "reward": [
         7149,
         7150,
@@ -970,6 +1406,13 @@
       "oneStarScore": 9,
       "twoStarScore": 790,
       "threeStarScore": 1005,
+      "timeBonus": {
+        "45": 5,
+        "60": 4,
+        "120": 3,
+        "160": 2,
+        "180": 1
+      },
       "reward": [
         7149,
         7150,
@@ -986,6 +1429,12 @@
       "oneStarScore": 8,
       "twoStarScore": 110,
       "threeStarScore": 275,
+      "timeBonus": {
+        "25": 5,
+        "40": 4,
+        "60": 3,
+        "90": 2
+      },
       "reward": [
         7149,
         7150,
@@ -1002,6 +1451,13 @@
       "oneStarScore": 9,
       "twoStarScore": 950,
       "threeStarScore": 1100,
+      "timeBonus": {
+        "25": 5,
+        "40": 4,
+        "60": 3,
+        "90": 2,
+        "120": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1018,6 +1474,13 @@
       "oneStarScore": 3,
       "twoStarScore": 380,
       "threeStarScore": 645,
+      "timeBonus": {
+        "45": 5,
+        "70": 4,
+        "90": 3,
+        "120": 2,
+        "180": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1034,6 +1497,12 @@
       "oneStarScore": 4,
       "twoStarScore": 730,
       "threeStarScore": 920,
+      "timeBonus": {
+        "70": 5,
+        "120": 4,
+        "180": 3,
+        "270": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1050,6 +1519,13 @@
       "oneStarScore": 4,
       "twoStarScore": 280,
       "threeStarScore": 345,
+      "timeBonus": {
+        "35": 5,
+        "60": 4,
+        "72": 3,
+        "90": 2,
+        "120": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1066,6 +1542,13 @@
       "oneStarScore": 12,
       "twoStarScore": 790,
       "threeStarScore": 1050,
+      "timeBonus": {
+        "45": 5,
+        "70": 4,
+        "100": 3,
+        "160": 2,
+        "200": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1082,6 +1565,13 @@
       "oneStarScore": 8,
       "twoStarScore": 710,
       "threeStarScore": 990,
+      "timeBonus": {
+        "45": 5,
+        "90": 4,
+        "120": 3,
+        "160": 2,
+        "270": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1098,6 +1588,13 @@
       "oneStarScore": 20,
       "twoStarScore": 1210,
       "threeStarScore": 1680,
+      "timeBonus": {
+        "90": 5,
+        "120": 4,
+        "150": 3,
+        "260": 2,
+        "350": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1114,6 +1611,13 @@
       "oneStarScore": 4,
       "twoStarScore": 260,
       "threeStarScore": 535,
+      "timeBonus": {
+        "45": 5,
+        "75": 4,
+        "110": 3,
+        "160": 2,
+        "270": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1130,6 +1634,13 @@
       "oneStarScore": 4,
       "twoStarScore": 1020,
       "threeStarScore": 1320,
+      "timeBonus": {
+        "45": 5,
+        "70": 4,
+        "105": 3,
+        "130": 2,
+        "200": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1146,6 +1657,13 @@
       "oneStarScore": 4,
       "twoStarScore": 710,
       "threeStarScore": 910,
+      "timeBonus": {
+        "60": 5,
+        "90": 4,
+        "120": 3,
+        "150": 2,
+        "180": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1162,6 +1680,13 @@
       "oneStarScore": 4,
       "twoStarScore": 360,
       "threeStarScore": 435,
+      "timeBonus": {
+        "22": 5,
+        "40": 4,
+        "52": 3,
+        "60": 2,
+        "120": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1178,6 +1703,13 @@
       "oneStarScore": 4,
       "twoStarScore": 590,
       "threeStarScore": 710,
+      "timeBonus": {
+        "60": 5,
+        "90": 4,
+        "120": 3,
+        "150": 2,
+        "180": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1194,6 +1726,13 @@
       "oneStarScore": 8,
       "twoStarScore": 395,
       "threeStarScore": 480,
+      "timeBonus": {
+        "25": 5,
+        "45": 4,
+        "60": 3,
+        "90": 2,
+        "130": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1210,6 +1749,13 @@
       "oneStarScore": 24,
       "twoStarScore": 1050,
       "threeStarScore": 1350,
+      "timeBonus": {
+        "80": 5,
+        "120": 4,
+        "160": 3,
+        "270": 2,
+        "310": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1226,6 +1772,13 @@
       "oneStarScore": 16,
       "twoStarScore": 1450,
       "threeStarScore": 1800,
+      "timeBonus": {
+        "55": 5,
+        "90": 4,
+        "120": 3,
+        "160": 2,
+        "270": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1242,6 +1795,13 @@
       "oneStarScore": 4,
       "twoStarScore": 810,
       "threeStarScore": 975,
+      "timeBonus": {
+        "50": 5,
+        "90": 4,
+        "125": 3,
+        "160": 2,
+        "270": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1258,6 +1818,13 @@
       "oneStarScore": 4,
       "twoStarScore": 710,
       "threeStarScore": 945,
+      "timeBonus": {
+        "44": 5,
+        "90": 4,
+        "110": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1274,6 +1841,13 @@
       "oneStarScore": 24,
       "twoStarScore": 190,
       "threeStarScore": 420,
+      "timeBonus": {
+        "60": 5,
+        "90": 4,
+        "130": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1290,6 +1864,13 @@
       "oneStarScore": 12,
       "twoStarScore": 780,
       "threeStarScore": 1010,
+      "timeBonus": {
+        "25": 5,
+        "60": 4,
+        "120": 3,
+        "160": 2,
+        "200": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1306,6 +1887,13 @@
       "oneStarScore": 20,
       "twoStarScore": 1260,
       "threeStarScore": 1385,
+      "timeBonus": {
+        "60": 5,
+        "90": 4,
+        "120": 3,
+        "150": 2,
+        "180": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1322,6 +1910,12 @@
       "oneStarScore": 4,
       "twoStarScore": 710,
       "threeStarScore": 980,
+      "timeBonus": {
+        "45": 5,
+        "80": 4,
+        "120": 3,
+        "180": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1338,6 +1932,13 @@
       "oneStarScore": 4,
       "twoStarScore": 380,
       "threeStarScore": 510,
+      "timeBonus": {
+        "25": 5,
+        "40": 4,
+        "55": 3,
+        "75": 2,
+        "120": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1354,6 +1955,13 @@
       "oneStarScore": 4,
       "twoStarScore": 960,
       "threeStarScore": 1140,
+      "timeBonus": {
+        "45": 5,
+        "70": 4,
+        "90": 3,
+        "120": 2,
+        "180": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1370,6 +1978,13 @@
       "oneStarScore": 4,
       "twoStarScore": 690,
       "threeStarScore": 810,
+      "timeBonus": {
+        "25": 5,
+        "45": 4,
+        "65": 3,
+        "120": 2,
+        "160": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1386,6 +2001,13 @@
       "oneStarScore": 24,
       "twoStarScore": 1360,
       "threeStarScore": 1580,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "240": 2,
+        "300": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1402,6 +2024,13 @@
       "oneStarScore": 16,
       "twoStarScore": 1220,
       "threeStarScore": 1410,
+      "timeBonus": {
+        "60": 5,
+        "90": 4,
+        "120": 3,
+        "150": 2,
+        "180": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1418,6 +2047,13 @@
       "oneStarScore": 8,
       "twoStarScore": 590,
       "threeStarScore": 675,
+      "timeBonus": {
+        "20": 5,
+        "32": 4,
+        "45": 3,
+        "60": 2,
+        "120": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1434,6 +2070,13 @@
       "oneStarScore": 4,
       "twoStarScore": 175,
       "threeStarScore": 420,
+      "timeBonus": {
+        "45": 5,
+        "75": 4,
+        "120": 3,
+        "160": 2,
+        "200": 1
+      },
       "reward": [
         7149,
         7150,
@@ -1450,6 +2093,13 @@
       "oneStarScore": 4,
       "twoStarScore": 880,
       "threeStarScore": 1030,
+      "timeBonus": {
+        "35": 5,
+        "50": 4,
+        "80": 3,
+        "120": 2,
+        "160": 1
+      },
       "reward": [
         7153,
         7154,
@@ -1466,6 +2116,13 @@
       "oneStarScore": 4,
       "twoStarScore": 1170,
       "threeStarScore": 1395,
+      "timeBonus": {
+        "60": 5,
+        "90": 4,
+        "120": 3,
+        "150": 2,
+        "180": 1
+      },
       "reward": [
         7153,
         7154,
@@ -1482,6 +2139,13 @@
       "oneStarScore": 4,
       "twoStarScore": 980,
       "threeStarScore": 1160,
+      "timeBonus": {
+        "60": 5,
+        "80": 4,
+        "102": 3,
+        "120": 2,
+        "180": 1
+      },
       "reward": [
         7153,
         7154,
@@ -1498,6 +2162,13 @@
       "oneStarScore": 3,
       "twoStarScore": 710,
       "threeStarScore": 1100,
+      "timeBonus": {
+        "90": 5,
+        "140": 4,
+        "180": 3,
+        "220": 2,
+        "300": 1
+      },
       "reward": [
         7153,
         7154,
@@ -1514,6 +2185,13 @@
       "oneStarScore": 16,
       "twoStarScore": 830,
       "threeStarScore": 1160,
+      "timeBonus": {
+        "60": 5,
+        "90": 4,
+        "120": 3,
+        "150": 2,
+        "180": 1
+      },
       "reward": [
         7153,
         7154,
@@ -1530,6 +2208,13 @@
       "oneStarScore": 18,
       "twoStarScore": 960,
       "threeStarScore": 1690,
+      "timeBonus": {
+        "120": 5,
+        "180": 4,
+        "270": 3,
+        "360": 2,
+        "420": 1
+      },
       "reward": [
         7153,
         7154,
@@ -1546,6 +2231,13 @@
       "oneStarScore": 10,
       "twoStarScore": 1020,
       "threeStarScore": 2790,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "2000": 2,
+        "200": 1
+      },
       "reward": [
         7153,
         7154,
@@ -1562,6 +2254,13 @@
       "oneStarScore": 4,
       "twoStarScore": 135,
       "threeStarScore": 380,
+      "timeBonus": {
+        "30": 5,
+        "45": 4,
+        "60": 3,
+        "90": 2,
+        "120": 1
+      },
       "reward": [
         7153,
         7154,
@@ -1578,6 +2277,13 @@
       "oneStarScore": 3,
       "twoStarScore": 1195,
       "threeStarScore": 1420,
+      "timeBonus": {
+        "60": 5,
+        "120": 4,
+        "160": 3,
+        "210": 2,
+        "270": 1
+      },
       "reward": [
         7153,
         7154,
@@ -1594,6 +2300,13 @@
       "oneStarScore": 16,
       "twoStarScore": 310,
       "threeStarScore": 730,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1610,6 +2323,11 @@
       "oneStarScore": 2,
       "twoStarScore": 90,
       "threeStarScore": 210,
+      "timeBonus": {
+        "30": 3,
+        "50": 2,
+        "80": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1626,6 +2344,13 @@
       "oneStarScore": 10,
       "twoStarScore": 580,
       "threeStarScore": 1015,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1642,6 +2367,13 @@
       "oneStarScore": 4,
       "twoStarScore": 670,
       "threeStarScore": 1030,
+      "timeBonus": {
+        "60": 5,
+        "80": 4,
+        "120": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1658,6 +2390,12 @@
       "oneStarScore": 9,
       "twoStarScore": 710,
       "threeStarScore": 1060,
+      "timeBonus": {
+        "50": 4,
+        "70": 43,
+        "100": 2,
+        "150": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1674,6 +2412,13 @@
       "oneStarScore": 6,
       "twoStarScore": 605,
       "threeStarScore": 890,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1690,6 +2435,12 @@
       "oneStarScore": 4,
       "twoStarScore": 360,
       "threeStarScore": 460,
+      "timeBonus": {
+        "40": 4,
+        "65": 3,
+        "90": 2,
+        "120": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1706,6 +2457,13 @@
       "oneStarScore": 18,
       "twoStarScore": 520,
       "threeStarScore": 1030,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1722,6 +2480,13 @@
       "oneStarScore": 12,
       "twoStarScore": 705,
       "threeStarScore": 1050,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "120": 3,
+        "140": 2,
+        "160": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1738,6 +2503,13 @@
       "oneStarScore": 9,
       "twoStarScore": 910,
       "threeStarScore": 1300,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "220": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1754,6 +2526,13 @@
       "oneStarScore": 4,
       "twoStarScore": 1700,
       "threeStarScore": 2060,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "220": 2,
+        "310": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1770,6 +2549,13 @@
       "oneStarScore": 2,
       "twoStarScore": 440,
       "threeStarScore": 675,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1786,6 +2572,12 @@
       "oneStarScore": 3,
       "twoStarScore": 560,
       "threeStarScore": 640,
+      "timeBonus": {
+        "70": 4,
+        "100": 3,
+        "140": 2,
+        "200": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1802,6 +2594,11 @@
       "oneStarScore": 6,
       "twoStarScore": 180,
       "threeStarScore": 360,
+      "timeBonus": {
+        "30": 5,
+        "60": 4,
+        "90": 3
+      },
       "reward": [
         7157,
         7158,
@@ -1818,6 +2615,11 @@
       "oneStarScore": 12,
       "twoStarScore": 480,
       "threeStarScore": 845,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "180": 0
+      },
       "reward": [
         7157,
         7158,
@@ -1834,6 +2636,12 @@
       "oneStarScore": 12,
       "twoStarScore": 725,
       "threeStarScore": 950,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1850,6 +2658,11 @@
       "oneStarScore": 2,
       "twoStarScore": 160,
       "threeStarScore": 270,
+      "timeBonus": {
+        "25": 4,
+        "50": 3,
+        "120": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1866,6 +2679,12 @@
       "oneStarScore": 3,
       "twoStarScore": 820,
       "threeStarScore": 1080,
+      "timeBonus": {
+        "60": 4,
+        "100": 3,
+        "140": 2,
+        "180": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1882,6 +2701,12 @@
       "oneStarScore": 8,
       "twoStarScore": 540,
       "threeStarScore": 630,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "200": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1898,6 +2723,13 @@
       "oneStarScore": 2,
       "twoStarScore": 510,
       "threeStarScore": 705,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1914,6 +2746,13 @@
       "oneStarScore": 4,
       "twoStarScore": 1410,
       "threeStarScore": 1840,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1930,6 +2769,12 @@
       "oneStarScore": 15,
       "twoStarScore": 930,
       "threeStarScore": 1240,
+      "timeBonus": {
+        "60": 5,
+        "120": 4,
+        "160": 3,
+        "210": 2
+      },
       "reward": [
         7157,
         7158,
@@ -1946,6 +2791,12 @@
       "oneStarScore": 4,
       "twoStarScore": 490,
       "threeStarScore": 690,
+      "timeBonus": {
+        "40": 5,
+        "90": 4,
+        "120": 3,
+        "160": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1962,6 +2813,13 @@
       "oneStarScore": 4,
       "twoStarScore": 1240,
       "threeStarScore": 2020,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1978,6 +2836,12 @@
       "oneStarScore": 9,
       "twoStarScore": 415,
       "threeStarScore": 670,
+      "timeBonus": {
+        "45": 4,
+        "60": 3,
+        "90": 2,
+        "180": 1
+      },
       "reward": [
         7157,
         7158,
@@ -1994,6 +2858,11 @@
       "oneStarScore": 6,
       "twoStarScore": 310,
       "threeStarScore": 500,
+      "timeBonus": {
+        "45": 4,
+        "60": 3,
+        "180": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2010,6 +2879,12 @@
       "oneStarScore": 16,
       "twoStarScore": 970,
       "threeStarScore": 1375,
+      "timeBonus": {
+        "40": 5,
+        "60": 4,
+        "90": 3,
+        "200": 2
+      },
       "reward": [
         7157,
         7158,
@@ -2026,6 +2901,11 @@
       "oneStarScore": 3,
       "twoStarScore": 220,
       "threeStarScore": 360,
+      "timeBonus": {
+        "40": 3,
+        "60": 2,
+        "120": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2042,6 +2922,13 @@
       "oneStarScore": 12,
       "twoStarScore": 880,
       "threeStarScore": 1200,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2058,6 +2945,12 @@
       "oneStarScore": 12,
       "twoStarScore": 640,
       "threeStarScore": 810,
+      "timeBonus": {
+        "60": 4,
+        "100": 3,
+        "140": 2,
+        "180": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2074,6 +2967,13 @@
       "oneStarScore": 4,
       "twoStarScore": 1330,
       "threeStarScore": 2650,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2090,6 +2990,12 @@
       "oneStarScore": 3,
       "twoStarScore": 680,
       "threeStarScore": 900,
+      "timeBonus": {
+        "60": 4,
+        "100": 3,
+        "140": 2,
+        "180": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2106,6 +3012,12 @@
       "oneStarScore": 16,
       "twoStarScore": 720,
       "threeStarScore": 900,
+      "timeBonus": {
+        "40": 4,
+        "60": 3,
+        "100": 2,
+        "180": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2122,6 +3034,12 @@
       "oneStarScore": 12,
       "twoStarScore": 440,
       "threeStarScore": 710,
+      "timeBonus": {
+        "40": 4,
+        "80": 3,
+        "120": 2,
+        "180": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2138,6 +3056,13 @@
       "oneStarScore": 20,
       "twoStarScore": 990,
       "threeStarScore": 1610,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2154,6 +3079,13 @@
       "oneStarScore": 21,
       "twoStarScore": 2250,
       "threeStarScore": 3035,
+      "timeBonus": {
+        "70": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "310": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2170,6 +3102,13 @@
       "oneStarScore": 3,
       "twoStarScore": 680,
       "threeStarScore": 990,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2186,6 +3125,13 @@
       "oneStarScore": 8,
       "twoStarScore": 380,
       "threeStarScore": 650,
+      "timeBonus": {
+        "45": 5,
+        "90": 4,
+        "120": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2202,6 +3148,12 @@
       "oneStarScore": 3,
       "twoStarScore": 680,
       "threeStarScore": 990,
+      "timeBonus": {
+        "50": 4,
+        "90": 3,
+        "130": 2,
+        "160": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2218,6 +3170,12 @@
       "oneStarScore": 4,
       "twoStarScore": 790,
       "threeStarScore": 1080,
+      "timeBonus": {
+        "50": 4,
+        "100": 3,
+        "140": 2,
+        "180": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2234,6 +3192,13 @@
       "oneStarScore": 4,
       "twoStarScore": 1550,
       "threeStarScore": 2195,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2250,6 +3215,13 @@
       "oneStarScore": 20,
       "twoStarScore": 990,
       "threeStarScore": 1420,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2266,6 +3238,13 @@
       "oneStarScore": 4,
       "twoStarScore": 890,
       "threeStarScore": 1390,
+      "timeBonus": {
+        "70": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2282,6 +3261,11 @@
       "oneStarScore": 6,
       "twoStarScore": 380,
       "threeStarScore": 545,
+      "timeBonus": {
+        "60": 5,
+        "100": 3,
+        "140": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2298,6 +3282,13 @@
       "oneStarScore": 9,
       "twoStarScore": 670,
       "threeStarScore": 1010,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2314,6 +3305,13 @@
       "oneStarScore": 2,
       "twoStarScore": 420,
       "threeStarScore": 760,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2330,6 +3328,12 @@
       "oneStarScore": 9,
       "twoStarScore": 740,
       "threeStarScore": 1015,
+      "timeBonus": {
+        "45": 4,
+        "90": 3,
+        "120": 2,
+        "180": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2346,6 +3350,12 @@
       "oneStarScore": 4,
       "twoStarScore": 185,
       "threeStarScore": 300,
+      "timeBonus": {
+        "25": 5,
+        "45": 3,
+        "60": 2,
+        "120": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2362,6 +3372,13 @@
       "oneStarScore": 4,
       "twoStarScore": 1100,
       "threeStarScore": 1810,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "140": 3,
+        "180": 2,
+        "270": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2378,6 +3395,11 @@
       "oneStarScore": 2,
       "twoStarScore": 210,
       "threeStarScore": 300,
+      "timeBonus": {
+        "30": 4,
+        "60": 3,
+        "180": 1
+      },
       "reward": [
         7157,
         7158,
@@ -2394,6 +3416,13 @@
       "oneStarScore": 4,
       "twoStarScore": 2150,
       "threeStarScore": 2865,
+      "timeBonus": {
+        "60": 5,
+        "100": 4,
+        "160": 3,
+        "220": 2,
+        "300": 1
+      },
       "reward": [
         7157,
         7158,

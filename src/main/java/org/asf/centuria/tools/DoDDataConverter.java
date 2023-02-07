@@ -114,6 +114,12 @@ public class DoDDataConverter {
 								reward.add(lootIds.get(ind));
 							}
 							JsonObject lvl = ele.getAsJsonObject();
+							JsonObject timeBonus = new JsonObject();
+							for (JsonElement ele2 : lvl.get("timerScoreThresholds").getAsJsonArray()) {
+								JsonObject bonus = ele2.getAsJsonObject();
+								timeBonus.addProperty(bonus.get("seconds").getAsString(),
+										bonus.get("pointsPerSecond").getAsInt());
+							}
 							JsonObject level = new JsonObject();
 							level.addProperty("name", lvl.get("name").getAsString());
 							level.addProperty("length", lvl.get("codeLength").getAsInt());
@@ -124,6 +130,7 @@ public class DoDDataConverter {
 							level.addProperty("oneStarScore", lvl.get("oneStarScore").getAsInt());
 							level.addProperty("twoStarScore", lvl.get("twoStarScore").getAsInt());
 							level.addProperty("threeStarScore", lvl.get("threeStarScore").getAsInt());
+							level.add("timeBonus", timeBonus);
 							level.add("reward", reward);
 							levels.add(level);
 							index++;

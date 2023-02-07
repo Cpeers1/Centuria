@@ -3,6 +3,7 @@ package org.asf.centuria.minigames.games;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.asf.centuria.Centuria;
@@ -37,6 +38,7 @@ public class GameDoOrDye extends AbstractMinigame {
 	public int startingIngredientCount;
 	public int scorePerIngredient;
 	public boolean multipleGuesses;
+	public long timeStart;
 
 	public int scoreThreeStars;
 	public int scoreTwoStars;
@@ -50,6 +52,7 @@ public class GameDoOrDye extends AbstractMinigame {
 	private ArrayList<RewardData> rewardsOneStar = new ArrayList<RewardData>();
 	private ArrayList<RewardData> rewardsTwoStars = new ArrayList<RewardData>();
 	private ArrayList<RewardData> rewardsThreeStars = new ArrayList<RewardData>();
+	private HashMap<Integer, Integer> timeBonuses = new HashMap<Integer, Integer>();
 
 	private void addLoot(LootInfo reward, ArrayList<RewardData> rewards) {
 		if (reward.reward.referencedTableId != null) {
@@ -86,6 +89,8 @@ public class GameDoOrDye extends AbstractMinigame {
 
 	@MinigameMessage("startLevel")
 	public void startLevel(Player plr, XtReader rd) {
+		timeStart = System.currentTimeMillis();
+
 		// Deserialize
 		level = rd.readInt();
 
@@ -97,6 +102,7 @@ public class GameDoOrDye extends AbstractMinigame {
 		rewardsOneStar.clear();
 		rewardsTwoStars.clear();
 		rewardsThreeStars.clear();
+		timeBonuses.clear();
 
 		// load level def from json
 		try {
@@ -115,6 +121,13 @@ public class GameDoOrDye extends AbstractMinigame {
 			scoreTwoStars = helper.get("twoStarScore").getAsInt();
 			scoreThreeStars = helper.get("threeStarScore").getAsInt();
 
+			// Load time bonuses
+			JsonObject bonuses = helper.get("timeBonus").getAsJsonObject();
+			for (String bonus : bonuses.keySet()) {
+				timeBonuses.put(Integer.parseInt(bonus), bonuses.get(bonus).getAsInt());
+			}
+
+			// Load rewards
 			int rewardIndex = 0;
 			for (JsonElement ele : helper.get("reward").getAsJsonArray()) {
 				int reward = ele.getAsInt();
@@ -256,12 +269,30 @@ public class GameDoOrDye extends AbstractMinigame {
 			pk2.command = "endLevelLose";
 			pk2.data = wr2.encode().substring(4);
 			plr.client.sendPacket(pk2);
-			rewardsOneStar.clear();
-			rewardsTwoStars.clear();
-			rewardsThreeStars.clear();
 		}
 
 		if (win) {
+			// Calculate time bonus
+			int timeBonusScore = 0;
+			long timeSpent = System.currentTimeMillis() - timeStart;
+			int secondsSpent = (int) (timeSpent / 1000);
+
+			// Find best bonus
+			int lastBonusVal = 0;
+			int lastBonusLimit = 0;
+			for (int limit : timeBonuses.keySet()) {
+				if (secondsSpent <= limit && (limit < lastBonusLimit || lastBonusLimit == 0)) {
+					lastBonusLimit = limit;
+					lastBonusVal = timeBonuses.get(limit);
+				}
+			}
+
+			// Calculate reward
+			if (lastBonusVal != 0) {
+				int bonusSecs = lastBonusLimit - secondsSpent;
+				timeBonusScore = bonusSecs * lastBonusVal;
+			}
+
 			// Unlock level
 			UserVarValue unlock = plr.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(9100, 0);
 			int value = 0;
@@ -276,7 +307,7 @@ public class GameDoOrDye extends AbstractMinigame {
 			int ingredientScore = dyesOnScreen.size() * scorePerIngredient;
 			int firstGuessBonus = multipleGuesses ? 0 : 100;
 			int lastIngredientBonus = lose ? 100 : 0;
-			int totalScore = ingredientScore + firstGuessBonus + lastIngredientBonus;
+			int totalScore = ingredientScore + firstGuessBonus + lastIngredientBonus + timeBonusScore;
 
 			// Save score
 			UserVarValue var = plr.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(9101,
@@ -295,7 +326,7 @@ public class GameDoOrDye extends AbstractMinigame {
 			// Send win
 			XtWriter wr1 = new XtWriter();
 			wr1.writeInt(ingredientScore); // IngredientScore
-			wr1.writeInt(0); // TimeScore
+			wr1.writeInt(timeBonusScore); // TimeScore
 			wr1.writeInt(lastIngredientBonus); // LastIngredientBonus
 			wr1.writeInt(firstGuessBonus); // firstGuessBonus
 			wr1.writeString("null"); // ?
