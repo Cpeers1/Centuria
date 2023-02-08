@@ -123,4 +123,11 @@ public class FileBasedSaveManager extends SaveManager {
 		return saves.toArray(t -> new String[t]);
 	}
 
+	@Override
+	public PlayerInventory getSaveSpecificInventoryOf(String save) {
+		if (!saveExists(save))
+			return null;
+		return new FileBasedPlayerInventory(account.getAccountID(), save);
+	}
+
 }

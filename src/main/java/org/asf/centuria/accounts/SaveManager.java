@@ -10,6 +10,15 @@ package org.asf.centuria.accounts;
 public abstract class SaveManager {
 
 	/**
+	 * Retrieves a save-specific inventory for a specific save
+	 * 
+	 * @since Beta 1.6
+	 * @param save Save name
+	 * @return PlayerInventory instance or null if invalid
+	 */
+	public abstract PlayerInventory getSaveSpecificInventoryOf(String save);
+
+	/**
 	 * Retrieves the current active save name
 	 * 
 	 * @return Active save name
