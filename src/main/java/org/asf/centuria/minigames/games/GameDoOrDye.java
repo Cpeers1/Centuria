@@ -347,32 +347,34 @@ public class GameDoOrDye extends AbstractMinigame {
 			// Give reward
 			if (stars > 0) {
 				// Find rewards
-				ArrayList<RewardData> rewards = null;
-				switch (stars) {
-				case 1:
-					rewards = rewardsOneStar;
-					break;
-				case 2:
-					rewards = rewardsTwoStars;
-					break;
-				case 3:
-					rewards = rewardsThreeStars;
-					break;
-				}
+				for (int i = 0; i < stars; i++) {
+					ArrayList<RewardData> rewards = null;
+					switch (i) {
+					case 0:
+						rewards = rewardsOneStar;
+						break;
+					case 1:
+						rewards = rewardsTwoStars;
+						break;
+					case 2:
+						rewards = rewardsThreeStars;
+						break;
+					}
 
-				// Add rewards
-				for (RewardData reward : rewards) {
-					plr.account.getSaveSpecificInventory().getItemAccessor(plr).add(Integer.parseInt(reward.id),
-							reward.count);
+					// Add rewards
+					for (RewardData reward : rewards) {
+						plr.account.getSaveSpecificInventory().getItemAccessor(plr).add(Integer.parseInt(reward.id),
+								reward.count);
 
-					// Send packet
-					MinigamePrizePacket p1 = new MinigamePrizePacket();
-					p1.given = true;
-					p1.itemDefId = reward.id;
-					p1.itemCount = reward.count;
-					p1.prizeIndex1 = 0;
-					p1.prizeIndex2 = stars;
-					plr.client.sendPacket(p1);
+						// Send packet
+						MinigamePrizePacket p1 = new MinigamePrizePacket();
+						p1.given = true;
+						p1.itemDefId = reward.id;
+						p1.itemCount = reward.count;
+						p1.prizeIndex1 = 0;
+						p1.prizeIndex2 = 3;
+						plr.client.sendPacket(p1);
+					}
 				}
 
 				// XP
