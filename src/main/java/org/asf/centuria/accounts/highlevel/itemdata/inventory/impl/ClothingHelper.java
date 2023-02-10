@@ -13,6 +13,8 @@ public class ClothingHelper extends AbstractInventoryInteractionHelper {
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, int defID) {
 		String id = inventory.getClothingAccessor().addClothing(defID, false);
+		if (id == null)
+			return null;
 		return inventory.getAccessor().findInventoryObject(INV_TYPE, id);
 	}
 

@@ -336,9 +336,10 @@ public class ResourceCollectionModule extends InteractionModule {
 
 				// Check reset
 				if (def.respawnSeconds > -1 && lastHarvest + (def.respawnSeconds * 1000) < System.currentTimeMillis()) {
-					player.account.getSaveSpecificInventory().getInteractionMemory().resetHarvestCount(player.levelID, id); // reset
-																														// harvest
-																														// counter
+					player.account.getSaveSpecificInventory().getInteractionMemory().resetHarvestCount(player.levelID,
+							id); // reset
+					// harvest
+					// counter
 					return true; // Valid as it had reseted
 				}
 
@@ -508,10 +509,11 @@ public class ResourceCollectionModule extends InteractionModule {
 				// Treasure
 
 				// Check time
-				if (player.account.getSaveSpecificInventory().getInteractionMemory().hasTreasureBeenUnlocked(player.levelID,
-						id)
-						&& System.currentTimeMillis() < (player.account.getSaveSpecificInventory().getInteractionMemory()
-								.getLastTreasureUnlockTime(player.levelID, id) + (def.respawnSeconds * 1000)))
+				if (player.account.getSaveSpecificInventory().getInteractionMemory()
+						.hasTreasureBeenUnlocked(player.levelID, id)
+						&& System
+								.currentTimeMillis() < (player.account.getSaveSpecificInventory().getInteractionMemory()
+										.getLastTreasureUnlockTime(player.levelID, id) + (def.respawnSeconds * 1000)))
 					return 0; // Cannot loot yet
 
 				// Give reward
@@ -556,7 +558,8 @@ public class ResourceCollectionModule extends InteractionModule {
 									return 0; // Cannot loot yet
 
 								// Set unlocked and timestamp
-								player.account.getSaveSpecificInventory().getInteractionMemory().unlocked(player.levelID, id);
+								player.account.getSaveSpecificInventory().getInteractionMemory()
+										.unlocked(player.levelID, id);
 								player.account.getSaveSpecificInventory().getInteractionMemory().saveTo(player.client);
 
 								// Make sure the resource will be respawned
@@ -823,8 +826,8 @@ public class ResourceCollectionModule extends InteractionModule {
 				// Check reset
 				if (def.respawnSeconds > -1 && lastHarvest + (def.respawnSeconds * 1000) < System.currentTimeMillis()) {
 					// Reset harvest count
-					player.account.getSaveSpecificInventory().getInteractionMemory().resetHarvestCount(player.pendingLevelID,
-							id);
+					player.account.getSaveSpecificInventory().getInteractionMemory()
+							.resetHarvestCount(player.pendingLevelID, id);
 				} else {
 					// Check harvest count
 					if (harvested >= def.interactionsBeforeDespawn) {
@@ -888,8 +891,7 @@ public class ResourceCollectionModule extends InteractionModule {
 								// Check reset and last unlock
 								if ((respawnSeconds == -1
 										|| lasUnlock + (respawnSeconds * 1000) > System.currentTimeMillis())
-										&& player.account
-												.getSaveSpecificInventory().getInteractionMemory()
+										&& player.account.getSaveSpecificInventory().getInteractionMemory()
 												.hasTreasureBeenUnlocked(player.pendingLevelID, id)) {
 									pState = 2;
 									player.respawnItems.put(id, (long) (lasUnlock + (respawnSeconds * 1000)));

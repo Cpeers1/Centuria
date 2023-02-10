@@ -32,14 +32,14 @@ public class FileBasedSaveManager extends SaveManager {
 
 	@Override
 	public boolean saveExists(String save) {
-		if (!save.matches("^[A-Za-z0-9 _.]+$"))
+		if (!save.matches("^[A-Za-z0-9 _.()]+$"))
 			return false;
 		return new File("inventories/" + account.getAccountID() + "/" + save).exists();
 	}
 
 	@Override
 	public boolean createSave(String save) {
-		if (!save.matches("^[A-Za-z0-9 _.]+$"))
+		if (!save.matches("^[A-Za-z0-9 _.()]+$"))
 			return false;
 		if (saveExists(save))
 			return false;
@@ -78,7 +78,7 @@ public class FileBasedSaveManager extends SaveManager {
 
 	@Override
 	public boolean deleteSave(String save) {
-		if (!save.matches("^[A-Za-z0-9 _.]+$"))
+		if (!save.matches("^[A-Za-z0-9 _.()]+$"))
 			return false;
 		if (!saveExists(save))
 			return false;
@@ -94,7 +94,7 @@ public class FileBasedSaveManager extends SaveManager {
 
 	@Override
 	public boolean switchSave(String save) {
-		if (!save.matches("^[A-Za-z0-9 _.]+$"))
+		if (!save.matches("^[A-Za-z0-9 _.()]+$"))
 			return false;
 		if (!saveExists(save))
 			return false;
@@ -121,6 +121,13 @@ public class FileBasedSaveManager extends SaveManager {
 		}
 
 		return saves.toArray(t -> new String[t]);
+	}
+
+	@Override
+	public PlayerInventory getSaveSpecificInventoryOf(String save) {
+		if (!saveExists(save))
+			return null;
+		return new FileBasedPlayerInventory(account.getAccountID(), save);
 	}
 
 }

@@ -44,7 +44,7 @@ public abstract class ClothingItemAccessor extends AbstractInventoryAccessor {
 	 * 
 	 * @param defID         Clothing item defID
 	 * @param isInTradeList True to add this item to trade list, false otherwise
-	 * @return Item UUID
+	 * @return Item UUID or null
 	 */
 	public abstract String addClothing(int defID, boolean isInTradeList);
 

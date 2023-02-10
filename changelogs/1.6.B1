@@ -1,0 +1,15 @@
+This is a partial update, planning to add more in 1.6.B2, however the present patch was quite large and decided to release.
+
+New features and changes in this update:
+ - Implemented minigame: Do or Dye (credits to Joey for the minigame itself, rewards implemented by Zera)
+ - Added the missing tiles to What the Hex
+ - Fixed server errors on account deletion
+ - Fixed inspiration NPCs such as Konrad
+ - Fix dye 9-0 error
+ - Fix mistake in quest rewards
+ - Fix non-unravelled enigmas showing in shop stock
+ - Fix 500 error in the user details call of the API for new accounts
+
+What the Hex is still pending a fix for the reward issue, however there may be many more bugs left.
+Any issues relating to the minigames, even if already known before this update, please report them in bug reports.
+Note that Twiggle Builders still remains not fully functional (does not give rewards), its presently in limbo.

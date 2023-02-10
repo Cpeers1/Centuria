@@ -133,6 +133,21 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 
 				// Remove dye from inventory
 				inv.getDyeAccessor().removeDye(dye);
+
+				// Check if still present
+				if (!inv.getAccessor().hasInventoryObject("111", dye)) {
+					// Send remove
+					InventoryItemRemovedPacket pkt = new InventoryItemRemovedPacket();
+					pkt.items = new String[] { dye };
+					client.sendPacket(pkt);
+				} else {
+					// Send update
+					InventoryItemPacket pkt = new InventoryItemPacket();
+					JsonArray arr = new JsonArray();
+					arr.add(inv.getAccessor().findInventoryObject("111", dye));
+					pkt.item = arr;
+					client.sendPacket(pkt);
+				}
 			}
 
 			// Apply undye

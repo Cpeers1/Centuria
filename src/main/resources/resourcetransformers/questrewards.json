@@ -1085,7 +1085,7 @@
         {
           "hasItem": true,
           "hasTableReference": false,
-          "itemId": "14896",
+          "itemId": "14500",
           "minCount": 15,
           "maxCount": 20,
           "weight": 1
@@ -1194,8 +1194,8 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
-          "minCount": 40,
-          "maxCount": 50,
+          "minCount": 60,
+          "maxCount": 80,
           "weight": 1
         }
       ]

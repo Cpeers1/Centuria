@@ -491,6 +491,8 @@ public class FileBasedAccountObject extends CenturiaAccount {
 			for (String userID : dms.keySet()) {
 				// Load DM id
 				String dmID = dms.get(userID).getAsString();
+				if (!manager.dmExists(dmID))
+					continue; // Skip
 
 				// Remove all participants
 				String[] participants = manager.getDMParticipants(dmID);

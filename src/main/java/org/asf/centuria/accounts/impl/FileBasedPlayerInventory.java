@@ -151,6 +151,8 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 	}
 
 	private void deleteDir(File dir) {
+		if (!dir.exists())
+			return;
 		for (File subDir : dir.listFiles(t -> t.isDirectory())) {
 			deleteDir(subDir);
 		}
