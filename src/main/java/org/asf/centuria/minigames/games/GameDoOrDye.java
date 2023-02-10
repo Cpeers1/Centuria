@@ -164,14 +164,14 @@ public class GameDoOrDye extends AbstractMinigame {
 
 			// generate solution
 			if (allowRepeatColors) {
-				for (int i = 0; i < codeLength; i++) {
-					int index = (int) (Math.random() * codeLength);
+				while (solution.size() < codeLength) {
+					int index = (int) (Math.random() * availableDyes.size());
 					solution.add(availableDyes.get(index));
 				}
 			} else {
 				ArrayList<CodeColor> used = new ArrayList<CodeColor>();
 				while (solution.size() < codeLength) {
-					int index = (int) (Math.random() * codeLength);
+					int index = (int) (Math.random() * availableDyes.size());
 					if (used.contains(availableDyes.get(index)) == false) {
 						solution.add(availableDyes.get(index));
 						used.add(availableDyes.get(index));
