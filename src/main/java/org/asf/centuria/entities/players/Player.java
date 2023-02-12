@@ -561,14 +561,6 @@ public class Player {
 							break;
 					}
 
-					XtWriter writer = new XtWriter();
-					writer.writeString("rfjtr");
-					writer.writeInt(-1); // data prefix
-					writer.writeInt(1); // other world
-					writer.writeString("");
-					writer.writeString(""); // data suffix
-					client.sendPacket(writer.encode());
-
 					if (!plr.room.equals(player.room)) {
 						// Check sanc
 						if (plr.levelType == 2 && plr.room.startsWith("sanctuary_")) {
@@ -602,6 +594,14 @@ public class Player {
 							}
 						}
 
+						XtWriter writer = new XtWriter();
+						writer.writeString("rfjtr");
+						writer.writeInt(-1); // data prefix
+						writer.writeInt(1); // other world
+						writer.writeString("");
+						writer.writeString(""); // data suffix
+						client.sendPacket(writer.encode());
+
 						// Build room join
 						RoomJoinPacket join = new RoomJoinPacket();
 						join.levelType = plr.levelType;
@@ -630,6 +630,14 @@ public class Player {
 						// Send packet
 						client.sendPacket(join);
 					} else {
+						XtWriter writer = new XtWriter();
+						writer.writeString("rfjtr");
+						writer.writeInt(-1); // data prefix
+						writer.writeInt(1); // other world
+						writer.writeString("");
+						writer.writeString(""); // data suffix
+						client.sendPacket(writer.encode());
+
 						// Same room, sync player
 						ObjectUpdatePacket pkt = new ObjectUpdatePacket();
 						pkt.action = 0;
