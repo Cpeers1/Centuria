@@ -310,12 +310,14 @@ public class FileBasedAccountManager extends AccountManager {
 			if (Centuria.defaultUseManagedSaves) {
 				// Create managed save data
 
-				// First create a save manifest
+				// Load inventory
 				PlayerInventory sharedInv = new FileBasedPlayerInventory(id, "");
-				sharedInv.setItem("savemanifest", new JsonObject());
 
 				// Load save manager
 				SaveManager manager = new FileBasedSaveManager(sharedInv, getAccount(id));
+
+				// Create save manifest
+				sharedInv.setItem("savemanifest", new JsonObject());
 
 				// Find default save settings
 				JsonObject defaultSaveSettings;
@@ -328,7 +330,7 @@ public class FileBasedAccountManager extends AccountManager {
 				}
 
 				// Create saves
-				String defaultSaveName = defaultSaveSettings.get("migrationSaveName").getAsString();
+				String defaultSaveName = defaultSaveSettings.get("defaultSaveName").getAsString();
 				for (String saveName : defaultSaveSettings.get("saves").getAsJsonObject().keySet()) {
 					JsonObject saveSettings = defaultSaveSettings.get("saves").getAsJsonObject().get(saveName)
 							.getAsJsonObject();

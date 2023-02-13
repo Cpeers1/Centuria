@@ -109,6 +109,11 @@ public class FileBasedAccountObject extends CenturiaAccount {
 			SaveMode mode = getSaveMode();
 			if (mode == SaveMode.SINGLE)
 				mainInv = sharedInv;
+			else if (!sharedInv.getItem("savemanifest").getAsJsonObject().has("activeSave")) {
+				// Clean up
+				mode = SaveMode.SINGLE;
+				sharedInv.deleteItem("savemanifest");
+			}
 
 		} else {
 			// Use the existing inventory object

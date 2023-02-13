@@ -140,6 +140,7 @@ public class UserDetailsHandler extends HttpUploadProcessor {
 
 				response.addProperty("avatar_species", species);
 				response.addProperty("last_login_time", acc.getLastLoginTime());
+				response.addProperty("tutorial_completed", !acc.isPlayerNew());
 				response.addProperty("is_online", acc.getOnlinePlayerInstance() != null);
 				response.addProperty("save_mode", acc.getSaveMode().toString());
 				if (acc.isMuted() || acc.isBanned()) {
