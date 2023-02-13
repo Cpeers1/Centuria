@@ -1,0 +1,10 @@
+Fixes in 1.6.1:
+ - Fixed account creation error with managed save data
+ - Fix bug with teleporting to players
+ - Add a way to check if the tutorial was completed from the API
+
+Fixes in the GC module:
+ - Fix account delete/ban handling
+
+Fixes in the feraltweaks module:
+ - Fix client handshake not fully functioning
