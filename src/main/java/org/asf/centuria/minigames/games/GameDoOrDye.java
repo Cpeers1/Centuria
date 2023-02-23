@@ -280,7 +280,10 @@ public class GameDoOrDye extends AbstractMinigame {
 			// Find best bonus
 			int lastBonusVal = 0;
 			int lastBonusLimit = 0;
+			int highestBonusLimit = 0;
 			for (int limit : timeBonuses.keySet()) {
+				if (limit >= highestBonusLimit)
+					highestBonusLimit = limit;
 				if (secondsSpent <= limit && (limit < lastBonusLimit || lastBonusLimit == 0)) {
 					lastBonusLimit = limit;
 					lastBonusVal = timeBonuses.get(limit);
@@ -289,7 +292,7 @@ public class GameDoOrDye extends AbstractMinigame {
 
 			// Calculate reward
 			if (lastBonusVal != 0) {
-				int bonusSecs = lastBonusLimit - secondsSpent;
+				int bonusSecs = highestBonusLimit - secondsSpent;
 				timeBonusScore = bonusSecs * lastBonusVal;
 			}
 
