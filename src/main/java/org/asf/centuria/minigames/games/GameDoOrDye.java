@@ -38,7 +38,6 @@ public class GameDoOrDye extends AbstractMinigame {
 	public int startingIngredientCount;
 	public int scorePerIngredient;
 	public boolean multipleGuesses;
-	public long timeStart;
 
 	public int scoreThreeStars;
 	public int scoreTwoStars;
@@ -89,7 +88,6 @@ public class GameDoOrDye extends AbstractMinigame {
 
 	@MinigameMessage("startLevel")
 	public void startLevel(Player plr, XtReader rd) {
-		timeStart = System.currentTimeMillis();
 
 		// Deserialize
 		level = rd.readInt();
@@ -274,8 +272,7 @@ public class GameDoOrDye extends AbstractMinigame {
 		if (win) {
 			// Calculate time bonus
 			int timeBonusScore = 0;
-			long timeSpent = System.currentTimeMillis() - timeStart;
-			int secondsSpent = (int) (timeSpent / 1000);
+			int secondsSpent = levelTimer / 1000;
 
 			// Find best bonus
 			int lastBonusVal = 0;
