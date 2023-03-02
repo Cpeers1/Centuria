@@ -29,3 +29,6 @@ clientmods/org.asf.centuria.client.chartmod/run
 
 update.list
 updater.jar
+
+# macOS
+**/.DS_Store

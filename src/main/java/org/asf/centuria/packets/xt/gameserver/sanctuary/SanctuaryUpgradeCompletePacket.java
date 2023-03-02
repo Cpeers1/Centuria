@@ -18,7 +18,7 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 
 	private static final String PACKET_ID = "suc";
 
-	public String twiggleInvId;
+	public static String twiggleInvId;
 
 	public boolean success;
 
@@ -54,101 +54,50 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 			// need to use the twiggle to find out what was worked on
 
 			var player = (Player) client.container;
-			var twiggleAccessor = player.account.getSaveSpecificInventory().getTwiggleAccesor();
 
-			var twiggleItem = twiggleAccessor.getTwiggle(twiggleInvId);
+			var twiggleItem = player.account.getSaveSpecificInventory().getTwiggleAccesor().getTwiggle(twiggleInvId);
 
 			switch (twiggleItem.getTwiggleComponent().workType) {
-			case WorkingOtherSanctuary:
-			case WorkingSanctuary:
-				// we are ok
-				break;
-			case FinishedOtherSanctuary:
-			case FinishedSanctuary:
-			case None:
-			default: {
-				// failed to complete expansion
-				this.success = false;
-				client.sendPacket(this);
-				return true;
-			}
-			}
-
-			if (twiggleItem.getTwiggleComponent().twiggleWorkParams.stage != null) {
-				// its a stage upgrade
-				var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor().upgradeSanctuaryToStage(
-						twiggleItem.getTwiggleComponent().twiggleWorkParams.classItemInvId,
-						twiggleItem.getTwiggleComponent().twiggleWorkParams.stage);
-
-				if (didSucceed) {
-					var il = player.account.getSaveSpecificInventory().getItem("201");
-					var ilPacket = new InventoryItemPacket();
-					ilPacket.item = il;
-
-					// send IL
-					player.client.sendPacket(ilPacket);
-
-					il = player.account.getSaveSpecificInventory().getItem("5");
-					ilPacket = new InventoryItemPacket();
-					ilPacket.item = il;
-
-					// send IL
-					player.client.sendPacket(ilPacket);
-
-					il = player.account.getSaveSpecificInventory().getItem("10");
-					ilPacket = new InventoryItemPacket();
-					ilPacket.item = il;
-
-					// send IL
-					player.client.sendPacket(ilPacket);
-					
-					twiggleAccessor.clearTwiggleWork(twiggleInvId);
-					il = player.account.getSaveSpecificInventory().getItem("110");
-					ilPacket = new InventoryItemPacket();
-					ilPacket.item = il;
-
-					// send IL
-					player.client.sendPacket(ilPacket);
-				} else {
+				case WorkingOtherSanctuary:
+				case WorkingSanctuary:
+					// we are ok
+					break;
+				case FinishedOtherSanctuary:
+				case FinishedSanctuary:
+				case None:
+				default: {
 					// failed to complete expansion
 					this.success = false;
 					client.sendPacket(this);
 					return true;
 				}
-			} else if (twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex != null) {
+			}
+
+			if (twiggleItem.getTwiggleComponent().twiggleWorkParams.stage != null) {
 				// its a stage upgrade
-				var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor().enlargenSanctuaryRooms(
-						twiggleItem.getTwiggleComponent().twiggleWorkParams.classItemInvId,
-						twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex);
+				var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+						.upgradeSanctuaryToStage(
+								twiggleItem.getTwiggleComponent().twiggleWorkParams.classItemInvId,
+								twiggleItem.getTwiggleComponent().twiggleWorkParams.stage);
 
 				if (didSucceed) {
-					var il = player.account.getSaveSpecificInventory().getItem("201");
-					var ilPacket = new InventoryItemPacket();
-					ilPacket.item = il;
+					sendIlPacket(player);
+				} else {
+					// failed to complete upgrade
+					this.success = false;
+					client.sendPacket(this);
+					return true;
+				}
+			} else if (twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex != null) {
+				// its a room expansion
+				var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+						.enlargenSanctuaryRooms(
+								twiggleItem.getTwiggleComponent().twiggleWorkParams.classItemInvId,
+								twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex,
+								true);
 
-					// send IL
-					player.client.sendPacket(ilPacket);
-
-					il = player.account.getSaveSpecificInventory().getItem("5");
-					ilPacket = new InventoryItemPacket();
-					ilPacket.item = il;
-
-					// send IL
-					player.client.sendPacket(ilPacket);
-
-					il = player.account.getSaveSpecificInventory().getItem("10");
-					ilPacket = new InventoryItemPacket();
-					ilPacket.item = il;
-
-					// send IL
-					player.client.sendPacket(ilPacket);
-					twiggleAccessor.clearTwiggleWork(twiggleInvId);
-					il = player.account.getSaveSpecificInventory().getItem("110");
-					ilPacket = new InventoryItemPacket();
-					ilPacket.item = il;
-
-					// send IL
-					player.client.sendPacket(ilPacket);
+				if (didSucceed) {
+					sendIlPacket(player);
 				} else {
 					// failed to complete expansion
 					this.success = false;
@@ -171,6 +120,39 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 		}
 
 		return true;
+	}
+
+	public void sendIlPacket(Player player) {
+		var twiggleAccessor = player.account.getSaveSpecificInventory().getTwiggleAccesor();
+
+		var il = player.account.getSaveSpecificInventory().getItem("201");
+		var ilPacket = new InventoryItemPacket();
+		ilPacket.item = il;
+
+		// send IL
+		player.client.sendPacket(ilPacket);
+
+		il = player.account.getSaveSpecificInventory().getItem("5");
+		ilPacket = new InventoryItemPacket();
+		ilPacket.item = il;
+
+		// send IL
+		player.client.sendPacket(ilPacket);
+
+		il = player.account.getSaveSpecificInventory().getItem("10");
+		ilPacket = new InventoryItemPacket();
+		ilPacket.item = il;
+
+		// send IL
+		player.client.sendPacket(ilPacket);
+
+		twiggleAccessor.clearTwiggleWork(twiggleInvId);
+		il = player.account.getSaveSpecificInventory().getItem("110");
+		ilPacket = new InventoryItemPacket();
+		ilPacket.item = il;
+
+		// send IL
+		player.client.sendPacket(ilPacket);
 	}
 
 	public void JoinSanctuary(SmartfoxClient client, String sanctuaryOwner) {

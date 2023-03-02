@@ -1157,7 +1157,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 
 	@Override
-	public boolean enlargenSanctuaryRooms(String sancClassInvId, int roomIndex) {
+	public boolean enlargenSanctuaryRooms(String sancClassInvId, int roomIndex, Boolean isEnlargen) {
 
 		// Need to upgrade sanctuary..
 		if (!inventory.containsItem("10"))
@@ -1183,7 +1183,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 				.get("SanctuaryClass").getAsJsonObject();
 
 		var roomEnlargeArray = sancClass.get("enlargedAreas").getAsJsonArray();
-		roomEnlargeArray.set(roomIndex, new JsonPrimitive(1));
+		roomEnlargeArray.set(roomIndex, new JsonPrimitive(isEnlargen ? 1 : 0));
 
 		JsonObject ts = new JsonObject();
 		ts.addProperty("ts", System.currentTimeMillis());
@@ -1242,7 +1242,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 				// update room enlarge array
 				roomEnlargeArray = houseLevel.get("enlargedAreas").getAsJsonArray();
-				roomEnlargeArray.set(roomIndex, new JsonPrimitive(1));
+				roomEnlargeArray.set(roomIndex, new JsonPrimitive(isEnlargen ? 1 : 0));
 
 				// stamp
 				matchedHouseItem.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()

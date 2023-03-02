@@ -3,6 +3,8 @@ package org.asf.centuria.packets.xt.gameserver.sanctuary;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.inventoryitems.twiggles.TwiggleItem;
@@ -67,6 +69,7 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 			var player = (Player) client.container;
 			var twiggleAccessor = player.account.getSaveSpecificInventory().getTwiggleAccesor();
 			boolean isStageUpgrade = false;
+			boolean isDisableRoom = false;
 
 			TwiggleItem updatedTwiggle = null;
 			var classItemInvId = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
@@ -84,9 +87,7 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 						System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForStageUp(stage), workParams);
 
 				isStageUpgrade = true;
-			}
-			// if the enlarged array has any elements that don't match the og elements
-			else {
+			} else { // if the enlarged array has any elements that don't match the og elements
 				boolean nonMatchingElement = false;
 				int nonMatchingElementIndex = 0;
 				JsonArray expansionArray = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
@@ -101,25 +102,57 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 				}
 
 				if (nonMatchingElement) {
-					// its a room expand upgrade
 					expansionIndex = nonMatchingElementIndex;
 
 					TwiggleWorkParameters workParams = new TwiggleWorkParameters();
 					workParams.classItemInvId = classItemInvId;
 					workParams.enlargedAreaIndex = expansionIndex;
-					updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary,
-							System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForExpand(expansionIndex),
-							workParams);
+					if (enlargedAreaIndexes.get(nonMatchingElementIndex) != 0) {
+						// its a room expand upgrade
+						updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary,
+								System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForExpand(expansionIndex),
+								workParams);
+						Centuria.logger.info("Room Expansion");
+					} else {
+						// the room expansion has been disabled
+						var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+								.enlargenSanctuaryRooms(classItemInvId, expansionIndex, false);
+						SanctuaryUpgradeCompletePacket SanctuaryUpgradeCompletePacketObject = new SanctuaryUpgradeCompletePacket();
+						if (didSucceed) {
+							isDisableRoom = true;
+							SanctuaryUpgradeCompletePacketObject.sendIlPacket(player);
+							SanctuaryUpgradeCompletePacketObject.JoinSanctuary(client, player.account.getAccountID());
+							Centuria.logger.info("Expansion Disabled");
+						} else {
+							SanctuaryUpgradeCompletePacketObject.success = false;
+							client.sendPacket(SanctuaryUpgradeCompletePacketObject);
+							return true;
+						}
+					}
+				} else {
+					// the room has been disabled
+					var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+							.upgradeSanctuaryToStage(classItemInvId, stage);
+					SanctuaryUpgradeCompletePacket SanctuaryUpgradeCompletePacketObject = new SanctuaryUpgradeCompletePacket();
+					if (didSucceed) {
+						isDisableRoom = true;
+						SanctuaryUpgradeCompletePacketObject.sendIlPacket(player);
+						SanctuaryUpgradeCompletePacketObject.JoinSanctuary(client, player.account.getAccountID());
+						Centuria.logger.info("Room Disabled");
+					} else {
+						SanctuaryUpgradeCompletePacketObject.success = false;
+						client.sendPacket(SanctuaryUpgradeCompletePacketObject);
+						return true;
+					}
 				}
 			}
 
 			if (updatedTwiggle == null) {
 				// failed to expand
-				this.success = false;
+				this.success = isDisableRoom;
 				client.sendPacket(this);
 			} else {
 				// remove resources from player
-
 				if (isStageUpgrade) {
 					var map = SanctuaryWorkCalculator.getCostForStageUp(stage);
 

@@ -174,30 +174,34 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	 * Saves the currently active sanctuary look to a new slot with the ID provided.
 	 */
 	public abstract void saveSanctuaryLookToSlot(String activeSancLookId, String slotId, String saveName);
-	
+
 	/**
 	 * Upgrades the class of sanctuary to the specific stage.
-	 * @param sancClassInvId The inv id of the sanctuary class to upgrade. 
-	 * @param stage The stage of the sanctuary to upgrade to.
+	 * 
+	 * @param sancClassInvId The inv id of the sanctuary class to upgrade.
+	 * @param stage          The stage of the sanctuary to upgrade to.
 	 */
 	public abstract boolean upgradeSanctuaryToStage(String sancClassInvId, int stage);
-	
+
 	/**
-	 * Enlargens the room of a specific sanctuary type..
-	 * @param sancClassInvId The inv id of the sanctuary class to upgrade. 
-	 * @param roomIndex The room index to set to 1 
+	 * Enlargens the room of a specific sanctuary type.
+	 * 
+	 * @param sancClassInvId The inv id of the sanctuary class to upgrade.
+	 * @param roomIndex      The room index to set to 1
 	 */
-	public abstract boolean enlargenSanctuaryRooms(String sancClassInvId, int roomIndex);
-	
+	public abstract boolean enlargenSanctuaryRooms(String sancClassInvId, int roomIndex, Boolean isEnlargen);
+
 	/**
 	 * Gets the current sanctuary stage.
+	 * 
 	 * @param sancClassInvId The inv id of the sanctuary class.
 	 * @return The sanctuary stage.
 	 */
 	public abstract int getCurrentSanctuaryStage(String sancClassInvId);
-	
+
 	/**
 	 * Gets the current sanctuary expansion array
+	 * 
 	 * @param sancClassInvId The inv id of the sanctuary class.
 	 * @return The sanctuary expansion Array.
 	 */
