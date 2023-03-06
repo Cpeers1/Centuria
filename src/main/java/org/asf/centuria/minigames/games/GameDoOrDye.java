@@ -218,19 +218,23 @@ public class GameDoOrDye extends AbstractMinigame {
 			}
 		}
 
+		ArrayList remainingSolution = (ArrayList)solution.clone();
+
 		// Right ingredient right order
 		int correctPositons = 0;
 		for (int i = 0; i < sequence.size(); i++) {
 			if (sequence.get(i).equals(solution.get(i))) {
 				correctPositons++;
+				remainingSolution.remove(sequence.get(i));
 			}
 		}
 
 		// Right ingredient wrong order
 		int wrongPositions = 0;
 		for (int i = 0; i < sequence.size(); i++) {
-			if (!(sequence.get(i).equals(solution.get(i))) && solution.contains(sequence.get(i))) {
+			if (!(sequence.get(i).equals(solution.get(i))) && remainingSolution.contains(sequence.get(i))) {
 				wrongPositions++;
+				remainingSolution.remove(sequence.get(i));
 			}
 		}
 
