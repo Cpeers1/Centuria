@@ -1,17 +1,24 @@
 package org.asf.centuria.minigames.games;
 
+import java.util.ArrayList;
+
 import org.asf.centuria.data.XtReader;
+import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.minigames.AbstractMinigame;
 import org.asf.centuria.minigames.MinigameMessage;
+import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameCurrencyPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigamePrizePacket;;
 
 public class GameTwiggleBuilders extends AbstractMinigame {
 	
-	private int currentLevel = 0;
-
+	public int level;
+	public int score;
+	public String results;
+	
 	@Override
 	public boolean canHandle(int levelID) {
 		return levelID == 4111;
@@ -26,32 +33,58 @@ public class GameTwiggleBuilders extends AbstractMinigame {
 
 	@MinigameMessage("startLevel")
 	public void startLevel(Player plr, XtReader rd) {
-		MinigameMessagePacket msg = new MinigameMessagePacket();
-		msg.command = "startLevel";
-		int level = rd.readInt();
-		currentLevel = level;
+		//Deserialize
+		level = rd.readInt();
 
-		// TODO: mechanics
-
-		msg.data = Integer.toString(level);
-		plr.client.sendPacket(msg);
+		//Reply
+		XtWriter wr1 = new XtWriter();
+		wr1.writeInt(level); // IngredientScore
+		MinigameMessagePacket pk1 = new MinigameMessagePacket();
+		pk1.command = "startLevel";
+		pk1.data = wr1.encode().substring(4);
+		plr.client.sendPacket(pk1);
 	}
 	
 	@MinigameMessage("requestResults")
 	public void requestResults(Player plr, XtReader rd) {
-		// TODO: mechanics
-		givePrize(plr);		
+		results = rd.readRemaining();
 	}
 
 	@MinigameMessage("endLevel")
 	public void endLevel(Player plr, XtReader rd) {
-		// TODO: save
+		//TODO: Use results to calculate score and rewards
 		
-		// Inform the client its done
-		MinigameMessagePacket msg = new MinigameMessagePacket();
-		msg.command = "endLevel";
-		msg.data = "30";
-		plr.client.sendPacket(msg);
+		if (results.isEmpty()){
+			score = 0;
+		}
+		else{
+			score = 30;
+		}
+		
+		// Save score
+		UserVarValue var = plr.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(9311,
+		level);
+		int value2 = 0;
+		if (var != null)
+			value2 = var.value;
+		if (score > value2)
+			plr.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(9311, level, score);
+
+		// Update client
+		InventoryItemPacket pkt = new InventoryItemPacket();
+		pkt.item = plr.account.getSaveSpecificInventory().getItem("303");
+		plr.client.sendPacket(pkt);
+		
+		//Prize
+		givePrize(plr);	
+		
+		//End
+		XtWriter wr1 = new XtWriter();
+		wr1.writeInt(score);
+		MinigameMessagePacket pk1 = new MinigameMessagePacket();
+		pk1.command = "endLevel";
+		pk1.data = wr1.encode().substring(4);
+		plr.client.sendPacket(pk1);
 	}
 
 	public void givePrize(Player plr) {
