@@ -82,27 +82,15 @@ public class DoDDataConverter {
 						}
 
 						// Load least specific after that
-						int last = 0;
-						JsonObject lastObj = null;
 						for (JsonElement ele : dodData.get("levelRewards").getAsJsonArray()) {
 							JsonObject reward = ele.getAsJsonObject();
 							if (!reward.get("isRange").getAsBoolean()) {
-								// Load it
-								int cstart = reward.get("levelIndex").getAsInt();
-								int start = last;
-								int end = cstart;
-								for (int i = start; i <= end; i++) {
-									rewardIndexes.put(i,
-											new Integer[] { lastObj.get("oneStarRewardIndex").getAsInt(),
-													lastObj.get("twoStarRewardIndex").getAsInt(),
-													lastObj.get("threeStarRewardIndex").getAsInt() });
-								}
-
-								// Save last
-								last = cstart;
-							} else
-								last = reward.get("endLevelIndex").getAsInt();
-							lastObj = reward;
+								// Set it
+								rewardIndexes.put(reward.get("levelIndex").getAsInt(),
+										new Integer[] { reward.get("oneStarRewardIndex").getAsInt(),
+												reward.get("twoStarRewardIndex").getAsInt(),
+												reward.get("threeStarRewardIndex").getAsInt() });
+							}
 						}
 
 						// Create level array

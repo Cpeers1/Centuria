@@ -38,7 +38,6 @@ public class GameDoOrDye extends AbstractMinigame {
 	public int startingIngredientCount;
 	public int scorePerIngredient;
 	public boolean multipleGuesses;
-	public long timeStart;
 
 	public int scoreThreeStars;
 	public int scoreTwoStars;
@@ -89,7 +88,6 @@ public class GameDoOrDye extends AbstractMinigame {
 
 	@MinigameMessage("startLevel")
 	public void startLevel(Player plr, XtReader rd) {
-		timeStart = System.currentTimeMillis();
 
 		// Deserialize
 		level = rd.readInt();
@@ -220,19 +218,23 @@ public class GameDoOrDye extends AbstractMinigame {
 			}
 		}
 
+		ArrayList remainingSolution = (ArrayList)solution.clone();
+
 		// Right ingredient right order
 		int correctPositons = 0;
 		for (int i = 0; i < sequence.size(); i++) {
 			if (sequence.get(i).equals(solution.get(i))) {
 				correctPositons++;
+				remainingSolution.remove(sequence.get(i));
 			}
 		}
 
 		// Right ingredient wrong order
 		int wrongPositions = 0;
 		for (int i = 0; i < sequence.size(); i++) {
-			if (!(sequence.get(i).equals(solution.get(i))) && solution.contains(sequence.get(i))) {
+			if (!(sequence.get(i).equals(solution.get(i))) && remainingSolution.contains(sequence.get(i))) {
 				wrongPositions++;
+				remainingSolution.remove(sequence.get(i));
 			}
 		}
 
@@ -274,13 +276,15 @@ public class GameDoOrDye extends AbstractMinigame {
 		if (win) {
 			// Calculate time bonus
 			int timeBonusScore = 0;
-			long timeSpent = System.currentTimeMillis() - timeStart;
-			int secondsSpent = (int) (timeSpent / 1000);
+			int secondsSpent = levelTimer / 1000;
 
 			// Find best bonus
 			int lastBonusVal = 0;
 			int lastBonusLimit = 0;
+			int highestBonusLimit = 0;
 			for (int limit : timeBonuses.keySet()) {
+				if (limit >= highestBonusLimit)
+					highestBonusLimit = limit;
 				if (secondsSpent <= limit && (limit < lastBonusLimit || lastBonusLimit == 0)) {
 					lastBonusLimit = limit;
 					lastBonusVal = timeBonuses.get(limit);
@@ -289,7 +293,7 @@ public class GameDoOrDye extends AbstractMinigame {
 
 			// Calculate reward
 			if (lastBonusVal != 0) {
-				int bonusSecs = lastBonusLimit - secondsSpent;
+				int bonusSecs = highestBonusLimit - secondsSpent;
 				timeBonusScore = bonusSecs * lastBonusVal;
 			}
 

@@ -85,7 +85,7 @@ import com.google.gson.JsonObject;
 
 public class Centuria {
 	// Update
-	public static String SERVER_UPDATE_VERSION = "1.6.1.B1";
+	public static String SERVER_UPDATE_VERSION = "1.6.2.B1";
 	public static String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/centuria";
 
 	// Configuration
@@ -390,8 +390,8 @@ public class Centuria {
 							+ "give-all-furniture=false\n" + "give-all-currency=false\n" + "give-all-resources=false\n"
 							+ "server-spawn-behaviour=random\ndefault-save-behaviour=single\n"
 							+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
-							+ "encrypt-game=false\n" + "debug-mode=false\n" + "\nvpn-user-whitelist=vpn-whitelist\n"
-							+ "vpn-ipv4-banlist=\n" + "vpn-ipv6-banlist=");
+							+ "encrypt-game=false\nencrypt-director=false\n" + "debug-mode=false\n"
+							+ "\nvpn-user-whitelist=vpn-whitelist\n" + "vpn-ipv4-banlist=\n" + "vpn-ipv6-banlist=");
 		}
 
 		// Parse properties
@@ -597,9 +597,15 @@ public class Centuria {
 		// Start director server
 		Centuria.logger
 				.info("Starting Director server on port " + Integer.parseInt(properties.get("director-port")) + "...");
-		directorServer = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("director-port")))
+		factory = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("director-port")))
 				.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
-				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT).build();
+				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT);
+
+		if (properties.getOrDefault("encrypt-director", "false").equals("true") && new File("keystore.jks").exists()
+				&& new File("keystore.jks.password").exists()) {
+			factory = factory.setImplementation(ConnectiveHTTPSServer.class);
+		}
+		directorServer = factory.build();
 		directorServer.registerProcessor(new GameServerRequestHandler());
 		EventBus.getInstance().dispatchEvent(new DirectorServerStartupEvent(directorServer));
 
