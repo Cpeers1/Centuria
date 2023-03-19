@@ -1,0 +1,8 @@
+Changes in 1.6.3.B1:
+
+
+Fixes in 1.6.3.B1:
+- Removed test and broken items from the creative inventory
+
+New features in 1.6.3.B1:
+- Added command: removeallfiltereditems: removes items from existing accounts such as the dreaded Ed Pauldrons Test
