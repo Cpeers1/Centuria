@@ -19,7 +19,6 @@ public class SaveManagerHandler extends HttpUploadProcessor {
 	@Override
 	public void process(String contentType, Socket client, String method) {
 		try {
-			Centuria.logger.info("API CALL: " + getRequest().path);
 			if (!getRequest().method.equalsIgnoreCase("post")) {
 				this.setResponseCode(400);
 				this.setResponseMessage("Bad request");

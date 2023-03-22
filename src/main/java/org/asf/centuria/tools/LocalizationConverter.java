@@ -77,14 +77,14 @@ public class LocalizationConverter {
 						}
 					}
 				}
-				
+
 				if (nameID != null) {
 					if (descID == null)
 						descID = "No description";
 					else
 						descID = localization.get(descID).getAsString();
 					csv += lastID + ",\"" + localization.get(nameID).getAsString() + "\",\"" + descID + "\"\n";
-				}				
+				}
 			} else if (lastData != null) {
 				lastData += line + "\n";
 			}
@@ -92,8 +92,10 @@ public class LocalizationConverter {
 		res.add("ItemNames", items);
 		res.add("ItemDescriptions", itemdescirptions);
 
-		System.out.println(new Gson().newBuilder().setPrettyPrinting().create().toJson(res));
-//		System.out.println(csv);
+		if (args.length != 3 || args[2].equals("json"))
+			System.out.println(new Gson().newBuilder().setPrettyPrinting().create().toJson(res));
+		else if (args.length == 3 && args[2].equals("csv"))
+			System.out.println(csv);
 	}
 
 }

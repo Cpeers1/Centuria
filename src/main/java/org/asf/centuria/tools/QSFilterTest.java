@@ -29,7 +29,7 @@ public class QSFilterTest {
 			NetworkedObject obj = NetworkedObjects.getObject(id);
 			System.out.println("Missing: " + obj.objectName + " (" + id + ")");
 		}
-		
+
 		// Find overrides
 		ArrayList<String> overrides = new ArrayList<String>();
 		for (String id : missingIds) {
@@ -39,8 +39,6 @@ public class QSFilterTest {
 				System.out.println("Missing override: " + obj.containerId);
 			}
 		}
-
-		idsOg = idsOg;
 	}
 
 	public static String[] getUuidsFrom(String packet) {

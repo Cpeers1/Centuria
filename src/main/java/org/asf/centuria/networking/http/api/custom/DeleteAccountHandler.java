@@ -15,8 +15,6 @@ public class DeleteAccountHandler extends HttpUploadProcessor {
 	@Override
 	public void process(String contentType, Socket client, String method) {
 		try {
-			Centuria.logger.info("API CALL: " + getRequest().path);
-
 			// Load manager
 			AccountManager manager = AccountManager.getInstance();
 

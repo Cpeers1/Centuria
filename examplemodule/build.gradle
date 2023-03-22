@@ -60,7 +60,6 @@ dependencies {
 
 	implementation name: "Centuria"
 	implementation name: "ConnectiveHTTP"
-	implementation name: 'CyanComponents'
 }
 
 createEclipseLaunches {
@@ -114,7 +113,7 @@ task moduledata () {
 				continue;
 				
 		    String outFileNm = arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "")
-		    if (outFileNm.equals("Centuria"))
+		    if (outFileNm.equals("Centuria") || new File("emulibs", outFileNm + ".jar").exists())
 		    	continue;
 			copy {			    
 				from arti.file

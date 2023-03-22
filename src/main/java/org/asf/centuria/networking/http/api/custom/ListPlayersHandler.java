@@ -16,8 +16,6 @@ public class ListPlayersHandler extends HttpUploadProcessor {
 	@Override
 	public void process(String contentType, Socket client, String method) {
 		try {
-			Centuria.logger.info("API CALL: " + getRequest().path);
-
 			// Load spawn helper
 			JsonObject helper = null;
 			try {

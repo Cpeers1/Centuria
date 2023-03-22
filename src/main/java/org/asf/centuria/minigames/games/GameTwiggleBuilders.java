@@ -1,7 +1,5 @@
 package org.asf.centuria.minigames.games;
 
-import java.util.ArrayList;
-
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;

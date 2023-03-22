@@ -1,7 +1,6 @@
 package org.asf.centuria.enums.minigames;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public enum CodeColor {
 	None(0),
@@ -16,7 +15,7 @@ public enum CodeColor {
 	Brown(256);
 
     private int value;
-    private static Map map = new HashMap<>();
+    private static HashMap<Integer, CodeColor> map = new HashMap<>();
 
     private CodeColor(int value) {
         this.value = value;

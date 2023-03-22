@@ -186,7 +186,7 @@ public abstract class BaseSmartfoxServer {
 				setupComplete = true;
 			}
 
-			System.err.println("Unhandled packet: client " + client.getAddress() + " sent: " + data);
+			Centuria.logger.error("Unhandled packet: client " + client.getAddress() + " sent: " + data);
 		}
 	}
 

@@ -10,10 +10,9 @@ import java.util.zip.GZIPInputStream;
 
 public class DecodeInventoryPacketString {
 	public static void main(String[] args) throws IOException {
-		
-		//HACKYYY
-		for(int i = 0; i > -1; i++)
-		{
+
+		// HACKYYY
+		for (int i = 0; i > -1; i++) {
 			try {
 				Scanner sc = new Scanner(System.in);
 
@@ -21,29 +20,27 @@ public class DecodeInventoryPacketString {
 				String input = sc.nextLine();
 
 				System.out.println("Loading...");
-				
+
 				byte[] decoded = Base64.getDecoder().decode(input);
 				InputStream stream = new ByteArrayInputStream(decoded);
 				GZIPInputStream gis = new GZIPInputStream(stream);
-			    ByteArrayOutputStream output = new ByteArrayOutputStream();
-			    
-		        // copy GZIPInputStream to ByteArrayOutputStream
-		        byte[] buffer = new byte[1024];
-		        int len;
-		        while ((len = gis.read(buffer)) > 0) {
-		            output.write(buffer, 0, len);
-		        }
+				ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+				// copy GZIPInputStream to ByteArrayOutputStream
+				byte[] buffer = new byte[1024];
+				int len;
+				while ((len = gis.read(buffer)) > 0) {
+					output.write(buffer, 0, len);
+				}
 
 				String decodedToString = new String(output.toByteArray(), "UTF-8");
-				
-				System.out.println(decodedToString);
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}		
-		}
 
+				System.out.println(decodedToString);
+				sc.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 
 	}
 

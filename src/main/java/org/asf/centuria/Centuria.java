@@ -62,7 +62,6 @@ import org.asf.centuria.networking.http.api.AuthenticateHandler;
 import org.asf.centuria.networking.http.api.DisplayNameValidationHandler;
 import org.asf.centuria.networking.http.api.DisplayNamesRequestHandler;
 import org.asf.centuria.networking.http.api.RequestTokenHandler;
-import org.asf.centuria.networking.http.api.SettingsHandler;
 import org.asf.centuria.networking.http.api.UpdateDisplayNameHandler;
 import org.asf.centuria.networking.http.api.UserHandler;
 import org.asf.centuria.networking.http.api.XPDetailsHandler;
@@ -85,7 +84,7 @@ import com.google.gson.JsonObject;
 
 public class Centuria {
 	// Update
-	public static String SERVER_UPDATE_VERSION = "1.6.2.B1";
+	public static String SERVER_UPDATE_VERSION = "1.6.3.B1";
 	public static String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/centuria";
 
 	// Configuration
@@ -142,7 +141,7 @@ public class Centuria {
 		System.out.println("                              Centuria                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                          Version 1.6.1.B1                          "); // not doing this
+		System.out.println("                          Version 1.6.3.B1                          "); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain
@@ -531,7 +530,6 @@ public class Centuria {
 		// API processors
 		apiServer.registerProcessor(new UserHandler());
 		apiServer.registerProcessor(new XPDetailsHandler());
-		apiServer.registerProcessor(new SettingsHandler());
 		apiServer.registerProcessor(new AuthenticateHandler());
 		apiServer.registerProcessor(new UpdateDisplayNameHandler());
 		apiServer.registerProcessor(new DisplayNamesRequestHandler());
@@ -569,7 +567,6 @@ public class Centuria {
 			// API processors
 			apiServer.registerProcessor(new UserHandler());
 			apiServer.registerProcessor(new XPDetailsHandler());
-			apiServer.registerProcessor(new SettingsHandler());
 			apiServer.registerProcessor(new AuthenticateHandler());
 			apiServer.registerProcessor(new UpdateDisplayNameHandler());
 			apiServer.registerProcessor(new DisplayNamesRequestHandler());
