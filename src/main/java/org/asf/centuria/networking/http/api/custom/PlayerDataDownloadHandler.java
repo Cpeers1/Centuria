@@ -22,8 +22,6 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 	@Override
 	public void process(String contentType, Socket client, String method) {
 		try {
-			Centuria.logger.info("API CALL: " + getRequest().path);
-
 			// Load manager
 			AccountManager manager = AccountManager.getInstance();
 
@@ -131,9 +129,8 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 					strm.close();
 				} catch (IOException e) {
 				}
-				getResponse().body = new ByteArrayInputStream(strm.toByteArray());
-				getResponse().setHeader("Content-Type", "application/zip", false);
-				getResponse().setHeader("Content-Length", Integer.toString(strm.toByteArray().length), false);
+				getResponse().setContent("application/zip", new ByteArrayInputStream(strm.toByteArray()),
+						strm.toByteArray().length);
 				return;
 			} else {
 				if (!acc.getSaveSpecificInventory().containsItem(path)) {

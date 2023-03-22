@@ -62,7 +62,6 @@ import org.asf.centuria.networking.http.api.AuthenticateHandler;
 import org.asf.centuria.networking.http.api.DisplayNameValidationHandler;
 import org.asf.centuria.networking.http.api.DisplayNamesRequestHandler;
 import org.asf.centuria.networking.http.api.RequestTokenHandler;
-import org.asf.centuria.networking.http.api.SettingsHandler;
 import org.asf.centuria.networking.http.api.UpdateDisplayNameHandler;
 import org.asf.centuria.networking.http.api.UserHandler;
 import org.asf.centuria.networking.http.api.XPDetailsHandler;
@@ -531,7 +530,6 @@ public class Centuria {
 		// API processors
 		apiServer.registerProcessor(new UserHandler());
 		apiServer.registerProcessor(new XPDetailsHandler());
-		apiServer.registerProcessor(new SettingsHandler());
 		apiServer.registerProcessor(new AuthenticateHandler());
 		apiServer.registerProcessor(new UpdateDisplayNameHandler());
 		apiServer.registerProcessor(new DisplayNamesRequestHandler());
@@ -569,7 +567,6 @@ public class Centuria {
 			// API processors
 			apiServer.registerProcessor(new UserHandler());
 			apiServer.registerProcessor(new XPDetailsHandler());
-			apiServer.registerProcessor(new SettingsHandler());
 			apiServer.registerProcessor(new AuthenticateHandler());
 			apiServer.registerProcessor(new UpdateDisplayNameHandler());
 			apiServer.registerProcessor(new DisplayNamesRequestHandler());

@@ -53,24 +53,19 @@ public class ObjectActionStartPacket implements IXtPacket<ObjectActionStartPacke
 		source = plr.account.getAccountID();
 
 		// log interaction details
-		if (Centuria.debugMode) {
-			System.out.println("[INTERACTION] [START]  Client to server (target: " + target + ")");
-		}
+		Centuria.logger.debug("Interaction Start: Client to server (target: " + target + ")");
 
 		// Load object
 		NetworkedObject obj = NetworkedObjects.getObject(target);
 		if (obj == null)
-			System.err.println("[INTERACTION] [START]  WARNING: Unrecognized object: " + target);
+			Centuria.logger.warn("WARNING: Unrecognized object: " + target);
 
 		// Dispatch event
 		EventBus.getInstance().dispatchEvent(new InteractionStartEvent(plr, target, obj));
 
 		// Send response
 		client.sendPacket(this);
-
-		if (Centuria.debugMode) {
-			System.out.println("[INTERACTION] [START]  Server to client: " + build());
-		}
+		Centuria.logger.debug("Interaction Start: Server to client: " + build());
 
 		return true;
 	}

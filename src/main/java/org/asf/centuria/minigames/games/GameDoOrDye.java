@@ -218,7 +218,7 @@ public class GameDoOrDye extends AbstractMinigame {
 			}
 		}
 
-		ArrayList remainingSolution = (ArrayList)solution.clone();
+		ArrayList<CodeColor> remainingSolution = new ArrayList<CodeColor>(solution);
 
 		// Right ingredient right order
 		int correctPositons = 0;

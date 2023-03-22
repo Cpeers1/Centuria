@@ -1,10 +1,8 @@
 package org.asf.centuria.minigames.games;
 
 import java.awt.Component;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-import java.awt.FlowLayout;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
@@ -183,11 +181,11 @@ public class WTHVis {
 				if (Centuria.gameServer.getPlayers().length != 0) {
 					if (Centuria.gameServer.getPlayers()[0].currentGame != null
 							&& Centuria.gameServer.getPlayers()[0].currentGame instanceof GameWhatTheHex) {
-						GameWhatTheHex ses = (GameWhatTheHex)Centuria.gameServer.getPlayers()[0].currentGame;
+						GameWhatTheHex ses = (GameWhatTheHex) Centuria.gameServer.getPlayers()[0].currentGame;
 						int i = 0;
 						for (Component comp : frame.getContentPane().getComponents()) {
 							if (comp instanceof JLabel) {
-								tile((JLabel)comp, ses.board[i++]);
+								tile((JLabel) comp, ses.board[i++]);
 							}
 						}
 					}

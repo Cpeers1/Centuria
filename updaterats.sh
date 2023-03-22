@@ -24,7 +24,7 @@ function execute() {
     ./gradlew installation || return $?
     
     if [ ! -d "$dir/libraries" ]; then mkdir "$dir/libraries"; fi
-    cp -r "build/Installations/"*.jar "$dir/libraries"
+    cp -r "build/Binaries/ConnectiveHTTP/"*.jar "$dir/libraries"
 }
 
 echo Building...

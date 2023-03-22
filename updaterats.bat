@@ -21,7 +21,7 @@ goto execute
 cmd /c java -cp gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain installation
 
 if NOT EXIST %dir%\libraries mkdir %dir%\libraries
-for /R build\Installations %%f in (*.jar) do copy /Y %%f %dir%\libraries >NUL
+for /R build\Binaries\ConnectiveHTTP %%f in (*.jar) do copy /Y %%f %dir%\libraries >NUL
 goto exitmeth
 
 :exitmeth

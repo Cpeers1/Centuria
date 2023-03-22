@@ -1,5 +1,5 @@
 Changes in 1.6.3.B1:
-
+- Updated some backend libraries and stripped a lot of unused jars, improving server performance
 
 Fixes in 1.6.3.B1:
 - Removed test and broken items from the creative inventory
