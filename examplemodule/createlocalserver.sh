@@ -31,12 +31,16 @@ function execute() {
     cp -rf "build/Installations/." "$dir/server"
     cp -rf "libraries/"*-javadoc.jar "$dir/server/libs"
     cp -rf "libraries/"*-sources.jar "$dir/server/libs"
-	cp "build/Installations/Centuria.jar" "$dir/server/libs"
-    
+    cp "build/Installations/Centuria.jar" "$dir/server/libs"
+
     if [ ! -d "$dir/libraries" ]; then
         mkdir "$dir/libraries"
     fi
+    if [ ! -d "$dir/emulibs" ] ; then
+        mkdir "$dir/emulibs"
+    fi
     cp -rf "$dir/server/libs/." "$dir/libraries"
+    cp -rf "$dir/server/libs/." "$dir/emulibs"
 }
 
 echo Building...

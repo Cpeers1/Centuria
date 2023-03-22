@@ -11,4 +11,5 @@ bin/
 # Run files
 server/
 libraries/
+emulibs/
 Launch Centuria Server**.launch

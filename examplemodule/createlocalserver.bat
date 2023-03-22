@@ -28,6 +28,10 @@ if NOT EXIST "%dir%\libraries" mkdir "%dir%\libraries"
 copy /Y build\Installations\Centuria.jar "%dir%\libraries" >NUL
 robocopy /E /NFL /NDL /NJH /NJS /nc /ns /np "%dir%\server\libs" "%dir%\libraries"
 
+if NOT EXIST "%dir%\emulibs" mkdir "%dir%\emulibs"
+copy /Y build\Installations\Centuria.jar "%dir%\emulibs" >NUL
+robocopy /E /NFL /NDL /NJH /NJS /nc /ns /np "%dir%\server\libs" "%dir%\emulibs"
+
 :exitmeth
 cd /d %dir%
 rmdir /S /Q %tmpdir%
