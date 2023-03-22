@@ -1,8 +1,9 @@
 Changes in 1.6.3.B1:
-- Updated some backend libraries and stripped a lot of unused jars, improving server performance
+ - Updated some backend libraries and stripped a lot of unused jars, improving server performance
 
 Fixes in 1.6.3.B1:
-- Removed test and broken items from the creative inventory
+ - Removed test and broken items from the creative inventory
+ - Fixed the server module example project to exclude built-in libraries on project build
 
 New features in 1.6.3.B1:
-- Added command: removeallfiltereditems: removes items from existing accounts such as the dreaded Ed Pauldrons Test
+ - Added command: removeallfiltereditems: removes items from existing accounts such as the dreaded Ed Pauldrons Test
