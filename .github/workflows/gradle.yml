@@ -29,6 +29,6 @@ jobs:
         arguments: build
     - name: Publish build artifact
       uses: actions/upload-artifact@v3
-        with:
-          name: Centuria Server
-          path: build/Installations
+      with:
+        name: Centuria Server
+        path: build/Installations
