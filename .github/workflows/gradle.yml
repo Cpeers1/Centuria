@@ -2,9 +2,9 @@ name: Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "beta-1.6" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "beta-1.6" ]
 
 permissions:
   contents: read
