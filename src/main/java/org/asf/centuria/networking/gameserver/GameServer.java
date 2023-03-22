@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.ConcurrentModificationException;
@@ -494,10 +496,19 @@ public class GameServer extends BaseSmartfoxServer {
 		JsonObject o = new JsonObject();
 		o.addProperty("statusId", statusCode);
 		o.addProperty("_cmd", "login");
-		params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
+
+		// Jamaa time is seconds since 1-1-2015
+		params.addProperty("jamaaTime", (System.currentTimeMillis() / 1000)
+				- ZonedDateTime.of(2015, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toEpochSecond());
+
+		// Add login flags
 		params.addProperty("pendingFlags", pendingFlags);
+
+		// Look IDs
 		params.addProperty("activeLookId", acc.getActiveLook());
 		params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
+
+		// Session ids etc
 		params.addProperty("sessionId", acc.getAccountID());
 		params.addProperty("userId", acc.getAccountNumericID());
 		params.addProperty("avatarInvId", 0);
