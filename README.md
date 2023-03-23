@@ -11,7 +11,7 @@ On windows, run the following commands in cmd or powershell::
 
 Set up a development environment (optional):
 ```powershell
-.\gradlew eclipse createEclipseLaunches
+.\gradlew eclipse
 ```
 
 Build the project:

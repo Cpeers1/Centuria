@@ -11,17 +11,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.ZipInputStream;
 
-import org.asf.cyan.api.common.CYAN_COMPONENT;
-import org.asf.cyan.api.common.CyanComponent;
-import org.asf.cyan.api.config.serializing.internal.Splitter;
 import org.asf.cyan.fluid.bytecode.FluidClassPool;
 import org.asf.cyan.fluid.bytecode.sources.LoaderClassSourceProvider;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.objectweb.asm.tree.ClassNode;
 
-@CYAN_COMPONENT
-public class ModuleManager extends CyanComponent {
+public class ModuleManager {
 
 	//
 	//
@@ -63,22 +59,10 @@ public class ModuleManager extends CyanComponent {
 	private FluidClassPool modulePool = FluidClassPool.createEmpty();
 
 	// Init
-	private boolean simpleInit = false;
 	private boolean init = false;
 
 	// Module management
 	private HashMap<String, ICenturiaModule> modules = new HashMap<String, ICenturiaModule>();
-
-	/**
-	 * Simple init, only assigns main implementation
-	 */
-	public void simpleInit() {
-		if (simpleInit)
-			return;
-
-		simpleInit = true;
-		assignImplementation();
-	}
 
 	/**
 	 * Initializes all components
@@ -92,9 +76,6 @@ public class ModuleManager extends CyanComponent {
 
 		// Log init message
 		Centuria.logger.info("Preparing to load modules...");
-
-		// Run simple initialization
-		simpleInit();
 
 		// Prepare the modules folder
 		File modules = new File("modules");
@@ -110,7 +91,7 @@ public class ModuleManager extends CyanComponent {
 
 		// Add the complete classpath to the pool
 		Centuria.logger.info("Importing java classpath...");
-		for (String path : Splitter.split(System.getProperty("java.class.path"), File.pathSeparator)) {
+		for (String path : System.getProperty("java.class.path").split(File.pathSeparator)) {
 			if (path.equals("."))
 				continue;
 

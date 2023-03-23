@@ -31,7 +31,6 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 
 	@Override
 	public void process(String contentType, Socket client, String method) {
-		Centuria.logger.info("API CALL: " + getRequest().path);
 		String path = this.getRequestPath();
 		AccountManager manager = AccountManager.getInstance();
 
@@ -471,9 +470,6 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				setBody("text/json", "{}");
 			}
 		} catch (Exception e) {
-			if (Centuria.debugMode) {
-				System.err.println("[FALLBACKAPI] ERROR : " + e.getMessage() + " )");
-			}
 			Centuria.logger.error(getRequest().path + " failed", e);
 		}
 	}

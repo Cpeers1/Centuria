@@ -7,11 +7,6 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 public class ProxiedObjectInfoPacket implements IXtPacket<ProxiedObjectInfoPacket> {
 
 	private String msg;

@@ -19,8 +19,6 @@ public class DisplayNameValidationHandler extends HttpUploadProcessor {
 	@Override
 	public void process(String contentType, Socket client, String method) {
 		try {
-			Centuria.logger.info("API CALL: " + getRequest().path);
-
 			// Get name
 			String name = URLDecoder.decode(getRequest().path.substring(path().length() + 1), "UTF-8");
 			AccountManager manager = AccountManager.getInstance();

@@ -19,7 +19,6 @@ public class DialogConverter {
 
 		JsonObject res = new JsonObject();
 		JsonObject dialogues = new JsonObject();
-		String dialogueName = "";
 		String lastData = null;
 		String id = "";
 		

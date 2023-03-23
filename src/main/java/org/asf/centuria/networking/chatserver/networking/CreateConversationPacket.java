@@ -17,7 +17,6 @@ public class CreateConversationPacket extends AbstractChatPacket {
 
 	private JsonArray participants;
 	private String type;
-	private String title;
 
 	@Override
 	public String id() {
@@ -31,7 +30,6 @@ public class CreateConversationPacket extends AbstractChatPacket {
 
 	@Override
 	public void parse(JsonObject data) {
-		title = data.get("title").getAsString();
 		participants = data.get("participants").getAsJsonArray();
 		type = data.get("conversationType").getAsString();
 	}

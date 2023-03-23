@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = "1.6.1.B1"
+version = "1.6.3.B1"
 group = "org.asf.centuria"
 
 sourceCompatibility = '1.17'
@@ -16,9 +16,8 @@ apply plugin: 'idea'
 
 repositories {
     mavenCentral()
-	maven { name = "AerialWorks"; url = "https://aerialworks.ddns.net/maven" }
     flatDir {
-       dirs 'libraries'
+       dirs 'libraries', 'fluid'
    }
 }
 
@@ -63,12 +62,8 @@ artifacts {
 dependencies {
 	implementation name: "ConnectiveHTTP"
 	implementation name: "RatsMemory"
-	implementation name: "HttpBasicFileModule"
 	
-	implementation group: 'org.asf.cyan', name: 'CyanComponents', version: '1.0.0.A8'
-	implementation group: 'org.asf.cyan', name: 'CyanUtil', version: '1.0.0.A19'
-	implementation group: 'org.asf.cyan', name: 'CCFG', version: '1.0.0.A17'
-	implementation group: 'org.asf.cyan', name: 'Fluid', version: '1.0.0.A27'
+	implementation group: 'org.asf.cyan', name: 'Fluid', version: '1.0.0.A33'
 	
 	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.0'
 	implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.0'
@@ -81,7 +76,6 @@ dependencies {
 	
 	implementation group: 'javax.activation', name: 'activation', version: '1.1.1'
 	
-	implementation group: 'org.asf.aos.util.service', name: 'aosutil-service-SLIB-UTIL', version: '0.0.0.12'
 	implementation group: 'org.apache.commons', name: 'commons-compress', version: '1.21'	
 	implementation group: 'org.tukaani', name: 'xz', version: '1.9'
 	implementation group: 'org.joml', name: 'joml', version: '1.10.4'

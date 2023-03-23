@@ -1,0 +1,8 @@
+Changes made in 1.6.2:
+ - Implemented director encryption
+ - Implemented saving in Twiggle Builders (no rewards yet tho, credits to Joey)
+
+Fixes in 1.6.2:
+ - Fixed Do or Dye time bonuses
+ - Fixed Do or Dye rewards
+ - Fixed incorrect solution handling in Do or Dye (credits to Joey)

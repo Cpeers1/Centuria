@@ -597,6 +597,15 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
 			else
 				commandMessages.add("giveitem <itemDefId> [<quantity>]");
+		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllCurrency
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllFurnitureItems
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllClothes
+				|| GameServer.hasPerm(permLevel, "moderator"))
+			if (GameServer.hasPerm(permLevel, "moderator"))
+				commandMessages.add("removeallfiltereditems [<player>]");
+			else
+				commandMessages.add("removeallfiltereditems");
 		commandMessages.add("questrewind <amount-of-quests-to-rewind>");
 
 		// Add module commands
@@ -2389,6 +2398,75 @@ public class SendMessage extends AbstractChatPacket {
 							}
 						}
 						break;
+					}
+				}
+
+				//
+				// Remove filtered items command
+				if (cmd.equals("removeallfiltereditems")) {
+					// Check mode and permissions
+					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllCurrency
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllFurnitureItems
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllClothes
+							|| GameServer.hasPerm(permLevel, "moderator")) {
+						// Run command
+						try {
+							// Parse arguments if any and check perms
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() > 1 && GameServer.hasPerm(permLevel, "moderator")) {
+								player = args.get(1);
+							}
+
+							// Find ID
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Find account
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+							if (acc == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Load filter
+							InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+									.getResourceAsStream("creativeitemfilter.json");
+							JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8"))
+									.getAsJsonObject().get("Items").getAsJsonObject();
+							strm.close();
+
+							// Remove items
+							int removedItems = 0;
+							for (String id : helper.keySet()) {
+								// Find how many exist in the inventory
+								ItemAccessor accessor = acc.getSaveSpecificInventory()
+										.getItemAccessor(acc.getOnlinePlayerInstance());
+								int defID = Integer.parseInt(id);
+								int currentCount = accessor.getCountOfItem(defID);
+
+								if (currentCount > 0) {
+									// Remove items
+									accessor.remove(defID, currentCount);
+									removedItems += currentCount;
+								}
+							}
+
+							// Show result
+							systemMessage("Removed " + removedItems + " item" + (removedItems == 1 ? "" : "s")
+									+ " from the inventory.\n\nNote: a relog may be required for this to take effect.",
+									cmd, client);
+
+							return true;
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
+							return true;
+						}
 					}
 				}
 

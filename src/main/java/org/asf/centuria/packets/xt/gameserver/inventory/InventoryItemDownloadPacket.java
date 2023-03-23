@@ -25,6 +25,25 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 	private static final String PACKET_ID = "ilt";
 
+	private static final ArrayList<String> creativeItemFilter = new ArrayList<String>();
+	static {
+		// Load filter
+		try {
+			// Load helper
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("creativeitemfilter.json");
+			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+					.get("Items").getAsJsonObject();
+			strm.close();
+
+			// Register
+			for (String id : helper.keySet())
+				creativeItemFilter.add(id);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private String slot = "";
 
 	@Override
@@ -189,6 +208,8 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 					// Add all clothes (3 of each)
 					for (String id : helper.keySet()) {
+						if (creativeItemFilter.contains(id))
+							continue;
 						if (inv.getClothingAccessor().getClothingCount(Integer.valueOf(id)) < 3) {
 							for (int i = inv.getClothingAccessor().getClothingCount(Integer.valueOf(id)); i < 3; i++) {
 								inv.getClothingAccessor().addClothing(Integer.valueOf(id), false);
@@ -231,6 +252,8 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 				// Add all furniture (6 of each)
 				for (String id : helper.keySet()) {
+					if (creativeItemFilter.contains(id))
+						continue;
 					if (inv.getFurnitureAccessor().getFurnitureCount(Integer.valueOf(id)) < 6) {
 						for (int i = inv.getFurnitureAccessor().getFurnitureCount(Integer.valueOf(id)); i < 6; i++) {
 							inv.getFurnitureAccessor().addFurniture(Integer.valueOf(id), false);

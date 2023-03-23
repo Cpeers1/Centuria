@@ -27,7 +27,6 @@ public class TestModule implements ICenturiaModule {
 
 	@EventListener
 	public void update(ServerUpdateEvent event) {
-		event = event;
 	}
 
 	@EventListener
@@ -54,8 +53,9 @@ public class TestModule implements ICenturiaModule {
 				event.respond("Already using managed data");
 				return;
 			}
-			
-			event.getAccount().getOnlinePlayerInstance().client.sendPacket("%xt%mod:ft%-1%disconnect%Disconnected%Account data migration in progress%Log out%");
+
+			event.getAccount().getOnlinePlayerInstance().client
+					.sendPacket("%xt%mod:ft%-1%disconnect%Disconnected%Account data migration in progress%Log out%");
 			event.getAccount().migrateSaveDataToManagedMode();
 		}
 	}

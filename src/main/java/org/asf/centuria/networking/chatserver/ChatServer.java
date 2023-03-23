@@ -153,8 +153,7 @@ public class ChatServer {
 
 				// Log disconnect
 				if (!(e instanceof IOException) && !(e instanceof SocketException)) {
-					System.err.println("Chat connection died! Error: " + e.getClass().getName()
-							+ (e.getMessage() != null ? ": " + e.getMessage() : ""));
+					Centuria.logger.error("Chat connection died!", e);
 					e.printStackTrace();
 				}
 
