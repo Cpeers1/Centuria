@@ -21,8 +21,6 @@ public class SeasonPassRequestHandler extends HttpUploadProcessor {
 
 	@Override
 	public void process(String contentType, Socket client, String method) {
-		Centuria.logger.info("API CALL: " + getRequest().path);
-
 		try {
 			// Parse JWT payload
 			String token = this.getHeader("Authorization").substring("Bearer ".length());
