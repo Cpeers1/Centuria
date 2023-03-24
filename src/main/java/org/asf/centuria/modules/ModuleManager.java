@@ -20,21 +20,6 @@ import org.objectweb.asm.tree.ClassNode;
 public class ModuleManager {
 
 	//
-	//
-	// ----------------------------------------------------------------------------
-	//
-	// Based on the ConnectiveHTTP module loading system as i needed something fast
-	//
-	// ----------------------------------------------------------------------------
-	//
-	// Source for it available at:
-	// https://github.com/Stefan0436/ConnectiveStandalone
-	//
-	// Hope to replace this some day in the future
-	//
-	//
-
-	//
 	// Primary fields
 	//
 

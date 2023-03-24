@@ -1738,6 +1738,11 @@ public class SendMessage extends AbstractChatPacket {
 						// Check perms
 						if (GameServer.hasPerm(permLevel, "admin")) {
 							// Shut down the server
+							for (Player plr : Centuria.gameServer.getPlayers()) {
+								// Dispatch event
+								EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
+										"Server has been shut down.", DisconnectType.SERVER_SHUTDOWN));
+							}
 							Centuria.updateShutdown();
 							return true;
 						} else {

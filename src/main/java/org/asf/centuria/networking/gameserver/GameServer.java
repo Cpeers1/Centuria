@@ -324,7 +324,7 @@ public class GameServer extends BaseSmartfoxServer {
 		}
 
 		// Send response
-		sendLoginResponse(client, auth, acc, 1, acc.isPlayerNew() ? 2 : 3, new JsonObject());
+		sendLoginResponse(client, auth, acc, 1, acc.isPlayerNew() ? 2 : 3, params);
 		sendPacket(client, "%xt%ulc%-1%");
 
 		// Add player
