@@ -91,7 +91,7 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 				boolean nonMatchingElement = false;
 				int nonMatchingElementIndex = 0;
 				JsonArray expansionArray = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
-						.getExpandedRooms(classItemInvId);
+						.getHouseExpandedRoomsArray(classItemInvId);
 
 				for (int i = 0; i < enlargedAreaIndexes.size() && i < expansionArray.size(); i++) {
 					if (enlargedAreaIndexes.get(i) != expansionArray.get(i).getAsInt()) {
@@ -107,22 +107,26 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 					TwiggleWorkParameters workParams = new TwiggleWorkParameters();
 					workParams.classItemInvId = classItemInvId;
 					workParams.enlargedAreaIndex = expansionIndex;
-					if (enlargedAreaIndexes.get(nonMatchingElementIndex) != 0) {
-						// its a room expand upgrade
+					if (enlargedAreaIndexes.get(nonMatchingElementIndex) != 0
+							&& player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+									.getClassExpandedRoomsArray(classItemInvId).get(nonMatchingElementIndex)
+									.getAsInt() == 0) {
 						updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary,
-								System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForExpand(expansionIndex),
+								System.currentTimeMillis()
+										+ SanctuaryWorkCalculator.getTimeForExpand(expansionIndex),
 								workParams);
+
 						Centuria.logger.info("Room Expansion");
 					} else {
-						// the room expansion has been disabled
+						// the room expansion has been disabled/enabled
 						var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
-								.modifySancturaryRoomUpgradeState(classItemInvId, expansionIndex, false);
+								.toggleSancturaryRoomUpgradeState(classItemInvId, expansionIndex);
 						SanctuaryUpgradeCompletePacket SanctuaryUpgradeCompletePacketObject = new SanctuaryUpgradeCompletePacket();
 						if (didSucceed) {
 							isDisableRoom = true;
 							SanctuaryUpgradeCompletePacketObject.sendIlPacket(player);
 							SanctuaryUpgradeCompletePacketObject.JoinSanctuary(client, player.account.getAccountID());
-							Centuria.logger.info("Expansion Disabled");
+							Centuria.logger.info("Expansion Disabled/Enabled");
 						} else {
 							SanctuaryUpgradeCompletePacketObject.success = false;
 							client.sendPacket(SanctuaryUpgradeCompletePacketObject);

@@ -1162,7 +1162,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 
 	@Override
-	public boolean modifySancturaryRoomUpgradeState(String sancClassInvId, int roomIndex, Boolean isEnlargen) {
+	public boolean toggleSancturaryRoomUpgradeState(String sancClassInvId, int roomIndex) {
 
 		// Need to upgrade sanctuary..
 		if (!inventory.containsItem("10"))
@@ -1188,9 +1188,8 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 				.get("SanctuaryClass").getAsJsonObject();
 
 		var roomEnlargeArray = sancClass.get("enlargedAreas").getAsJsonArray();
-		if (isEnlargen) {
-			roomEnlargeArray.set(roomIndex, new JsonPrimitive(1));
-		}
+		roomEnlargeArray.set(roomIndex, new JsonPrimitive(1)); // We assume the expansion will be permanent regardless
+																// of being enabled
 
 		JsonObject ts = new JsonObject();
 		ts.addProperty("ts", System.currentTimeMillis());
@@ -1253,7 +1252,9 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 				// update room enlarge array
 				roomEnlargeArray = houseLevel.get("enlargedAreas").getAsJsonArray();
-				roomEnlargeArray.set(roomIndex, new JsonPrimitive(isEnlargen ? 1 : 0));
+				roomEnlargeArray.set(roomIndex, new JsonPrimitive(1 - roomEnlargeArray.get(roomIndex).getAsInt())); // flip
+																													// enabled
+																													// state
 
 				// stamp
 				matchedHouseItem.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
@@ -1306,7 +1307,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 
 	@Override
-	public JsonArray getExpandedRooms(String sancClassInvId) {
+	public JsonArray getHouseExpandedRoomsArray(String sancClassInvId) {
 
 		if (!inventory.containsItem("10"))
 			inventory.setItem("10", new JsonArray());
@@ -1347,6 +1348,30 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		return houseObject.getAsJsonObject().getAsJsonObject(InventoryItem.COMPONENTS_PROPERTY_NAME)
 				.getAsJsonObject("House")
 				.get("enlargedAreas").getAsJsonArray();
+	}
+
+	@Override
+	public JsonArray getClassExpandedRoomsArray(String sancClassInvId) {
+
+		if (!inventory.containsItem("10"))
+			inventory.setItem("10", new JsonArray());
+
+		var classInv = inventory.getItem("10").getAsJsonArray();
+
+		JsonElement classObject = null;
+
+		for (var item : classInv) {
+			if (item.getAsJsonObject().get("id").getAsString().equals(sancClassInvId)) {
+				classObject = item;
+				break;
+			}
+		}
+
+		if (classObject == null)
+			return null;
+
+		return classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+				.get("SanctuaryClass").getAsJsonObject().get("enlargedAreas").getAsJsonArray();
 	}
 
 }

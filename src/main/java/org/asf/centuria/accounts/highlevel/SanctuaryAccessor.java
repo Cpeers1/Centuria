@@ -184,13 +184,13 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	public abstract boolean upgradeSanctuaryToStage(String sancClassInvId, int stage);
 
 	/**
-	 * Enlargens the room of a specific sanctuary type.
+	 * Expands (or toggles the expansion if already expanded) of the room of a
+	 * specific sanctuary type.
 	 * 
-	 * @param sancClassInvId The inv id of the sanctuary class to upgrade.
+	 * @param sancClassInvId The inv id of the sanctuary class to expand.
 	 * @param roomIndex      The room index to set to 1
-	 * @param isEnlargen     Choose to set index to 1 or 0
 	 */
-	public abstract boolean modifySancturaryRoomUpgradeState(String sancClassInvId, int roomIndex, Boolean isEnlargen);
+	public abstract boolean toggleSancturaryRoomUpgradeState(String sancClassInvId, int roomIndex);
 
 	/**
 	 * Gets the current sanctuary stage.
@@ -201,11 +201,19 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	public abstract int getCurrentSanctuaryStage(String sancClassInvId);
 
 	/**
-	 * Gets the current sanctuary expansion array
+	 * Gets the current sanctuary expansion array from the house inventory.
 	 * 
 	 * @param sancClassInvId The inv id of the sanctuary class.
 	 * @return The sanctuary expansion Array.
 	 */
-	public abstract JsonArray getExpandedRooms(String sancClassInvId);
+	public abstract JsonArray getHouseExpandedRoomsArray(String sancClassInvId);
+
+	/**
+	 * Gets the current sanctuary expansion array from the class inventory.
+	 * 
+	 * @param sancClassInvId The inv id of the sanctuary class.
+	 * @return The sanctuary expansion Array.
+	 */
+	public abstract JsonArray getClassExpandedRoomsArray(String sancClassInvId);
 
 }
