@@ -142,8 +142,10 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 					SanctuaryUpgradeCompletePacket SanctuaryUpgradeCompletePacketObject = new SanctuaryUpgradeCompletePacket();
 					if (didSucceed) {
 						isDisableRoom = true;
-						SanctuaryUpgradeCompletePacketObject.sendIlPacket(player);
-						SanctuaryUpgradeCompletePacketObject.JoinSanctuary(client, player.account.getAccountID());
+						if (isStageUpgrade) {
+							SanctuaryUpgradeCompletePacketObject.sendIlPacket(player);
+							SanctuaryUpgradeCompletePacketObject.JoinSanctuary(client, player.account.getAccountID());
+						}
 						Centuria.logger.info("Room Disabled");
 					} else {
 						SanctuaryUpgradeCompletePacketObject.success = false;
