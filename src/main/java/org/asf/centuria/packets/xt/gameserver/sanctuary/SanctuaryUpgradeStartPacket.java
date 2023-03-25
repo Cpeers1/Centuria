@@ -116,7 +116,7 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 					} else {
 						// the room expansion has been disabled
 						var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
-								.enlargenSanctuaryRooms(classItemInvId, expansionIndex, false);
+								.modifySancturaryRoomUpgradeState(classItemInvId, expansionIndex, false);
 						SanctuaryUpgradeCompletePacket SanctuaryUpgradeCompletePacketObject = new SanctuaryUpgradeCompletePacket();
 						if (didSucceed) {
 							isDisableRoom = true;

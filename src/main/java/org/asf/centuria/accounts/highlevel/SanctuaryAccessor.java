@@ -188,8 +188,9 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	 * 
 	 * @param sancClassInvId The inv id of the sanctuary class to upgrade.
 	 * @param roomIndex      The room index to set to 1
+	 * @param isEnlargen     Choose to set index to 1 or 0
 	 */
-	public abstract boolean enlargenSanctuaryRooms(String sancClassInvId, int roomIndex, Boolean isEnlargen);
+	public abstract boolean modifySancturaryRoomUpgradeState(String sancClassInvId, int roomIndex, Boolean isEnlargen);
 
 	/**
 	 * Gets the current sanctuary stage.

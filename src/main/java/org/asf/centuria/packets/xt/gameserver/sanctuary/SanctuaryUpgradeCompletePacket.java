@@ -91,7 +91,7 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 			} else if (twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex != null) {
 				// its a room expansion
 				var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
-						.enlargenSanctuaryRooms(
+						.modifySancturaryRoomUpgradeState(
 								twiggleItem.getTwiggleComponent().twiggleWorkParams.classItemInvId,
 								twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex,
 								true);
@@ -145,8 +145,10 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 
 		// send IL
 		player.client.sendPacket(ilPacket);
-
-		twiggleAccessor.clearTwiggleWork(twiggleInvId);
+		
+		if(twiggleAccessor.getTwiggle(twiggleInvId) != null){
+			twiggleAccessor.clearTwiggleWork(twiggleInvId);
+		}
 		il = player.account.getSaveSpecificInventory().getItem("110");
 		ilPacket = new InventoryItemPacket();
 		ilPacket.item = il;
