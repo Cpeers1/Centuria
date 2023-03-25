@@ -1068,8 +1068,10 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		var sancClass = classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
 				.get("SanctuaryClass").getAsJsonObject();
 
-		sancClass.remove("stage");
-		sancClass.addProperty("stage", stage);
+		if (sancClass.get("stage").getAsInt() < stage) {
+			sancClass.remove("stage");
+			sancClass.addProperty("stage", stage);
+		}
 
 		JsonObject ts = new JsonObject();
 		ts.addProperty("ts", System.currentTimeMillis());
@@ -1091,10 +1093,13 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		var looks = inventory.getItem("201").getAsJsonArray();
 
 		for (var item : looks) {
-			var infoLevel = item.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
-					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
 
-			if (infoLevel.get("classInvId").getAsString().equals(sancClassInvId)) {
+			var SanctuaryLook = item.getAsJsonObject().getAsJsonObject(InventoryItem.COMPONENTS_PROPERTY_NAME)
+					.getAsJsonObject("SanctuaryLook");
+
+			if (SanctuaryLook == null) {
+				continue;
+			} else if (SanctuaryLook.getAsJsonObject("info").get("classInvId").getAsString().equals(sancClassInvId)) {
 				lookObjectsToUpdate.add(item.getAsJsonObject());
 			}
 		}
