@@ -133,7 +133,9 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 							return true;
 						}
 					}
-				} else {
+				}
+				if (stage < player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+						.getCurrentSanctuaryStage(classItemInvId)) {
 					// the room has been disabled
 					var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
 							.upgradeSanctuaryToStage(classItemInvId, stage);
