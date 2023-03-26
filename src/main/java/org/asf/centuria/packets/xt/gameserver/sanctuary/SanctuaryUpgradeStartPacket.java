@@ -77,7 +77,7 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 			var sanctuaryLookInfo = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
 					.getSanctuaryLook(player.account.getActiveSanctuaryLook()).get("components").getAsJsonObject()
 					.get("SanctuaryLook").getAsJsonObject().get("info");
-			var classItemInvId = sanctuaryLookInfo.getAsJsonObject().get("classInvId").getAsString(); 
+			var classItemInvId = sanctuaryLookInfo.getAsJsonObject().get("classInvId").getAsString();
 			var houseItemInvId = sanctuaryLookInfo.getAsJsonObject().get("houseInvId").getAsString();
 
 			// If the stage has gone up, its a stage upgrade
@@ -88,7 +88,7 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 				workParams.stage = stage;
 				updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary,
 						System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForStageUp(stage), workParams);
-				System.out.println("Stage upgrade");
+				Centuria.logger.debug("Stage upgrade");
 				isStageUpgrade = true;
 			}
 			// disabling/enabling room
@@ -96,16 +96,19 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 					.getCurrentSanctuaryStage(classItemInvId)) {
 				didDisablingSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
 						.upgradeSanctuaryToStage(classItemInvId, stage);
-				System.out.println("Room disabling");
+				Centuria.logger.debug("Room disabling");
 			}
 
-			// if the enlarged array has any elements that don't match the og elements
+			// get the og expansion arrays (house inv. array is temporary, while class inv.
+			// array is
+			// permanent)
 			JsonArray houseInvExpansionArray = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
 					.getHouseExpandedRoomsArray(houseItemInvId);
 			JsonArray classInvExpansionArray = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
 					.getClassExpandedRoomsArray(classItemInvId);
 
-			// room expansion
+			// room expansion (when class inv. array differs from the one in packet by a
+			// spot)
 			for (int i = 0; i < enlargedAreaIndexes.size() && i < classInvExpansionArray.size(); i++) {
 				if (enlargedAreaIndexes.get(i) == 1 && classInvExpansionArray.get(i).getAsInt() == 0) {
 					expansionIndex = i;
@@ -119,22 +122,24 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 									+ SanctuaryWorkCalculator.getTimeForExpand(expansionIndex),
 							workParams);
 					isRoomUpgrade = true;
-					System.out.println("Room expansion");
+					Centuria.logger.debug("Room expansion");
 					break;
 				}
 			}
 
-			// enabling/disabling expansion
+			// enabling/disabling expansion (when house inv. array differs from the one in
+			// packet)
 			for (int i = 0; i < enlargedAreaIndexes.size() && i < houseInvExpansionArray.size(); i++) {
 				if (enlargedAreaIndexes.get(i) != houseInvExpansionArray.get(i).getAsInt()) {
 					didDisablingSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
 							.expandManySanctuaryRooms(classItemInvId,
 									new GsonBuilder().create().toJsonTree(enlargedAreaIndexes).getAsJsonArray());
-					System.out.println("Expansion disabling");
+					Centuria.logger.debug("Expansion disabling");
 					break;
 				}
 			}
-
+			
+			// send IL packet from another packet's class to reload world after disabling/enabling
 			SanctuaryUpgradeCompletePacket SanctuaryUpgradeCompletePacketObject = new SanctuaryUpgradeCompletePacket();
 			if (didDisablingSucceed && !isStageUpgrade && !isRoomUpgrade) {
 				SanctuaryUpgradeCompletePacketObject.sendIlPacket(player);
