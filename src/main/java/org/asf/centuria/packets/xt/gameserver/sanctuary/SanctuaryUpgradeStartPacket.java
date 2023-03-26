@@ -74,10 +74,11 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 			boolean didDisablingSucceed = false;
 
 			TwiggleItem updatedTwiggle = null;
-			var classItemInvId = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+			var sanctuaryLookInfo = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
 					.getSanctuaryLook(player.account.getActiveSanctuaryLook()).get("components").getAsJsonObject()
-					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject().get("classInvId")
-					.getAsString();
+					.get("SanctuaryLook").getAsJsonObject().get("info");
+			var classItemInvId = sanctuaryLookInfo.getAsJsonObject().get("classInvId").getAsString(); 
+			var houseItemInvId = sanctuaryLookInfo.getAsJsonObject().get("houseInvId").getAsString();
 
 			// If the stage has gone up, its a stage upgrade
 			if (stage > player.account.getSaveSpecificInventory().getSanctuaryAccessor()
@@ -90,10 +91,17 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 				System.out.println("Stage upgrade");
 				isStageUpgrade = true;
 			}
+			// disabling/enabling room
+			else if (stage <= player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+					.getCurrentSanctuaryStage(classItemInvId)) {
+				didDisablingSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+						.upgradeSanctuaryToStage(classItemInvId, stage);
+				System.out.println("Room disabling");
+			}
 
 			// if the enlarged array has any elements that don't match the og elements
 			JsonArray houseInvExpansionArray = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
-					.getHouseExpandedRoomsArray(classItemInvId);
+					.getHouseExpandedRoomsArray(houseItemInvId);
 			JsonArray classInvExpansionArray = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
 					.getClassExpandedRoomsArray(classItemInvId);
 
@@ -127,16 +135,8 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 				}
 			}
 
-			// disabling/enabling room
-			if (stage < player.account.getSaveSpecificInventory().getSanctuaryAccessor()
-					.getCurrentSanctuaryStage(classItemInvId)) {
-				didDisablingSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
-						.upgradeSanctuaryToStage(classItemInvId, stage);
-				System.out.println("Room disabling");
-			}
-
 			SanctuaryUpgradeCompletePacket SanctuaryUpgradeCompletePacketObject = new SanctuaryUpgradeCompletePacket();
-			if (didDisablingSucceed) {
+			if (didDisablingSucceed && !isStageUpgrade && !isRoomUpgrade) {
 				SanctuaryUpgradeCompletePacketObject.sendIlPacket(player);
 				SanctuaryUpgradeCompletePacketObject.JoinSanctuary(client, player.account.getAccountID());
 			}

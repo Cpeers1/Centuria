@@ -210,10 +210,10 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	/**
 	 * Gets the current sanctuary expansion array from the house inventory.
 	 * 
-	 * @param sancClassInvId The inv id of the sanctuary class.
+	 * @param houseInvId The inv id of the house.
 	 * @return The sanctuary expansion Array.
 	 */
-	public abstract JsonArray getHouseExpandedRoomsArray(String sancClassInvId);
+	public abstract JsonArray getHouseExpandedRoomsArray(String houseInvId);
 
 	/**
 	 * Gets the current sanctuary expansion array from the class inventory.

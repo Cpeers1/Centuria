@@ -1387,29 +1387,10 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 
 	@Override
-	public JsonArray getHouseExpandedRoomsArray(String sancClassInvId) {
+	public JsonArray getHouseExpandedRoomsArray(String houseInvId) {
 
-		if (!inventory.containsItem("10"))
-			inventory.setItem("10", new JsonArray());
 		if (!inventory.containsItem("5"))
-			inventory.setItem("5", new JsonArray());
-		if (!inventory.containsItem("201"))
-			inventory.setItem("201", new JsonArray());
-
-		var looksInv = inventory.getItem("201").getAsJsonArray();
-		String houseInvId = "";
-
-		for (var item : looksInv) {
-			if (item.getAsJsonObject().getAsJsonObject(InventoryItem.COMPONENTS_PROPERTY_NAME)
-					.getAsJsonObject("SanctuaryLook")
-					.getAsJsonObject("info").get("classInvId").getAsString().equals(sancClassInvId)) {
-
-				houseInvId = item.getAsJsonObject().getAsJsonObject(InventoryItem.COMPONENTS_PROPERTY_NAME)
-						.getAsJsonObject("SanctuaryLook")
-						.getAsJsonObject("info").get("houseInvId").getAsString();
-				break;
-			}
-		}
+			inventory.setItem("5", new JsonArray()); 
 
 		var houseInv = inventory.getItem("5").getAsJsonArray();
 		JsonElement houseObject = null;
