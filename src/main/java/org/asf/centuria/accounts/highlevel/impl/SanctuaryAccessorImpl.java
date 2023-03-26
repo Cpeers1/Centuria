@@ -1162,7 +1162,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 
 	@Override
-	public boolean toggleSancturaryRoomUpgradeState(String sancClassInvId, int roomIndex) {
+	public boolean expandSanctuaryRoom(String sancClassInvId, int roomIndex) {
 
 		// Need to upgrade sanctuary..
 		if (!inventory.containsItem("10"))
@@ -1188,8 +1188,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 				.get("SanctuaryClass").getAsJsonObject();
 
 		var roomEnlargeArray = sancClass.get("enlargedAreas").getAsJsonArray();
-		roomEnlargeArray.set(roomIndex, new JsonPrimitive(1)); // We assume the expansion will be permanent regardless
-																// of being enabled
+		roomEnlargeArray.set(roomIndex, new JsonPrimitive(1));
 
 		JsonObject ts = new JsonObject();
 		ts.addProperty("ts", System.currentTimeMillis());
@@ -1252,9 +1251,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 				// update room enlarge array
 				roomEnlargeArray = houseLevel.get("enlargedAreas").getAsJsonArray();
-				roomEnlargeArray.set(roomIndex, new JsonPrimitive(1 - roomEnlargeArray.get(roomIndex).getAsInt())); // flip
-																													// enabled
-																													// state
+				roomEnlargeArray.set(roomIndex, new JsonPrimitive(1));
 
 				// stamp
 				matchedHouseItem.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
@@ -1272,6 +1269,89 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 		// save the 10
 		inventory.setItem("10", classInv);
+
+		// save the 5
+		inventory.setItem("5", houseInv);
+
+		// save the 201
+		inventory.setItem("201", looks);
+
+		return true;
+	}
+
+	@Override
+	public boolean expandManySanctuaryRooms(String sancClassInvId, JsonArray expansionArray) {
+
+		JsonObject ts = new JsonObject();
+		ts.addProperty("ts", System.currentTimeMillis());
+
+		// we also need to update the house and island invs of any looks using this
+		// class
+
+		List<JsonObject> lookObjectsToUpdate = new ArrayList<JsonObject>();
+
+		if (!inventory.containsItem("201"))
+			inventory.setItem("201", new JsonArray());
+
+		var looks = inventory.getItem("201").getAsJsonArray();
+
+		for (var item : looks) {
+
+			var SanctuaryLook = item.getAsJsonObject().getAsJsonObject(InventoryItem.COMPONENTS_PROPERTY_NAME)
+					.getAsJsonObject("SanctuaryLook");
+
+			if (SanctuaryLook == null) {
+				continue;
+			} else if (SanctuaryLook.getAsJsonObject("info").get("classInvId").getAsString().equals(sancClassInvId)) {
+
+				lookObjectsToUpdate.add(item.getAsJsonObject());
+			}
+		}
+
+		// now that we found all the looks to update, we need to update their house
+		// inventories..
+
+		if (!inventory.containsItem("5"))
+			inventory.setItem("5", new JsonArray());
+
+		var houseInv = inventory.getItem("5").getAsJsonArray();
+
+		for (var item : lookObjectsToUpdate) {
+			var infoLevel = item.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
+
+			var houseInvId = infoLevel.get("houseInvId").getAsString();
+
+			JsonElement matchedHouseItem = null;
+
+			for (var houseItem : houseInv) {
+				if (houseItem.getAsJsonObject().get("id").getAsString().equals(houseInvId)) {
+					matchedHouseItem = houseItem;
+					break;
+				}
+			}
+
+			if (matchedHouseItem != null) {
+				var houseLevel = matchedHouseItem.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME)
+						.getAsJsonObject().get("House").getAsJsonObject();
+
+				// update room enlarge array
+				houseLevel.remove("enlargedAreas");
+				houseLevel.add("enlargedAreas", expansionArray);
+
+				// stamp
+				matchedHouseItem.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+						.remove("ts");
+				matchedHouseItem.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+						.add("ts", ts);
+			} else {
+				return false;
+			}
+
+			// stamp
+			item.remove("ts");
+			item.add("ts", ts);
+		}
 
 		// save the 5
 		inventory.setItem("5", houseInv);

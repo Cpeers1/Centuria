@@ -184,13 +184,20 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	public abstract boolean upgradeSanctuaryToStage(String sancClassInvId, int stage);
 
 	/**
-	 * Expands (or toggles the expansion if already expanded) of the room of a
-	 * specific sanctuary type.
+	 * Expands the room of a specific sanctuary class.
 	 * 
 	 * @param sancClassInvId The inv id of the sanctuary class to expand.
 	 * @param roomIndex      The room index to set to 1
 	 */
-	public abstract boolean toggleSancturaryRoomUpgradeState(String sancClassInvId, int roomIndex);
+	public abstract boolean expandSanctuaryRoom(String sancClassInvId, int roomIndex);
+
+	/**
+	 * Expands or unexpands multiple rooms of a specific sanctuary class.
+	 * 
+	 * @param sancClassInvId The inv id of the sanctuary class to expand.
+	 * @param expansionArray The new expansion array to update to.
+	 */
+	public abstract boolean expandManySanctuaryRooms(String sancClassInvId, JsonArray expansionArray);
 
 	/**
 	 * Gets the current sanctuary stage.
