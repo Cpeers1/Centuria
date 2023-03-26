@@ -18,7 +18,7 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 
 	private static final String PACKET_ID = "suc";
 
-	public static String twiggleInvId;
+	public String twiggleInvId;
 
 	public boolean success;
 
