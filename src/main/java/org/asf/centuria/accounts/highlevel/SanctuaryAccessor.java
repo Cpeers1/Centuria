@@ -174,33 +174,53 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	 * Saves the currently active sanctuary look to a new slot with the ID provided.
 	 */
 	public abstract void saveSanctuaryLookToSlot(String activeSancLookId, String slotId, String saveName);
-	
+
 	/**
 	 * Upgrades the class of sanctuary to the specific stage.
-	 * @param sancClassInvId The inv id of the sanctuary class to upgrade. 
-	 * @param stage The stage of the sanctuary to upgrade to.
+	 * 
+	 * @param sancClassInvId The inv id of the sanctuary class to upgrade.
+	 * @param stage          The stage of the sanctuary to upgrade to.
 	 */
 	public abstract boolean upgradeSanctuaryToStage(String sancClassInvId, int stage);
-	
+
 	/**
-	 * Enlargens the room of a specific sanctuary type..
-	 * @param sancClassInvId The inv id of the sanctuary class to upgrade. 
-	 * @param roomIndex The room index to set to 1 
+	 * Expands the room of a specific sanctuary class.
+	 * 
+	 * @param sancClassInvId The inv id of the sanctuary class to expand.
+	 * @param roomIndex      The room index to set to 1
 	 */
-	public abstract boolean enlargenSanctuaryRooms(String sancClassInvId, int roomIndex);
-	
+	public abstract boolean expandSanctuaryRoom(String sancClassInvId, int roomIndex);
+
+	/**
+	 * Expands or unexpands multiple rooms of a specific sanctuary class.
+	 * 
+	 * @param sancClassInvId The inv id of the sanctuary class to expand.
+	 * @param expansionArray The new expansion array to update to.
+	 */
+	public abstract boolean expandManySanctuaryRooms(String sancClassInvId, JsonArray expansionArray);
+
 	/**
 	 * Gets the current sanctuary stage.
+	 * 
 	 * @param sancClassInvId The inv id of the sanctuary class.
 	 * @return The sanctuary stage.
 	 */
 	public abstract int getCurrentSanctuaryStage(String sancClassInvId);
-	
+
 	/**
-	 * Gets the current sanctuary expansion array
+	 * Gets the current sanctuary expansion array from the house inventory.
+	 * 
+	 * @param houseInvId The inv id of the house.
+	 * @return The sanctuary expansion Array.
+	 */
+	public abstract JsonArray getHouseExpandedRoomsArray(String houseInvId);
+
+	/**
+	 * Gets the current sanctuary expansion array from the class inventory.
+	 * 
 	 * @param sancClassInvId The inv id of the sanctuary class.
 	 * @return The sanctuary expansion Array.
 	 */
-	public abstract JsonArray getExpandedRooms(String sancClassInvId);
+	public abstract JsonArray getClassExpandedRoomsArray(String sancClassInvId);
 
 }
