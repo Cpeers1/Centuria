@@ -167,9 +167,6 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 			var ilPacket = new InventoryItemPacket();
 			ilPacket.item = il;
 
-			writer = new XtWriter();
-			ilPacket.build(writer);
-
 			// send IL
 			plr.client.sendPacket(ilPacket);
 		}
@@ -179,17 +176,11 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 			var ilPacket = new InventoryItemPacket();
 			ilPacket.item = il;
 
-			writer = new XtWriter();
-			ilPacket.build(writer);
-
 			// send IL
 			plr.client.sendPacket(ilPacket);
 		}
 
 		// then do this packet
-
-		writer = new XtWriter();
-		this.build(writer);
 
 		plr.client.sendPacket(this);
 
