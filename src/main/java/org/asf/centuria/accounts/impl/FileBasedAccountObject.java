@@ -372,6 +372,8 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 	@Override
 	public void setActiveLook(String lookID) {
+		if (lookID == null)
+			return;
 		if (getSaveMode() == SaveMode.MANAGED) {
 			JsonObject looks = new JsonObject();
 			if (mainInv.containsItem("activelooks"))
