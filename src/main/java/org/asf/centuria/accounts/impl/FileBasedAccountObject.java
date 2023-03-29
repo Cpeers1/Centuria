@@ -307,6 +307,10 @@ public class FileBasedAccountObject extends CenturiaAccount {
 				looks.addProperty("activeSanctuaryLook", UUID.randomUUID().toString());
 				mainInv.setItem("activelooks", looks);
 			}
+			if (!looks.has("activeLook")){
+				looks.addProperty("activeLook", UUID.randomUUID().toString());
+				mainInv.setItem("activelooks", looks);
+			}
 			return looks.get("activeLook").getAsString();
 		}
 
@@ -337,6 +341,10 @@ public class FileBasedAccountObject extends CenturiaAccount {
 				looks = mainInv.getItem("activelooks").getAsJsonObject();
 			else {
 				looks.addProperty("activeLook", UUID.randomUUID().toString());
+				looks.addProperty("activeSanctuaryLook", UUID.randomUUID().toString());
+				mainInv.setItem("activelooks", looks);
+			}
+			if (!looks.has("activeSanctuaryLook")){
 				looks.addProperty("activeSanctuaryLook", UUID.randomUUID().toString());
 				mainInv.setItem("activelooks", looks);
 			}
