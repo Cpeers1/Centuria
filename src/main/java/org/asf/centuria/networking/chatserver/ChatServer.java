@@ -123,6 +123,9 @@ public class ChatServer {
 					try {
 						client.handle(obj);
 					} catch (Exception e) {
+						if (client.isConnected())
+							Centuria.logger.error("Error handling chat packet from "
+									+ client.getPlayer().getDisplayName() + ": " + obj, e);
 					}
 				}
 
