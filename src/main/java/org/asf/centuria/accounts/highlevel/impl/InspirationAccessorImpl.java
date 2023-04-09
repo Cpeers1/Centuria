@@ -125,6 +125,8 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 			if (!enigmaData.has("recipe"))
 				continue;
 			var recipeDefIds = enigmaData.get("recipe").getAsJsonObject().get("_defIDs").getAsJsonArray();
+			if (recipeDefIds.size() != inspirations.length)
+				continue; // Not the correct amount
 
 			// need matches == inspirations length
 			// TODO: refactor this is an ugly af solution
