@@ -2,3 +2,4 @@ Fixes in 1.6.4.B1:
  - Fix issues with mod handshake in the base server code
  - Fix shutdown command using the wrong popup message
  - Fix enigma crafting breaking down with incorrect sketch counts
+ - Fix disconnect issues
