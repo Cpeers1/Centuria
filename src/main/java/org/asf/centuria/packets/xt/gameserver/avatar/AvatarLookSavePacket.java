@@ -68,6 +68,10 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 			// Parse avatar
 			JsonObject lookData = JsonParser.parseString(this.lookData).getAsJsonObject();
 
+			// Save look file to look database
+			plr.activeLook = lookID;
+			plr.account.setActiveLook(plr.activeLook);
+
 			// Save avatar to inventory
 			JsonArray items = plr.account.getSaveSpecificInventory().getItem("avatars").getAsJsonArray();
 			JsonObject lookObj = null;
@@ -99,6 +103,10 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 				update.add(lookObj);
 			}
 			plr.account.getSaveSpecificInventory().setItem("avatars", items);
+
+			// Prevent double save
+			plr.pendingLookID = null;
+			plr.pendingLookDefID = 8254;
 
 			// Update avatar object in client inventory
 			InventoryItemPacket pkt = new InventoryItemPacket();

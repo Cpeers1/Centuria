@@ -93,5 +93,4 @@ public class AvatarSelectLookPacket implements IXtPacket<AvatarSelectLookPacket>
 
 		return true;
 	}
-
 }
