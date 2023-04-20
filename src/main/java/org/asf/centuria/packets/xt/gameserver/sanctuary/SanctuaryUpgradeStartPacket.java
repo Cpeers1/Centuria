@@ -3,6 +3,8 @@ package org.asf.centuria.packets.xt.gameserver.sanctuary;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.inventoryitems.twiggles.TwiggleItem;
@@ -14,6 +16,7 @@ import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.util.SanctuaryWorkCalculator;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 
 public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeStartPacket> {
@@ -67,12 +70,15 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 			var player = (Player) client.container;
 			var twiggleAccessor = player.account.getSaveSpecificInventory().getTwiggleAccesor();
 			boolean isStageUpgrade = false;
+			boolean isRoomUpgrade = false;
+			boolean didDisablingSucceed = false;
 
 			TwiggleItem updatedTwiggle = null;
-			var classItemInvId = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+			var sanctuaryLookInfo = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
 					.getSanctuaryLook(player.account.getActiveSanctuaryLook()).get("components").getAsJsonObject()
-					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject().get("classInvId")
-					.getAsString();
+					.get("SanctuaryLook").getAsJsonObject().get("info");
+			var classItemInvId = sanctuaryLookInfo.getAsJsonObject().get("classInvId").getAsString();
+			var houseItemInvId = sanctuaryLookInfo.getAsJsonObject().get("houseInvId").getAsString();
 
 			// If the stage has gone up, its a stage upgrade
 			if (stage > player.account.getSaveSpecificInventory().getSanctuaryAccessor()
@@ -82,44 +88,70 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 				workParams.stage = stage;
 				updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary,
 						System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForStageUp(stage), workParams);
-
+				Centuria.logger.debug("Stage upgrade");
 				isStageUpgrade = true;
 			}
-			// if the enlarged array has any elements that don't match the og elements
-			else {
-				boolean nonMatchingElement = false;
-				int nonMatchingElementIndex = 0;
-				JsonArray expansionArray = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
-						.getExpandedRooms(classItemInvId);
+			// disabling/enabling room
+			else if (stage <= player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+					.getCurrentSanctuaryStage(classItemInvId)) {
+				didDisablingSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+						.upgradeSanctuaryToStage(classItemInvId, stage);
+				Centuria.logger.debug("Room disabling");
+			}
 
-				for (int i = 0; i < enlargedAreaIndexes.size() && i < expansionArray.size(); i++) {
-					if (enlargedAreaIndexes.get(i) != expansionArray.get(i).getAsInt()) {
-						nonMatchingElement = true;
-						nonMatchingElementIndex = i;
-						break;
-					}
-				}
+			// get the og expansion arrays (house inv. array is temporary, while class inv.
+			// array is
+			// permanent)
+			JsonArray houseInvExpansionArray = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+					.getHouseExpandedRoomsArray(houseItemInvId);
+			JsonArray classInvExpansionArray = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+					.getClassExpandedRoomsArray(classItemInvId);
 
-				if (nonMatchingElement) {
-					// its a room expand upgrade
-					expansionIndex = nonMatchingElementIndex;
+			// room expansion (when class inv. array differs from the one in packet by a
+			// spot)
+			for (int i = 0; i < enlargedAreaIndexes.size() && i < classInvExpansionArray.size(); i++) {
+				if (enlargedAreaIndexes.get(i) == 1 && classInvExpansionArray.get(i).getAsInt() == 0) {
+					expansionIndex = i;
 
 					TwiggleWorkParameters workParams = new TwiggleWorkParameters();
 					workParams.classItemInvId = classItemInvId;
 					workParams.enlargedAreaIndex = expansionIndex;
+
 					updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary,
-							System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForExpand(expansionIndex),
+							System.currentTimeMillis()
+									+ SanctuaryWorkCalculator.getTimeForExpand(expansionIndex),
 							workParams);
+					isRoomUpgrade = true;
+					Centuria.logger.debug("Room expansion");
+					break;
 				}
 			}
 
+			// enabling/disabling expansion (when house inv. array differs from the one in
+			// packet)
+			for (int i = 0; i < enlargedAreaIndexes.size() && i < houseInvExpansionArray.size(); i++) {
+				if (enlargedAreaIndexes.get(i) != houseInvExpansionArray.get(i).getAsInt()) {
+					didDisablingSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
+							.expandManySanctuaryRooms(classItemInvId,
+									new GsonBuilder().create().toJsonTree(enlargedAreaIndexes).getAsJsonArray());
+					Centuria.logger.debug("Expansion disabling");
+					break;
+				}
+			}
+			
+			// send IL packet from another packet's class to reload world after disabling/enabling
+			SanctuaryUpgradeCompletePacket SanctuaryUpgradeCompletePacketObject = new SanctuaryUpgradeCompletePacket();
+			if (didDisablingSucceed && !isStageUpgrade && !isRoomUpgrade) {
+				SanctuaryUpgradeCompletePacketObject.sendIlPacket(player);
+				SanctuaryUpgradeCompletePacketObject.JoinSanctuary(client, player.account.getAccountID());
+			}
+
 			if (updatedTwiggle == null) {
-				// failed to expand
-				this.success = false;
+				// failed to expand or room was disabled
+				this.success = didDisablingSucceed;
 				client.sendPacket(this);
 			} else {
 				// remove resources from player
-
 				if (isStageUpgrade) {
 					var map = SanctuaryWorkCalculator.getCostForStageUp(stage);
 
@@ -127,7 +159,8 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 						player.account.getSaveSpecificInventory().getItemAccessor(player).remove(item.getKey(),
 								item.getValue());
 					}
-				} else {
+				}
+				if (isRoomUpgrade) {
 					var map = SanctuaryWorkCalculator.getCostForEnlargen(expansionIndex);
 
 					for (var item : map.entrySet()) {
@@ -146,7 +179,9 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 				client.sendPacket(this);
 			}
 
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			e.printStackTrace();
 
 			// failed to expand

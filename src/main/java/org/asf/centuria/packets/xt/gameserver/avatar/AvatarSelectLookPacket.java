@@ -62,6 +62,7 @@ public class AvatarSelectLookPacket implements IXtPacket<AvatarSelectLookPacket>
 		plr.client.sendPacket(this);
 
 		// Save active look
+		// TODO: only do this if its a primary look
 		plr.account.setActiveLook(plr.activeLook);
 
 		// Assign the defID
@@ -92,5 +93,4 @@ public class AvatarSelectLookPacket implements IXtPacket<AvatarSelectLookPacket>
 
 		return true;
 	}
-
 }

@@ -286,12 +286,15 @@ public abstract class CenturiaAccount {
 					.dispatchEvent(new AccountDisconnectEvent(plr.account, reason, DisconnectType.KICKED));
 
 			// Kick the player
-			plr.client.sendPacket("%xt%ua%-1%4086%");
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
+			if (plr.client.isConnected()) {
+				plr.client.sendPacket("%xt%ua%-1%4086%");
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+				}
+				if (plr.client.isConnected())
+					plr.client.disconnect();
 			}
-			plr.client.disconnect();
 		}
 	}
 
@@ -399,12 +402,15 @@ public abstract class CenturiaAccount {
 					.dispatchEvent(new AccountDisconnectEvent(plr.account, reason, DisconnectType.BANNED));
 
 			// Kick the player
-			plr.client.sendPacket("%xt%ua%-1%3561%");
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
+			if (plr.client.isConnected()) {
+				plr.client.sendPacket("%xt%ua%-1%3561%");
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+				}
+				if (plr.client.isConnected())
+					plr.client.disconnect();
 			}
-			plr.client.disconnect();
 		}
 
 		// Disconnect it from the chat server
@@ -469,14 +475,17 @@ public abstract class CenturiaAccount {
 			// Dispatch event
 			EventBus.getInstance()
 					.dispatchEvent(new AccountDisconnectEvent(plr.account, reason, DisconnectType.BANNED));
-			
+
 			// Kick the player
-			plr.client.sendPacket("%xt%ua%-1%3561%");
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
+			if (plr.client.isConnected()) {
+				plr.client.sendPacket("%xt%ua%-1%3561%");
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+				}
+				if (plr.client.isConnected())
+					plr.client.disconnect();
 			}
-			plr.client.disconnect();
 		}
 
 		// Dispatch event

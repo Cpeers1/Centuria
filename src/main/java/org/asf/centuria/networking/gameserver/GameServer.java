@@ -7,12 +7,15 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.TimeZone;
+import java.util.stream.Stream;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
@@ -82,10 +85,28 @@ public class GameServer extends BaseSmartfoxServer {
 	public Player[] getPlayers() {
 		while (true) {
 			try {
-				return players.values().toArray(t -> new Player[t]);
+				return Stream.of(players.values().toArray(t -> new Player[t])).filter(t -> {
+					if (t != null)
+						return true;
+					else {
+						while (true) {
+							try {
+								String[] ids = players.keySet().toArray(t2 -> new String[t2]);
+								for (String id : ids) {
+									if (id == null || players.get(id) == null)
+										players.remove(id);
+								}
+								break;
+							} catch (ConcurrentModificationException e) {
+							}
+						}
+						return false;
+					}
+				}).toArray(t -> new Player[t]);
 			} catch (ConcurrentModificationException e) {
 			}
 		}
+
 	}
 
 	@Override
@@ -322,7 +343,7 @@ public class GameServer extends BaseSmartfoxServer {
 		}
 
 		// Send response
-		sendLoginResponse(client, auth, acc, 1, acc.isPlayerNew() ? 2 : 3, new JsonObject());
+		sendLoginResponse(client, auth, acc, 1, acc.isPlayerNew() ? 2 : 3, params);
 		sendPacket(client, "%xt%ulc%-1%");
 
 		// Add player
@@ -494,10 +515,19 @@ public class GameServer extends BaseSmartfoxServer {
 		JsonObject o = new JsonObject();
 		o.addProperty("statusId", statusCode);
 		o.addProperty("_cmd", "login");
-		params.addProperty("jamaaTime", System.currentTimeMillis() / 1000);
+
+		// Jamaa time is seconds since 1-1-2015
+		params.addProperty("jamaaTime", (System.currentTimeMillis() / 1000)
+				- ZonedDateTime.of(2015, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toEpochSecond());
+
+		// Add login flags
 		params.addProperty("pendingFlags", pendingFlags);
+
+		// Look IDs
 		params.addProperty("activeLookId", acc.getActiveLook());
 		params.addProperty("sanctuaryLookId", acc.getActiveSanctuaryLook());
+
+		// Session ids etc
 		params.addProperty("sessionId", acc.getAccountID());
 		params.addProperty("userId", acc.getAccountNumericID());
 		params.addProperty("avatarInvId", 0);

@@ -1068,8 +1068,10 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		var sancClass = classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
 				.get("SanctuaryClass").getAsJsonObject();
 
-		sancClass.remove("stage");
-		sancClass.addProperty("stage", stage);
+		if (sancClass.get("stage").getAsInt() < stage) {
+			sancClass.remove("stage");
+			sancClass.addProperty("stage", stage);
+		}
 
 		JsonObject ts = new JsonObject();
 		ts.addProperty("ts", System.currentTimeMillis());
@@ -1091,10 +1093,13 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		var looks = inventory.getItem("201").getAsJsonArray();
 
 		for (var item : looks) {
-			var infoLevel = item.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
-					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
 
-			if (infoLevel.get("classInvId").getAsString().equals(sancClassInvId)) {
+			var SanctuaryLook = item.getAsJsonObject().getAsJsonObject(InventoryItem.COMPONENTS_PROPERTY_NAME)
+					.getAsJsonObject("SanctuaryLook");
+
+			if (SanctuaryLook == null) {
+				continue;
+			} else if (SanctuaryLook.getAsJsonObject("info").get("classInvId").getAsString().equals(sancClassInvId)) {
 				lookObjectsToUpdate.add(item.getAsJsonObject());
 			}
 		}
@@ -1157,7 +1162,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 
 	@Override
-	public boolean enlargenSanctuaryRooms(String sancClassInvId, int roomIndex) {
+	public boolean expandSanctuaryRoom(String sancClassInvId, int roomIndex) {
 
 		// Need to upgrade sanctuary..
 		if (!inventory.containsItem("10"))
@@ -1205,10 +1210,14 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		var looks = inventory.getItem("201").getAsJsonArray();
 
 		for (var item : looks) {
-			var infoLevel = item.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
-					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
 
-			if (infoLevel.get("classInvId").getAsString().equals(sancClassInvId)) {
+			var SanctuaryLook = item.getAsJsonObject().getAsJsonObject(InventoryItem.COMPONENTS_PROPERTY_NAME)
+					.getAsJsonObject("SanctuaryLook");
+
+			if (SanctuaryLook == null) {
+				continue;
+			} else if (SanctuaryLook.getAsJsonObject("info").get("classInvId").getAsString().equals(sancClassInvId)) {
+
 				lookObjectsToUpdate.add(item.getAsJsonObject());
 			}
 		}
@@ -1271,6 +1280,89 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 
 	@Override
+	public boolean expandManySanctuaryRooms(String sancClassInvId, JsonArray expansionArray) {
+
+		JsonObject ts = new JsonObject();
+		ts.addProperty("ts", System.currentTimeMillis());
+
+		// we also need to update the house and island invs of any looks using this
+		// class
+
+		List<JsonObject> lookObjectsToUpdate = new ArrayList<JsonObject>();
+
+		if (!inventory.containsItem("201"))
+			inventory.setItem("201", new JsonArray());
+
+		var looks = inventory.getItem("201").getAsJsonArray();
+
+		for (var item : looks) {
+
+			var SanctuaryLook = item.getAsJsonObject().getAsJsonObject(InventoryItem.COMPONENTS_PROPERTY_NAME)
+					.getAsJsonObject("SanctuaryLook");
+
+			if (SanctuaryLook == null) {
+				continue;
+			} else if (SanctuaryLook.getAsJsonObject("info").get("classInvId").getAsString().equals(sancClassInvId)) {
+
+				lookObjectsToUpdate.add(item.getAsJsonObject());
+			}
+		}
+
+		// now that we found all the looks to update, we need to update their house
+		// inventories..
+
+		if (!inventory.containsItem("5"))
+			inventory.setItem("5", new JsonArray());
+
+		var houseInv = inventory.getItem("5").getAsJsonArray();
+
+		for (var item : lookObjectsToUpdate) {
+			var infoLevel = item.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
+
+			var houseInvId = infoLevel.get("houseInvId").getAsString();
+
+			JsonElement matchedHouseItem = null;
+
+			for (var houseItem : houseInv) {
+				if (houseItem.getAsJsonObject().get("id").getAsString().equals(houseInvId)) {
+					matchedHouseItem = houseItem;
+					break;
+				}
+			}
+
+			if (matchedHouseItem != null) {
+				var houseLevel = matchedHouseItem.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME)
+						.getAsJsonObject().get("House").getAsJsonObject();
+
+				// update room enlarge array
+				houseLevel.remove("enlargedAreas");
+				houseLevel.add("enlargedAreas", expansionArray);
+
+				// stamp
+				matchedHouseItem.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+						.remove("ts");
+				matchedHouseItem.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
+						.add("ts", ts);
+			} else {
+				return false;
+			}
+
+			// stamp
+			item.remove("ts");
+			item.add("ts", ts);
+		}
+
+		// save the 5
+		inventory.setItem("5", houseInv);
+
+		// save the 201
+		inventory.setItem("201", looks);
+
+		return true;
+	}
+
+	@Override
 	public int getCurrentSanctuaryStage(String sancClassInvId) {
 
 		if (!inventory.containsItem("10"))
@@ -1295,7 +1387,32 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 
 	@Override
-	public JsonArray getExpandedRooms(String sancClassInvId) {
+	public JsonArray getHouseExpandedRoomsArray(String houseInvId) {
+
+		if (!inventory.containsItem("5"))
+			inventory.setItem("5", new JsonArray()); 
+
+		var houseInv = inventory.getItem("5").getAsJsonArray();
+		JsonElement houseObject = null;
+
+		for (var item : houseInv) {
+			if (item.getAsJsonObject().get("id").getAsString().equals(houseInvId)) {
+
+				houseObject = item;
+				break;
+			}
+		}
+
+		if (houseObject == null)
+			return null;
+
+		return houseObject.getAsJsonObject().getAsJsonObject(InventoryItem.COMPONENTS_PROPERTY_NAME)
+				.getAsJsonObject("House")
+				.get("enlargedAreas").getAsJsonArray();
+	}
+
+	@Override
+	public JsonArray getClassExpandedRoomsArray(String sancClassInvId) {
 
 		if (!inventory.containsItem("10"))
 			inventory.setItem("10", new JsonArray());

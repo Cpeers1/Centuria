@@ -62,6 +62,7 @@ import org.asf.centuria.networking.http.api.AuthenticateHandler;
 import org.asf.centuria.networking.http.api.DisplayNameValidationHandler;
 import org.asf.centuria.networking.http.api.DisplayNamesRequestHandler;
 import org.asf.centuria.networking.http.api.RequestTokenHandler;
+import org.asf.centuria.networking.http.api.SeasonPassRequestHandler;
 import org.asf.centuria.networking.http.api.UpdateDisplayNameHandler;
 import org.asf.centuria.networking.http.api.UserHandler;
 import org.asf.centuria.networking.http.api.XPDetailsHandler;
@@ -76,6 +77,7 @@ import org.asf.centuria.networking.http.api.custom.RegistrationHandler;
 import org.asf.centuria.networking.http.api.custom.SaveManagerHandler;
 import org.asf.centuria.networking.http.api.custom.UserDetailsHandler;
 import org.asf.centuria.networking.http.director.GameServerRequestHandler;
+import org.asf.centuria.seasonpasses.SeasonPassManager;
 import org.asf.rats.ConnectiveHTTPServer;
 import org.asf.rats.ConnectiveServerFactory;
 
@@ -84,7 +86,7 @@ import com.google.gson.JsonObject;
 
 public class Centuria {
 	// Update
-	public static String SERVER_UPDATE_VERSION = "1.6.3.B1";
+	public static String SERVER_UPDATE_VERSION = "1.6.4.B1";
 	public static String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/centuria";
 
 	// Configuration
@@ -141,7 +143,7 @@ public class Centuria {
 		System.out.println("                              Centuria                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                          Version 1.6.3.B1                          "); // not doing this
+		System.out.println("                          Version 1.6.4.B1                          "); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain
@@ -492,6 +494,9 @@ public class Centuria {
 			}
 		}
 
+		// Load season passes
+		SeasonPassManager.getCurrentPass();
+
 		// Start the servers
 		Centuria.logger.info("Starting API server on port " + Integer.parseInt(properties.get("api-port")) + "...");
 
@@ -536,6 +541,7 @@ public class Centuria {
 		apiServer.registerProcessor(new DisplayNameValidationHandler());
 		apiServer.registerProcessor(new RequestTokenHandler());
 		apiServer.registerProcessor(new GameRegistrationHandler());
+		apiServer.registerProcessor(new SeasonPassRequestHandler());
 
 		// Custom API
 		apiServer.registerProcessor(new LoginRefreshHandler());
@@ -573,6 +579,7 @@ public class Centuria {
 			apiServer.registerProcessor(new DisplayNameValidationHandler());
 			apiServer.registerProcessor(new RequestTokenHandler());
 			apiServer.registerProcessor(new GameRegistrationHandler());
+			apiServer.registerProcessor(new SeasonPassRequestHandler());
 
 			// Custom API
 			apiServer.registerProcessor(new LoginRefreshHandler());
