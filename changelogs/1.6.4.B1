@@ -3,4 +3,5 @@ Fixes in 1.6.4.B1:
  - Fix shutdown command using the wrong popup message
  - Fix enigma crafting breaking down with incorrect sketch counts
  - Fix issues with login where null player objects can wind up in memory
+ - Implemented room disabling and renaming (credits to animal animalson)
  - Fix disconnect issues
