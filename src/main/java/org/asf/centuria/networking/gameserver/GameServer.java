@@ -15,6 +15,7 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.TimeZone;
+import java.util.stream.Stream;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
@@ -84,10 +85,28 @@ public class GameServer extends BaseSmartfoxServer {
 	public Player[] getPlayers() {
 		while (true) {
 			try {
-				return players.values().toArray(t -> new Player[t]);
+				return Stream.of(players.values().toArray(t -> new Player[t])).filter(t -> {
+					if (t != null)
+						return true;
+					else {
+						while (true) {
+							try {
+								String[] ids = players.keySet().toArray(t2 -> new String[t2]);
+								for (String id : ids) {
+									if (id == null || players.get(id) == null)
+										players.remove(id);
+								}
+								break;
+							} catch (ConcurrentModificationException e) {
+							}
+						}
+						return false;
+					}
+				}).toArray(t -> new Player[t]);
 			} catch (ConcurrentModificationException e) {
 			}
 		}
+
 	}
 
 	@Override
