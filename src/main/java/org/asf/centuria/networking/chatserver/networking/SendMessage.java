@@ -252,8 +252,7 @@ public class SendMessage extends AbstractChatPacket {
 		// Ignore 'limbo' players
 		Player gameClient = client.getPlayer().getOnlinePlayerInstance();
 		if (gameClient == null) {
-			// Ok, even worse, hacker, disconnect them after banning
-			client.getPlayer().ban("No gameserver connection while chatting");
+			// Ok-
 			client.disconnect();
 			return true;
 		} else if (!gameClient.roomReady || gameClient.room == null) {
