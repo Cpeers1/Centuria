@@ -1,0 +1,2 @@
+Fixes in 1.6.3.B3:
+ - Fix issue with the block system not filtering blocked players in the social system

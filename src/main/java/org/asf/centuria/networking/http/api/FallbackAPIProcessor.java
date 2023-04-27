@@ -309,6 +309,10 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				int limit = Integer.parseInt(query.getOrDefault("limit", Integer.toString(Integer.MAX_VALUE)));
 				for (int i = (page - 1) * limit; i < followerList.length; i++) {
 					SocialEntry entry = followerList[i];
+					
+					// Check block
+					if (SocialManager.getInstance().getPlayerIsBlocked(sourcePlayerID, entry.playerID))
+						continue; // Skip since the source blocks the target player
 
 					if (i >= page * limit)
 						break;
@@ -374,6 +378,10 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				int limit = Integer.parseInt(query.getOrDefault("limit", Integer.toString(Integer.MAX_VALUE)));
 				for (int i = (page - 1) * limit; i < followingList.length; i++) {
 					SocialEntry entry = followingList[i];
+					
+					// Check block
+					if (SocialManager.getInstance().getPlayerIsBlocked(entry.playerID, sourcePlayerID))
+						continue; // Skip since the target blocks the source player
 
 					if (i >= page * limit)
 						break;
