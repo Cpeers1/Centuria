@@ -6,13 +6,16 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
+import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
+import org.asf.centuria.social.SocialManager;
 
 public class RelationshipFindPlayerPacket implements IXtPacket<RelationshipFindPlayerPacket> {
 
 	private static final String PACKET_ID = "rffpu";
-	
+
 	private String name;
 	private String accountId = "";
 	private boolean success = false;
@@ -44,14 +47,21 @@ public class RelationshipFindPlayerPacket implements IXtPacket<RelationshipFindP
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		// Find avatar
+		// Find player
 
 		if (Centuria.debugMode) {
 			System.out.println("[SOCIAL] [FindPlayer] Client to server ( playerName: " + name + " )");
 		}
 
+		boolean moderator = false;
+		if (((Player) client.container).account.getSaveSharedInventory().containsItem("permissions")) {
+			String permLevel = ((Player) client.container).account.getSaveSharedInventory().getItem("permissions")
+					.getAsJsonObject().get("permissionLevel").getAsString();
+			moderator = GameServer.hasPerm(permLevel, "moderator");
+		}
 		String id = AccountManager.getInstance().getUserByDisplayName(name);
-		if (id == null || AccountManager.getInstance().getAccount(id).isBanned()) {
+		if (id == null || (!moderator && (AccountManager.getInstance().getAccount(id).isBanned() || SocialManager
+				.getInstance().getPlayerIsBlocked(id, ((Player) client.container).account.getAccountID())))) {
 			client.sendPacket(this);
 
 			// log interaction details
