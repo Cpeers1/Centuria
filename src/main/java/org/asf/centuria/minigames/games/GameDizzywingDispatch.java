@@ -22,22 +22,25 @@ import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
 import org.joml.Vector2i;
 
+import javassist.bytecode.ByteArray;
+
 public class GameDizzywingDispatch extends AbstractMinigame {
 
     public String currentGameUUID;
-    public Match3GameBoard gameState;
+    public GameState gameState;
     public int level = 1;
-    public int value = 500;
+    public int score = 500;
+    public int moveCount = 0;
+    public int powerup = 0;
 
     static {
     }
 
-    public class Match3GameBoard {
+    public class GameState {
 
-        public class Match3Cell {
+        public class GridCell {
             public int tileHealth;
-            public Vector2i cellPos;
-            public Match3TileType TileType;
+            public TileType TileType;
             public BoosterType Booster;
         }
 
@@ -58,60 +61,61 @@ public class GameDizzywingDispatch extends AbstractMinigame {
             DelayedDoubleTwinTrouble
         }
 
-        public enum Match3TileType {
-            RedBird,
-            YellowBird,
+        public enum TileType {
+            LightBlueBird,
+            DarkBlueBird,
             GreenBird,
-            BlueBird,
+            PinkBird,
             PurpleBird,
+            RedBird,
             WhiteBird,
+            YellowBird,
             Hat,
             Purse
         }
 
-        public Match3Cell[][] grid;
+        public Map<Vector2i, GridCell> grid;
         public Vector2i gridSize;
         public Integer moveCount;
-        private List<Match3TileType> spawnTiles;
+        public List<TileType> spawnTiles;
 
-        public Match3GameBoard(){
+        public GameState(){
             gridSize = new Vector2i(9, 9);
-            spawnTiles = new ArrayList<Match3TileType>(Arrays.asList(
-                Match3TileType.RedBird,
-                Match3TileType.YellowBird,
-                Match3TileType.GreenBird,
-                Match3TileType.PurpleBird,
-                Match3TileType.WhiteBird));
+            spawnTiles = new ArrayList<TileType>(Arrays.asList(
+            TileType.LightBlueBird,
+            TileType.DarkBlueBird,
+            TileType.GreenBird,
+            TileType.PinkBird,
+            TileType.PurpleBird,
+            TileType.RedBird,
+            TileType.WhiteBird,
+            TileType.YellowBird,
+            TileType.Hat,
+            TileType.Purse));
             InitializeCells();
             InitializeGameBoard();
         }
 
-        public Match3Cell GetCell(Vector2i inCellPos)
+        public GridCell GetCell(Vector2i pos)
         {
-            return GetCell(inCellPos.x, inCellPos.y);
-        }
-
-        public Match3Cell GetCell(int x, int y)
-        {
-            if (x >= 0 && x < grid.length && y >= 0 && y < grid[0].length)
+            if (pos.x >= 0 && pos.x < gridSize.x && pos.y >= 0 && pos.y < gridSize.y)
             {
-                return grid[x][y];
+                return grid.get(pos);
             }
             return null;
         }
 
         private void InitializeCells()
         {
-            grid = new Match3Cell[gridSize.x][gridSize.y];
+            grid = new HashMap<>();
             for (int y = 0; y < gridSize.y; y++)
             {
                 for (int x = 0; x < gridSize.x; x++)
                 {
-                    Match3Cell cell = new Match3Cell();
+                    GridCell cell = new GridCell();
                     cell.tileHealth = 0;
                     cell.Booster = BoosterType.None;
-                    cell.cellPos = new Vector2i(x, y);
-                    grid[x][y] = cell;
+                    grid.put(new Vector2i(x, y), cell);
                 }
             }
         }
@@ -122,7 +126,7 @@ public class GameDizzywingDispatch extends AbstractMinigame {
             
             for(int x = 0; x < gridSize.x; x++){
                 for(int y = 0; y < gridSize.y; y++){
-                    inArray[x + gridSize.x * y] = GridCellByteValueForChecksum(x, y);
+                    inArray[x + gridSize.x * y] = GridCellByteValueForChecksum(new Vector2i(x, y));
                 }
             }
 
@@ -133,10 +137,10 @@ public class GameDizzywingDispatch extends AbstractMinigame {
             return (text + text2 + text3).hashCode();
         }
 
-        public byte GridCellByteValueForChecksum(int col, int row)
+        public byte GridCellByteValueForChecksum(Vector2i pos)
         {
             int byteValue = 0;
-            Match3Cell cell = GetCell(col, row);
+            GridCell cell = GetCell(pos);
 
             int typeValueOnServer = cell.TileType.ordinal();
 
@@ -161,12 +165,16 @@ public class GameDizzywingDispatch extends AbstractMinigame {
             {
                 for (int x = 0; x < gridSize.x; x++)
                 {
-                    Collections.shuffle(spawnTiles);
-                    for (Match3TileType spawnTile : spawnTiles)
+                    List<TileType> shuffledSpawnTiles = new ArrayList<TileType>(spawnTiles);
+                    Collections.shuffle(shuffledSpawnTiles, randomizer);
+
+                    for (TileType spawnTile : shuffledSpawnTiles)
                     {
-                        if ((x < 2 || !(GetCell(x - 1, y).TileType == spawnTile) || !(GetCell(x - 2, y).TileType == spawnTile)) && (y < 2 || !(GetCell(x, y - 1).TileType == spawnTile) || !(GetCell(x, y - 2).TileType == spawnTile)))
+                        if ((x < 2 || !(GetCell(new Vector2i(x - 1, y)).TileType == spawnTile) || !(GetCell(new Vector2i(x - 2, y)).TileType == spawnTile)) && (y < 2 || !(GetCell(new Vector2i(x, y - 1)).TileType == spawnTile) || !(GetCell(new Vector2i(x, y - 2)).TileType == spawnTile)))
                         {
-                            grid[x][y].TileType = spawnTile;
+                            GridCell cell = grid.get(new Vector2i(x, y));
+                            cell.TileType = spawnTile;
+                            grid.put(new Vector2i(x, y), cell);
                             break;
                         }
                     }
@@ -175,10 +183,41 @@ public class GameDizzywingDispatch extends AbstractMinigame {
             moveCount = 0;
         }
 
-        public void CalculateMove(Vector2i cell1, Vector2i cell2){
-
+        public void CalculateMove(Vector2i pos1, Vector2i pos2){
+            GridCell cell1 = GetCell(pos1);
+            grid.put(pos1, GetCell(pos2));
+            grid.put(pos2, cell1);
         }
-    
+
+        public String toBase64String(){
+            byte[] inArray = new byte[gridSize.x * gridSize.y];
+            
+            for(int x = 0; x < gridSize.x; x++){
+                for(int y = 0; y < gridSize.y; y++){
+                    inArray[x + gridSize.x * y] = GridCellByteValueForBase64String(new Vector2i(x, y));
+                }
+            }
+
+            return Base64.getEncoder().encodeToString(inArray);
+        }
+
+        public byte GridCellByteValueForBase64String(Vector2i pos)
+        {
+            int byteValue = 0;
+            GridCell cell = GetCell(pos);
+
+            if(cell.TileType == TileType.Purse){
+                byteValue += 18;
+            } else if (cell.TileType == TileType.Hat){
+                byteValue += 29;
+            } else {
+                byteValue += (2 * cell.TileType.ordinal() + (cell.tileHealth == 0 ? 0 : 1));
+            }
+
+            byteValue += cell.Booster.ordinal() * 20;
+            
+            return (byte)byteValue;
+        }
     }
 
     @Override
@@ -206,26 +245,28 @@ public class GameDizzywingDispatch extends AbstractMinigame {
         // send timestamp to start a game
         currentGameUUID = UUID.randomUUID().toString();
         level = 1;
-        gameState = new Match3GameBoard();
+        gameState = new GameState();
 
         XtWriter mmData = new XtWriter();
         mmData.writeString(currentGameUUID);
         mmData.writeInt(gameState.CalculateBoardChecksum()); // this is a checksum, not a timestamp
         mmData.writeInt(level);
         mmData.writeInt(0);
-        mmData.writeInt(value);
+        mmData.writeInt(score);
         mmData.writeInt(0);
 
         MinigameMessagePacket mm = new MinigameMessagePacket();
 		mm.command = "startGame";
 		mm.data = mmData.encode().substring(4);
 		player.client.sendPacket(mm);
-
-
+        
+        
         if (Centuria.debugMode) {
             DDVis vis = new DDVis();
             new Thread(() -> vis.frame.setVisible(true)).start();
         }
+
+        syncClient(player, rd, moveCount, level, score, powerup, gameState);
 
     }
 
@@ -243,7 +284,7 @@ public class GameDizzywingDispatch extends AbstractMinigame {
 
         if (Centuria.debugMode) {
             level++;
-            goToLevel(player, level, value);
+            goToLevel(player, level, score);
         }
         //System.out.println(rd.readRemaining());
 
@@ -280,7 +321,7 @@ public class GameDizzywingDispatch extends AbstractMinigame {
 
     @MinigameMessage("continueGame")
 	public void continueGame(Player player, XtReader rd) {
-
+        // send start game client with previous values
     }
 
     @MinigameMessage("saveGame")
@@ -294,8 +335,20 @@ public class GameDizzywingDispatch extends AbstractMinigame {
     }
 
     @MinigameMessage("syncClient")
-	public void syncClient(Player player, XtReader rd) {
+	public void syncClient(Player player, XtReader rd, int moveCount, int level, int score, int powerup, GameState gameState) {
+        XtWriter mmData = new XtWriter();
+        mmData.writeInt(moveCount);
+        mmData.writeInt(level);
+        mmData.writeInt(score);
+        mmData.writeInt(powerup);
+        mmData.writeString(gameState.toBase64String());
+        //mmData.writeString("AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9Q");
+        mmData.writeInt(0); // no level objective
 
+        MinigameMessagePacket mm = new MinigameMessagePacket();
+		mm.command = "syncClient";
+		mm.data = mmData.encode().substring(4);
+		player.client.sendPacket(mm);
     }
     
 }
