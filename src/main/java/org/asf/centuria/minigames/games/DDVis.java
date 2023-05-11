@@ -84,13 +84,13 @@ public class DDVis {
 		switch(tileTypeString) {
 			case "RedBird":
 				return Color.RED;
-			case "DarkBlueBird":
+			case "BlueBird":
 				return Color.BLUE;
-			case "LightBlueBird":
+			case "AquaBird":
 				return Color.CYAN;
 			case "GreenBird":
 				return Color.GREEN;
-			case "WhiteBird":
+			case "SnowyBird":
 				return Color.LIGHT_GRAY;
 			case "YellowBird":
 				return Color.ORANGE;
