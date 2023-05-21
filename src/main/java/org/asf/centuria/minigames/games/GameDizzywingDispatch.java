@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
 
-import org.apache.logging.log4j.core.tools.picocli.CommandLine.Help.TextTable.Cell;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
@@ -25,9 +24,7 @@ import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
 import org.joml.Vector2i;
 
-import javassist.bytecode.ByteArray;
-
-public class GameDizzywingDispatch extends AbstractMinigame {
+public class GameDizzywingDispatch extends AbstractMinigame{
 
     public String currentGameUUID;
     public GameState gameState;
@@ -84,23 +81,21 @@ public class GameDizzywingDispatch extends AbstractMinigame {
         }
 
         public Map<Vector2i, GridCell> grid;
-        public Map<Vector2i, Boolean> visited;
+        public boolean visited[][];
         public Vector2i gridSize;
         public Integer moveCount;
         public List<TileType> spawnTiles;
+        public Random randomizer;
 
         public GameState(){
             gridSize = new Vector2i(9, 9);
             spawnTiles = new ArrayList<TileType>(Arrays.asList(
-            TileType.AquaBird,
-            TileType.BlueBird,
             TileType.GreenBird,
-            TileType.PinkBird,
             TileType.PurpleBird,
             TileType.RedBird,
             TileType.SnowyBird,
-            TileType.YellowBird,
-            TileType.HatOrPurse));
+            TileType.YellowBird));
+            randomizer = new Random(currentGameUUID.hashCode());
             InitializeGameBoard();
         }
 
@@ -111,6 +106,13 @@ public class GameDizzywingDispatch extends AbstractMinigame {
                 return grid.get(pos);
             }
             return null;
+        }
+
+        public void SetCell(Vector2i pos, GridCell cell){
+            if (pos.x >= 0 && pos.x < gridSize.x && pos.y >= 0 && pos.y < gridSize.y && cell != null)
+            {
+                grid.put(pos, cell);
+            }
         }
         
         public int CalculateBoardChecksum()
@@ -152,7 +154,6 @@ public class GameDizzywingDispatch extends AbstractMinigame {
         {
 
             grid = new HashMap<>();
-            Random randomizer = new Random(currentGameUUID.hashCode());
 
             for (int y = 0; y < gridSize.y; y++)
             {
@@ -165,7 +166,7 @@ public class GameDizzywingDispatch extends AbstractMinigame {
                     {
                         if ((x < 2 || !(GetCell(new Vector2i(x - 1, y)).TileType == spawnTile) || !(GetCell(new Vector2i(x - 2, y)).TileType == spawnTile)) && (y < 2 || !(GetCell(new Vector2i(x, y - 1)).TileType == spawnTile) || !(GetCell(new Vector2i(x, y - 2)).TileType == spawnTile)))
                         {
-                            grid.put(new Vector2i(x, y), new GridCell(0, spawnTile, BoosterType.None));
+                            SetCell(new Vector2i(x, y), new GridCell(0, spawnTile, BoosterType.None));
                             break;
                         }
                     }
@@ -175,152 +176,134 @@ public class GameDizzywingDispatch extends AbstractMinigame {
         }
 
         public void CalculateMove(Vector2i pos1, Vector2i pos2){
+
             GridCell cell1 = GetCell(pos1);
-            grid.put(pos1, GetCell(pos2));
-            grid.put(pos2, cell1);
+            SetCell(pos1, GetCell(pos2));
+            SetCell(pos2, cell1);
 
-            visited = new HashMap<>();
+            floodFillClearVisited();
 
-            Random randomizer = new Random(currentGameUUID.hashCode());
-            
-            if(GetCell(pos1).Booster == BoosterType.None && GetCell(pos2).Booster == BoosterType.None){
-                
-                for(int x = 0; x < gridSize.x; x++){
-                    for(int y = 0; y < gridSize.y; y++){
-                        if(visited.get(new Vector2i(x, y)) == null){
-                            floodFill(new Vector2i(x, y));
-                        }
-                    }
-                }
-
-                for(int x = 0; x < gridSize.x; x++){
-                    Integer noGapsInColumn = 0;
-                    for(int y = 0; y < gridSize.y; y++){
-                        GridCell currCell = GetCell(new Vector2i(x, y));
-                        if(currCell.TileType == TileType.None && currCell.Booster == BoosterType.None){
-                            noGapsInColumn++;
-                        } else {
-                            grid.put(new Vector2i(x, y - noGapsInColumn), currCell);
-                        }
-                    }
-                    for(int y = gridSize.y; y >= gridSize.y-noGapsInColumn; y--){
-                        //grid.put(new Vector2i(x, y), new GridCell(0, spawnTiles.get(randomizer.nextInt(spawnTiles.size())), BoosterType.None));
-                        grid.put(new Vector2i(x, y), new GridCell(0, TileType.HatOrPurse, BoosterType.None));
-                    }
-                }
-                
-            } else if (GetCell(pos1).Booster != BoosterType.None && GetCell(pos2).Booster != BoosterType.None){
-                
-            } else {
-                
+            if(GetCell(pos2).Booster.ordinal() > GetCell(pos1).Booster.ordinal()){
+                Vector2i temp = pos1;
+                pos1 = pos2;
+                pos2 = temp;
             }
+
+            if(GetCell(pos1).Booster != BoosterType.None && GetCell(pos2).Booster != BoosterType.None){
+            }
+            else if(GetCell(pos1).Booster != BoosterType.None && GetCell(pos2).Booster == BoosterType.None){
+                
+                if(GetCell(pos1).Booster == BoosterType.FlyerHorizontal){
+                    for(int x = 0; x < gridSize.x; x++){
+                        SetCell(new Vector2i(x, pos1.y), new GridCell(0, TileType.None, BoosterType.None));
+                    }
+                    fillGaps();
+                } else if(GetCell(pos1).Booster == BoosterType.FlyerVertical){
+                    for(int y = 0; y < gridSize.y; y++){
+                        SetCell(new Vector2i(pos1.x, y), new GridCell(0, TileType.None, BoosterType.None));
+                    }
+                    fillGaps();
+                } else if(GetCell(pos1).Booster == BoosterType.ColorBomb){
+                }
+            }
+
+            for(Integer evaluationDepth = 0; evaluationDepth < 5; evaluationDepth++){
+                Boolean isMatches = false;
+
+                for(int x = 0; x < gridSize.x; x++){
+                    for(int y = 0; y < gridSize.y; y++){
+                        if(!floodFillGetVisited(new Vector2i(x, y))){
+                            isMatches ^= floodFill(new Vector2i(x, y), pos1, pos2);
+                        }
+                    }
+                }
+                fillGaps();
+
+                if(!isMatches){
+                    break;
+                }
+            }
+                
+        }
+
+        public void fillGaps(){
+            for(int x = 0; x < gridSize.x; x++){
+                Integer noGapsInColumn = 0;
+                for(int y = 0; y < gridSize.y; y++){
+                    GridCell currCell = GetCell(new Vector2i(x, y));
+                    if(currCell.TileType == TileType.None && currCell.Booster == BoosterType.None){
+                        noGapsInColumn++;
+                    } else {
+                        SetCell(new Vector2i(x, y - noGapsInColumn), currCell);
+                    }
+                }
+                for(int y = gridSize.y; y >= gridSize.y-noGapsInColumn; y--){
+                    SetCell(new Vector2i(x, y), new GridCell(0, spawnTiles.get(randomizer.nextInt(spawnTiles.size())), BoosterType.None));
+                }
+            }
+        }
+
+        public Boolean isNeighbourCell(Vector2i pos1, Vector2i pos2){
+            GridCell cell1 = GetCell(pos1);
+            GridCell cell2 = GetCell(pos2);
+
+            if(cell1 == null || cell2 == null) return false;
+            if(cell1.TileType == cell2.TileType && cell1.Booster == cell2.Booster) return true;
+
+            return false;
+        }
+
+        public void floodFillSetVisited(Vector2i pos){
+            visited[pos.x][pos.y] = true;
+        }
+
+        public boolean floodFillGetVisited(Vector2i pos){
+            return visited[pos.x][pos.y];
+        }
+
+        public void floodFillClearVisited(){
+            visited = new boolean[gridSize.x][gridSize.y];
         }
         
         // patterns are hardcoded
-        public void floodFill(Vector2i pos){
+        public Boolean floodFill(Vector2i pos, Vector2i swappedTile1, Vector2i swappedTile2){
             
-            TileType refTileType = GetCell(pos).TileType;
-            BoosterType newBooster = BoosterType.None;
-            Boolean patternMatched = false;
-            
-            Integer noSameTypeNorth = 0;
-            Integer noSameTypeSouth = 0;
-            Integer noSameTypeEast = 0;
-            Integer noSameTypeWest = 0;
+            Queue<Vector2i> floodFillQueue = new LinkedList<>();
+            floodFillQueue.add(pos);
 
-            for(int x = pos.x+1; x < Math.min(pos.x+4, gridSize.x); x++){
-                if(GetCell(new Vector2i(x, pos.y)).TileType == refTileType){
-                    noSameTypeEast++;
-                } else {
-                    break;
-                }
+            List<Vector2i> connectedNodes = new LinkedList<>();
+            String nodePattern = "";
+
+            while(!floodFillQueue.isEmpty()){
+                Vector2i curr = floodFillQueue.poll();
+
+                if(GetCell(curr) == null) continue;
+                if(floodFillGetVisited(curr)) continue;
+                if(GetCell(pos).TileType != GetCell(curr).TileType) continue;
+                if(GetCell(pos).Booster != GetCell(curr).Booster) continue;
+
+                floodFillSetVisited(curr);
+                connectedNodes.add(curr);
+
+                Integer horizontalConnections = 0;
+                Integer verticalConnections = 0;
+
+                if(isNeighbourCell(curr, new Vector2i(curr.x-1, curr.y))) horizontalConnections++; floodFillQueue.add(new Vector2i(curr.x-1, curr.y));
+                if(isNeighbourCell(curr, new Vector2i(curr.x+1, curr.y))) horizontalConnections++; floodFillQueue.add(new Vector2i(curr.x+1, curr.y));
+                if(isNeighbourCell(curr, new Vector2i(curr.x, curr.y-1))) verticalConnections++; floodFillQueue.add(new Vector2i(curr.x, curr.y-1));
+                if(isNeighbourCell(curr, new Vector2i(curr.x, curr.y+1))) verticalConnections++; floodFillQueue.add(new Vector2i(curr.x, curr.y+1));
+
+                if(horizontalConnections == 1 && verticalConnections == 0) nodePattern += "C";
+                else if(horizontalConnections == 0 && verticalConnections == 1) nodePattern += "U";
+                else if(horizontalConnections == 2 && verticalConnections == 0) nodePattern += "-";
+                else if(horizontalConnections == 0 && verticalConnections == 2) nodePattern += "|";
+                else if(horizontalConnections == 1 && verticalConnections == 1) nodePattern += "L";
+                else if((horizontalConnections == 2 && verticalConnections == 1) || (horizontalConnections == 1 && verticalConnections == 2)) nodePattern += "T";
             }
 
-            for(int x = pos.x-1; x > Math.max(pos.x-4, 0); x--){
-                if(GetCell(new Vector2i(x, pos.y)).TileType == refTileType){
-                    noSameTypeWest++;
-                } else {
-                    break;
-                }
-            }
+            if (nodePattern.length() > 2) Centuria.logger.info(nodePattern + " " + GetCell(pos).TileType + " " + GetCell(pos).Booster + " " + pos.toString());
 
-            for(int y = pos.y+1; y < Math.min(pos.y+4, gridSize.y); y++){
-                if(GetCell(new Vector2i(pos.x, y)).TileType == refTileType){
-                    noSameTypeNorth++;
-                } else {
-                    break;
-                }
-            }
-
-            for(int y = pos.y-1; y > Math.max(pos.y-4, 0); y--){
-                if(GetCell(new Vector2i(pos.x, y)).TileType == refTileType){
-                    noSameTypeSouth++;
-                } else {
-                    break;
-                }
-            }
-
-            // L shape, boom bird
-            if((noSameTypeNorth == 2 && noSameTypeEast == 2) ||
-                (noSameTypeNorth == 2 && noSameTypeWest == 2) ||
-                (noSameTypeSouth == 2 && noSameTypeEast == 2) ||
-                (noSameTypeSouth == 2 && noSameTypeWest == 2)){
-                    newBooster = BoosterType.ColorBomb;
-                    patternMatched = true;
-                }
-            
-            // T shape, boom bird
-            if((noSameTypeNorth == 2 && noSameTypeEast == 1 && noSameTypeWest == 1) ||
-                (noSameTypeSouth == 2 && noSameTypeEast == 1 && noSameTypeWest == 1) ||
-                (noSameTypeEast == 2 && noSameTypeNorth == 1 && noSameTypeSouth == 1) ||
-                (noSameTypeWest == 2 && noSameTypeNorth == 1 && noSameTypeSouth == 1)){
-                    newBooster = BoosterType.ColorBomb;
-                    patternMatched = true;
-                }
-
-            // match 5, prism peacock
-            if(noSameTypeNorth == 4 || noSameTypeEast == 4){
-                newBooster = BoosterType.TwinTrouble;
-                patternMatched = true;
-            }
-            
-            // vertical line, buzzy bird
-            if(noSameTypeNorth == 3){
-                newBooster = BoosterType.FlyerVertical;
-                patternMatched = true;
-            }
-
-            // vertical line, buzzy bird
-            if(noSameTypeEast == 3){
-                newBooster = BoosterType.FlyerHorizontal;
-                patternMatched = true;
-            }
-            
-            // match 3
-            if(noSameTypeNorth == 2 || noSameTypeEast == 2){
-                patternMatched = true;
-            }
-
-            if(patternMatched){
-                for(int x = pos.x-noSameTypeWest; x <= pos.x+noSameTypeEast; x++){
-                    grid.put(new Vector2i(x, pos.y), new GridCell(0, TileType.None, BoosterType.None));
-                    visited.put(new Vector2i(x, pos.y), true);
-                }
-    
-                for(int y = pos.y-noSameTypeSouth; y <= pos.y+noSameTypeNorth; y++){
-                    grid.put(new Vector2i(pos.x, y), new GridCell(0, TileType.None, BoosterType.None));
-                    visited.put(new Vector2i(pos.x, y), true);
-                }
-
-                if(newBooster != BoosterType.None){
-                    grid.put(pos, new GridCell(0, refTileType, newBooster));
-                }
-            }
-
-            
-
-            return;
-
+            return true;
         }
 
         public String toBase64String(){
@@ -342,13 +325,11 @@ public class GameDizzywingDispatch extends AbstractMinigame {
 
             if(cell.TileType == TileType.HatOrPurse){
                 byteValue += 18;
-            } else if(cell.TileType == TileType.None){
-                byteValue += 255;
-            } else {
-                byteValue += (2 * cell.TileType.ordinal() + (cell.tileHealth == 0 ? 0 : 1));
-                byteValue += cell.Booster.ordinal() * 20;
+            } else if(cell.TileType != TileType.None){
+                byteValue += ((cell.Booster == BoosterType.None ? 2 : 1) * cell.TileType.ordinal() + (cell.tileHealth == 0 ? 0 : 1));
             }
-
+            
+            byteValue += cell.Booster.ordinal() * 20;
             
             return (byte)byteValue;
         }
@@ -400,7 +381,7 @@ public class GameDizzywingDispatch extends AbstractMinigame {
             new Thread(() -> vis.frame.setVisible(true)).start();
         }
 
-        syncClient(player, rd, moveCount, level, score, powerup, gameState);
+        syncClient(player, rd);
 
     }
 
@@ -411,7 +392,7 @@ public class GameDizzywingDispatch extends AbstractMinigame {
 
         // process move sent by client
         gameState.CalculateMove(new Vector2i(rd.readInt(), rd.readInt()), new Vector2i(rd.readInt(), rd.readInt()));
-        syncClient(player, rd, moveCount, level, score, powerup, gameState);
+        syncClient(player, rd);
 
         InventoryItemPacket pk = new InventoryItemPacket();
         pk.item = player.account.getSaveSpecificInventory().getItem("303");
@@ -419,17 +400,17 @@ public class GameDizzywingDispatch extends AbstractMinigame {
 
         if (Centuria.debugMode) {
             level++;
-            goToLevel(player, level, score);
+            goToLevel(player);
         }
 
     }
 
-	private void goToLevel(Player player, int level, int value) {
+	private void goToLevel(Player player) {
         // change to next level
         XtWriter mmData = new XtWriter();
         mmData.writeInt(level);
         mmData.writeInt(0);
-        mmData.writeInt(value);
+        mmData.writeInt(score);
         mmData.writeInt(0);
 
         MinigameMessagePacket mm = new MinigameMessagePacket();
@@ -469,7 +450,7 @@ public class GameDizzywingDispatch extends AbstractMinigame {
     }
 
     @MinigameMessage("syncClient")
-	public void syncClient(Player player, XtReader rd, int moveCount, int level, int score, int powerup, GameState gameState) {
+	public void syncClient(Player player, XtReader rd) {
         XtWriter mmData = new XtWriter();
         mmData.writeInt(moveCount);
         mmData.writeInt(level);
