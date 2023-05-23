@@ -29,7 +29,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     public String currentGameUUID;
     public GameState gameState;
     public int level = 1;
-    public int score = 500;
+    public int score = 0;
     public int moveCount = 0;
     public int powerup = 0;
 
@@ -78,6 +78,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         public Integer moveCount;
         public List<TileType> spawnTiles;
         public Random randomizer;
+        public int matchComboScore;
 
         public GameState(){
             gridSize = new Vector2i(9, 9);
@@ -106,6 +107,11 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             {
                 grid.put(pos, cell);
             }
+        }
+
+        public void ClearCell(Vector2i pos, Boolean isScore){
+            SetCell(pos, new GridCell(0, TileType.None, BoosterType.None));
+            if(isScore) score += 30;
         }
         
         public int CalculateBoardChecksum()
@@ -183,45 +189,23 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
 
             if(GetCell(pos1).Booster != BoosterType.None && GetCell(pos2).Booster != BoosterType.None){ // booster combo behaviours
-            }
-            else if(GetCell(pos1).Booster != BoosterType.None && GetCell(pos2).Booster == BoosterType.None){    // single booster behaviours
+                
+            } else if(GetCell(pos1).Booster != BoosterType.None && GetCell(pos2).Booster == BoosterType.None){    // single booster behaviours
                 
                 if(GetCell(pos1).Booster == BoosterType.FlyerHorizontal){
-                    for(int x = 0; x < gridSize.x; x++){
-                        SetCell(new Vector2i(x, pos1.y), new GridCell(0, TileType.None, BoosterType.None));
-                    }
-                    fillGaps();
+                    HorizontalBuzzyBirdBehaviour(pos1);
                 } else if(GetCell(pos1).Booster == BoosterType.FlyerVertical){
-                    for(int y = 0; y < gridSize.y; y++){
-                        SetCell(new Vector2i(pos1.x, y), new GridCell(0, TileType.None, BoosterType.None));
-                    }
-                    fillGaps();
+                    VerticalBuzzyBirdBehaviour(pos1);
                 } else if(GetCell(pos1).Booster == BoosterType.ColorBomb){
-                    for(int x = pos1.x-1; x <= pos1.x+1; x++){
-                        for(int y = pos1.y-1; y <= pos1.y+1; y++){
-                            SetCell(new Vector2i(x, y), new GridCell(0, TileType.None, BoosterType.None));
-                        }
-                    }
-                    SetCell(new Vector2i(pos1.x, pos1.y-1), new GridCell(0, TileType.None, BoosterType.None));
-                    fillGaps();
-                    for(int x = pos1.x-1; x <= pos1.x+1; x++){
-                        for(int y = pos1.y-2; y <= pos1.y; y++){
-                            SetCell(new Vector2i(x, y), new GridCell(0, TileType.None, BoosterType.None));
-                        }
-                    }
-                    fillGaps();
+                    ColorBombBehaviour(pos1);
                 } else if (GetCell(pos1).Booster == BoosterType.TwinTrouble){
-                    TileType refType = GetCell(pos2).TileType;
-                    for(int y = 0; y < gridSize.y; y++){
-                        for(int x = 0; x < gridSize.x; x++){
-                            if(GetCell(new Vector2i(x, y)).TileType == refType) SetCell(new Vector2i(x, y), new GridCell(0, TileType.None, BoosterType.None));
-                        }
-                    }
-                    fillGaps();
+                    PrismPeacockBehaviour(pos2);
                 }
             }
 
-            for(Integer evaluationDepth = 0; evaluationDepth < 5; evaluationDepth++){ // for as long as there are still matches on the game board
+            matchComboScore = 0;
+
+            while(true){ // for as long as there are still matches on the game board
 
                 Boolean isMatches = findAndClearMatches();
                 fillGaps(); // replace tiles marked as having being cleared
@@ -230,9 +214,48 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     break;
                 }
 
-                syncClient(player, rd);
             }
                 
+        }
+
+        private void HorizontalBuzzyBirdBehaviour(Vector2i pos1) {
+            for(int x = 0; x < gridSize.x; x++){
+                ClearCell(new Vector2i(x, pos1.y), true);
+            }
+            fillGaps();
+        }
+
+        private void VerticalBuzzyBirdBehaviour(Vector2i pos1) {
+            for(int y = 0; y < gridSize.y; y++){
+                ClearCell(new Vector2i(pos1.x, y), true);
+            }
+            fillGaps();
+        }
+
+        private void ColorBombBehaviour(Vector2i pos1) {
+            for(int x = pos1.x-1; x <= pos1.x+1; x++){
+                for(int y = pos1.y-1; y <= pos1.y+1; y++){
+                    ClearCell(new Vector2i(x, y), true);
+                }
+            }
+            SetCell(new Vector2i(pos1.x, Math.max(0, pos1.y-1)), new GridCell(0, TileType.RedBird, BoosterType.ColorBomb));
+            fillGaps();
+            for(int x = pos1.x-1; x <= pos1.x+1; x++){
+                for(int y = pos1.y-2; y <= pos1.y; y++){
+                    ClearCell(new Vector2i(x, y), true);
+                }
+            }
+            fillGaps();
+        }
+
+        private void PrismPeacockBehaviour(Vector2i pos2) {
+            TileType refType = GetCell(pos2).TileType;
+            for(int y = 0; y < gridSize.y; y++){
+                for(int x = 0; x < gridSize.x; x++){
+                    if(GetCell(new Vector2i(x, y)).TileType == refType) ClearCell(new Vector2i(x, y), true);
+                }
+            }
+            fillGaps();
         }
 
         public void fillGaps(){
@@ -297,15 +320,21 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             TileType refType = GetCell(pos).TileType;
             BoosterType refBooster = BoosterType.None;
 
-            if(floodFillGetMatch(pos) == 4) {
+            if(floodFillGetMatch(pos) == 3) {
+                matchComboScore += 30; score += matchComboScore;
+            }
+            else if(floodFillGetMatch(pos) == 4) {
                 refBooster = randomizer.nextInt(2) == 0 ? BoosterType.FlyerHorizontal : BoosterType.FlyerVertical;
+                matchComboScore += 150; score += matchComboScore;
             }
             else if(floodFillGetMatch(pos) == 5) {
                 refBooster = BoosterType.TwinTrouble;
                 refType = TileType.None;
+                matchComboScore += 150; score += matchComboScore;
             }
             else if(floodFillGetMatch(pos) == 6) {
                 refBooster = BoosterType.ColorBomb;
+                matchComboScore += 150; score += matchComboScore;
             }
             
             Queue<Vector2i> floodFillQueue = new LinkedList<>();
@@ -332,7 +361,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
            
             for(Vector2i node : connectedNodes){
-                SetCell(node, new GridCell(0, TileType.None, BoosterType.None));
+                ClearCell(node, false);
             }
             if(refBooster != BoosterType.None){
                 SetCell(pos, new GridCell(0, refType, refBooster));
@@ -510,8 +539,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         pk.item = player.account.getSaveSpecificInventory().getItem("303");
         player.client.sendPacket(pk);
 
-        if (Centuria.debugMode) {
-            level++;
+        if ((int)Math.log(score) > level) {
+            level = (int)Math.log(score);
             goToLevel(player);
         }
 
