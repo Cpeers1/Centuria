@@ -55,16 +55,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             None,
             FlyerHorizontal,
             FlyerVertical,
-            TwinTrouble,
             ColorBomb,
-            Combo_DoubleFlyer,
-            Combo_FlyerTwinTrouble,
-            Combo_FlyerColorBomb,
-            Combo_DoubleTwinTrouble,
-            Combo_TwinTroubleColorBomb,
-            Combo_DoubleColorBomb,
-            DelayedTwinTrouble,
-            DelayedDoubleTwinTrouble,
+            TwinTrouble
         }
 
         public enum TileType {
@@ -81,7 +73,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         }
 
         public Map<Vector2i, GridCell> grid;
-        public boolean visited[][];
+        public int visited[][];
         public Vector2i gridSize;
         public Integer moveCount;
         public List<TileType> spawnTiles;
@@ -97,6 +89,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             TileType.YellowBird));
             randomizer = new Random(currentGameUUID.hashCode());
             InitializeGameBoard();
+            floodFillClearVisited();
         }
 
         public GridCell GetCell(Vector2i pos)
@@ -175,7 +168,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             moveCount = 0;
         }
 
-        public void CalculateMove(Vector2i pos1, Vector2i pos2){
+        public void CalculateMove(Vector2i pos1, Vector2i pos2, Player player, XtReader rd){
 
             GridCell cell1 = GetCell(pos1);
             SetCell(pos1, GetCell(pos2));
@@ -189,9 +182,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 pos2 = temp;
             }
 
-            if(GetCell(pos1).Booster != BoosterType.None && GetCell(pos2).Booster != BoosterType.None){
+            if(GetCell(pos1).Booster != BoosterType.None && GetCell(pos2).Booster != BoosterType.None){ // booster combo behaviours
             }
-            else if(GetCell(pos1).Booster != BoosterType.None && GetCell(pos2).Booster == BoosterType.None){
+            else if(GetCell(pos1).Booster != BoosterType.None && GetCell(pos2).Booster == BoosterType.None){    // single booster behaviours
                 
                 if(GetCell(pos1).Booster == BoosterType.FlyerHorizontal){
                     for(int x = 0; x < gridSize.x; x++){
@@ -204,24 +197,40 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     }
                     fillGaps();
                 } else if(GetCell(pos1).Booster == BoosterType.ColorBomb){
+                    for(int x = pos1.x-1; x <= pos1.x+1; x++){
+                        for(int y = pos1.y-1; y <= pos1.y+1; y++){
+                            SetCell(new Vector2i(x, y), new GridCell(0, TileType.None, BoosterType.None));
+                        }
+                    }
+                    SetCell(new Vector2i(pos1.x, pos1.y-1), new GridCell(0, TileType.None, BoosterType.None));
+                    fillGaps();
+                    for(int x = pos1.x-1; x <= pos1.x+1; x++){
+                        for(int y = pos1.y-2; y <= pos1.y; y++){
+                            SetCell(new Vector2i(x, y), new GridCell(0, TileType.None, BoosterType.None));
+                        }
+                    }
+                    fillGaps();
+                } else if (GetCell(pos1).Booster == BoosterType.TwinTrouble){
+                    TileType refType = GetCell(pos2).TileType;
+                    for(int y = 0; y < gridSize.y; y++){
+                        for(int x = 0; x < gridSize.x; x++){
+                            if(GetCell(new Vector2i(x, y)).TileType == refType) SetCell(new Vector2i(x, y), new GridCell(0, TileType.None, BoosterType.None));
+                        }
+                    }
+                    fillGaps();
                 }
             }
 
-            for(Integer evaluationDepth = 0; evaluationDepth < 5; evaluationDepth++){
-                Boolean isMatches = false;
+            for(Integer evaluationDepth = 0; evaluationDepth < 5; evaluationDepth++){ // for as long as there are still matches on the game board
 
-                for(int x = 0; x < gridSize.x; x++){
-                    for(int y = 0; y < gridSize.y; y++){
-                        if(!floodFillGetVisited(new Vector2i(x, y))){
-                            isMatches ^= floodFill(new Vector2i(x, y), pos1, pos2);
-                        }
-                    }
-                }
-                fillGaps();
+                Boolean isMatches = findAndClearMatches();
+                fillGaps(); // replace tiles marked as having being cleared
 
                 if(!isMatches){
                     break;
                 }
+
+                syncClient(player, rd);
             }
                 
         }
@@ -229,21 +238,21 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         public void fillGaps(){
             for(int x = 0; x < gridSize.x; x++){
                 Integer noGapsInColumn = 0;
-                for(int y = 0; y < gridSize.y; y++){
+                for(int y = 0; y < gridSize.y; y++){ // for each column
                     GridCell currCell = GetCell(new Vector2i(x, y));
                     if(currCell.TileType == TileType.None && currCell.Booster == BoosterType.None){
                         noGapsInColumn++;
                     } else {
-                        SetCell(new Vector2i(x, y - noGapsInColumn), currCell);
+                        SetCell(new Vector2i(x, y - noGapsInColumn), currCell); // move all the tiles down to eliminate gaps
                     }
                 }
                 for(int y = gridSize.y; y >= gridSize.y-noGapsInColumn; y--){
-                    SetCell(new Vector2i(x, y), new GridCell(0, spawnTiles.get(randomizer.nextInt(spawnTiles.size())), BoosterType.None));
+                    SetCell(new Vector2i(x, y), new GridCell(0, spawnTiles.get(randomizer.nextInt(spawnTiles.size())), BoosterType.None)); // now fill the gaps
                 }
             }
         }
 
-        public Boolean isNeighbourCell(Vector2i pos1, Vector2i pos2){
+        public Boolean floodFillIsNeighbourCell(Vector2i pos1, Vector2i pos2){
             GridCell cell1 = GetCell(pos1);
             GridCell cell2 = GetCell(pos2);
 
@@ -253,57 +262,158 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             return false;
         }
 
+        // 0 = unvisited
+        // 1 = visited
+        // 3 = match 3 (unvisited)
+        // 4 = match 4 (unvisited)
+        // 5 = match 5 (unvisited)
+        // 6 = intersection of match 3s (unvisited)
+        public void floodFillSetMatch(Vector2i pos, int matchType){
+            visited[pos.x][pos.y] = matchType;
+        }
+
+        public int floodFillGetMatch(Vector2i pos){
+            if (pos.x >= 0 && pos.x < gridSize.x && pos.y >= 0 && pos.y < gridSize.y)
+            {
+                return visited[pos.x][pos.y];
+            }
+            return 0;
+        }
+
         public void floodFillSetVisited(Vector2i pos){
-            visited[pos.x][pos.y] = true;
+            visited[pos.x][pos.y] = 1;
         }
 
         public boolean floodFillGetVisited(Vector2i pos){
-            return visited[pos.x][pos.y];
+            return visited[pos.x][pos.y] == 1;
         }
 
         public void floodFillClearVisited(){
-            visited = new boolean[gridSize.x][gridSize.y];
+            visited = new int[gridSize.x][gridSize.y];
         }
-        
-        // patterns are hardcoded
-        public Boolean floodFill(Vector2i pos, Vector2i swappedTile1, Vector2i swappedTile2){
+
+        public void floodFill(Vector2i pos){
+            
+            TileType refType = GetCell(pos).TileType;
+            BoosterType refBooster = BoosterType.None;
+
+            if(floodFillGetMatch(pos) == 4) {
+                refBooster = randomizer.nextInt(2) == 0 ? BoosterType.FlyerHorizontal : BoosterType.FlyerVertical;
+            }
+            else if(floodFillGetMatch(pos) == 5) {
+                refBooster = BoosterType.TwinTrouble;
+                refType = TileType.None;
+            }
+            else if(floodFillGetMatch(pos) == 6) {
+                refBooster = BoosterType.ColorBomb;
+            }
             
             Queue<Vector2i> floodFillQueue = new LinkedList<>();
             floodFillQueue.add(pos);
 
             List<Vector2i> connectedNodes = new LinkedList<>();
-            String nodePattern = "";
 
             while(!floodFillQueue.isEmpty()){
                 Vector2i curr = floodFillQueue.poll();
 
                 if(GetCell(curr) == null) continue;
-                if(floodFillGetVisited(curr)) continue;
+                if(floodFillGetMatch(curr) <= 1) continue;
                 if(GetCell(pos).TileType != GetCell(curr).TileType) continue;
                 if(GetCell(pos).Booster != GetCell(curr).Booster) continue;
 
                 floodFillSetVisited(curr);
                 connectedNodes.add(curr);
 
-                Integer horizontalConnections = 0;
-                Integer verticalConnections = 0;
-
-                if(isNeighbourCell(curr, new Vector2i(curr.x-1, curr.y))) horizontalConnections++; floodFillQueue.add(new Vector2i(curr.x-1, curr.y));
-                if(isNeighbourCell(curr, new Vector2i(curr.x+1, curr.y))) horizontalConnections++; floodFillQueue.add(new Vector2i(curr.x+1, curr.y));
-                if(isNeighbourCell(curr, new Vector2i(curr.x, curr.y-1))) verticalConnections++; floodFillQueue.add(new Vector2i(curr.x, curr.y-1));
-                if(isNeighbourCell(curr, new Vector2i(curr.x, curr.y+1))) verticalConnections++; floodFillQueue.add(new Vector2i(curr.x, curr.y+1));
-
-                if(horizontalConnections == 1 && verticalConnections == 0) nodePattern += "C";
-                else if(horizontalConnections == 0 && verticalConnections == 1) nodePattern += "U";
-                else if(horizontalConnections == 2 && verticalConnections == 0) nodePattern += "-";
-                else if(horizontalConnections == 0 && verticalConnections == 2) nodePattern += "|";
-                else if(horizontalConnections == 1 && verticalConnections == 1) nodePattern += "L";
-                else if((horizontalConnections == 2 && verticalConnections == 1) || (horizontalConnections == 1 && verticalConnections == 2)) nodePattern += "T";
+                floodFillQueue.add(new Vector2i(curr.x-1, curr.y));
+                floodFillQueue.add(new Vector2i(curr.x+1, curr.y));
+                floodFillQueue.add(new Vector2i(curr.x, curr.y-1));
+                floodFillQueue.add(new Vector2i(curr.x, curr.y+1));
             }
 
-            if (nodePattern.length() > 2) Centuria.logger.info(nodePattern + " " + GetCell(pos).TileType + " " + GetCell(pos).Booster + " " + pos.toString());
+           
+            for(Vector2i node : connectedNodes){
+                SetCell(node, new GridCell(0, TileType.None, BoosterType.None));
+            }
+            if(refBooster != BoosterType.None){
+                SetCell(pos, new GridCell(0, refType, refBooster));
+            }
 
-            return true;
+        }
+        
+        // patterns are hardcoded
+        public Boolean findAndClearMatches(){
+
+            Boolean isMatch = false;
+
+            // find all vertical matches
+            for(int x = 0; x < gridSize.x; x++){
+                Integer sameTilesColumn = 1;
+                for(int y = 0; y < gridSize.y; y++){ // for each column
+                    if(floodFillIsNeighbourCell(new Vector2i(x, y), new Vector2i(x, y+1))){ // keep track of number of tiles with the same tile type next to each other
+                        sameTilesColumn++;
+                        //System.out.print(sameTilesColumn + " " + x + " " + y + "\n");
+                    } else if (sameTilesColumn > 2) {
+                        //System.out.print(sameTilesColumn + " " + x + " " + y + "\n");
+                        isMatch = true;
+                        
+                        for(int backtrack = y-sameTilesColumn+1; backtrack <= y; backtrack++){
+                            floodFillSetMatch(new Vector2i(x, backtrack), sameTilesColumn); // record this number
+                        }
+                        sameTilesColumn = 1;
+                    } else {
+                        sameTilesColumn = 1;
+                    }
+                }
+            }
+            
+            // find all horizontal matches
+            for(int y = 0; y < gridSize.y; y++){
+                Integer sameTilesRow = 1;
+                for(int x = 0; x < gridSize.x; x++){ // for each column
+                    if(floodFillIsNeighbourCell(new Vector2i(x+1, y), new Vector2i(x, y))){ // keep track of number of tiles with the same tile type next to each other
+                        sameTilesRow++;
+                        //System.out.print(sameTilesRow + " " + x + " " + y + "\n");
+                    } else if (sameTilesRow > 2) {
+                        //System.out.print(sameTilesRow + " " + x + " " + y + "\n");
+                        isMatch = true;
+
+                        for(int backtrack = x-sameTilesRow+1; backtrack <= x; backtrack++){
+                            Integer horizontalConnections = 0;
+                            Integer verticalConnections = 0;
+                            
+                            if(floodFillGetMatch(new Vector2i(backtrack-1, y)) >= 3 && floodFillIsNeighbourCell(new Vector2i(backtrack, y), new Vector2i(backtrack-1, y))) horizontalConnections++;
+                            if(floodFillGetMatch(new Vector2i(backtrack+1, y)) >= 3 && floodFillIsNeighbourCell(new Vector2i(backtrack, y), new Vector2i(backtrack+1, y))) horizontalConnections++;
+                            if(floodFillGetMatch(new Vector2i(backtrack, y-1)) >= 3 && floodFillIsNeighbourCell(new Vector2i(backtrack, y), new Vector2i(backtrack, y-1))) verticalConnections++;
+                            if(floodFillGetMatch(new Vector2i(backtrack, y+1)) >= 3 && floodFillIsNeighbourCell(new Vector2i(backtrack, y), new Vector2i(backtrack, y+1))) verticalConnections++;
+
+                            if(horizontalConnections != 0 && verticalConnections != 0){
+                                floodFillSetMatch(new Vector2i(backtrack, y), 6); // same as before, but check if this is the intersection of 2 lines
+                            } else {
+                                floodFillSetMatch(new Vector2i(backtrack, y), sameTilesRow);
+                            }
+                        }
+                        sameTilesRow = 1;
+                    } else {
+                        sameTilesRow = 1;
+                    }
+                }
+            }
+
+            // clear all T shaped and L shaped matches
+            for(int x = 0; x < gridSize.x; x++){
+                for(int y = 0; y < gridSize.y; y++){
+                    if(floodFillGetMatch(new Vector2i(x, y)) == 6) floodFill(new Vector2i(x, y));
+                }
+            }
+
+            // clear all line-shaped matches
+            for(int x = 0; x < gridSize.x; x++){
+                for(int y = 0; y < gridSize.y; y++){
+                    if(floodFillGetMatch(new Vector2i(x, y)) > 2) floodFill(new Vector2i(x, y));
+                }
+            }
+
+            return isMatch;
         }
 
         public String toBase64String(){
@@ -324,12 +434,14 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             GridCell cell = GetCell(pos);
 
             if(cell.TileType == TileType.HatOrPurse){
-                byteValue += 18;
-            } else if(cell.TileType != TileType.None){
+                byteValue = 18;
+            } else if (cell.Booster == BoosterType.TwinTrouble){
+                byteValue = 88;
+            } else {
                 byteValue += ((cell.Booster == BoosterType.None ? 2 : 1) * cell.TileType.ordinal() + (cell.tileHealth == 0 ? 0 : 1));
+                byteValue += cell.Booster.ordinal() * 20;
             }
             
-            byteValue += cell.Booster.ordinal() * 20;
             
             return (byte)byteValue;
         }
@@ -391,7 +503,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         int clientChecksum = rd.readInt();
 
         // process move sent by client
-        gameState.CalculateMove(new Vector2i(rd.readInt(), rd.readInt()), new Vector2i(rd.readInt(), rd.readInt()));
+        gameState.CalculateMove(new Vector2i(rd.readInt(), rd.readInt()), new Vector2i(rd.readInt(), rd.readInt()), player, rd);
         syncClient(player, rd);
 
         InventoryItemPacket pk = new InventoryItemPacket();
@@ -457,7 +569,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         mmData.writeInt(score);
         mmData.writeInt(powerup);
         mmData.writeString(gameState.toBase64String());
-        //mmData.writeString("AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9Q");
+        //mmData.writeString("8/T19vf4+fr7/P3+/w==");
         mmData.writeInt(0); // no level objective
 
         MinigameMessagePacket mm = new MinigameMessagePacket();

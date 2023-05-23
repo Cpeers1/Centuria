@@ -63,7 +63,9 @@ public class DDVis {
 								"<html>" +
 								ses.gameState.GetCell(new Vector2i(x, y)).TileType.toString() + 
 								"<br>" + 
-								ses.gameState.GetCell(new Vector2i(x, y)).Booster.toString() +
+								ses.gameState.GetCell(new Vector2i(x, y)).Booster.toString() + 
+								"<br>" + 
+								ses.gameState.floodFillGetMatch(new Vector2i(x, y)) +
 								"</html>");
 								gameBoardDisplay.get(new Vector2i(x, 8-y)).setForeground(TileColor(ses.gameState.GetCell(new Vector2i(x, y)).TileType.toString()));
 							}
