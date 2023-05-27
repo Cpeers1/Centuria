@@ -1,18 +1,14 @@
 package org.asf.centuria.minigames.games;
 
-import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import java.util.Vector;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
@@ -26,40 +22,77 @@ import org.joml.Vector2i;
 
 public class GameDizzywingDispatch extends AbstractMinigame{
 
-    public String currentGameUUID;
+    private String currentGameUUID;
     public GameState gameState;
-    public int level = 1;
-    public int score = 0;
-    public int moveCount = 0;
-    public int powerup = 0;
+    private int level = 1;
+    private int score = 0;
+    private int moveCount = 0;
+    private int dizzyBirdMeter = 0;
 
     static {
+        if (Centuria.debugMode) {
+            DDVis vis = new DDVis();
+            new Thread(() -> vis.frame.setVisible(true)).start();
+        }
     }
 
     public class GameState {
 
         public class GridCell {
-            public int tileHealth;
-            public TileType TileType;
-            public BoosterType Booster;
+            private int tileHealth;
+            private TileType TileType;
+            private BoosterType Booster;
 
             public GridCell(int health, TileType tileType, BoosterType booster){
                 tileHealth = health;
                 TileType = tileType;
                 Booster = booster;
             }
+
+            public void SetTileType(TileType tileType){
+                TileType = tileType;
+            }
+
+            public TileType GetTileType(){
+                return TileType;
+            }
+
+            public void SetBooster(BoosterType booster){
+                Booster = booster;
+            }
+            
+            public BoosterType GetBooster(){
+                return Booster;
+            }
+
+            public void AddHealth(Integer change){
+                tileHealth = Math.max(tileHealth - change, 0);
+            }
+
+            public void SetHealth(Integer health){
+                tileHealth = health;
+            }
+            
+            public Integer GetHealth(){
+                return tileHealth;
+            }
+
+            public Boolean isBoosted(){
+                return Booster != BoosterType.None;
+            }
+                 
         }
 
-        public enum BoosterType
+        enum BoosterType
         {
             None,
-            FlyerHorizontal,
-            FlyerVertical,
-            ColorBomb,
-            TwinTrouble
+            BuzzyBirdHorizontal,
+            BuzzyBirdVertical,
+            BoomBird,
+            PrismPeacock
         }
 
-        public enum TileType {
+        enum TileType {
             AquaBird,
             BlueBird,
             GreenBird,
@@ -72,13 +105,13 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             None
         }
 
-        public Map<Vector2i, GridCell> grid;
-        public int visited[][];
-        public Vector2i gridSize;
-        public Integer moveCount;
-        public List<TileType> spawnTiles;
-        public Random randomizer;
-        public int matchComboScore;
+        private GridCell[][] grid;
+        private int visited[][];
+        private Vector2i gridSize;
+        private Integer moveCount;
+        private List<TileType> spawnTiles;
+        private Random randomizer;
+        private Integer matchComboScore;
 
         public GameState(){
             gridSize = new Vector2i(9, 9);
@@ -97,21 +130,53 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         {
             if (pos.x >= 0 && pos.x < gridSize.x && pos.y >= 0 && pos.y < gridSize.y)
             {
-                return grid.get(pos);
+                return grid[pos.x][pos.y];
             }
             return null;
         }
 
-        public void SetCell(Vector2i pos, GridCell cell){
+        private void SetCell(Vector2i pos, GridCell cell){
             if (pos.x >= 0 && pos.x < gridSize.x && pos.y >= 0 && pos.y < gridSize.y && cell != null)
             {
-                grid.put(pos, cell);
+                grid[pos.x][pos.y] = cell;
             }
         }
 
-        public void ClearCell(Vector2i pos, Boolean isScore){
-            SetCell(pos, new GridCell(0, TileType.None, BoosterType.None));
-            if(isScore) score += 30;
+        private void ClearCell(Vector2i pos, Boolean isScore, Boolean forceClear){
+            
+            if (GetCell(pos) == null || GetCell(pos).GetTileType() == TileType.None) {
+                return;
+            }
+
+            if(forceClear){
+                SetCell(pos, new GridCell(0, TileType.None, BoosterType.None));
+                return;
+            } else if(GetCell(pos).TileType != TileType.HatOrPurse) {
+                SetCell(pos, new GridCell(0, TileType.None, BoosterType.None));
+            }
+
+            if(isScore) {
+                score += 30;
+                dizzyBirdMeter += 30;
+            }
+
+            switch (GetCell(pos).GetBooster()) {
+                case BuzzyBirdHorizontal: 
+                    BuzzyBirdHorizontalBehaviour(pos, 1);
+                    break;
+                case BuzzyBirdVertical: 
+                    BuzzyBirdVerticalBehaviour(pos, 1);
+                    break;
+                case BoomBird: 
+                    BoomBirdBehaviour(pos, 3);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void ClearGrid(){
+            grid = new GridCell[gridSize.x][gridSize.y];
         }
         
         public int CalculateBoardChecksum()
@@ -125,25 +190,23 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
 
             //Board checksum algorithm!
-            String text = Base64.getEncoder().encodeToString(inArray);
-            String text2 = currentGameUUID.toString();
-            String text3 = moveCount.toString();
-            return (text + text2 + text3).hashCode();
+            String string1 = Base64.getEncoder().encodeToString(inArray);
+            String string2 = currentGameUUID.toString();
+            String string3 = moveCount.toString();
+            return (string1 + string2 + string3).hashCode();
         }
 
-        public byte GridCellByteValueForChecksum(Vector2i pos)
+        private byte GridCellByteValueForChecksum(Vector2i pos)
         {
             int byteValue = 0;
             GridCell cell = GetCell(pos);
 
-            int typeValueOnServer = cell.TileType.ordinal();
+            Integer tileTypeValue = cell.GetTileType().ordinal();
 
-            boolean isBoosted = cell.Booster != BoosterType.None;
-            if (isBoosted)
-            {
-                byteValue += typeValueOnServer;
+            if (cell.isBoosted()) {
+                byteValue += (cell.isBoosted() ? 1 : 0) * 20 + tileTypeValue;
             } else {
-                byteValue += typeValueOnServer * 2 + cell.tileHealth;
+                byteValue += tileTypeValue * 2 + cell.tileHealth;
             }
 
             return (byte)byteValue;
@@ -152,18 +215,21 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         private void InitializeGameBoard()
         {
 
-            grid = new HashMap<>();
+            ClearGrid();
+            List<TileType> shuffledSpawnTiles = new ArrayList<TileType>(spawnTiles);
 
             for (int y = 0; y < gridSize.y; y++)
             {
                 for (int x = 0; x < gridSize.x; x++)
                 {
-                    List<TileType> shuffledSpawnTiles = new ArrayList<TileType>(spawnTiles);
                     Collections.shuffle(shuffledSpawnTiles, randomizer);
 
                     for (TileType spawnTile : shuffledSpawnTiles)
                     {
-                        if ((x < 2 || !(GetCell(new Vector2i(x - 1, y)).TileType == spawnTile) || !(GetCell(new Vector2i(x - 2, y)).TileType == spawnTile)) && (y < 2 || !(GetCell(new Vector2i(x, y - 1)).TileType == spawnTile) || !(GetCell(new Vector2i(x, y - 2)).TileType == spawnTile)))
+                        if ((x < 2 || !(GetCell(new Vector2i(x - 1, y)).TileType == spawnTile) || 
+                            !(GetCell(new Vector2i(x - 2, y)).TileType == spawnTile)) && 
+                            (y < 2 || !(GetCell(new Vector2i(x, y - 1)).TileType == spawnTile) || 
+                            !(GetCell(new Vector2i(x, y - 2)).TileType == spawnTile)))
                         {
                             SetCell(new Vector2i(x, y), new GridCell(0, spawnTile, BoosterType.None));
                             break;
@@ -174,34 +240,200 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             moveCount = 0;
         }
 
-        public void CalculateMove(Vector2i pos1, Vector2i pos2, Player player, XtReader rd){
+        public void CalculateMove(Vector2i pos1, Vector2i pos2){
 
-            GridCell cell1 = GetCell(pos1);
-            SetCell(pos1, GetCell(pos2));
-            SetCell(pos2, cell1);
+            moveCount++;
 
-            floodFillClearVisited();
+            if(pos2.y != -1){   // if given two tiles as input
 
-            if(GetCell(pos2).Booster.ordinal() > GetCell(pos1).Booster.ordinal()){
-                Vector2i temp = pos1;
-                pos1 = pos2;
-                pos2 = temp;
-            }
-
-            if(GetCell(pos1).Booster != BoosterType.None && GetCell(pos2).Booster != BoosterType.None){ // booster combo behaviours
-                
-            } else if(GetCell(pos1).Booster != BoosterType.None && GetCell(pos2).Booster == BoosterType.None){    // single booster behaviours
-                
-                if(GetCell(pos1).Booster == BoosterType.FlyerHorizontal){
-                    HorizontalBuzzyBirdBehaviour(pos1);
-                } else if(GetCell(pos1).Booster == BoosterType.FlyerVertical){
-                    VerticalBuzzyBirdBehaviour(pos1);
-                } else if(GetCell(pos1).Booster == BoosterType.ColorBomb){
-                    ColorBombBehaviour(pos1);
-                } else if (GetCell(pos1).Booster == BoosterType.TwinTrouble){
-                    PrismPeacockBehaviour(pos2);
+                GridCell cell1 = GetCell(pos1);
+                SetCell(pos1, GetCell(pos2));
+                SetCell(pos2, cell1);
+    
+                floodFillClearVisited();
+    
+                // Guarantee pos1 to have a more powerful or as powerful booster as pos2
+                if(GetCell(pos2).GetBooster().ordinal() > GetCell(pos1).GetBooster().ordinal()){
+                    Vector2i temp = pos1;
+                    pos1 = pos2;
+                    pos2 = temp;
                 }
+    
+                if(GetCell(pos1).isBoosted() && GetCell(pos2).isBoosted()){ // booster combo behaviours
+                    
+                    if((GetCell(pos2).GetBooster() == BoosterType.BuzzyBirdHorizontal || 
+                        GetCell(pos2).GetBooster() == BoosterType.BuzzyBirdVertical) &&
+                        GetCell(pos1).GetBooster() == BoosterType.BoomBird){    // Buzzy bird and boom bird
+    
+                        ClearCell(pos1, false, true);
+                        ClearCell(pos2, true, true);
+        
+                        BuzzyBirdHorizontalBehaviour(pos1, 3);
+                        BuzzyBirdVerticalBehaviour(pos1, 3);
+    
+                    } else if (GetCell(pos1).GetBooster() == BoosterType.BoomBird &&
+                            GetCell(pos2).GetBooster() == BoosterType.BoomBird){    // Boom bird and boom bird
+    
+                        ClearCell(pos1, false, true);
+                        ClearCell(pos2, true, true);
+            
+                        BoomBirdBehaviour(pos1, 5);
+    
+                    } else if ((GetCell(pos1).GetBooster() == BoosterType.BuzzyBirdHorizontal || 
+                                GetCell(pos1).GetBooster() == BoosterType.BuzzyBirdVertical) &&
+                                (GetCell(pos2).GetBooster() == BoosterType.BuzzyBirdHorizontal || 
+                                GetCell(pos2).GetBooster() == BoosterType.BuzzyBirdVertical)){  // Buzzy bird and buzzy bird
+    
+                        ClearCell(pos1, false, true);
+                        ClearCell(pos2, true, true);
+                
+                        BuzzyBirdHorizontalBehaviour(pos1, 1);
+                        BuzzyBirdVerticalBehaviour(pos1, 1);
+    
+                    } else if (GetCell(pos1).GetBooster() == BoosterType.PrismPeacock &&
+                                (GetCell(pos2).GetBooster() == BoosterType.BuzzyBirdHorizontal || 
+                                GetCell(pos2).GetBooster() == BoosterType.BuzzyBirdVertical)){  // Prism peacock and buzzy bird
+    
+                        TileType refType = GetCell(pos2).TileType;
+    
+                        ClearCell(pos1, false, true);
+                        ClearCell(pos2, true, true);
+    
+                        List<Vector2i> newBuzzyBirds = new ArrayList<>();
+    
+                        for(int x = 0; x < gridSize.x; x++){
+                            for(int y = 0; y < gridSize.y; y++){
+                                Vector2i curr = new Vector2i(x, y);
+    
+                                if(GetCell(curr).GetTileType() == refType && !GetCell(curr).isBoosted()) {
+                                    newBuzzyBirds.add(curr);
+                                }
+                            }
+                        }
+    
+                        for (Vector2i newBuzzyBird : newBuzzyBirds) {
+                            Boolean coinflip = randomizer.nextInt(2) == 1;
+                            
+                            if(coinflip) {
+                                BuzzyBirdHorizontalBehaviour(newBuzzyBird, 1);
+                            } else {
+                                BuzzyBirdVerticalBehaviour(newBuzzyBird, 1);
+                            }
+                        }
+    
+                    } else if (GetCell(pos1).GetBooster() == BoosterType.PrismPeacock &&
+                            (GetCell(pos2).GetBooster() == BoosterType.BoomBird)){  // Prism peacock and boom bird
+    
+                        TileType refType = GetCell(pos2).TileType;
+    
+                        ClearCell(pos1, false, true);
+                        ClearCell(pos2, true, true);
+    
+                        List<Vector2i> newBoomBirds = new ArrayList<>();
+    
+                        for(int x = 0; x < gridSize.x; x++){
+                            for(int y = 0; y < gridSize.y; y++){
+                                Vector2i curr = new Vector2i(x, y);
+    
+                                if(GetCell(curr).GetTileType() == refType && !GetCell(curr).isBoosted()) {
+                                    SetCell(curr, new GridCell(0, refType, BoosterType.BoomBird));
+                                    newBoomBirds.add(curr);
+                                }
+                            }
+                        }
+    
+                        Integer d = Math.floorDiv(3, 2);
+    
+                        for (Vector2i pos : newBoomBirds) {
+                
+                            for(int x = pos.x-d; x <= pos.x+d; x++){
+                                for(int y = pos.y-d; y <= pos.y+d; y++){
+        
+                                    Vector2i curr = new Vector2i(x, y);
+        
+                                    if(GetCell(curr).GetBooster() != BoosterType.BoomBird) {
+                                        ClearCell(curr, true, false);
+                                    }
+                                }
+                            }
+                        }
+                        fillGaps();
+    
+                        newBoomBirds.clear();
+    
+                        for(int x = 0; x < gridSize.x; x++){
+                            for(int y = 0; y < gridSize.y; y++){
+                                Vector2i curr = new Vector2i(x, y);
+    
+                                if(GetCell(curr).GetTileType() == refType && GetCell(curr).GetBooster() == BoosterType.BoomBird) {
+                                    newBoomBirds.add(curr);
+                                }
+                            }
+                        }
+    
+                        for (Vector2i pos : newBoomBirds) {
+                
+                            for(int x = pos.x-d; x <= pos.x+d; x++){
+                                for(int y = pos.y-d; y <= pos.y+d; y++){
+        
+                                    Vector2i curr = new Vector2i(x, y);
+                                    ClearCell(curr, true, false);
+                                }
+                            }
+                        }
+    
+    
+                    } else if (GetCell(pos1).GetBooster() == BoosterType.PrismPeacock &&
+                                GetCell(pos1).GetBooster() == BoosterType.PrismPeacock){    // Prism peacock and prism peacock
+                                ClearCell(pos1, false, true);
+                                ClearCell(pos2, false, true);
+    
+                        for(int x = 0; x < gridSize.x; x++){
+                            for(int y = 0; y < gridSize.y; y++){
+                                Vector2i curr = new Vector2i(x, y);
+                                ClearCell(curr, true, false);
+                            }
+                        }
+                    }
+    
+                } else if(GetCell(pos1).isBoosted() && !GetCell(pos2).isBoosted()){    // single booster behaviours
+                    
+                    switch (GetCell(pos1).GetBooster()) {
+                        case BuzzyBirdHorizontal: 
+                            BuzzyBirdHorizontalBehaviour(pos1, 1);
+                            break;
+                        case BuzzyBirdVertical: 
+                            BuzzyBirdVerticalBehaviour(pos1, 1);
+                            break;
+                        case BoomBird: 
+                            BoomBirdBehaviour(pos1, 3);
+                            break;
+                        case PrismPeacock: 
+                            PrismPeacockBehaviour(pos1, GetCell(pos2).GetTileType());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+            } else {    // only one tile as input
+
+                switch (GetCell(pos1).GetBooster()) {
+                    case BuzzyBirdHorizontal: 
+                        BuzzyBirdHorizontalBehaviour(pos1, 1);
+                        break;
+                    case BuzzyBirdVertical: 
+                        BuzzyBirdVerticalBehaviour(pos1, 1);
+                        break;
+                    case BoomBird: 
+                        BoomBirdBehaviour(pos1, 3);
+                        break;
+                    default:
+                        break;
+                }
+
             }
+
 
             matchComboScore = 0;
 
@@ -218,41 +450,67 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 
         }
 
-        private void HorizontalBuzzyBirdBehaviour(Vector2i pos1) {
-            for(int x = 0; x < gridSize.x; x++){
-                ClearCell(new Vector2i(x, pos1.y), true);
-            }
-            fillGaps();
-        }
-
-        private void VerticalBuzzyBirdBehaviour(Vector2i pos1) {
-            for(int y = 0; y < gridSize.y; y++){
-                ClearCell(new Vector2i(pos1.x, y), true);
-            }
-            fillGaps();
-        }
-
-        private void ColorBombBehaviour(Vector2i pos1) {
-            for(int x = pos1.x-1; x <= pos1.x+1; x++){
-                for(int y = pos1.y-1; y <= pos1.y+1; y++){
-                    ClearCell(new Vector2i(x, y), true);
-                }
-            }
-            SetCell(new Vector2i(pos1.x, Math.max(0, pos1.y-1)), new GridCell(0, TileType.RedBird, BoosterType.ColorBomb));
-            fillGaps();
-            for(int x = pos1.x-1; x <= pos1.x+1; x++){
-                for(int y = pos1.y-2; y <= pos1.y; y++){
-                    ClearCell(new Vector2i(x, y), true);
+        private void BuzzyBirdHorizontalBehaviour(Vector2i pos, Integer size) {
+            
+            Integer d = Math.floorDiv(size, 2);
+            
+            for(int y = pos.y-d; y <= pos.y+d; y++){
+                for(int x = 0; x < gridSize.x; x++){
+                    Vector2i curr = new Vector2i(x, y);
+                    ClearCell(curr, true, false);
                 }
             }
             fillGaps();
         }
 
-        private void PrismPeacockBehaviour(Vector2i pos2) {
-            TileType refType = GetCell(pos2).TileType;
+        private void BuzzyBirdVerticalBehaviour(Vector2i pos, Integer size) {
+            
+            Integer d = Math.floorDiv(size, 2);
+
+            for(int x = pos.x-d; x <= pos.x+d; x++){
+                for(int y = 0; y < gridSize.y; y++){
+                    Vector2i curr = new Vector2i(x, y);
+                    ClearCell(curr, true, false);
+                }
+            }
+            fillGaps();
+        }
+
+        private void BoomBirdBehaviour(Vector2i pos, Integer size) {
+
+            Integer d = Math.floorDiv(size, 2);
+
+            for(int x = pos.x-d; x <= pos.x+d; x++){
+                for(int y = pos.y-d; y <= pos.y+d; y++){
+
+                    Vector2i curr = new Vector2i(x, y);
+
+                    if(x != pos.x && y != pos.y) {
+                        ClearCell(curr, true, false);
+                    }
+                }
+            }
+            fillGaps();
+            for(int x = pos.x-d; x <= pos.x+d; x++){
+                for(int y = pos.y-d-1; y <= pos.y+d-1; y++){
+                    Vector2i curr = new Vector2i(x, y);
+                    ClearCell(curr, true, false);
+                }
+            }
+            fillGaps();
+        }
+
+        private void PrismPeacockBehaviour(Vector2i pos, TileType refType) {
+
+            ClearCell(pos, false, true);
+
             for(int y = 0; y < gridSize.y; y++){
                 for(int x = 0; x < gridSize.x; x++){
-                    if(GetCell(new Vector2i(x, y)).TileType == refType) ClearCell(new Vector2i(x, y), true);
+                    Vector2i curr = new Vector2i(x, y);
+
+                    if(GetCell(new Vector2i(x, y)).TileType == refType && !GetCell(new Vector2i(x, y)).isBoosted()) {
+                        ClearCell(curr, true, false);
+                    }
                 }
             }
             fillGaps();
@@ -303,13 +561,13 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             return 0;
         }
 
-        public void floodFillSetVisited(Vector2i pos){
-            visited[pos.x][pos.y] = 1;
-        }
+        //public void floodFillSetVisited(Vector2i pos){
+        //    visited[pos.x][pos.y] = 1;
+        //}
 
-        public boolean floodFillGetVisited(Vector2i pos){
-            return visited[pos.x][pos.y] == 1;
-        }
+        //public boolean floodFillGetVisited(Vector2i pos){
+        //    return visited[pos.x][pos.y] == 1;
+        //}
 
         public void floodFillClearVisited(){
             visited = new int[gridSize.x][gridSize.y];
@@ -321,20 +579,20 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             BoosterType refBooster = BoosterType.None;
 
             if(floodFillGetMatch(pos) == 3) {
-                matchComboScore += 30; score += matchComboScore;
+                scoreCombo(30);
             }
             else if(floodFillGetMatch(pos) == 4) {
-                refBooster = randomizer.nextInt(2) == 0 ? BoosterType.FlyerHorizontal : BoosterType.FlyerVertical;
-                matchComboScore += 150; score += matchComboScore;
+                refBooster = randomizer.nextInt(2) == 0 ? BoosterType.BuzzyBirdHorizontal : BoosterType.BuzzyBirdVertical;
+                scoreCombo(150);
             }
             else if(floodFillGetMatch(pos) == 5) {
-                refBooster = BoosterType.TwinTrouble;
-                refType = TileType.None;
-                matchComboScore += 150; score += matchComboScore;
+                refBooster = BoosterType.PrismPeacock;
+                //refType = TileType.None;
+                scoreCombo(150);
             }
             else if(floodFillGetMatch(pos) == 6) {
-                refBooster = BoosterType.ColorBomb;
-                matchComboScore += 150; score += matchComboScore;
+                refBooster = BoosterType.BoomBird;
+                scoreCombo(150);
             }
             
             Queue<Vector2i> floodFillQueue = new LinkedList<>();
@@ -350,7 +608,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 if(GetCell(pos).TileType != GetCell(curr).TileType) continue;
                 if(GetCell(pos).Booster != GetCell(curr).Booster) continue;
 
-                floodFillSetVisited(curr);
+                floodFillSetMatch(curr, 1);
                 connectedNodes.add(curr);
 
                 floodFillQueue.add(new Vector2i(curr.x-1, curr.y));
@@ -361,12 +619,23 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
            
             for(Vector2i node : connectedNodes){
-                ClearCell(node, false);
+                ClearCell(node, false, false);
             }
             if(refBooster != BoosterType.None){
+
+                if(refBooster == BoosterType.PrismPeacock){
+                    refType = TileType.None;
+                }
+
                 SetCell(pos, new GridCell(0, refType, refBooster));
             }
 
+        }
+
+        private void scoreCombo(int scoreIncrease) {
+            matchComboScore += scoreIncrease;
+            score += matchComboScore;
+            dizzyBirdMeter += matchComboScore / 100;
         }
         
         // patterns are hardcoded
@@ -415,7 +684,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                             if(floodFillGetMatch(new Vector2i(backtrack, y-1)) >= 3 && floodFillIsNeighbourCell(new Vector2i(backtrack, y), new Vector2i(backtrack, y-1))) verticalConnections++;
                             if(floodFillGetMatch(new Vector2i(backtrack, y+1)) >= 3 && floodFillIsNeighbourCell(new Vector2i(backtrack, y), new Vector2i(backtrack, y+1))) verticalConnections++;
 
-                            if(horizontalConnections != 0 && verticalConnections != 0){
+                            if(horizontalConnections > 0 && verticalConnections > 0){
                                 floodFillSetMatch(new Vector2i(backtrack, y), 6); // same as before, but check if this is the intersection of 2 lines
                             } else {
                                 floodFillSetMatch(new Vector2i(backtrack, y), sameTilesRow);
@@ -431,14 +700,22 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             // clear all T shaped and L shaped matches
             for(int x = 0; x < gridSize.x; x++){
                 for(int y = 0; y < gridSize.y; y++){
-                    if(floodFillGetMatch(new Vector2i(x, y)) == 6) floodFill(new Vector2i(x, y));
+                    Vector2i curr = new Vector2i(x, y);
+
+                    if(floodFillGetMatch(curr) == 6) {
+                        floodFill(curr);
+                    }
                 }
             }
 
             // clear all line-shaped matches
             for(int x = 0; x < gridSize.x; x++){
                 for(int y = 0; y < gridSize.y; y++){
-                    if(floodFillGetMatch(new Vector2i(x, y)) > 2) floodFill(new Vector2i(x, y));
+                    Vector2i curr = new Vector2i(x, y);
+
+                    if(floodFillGetMatch(curr) >= 3) {
+                        floodFill(curr);
+                    }
                 }
             }
 
@@ -464,7 +741,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
             if(cell.TileType == TileType.HatOrPurse){
                 byteValue = 18;
-            } else if (cell.Booster == BoosterType.TwinTrouble){
+            } else if (cell.Booster == BoosterType.PrismPeacock){
                 byteValue = 88;
             } else {
                 byteValue += ((cell.Booster == BoosterType.None ? 2 : 1) * cell.TileType.ordinal() + (cell.tileHealth == 0 ? 0 : 1));
@@ -473,6 +750,42 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             
             
             return (byte)byteValue;
+        }
+
+        public Boolean UpdateLevel(){ // Returns true if level is incremented.
+
+            moveCount = 0;
+
+            Integer roundAccuracy = 100;
+            Integer firstLvlScore = 1000;
+            Float growthRate = 5f;
+
+            Integer scoreRequirement = (int) (roundAccuracy * Math.round((firstLvlScore * Math.log1p(growthRate * level - growthRate + 1f) + firstLvlScore) / roundAccuracy));
+            if(score > scoreRequirement){
+                level++;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public void scrambleTiles() {
+            List<GridCell> scrambledTiles = new ArrayList<>();
+
+            for(int x = 0; x < gridSize.x; x++){
+                for(int y = 0; y < gridSize.y; y++){  
+                    Vector2i curr = new Vector2i(x, y);
+                    scrambledTiles.add(GetCell(curr));
+                }
+            }
+
+            Collections.shuffle(scrambledTiles, randomizer);
+
+            Integer tileNumber = 0;
+            for(GridCell tile : scrambledTiles){
+                SetCell(new Vector2i(tileNumber % gridSize.y, tileNumber / gridSize.y), tile);
+                tileNumber++;
+            }
         }
     }
 
@@ -515,12 +828,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 		mm.command = "startGame";
 		mm.data = mmData.encode().substring(4);
 		player.client.sendPacket(mm);
-        
-        
-        if (Centuria.debugMode) {
-            DDVis vis = new DDVis();
-            new Thread(() -> vis.frame.setVisible(true)).start();
-        }
 
         syncClient(player, rd);
 
@@ -532,15 +839,18 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         int clientChecksum = rd.readInt();
 
         // process move sent by client
-        gameState.CalculateMove(new Vector2i(rd.readInt(), rd.readInt()), new Vector2i(rd.readInt(), rd.readInt()), player, rd);
-        syncClient(player, rd);
+        gameState.CalculateMove(new Vector2i(rd.readInt(), rd.readInt()), new Vector2i(rd.readInt(), rd.readInt()));
+        if (clientChecksum != gameState.CalculateBoardChecksum()) {
+            syncClient(player, rd);
+        }
 
+        // save inventory
         InventoryItemPacket pk = new InventoryItemPacket();
         pk.item = player.account.getSaveSpecificInventory().getItem("303");
         player.client.sendPacket(pk);
 
-        if ((int)Math.log(score) > level) {
-            level = (int)Math.log(score);
+        // check if level should increase
+        if (gameState.UpdateLevel()) {
             goToLevel(player);
         }
 
@@ -563,16 +873,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
     @MinigameMessage("dizzyBird")
     public void dizzyBird(Player player, XtReader rd) {
-        // send timestamp to start a game
-        currentGameUUID = UUID.randomUUID().toString();
-
-        XtWriter mmData = new XtWriter();
-        mmData.writeLong(System.currentTimeMillis() / 1000); // this is a checksum, not a timestamp
-
-        MinigameMessagePacket mm = new MinigameMessagePacket();
-        mm.command = "dizzyBird";
-        mm.data = mmData.encode().substring(4);
-        player.client.sendPacket(mm);
+        dizzyBirdMeter = 0;
+        gameState.scrambleTiles();
+        syncClient(player, rd);
     }
 
     @MinigameMessage("continueGame")
@@ -596,7 +899,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         mmData.writeInt(moveCount);
         mmData.writeInt(level);
         mmData.writeInt(score);
-        mmData.writeInt(powerup);
+        mmData.writeInt(dizzyBirdMeter);
         mmData.writeString(gameState.toBase64String());
         //mmData.writeString("8/T19vf4+fr7/P3+/w==");
         mmData.writeInt(0); // no level objective
