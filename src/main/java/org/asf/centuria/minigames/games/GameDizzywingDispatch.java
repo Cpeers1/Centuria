@@ -65,10 +65,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 return Booster;
             }
 
-            public void AddHealth(Integer change){
-                tileHealth = Math.max(tileHealth - change, 0);
-            }
-
             public void SetHealth(Integer health){
                 tileHealth = health;
             }
@@ -124,6 +120,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             randomizer = new Random(currentGameUUID.hashCode());
             InitializeGameBoard();
             floodFillClearVisited();
+
         }
 
         public GridCell GetCell(Vector2i pos)
@@ -144,7 +141,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         private void ClearCell(Vector2i pos, Boolean isScore, Boolean forceClear){
             
-            if (GetCell(pos) == null || GetCell(pos).GetTileType() == TileType.None) {
+            if (GetCell(pos) == null) {
                 return;
             }
 
@@ -172,6 +169,14 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void breakEggCell(Vector2i pos){
+            GridCell eggCell = GetCell(pos);
+            if(eggCell != null){
+                eggCell.SetHealth(0);
+                SetCell(pos, eggCell);
             }
         }
 
@@ -439,7 +444,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
             while(true){ // for as long as there are still matches on the game board
 
-                Boolean isMatches = findAndClearMatches();
+                Boolean isMatches = findAndClearMatches(pos1, pos2);
+                fillGaps();
+                clearHats();
                 fillGaps(); // replace tiles marked as having being cleared
 
                 if(!isMatches){
@@ -449,6 +456,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
                 
         }
+
+        
 
         private void BuzzyBirdHorizontalBehaviour(Vector2i pos, Integer size) {
             
@@ -516,6 +525,19 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             fillGaps();
         }
 
+        private void clearHats() {
+            for(int x = 0; x < gridSize.x; x++){
+                for(int y = 0; y < gridSize.y; y++){ // for each column
+                    Vector2i curr = new Vector2i(x, y);
+                    if(GetCell(curr).GetTileType() == TileType.HatOrPurse){
+                        ClearCell(curr, false, true);
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+
         public void fillGaps(){
             for(int x = 0; x < gridSize.x; x++){
                 Integer noGapsInColumn = 0;
@@ -537,8 +559,16 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             GridCell cell1 = GetCell(pos1);
             GridCell cell2 = GetCell(pos2);
 
-            if(cell1 == null || cell2 == null) return false;
-            if(cell1.TileType == cell2.TileType && cell1.Booster == cell2.Booster) return true;
+            if(cell1 == null || cell2 == null){
+                return false;
+            } else if (cell1.TileType == cell2.TileType &&
+                         cell1.Booster == BoosterType.None &&
+                         cell2.Booster == BoosterType.None &&
+                         cell1.tileHealth == 0 &&
+                         cell1.tileHealth == 0){
+
+                return true;
+            }
 
             return false;
         }
@@ -573,27 +603,12 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             visited = new int[gridSize.x][gridSize.y];
         }
 
-        public void floodFill(Vector2i pos){
+        public void floodFill(Vector2i pos, Vector2i swap1, Vector2i swap2){
             
-            TileType refType = GetCell(pos).TileType;
+            TileType refType = GetCell(pos).GetTileType();
             BoosterType refBooster = BoosterType.None;
 
-            if(floodFillGetMatch(pos) == 3) {
-                scoreCombo(30);
-            }
-            else if(floodFillGetMatch(pos) == 4) {
-                refBooster = randomizer.nextInt(2) == 0 ? BoosterType.BuzzyBirdHorizontal : BoosterType.BuzzyBirdVertical;
-                scoreCombo(150);
-            }
-            else if(floodFillGetMatch(pos) == 5) {
-                refBooster = BoosterType.PrismPeacock;
-                //refType = TileType.None;
-                scoreCombo(150);
-            }
-            else if(floodFillGetMatch(pos) == 6) {
-                refBooster = BoosterType.BoomBird;
-                scoreCombo(150);
-            }
+            Integer matchTileSize = floodFillGetMatch(pos);
             
             Queue<Vector2i> floodFillQueue = new LinkedList<>();
             floodFillQueue.add(pos);
@@ -605,29 +620,64 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
                 if(GetCell(curr) == null) continue;
                 if(floodFillGetMatch(curr) <= 1) continue;
-                if(GetCell(pos).TileType != GetCell(curr).TileType) continue;
-                if(GetCell(pos).Booster != GetCell(curr).Booster) continue;
+                if(GetCell(pos).GetTileType() != GetCell(curr).GetTileType()) continue;
+                if(GetCell(pos).GetBooster() != GetCell(curr).GetBooster()) continue;
+                if(GetCell(pos).GetHealth() != GetCell(curr).GetHealth()) continue;
 
                 floodFillSetMatch(curr, 1);
                 connectedNodes.add(curr);
+
+                matchTileSize = Math.max(matchTileSize, floodFillGetMatch(curr));
 
                 floodFillQueue.add(new Vector2i(curr.x-1, curr.y));
                 floodFillQueue.add(new Vector2i(curr.x+1, curr.y));
                 floodFillQueue.add(new Vector2i(curr.x, curr.y-1));
                 floodFillQueue.add(new Vector2i(curr.x, curr.y+1));
             }
+            
+            switch(matchTileSize) {
+                case 3:
+                    scoreCombo(30);
+                    break;
+                case 4:
+                    refBooster = randomizer.nextInt(2) == 0 ? BoosterType.BuzzyBirdHorizontal : BoosterType.BuzzyBirdVertical;
+                    scoreCombo(150);
+                    break;
+                case 5:
+                    refBooster = BoosterType.PrismPeacock;
+                    scoreCombo(150);
+                    break;
+                case 6:
+                    refBooster = BoosterType.BoomBird;
+                    scoreCombo(150);
+                    break;
+                default:
+                    break;
+            }
 
            
             for(Vector2i node : connectedNodes){
                 ClearCell(node, false, false);
+
+                breakEggCell(new Vector2i(node.x-1, node.y));   // break the eggs surrounding a match
+                breakEggCell(new Vector2i(node.x+1, node.y));
+                breakEggCell(new Vector2i(node.x, node.y-1));
+                breakEggCell(new Vector2i(node.x, node.y+1));
             }
+
             if(refBooster != BoosterType.None){
 
                 if(refBooster == BoosterType.PrismPeacock){
                     refType = TileType.None;
                 }
 
-                SetCell(pos, new GridCell(0, refType, refBooster));
+                if(connectedNodes.contains(swap1)){
+                    SetCell(swap1, new GridCell(0, refType, refBooster));
+                } else if(connectedNodes.contains(swap2)){
+                    SetCell(swap2, new GridCell(0, refType, refBooster));
+                } else {
+                    SetCell(pos, new GridCell(0, refType, refBooster));
+                }
             }
 
         }
@@ -639,7 +689,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         }
         
         // patterns are hardcoded
-        public Boolean findAndClearMatches(){
+        public Boolean findAndClearMatches(Vector2i pos1, Vector2i pos2){
 
             Boolean isMatch = false;
 
@@ -703,7 +753,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     Vector2i curr = new Vector2i(x, y);
 
                     if(floodFillGetMatch(curr) == 6) {
-                        floodFill(curr);
+                        floodFill(curr, pos1, pos2);
                     }
                 }
             }
@@ -714,7 +764,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     Vector2i curr = new Vector2i(x, y);
 
                     if(floodFillGetMatch(curr) >= 3) {
-                        floodFill(curr);
+                        floodFill(curr, pos1, pos2);
                     }
                 }
             }
