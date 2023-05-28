@@ -63,13 +63,13 @@ public class DDVis {
 
 									gameBoardDisplay.get(new Vector2i(x, 8-y)).setText(
 									"<html>" +
-									ses.gameState.GetCell(new Vector2i(x, y)).GetTileType().toString() + 
+									ses.gameState.getCell(new Vector2i(x, y)).getTileType().toString() + 
 									"<br>" + 
-									ses.gameState.GetCell(new Vector2i(x, y)).GetBooster().toString() + 
+									ses.gameState.getCell(new Vector2i(x, y)).getBooster().toString() + 
 									"<br>" + 
-									ses.gameState.floodFillGetMatch(new Vector2i(x, y)) +
+									ses.gameState.floodFillGetToVisit(new Vector2i(x, y)) +
 									"</html>");
-									gameBoardDisplay.get(new Vector2i(x, 8-y)).setForeground(TileColor(ses.gameState.GetCell(new Vector2i(x, y)).GetTileType().toString()));
+									gameBoardDisplay.get(new Vector2i(x, 8-y)).setForeground(TileColor(ses.gameState.getCell(new Vector2i(x, y)).getTileType().toString()));
 								}
 							}
 						}
