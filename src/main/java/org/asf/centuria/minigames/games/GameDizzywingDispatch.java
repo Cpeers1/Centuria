@@ -131,29 +131,30 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             randomizer = new Random(currentGameUUID.hashCode());
             initializeGameBoard();
             floodFillClearVisited();
-
-            setCell(new Vector2i(0, 0), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(1, 1), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(1, 2), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(2, 0), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(3, 0), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            
-            setCell(new Vector2i(6, 0), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(6, 1), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(6, 3), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(5, 2), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(7, 2), new GridCell(0, TileType.PinkBird, BoosterType.None));
-
-            setCell(new Vector2i(0, 8), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(1, 8), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(2, 7), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(3, 8), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(4, 8), new GridCell(0, TileType.PinkBird, BoosterType.None));
-
-            setCell(new Vector2i(0, 5), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(1, 5), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(2, 4), new GridCell(0, TileType.PinkBird, BoosterType.None));
-            setCell(new Vector2i(3, 5), new GridCell(0, TileType.PinkBird, BoosterType.None));
+/*
+ setCell(new Vector2i(0, 0), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(1, 1), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(1, 2), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(2, 0), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(3, 0), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ 
+ setCell(new Vector2i(6, 0), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(6, 1), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(6, 3), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(5, 2), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(7, 2), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ 
+ setCell(new Vector2i(0, 8), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(1, 8), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(2, 7), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(3, 8), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(4, 8), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ 
+ setCell(new Vector2i(0, 5), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(1, 5), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(2, 4), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ setCell(new Vector2i(3, 5), new GridCell(0, TileType.PinkBird, BoosterType.None));
+ */
 
         }
 
@@ -170,7 +171,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             return null;
         }
 
-        private void setCell(Vector2i pos, GridCell cell){
+        public void setCell(Vector2i pos, GridCell cell){
             if (pos.x >= 0 && pos.x < gridSize.x && pos.y >= 0 && pos.y < gridSize.y && cell != null)
             {
                 grid[pos.x][pos.y] = cell;
@@ -187,10 +188,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 setCell(pos, new GridCell(0, TileType.None, BoosterType.None));
                 return;
             } else if(getCell(pos).getHealth() > 0) {
-                GridCell brokenEggTile = getCell(pos);
-                brokenEggTile.setHealth(0);
-                setCell(pos, brokenEggTile);
-            } else if(getCell(pos).getTileType() != TileType.HatOrPurse) {
+                breakEggTile(pos);
+            } else if(getCell(pos).getTileType() != TileType.HatOrPurse && getCell(pos).getBooster() != BoosterType.PrismPeacock) {
                 setCell(pos, new GridCell(0, TileType.None, BoosterType.None));
             }
 
@@ -214,27 +213,11 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
         }
 
-        private void nextToMatchEffects(Vector2i pos){  // breaks egg tiles, activates booster tiles
-            GridCell cell = getCell(pos);
-            if(cell != null){
-                switch (getCell(pos).getBooster()) {
-                    case BuzzyBirdHorizontal: 
-                        buzzyBirdHorizontalBehaviour(pos, 1);
-                        break;
-                    case BuzzyBirdVertical: 
-                        buzzyBirdVerticalBehaviour(pos, 1);
-                        break;
-                    case BoomBird: 
-                        boomBirdBehaviour(pos, 3);
-                        break;
-                    case None:
-                        cell.setHealth(0);
-                        setCell(pos, cell);
-                        break;
-                    default:
-                        break;
-                }
-                
+        private void breakEggTile(Vector2i pos){
+            GridCell eggTile = getCell(pos);
+            if(eggTile != null){
+                eggTile.setHealth(0);
+                setCell(pos, eggTile);
             }
         }
 
@@ -246,7 +229,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             grid = new GridCell[gridSize.x][gridSize.y];
         }
         
-        public int calculateBoardChecksum()
+        public int calculateBoardChecksum() // level of emulation accuracy uncertain
         {
             byte[] inArray = new byte[gridSize.x * gridSize.y];
             
@@ -263,7 +246,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             return (string1 + string2 + string3).hashCode();
         }
 
-        private byte gridCellByteValueForChecksum(Vector2i pos)
+        private byte gridCellByteValueForChecksum(Vector2i pos) // level of emulation accuracy uncertain
         {
             int byteValue = 0;
             GridCell cell = getCell(pos);
@@ -279,7 +262,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             return (byte)byteValue;
         }
 
-        private void initializeGameBoard()
+        private void initializeGameBoard() // level of emulation accuracy uncertain
         {
 
             clearGrid();
@@ -317,11 +300,11 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
             if(pos2.y != -1){   // if given two tiles as input
 
-                GridCell cell1 = getCell(pos1);
+                GridCell cell1 = getCell(pos1); // swap the tiles
                 setCell(pos1, getCell(pos2));
                 setCell(pos2, cell1);
     
-                floodFillClearVisited();
+                floodFillClearVisited();    // reset the visited array
     
                 // Guarantee pos1 to have a more powerful or as powerful booster as pos2
                 if(getCell(pos2).getBooster().ordinal() > getCell(pos1).getBooster().ordinal()){
@@ -405,9 +388,11 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                         for(int x = 0; x < gridSize.x; x++){
                             for(int y = 0; y < gridSize.y; y++){
                                 Vector2i curr = new Vector2i(x, y);
+                                GridCell currCell = getCell(curr);
     
-                                if(getCell(curr).getTileType() == refType && !getCell(curr).isBoosted()) {
-                                    setCell(curr, new GridCell(0, refType, BoosterType.BoomBird));
+                                if(currCell.getTileType() == refType && !currCell.isBoosted()) {
+                                    currCell.setBooster(BoosterType.BoomBird);  // presumably no need to check for tile health
+                                    setCell(curr, currCell);
                                     newBoomBirds.add(curr);
                                 }
                             }
@@ -435,8 +420,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                         for(int x = 0; x < gridSize.x; x++){
                             for(int y = 0; y < gridSize.y; y++){
                                 Vector2i curr = new Vector2i(x, y);
+                                GridCell currCell = getCell(curr);
     
-                                if(getCell(curr).getTileType() == refType && getCell(curr).getBooster() == BoosterType.BoomBird) {
+                                if(currCell.getTileType() == refType && currCell.getBooster() == BoosterType.BoomBird) {
                                     newBoomBirds.add(curr);
                                 }
                             }
@@ -521,6 +507,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         private void buzzyBirdHorizontalBehaviour(Vector2i pos, Integer size) {
             
+            clearCell(pos, false, true);
+
             Integer d = Math.floorDiv(size, 2);
             
             for(int y = pos.y-d; y <= pos.y+d; y++){
@@ -531,11 +519,13 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
             fillGaps();
         }
-
+        
         private void buzzyBirdVerticalBehaviour(Vector2i pos, Integer size) {
             
+            clearCell(pos, false, true);
+            
             Integer d = Math.floorDiv(size, 2);
-
+            
             for(int x = pos.x-d; x <= pos.x+d; x++){
                 for(int y = 0; y < gridSize.y; y++){
                     Vector2i curr = new Vector2i(x, y);
@@ -544,8 +534,10 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
             fillGaps();
         }
-
+        
         private void boomBirdBehaviour(Vector2i pos, Integer size) {
+            
+            clearCell(pos, false, true);
 
             Integer d = Math.floorDiv(size, 2);
 
@@ -576,8 +568,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             for(int y = 0; y < gridSize.y; y++){
                 for(int x = 0; x < gridSize.x; x++){
                     Vector2i curr = new Vector2i(x, y);
+                    GridCell currCell = getCell(curr);
 
-                    if(getCell(new Vector2i(x, y)).TileType == refType && !getCell(new Vector2i(x, y)).isBoosted()) {
+                    if(currCell.TileType == refType && !currCell.isBoosted()) {
                         clearCell(curr, true, false);
                     }
                 }
@@ -594,7 +587,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             if(cell1 == null || cell2 == null){
                 return false;
             } else if (cell1.getTileType() == cell2.getTileType() &&
-                         !cell1.isBoosted() && !cell2.isBoosted() &&
+                         //!cell1.isBoosted() && !cell2.isBoosted() &&
                          cell1.getHealth() == 0 && cell1.getHealth() == 0){
                 
                 return checkMatch ? floodFillGetToVisit(pos2) && floodFillGetToVisit(pos2) : true;
@@ -652,8 +645,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 if(getCell(curr) == null) continue;
                 if(!floodFillGetVisited(curr)) continue;
                 if(getCell(pos).getTileType() != getCell(curr).getTileType()) continue;
-                if(getCell(pos).getBooster() != getCell(curr).getBooster()) continue;
-                if(getCell(pos).getHealth() != getCell(curr).getHealth()) continue;
+                //if(getCell(pos).getBooster() != getCell(curr).getBooster()) continue;
+                if(getCell(pos).getHealth() > 0 && getCell(curr).getHealth() > 0) continue;
 
                 floodFillSetVisited(curr);
                 connectedNodes.add(curr);
@@ -705,10 +698,10 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             for(Vector2i node : connectedNodes){
                 clearCell(node, false, false);
 
-                nextToMatchEffects(new Vector2i(node.x-1, node.y));   // break the eggs surrounding a match
-                nextToMatchEffects(new Vector2i(node.x+1, node.y));
-                nextToMatchEffects(new Vector2i(node.x, node.y-1));
-                nextToMatchEffects(new Vector2i(node.x, node.y+1));
+                breakEggTile(new Vector2i(node.x-1, node.y));   // break the eggs surrounding a match
+                breakEggTile(new Vector2i(node.x+1, node.y));
+                breakEggTile(new Vector2i(node.x, node.y-1));
+                breakEggTile(new Vector2i(node.x, node.y+1));
             }
 
             if(refBooster != BoosterType.None){
@@ -844,11 +837,11 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
             moveCount = 0;
 
-            Integer roundAccuracy = 100;
-            Integer firstLvlScore = 1000;
-            Float growthRate = 5f;
+            Integer a = 100;  // score requirement is accurate up to this value
+            Integer f = 1000;  // score required for the first level
+            Float g = 5f; // growth rate
 
-            Integer scoreRequirement = (int) (roundAccuracy * Math.round((firstLvlScore * Math.log1p(growthRate * level - growthRate + 1f) + firstLvlScore) / roundAccuracy));
+            Integer scoreRequirement = (int) (a * Math.round((f * Math.log1p(g * level - g + 1f) + f) / a));
             if(score > scoreRequirement){
                 level++;
                 return true;
@@ -948,7 +941,12 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         
         // send timestamp to start a game
         currentGameUUID = UUID.randomUUID().toString();
+
         level = 1;
+        score = 0;
+        moveCount = 0;
+        dizzyBirdMeter = 0;
+
         gameState = new GameState();
 
         XtWriter mmData = new XtWriter();

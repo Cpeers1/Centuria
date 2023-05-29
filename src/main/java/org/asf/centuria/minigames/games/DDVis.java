@@ -5,20 +5,28 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 import org.asf.centuria.Centuria;
+import org.asf.centuria.data.XtReader;
+import org.asf.centuria.minigames.games.GameDizzywingDispatch.GameState.BoosterType;
+import org.asf.centuria.minigames.games.GameDizzywingDispatch.GameState.GridCell;
+import org.asf.centuria.minigames.games.GameDizzywingDispatch.GameState.TileType;
 import org.joml.Vector2i;
 
 public class DDVis {
 
 	public JFrame frame;
 	public Map<Vector2i, JLabel> gameBoardDisplay = new HashMap<>();
+	public Map<JLabel, Vector2i> gameBoardDisplayInverseMapping = new HashMap<>();
 	private GameDizzywingDispatch ses;
 
 	/**
@@ -37,14 +45,18 @@ public class DDVis {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
+		MyMouseListener myMouseListener = new MyMouseListener();
+
 		for (int y = 0; y < 9; y++)
 		{
 			for (int x = 0; x < 9; x++)
 			{
 				JLabel l1 = new JLabel("New label");
 				l1.setBounds((1000/9)*x, (500/9)*y, (1000/9), (500/9));
+				l1.addMouseListener(myMouseListener);
 				frame.getContentPane().add(l1);
 				gameBoardDisplay.put(new Vector2i(x, y), l1);
+				gameBoardDisplayInverseMapping.put(l1, new Vector2i(x, y));
 			}
 		}
 
@@ -107,4 +119,40 @@ public class DDVis {
 				return Color.BLACK;
 		}
 	}
+
+	class MyMouseListener extends MouseAdapter {
+
+		@Override
+		public void mousePressed(MouseEvent e) 
+		{
+			JLabel label = (JLabel) e.getComponent();
+			Vector2i pos = gameBoardDisplayInverseMapping.get(label);
+			pos.y = 8-pos.y;
+			Centuria.logger.info(pos);
+			if(ses.gameState != null){
+				GridCell curr = ses.gameState.getCell(pos);
+	
+				if(curr.getTileType() != TileType.PinkBird){
+					curr.setTileType(TileType.PinkBird);
+				} else if (curr.getHealth() == 0) {
+					curr.setHealth(1);
+				} else if (curr.getBooster() != BoosterType.BoomBird){
+					curr.setHealth(0);
+					curr.setBooster(BoosterType.BoomBird);
+				} else if (curr.getBooster() != BoosterType.BuzzyBirdHorizontal){
+					curr.setBooster(BoosterType.BuzzyBirdHorizontal);
+				} else if (curr.getBooster() != BoosterType.BuzzyBirdVertical){
+					curr.setBooster(BoosterType.BuzzyBirdVertical);
+				} else if (curr.getBooster() != BoosterType.PrismPeacock){
+					curr.setBooster(BoosterType.PrismPeacock);
+					curr.setTileType(TileType.None);
+				}
+	
+				ses.gameState.setCell(pos, curr);
+				ses.syncClient(Centuria.gameServer.getPlayers()[0], new XtReader(""));
+			}
+		}
+		
+	}
+
 }
