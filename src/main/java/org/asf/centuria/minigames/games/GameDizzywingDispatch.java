@@ -131,30 +131,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             randomizer = new Random(currentGameUUID.hashCode());
             initializeGameBoard();
             floodFillClearVisited();
-/*
- setCell(new Vector2i(0, 0), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(1, 1), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(1, 2), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(2, 0), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(3, 0), new GridCell(0, TileType.PinkBird, BoosterType.None));
- 
- setCell(new Vector2i(6, 0), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(6, 1), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(6, 3), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(5, 2), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(7, 2), new GridCell(0, TileType.PinkBird, BoosterType.None));
- 
- setCell(new Vector2i(0, 8), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(1, 8), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(2, 7), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(3, 8), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(4, 8), new GridCell(0, TileType.PinkBird, BoosterType.None));
- 
- setCell(new Vector2i(0, 5), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(1, 5), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(2, 4), new GridCell(0, TileType.PinkBird, BoosterType.None));
- setCell(new Vector2i(3, 5), new GridCell(0, TileType.PinkBird, BoosterType.None));
- */
 
         }
 
@@ -400,14 +376,14 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     
                         Integer d = Math.floorDiv(3, 2);
     
-                        for (Vector2i pos : newBoomBirds) {
+                        for (Vector2i pos : newBoomBirds) {     // first explosions
                 
                             for(int x = pos.x-d; x <= pos.x+d; x++){
                                 for(int y = pos.y-d; y <= pos.y+d; y++){
         
                                     Vector2i curr = new Vector2i(x, y);
         
-                                    if(!newBoomBirds.contains(curr)) {
+                                    if(!newBoomBirds.contains(curr) && getCell(curr).getTileType() != TileType.None) {
                                         clearCell(curr, true, false);
                                     }
                                 }
@@ -428,16 +404,18 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                             }
                         }
     
-                        for (Vector2i pos : newBoomBirds) {
+                        for (Vector2i pos : newBoomBirds) {    // second explosions
                 
                             for(int x = pos.x-d; x <= pos.x+d; x++){
                                 for(int y = pos.y-d; y <= pos.y+d; y++){
         
                                     Vector2i curr = new Vector2i(x, y);
-                                    clearCell(curr, true, false);
+                                    clearCell(curr, true, true);
                                 }
                             }
                         }
+
+                        fillGaps();
     
     
                     } else if (getCell(pos1).getBooster() == BoosterType.PrismPeacock &&
@@ -451,6 +429,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                                 clearCell(curr, true, false);
                             }
                         }
+
+                        fillGaps();
                     }
     
                 } else if(getCell(pos1).isBoosted() && !getCell(pos2).isBoosted()){    // single booster behaviours
@@ -586,9 +566,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
             if(cell1 == null || cell2 == null){
                 return false;
-            } else if (cell1.getTileType() == cell2.getTileType() &&
+            } else if (cell1.getTileType() == cell2.getTileType()){
                          //!cell1.isBoosted() && !cell2.isBoosted() &&
-                         cell1.getHealth() == 0 && cell1.getHealth() == 0){
+                         //cell1.getHealth() == 0 && cell1.getHealth() == 0
                 
                 return checkMatch ? floodFillGetToVisit(pos2) && floodFillGetToVisit(pos2) : true;
             }
@@ -646,7 +626,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 if(!floodFillGetVisited(curr)) continue;
                 if(getCell(pos).getTileType() != getCell(curr).getTileType()) continue;
                 //if(getCell(pos).getBooster() != getCell(curr).getBooster()) continue;
-                if(getCell(pos).getHealth() > 0 && getCell(curr).getHealth() > 0) continue;
+                //if(getCell(pos).getHealth() > 0 && getCell(curr).getHealth() > 0) continue;
 
                 floodFillSetVisited(curr);
                 connectedNodes.add(curr);
@@ -669,7 +649,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
                 if((horizontalConnections == 1 && verticalConnections == 1) || 
                     (horizontalConnections == 2 && verticalConnections == 1) || 
-                    (horizontalConnections == 1 && verticalConnections == 2)) {
+                    (horizontalConnections == 1 && verticalConnections == 2) &&
+                    matchTileSize != 5) {   // do not change to boom bird if a prism peacock would form
                         matchTileSize = 6;
                     }
             }

@@ -56,7 +56,7 @@ public class DDVis {
 				l1.addMouseListener(myMouseListener);
 				frame.getContentPane().add(l1);
 				gameBoardDisplay.put(new Vector2i(x, y), l1);
-				gameBoardDisplayInverseMapping.put(l1, new Vector2i(x, y));
+				gameBoardDisplayInverseMapping.put(l1, new Vector2i(x, 8-y));
 			}
 		}
 
@@ -127,7 +127,6 @@ public class DDVis {
 		{
 			JLabel label = (JLabel) e.getComponent();
 			Vector2i pos = gameBoardDisplayInverseMapping.get(label);
-			pos.y = 8-pos.y;
 			Centuria.logger.info(pos);
 			if(ses.gameState != null){
 				GridCell curr = ses.gameState.getCell(pos);
@@ -136,16 +135,9 @@ public class DDVis {
 					curr.setTileType(TileType.PinkBird);
 				} else if (curr.getHealth() == 0) {
 					curr.setHealth(1);
-				} else if (curr.getBooster() != BoosterType.BoomBird){
+				} else if (curr.getTileType() != TileType.HatOrPurse){
 					curr.setHealth(0);
-					curr.setBooster(BoosterType.BoomBird);
-				} else if (curr.getBooster() != BoosterType.BuzzyBirdHorizontal){
-					curr.setBooster(BoosterType.BuzzyBirdHorizontal);
-				} else if (curr.getBooster() != BoosterType.BuzzyBirdVertical){
-					curr.setBooster(BoosterType.BuzzyBirdVertical);
-				} else if (curr.getBooster() != BoosterType.PrismPeacock){
-					curr.setBooster(BoosterType.PrismPeacock);
-					curr.setTileType(TileType.None);
+					curr.setTileType(TileType.HatOrPurse);
 				}
 	
 				ses.gameState.setCell(pos, curr);
