@@ -127,7 +127,6 @@ public class DDVis {
 		{
 			JLabel label = (JLabel) e.getComponent();
 			Vector2i pos = gameBoardDisplayInverseMapping.get(label);
-			Centuria.logger.info(pos);
 			if(ses.gameState != null){
 				GridCell curr = ses.gameState.getCell(pos);
 	

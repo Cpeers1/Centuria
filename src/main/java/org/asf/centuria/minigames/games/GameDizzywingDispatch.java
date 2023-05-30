@@ -16,6 +16,7 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.minigames.AbstractMinigame;
 import org.asf.centuria.minigames.MinigameMessage;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
@@ -26,7 +27,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
     private String currentGameUUID;
     public GameState gameState;
-    private int level = 1;
+    private int level = 0;
     private int score = 0;
     private int moveCount = 0;
     private int dizzyBirdMeter = 0;
@@ -115,7 +116,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         private boolean toVisit[][];
         private boolean visited[][];
         private Vector2i gridSize;
-        private Integer moveCount;
         private List<TileType> spawnTiles;
         private Random randomizer;
         private Integer matchComboScore;
@@ -218,7 +218,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             //Board checksum algorithm!
             String string1 = Base64.getEncoder().encodeToString(inArray);
             String string2 = currentGameUUID.toString();
-            String string3 = moveCount.toString();
+            String string3 = ((Integer)(moveCount)).toString();
             return (string1 + string2 + string3).hashCode();
         }
 
@@ -263,7 +263,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     }
                 }
             }
-            moveCount = 0;
         }
 
 
@@ -816,13 +815,11 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         public Boolean updateLevel(){ // Returns true if level is incremented.
 
-            moveCount = 0;
+            Integer r = 50;  // round to the nearest r
+            Integer s = 500;  // starting level score
+            Float g = 2.5f; // growth rate
 
-            Integer a = 100;  // score requirement is accurate up to this value
-            Integer f = 1000;  // score required for the first level
-            Float g = 5f; // growth rate
-
-            Integer scoreRequirement = (int) (a * Math.round((f * Math.log1p(g * level - g + 1f) + f) / a));
+            Integer scoreRequirement = (int) (r * Math.round((s * Math.log1p(g * level - g + 1f) + s) / r));
             if(score > scoreRequirement){
                 level++;
                 return true;
@@ -898,6 +895,65 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         }
     }
 
+  
+    // functions related to saving the saved game user variable to the player inventory.
+
+    private void saveSavedGameUserVar(Player player) {
+        /*
+        `persistentAchievementDataUserVarDefId`: `13392`,
+        `puzzleRedemptionStatusUserVarDefId`: `13404`,
+        `puzzlePieceRedemptionStatusUserVarDefId`: `13405`,
+        `savedGameUserVarDefId`: `30613`,
+        */
+
+        // write into the player inventory the number of moves made in the level, send inventory item packet
+        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(30613, level, moveCount);
+        // write into the player inventory the current score
+        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(13392, 0, score);
+        // write into the player inventory the highest score
+        UserVarValue highestScore = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(13392, 1);
+        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(13392, 1, Math.max(highestScore.value, score));
+    }
+
+    private void resetSavedGameUserVar(Player player) {
+
+        // reset these values as a new game has been started
+        level = 0;
+        score = 0;
+        moveCount = 0;
+        dizzyBirdMeter = 0;
+        
+        // reset the saved game.
+        player.account.getSaveSpecificInventory().getUserVarAccesor().deletePlayerVar(30613);
+        // there is no level 0 and it is counted as having 1 move
+        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(30613, 0, 1);
+        // reset the recorded current score
+        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(13392, 0, 0);
+        // check if the highest score value is initialized, set it to zero if not
+        UserVarValue highestScore = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(13392, 1);
+        if(highestScore == null){
+            player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(13392, 1, 0);
+        }
+    }
+
+    private void loadSavedGameUserVar(Player player) {
+
+        // retrieve the data from the player inventory
+        UserVarValue[] savedGame = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(30613);
+        UserVarValue prevScore = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(13392, 0);
+
+        // load in the values associated with a previous game
+        if(savedGame != null){
+            level = Math.max(1, savedGame.length-1);
+            score = prevScore.value;
+            moveCount = savedGame[savedGame.length-1].value;
+            dizzyBirdMeter = 0;
+        }
+    }
+
+
+    // functions that implement the game's protocols.
+
     @Override
 	public AbstractMinigame instantiate() {
 		return new GameDizzywingDispatch();
@@ -917,32 +973,30 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 	}
 
     @MinigameMessage("startGame")
-	public void startGame(Player player, XtReader rd) {
+    public void startGame(Player player, XtReader rd){
         
+        resetSavedGameUserVar(player);
         
-        // send timestamp to start a game
+        // The GUID is used as the seed for the random number generator.
         currentGameUUID = UUID.randomUUID().toString();
-
-        level = 1;
-        score = 0;
-        moveCount = 0;
-        dizzyBirdMeter = 0;
-
         gameState = new GameState();
 
+        // the format of the minigame message response packet
         XtWriter mmData = new XtWriter();
         mmData.writeString(currentGameUUID);
-        mmData.writeInt(gameState.calculateBoardChecksum()); // this is a checksum, not a timestamp
+        mmData.writeInt(gameState.calculateBoardChecksum());
         mmData.writeInt(level);
-        mmData.writeInt(0);
+        mmData.writeInt(0); // not sure
         mmData.writeInt(score);
-        mmData.writeInt(0);
+        mmData.writeInt(0); // not sure
 
+        // send response packet
         MinigameMessagePacket mm = new MinigameMessagePacket();
 		mm.command = "startGame";
 		mm.data = mmData.encode().substring(4);
 		player.client.sendPacket(mm);
 
+        // load in server-generated game board
         syncClient(player, rd);
 
     }
@@ -954,30 +1008,33 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         // process move sent by client
         gameState.calculateMove(new Vector2i(rd.readInt(), rd.readInt()), new Vector2i(rd.readInt(), rd.readInt()));
+        // sync client if sever checksum differs from client checksum (always occurs at current)
         if (clientChecksum != gameState.calculateBoardChecksum()) {
             syncClient(player, rd);
         }
 
-        // save inventory
-        InventoryItemPacket pk = new InventoryItemPacket();
-        pk.item = player.account.getSaveSpecificInventory().getItem("303");
-        player.client.sendPacket(pk);
-
+        // save score and number of moves made on this level
+        saveGame(player, rd);
+        
         // check if level should increase
         if (gameState.updateLevel()) {
+            moveCount = 0;
+            saveGame(player, rd);
             goToLevel(player);
         }
 
     }
 
 	private void goToLevel(Player player) {
-        // change to next level
+       
+        // packet data
         XtWriter mmData = new XtWriter();
         mmData.writeInt(level);
-        mmData.writeInt(0);
+        mmData.writeInt(0); // not sure
         mmData.writeInt(score);
-        mmData.writeInt(0);
+        mmData.writeInt(0); // not sure
 
+        // send packet
         MinigameMessagePacket mm = new MinigameMessagePacket();
 		mm.command = "goToLevel";
 		mm.data = mmData.encode().substring(4);
@@ -987,20 +1044,56 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
     @MinigameMessage("dizzyBird")
     public void dizzyBird(Player player, XtReader rd) {
-        dizzyBirdMeter = 0;
+        dizzyBirdMeter = 0; // reset the meter at the right-hand side of the screen
         gameState.scrambleTiles();
         syncClient(player, rd);
     }
 
     @MinigameMessage("continueGame")
 	public void continueGame(Player player, XtReader rd) {
+        
         // send start game client with previous values
+        loadSavedGameUserVar(player);
+
+        // The GUID is used as the seed for the random number generator.
+        currentGameUUID = UUID.randomUUID().toString();
+        gameState = new GameState();
+
+        // the format of the minigame message response packet
+        XtWriter mmData = new XtWriter();
+        mmData.writeString(currentGameUUID);
+        mmData.writeInt(gameState.calculateBoardChecksum());
+        // it seems the game cannot start unless these specific values are used
+        mmData.writeInt(1);
+        mmData.writeInt(0);
+        mmData.writeInt(500);
+        mmData.writeInt(0);
+
+        // send response packet
+        MinigameMessagePacket mm = new MinigameMessagePacket();
+		mm.command = "startGame";
+		mm.data = mmData.encode().substring(4);
+		player.client.sendPacket(mm);
+
+        // load in server-generated game board
+        syncClient(player, rd);
     }
+
 
     @MinigameMessage("saveGame")
 	public void saveGame(Player player, XtReader rd) {
 
+        saveSavedGameUserVar(player);
+
+        if (player.client != null && player.client.isConnected()) {
+            // Send to client
+            InventoryItemPacket pk = new InventoryItemPacket();
+            pk.item = player.account.getSaveSpecificInventory().getItem("303");
+            player.client.sendPacket(pk);
+        }
     }
+
+
 
     @MinigameMessage("redeemPiece")
 	public void redeemPiece(Player player, XtReader rd) {
@@ -1015,7 +1108,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         mmData.writeInt(score);
         mmData.writeInt(dizzyBirdMeter);
         mmData.writeString(gameState.toBase64String());
-        //mmData.writeString("8/T19vf4+fr7/P3+/w==");
         mmData.writeInt(0); // no level objective
 
         MinigameMessagePacket mm = new MinigameMessagePacket();
