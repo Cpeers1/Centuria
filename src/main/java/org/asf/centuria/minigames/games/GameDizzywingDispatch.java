@@ -2,6 +2,8 @@ package org.asf.centuria.minigames.games;
 
 import java.util.Queue;
 import java.util.Random;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -19,9 +21,15 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.minigames.AbstractMinigame;
 import org.asf.centuria.minigames.MinigameMessage;
+import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
 import org.joml.Vector2i;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class GameDizzywingDispatch extends AbstractMinigame{
 
@@ -32,7 +40,36 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     private int moveCount = 0;
     private int dizzyBirdMeter = 0;
 
+    static private JsonArray specialOrders;
+    static private JsonArray specialOrderCountRanges;
+    static private JsonArray levelRewards;
+    static private JsonArray achievementPuzzles;
+    static private JsonArray achievementToUserVarIndexList;
+
     static {
+        // Load level info
+		try {
+			// Load the helper
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("minigames/dizzywingdispatch.json");
+			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
+			strm.close();
+
+			// Load all level data
+			JsonObject componentJSON = helper.getAsJsonArray("components").get(9).getAsJsonObject()
+                                        .getAsJsonObject("componentJSON");
+			specialOrders = componentJSON.getAsJsonArray("specialOrders");
+			specialOrderCountRanges = componentJSON.getAsJsonArray("specialOrderCountRanges");
+			levelRewards = componentJSON.getAsJsonArray("levelRewards");
+			achievementPuzzles = componentJSON.getAsJsonArray("achievementPuzzles");
+			achievementToUserVarIndexList = componentJSON.getAsJsonArray("achievementPuzzles");
+            
+		} catch (IOException e) {
+			// This is very bad, should not start allow the server to continue otherwise
+			// things will break HARD
+			throw new RuntimeException(e);
+		}
+
         if (Centuria.debugMode) {
             DDVis vis = new DDVis();
             new Thread(() -> vis.frame.setVisible(true)).start();
@@ -86,6 +123,237 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                  
         }
 
+        public class LevelObjectives {
+            private int objectivesTracker[][] = { {-1, -1, 0},
+                                                {-1, -1, 1},
+                                                {-1, -1, 2},
+                                                {-1, -1, 3}};
+
+            JsonObject specialOrderData;
+            JsonObject specialOrderCountRangeData;
+
+            Integer currScore = 0;
+
+            public LevelObjectives(){
+                newLevelNewObjectives();
+            }
+
+            public void newLevelNewObjectives(){
+
+                currScore = 0;
+
+                for(JsonElement ele : specialOrders){
+                    JsonObject data = ele.getAsJsonObject();
+                    if(level > data.get("_toLevelNumber").getAsInt() || 
+                        !data.get("_isToLevelInfinite").getAsBoolean()){
+                        continue;
+                    } else {
+                        specialOrderData = data;
+                    }
+                }
+
+                for(JsonElement ele : specialOrderCountRanges){
+                    JsonObject data = ele.getAsJsonObject();
+                    if(level > data.get("_toLevelNumber").getAsInt() || 
+                        !data.get("_isToLevelInfinite").getAsBoolean()){
+                        continue;
+                    } else {
+                        specialOrderCountRangeData = data;
+                    }
+                }
+
+                initObjective(LevelObjectiveType.ScoreRequirement, scoreRequirement());
+
+                if(!diceRoll("_regularLevelAppearancePercent", true)){
+
+                    Integer clothing = 0;
+                    Integer eggs = 0;
+
+                    if(diceRoll("_accessoriesAppearancePercent", false)){
+                        clothing = initObjective(LevelObjectiveType.ClothingLeft, "_minimumAccessoryCount", "_maximumAccessoryCount");
+                    } else {
+                        clearObjective(LevelObjectiveType.ClothingLeft);
+                    }
+                    
+                    if (diceRoll("_eggsAppearancePercent", false)){
+                        eggs = initObjective(LevelObjectiveType.EggsLeft, "_minimumEggRowCount", "_maximumEggRowCount");
+                    } else {
+                        clearObjective(LevelObjectiveType.EggsLeft);
+                    }
+                    
+                    if (diceRoll("_limitedMovesAppearancePercent", false)){
+                        initObjective(LevelObjectiveType.MovesLeft, "_minimumLimitedMovesOnlyCount", "_maximumLimitedMovesOnlyCount");
+                    } else {
+                        clearObjective(LevelObjectiveType.MovesLeft);
+                    }
+
+                    for(int x = gridSize.x-1; x >= 0; x--){
+                        for(int y = gridSize.y-1; y >= 0; y--){
+                            Vector2i curr = new Vector2i(x, y);
+                            GridCell currCell = getCell(curr);
+    
+                            if(!currCell.isBoosted()) {
+                                if(currCell.getTileType() != TileType.HatOrPurse && clothing > 0){
+                                    currCell.setTileType(TileType.HatOrPurse);
+                                    setCell(curr, currCell);
+                                    clothing--;
+                                } else if(currCell.getHealth() == 0 && eggs > 0){
+                                    currCell.setHealth(1);
+                                    setCell(curr, currCell);
+                                    eggs--;
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+
+                
+                
+            }
+
+            public void addScore(Integer increase){
+                currScore += increase;
+                updateObjective(LevelObjectiveType.ScoreRequirement, currScore);
+            }
+
+            public void takeMove(){
+                if(isObjective(LevelObjectiveType.MovesLeft)){
+                    updateObjectiveByChange(LevelObjectiveType.MovesLeft, 1);
+                }
+            }
+
+            public boolean hasRunOutOfMoves(){
+                if(isObjective(LevelObjectiveType.MovesLeft)){
+                    return objectivesTracker[LevelObjectiveType.MovesLeft.ordinal()][1] < 0;
+                } else {
+                    return false;
+                }
+            }
+
+            private void trackEggsAndClothing(){
+                Integer numberOfEggs = 0;
+                for(int x = 0; x < gridSize.x; x++){
+                    for(int y = 0; y < gridSize.y; y++){
+                        Vector2i curr = new Vector2i(x, y);
+
+                        if(getCell(curr).getHealth() > 0) {
+                            numberOfEggs++;
+                        }
+                    }
+                }
+                updateObjectiveRemaining(LevelObjectiveType.EggsLeft, numberOfEggs);
+
+                Integer numberOfClothing = 0;
+                for(int x = 0; x < gridSize.x; x++){
+                    for(int y = 0; y < gridSize.y; y++){
+                        Vector2i curr = new Vector2i(x, y);
+
+                        if(getCell(curr).getTileType() == TileType.HatOrPurse) {
+                            numberOfClothing++;
+                        }
+                    }
+                }
+                updateObjectiveRemaining(LevelObjectiveType.ClothingLeft, numberOfClothing);
+            }
+
+            public Boolean isNextLevel(){
+                trackEggsAndClothing();
+
+                Boolean goToNextLevel = true;
+                goToNextLevel &= isAchieved(LevelObjectiveType.ClothingLeft);
+                goToNextLevel &= isAchieved(LevelObjectiveType.EggsLeft);
+                goToNextLevel &= isAchieved(LevelObjectiveType.ScoreRequirement);
+                goToNextLevel &= !hasRunOutOfMoves();
+
+                if(goToNextLevel){
+                    level++;
+                    newLevelNewObjectives();
+                    if(level == 25){
+                        spawnTiles.add(TileType.AquaBird);
+                    } else if (level == 75){
+                        spawnTiles.add(TileType.BlueBird);
+                    } else if (level == 100){
+                        spawnTiles.add(TileType.PinkBird);
+                    }
+                }
+
+                return goToNextLevel;
+            }
+
+
+            // helper functions
+
+            private Boolean diceRoll(String attribute, Boolean overHundred){
+                if(overHundred){
+                    return randomizer.nextInt(100) < 
+                    specialOrderData.get(attribute).getAsInt();
+                } else {
+                    Integer newTotal = specialOrderData.get("_accessoriesAppearancePercent").getAsInt() +
+                                        specialOrderData.get("_eggsAppearancePercent").getAsInt() +
+                                        specialOrderData.get("_limitedMovesAppearancePercent").getAsInt();
+                    return randomizer.nextInt(newTotal) < 
+                    specialOrderData.get(attribute).getAsInt();
+                }
+            }
+            
+            private void initObjective(LevelObjectiveType objectiveType, Integer requirement){
+                objectivesTracker[objectiveType.ordinal()][0] = requirement;
+                objectivesTracker[objectiveType.ordinal()][1] = 0;
+            }
+
+            private Integer initObjective(LevelObjectiveType objectiveType, String minimum, String maximum){
+                objectivesTracker[objectiveType.ordinal()][0] = gameState.randomizer.nextInt(
+                                                                specialOrderCountRangeData.get(minimum).getAsInt(),
+                                                                specialOrderCountRangeData.get(maximum).getAsInt()+1);
+                objectivesTracker[objectiveType.ordinal()][1] = 0;
+
+                return objectivesTracker[objectiveType.ordinal()][0];
+            }
+
+            private void clearObjective(LevelObjectiveType objectiveType){
+                objectivesTracker[objectiveType.ordinal()][0] = -1;
+                objectivesTracker[objectiveType.ordinal()][1] = -1;
+            }
+            
+            private void updateObjectiveByChange(LevelObjectiveType objectiveType, Integer value){
+                objectivesTracker[objectiveType.ordinal()][1] += value;
+            }
+
+            private void updateObjectiveRemaining(LevelObjectiveType objectiveType, Integer value){
+                objectivesTracker[objectiveType.ordinal()][1] = objectivesTracker[objectiveType.ordinal()][0] - value;
+            }
+
+            private void updateObjective(LevelObjectiveType objectiveType, Integer value){
+                objectivesTracker[objectiveType.ordinal()][1] = value;
+            }
+
+            private Boolean isObjective(LevelObjectiveType objectiveType) {
+                return objectivesTracker[objectiveType.ordinal()][0] != -1;
+            }
+
+            private Boolean isAchieved(LevelObjectiveType objectiveType){
+                if(objectivesTracker[objectiveType.ordinal()][0] == -1){
+                    return true;
+                } else if (objectivesTracker[objectiveType.ordinal()][0] <=
+                        objectivesTracker[objectiveType.ordinal()][1]) {
+                    return true;
+                } else{
+                    return false;
+                }
+            }
+
+            private Integer scoreRequirement(){
+
+                Integer r = 50;  // round to the nearest r
+                Integer s = 500;  // starting level score
+                Float g = 2.5f; // growth rate
+                Integer o = 125; // offset
+
+                return (int) (r * Math.round((s * Math.log1p(g * (level + o) - g + 1f) + s) / r));
+            }
+        }
+
         enum BoosterType
         {
             None,
@@ -108,7 +376,13 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             None
         }
 
-
+        public enum LevelObjectiveType
+        {
+            ScoreRequirement,
+            MovesLeft,
+            EggsLeft,
+            ClothingLeft
+        }
 
         // initializing the object
 
@@ -119,6 +393,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         private List<TileType> spawnTiles;
         private Random randomizer;
         private Integer matchComboScore;
+        private LevelObjectives objectives;
 
         public GameState(){
             gridSize = new Vector2i(9, 9);
@@ -131,7 +406,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             randomizer = new Random(currentGameUUID.hashCode());
             initializeGameBoard();
             floodFillClearVisited();
-
+            objectives = new LevelObjectives();
         }
 
 
@@ -272,6 +547,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         public void calculateMove(Vector2i pos1, Vector2i pos2){
 
             moveCount++;
+            objectives.takeMove();
 
             if(pos2.y != -1){   // if given two tiles as input
 
@@ -809,25 +1085,32 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         private void scoreCombo(int scoreIncrease) {
             matchComboScore += scoreIncrease;
-            score += matchComboScore;
+
             dizzyBirdMeter += scoreIncrease / 30;
+            score += matchComboScore;
+            objectives.addScore(matchComboScore);
         }
 
-        public Boolean updateLevel(){ // Returns true if level is incremented.
+        public Boolean updateLevel(){
+            return objectives.isNextLevel();
+        }
 
-            Integer r = 50;  // round to the nearest r
-            Integer s = 500;  // starting level score
-            Float g = 2.5f; // growth rate
-
-            Integer scoreRequirement = (int) (r * Math.round((s * Math.log1p(g * level - g + 1f) + s) / r));
-            if(score > scoreRequirement){
-                level++;
-                return true;
-            } else {
-                return false;
+        public List<int[]> getObjectiveProgress(){
+            List<int[]> progress = new ArrayList<>();
+            for(LevelObjectiveType objectiveType : LevelObjectiveType.values()){
+                int[] objectiveData = objectives.objectivesTracker[objectiveType.ordinal()];
+                if(objectiveData[0] != -1){
+                    progress.add(objectiveData);
+                }
             }
+            return progress;
         }
 
+        public Boolean runOutOfMoves(){
+            return objectives.hasRunOutOfMoves();
+        }
+
+        
 
 
         // functions related to updating the board when a syncClient message is sent
@@ -1108,8 +1391,48 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         mmData.writeInt(score);
         mmData.writeInt(dizzyBirdMeter);
         mmData.writeString(gameState.toBase64String());
-        mmData.writeInt(0); // no level objective
 
+        
+        List<int[]> objectiveProgress = gameState.getObjectiveProgress();
+        
+        if(!gameState.runOutOfMoves()){
+            mmData.writeInt(objectiveProgress.size());
+            for(int[] objectiveData : objectiveProgress){
+                mmData.writeInt(objectiveData[2]);
+                mmData.writeInt(objectiveData[0]);
+                mmData.writeInt(objectiveData[1]);
+            }
+        } else {
+            mmData.writeInt(2);
+
+            mmData.writeInt(objectiveProgress.get(0)[2]);
+            mmData.writeInt(objectiveProgress.get(0)[0]);
+            mmData.writeInt(objectiveProgress.get(0)[1]);
+
+            mmData.writeInt(1);
+            mmData.writeInt(-1);
+            mmData.writeInt(-1);
+        }
+
+/*  example level objective
+        mmData.writeInt(4); // number of elements, only 2 goals at once
+
+        mmData.writeInt(0); // increase score bar, required for multiple goals
+        mmData.writeInt(500);   // level score requirement
+        mmData.writeInt(250);   // current score achieved in level
+
+        mmData.writeInt(1); // moves left
+        mmData.writeInt(10);
+        mmData.writeInt(0);
+
+        mmData.writeInt(2); // eggs left
+        mmData.writeInt(17); // where the number is first - second
+        mmData.writeInt(0);
+
+        mmData.writeInt(3); // items left
+        mmData.writeInt(23);
+        mmData.writeInt(0);
+*/
         MinigameMessagePacket mm = new MinigameMessagePacket();
 		mm.command = "syncClient";
 		mm.data = mmData.encode().substring(4);

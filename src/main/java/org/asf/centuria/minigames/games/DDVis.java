@@ -1,23 +1,15 @@
 package org.asf.centuria.minigames.games;
 
-import java.awt.Button;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
-
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
-import org.asf.centuria.minigames.games.GameDizzywingDispatch.GameState.BoosterType;
 import org.asf.centuria.minigames.games.GameDizzywingDispatch.GameState.GridCell;
 import org.asf.centuria.minigames.games.GameDizzywingDispatch.GameState.TileType;
 import org.joml.Vector2i;

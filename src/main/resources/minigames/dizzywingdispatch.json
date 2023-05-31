@@ -1,0 +1,1631 @@
+{
+	"templateClass":"CasualGameTemplate",
+	"templateFormatHash":"47fac800729b03a3c2b4937595752a07",
+	"components": [
+		{
+			"componentClass": "MinigameRewardDefComponent",
+			"componentJSON":
+				{
+				    "lootLists": [
+				        {
+				            "list": {
+				                "_defIDs": [
+				                    "13625",
+				                    "13626",
+				                    "13627",
+				                    "13631"
+				                ]
+				            }
+				        },
+				        {
+				            "list": {
+				                "_defIDs": [
+				                    "13384",
+				                    "13385",
+				                    "13386",
+				                    "13387",
+				                    "13388",
+				                    "13389"
+				                ]
+				            }
+				        }
+				    ]
+				}
+			},
+		{
+			"componentClass": "MinigameDefComponent",
+			"componentJSON":
+				{
+				    "minPlayers": 1,
+				    "maxPlayers": 1,
+				    "secondsToCompleteEachStage": [
+				        0,
+				        0,
+				        0,
+				        0,
+				        0,
+				        0,
+				        6,
+				        8,
+				        10,
+				        12,
+				        14,
+				        16,
+				        18,
+				        20,
+				        22,
+				        24,
+				        26,
+				        28,
+				        30,
+				        32,
+				        34,
+				        36,
+				        38,
+				        40,
+				        42,
+				        44,
+				        46,
+				        48,
+				        50,
+				        52,
+				        54,
+				        56,
+				        58,
+				        60,
+				        62,
+				        64,
+				        66,
+				        68,
+				        70,
+				        72,
+				        74,
+				        76,
+				        78,
+				        80,
+				        82,
+				        84,
+				        86,
+				        88,
+				        90,
+				        92,
+				        94,
+				        96,
+				        98,
+				        100,
+				        102,
+				        104,
+				        106,
+				        108,
+				        110,
+				        112,
+				        114,
+				        116,
+				        118,
+				        120,
+				        122,
+				        124,
+				        126,
+				        128,
+				        130,
+				        132,
+				        134,
+				        136,
+				        138,
+				        140,
+				        142,
+				        144,
+				        146,
+				        148,
+				        150,
+				        152,
+				        154,
+				        156,
+				        158,
+				        160,
+				        162,
+				        164,
+				        166,
+				        168,
+				        170,
+				        172,
+				        174,
+				        176,
+				        178,
+				        180,
+				        182,
+				        184,
+				        186,
+				        188,
+				        190,
+				        192,
+				        194,
+				        196,
+				        198,
+				        200,
+				        202,
+				        204,
+				        206,
+				        208,
+				        210,
+				        212,
+				        214,
+				        216,
+				        218,
+				        220,
+				        222,
+				        224,
+				        226,
+				        228,
+				        230,
+				        232,
+				        234,
+				        236,
+				        238,
+				        240,
+				        242,
+				        244,
+				        246,
+				        248,
+				        250,
+				        252,
+				        254,
+				        256,
+				        258,
+				        260,
+				        262,
+				        264,
+				        266,
+				        268,
+				        270,
+				        272,
+				        274,
+				        276,
+				        278,
+				        280,
+				        282,
+				        284,
+				        286,
+				        288,
+				        290,
+				        292,
+				        294,
+				        296,
+				        298,
+				        300,
+				        302,
+				        304
+				    ],
+				    "retryPurchaseDefs": {
+				        "_defIDs": [
+				            "30682",
+				            "30684",
+				            "30685"
+				        ]
+				    }
+				}
+			},
+		{
+			"componentClass": "Icon2DDefComponent",
+			"componentJSON":
+				{
+				    "imageDefID": "8200"
+				}
+			},
+		{
+			"componentClass": "LocalizedNameDefComponent",
+			"componentJSON":
+				{
+				    "localizedDefID": "8198"
+				}
+			},
+		{
+			"componentClass": "LocalizedDescriptionDefComponent",
+			"componentJSON":
+				{
+				    "localizedDefID": "8199"
+				}
+			},
+		{
+			"componentClass": "ClassNameDefComponent",
+			"componentJSON":
+				{
+				    "className": "match3.Match3"
+				}
+			},
+		{
+			"componentClass": "BundleIDDefComponent",
+			"componentJSON":
+				{
+				    "bundle": {
+				        "bundleMetaGUID": "73229bdabaa11dc4da406b842d61bc45",
+				        "bundlePath": "Levels/CasualGames/Match3/World"
+				    }
+				}
+			},
+		{
+			"componentClass": "LevelDefComponent",
+			"componentJSON":
+				{
+				    "topLevel": false,
+				    "isSecretArea": false,
+				    "disabled": false,
+				    "levelOverrides": {
+				        "_defIDs": []
+				    },
+				    "networkedObjects": {
+				        "_defIDs": []
+				    },
+				    "worldMapInfos": [],
+				    "_unityLevelName": "Match3",
+				    "levelType": 1,
+				    "_socialExpanseArea": -1,
+				    "tempImageBundleID": "",
+				    "localizedNameID": "",
+				    "calendarDefID": "",
+				    "minimapBundleIdRef": ""
+				}
+			},
+		{
+			"componentClass": "AvailabilityDefComponent",
+			"componentIsCustom": true,
+			"componentJSON":
+				{
+				    "dateOverrideRef": {
+				        "_defID": "-1"
+				    },
+				    "chartDateAvailability": {
+				        "_ignoreYear": true,
+				        "_repeatMode": 1,
+				        "_dateStart": "",
+				        "_dateEnd": ""
+				    }
+				}
+			},
+		{
+			"componentClass": "Match3DefComponent",
+			"componentIsCustom": true,
+			"componentJSON":
+				{
+				    "levelRewards": [
+				        {
+				            "levelIndex": 1,
+				            "isRange": true,
+				            "endLevelIndex": 25,
+				            "isEndLevelInfinite": false,
+				            "rewardIndex": 0
+				        },
+				        {
+				            "levelIndex": 26,
+				            "isRange": true,
+				            "endLevelIndex": 50,
+				            "isEndLevelInfinite": false,
+				            "rewardIndex": 1
+				        },
+				        {
+				            "levelIndex": 51,
+				            "isRange": true,
+				            "endLevelIndex": 100,
+				            "isEndLevelInfinite": false,
+				            "rewardIndex": 2
+				        },
+				        {
+				            "levelIndex": 101,
+				            "isRange": true,
+				            "endLevelIndex": 0,
+				            "isEndLevelInfinite": true,
+				            "rewardIndex": 3
+				        }
+				    ],
+				    "achievementPuzzles": [
+				        {
+				            "portraitImageRef": "13381",
+				            "portraitNameRef": "12589",
+				            "achievements": [
+				                {
+				                    "achievementType": 0,
+				                    "threshold": 25000
+				                },
+				                {
+				                    "achievementType": 1,
+				                    "threshold": 500000
+				                },
+				                {
+				                    "achievementType": 0,
+				                    "threshold": 50000
+				                },
+				                {
+				                    "achievementType": 1,
+				                    "threshold": 1000000
+				                },
+				                {
+				                    "achievementType": 0,
+				                    "threshold": 75000
+				                },
+				                {
+				                    "achievementType": 1,
+				                    "threshold": 1500000
+				                },
+				                {
+				                    "achievementType": 0,
+				                    "threshold": 100000
+				                },
+				                {
+				                    "achievementType": 1,
+				                    "threshold": 2500000
+				                },
+				                {
+				                    "achievementType": 0,
+				                    "threshold": 200000
+				                },
+				                {
+				                    "achievementType": 26,
+				                    "threshold": 25
+				                },
+				                {
+				                    "achievementType": 25,
+				                    "threshold": 200
+				                },
+				                {
+				                    "achievementType": 26,
+				                    "threshold": 50
+				                },
+				                {
+				                    "achievementType": 25,
+				                    "threshold": 500
+				                },
+				                {
+				                    "achievementType": 26,
+				                    "threshold": 75
+				                },
+				                {
+				                    "achievementType": 25,
+				                    "threshold": 1000
+				                },
+				                {
+				                    "achievementType": 26,
+				                    "threshold": 100
+				                }
+				            ]
+				        },
+				        {
+				            "portraitImageRef": "13379",
+				            "portraitNameRef": "12592",
+				            "achievements": [
+				                {
+				                    "achievementType": 9,
+				                    "threshold": 1500
+				                },
+				                {
+				                    "achievementType": 8,
+				                    "threshold": 100000
+				                },
+				                {
+				                    "achievementType": 24,
+				                    "threshold": 2500
+				                },
+				                {
+				                    "achievementType": 23,
+				                    "threshold": 100000
+				                },
+				                {
+				                    "achievementType": 13,
+				                    "threshold": 1500
+				                },
+				                {
+				                    "achievementType": 12,
+				                    "threshold": 100000
+				                },
+				                {
+				                    "achievementType": 15,
+				                    "threshold": 2500
+				                },
+				                {
+				                    "achievementType": 14,
+				                    "threshold": 100000
+				                },
+				                {
+				                    "achievementType": 20,
+				                    "threshold": 1500
+				                },
+				                {
+				                    "achievementType": 19,
+				                    "threshold": 100000
+				                },
+				                {
+				                    "achievementType": 22,
+				                    "threshold": 2500
+				                },
+				                {
+				                    "achievementType": 21,
+				                    "threshold": 100000
+				                },
+				                {
+				                    "achievementType": 17,
+				                    "threshold": 150
+				                },
+				                {
+				                    "achievementType": 17,
+				                    "threshold": 300
+				                },
+				                {
+				                    "achievementType": 10,
+				                    "threshold": 150
+				                },
+				                {
+				                    "achievementType": 10,
+				                    "threshold": 300
+				                }
+				            ]
+				        },
+				        {
+				            "portraitImageRef": "13380",
+				            "portraitNameRef": "12595",
+				            "achievements": [
+				                {
+				                    "achievementType": 53,
+				                    "threshold": 50
+				                },
+				                {
+				                    "achievementType": 52,
+				                    "threshold": 10000
+				                },
+				                {
+				                    "achievementType": 52,
+				                    "threshold": 50000
+				                },
+				                {
+				                    "achievementType": 28,
+				                    "threshold": 25
+				                },
+				                {
+				                    "achievementType": 27,
+				                    "threshold": 100
+				                },
+				                {
+				                    "achievementType": 33,
+				                    "threshold": 25
+				                },
+				                {
+				                    "achievementType": 32,
+				                    "threshold": 100
+				                },
+				                {
+				                    "achievementType": 35,
+				                    "threshold": 25
+				                },
+				                {
+				                    "achievementType": 34,
+				                    "threshold": 100
+				                },
+				                {
+				                    "achievementType": 31,
+				                    "threshold": 20
+				                },
+				                {
+				                    "achievementType": 29,
+				                    "threshold": 100
+				                },
+				                {
+				                    "achievementType": 25,
+				                    "threshold": 5000
+				                },
+				                {
+				                    "achievementType": 25,
+				                    "threshold": 10000
+				                },
+				                {
+				                    "achievementType": 25,
+				                    "threshold": 15000
+				                },
+				                {
+				                    "achievementType": 25,
+				                    "threshold": 25000
+				                },
+				                {
+				                    "achievementType": 25,
+				                    "threshold": 50000
+				                }
+				            ]
+				        },
+				        {
+				            "portraitImageRef": "13382",
+				            "portraitNameRef": "12598",
+				            "achievements": [
+				                {
+				                    "achievementType": 36,
+				                    "threshold": 200
+				                },
+				                {
+				                    "achievementType": 50,
+				                    "threshold": 150
+				                },
+				                {
+				                    "achievementType": 40,
+				                    "threshold": 200
+				                },
+				                {
+				                    "achievementType": 42,
+				                    "threshold": 150
+				                },
+				                {
+				                    "achievementType": 46,
+				                    "threshold": 200
+				                },
+				                {
+				                    "achievementType": 48,
+				                    "threshold": 150
+				                },
+				                {
+				                    "achievementType": 44,
+				                    "threshold": 25
+				                },
+				                {
+				                    "achievementType": 38,
+				                    "threshold": 25
+				                },
+				                {
+				                    "achievementType": 7,
+				                    "threshold": 25
+				                },
+				                {
+				                    "achievementType": 6,
+				                    "threshold": 1500
+				                },
+				                {
+				                    "achievementType": 7,
+				                    "threshold": 50
+				                },
+				                {
+				                    "achievementType": 6,
+				                    "threshold": 2500
+				                },
+				                {
+				                    "achievementType": 7,
+				                    "threshold": 75
+				                },
+				                {
+				                    "achievementType": 6,
+				                    "threshold": 5000
+				                },
+				                {
+				                    "achievementType": 64,
+				                    "threshold": 150
+				                },
+				                {
+				                    "achievementType": 64,
+				                    "threshold": 300
+				                }
+				            ]
+				        },
+				        {
+				            "portraitImageRef": "13383",
+				            "portraitNameRef": "12601",
+				            "achievements": [
+				                {
+				                    "achievementType": 3,
+				                    "threshold": 100
+				                },
+				                {
+				                    "achievementType": 2,
+				                    "threshold": 10000
+				                },
+				                {
+				                    "achievementType": 5,
+				                    "threshold": 100
+				                },
+				                {
+				                    "achievementType": 4,
+				                    "threshold": 10000
+				                },
+				                {
+				                    "achievementType": 3,
+				                    "threshold": 150
+				                },
+				                {
+				                    "achievementType": 2,
+				                    "threshold": 10000
+				                },
+				                {
+				                    "achievementType": 5,
+				                    "threshold": 150
+				                },
+				                {
+				                    "achievementType": 4,
+				                    "threshold": 10000
+				                },
+				                {
+				                    "achievementType": 60,
+				                    "threshold": 150
+				                },
+				                {
+				                    "achievementType": 60,
+				                    "threshold": 300
+				                },
+				                {
+				                    "achievementType": 62,
+				                    "threshold": 150
+				                },
+				                {
+				                    "achievementType": 62,
+				                    "threshold": 300
+				                },
+				                {
+				                    "achievementType": 55,
+				                    "threshold": 150
+				                },
+				                {
+				                    "achievementType": 54,
+				                    "threshold": 150
+				                },
+				                {
+				                    "achievementType": 56,
+				                    "threshold": 150
+				                },
+				                {
+				                    "achievementType": 58,
+				                    "threshold": 150
+				                }
+				            ]
+				        },
+				        {
+				            "portraitImageRef": "13378",
+				            "portraitNameRef": "12604",
+				            "achievements": [
+				                {
+				                    "achievementType": 36,
+				                    "threshold": 1000
+				                },
+				                {
+				                    "achievementType": 50,
+				                    "threshold": 1000
+				                },
+				                {
+				                    "achievementType": 40,
+				                    "threshold": 1000
+				                },
+				                {
+				                    "achievementType": 42,
+				                    "threshold": 1000
+				                },
+				                {
+				                    "achievementType": 46,
+				                    "threshold": 1000
+				                },
+				                {
+				                    "achievementType": 48,
+				                    "threshold": 1000
+				                },
+				                {
+				                    "achievementType": 44,
+				                    "threshold": 50
+				                },
+				                {
+				                    "achievementType": 38,
+				                    "threshold": 50
+				                },
+				                {
+				                    "achievementType": 8,
+				                    "threshold": 500000
+				                },
+				                {
+				                    "achievementType": 23,
+				                    "threshold": 500000
+				                },
+				                {
+				                    "achievementType": 12,
+				                    "threshold": 500000
+				                },
+				                {
+				                    "achievementType": 14,
+				                    "threshold": 500000
+				                },
+				                {
+				                    "achievementType": 19,
+				                    "threshold": 500000
+				                },
+				                {
+				                    "achievementType": 21,
+				                    "threshold": 500000
+				                },
+				                {
+				                    "achievementType": 17,
+				                    "threshold": 5000
+				                },
+				                {
+				                    "achievementType": 10,
+				                    "threshold": 5000
+				                }
+				            ]
+				        }
+				    ],
+				    "gridSizeRow": 9,
+				    "gridSizeCol": 9,
+				    "powerupIncrement": 20,
+				    "boosterShapes": [
+				        {
+				            "boosterType": 4,
+				            "variations": [
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 2,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": -1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": -2,
+				                            "y": 0
+				                        }
+				                    ]
+				                }
+				            ]
+				        },
+				        {
+				            "boosterType": 4,
+				            "variations": [
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 2
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -2
+				                        }
+				                    ]
+				                }
+				            ]
+				        },
+				        {
+				            "boosterType": 3,
+				            "variations": [
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -1
+				                        },
+				                        {
+				                            "x": 1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": -1,
+				                            "y": 0
+				                        }
+				                    ]
+				                }
+				            ]
+				        },
+				        {
+				            "boosterType": 3,
+				            "variations": [
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 2
+				                        },
+				                        {
+				                            "x": 1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 2,
+				                            "y": 0
+				                        }
+				                    ]
+				                },
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 2
+				                        },
+				                        {
+				                            "x": -1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": -2,
+				                            "y": 0
+				                        }
+				                    ]
+				                },
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -2
+				                        },
+				                        {
+				                            "x": -1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": -2,
+				                            "y": 0
+				                        }
+				                    ]
+				                },
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -2
+				                        },
+				                        {
+				                            "x": 1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 2,
+				                            "y": 0
+				                        }
+				                    ]
+				                }
+				            ]
+				        },
+				        {
+				            "boosterType": 3,
+				            "variations": [
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -1
+				                        },
+				                        {
+				                            "x": 1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 2,
+				                            "y": 0
+				                        }
+				                    ]
+				                },
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -1
+				                        },
+				                        {
+				                            "x": -1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": -2,
+				                            "y": 0
+				                        }
+				                    ]
+				                },
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": -1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 2
+				                        }
+				                    ]
+				                },
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": -1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -2
+				                        }
+				                    ]
+				                }
+				            ]
+				        },
+				        {
+				            "boosterType": 2,
+				            "variations": [
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 2,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 3,
+				                            "y": 0
+				                        }
+				                    ]
+				                },
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 2,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": -1,
+				                            "y": 0
+				                        }
+				                    ]
+				                },
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": -1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": -2,
+				                            "y": 0
+				                        }
+				                    ]
+				                },
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": -1,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": -2,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": -3,
+				                            "y": 0
+				                        }
+				                    ]
+				                }
+				            ]
+				        },
+				        {
+				            "boosterType": 1,
+				            "variations": [
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 2
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 3
+				                        }
+				                    ]
+				                },
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 2
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -1
+				                        }
+				                    ]
+				                },
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": 1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -2
+				                        }
+				                    ]
+				                },
+				                {
+				                    "offsets": [
+				                        {
+				                            "x": 0,
+				                            "y": 0
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -1
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -2
+				                        },
+				                        {
+				                            "x": 0,
+				                            "y": -3
+				                        }
+				                    ]
+				                }
+				            ]
+				        }
+				    ],
+				    "levelGrowthRate": {
+				        "_roundToNearest": 50,
+				        "_startingLevelScore": 500,
+				        "_growthRate": 2.5,
+				        "_offset": 125,
+				        "_useDebugScore": false,
+				        "_debugScore": 1000
+				    },
+				    "specialOrders": [
+				        {
+				            "_fromLevelNumber": 1,
+				            "_toLevelNumber": 9,
+				            "_isToLevelInfinite": false,
+				            "_regularLevelAppearancePercent": 100,
+				            "_accessoriesAppearancePercent": 0,
+				            "_eggsAppearancePercent": 0,
+				            "_limitedMovesAppearancePercent": 0,
+				            "_comboAppearancePercent": 0
+				        },
+				        {
+				            "_fromLevelNumber": 10,
+				            "_toLevelNumber": 24,
+				            "_isToLevelInfinite": false,
+				            "_regularLevelAppearancePercent": 20,
+				            "_accessoriesAppearancePercent": 30,
+				            "_eggsAppearancePercent": 30,
+				            "_limitedMovesAppearancePercent": 0,
+				            "_comboAppearancePercent": 15
+				        },
+				        {
+				            "_fromLevelNumber": 25,
+				            "_toLevelNumber": 49,
+				            "_isToLevelInfinite": false,
+				            "_regularLevelAppearancePercent": 20,
+				            "_accessoriesAppearancePercent": 18,
+				            "_eggsAppearancePercent": 17,
+				            "_limitedMovesAppearancePercent": 25,
+				            "_comboAppearancePercent": 15
+				        },
+				        {
+				            "_fromLevelNumber": 50,
+				            "_toLevelNumber": 74,
+				            "_isToLevelInfinite": false,
+				            "_regularLevelAppearancePercent": 10,
+				            "_accessoriesAppearancePercent": 18,
+				            "_eggsAppearancePercent": 17,
+				            "_limitedMovesAppearancePercent": 30,
+				            "_comboAppearancePercent": 25
+				        },
+				        {
+				            "_fromLevelNumber": 75,
+				            "_toLevelNumber": 149,
+				            "_isToLevelInfinite": false,
+				            "_regularLevelAppearancePercent": 20,
+				            "_accessoriesAppearancePercent": 13,
+				            "_eggsAppearancePercent": 12,
+				            "_limitedMovesAppearancePercent": 30,
+				            "_comboAppearancePercent": 25
+				        },
+				        {
+				            "_fromLevelNumber": 150,
+				            "_toLevelNumber": 249,
+				            "_isToLevelInfinite": false,
+				            "_regularLevelAppearancePercent": 5,
+				            "_accessoriesAppearancePercent": 8,
+				            "_eggsAppearancePercent": 7,
+				            "_limitedMovesAppearancePercent": 35,
+				            "_comboAppearancePercent": 45
+				        },
+				        {
+				            "_fromLevelNumber": 250,
+				            "_toLevelNumber": 300,
+				            "_isToLevelInfinite": true,
+				            "_regularLevelAppearancePercent": 0,
+				            "_accessoriesAppearancePercent": 8,
+				            "_eggsAppearancePercent": 7,
+				            "_limitedMovesAppearancePercent": 50,
+				            "_comboAppearancePercent": 35
+				        }
+				    ],
+				    "specialOrderCountRanges": [
+				        {
+				            "_fromLevelNumber": 1,
+				            "_toLevelNumber": 9,
+				            "_isToLevelInfinite": false,
+				            "_minimumAccessoryCount": 0,
+				            "_maximumAccessoryCount": 0,
+				            "_minimumEggRowCount": 0,
+				            "_maximumEggRowCount": 0,
+				            "_minimumLimitedMovesOnlyCount": 0,
+				            "_maximumLimitedMovesOnlyCount": 0,
+				            "_minimumLimitedMovesComboCount": 0,
+				            "_maximumLimitedMovesComboCount": 0
+				        },
+				        {
+				            "_fromLevelNumber": 10,
+				            "_toLevelNumber": 49,
+				            "_isToLevelInfinite": false,
+				            "_minimumAccessoryCount": 1,
+				            "_maximumAccessoryCount": 5,
+				            "_minimumEggRowCount": 0,
+				            "_maximumEggRowCount": 1,
+				            "_minimumLimitedMovesOnlyCount": 10,
+				            "_maximumLimitedMovesOnlyCount": 20,
+				            "_minimumLimitedMovesComboCount": 30,
+				            "_maximumLimitedMovesComboCount": 35
+				        },
+				        {
+				            "_fromLevelNumber": 50,
+				            "_toLevelNumber": 74,
+				            "_isToLevelInfinite": false,
+				            "_minimumAccessoryCount": 5,
+				            "_maximumAccessoryCount": 10,
+				            "_minimumEggRowCount": 1,
+				            "_maximumEggRowCount": 3,
+				            "_minimumLimitedMovesOnlyCount": 10,
+				            "_maximumLimitedMovesOnlyCount": 15,
+				            "_minimumLimitedMovesComboCount": 30,
+				            "_maximumLimitedMovesComboCount": 35
+				        },
+				        {
+				            "_fromLevelNumber": 75,
+				            "_toLevelNumber": 149,
+				            "_isToLevelInfinite": false,
+				            "_minimumAccessoryCount": 1,
+				            "_maximumAccessoryCount": 7,
+				            "_minimumEggRowCount": 0,
+				            "_maximumEggRowCount": 4,
+				            "_minimumLimitedMovesOnlyCount": 10,
+				            "_maximumLimitedMovesOnlyCount": 15,
+				            "_minimumLimitedMovesComboCount": 25,
+				            "_maximumLimitedMovesComboCount": 30
+				        },
+				        {
+				            "_fromLevelNumber": 150,
+				            "_toLevelNumber": 249,
+				            "_isToLevelInfinite": false,
+				            "_minimumAccessoryCount": 5,
+				            "_maximumAccessoryCount": 10,
+				            "_minimumEggRowCount": 2,
+				            "_maximumEggRowCount": 4,
+				            "_minimumLimitedMovesOnlyCount": 7,
+				            "_maximumLimitedMovesOnlyCount": 10,
+				            "_minimumLimitedMovesComboCount": 20,
+				            "_maximumLimitedMovesComboCount": 25
+				        },
+				        {
+				            "_fromLevelNumber": 250,
+				            "_toLevelNumber": 300,
+				            "_isToLevelInfinite": true,
+				            "_minimumAccessoryCount": 5,
+				            "_maximumAccessoryCount": 15,
+				            "_minimumEggRowCount": 3,
+				            "_maximumEggRowCount": 6,
+				            "_minimumLimitedMovesOnlyCount": 5,
+				            "_maximumLimitedMovesOnlyCount": 7,
+				            "_minimumLimitedMovesComboCount": 15,
+				            "_maximumLimitedMovesComboCount": 20
+				        }
+				    ],
+				    "persistentAchievementDataUserVarDefId": "13392",
+				    "puzzleRedemptionStatusUserVarDefId": "13404",
+				    "puzzlePieceRedemptionStatusUserVarDefId": "13405",
+				    "savedGameUserVarDefId": "30613",
+				    "achievementToUserVarIndexList": [
+				        {
+				            "achievementType": 0,
+				            "userVarIndex": 0
+				        },
+				        {
+				            "achievementType": 1,
+				            "userVarIndex": 1
+				        },
+				        {
+				            "achievementType": 2,
+				            "userVarIndex": 2
+				        },
+				        {
+				            "achievementType": 3,
+				            "userVarIndex": 13
+				        },
+				        {
+				            "achievementType": 4,
+				            "userVarIndex": 3
+				        },
+				        {
+				            "achievementType": 5,
+				            "userVarIndex": 14
+				        },
+				        {
+				            "achievementType": 6,
+				            "userVarIndex": 4
+				        },
+				        {
+				            "achievementType": 7,
+				            "userVarIndex": 15
+				        },
+				        {
+				            "achievementType": 8,
+				            "userVarIndex": 5
+				        },
+				        {
+				            "achievementType": 9,
+				            "userVarIndex": 21
+				        },
+				        {
+				            "achievementType": 10,
+				            "userVarIndex": 6
+				        },
+				        {
+				            "achievementType": 11,
+				            "userVarIndex": 17
+				        },
+				        {
+				            "achievementType": 12,
+				            "userVarIndex": 7
+				        },
+				        {
+				            "achievementType": 13,
+				            "userVarIndex": 18
+				        },
+				        {
+				            "achievementType": 14,
+				            "userVarIndex": 8
+				        },
+				        {
+				            "achievementType": 15,
+				            "userVarIndex": 23
+				        },
+				        {
+				            "achievementType": 17,
+				            "userVarIndex": 9
+				        },
+				        {
+				            "achievementType": 18,
+				            "userVarIndex": 19
+				        },
+				        {
+				            "achievementType": 19,
+				            "userVarIndex": 10
+				        },
+				        {
+				            "achievementType": 20,
+				            "userVarIndex": 22
+				        },
+				        {
+				            "achievementType": 21,
+				            "userVarIndex": 11
+				        },
+				        {
+				            "achievementType": 22,
+				            "userVarIndex": 20
+				        },
+				        {
+				            "achievementType": 23,
+				            "userVarIndex": 12
+				        },
+				        {
+				            "achievementType": 24,
+				            "userVarIndex": 16
+				        },
+				        {
+				            "achievementType": 25,
+				            "userVarIndex": 24
+				        },
+				        {
+				            "achievementType": 26,
+				            "userVarIndex": 25
+				        },
+				        {
+				            "achievementType": 27,
+				            "userVarIndex": 26
+				        },
+				        {
+				            "achievementType": 28,
+				            "userVarIndex": 27
+				        },
+				        {
+				            "achievementType": 29,
+				            "userVarIndex": 28
+				        },
+				        {
+				            "achievementType": 31,
+				            "userVarIndex": 29
+				        },
+				        {
+				            "achievementType": 32,
+				            "userVarIndex": 30
+				        },
+				        {
+				            "achievementType": 33,
+				            "userVarIndex": 31
+				        },
+				        {
+				            "achievementType": 34,
+				            "userVarIndex": 32
+				        },
+				        {
+				            "achievementType": 35,
+				            "userVarIndex": 33
+				        },
+				        {
+				            "achievementType": 36,
+				            "userVarIndex": 44
+				        },
+				        {
+				            "achievementType": 37,
+				            "userVarIndex": 45
+				        },
+				        {
+				            "achievementType": 38,
+				            "userVarIndex": 36
+				        },
+				        {
+				            "achievementType": 39,
+				            "userVarIndex": 37
+				        },
+				        {
+				            "achievementType": 40,
+				            "userVarIndex": 38
+				        },
+				        {
+				            "achievementType": 41,
+				            "userVarIndex": 39
+				        },
+				        {
+				            "achievementType": 42,
+				            "userVarIndex": 48
+				        },
+				        {
+				            "achievementType": 43,
+				            "userVarIndex": 49
+				        },
+				        {
+				            "achievementType": 44,
+				            "userVarIndex": 40
+				        },
+				        {
+				            "achievementType": 45,
+				            "userVarIndex": 41
+				        },
+				        {
+				            "achievementType": 46,
+				            "userVarIndex": 46
+				        },
+				        {
+				            "achievementType": 47,
+				            "userVarIndex": 47
+				        },
+				        {
+				            "achievementType": 48,
+				            "userVarIndex": 42
+				        },
+				        {
+				            "achievementType": 49,
+				            "userVarIndex": 43
+				        },
+				        {
+				            "achievementType": 50,
+				            "userVarIndex": 34
+				        },
+				        {
+				            "achievementType": 51,
+				            "userVarIndex": 35
+				        },
+				        {
+				            "achievementType": 52,
+				            "userVarIndex": 51
+				        },
+				        {
+				            "achievementType": 53,
+				            "userVarIndex": 50
+				        },
+				        {
+				            "achievementType": 54,
+				            "userVarIndex": 54
+				        },
+				        {
+				            "achievementType": 55,
+				            "userVarIndex": 55
+				        },
+				        {
+				            "achievementType": 56,
+				            "userVarIndex": 56
+				        },
+				        {
+				            "achievementType": 57,
+				            "userVarIndex": 57
+				        },
+				        {
+				            "achievementType": 58,
+				            "userVarIndex": 52
+				        },
+				        {
+				            "achievementType": 59,
+				            "userVarIndex": 53
+				        },
+				        {
+				            "achievementType": 60,
+				            "userVarIndex": 58
+				        },
+				        {
+				            "achievementType": 61,
+				            "userVarIndex": 59
+				        },
+				        {
+				            "achievementType": 62,
+				            "userVarIndex": 60
+				        },
+				        {
+				            "achievementType": 63,
+				            "userVarIndex": 61
+				        },
+				        {
+				            "achievementType": 64,
+				            "userVarIndex": 62
+				        },
+				        {
+				            "achievementType": 65,
+				            "userVarIndex": 63
+				        }
+				    ]
+				}
+			}
+	]
+}
