@@ -35,7 +35,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
     private String currentGameUUID;
     public GameState gameState;
-    public int level = 1;
+    public int level = 0;
     private int score = 0;
     private int moveCount = 0;
     private int dizzyBirdMeter = 0;
@@ -141,27 +141,32 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             public void newLevelNewObjectives(){
 
                 currScore = 0;
+                if(level != 0){
 
-                for(JsonElement ele : specialOrders){
-                    JsonObject data = ele.getAsJsonObject();
-                    if((level >= data.get("_fromLevelNumber").getAsInt() &&
+                    for(JsonElement ele : specialOrders){
+                        JsonObject data = ele.getAsJsonObject();
+                        if((level >= data.get("_fromLevelNumber").getAsInt() &&
                         level <= data.get("_toLevelNumber").getAsInt()) || 
                         data.get("_isToLevelInfinite").getAsBoolean()){
-
-                        specialOrderData = data;
-                        break;
+                            
+                            specialOrderData = data;
+                            break;
+                        }
                     }
-                }
 
-                for(JsonElement ele : specialOrderCountRanges){
-                    JsonObject data = ele.getAsJsonObject();
-                    if((level >= data.get("_fromLevelNumber").getAsInt() &&
+                    for(JsonElement ele : specialOrderCountRanges){
+                        JsonObject data = ele.getAsJsonObject();
+                        if((level >= data.get("_fromLevelNumber").getAsInt() &&
                         level <= data.get("_toLevelNumber").getAsInt()) || 
                         data.get("_isToLevelInfinite").getAsBoolean()){
-
-                        specialOrderCountRangeData = data;
-                        break;
+                            
+                            specialOrderCountRangeData = data;
+                            break;
+                        }
                     }
+                } else {
+                    specialOrderData = specialOrders.get(0).getAsJsonObject();
+                    specialOrderCountRangeData = specialOrderCountRanges.get(0).getAsJsonObject();
                 }
 
                 initObjective(LevelObjectiveType.ScoreRequirement, scoreRequirement());
@@ -227,11 +232,11 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 if(goToNextLevel){
                     level++;
                     newLevelNewObjectives();
-                    if(level == 25){
+                    if(level > 25 && !spawnTiles.contains(TileType.AquaBird)){
                         spawnTiles.add(TileType.AquaBird);
-                    } else if (level == 75){
+                    } else if (level > 75 && !spawnTiles.contains(TileType.BlueBird)){
                         spawnTiles.add(TileType.BlueBird);
-                    } else if (level == 100){
+                    } else if (level > 100 && !spawnTiles.contains(TileType.PinkBird)){
                         spawnTiles.add(TileType.PinkBird);
                     }
                 }
@@ -311,10 +316,17 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
             
             private Integer initObjective(LevelObjectiveType objectiveType, String minimum, String maximum){
-                objectivesTracker[objectiveType.ordinal()][0] = randomizer.nextInt(
+                
+                Integer goal = randomizer.nextInt(
                     specialOrderCountRangeData.get(minimum).getAsInt(),
                     specialOrderCountRangeData.get(maximum).getAsInt()+1);
-                objectivesTracker[objectiveType.ordinal()][1] = 0;
+                if(goal > 0){
+                    objectivesTracker[objectiveType.ordinal()][0] = goal;
+                    objectivesTracker[objectiveType.ordinal()][1] = 0;
+                } else {
+                    objectivesTracker[objectiveType.ordinal()][0] = -1;
+                    objectivesTracker[objectiveType.ordinal()][1] = -1;
+                }
                 
                 Centuria.logger.info(objectiveType.ordinal() + " " + objectivesTracker[objectiveType.ordinal()][0]);
                 return objectivesTracker[objectiveType.ordinal()][0];
@@ -770,7 +782,14 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             for(int y = pos.y-d; y <= pos.y+d; y++){
                 for(int x = 0; x < gridSize.x; x++){
                     Vector2i curr = new Vector2i(x, y);
-                    clearCell(curr, true, false);
+                    if(getCell(curr) != null){
+                        if(getCell(curr).getBooster() != BoosterType.BuzzyBirdHorizontal){
+                            clearCell(curr, true, false);
+                        } else {
+                            clearCell(curr, true, true);
+                            buzzyBirdVerticalBehaviour(curr, 1);
+                        }
+                    }
                 }
             }
             fillGaps();
@@ -785,7 +804,14 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             for(int x = pos.x-d; x <= pos.x+d; x++){
                 for(int y = 0; y < gridSize.y; y++){
                     Vector2i curr = new Vector2i(x, y);
-                    clearCell(curr, true, false);
+                    if(getCell(curr) != null){
+                        if(getCell(curr).getBooster() != BoosterType.BuzzyBirdVertical){
+                            clearCell(curr, true, false);
+                        } else {
+                            clearCell(curr, true, true);
+                            buzzyBirdHorizontalBehaviour(curr, 1);
+                        }
+                    }
                 }
             }
             fillGaps();
@@ -1099,6 +1125,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         }
 
         public List<int[]> getObjectiveProgress(){
+            objectives.trackEggsAndClothing();
             List<int[]> progress = new ArrayList<>();
             for(LevelObjectiveType objectiveType : LevelObjectiveType.values()){
                 int[] objectiveData = objectives.objectivesTracker[objectiveType.ordinal()];
@@ -1204,7 +1231,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     private void resetSavedGameUserVar(Player player) {
 
         // reset these values as a new game has been started
-        level = 1;
+        level = 0;
         score = 0;
         moveCount = 0;
         dizzyBirdMeter = 0;
