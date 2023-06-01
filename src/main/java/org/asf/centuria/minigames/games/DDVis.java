@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JFrame;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
@@ -38,6 +39,7 @@ public class DDVis {
 		frame.getContentPane().setLayout(null);
 
 		MyMouseListener myMouseListener = new MyMouseListener();
+		LevelIncrementListener levelIncrementListener = new LevelIncrementListener();
 
 		for (int y = 0; y < 9; y++)
 		{
@@ -51,6 +53,11 @@ public class DDVis {
 				gameBoardDisplayInverseMapping.put(l1, new Vector2i(x, 8-y));
 			}
 		}
+
+		JButton b = new JButton("next level");
+		b.setBounds((1000/9)*1, (500/9)*10, (1000/9), (500/9));
+		b.addMouseListener(levelIncrementListener);
+		frame.getContentPane().add(b);
 
 
 		new Thread(() -> {
@@ -132,6 +139,20 @@ public class DDVis {
 				}
 	
 				ses.gameState.setCell(pos, curr);
+				ses.syncClient(Centuria.gameServer.getPlayers()[0], new XtReader(""));
+			}
+		}
+		
+	}
+
+	class LevelIncrementListener extends MouseAdapter {
+
+		@Override
+		public void mousePressed(MouseEvent e) 
+		{
+			if(ses.gameState != null){
+				ses.level++;
+				ses.gameState.objectives.newLevelNewObjectives();
 				ses.syncClient(Centuria.gameServer.getPlayers()[0], new XtReader(""));
 			}
 		}

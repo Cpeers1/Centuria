@@ -35,7 +35,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
     private String currentGameUUID;
     public GameState gameState;
-    private int level = 0;
+    public int level = 1;
     private int score = 0;
     private int moveCount = 0;
     private int dizzyBirdMeter = 0;
@@ -144,51 +144,53 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
                 for(JsonElement ele : specialOrders){
                     JsonObject data = ele.getAsJsonObject();
-                    if(level > data.get("_toLevelNumber").getAsInt() || 
-                        !data.get("_isToLevelInfinite").getAsBoolean()){
-                        continue;
-                    } else {
+                    if((level >= data.get("_fromLevelNumber").getAsInt() &&
+                        level <= data.get("_toLevelNumber").getAsInt()) || 
+                        data.get("_isToLevelInfinite").getAsBoolean()){
+
                         specialOrderData = data;
+                        break;
                     }
                 }
 
                 for(JsonElement ele : specialOrderCountRanges){
                     JsonObject data = ele.getAsJsonObject();
-                    if(level > data.get("_toLevelNumber").getAsInt() || 
-                        !data.get("_isToLevelInfinite").getAsBoolean()){
-                        continue;
-                    } else {
+                    if((level >= data.get("_fromLevelNumber").getAsInt() &&
+                        level <= data.get("_toLevelNumber").getAsInt()) || 
+                        data.get("_isToLevelInfinite").getAsBoolean()){
+
                         specialOrderCountRangeData = data;
+                        break;
                     }
                 }
 
                 initObjective(LevelObjectiveType.ScoreRequirement, scoreRequirement());
 
-                if(!diceRoll("_regularLevelAppearancePercent", true)){
+                if(!diceRoll("_regularLevelAppearancePercent")){
 
                     Integer clothing = 0;
                     Integer eggs = 0;
 
-                    if(diceRoll("_accessoriesAppearancePercent", false)){
+                    if(diceRoll("_accessoriesAppearancePercent")){
                         clothing = initObjective(LevelObjectiveType.ClothingLeft, "_minimumAccessoryCount", "_maximumAccessoryCount");
                     } else {
                         clearObjective(LevelObjectiveType.ClothingLeft);
                     }
                     
-                    if (diceRoll("_eggsAppearancePercent", false)){
+                    if (diceRoll("_eggsAppearancePercent")){
                         eggs = initObjective(LevelObjectiveType.EggsLeft, "_minimumEggRowCount", "_maximumEggRowCount");
                     } else {
                         clearObjective(LevelObjectiveType.EggsLeft);
                     }
                     
-                    if (diceRoll("_limitedMovesAppearancePercent", false)){
+                    if (diceRoll("_limitedMovesAppearancePercent")){
                         initObjective(LevelObjectiveType.MovesLeft, "_minimumLimitedMovesOnlyCount", "_maximumLimitedMovesOnlyCount");
                     } else {
                         clearObjective(LevelObjectiveType.MovesLeft);
                     }
 
-                    for(int x = gridSize.x-1; x >= 0; x--){
-                        for(int y = gridSize.y-1; y >= 0; y--){
+                    for(int y = gridSize.y-1; y >= 0; y--){
+                        for(int x = gridSize.x-1; x >= 0; x--){
                             Vector2i curr = new Vector2i(x, y);
                             GridCell currCell = getCell(curr);
     
@@ -212,6 +214,31 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 
             }
 
+            public Boolean isNextLevel(){
+                trackEggsAndClothing();
+
+                Boolean goToNextLevel = true;
+                goToNextLevel &= isAchieved(LevelObjectiveType.ClothingLeft);
+                goToNextLevel &= isAchieved(LevelObjectiveType.EggsLeft);
+                goToNextLevel &= isAchieved(LevelObjectiveType.ScoreRequirement);
+                goToNextLevel &= !hasRunOutOfMoves();
+                goToNextLevel &= isObjective(LevelObjectiveType.ScoreRequirement);
+
+                if(goToNextLevel){
+                    level++;
+                    newLevelNewObjectives();
+                    if(level == 25){
+                        spawnTiles.add(TileType.AquaBird);
+                    } else if (level == 75){
+                        spawnTiles.add(TileType.BlueBird);
+                    } else if (level == 100){
+                        spawnTiles.add(TileType.PinkBird);
+                    }
+                }
+
+                return goToNextLevel;
+            }
+
             public void addScore(Integer increase){
                 currScore += increase;
                 updateObjective(LevelObjectiveType.ScoreRequirement, currScore);
@@ -232,83 +259,80 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
 
             private void trackEggsAndClothing(){
-                Integer numberOfEggs = 0;
-                for(int x = 0; x < gridSize.x; x++){
-                    for(int y = 0; y < gridSize.y; y++){
-                        Vector2i curr = new Vector2i(x, y);
+                if(isObjective(LevelObjectiveType.EggsLeft)){
+                    Integer numberOfEggs = 0;
+                    for(int x = 0; x < gridSize.x; x++){
+                        for(int y = 0; y < gridSize.y; y++){
+                            Vector2i curr = new Vector2i(x, y);
 
-                        if(getCell(curr).getHealth() > 0) {
-                            numberOfEggs++;
+                            if(getCell(curr).getHealth() > 0) {
+                                numberOfEggs++;
+                            }
                         }
                     }
+                    updateObjectiveRemaining(LevelObjectiveType.EggsLeft, numberOfEggs);
                 }
-                updateObjectiveRemaining(LevelObjectiveType.EggsLeft, numberOfEggs);
 
-                Integer numberOfClothing = 0;
-                for(int x = 0; x < gridSize.x; x++){
-                    for(int y = 0; y < gridSize.y; y++){
-                        Vector2i curr = new Vector2i(x, y);
+                if(isObjective(LevelObjectiveType.ClothingLeft)){
+                    Integer numberOfClothing = 0;
+                    for(int x = 0; x < gridSize.x; x++){
+                        for(int y = 0; y < gridSize.y; y++){
+                            Vector2i curr = new Vector2i(x, y);
 
-                        if(getCell(curr).getTileType() == TileType.HatOrPurse) {
-                            numberOfClothing++;
+                            if(getCell(curr).getTileType() == TileType.HatOrPurse) {
+                                numberOfClothing++;
+                            }
                         }
                     }
+                    updateObjectiveRemaining(LevelObjectiveType.ClothingLeft, numberOfClothing);
                 }
-                updateObjectiveRemaining(LevelObjectiveType.ClothingLeft, numberOfClothing);
             }
-
-            public Boolean isNextLevel(){
-                trackEggsAndClothing();
-
-                Boolean goToNextLevel = true;
-                goToNextLevel &= isAchieved(LevelObjectiveType.ClothingLeft);
-                goToNextLevel &= isAchieved(LevelObjectiveType.EggsLeft);
-                goToNextLevel &= isAchieved(LevelObjectiveType.ScoreRequirement);
-                goToNextLevel &= !hasRunOutOfMoves();
-
-                if(goToNextLevel){
-                    level++;
-                    newLevelNewObjectives();
-                    if(level == 25){
-                        spawnTiles.add(TileType.AquaBird);
-                    } else if (level == 75){
-                        spawnTiles.add(TileType.BlueBird);
-                    } else if (level == 100){
-                        spawnTiles.add(TileType.PinkBird);
-                    }
-                }
-
-                return goToNextLevel;
-            }
-
 
             // helper functions
 
-            private Boolean diceRoll(String attribute, Boolean overHundred){
-                if(overHundred){
-                    return randomizer.nextInt(100) < 
-                    specialOrderData.get(attribute).getAsInt();
-                } else {
-                    Integer newTotal = specialOrderData.get("_accessoriesAppearancePercent").getAsInt() +
-                                        specialOrderData.get("_eggsAppearancePercent").getAsInt() +
-                                        specialOrderData.get("_limitedMovesAppearancePercent").getAsInt();
-                    return randomizer.nextInt(newTotal) < 
-                    specialOrderData.get(attribute).getAsInt();
+            private Boolean diceRoll(String attribute){
+                Centuria.logger.info(specialOrderData.get(attribute).getAsString() + " " + attribute);
+                return randomizer.nextInt(100) < specialOrderData.get(attribute).getAsInt();
+            }
+            
+            private Boolean isObjective(LevelObjectiveType objectiveType) {
+                return objectivesTracker[objectiveType.ordinal()][0] != -1;
+            }
+            
+            private Boolean isAchieved(LevelObjectiveType objectiveType){
+                if(objectivesTracker[objectiveType.ordinal()][0] == -1){
+                    return true;
+                } else if (objectivesTracker[objectiveType.ordinal()][0] <=
+                objectivesTracker[objectiveType.ordinal()][1]) {
+                    return true;
+                } else{
+                    return false;
                 }
             }
             
+            private Integer initObjective(LevelObjectiveType objectiveType, String minimum, String maximum){
+                objectivesTracker[objectiveType.ordinal()][0] = randomizer.nextInt(
+                    specialOrderCountRangeData.get(minimum).getAsInt(),
+                    specialOrderCountRangeData.get(maximum).getAsInt()+1);
+                objectivesTracker[objectiveType.ordinal()][1] = 0;
+                
+                Centuria.logger.info(objectiveType.ordinal() + " " + objectivesTracker[objectiveType.ordinal()][0]);
+                return objectivesTracker[objectiveType.ordinal()][0];
+            }
+
+            private Integer scoreRequirement(){
+
+                Integer r = 50;  // round to the nearest r
+                Integer s = 500;  // starting level score
+                Float g = 2.5f; // growth rate
+                Integer o = 125; // offset
+
+                return (int) (r * Math.round((s * Math.log1p(g * (level + o) - g + 1f) + s) / r));
+            }         
+
             private void initObjective(LevelObjectiveType objectiveType, Integer requirement){
                 objectivesTracker[objectiveType.ordinal()][0] = requirement;
                 objectivesTracker[objectiveType.ordinal()][1] = 0;
-            }
-
-            private Integer initObjective(LevelObjectiveType objectiveType, String minimum, String maximum){
-                objectivesTracker[objectiveType.ordinal()][0] = gameState.randomizer.nextInt(
-                                                                specialOrderCountRangeData.get(minimum).getAsInt(),
-                                                                specialOrderCountRangeData.get(maximum).getAsInt()+1);
-                objectivesTracker[objectiveType.ordinal()][1] = 0;
-
-                return objectivesTracker[objectiveType.ordinal()][0];
             }
 
             private void clearObjective(LevelObjectiveType objectiveType){
@@ -328,31 +352,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 objectivesTracker[objectiveType.ordinal()][1] = value;
             }
 
-            private Boolean isObjective(LevelObjectiveType objectiveType) {
-                return objectivesTracker[objectiveType.ordinal()][0] != -1;
-            }
-
-            private Boolean isAchieved(LevelObjectiveType objectiveType){
-                if(objectivesTracker[objectiveType.ordinal()][0] == -1){
-                    return true;
-                } else if (objectivesTracker[objectiveType.ordinal()][0] <=
-                        objectivesTracker[objectiveType.ordinal()][1]) {
-                    return true;
-                } else{
-                    return false;
-                }
-            }
-
-            private Integer scoreRequirement(){
-
-                Integer r = 50;  // round to the nearest r
-                Integer s = 500;  // starting level score
-                Float g = 2.5f; // growth rate
-                Integer o = 125; // offset
-
-                return (int) (r * Math.round((s * Math.log1p(g * (level + o) - g + 1f) + s) / r));
-            }
-        }
+        } 
 
         enum BoosterType
         {
@@ -393,7 +393,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         private List<TileType> spawnTiles;
         private Random randomizer;
         private Integer matchComboScore;
-        private LevelObjectives objectives;
+        public LevelObjectives objectives;
 
         public GameState(){
             gridSize = new Vector2i(9, 9);
@@ -469,6 +469,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             if(eggTile != null){
                 eggTile.setHealth(0);
                 setCell(pos, eggTile);
+                objectives.trackEggsAndClothing();
             }
         }
 
@@ -658,7 +659,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         
                                     Vector2i curr = new Vector2i(x, y);
         
-                                    if(!newBoomBirds.contains(curr) && getCell(curr).getTileType() != TileType.None) {
+                                    if(getCell(curr) != null && !newBoomBirds.contains(curr) && getCell(curr).getTileType() != TileType.None) {
                                         clearCell(curr, true, false);
                                     }
                                 }
@@ -841,7 +842,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
             if(cell1 == null || cell2 == null){
                 return false;
-            } else if (cell1.getTileType() == cell2.getTileType()){
+            } else if (cell1.getTileType() == cell2.getTileType() && 
+                        cell1.getTileType() != TileType.HatOrPurse){
                          //!cell1.isBoosted() && !cell2.isBoosted() &&
                          //cell1.getHealth() == 0 && cell1.getHealth() == 0
                 
@@ -992,6 +994,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
 
             fillGaps();
+            objectives.trackEggsAndClothing();
         }
 
         public void fillGaps(){
@@ -1201,7 +1204,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     private void resetSavedGameUserVar(Player player) {
 
         // reset these values as a new game has been started
-        level = 0;
+        level = 1;
         score = 0;
         moveCount = 0;
         dizzyBirdMeter = 0;
