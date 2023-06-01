@@ -296,7 +296,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             // helper functions
 
             private Boolean diceRoll(String attribute){
-                Centuria.logger.info(specialOrderData.get(attribute).getAsString() + " " + attribute);
                 return randomizer.nextInt(100) < specialOrderData.get(attribute).getAsInt();
             }
             
@@ -328,7 +327,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     objectivesTracker[objectiveType.ordinal()][1] = -1;
                 }
                 
-                Centuria.logger.info(objectiveType.ordinal() + " " + objectivesTracker[objectiveType.ordinal()][0]);
                 return objectivesTracker[objectiveType.ordinal()][0];
             }
 
@@ -388,12 +386,80 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             None
         }
 
-        public enum LevelObjectiveType
+        enum LevelObjectiveType
         {
             ScoreRequirement,
             MovesLeft,
             EggsLeft,
             ClothingLeft
+        }
+
+        enum PuzzleObjectiveType
+        {
+            HighScore,
+            TotalScore,
+            MakeFlyers,
+            MakeFlyers_SingleGame,
+            MakeBombBirds,
+            MakeBombBirds_SingleGame,
+            MakePeacocks,
+            MakePeacocks_SingleGame,
+            ClearRedBirds,
+            ClearRedBirds_SingleGame,
+            ClearBlueBirds,
+            ClearBlueBirds_SingleGame,
+            ClearGreenBirds,
+            ClearGreenBirds_SingleGame,
+            ClearYellowBirds,
+            ClearYellowBirds_SingleGame,
+            ClearPinkBirds,
+            ClearPinkBirds_SingleGame,
+            ClearWhiteBirds,
+            ClearWhiteBirds_SingleGame,
+            ClearPurpleBirds,
+            ClearPurpleBirds_SingleGame,
+            ClearAquaBirds,
+            ClearAquaBirds_SingleGame,
+            CompleteOrders,
+            CompleteOrders_SingleGame,
+            CompleteSpecialOrders,
+            CompleteSpecialOrders_SingleGame,
+            CompleteRushHourOrders,
+            CompleteRushHourOrders_SingleGame,
+            CompleteShortStaffedOrders,
+            CompleteShortStaffedOrders_SingleGame,
+            CompleteComboOrders,
+            CompleteComboOrders_SingleGame,
+            ClearedWithPeacockRed,
+            ClearedWithPeacockRed_SingleGame,
+            ClearedWithPeacockBlue,
+            ClearedWithPeacockBlue_SingleGame,
+            ClearedWithPeacockGreen,
+            ClearedWithPeacockGreen_SingleGame,
+            ClearedWithPeacockYellow,
+            ClearedWithPeacockYellow_SingleGame,
+            ClearedWithPeacockPink,
+            ClearedWithPeacockPink_SingleGame,
+            ClearedWithPeacockWhite,
+            ClearedWithPecockWhite_SingleGame,
+            ClearedWithPeacockPurple,
+            ClearedWithPeacockPurple_SingleGame,
+            ClearedWithPeacockAqua,
+            ClearedWithPeacockAqua_SingleGame,
+            HatchPowerups,
+            HatchPowerups_SingleGame,
+            ComboFlyerBomb,
+            ComboFlyerBomb_SingleGame,
+            ComboFlyerPeacock,
+            ComboFlyerPeacock_SingleGame,
+            ComboBombPeacock,
+            ComboBombPeacock_SingleGame,
+            ComboFlyerFlyer,
+            ComboFlyerFlyer_SingleGame,
+            ComboBombBomb,
+            ComboBombBomb_SingleGame,
+            ComboPeacockPeacock,
+            ComboPeacockPeacock_SingleGame
         }
 
         // initializing the object
