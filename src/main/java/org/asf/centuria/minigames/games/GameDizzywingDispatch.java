@@ -25,6 +25,10 @@ import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPac
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigamePrizePacket;
+import org.asf.centuria.interactions.modules.ResourceCollectionModule;
+import org.asf.centuria.interactions.modules.resourcecollection.rewards.LootInfo;
+import org.asf.centuria.levelevents.LevelEvent;
+import org.asf.centuria.levelevents.LevelEventBus;
 import org.joml.Vector2i;
 
 import com.google.gson.JsonArray;
@@ -47,7 +51,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     static private JsonArray specialOrders;
     static private JsonArray specialOrderCountRanges;
     static private JsonArray levelRewards;
-    //static private JsonArray achievementPuzzles;
+    static private JsonArray puzzleRewards;
     static private JsonArray achievementToUserVarIndexList;
 
     static {
@@ -60,12 +64,11 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 			strm.close();
 
 			// Load all level data
-			JsonObject componentJSON = helper.getAsJsonArray("components").get(9).getAsJsonObject()
-                                        .getAsJsonObject("componentJSON");
+			JsonObject componentJSON = helper.getAsJsonObject();
 			specialOrders = componentJSON.getAsJsonArray("specialOrders");
 			specialOrderCountRanges = componentJSON.getAsJsonArray("specialOrderCountRanges");
 			levelRewards = componentJSON.getAsJsonArray("levelRewards");
-			//achievementPuzzles = componentJSON.getAsJsonArray("achievementPuzzles");
+			puzzleRewards = componentJSON.getAsJsonArray("puzzleRewards");
 			achievementToUserVarIndexList = componentJSON.getAsJsonArray("achievementToUserVarIndexList");
             
 		} catch (IOException e) {
@@ -376,34 +379,52 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     } else if (level > 100 && !spawnTiles.contains(TileType.PinkBird)){
                         spawnTiles.add(TileType.PinkBird);
                     }
-/* 
+
                     for(JsonElement ele : levelRewards){
-                        JsonObject reward = (JsonObject)ele;
-                        if((level >= reward.get("levelIndex").getAsInt() &&
-                            level <= reward.get("endLevelIndex").getAsInt()) || 
-                            reward.get("isEndLevelInfinite").getAsBoolean()){
+                        JsonArray rewardData = (JsonArray)ele;
+                        JsonObject levelData = (JsonObject)rewardData.get(0);
+                        rewardData.remove(0);
+
+                        Integer randNo = randomizer.nextInt(100);
+                        Integer sumWeight = 0;
+                        
+                        if((level >= levelData.get("levelIndex").getAsInt() &&
+                            level <= levelData.get("endLevelIndex").getAsInt()) || 
+                            levelData.get("isEndLevelInfinite").getAsBoolean()){
                             
-                            Integer[] lootIDs = {13625, 13626, 13627, 13631};
+                            for(JsonElement eleReward : rewardData){
+                                JsonObject reward = (JsonObject)eleReward;
 
-                            // Give reward
-							player.account.getSaveSpecificInventory().getItemAccessor(player)
-                            .add(ele.currencyRewardType, ele.currencyRewardAmount);
+                                if(sumWeight < randNo && randNo <= reward.get("weight").getAsInt()){
+                                    LootInfo chosenReward = ResourceCollectionModule.getLootReward(reward.get("lootTableDefID").getAsString());
+                                    
+                                    // Give reward
+                                    String itemId = chosenReward.reward.itemId;
+                                    Integer count = chosenReward.count;
+    
+                                    player.account.getSaveSpecificInventory().getItemAccessor(player)
+                                    .add(Integer.parseInt(itemId), count);
+        
+                                    // XP
+                                    LevelEventBus.dispatch(new LevelEvent("levelevents.minigames.dizzywingdispatch",
+                                            new String[] { "level:" + level }, player));
+        
+                                    // Send packet
+                                    MinigamePrizePacket p1 = new MinigamePrizePacket();
+                                    p1.given = true;
+                                    p1.itemDefId = itemId;
+                                    p1.itemCount = count;
+                                    p1.prizeIndex1 = 1;
+                                    p1.prizeIndex2 = 0;
+                                    player.client.sendPacket(p1);
+                                } else {
+                                    sumWeight += reward.get("weight").getAsInt();
+                                }
 
-                            // XP
-                            LevelEventBus.dispatch(new LevelEvent("levelevents.minigames.whatthehex",
-                                    new String[] { "level:" + ele.level }, player));
+                            }
 
-                            // Send packet
-                            MinigamePrizePacket p1 = new MinigamePrizePacket();
-                            p1.given = true;
-                            p1.itemDefId = Integer.toString(ele.currencyRewardType);
-                            p1.itemCount = ele.currencyRewardAmount;
-                            p1.prizeIndex1 = elements.indexOf(ele);
-                            p1.prizeIndex2 = 0;
-                            player.client.sendPacket(p1);
                         }
                     }
-                    */
 
                     // get the objectives for the new level
                     newLevelNewObjectives();
@@ -583,9 +604,12 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         // used to keep track of level objectives
         public LevelObjectives objectives;
+
+        // writing to inventory
+        private Player player;
         
 
-        public GameState(){
+        public GameState(Player Player){
             gridSize = new Vector2i(9, 9);
             spawnTiles = new ArrayList<TileType>(Arrays.asList(
             TileType.GreenBird,
@@ -598,6 +622,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             floodFillClearVisited();
             objectives = new LevelObjectives();
             puzzleCurrentProgress = new int[100];
+            player = Player;
         }
 
 
@@ -1648,7 +1673,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         
         // The GUID is used as the seed for the random number generator.
         currentGameUUID = UUID.randomUUID().toString();
-        gameState = new GameState();
+        gameState = new GameState(player);
 
         // the format of the minigame message response packet
         XtWriter mmData = new XtWriter();
@@ -1722,7 +1747,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         // The GUID is used as the seed for the random number generator.
         currentGameUUID = UUID.randomUUID().toString();
-        gameState = new GameState();
+        gameState = new GameState(player);
 
         // the format of the minigame message response packet
         XtWriter mmData = new XtWriter();
@@ -1781,33 +1806,15 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             if(fullPainting && player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
                 UserVarIDs.puzzleRedemptionStatusUserVarDefId.getVal(), paintingIndex) == null){
                 
-                Integer rewardID = 0;
-                switch(painting){
-                    case 0:
-                        rewardID = 12591;
-                        break;
-                    case 1:
-                        rewardID = 12594;
-                        break;
-                    case 2:
-                        rewardID = 12597;
-                        break;
-                    case 3:
-                        rewardID = 12600;
-                        break;
-                    case 4:
-                        rewardID = 12603;
-                        break;
-                    case 5:
-                        rewardID = 12606;
-                        break;
-                    default:
-                        break;
-                }
+                Integer rewardID = puzzleRewards.get(painting).getAsInt();
 
                 // give player the item
                 player.account.getSaveSpecificInventory().getItemAccessor(player)
                 .add(rewardID, 1);
+
+                // XP
+                LevelEventBus.dispatch(new LevelEvent("levelevents.minigames.dizzywingdispatch",
+                new String[] { "level:" + level }, player));
                 
                 // send player a notification
                 MinigamePrizePacket p1 = new MinigamePrizePacket();
