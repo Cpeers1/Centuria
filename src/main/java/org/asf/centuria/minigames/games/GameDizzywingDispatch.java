@@ -24,6 +24,7 @@ import org.asf.centuria.minigames.MinigameMessage;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
+import org.asf.centuria.packets.xt.gameserver.minigame.MinigamePrizePacket;
 import org.joml.Vector2i;
 
 import com.google.gson.JsonArray;
@@ -40,10 +41,13 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     private int moveCount = 0;
     private int dizzyBirdMeter = 0;
 
+    private boolean pieceRedemption[][] = new boolean[20][20];
+    private int puzzleCurrentProgress[] = new int[100];
+
     static private JsonArray specialOrders;
     static private JsonArray specialOrderCountRanges;
     static private JsonArray levelRewards;
-    static private JsonArray achievementPuzzles;
+    //static private JsonArray achievementPuzzles;
     static private JsonArray achievementToUserVarIndexList;
 
     static {
@@ -61,8 +65,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 			specialOrders = componentJSON.getAsJsonArray("specialOrders");
 			specialOrderCountRanges = componentJSON.getAsJsonArray("specialOrderCountRanges");
 			levelRewards = componentJSON.getAsJsonArray("levelRewards");
-			achievementPuzzles = componentJSON.getAsJsonArray("achievementPuzzles");
-			achievementToUserVarIndexList = componentJSON.getAsJsonArray("achievementPuzzles");
+			//achievementPuzzles = componentJSON.getAsJsonArray("achievementPuzzles");
+			achievementToUserVarIndexList = componentJSON.getAsJsonArray("achievementToUserVarIndexList");
             
 		} catch (IOException e) {
 			// This is very bad, should not start allow the server to continue otherwise
@@ -76,9 +80,104 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         }
     }
 
+    enum PuzzleObjectiveType
+    {
+        HighScore(0),
+        TotalScore(1),
+        MakeFlyers(2),
+        MakeFlyers_SingleGame(3),
+        MakeBombBirds(4),
+        MakeBombBirds_SingleGame(5),
+        MakePeacocks(6),
+        MakePeacocks_SingleGame(7),
+        ClearRedBirds(8),
+        ClearRedBirds_SingleGame(9),
+        ClearBlueBirds(10),
+        ClearBlueBirds_SingleGame(11),
+        ClearGreenBirds(12),
+        ClearGreenBirds_SingleGame(13),
+        ClearYellowBirds(14),
+        ClearYellowBirds_SingleGame(15),
+        ClearPinkBirds(17),
+        ClearPinkBirds_SingleGame(18),
+        ClearWhiteBirds(19),
+        ClearWhiteBirds_SingleGame(20),
+        ClearPurpleBirds(21),
+        ClearPurpleBirds_SingleGame(22),
+        ClearAquaBirds(23),
+        ClearAquaBirds_SingleGame(24),
+        CompleteOrders(25),
+        CompleteOrders_SingleGame(26),
+        CompleteSpecialOrders(27),
+        CompleteSpecialOrders_SingleGame(28),
+        CompleteRushHourOrders(29),
+        CompleteRushHourOrders_SingleGame(31),
+        CompleteShortStaffedOrders(32),
+        CompleteShortStaffedOrders_SingleGame(33),
+        CompleteComboOrders(34),
+        CompleteComboOrders_SingleGame(35),
+        ClearedWithPeacockRed(36),
+        ClearedWithPeacockRed_SingleGame(37),
+        ClearedWithPeacockBlue(38),
+        ClearedWithPeacockBlue_SingleGame(39),
+        ClearedWithPeacockGreen(40),
+        ClearedWithPeacockGreen_SingleGame(41),
+        ClearedWithPeacockYellow(42),
+        ClearedWithPeacockYellow_SingleGame(43),
+        ClearedWithPeacockPink(44),
+        ClearedWithPeacockPink_SingleGame(45),
+        ClearedWithPeacockWhite(46),
+        ClearedWithPeacockWhite_SingleGame(47),
+        ClearedWithPeacockPurple(48),
+        ClearedWithPeacockPurple_SingleGame(49),
+        ClearedWithPeacockAqua(50),
+        ClearedWithPeacockAqua_SingleGame(51),
+        HatchPowerups(52),
+        HatchPowerups_SingleGame(53),
+        ComboFlyerBomb(54),
+        ComboFlyerBomb_SingleGame(55),
+        ComboFlyerPeacock(56),
+        ComboFlyerPeacock_SingleGame(57),
+        ComboBombPeacock(58),
+        ComboBombPeacock_SingleGame(59),
+        ComboFlyerFlyer(60),
+        ComboFlyerFlyer_SingleGame(61),
+        ComboBombBomb(62),
+        ComboBombBomb_SingleGame(63),
+        ComboPeacockPeacock(64),
+        ComboPeacockPeacock_SingleGame(65);
+        
+        private final int value;
+        private PuzzleObjectiveType(int value) {
+            this.value = value;
+        }
+        public int getVal() {
+            return value;
+        }
+    
+    }
+
+    enum UserVarIDs
+    {
+        persistentAchievementDataUserVarDefId(13392),
+        puzzleRedemptionStatusUserVarDefId(13404),
+        puzzlePieceRedemptionStatusUserVarDefId(13405),
+        savedGameUserVarDefId(30613),
+        tutorial(13624),
+        userVarInventory(303);
+        
+        private final int value;
+        private UserVarIDs(int value) {
+            this.value = value;
+        }
+        public int getVal() {
+            return value;
+        }
+    
+    }
+    
+
     public class GameState {
-
-
 
         // helper classes
 
@@ -143,6 +242,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 currScore = 0;
                 if(level != 0){
 
+                    //get level data for the level range the current level falls into
+                    
                     for(JsonElement ele : specialOrders){
                         JsonObject data = ele.getAsJsonObject();
                         if((level >= data.get("_fromLevelNumber").getAsInt() &&
@@ -169,8 +270,10 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     specialOrderCountRangeData = specialOrderCountRanges.get(0).getAsJsonObject();
                 }
 
+                // clear the score objective
                 initObjective(LevelObjectiveType.ScoreRequirement, scoreRequirement());
 
+                // randomly pick objectives to be given to the player
                 if(!diceRoll("_regularLevelAppearancePercent")){
 
                     Integer clothing = 0;
@@ -194,17 +297,20 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                         clearObjective(LevelObjectiveType.MovesLeft);
                     }
 
+                    // Add clothing and eggs to the board if the respective objectives are given
                     for(int y = gridSize.y-1; y >= 0; y--){
                         for(int x = gridSize.x-1; x >= 0; x--){
                             Vector2i curr = new Vector2i(x, y);
                             GridCell currCell = getCell(curr);
     
                             if(!currCell.isBoosted()) {
-                                if(currCell.getTileType() != TileType.HatOrPurse && clothing > 0){
+                                if(currCell.getTileType() != TileType.HatOrPurse && 
+                                    !currCell.isBoosted() && clothing > 0){
+
                                     currCell.setTileType(TileType.HatOrPurse);
                                     setCell(curr, currCell);
                                     clothing--;
-                                } else if(currCell.getHealth() == 0 && eggs > 0){
+                                } else if(currCell.getHealth() == 0 && !currCell.isBoosted() && eggs > 0){
                                     currCell.setHealth(1);
                                     setCell(curr, currCell);
                                     eggs--;
@@ -219,7 +325,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 
             }
 
-            public Boolean isNextLevel(){
+            public Boolean isNextLevel(){   // returns true if level is incermented
                 trackEggsAndClothing();
 
                 Boolean goToNextLevel = true;
@@ -231,7 +337,38 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
                 if(goToNextLevel){
                     level++;
-                    newLevelNewObjectives();
+
+                    // update puzzle objectives
+
+                    Integer numberOfOrders = 0;
+
+                    if(isAchieved(LevelObjectiveType.ClothingLeft) && 
+                        isObjective(LevelObjectiveType.ClothingLeft)){
+                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteSpecialOrders);
+                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteSpecialOrders_SingleGame);
+                        numberOfOrders++;
+                    }
+                    if(isAchieved(LevelObjectiveType.MovesLeft) && 
+                        isObjective(LevelObjectiveType.MovesLeft)){
+                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteRushHourOrders);
+                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteRushHourOrders_SingleGame);
+                        numberOfOrders++;
+                    }
+                    if(isAchieved(LevelObjectiveType.EggsLeft) && 
+                        isObjective(LevelObjectiveType.EggsLeft)){
+                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteShortStaffedOrders);
+                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteShortStaffedOrders_SingleGame);
+                        numberOfOrders++;
+                    }
+                    if(numberOfOrders > 1){
+                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteComboOrders);
+                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteComboOrders_SingleGame);
+                    }
+                    incrementPuzzleTemp(PuzzleObjectiveType.CompleteOrders);
+                    incrementPuzzleTemp(PuzzleObjectiveType.CompleteOrders_SingleGame);
+
+                    // add new bird types to be placed on to the board
+
                     if(level > 25 && !spawnTiles.contains(TileType.AquaBird)){
                         spawnTiles.add(TileType.AquaBird);
                     } else if (level > 75 && !spawnTiles.contains(TileType.BlueBird)){
@@ -239,6 +376,37 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     } else if (level > 100 && !spawnTiles.contains(TileType.PinkBird)){
                         spawnTiles.add(TileType.PinkBird);
                     }
+/* 
+                    for(JsonElement ele : levelRewards){
+                        JsonObject reward = (JsonObject)ele;
+                        if((level >= reward.get("levelIndex").getAsInt() &&
+                            level <= reward.get("endLevelIndex").getAsInt()) || 
+                            reward.get("isEndLevelInfinite").getAsBoolean()){
+                            
+                            Integer[] lootIDs = {13625, 13626, 13627, 13631};
+
+                            // Give reward
+							player.account.getSaveSpecificInventory().getItemAccessor(player)
+                            .add(ele.currencyRewardType, ele.currencyRewardAmount);
+
+                            // XP
+                            LevelEventBus.dispatch(new LevelEvent("levelevents.minigames.whatthehex",
+                                    new String[] { "level:" + ele.level }, player));
+
+                            // Send packet
+                            MinigamePrizePacket p1 = new MinigamePrizePacket();
+                            p1.given = true;
+                            p1.itemDefId = Integer.toString(ele.currencyRewardType);
+                            p1.itemCount = ele.currencyRewardAmount;
+                            p1.prizeIndex1 = elements.indexOf(ele);
+                            p1.prizeIndex2 = 0;
+                            player.client.sendPacket(p1);
+                        }
+                    }
+                    */
+
+                    // get the objectives for the new level
+                    newLevelNewObjectives();
                 }
 
                 return goToNextLevel;
@@ -249,7 +417,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 updateObjective(LevelObjectiveType.ScoreRequirement, currScore);
             }
 
-            public void takeMove(){
+            public void trackMoves(){   // to be called whenever a moves is made
                 if(isObjective(LevelObjectiveType.MovesLeft)){
                     updateObjectiveByChange(LevelObjectiveType.MovesLeft, 1);
                 }
@@ -295,15 +463,15 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
             // helper functions
 
-            private Boolean diceRoll(String attribute){
+            private Boolean diceRoll(String attribute){ // probability of objectives is expressed as percentages
                 return randomizer.nextInt(100) < specialOrderData.get(attribute).getAsInt();
             }
             
-            private Boolean isObjective(LevelObjectiveType objectiveType) {
+            private Boolean isObjective(LevelObjectiveType objectiveType) { // check if objective has been assigned to the player
                 return objectivesTracker[objectiveType.ordinal()][0] != -1;
             }
             
-            private Boolean isAchieved(LevelObjectiveType objectiveType){
+            private Boolean isAchieved(LevelObjectiveType objectiveType){ // returns true if objective is fulfilled or not assigned
                 if(objectivesTracker[objectiveType.ordinal()][0] == -1){
                     return true;
                 } else if (objectivesTracker[objectiveType.ordinal()][0] <=
@@ -314,7 +482,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 }
             }
             
-            private Integer initObjective(LevelObjectiveType objectiveType, String minimum, String maximum){
+            private Integer initObjective(LevelObjectiveType objectiveType, String minimum, String maximum){    // generates objective given names of Json elements that contain level data
                 
                 Integer goal = randomizer.nextInt(
                     specialOrderCountRangeData.get(minimum).getAsInt(),
@@ -330,7 +498,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 return objectivesTracker[objectiveType.ordinal()][0];
             }
 
-            private Integer scoreRequirement(){
+            private Integer scoreRequirement(){ // formula for score required to pass a level
 
                 Integer r = 50;  // round to the nearest r
                 Integer s = 500;  // starting level score
@@ -394,84 +562,28 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             ClothingLeft
         }
 
-        enum PuzzleObjectiveType
-        {
-            HighScore,
-            TotalScore,
-            MakeFlyers,
-            MakeFlyers_SingleGame,
-            MakeBombBirds,
-            MakeBombBirds_SingleGame,
-            MakePeacocks,
-            MakePeacocks_SingleGame,
-            ClearRedBirds,
-            ClearRedBirds_SingleGame,
-            ClearBlueBirds,
-            ClearBlueBirds_SingleGame,
-            ClearGreenBirds,
-            ClearGreenBirds_SingleGame,
-            ClearYellowBirds,
-            ClearYellowBirds_SingleGame,
-            ClearPinkBirds,
-            ClearPinkBirds_SingleGame,
-            ClearWhiteBirds,
-            ClearWhiteBirds_SingleGame,
-            ClearPurpleBirds,
-            ClearPurpleBirds_SingleGame,
-            ClearAquaBirds,
-            ClearAquaBirds_SingleGame,
-            CompleteOrders,
-            CompleteOrders_SingleGame,
-            CompleteSpecialOrders,
-            CompleteSpecialOrders_SingleGame,
-            CompleteRushHourOrders,
-            CompleteRushHourOrders_SingleGame,
-            CompleteShortStaffedOrders,
-            CompleteShortStaffedOrders_SingleGame,
-            CompleteComboOrders,
-            CompleteComboOrders_SingleGame,
-            ClearedWithPeacockRed,
-            ClearedWithPeacockRed_SingleGame,
-            ClearedWithPeacockBlue,
-            ClearedWithPeacockBlue_SingleGame,
-            ClearedWithPeacockGreen,
-            ClearedWithPeacockGreen_SingleGame,
-            ClearedWithPeacockYellow,
-            ClearedWithPeacockYellow_SingleGame,
-            ClearedWithPeacockPink,
-            ClearedWithPeacockPink_SingleGame,
-            ClearedWithPeacockWhite,
-            ClearedWithPecockWhite_SingleGame,
-            ClearedWithPeacockPurple,
-            ClearedWithPeacockPurple_SingleGame,
-            ClearedWithPeacockAqua,
-            ClearedWithPeacockAqua_SingleGame,
-            HatchPowerups,
-            HatchPowerups_SingleGame,
-            ComboFlyerBomb,
-            ComboFlyerBomb_SingleGame,
-            ComboFlyerPeacock,
-            ComboFlyerPeacock_SingleGame,
-            ComboBombPeacock,
-            ComboBombPeacock_SingleGame,
-            ComboFlyerFlyer,
-            ComboFlyerFlyer_SingleGame,
-            ComboBombBomb,
-            ComboBombBomb_SingleGame,
-            ComboPeacockPeacock,
-            ComboPeacockPeacock_SingleGame
-        }
-
         // initializing the object
 
+        // game board data
         private GridCell[][] grid;
+        private Vector2i gridSize;
+
+        // used by the flood fill algorithm
         private boolean toVisit[][];
         private boolean visited[][];
-        private Vector2i gridSize;
+
+        // used to generate new tiles
         private List<TileType> spawnTiles;
+        
+        // source of all randomness in the game
         private Random randomizer;
+
+        // used to calculate current score
         private Integer matchComboScore;
+
+        // used to keep track of level objectives
         public LevelObjectives objectives;
+        
 
         public GameState(){
             gridSize = new Vector2i(9, 9);
@@ -485,6 +597,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             initializeGameBoard();
             floodFillClearVisited();
             objectives = new LevelObjectives();
+            puzzleCurrentProgress = new int[100];
         }
 
 
@@ -508,6 +621,10 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         }
 
         private void clearCell(Vector2i pos, Boolean isScore, Boolean forceClear){
+            clearCell(pos, isScore, forceClear, false);
+        }
+
+        private void clearCell(Vector2i pos, Boolean isScore, Boolean forceClear, Boolean isClearedByPeacock){
             
             if (getCell(pos) == null) {
                 return;
@@ -538,6 +655,10 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     boomBirdBehaviour(pos, 3);
                     break;
                 default:
+                    clearCellUpdateObjective(pos);
+                    if(isClearedByPeacock){
+                        clearedWithPeacockUpdateObjective(pos);
+                    }
                     break;
             }
         }
@@ -626,13 +747,23 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         public void calculateMove(Vector2i pos1, Vector2i pos2){
 
             moveCount++;
-            objectives.takeMove();
+            objectives.trackMoves();
+            
+            matchComboScore = 0;
 
             if(pos2.y != -1){   // if given two tiles as input
 
                 GridCell cell1 = getCell(pos1); // swap the tiles
                 setCell(pos1, getCell(pos2));
                 setCell(pos2, cell1);
+
+
+                while(findAndClearMatches(pos1, pos2)){ // for as long as there are still matches on the game board
+
+                    fillGaps();
+                    clearHats();
+
+                }
     
                 floodFillClearVisited();    // reset the visited array
     
@@ -654,34 +785,46 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         
                         buzzyBirdHorizontalBehaviour(pos1, 3);
                         buzzyBirdVerticalBehaviour(pos1, 3);
-    
+
+                        incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerBomb);
+                        incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerBomb_SingleGame);
+                        
                     } else if (getCell(pos1).getBooster() == BoosterType.BoomBird &&
-                            getCell(pos2).getBooster() == BoosterType.BoomBird){    // Boom bird and boom bird
-    
+                        getCell(pos2).getBooster() == BoosterType.BoomBird){    // Boom bird and boom bird
+                        
                         clearCell(pos1, false, true);
                         clearCell(pos2, true, true);
-            
+                        
                         boomBirdBehaviour(pos1, 5);
-    
+
+                        incrementPuzzleTemp(PuzzleObjectiveType.ComboBombBomb);
+                        incrementPuzzleTemp(PuzzleObjectiveType.ComboBombBomb_SingleGame);
+                        
                     } else if ((getCell(pos1).getBooster() == BoosterType.BuzzyBirdHorizontal || 
-                                getCell(pos1).getBooster() == BoosterType.BuzzyBirdVertical) &&
-                                (getCell(pos2).getBooster() == BoosterType.BuzzyBirdHorizontal || 
-                                getCell(pos2).getBooster() == BoosterType.BuzzyBirdVertical)){  // Buzzy bird and buzzy bird
-    
+                        getCell(pos1).getBooster() == BoosterType.BuzzyBirdVertical) &&
+                        (getCell(pos2).getBooster() == BoosterType.BuzzyBirdHorizontal || 
+                        getCell(pos2).getBooster() == BoosterType.BuzzyBirdVertical)){  // Buzzy bird and buzzy bird
+                        
                         clearCell(pos1, false, true);
                         clearCell(pos2, true, true);
-                
+                        
                         buzzyBirdHorizontalBehaviour(pos1, 1);
                         buzzyBirdVerticalBehaviour(pos1, 1);
+
+                        incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerFlyer);
+                        incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerFlyer_SingleGame);
     
                     } else if (getCell(pos1).getBooster() == BoosterType.PrismPeacock &&
-                                (getCell(pos2).getBooster() == BoosterType.BuzzyBirdHorizontal || 
-                                getCell(pos2).getBooster() == BoosterType.BuzzyBirdVertical)){  // Prism peacock and buzzy bird
+                        (getCell(pos2).getBooster() == BoosterType.BuzzyBirdHorizontal || 
+                        getCell(pos2).getBooster() == BoosterType.BuzzyBirdVertical)){  // Prism peacock and buzzy bird
     
                         TileType refType = getCell(pos2).TileType;
     
                         clearCell(pos1, false, true);
                         clearCell(pos2, true, true);
+
+                        incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerPeacock);
+                        incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerPeacock_SingleGame);
     
                         List<Vector2i> newBuzzyBirds = new ArrayList<>();
     
@@ -699,19 +842,22 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                             Boolean coinflip = randomizer.nextInt(2) == 1;
                             
                             if(coinflip) {
-                                buzzyBirdHorizontalBehaviour(newBuzzyBird, 1);
+                                buzzyBirdHorizontalBehaviour(newBuzzyBird, 1, true);
                             } else {
-                                buzzyBirdVerticalBehaviour(newBuzzyBird, 1);
+                                buzzyBirdVerticalBehaviour(newBuzzyBird, 1, true);
                             }
                         }
     
                     } else if (getCell(pos1).getBooster() == BoosterType.PrismPeacock &&
-                            (getCell(pos2).getBooster() == BoosterType.BoomBird)){  // Prism peacock and boom bird
+                        (getCell(pos2).getBooster() == BoosterType.BoomBird)){  // Prism peacock and boom bird
     
                         TileType refType = getCell(pos2).TileType;
     
                         clearCell(pos1, false, true);
                         clearCell(pos2, true, true);
+
+                        incrementPuzzleTemp(PuzzleObjectiveType.ComboPeacockPeacock);
+                        incrementPuzzleTemp(PuzzleObjectiveType.ComboPeacockPeacock_SingleGame);
     
                         List<Vector2i> newBoomBirds = new ArrayList<>();
     
@@ -738,7 +884,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                                     Vector2i curr = new Vector2i(x, y);
         
                                     if(getCell(curr) != null && !newBoomBirds.contains(curr) && getCell(curr).getTileType() != TileType.None) {
-                                        clearCell(curr, true, false);
+                                        clearCell(curr, true, false, true);
                                     }
                                 }
                             }
@@ -764,7 +910,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                                 for(int y = pos.y-d; y <= pos.y+d; y++){
         
                                     Vector2i curr = new Vector2i(x, y);
-                                    clearCell(curr, true, true);
+                                    clearCell(curr, true, true, true);
                                 }
                             }
                         }
@@ -773,14 +919,18 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     
     
                     } else if (getCell(pos1).getBooster() == BoosterType.PrismPeacock &&
-                                getCell(pos1).getBooster() == BoosterType.PrismPeacock){    // Prism peacock and prism peacock
-                                clearCell(pos1, false, true);
-                                clearCell(pos2, false, true);
-    
+                        getCell(pos1).getBooster() == BoosterType.PrismPeacock){    // Prism peacock and prism peacock
+                        
+                        clearCell(pos1, false, true);
+                        clearCell(pos2, false, true);
+
+                        incrementPuzzleTemp(PuzzleObjectiveType.ComboBombPeacock);
+                        incrementPuzzleTemp(PuzzleObjectiveType.ComboBombPeacock_SingleGame);
+
                         for(int x = 0; x < gridSize.x; x++){
                             for(int y = 0; y < gridSize.y; y++){
                                 Vector2i curr = new Vector2i(x, y);
-                                clearCell(curr, true, false);
+                                clearCell(curr, true, false, true);
                             }
                         }
 
@@ -825,9 +975,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
             }
 
-
-            matchComboScore = 0;
-
             while(findAndClearMatches(pos1, pos2)){ // for as long as there are still matches on the game board
 
                 fillGaps();
@@ -839,7 +986,11 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         // functions related to how boosters clear tiles
 
-        private void buzzyBirdHorizontalBehaviour(Vector2i pos, Integer size) {
+        private void buzzyBirdHorizontalBehaviour(Vector2i pos, Integer size){
+            buzzyBirdHorizontalBehaviour(pos, size, false);
+        }
+
+        private void buzzyBirdHorizontalBehaviour(Vector2i pos, Integer size, boolean isClearedByPeacock) {
             
             clearCell(pos, false, true);
 
@@ -850,9 +1001,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     Vector2i curr = new Vector2i(x, y);
                     if(getCell(curr) != null){
                         if(getCell(curr).getBooster() != BoosterType.BuzzyBirdHorizontal){
-                            clearCell(curr, true, false);
+                            clearCell(curr, true, false, isClearedByPeacock);
                         } else {
-                            clearCell(curr, true, true);
+                            clearCell(curr, true, true, isClearedByPeacock);
                             buzzyBirdVerticalBehaviour(curr, 1);
                         }
                     }
@@ -860,8 +1011,12 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
             fillGaps();
         }
-        
-        private void buzzyBirdVerticalBehaviour(Vector2i pos, Integer size) {
+
+        private void buzzyBirdVerticalBehaviour(Vector2i pos, Integer size){
+            buzzyBirdVerticalBehaviour(pos, size, false);
+        }
+
+        private void buzzyBirdVerticalBehaviour(Vector2i pos, Integer size, boolean isClearedByPeacock) {
             
             clearCell(pos, false, true);
             
@@ -872,9 +1027,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     Vector2i curr = new Vector2i(x, y);
                     if(getCell(curr) != null){
                         if(getCell(curr).getBooster() != BoosterType.BuzzyBirdVertical){
-                            clearCell(curr, true, false);
+                            clearCell(curr, true, false, isClearedByPeacock);
                         } else {
-                            clearCell(curr, true, true);
+                            clearCell(curr, true, true, isClearedByPeacock);
                             buzzyBirdHorizontalBehaviour(curr, 1);
                         }
                     }
@@ -919,7 +1074,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     GridCell currCell = getCell(curr);
 
                     if(currCell.TileType == refType && !currCell.isBoosted()) {
-                        clearCell(curr, true, false);
+                        clearCell(curr, true, false, true);
                     }
                 }
             }
@@ -988,17 +1143,22 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
             Integer matchTileSize = matchType;
 
+            Boolean containsEgg = false;
+
             while(!floodFillQueue.isEmpty()){
                 Vector2i curr = floodFillQueue.poll();
 
                 if(getCell(curr) == null) continue;
                 if(!floodFillGetVisited(curr)) continue;
                 if(getCell(pos).getTileType() != getCell(curr).getTileType()) continue;
+                if(getCell(curr).getTileType() == TileType.HatOrPurse) continue;
                 //if(getCell(pos).getBooster() != getCell(curr).getBooster()) continue;
                 //if(getCell(pos).getHealth() > 0 && getCell(curr).getHealth() > 0) continue;
 
                 floodFillSetVisited(curr);
                 connectedNodes.add(curr);
+
+                containsEgg ^= getCell(curr).getHealth() > 0;
                 
                 floodFillQueue.add(new Vector2i(curr.x-1, curr.y));
                 floodFillQueue.add(new Vector2i(curr.x+1, curr.y));
@@ -1024,6 +1184,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     }
             }
             
+            // keep track of puzzle objectives
             switch(matchTileSize) {
                 case 3:
                     scoreCombo(30);
@@ -1031,17 +1192,28 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 case 4:
                     refBooster = randomizer.nextInt(2) == 0 ? BoosterType.BuzzyBirdHorizontal : BoosterType.BuzzyBirdVertical;
                     scoreCombo(150);
+                    incrementPuzzleTemp(PuzzleObjectiveType.MakeFlyers);
+                    incrementPuzzleTemp(PuzzleObjectiveType.MakeFlyers_SingleGame);
                     break;
                 case 5:
                     refBooster = BoosterType.PrismPeacock;
                     scoreCombo(150);
+                    incrementPuzzleTemp(PuzzleObjectiveType.MakePeacocks);
+                    incrementPuzzleTemp(PuzzleObjectiveType.MakePeacocks_SingleGame);
                     break;
                 case 6:
                     refBooster = BoosterType.BoomBird;
                     scoreCombo(150);
+                    incrementPuzzleTemp(PuzzleObjectiveType.MakeBombBirds);
+                    incrementPuzzleTemp(PuzzleObjectiveType.MakeBombBirds_SingleGame);
                     break;
                 default:
                     break;
+            }
+
+            if(containsEgg && matchTileSize > 3){
+                incrementPuzzleTemp(PuzzleObjectiveType.HatchPowerups);
+                incrementPuzzleTemp(PuzzleObjectiveType.HatchPowerups_SingleGame);
             }
 
            
@@ -1186,7 +1358,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             objectives.addScore(matchComboScore);
         }
 
-        public Boolean updateLevel(){
+        public Boolean isNextLevel(){
             return objectives.isNextLevel();
         }
 
@@ -1202,11 +1374,101 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             return progress;
         }
 
-        public Boolean runOutOfMoves(){
+        public Boolean hasRunOutOfMoves(){
             return objectives.hasRunOutOfMoves();
         }
-
         
+
+
+        // functions related to the puzzle objectives
+
+        private void clearCellUpdateObjective(Vector2i pos) {
+            switch(getCell(pos).getTileType()){
+                case RedBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearRedBirds);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearRedBirds_SingleGame);
+                    break;
+                case BlueBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearBlueBirds);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearBlueBirds_SingleGame);
+                    break;
+                case GreenBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearGreenBirds);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearGreenBirds_SingleGame);
+                    break;
+                case YellowBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearYellowBirds);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearYellowBirds_SingleGame);
+                    break;
+                case PinkBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearPinkBirds);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearPinkBirds_SingleGame);
+                    break;
+                case SnowyBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearWhiteBirds);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearWhiteBirds_SingleGame);
+                    break;
+                case PurpleBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearPurpleBirds);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearPurpleBirds_SingleGame);
+                case AquaBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearAquaBirds);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearAquaBirds_SingleGame);
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        private void clearedWithPeacockUpdateObjective(Vector2i pos) {
+            switch(getCell(pos).getTileType()){
+                case RedBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockRed);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockRed_SingleGame);
+                    break;
+                case BlueBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockBlue);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockBlue_SingleGame);
+                    break;
+                case GreenBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockGreen);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockGreen_SingleGame);
+                    break;
+                case YellowBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockYellow);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockYellow_SingleGame);
+                    break;
+                case PinkBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockPink);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockPink_SingleGame);
+                    break;
+                case SnowyBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockWhite);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockWhite_SingleGame);
+                    break;
+                case PurpleBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockPurple);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockPurple_SingleGame);
+                case AquaBird:
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockAqua);
+                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockAqua_SingleGame);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void incrementPuzzleTemp(PuzzleObjectiveType puzzle){
+            puzzleCurrentProgress[puzzle.getVal()]++;
+        }
+
+        public void clearPuzzleTemp(PuzzleObjectiveType puzzle){
+            puzzleCurrentProgress[puzzle.getVal()] = 0;
+        }
+
+        public Integer getPuzzleTemp(PuzzleObjectiveType puzzle){
+            return puzzleCurrentProgress[puzzle.getVal()];
+        }
 
 
         // functions related to updating the board when a syncClient message is sent
@@ -1277,54 +1539,79 @@ public class GameDizzywingDispatch extends AbstractMinigame{
   
     // functions related to saving the saved game user variable to the player inventory.
 
-    private void saveSavedGameUserVar(Player player) {
-        /*
-        `persistentAchievementDataUserVarDefId`: `13392`,
-        `puzzleRedemptionStatusUserVarDefId`: `13404`,
-        `puzzlePieceRedemptionStatusUserVarDefId`: `13405`,
-        `savedGameUserVarDefId`: `30613`,
-        */
-
-        // write into the player inventory the number of moves made in the level, send inventory item packet
-        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(30613, level, moveCount);
-        // write into the player inventory the current score
-        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(13392, 0, score);
-        // write into the player inventory the highest score
-        UserVarValue highestScore = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(13392, 1);
-        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(13392, 1, Math.max(highestScore.value, score));
+    private Integer puzzleTypeToUserVarIndex(PuzzleObjectiveType puzzle){
+        for(JsonElement ele : achievementToUserVarIndexList){
+            JsonObject dataPair = (JsonObject) ele;
+            if(dataPair.get("achievementType").getAsInt() == puzzle.getVal()){
+                return dataPair.get("userVarIndex").getAsInt();
+            }
+        }
+        return -1;
     }
 
-    private void resetSavedGameUserVar(Player player) {
+    private void setPuzzleObjectiveUserVar(Player player, PuzzleObjectiveType puzzle, Integer value){ 
+        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(UserVarIDs.persistentAchievementDataUserVarDefId.getVal(), puzzleTypeToUserVarIndex(puzzle), value);
+    }
+
+    private Integer getPuzzleObjectiveUserVar(Player player, PuzzleObjectiveType puzzle){
+
+        UserVarValue value = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(UserVarIDs.persistentAchievementDataUserVarDefId.getVal(), puzzle.getVal());
+        if(value == null){
+            setPuzzleObjectiveUserVar(player, puzzle, 0);
+            return 0;
+        } else {
+            return player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(UserVarIDs.persistentAchievementDataUserVarDefId.getVal(), puzzle.getVal()).value;
+        }
+    }
+
+    // these are called when the game starts.
+
+    private void saveSavedGameUserVar(Player player) {
+
+        // write into the player inventory the number of moves made in the level, send inventory item packet
+        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(UserVarIDs.savedGameUserVarDefId.getVal(), level, moveCount);
+
+        // write into the player inventory the puzzle objectives
+        for(PuzzleObjectiveType puzzleType : PuzzleObjectiveType.values()){
+            if(puzzleType.toString().contains("SingleGame") || 
+                puzzleType == PuzzleObjectiveType.HighScore){
+
+                setPuzzleObjectiveUserVar(player, puzzleType, 
+                    Math.max(gameState.getPuzzleTemp(puzzleType), 
+                    getPuzzleObjectiveUserVar(player, puzzleType)));
+            } else {
+                setPuzzleObjectiveUserVar(player, puzzleType, 
+                    gameState.getPuzzleTemp(puzzleType) +
+                    getPuzzleObjectiveUserVar(player, puzzleType));
+                gameState.clearPuzzleTemp(puzzleType);
+            }
+        }
+    }
+
+    private void resetSavedGameUserVar(Player player) { // this function is something of a leftover and doed not reset any user var
 
         // reset these values as a new game has been started
         level = 0;
         score = 0;
         moveCount = 0;
         dizzyBirdMeter = 0;
+
         
-        // reset the saved game.
-        player.account.getSaveSpecificInventory().getUserVarAccesor().deletePlayerVar(30613);
-        // there is no level 0 and it is counted as having 1 move
-        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(30613, 0, 1);
-        // reset the recorded current score
-        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(13392, 0, 0);
-        // check if the highest score value is initialized, set it to zero if not
-        UserVarValue highestScore = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(13392, 1);
-        if(highestScore == null){
-            player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(13392, 1, 0);
-        }
+        // initialise user vars
+        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(UserVarIDs.savedGameUserVarDefId.getVal(), 0, 1);
+        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(UserVarIDs.tutorial.getVal(), 0, 1);
     }
 
-    private void loadSavedGameUserVar(Player player) {
+    private void loadSavedGameUserVar(Player player) {  // the game only keeps track of the highest score ever and I'm not sure what the continue game button should do
 
         // retrieve the data from the player inventory
-        UserVarValue[] savedGame = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(30613);
-        UserVarValue prevScore = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(13392, 0);
+        UserVarValue[] savedGame = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(UserVarIDs.savedGameUserVarDefId.getVal());
+        Integer prevScore = getPuzzleObjectiveUserVar(player, PuzzleObjectiveType.HighScore);
 
         // load in the values associated with a previous game
         if(savedGame != null){
             level = Math.max(1, savedGame.length-1);
-            score = prevScore.value;
+            score = prevScore;
             moveCount = savedGame[savedGame.length-1].value;
             dizzyBirdMeter = 0;
         }
@@ -1353,6 +1640,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
     @MinigameMessage("startGame")
     public void startGame(Player player, XtReader rd){
+
+        // save score and number of moves made on this level
+        saveGame(player, rd);
         
         resetSavedGameUserVar(player);
         
@@ -1391,14 +1681,10 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         if (clientChecksum != gameState.calculateBoardChecksum()) {
             syncClient(player, rd);
         }
-
-        // save score and number of moves made on this level
-        saveGame(player, rd);
         
         // check if level should increase
-        if (gameState.updateLevel()) {
+        if (gameState.isNextLevel()) {
             moveCount = 0;
-            saveGame(player, rd);
             goToLevel(player);
         }
 
@@ -1462,21 +1748,87 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     @MinigameMessage("saveGame")
 	public void saveGame(Player player, XtReader rd) {
 
-        saveSavedGameUserVar(player);
+        if(gameState != null){
 
-        if (player.client != null && player.client.isConnected()) {
-            // Send to client
-            InventoryItemPacket pk = new InventoryItemPacket();
-            pk.item = player.account.getSaveSpecificInventory().getItem("303");
-            player.client.sendPacket(pk);
+            saveSavedGameUserVar(player);
+            
+            if (player.client != null && player.client.isConnected()) {
+                // Send to client
+                InventoryItemPacket pk = new InventoryItemPacket();
+                pk.item = player.account.getSaveSpecificInventory().getItem(Integer.toString(UserVarIDs.userVarInventory.getVal()));
+                player.client.sendPacket(pk);
+            }
         }
     }
 
 
 
     @MinigameMessage("redeemPiece")
-	public void redeemPiece(Player player, XtReader rd) {
+	public void redeemPiece(Player player, XtReader rd) {   // need to keep track of what has already been redeemed
+        int paintingIndex = rd.readInt(); // 0 - 6
+        int pieceIndex = rd.readInt(); // 0 - 16
 
+        pieceRedemption[paintingIndex][pieceIndex] = true;
+        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(
+            UserVarIDs.puzzlePieceRedemptionStatusUserVarDefId.getVal(), paintingIndex*16+pieceIndex, 1);
+  
+        for(int painting = 0; painting < 6; painting++){
+            Boolean fullPainting = true;
+            for(int piece = 0; piece < 16; piece++){
+                fullPainting &= player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
+                    UserVarIDs.puzzlePieceRedemptionStatusUserVarDefId.getVal(), paintingIndex*16+pieceIndex) != null;
+            }
+            if(fullPainting && player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
+                UserVarIDs.puzzleRedemptionStatusUserVarDefId.getVal(), paintingIndex) == null){
+                
+                Integer rewardID = 0;
+                switch(painting){
+                    case 0:
+                        rewardID = 12591;
+                        break;
+                    case 1:
+                        rewardID = 12594;
+                        break;
+                    case 2:
+                        rewardID = 12597;
+                        break;
+                    case 3:
+                        rewardID = 12600;
+                        break;
+                    case 4:
+                        rewardID = 12603;
+                        break;
+                    case 5:
+                        rewardID = 12606;
+                        break;
+                    default:
+                        break;
+                }
+
+                // give player the item
+                player.account.getSaveSpecificInventory().getItemAccessor(player)
+                .add(rewardID, 1);
+                
+                // send player a notification
+                MinigamePrizePacket p1 = new MinigamePrizePacket();
+                p1.given = true;
+                p1.itemDefId = Integer.toString(rewardID);
+                p1.itemCount = 1;
+                p1.prizeIndex1 = 1;
+                p1.prizeIndex2 = 0;
+                player.client.sendPacket(p1);
+
+                player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(
+                    UserVarIDs.puzzleRedemptionStatusUserVarDefId.getVal(), paintingIndex, 1);
+            }      
+        }
+        if (player.client != null && player.client.isConnected()) {
+            // Send to client
+            InventoryItemPacket pk = new InventoryItemPacket();
+            pk.item = player.account.getSaveSpecificInventory().getItem(Integer.toString(
+                UserVarIDs.userVarInventory.getVal()));
+            player.client.sendPacket(pk);
+        }
     }
 
     @MinigameMessage("syncClient")
@@ -1491,12 +1843,12 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         
         List<int[]> objectiveProgress = gameState.getObjectiveProgress();
         
-        if(!gameState.runOutOfMoves()){
+        if(!gameState.hasRunOutOfMoves()){
             mmData.writeInt(objectiveProgress.size());
             for(int[] objectiveData : objectiveProgress){
-                mmData.writeInt(objectiveData[2]);
-                mmData.writeInt(objectiveData[0]);
-                mmData.writeInt(objectiveData[1]);
+                mmData.writeInt(objectiveData[2]);   // objective type
+                mmData.writeInt(objectiveData[0]);   // objective requirement
+                mmData.writeInt(objectiveData[1]);   // objective current progress
             }
         } else {
             mmData.writeInt(2);
@@ -1510,25 +1862,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             mmData.writeInt(-1);
         }
 
-/*  example level objective
-        mmData.writeInt(4); // number of elements, only 2 goals at once
-
-        mmData.writeInt(0); // increase score bar, required for multiple goals
-        mmData.writeInt(500);   // level score requirement
-        mmData.writeInt(250);   // current score achieved in level
-
-        mmData.writeInt(1); // moves left
-        mmData.writeInt(10);
-        mmData.writeInt(0);
-
-        mmData.writeInt(2); // eggs left
-        mmData.writeInt(17); // where the number is first - second
-        mmData.writeInt(0);
-
-        mmData.writeInt(3); // items left
-        mmData.writeInt(23);
-        mmData.writeInt(0);
-*/
         MinigameMessagePacket mm = new MinigameMessagePacket();
 		mm.command = "syncClient";
 		mm.data = mmData.encode().substring(4);
