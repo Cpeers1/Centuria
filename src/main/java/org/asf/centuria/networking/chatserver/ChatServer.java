@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
 import org.asf.centuria.Centuria;
+import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -219,8 +220,12 @@ public class ChatServer {
 			// Build participants object
 			JsonArray members = new JsonArray();
 			for (String participant : manager.getDMParticipants(room)) {
-				members.add(participant);
+				if (participant.startsWith("plaintext:")
+						|| AccountManager.getInstance().getAccount(participant) != null)
+					members.add(participant);
 			}
+			if (members.size() == 0)
+				return null;
 			roomData.add("participants", members);
 
 			// Find recent message

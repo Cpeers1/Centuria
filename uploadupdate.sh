@@ -1,21 +1,21 @@
 #!/bin/bash
 
-server="https://aerialworks.ddns.net/extra/centuria"
+serverurl="https://aerialworks.ddns.net/extra/centuria"
 
 function uploadToServers() {
 	version="$1"
 	channel="$2"
 	
-	base="$server/$channel"
+	baseurl="$serverurl/$channel"
 	
 	function upload() {
 		for file in $1/* ; do
 			pref=$2
-			target="${file:${#pref}}"
-                        if [ -f "$file" ]; then
-			    echo curl -X PUT "$base/$version/$target" -u "REDACTED" --data-binary @"$file"
-			    curl -X PUT "$base/$version/$target" -u "$username:$password" --data-binary @"$file"
-                        fi
+			targetf="${file:${#pref}}"
+			if [ -f "$file" ]; then
+				echo 'curl "'"${baseurl}/${version}/${targetf}"'" -X PUT -u "REDACTED" --data-binary @"'"$file"'"'
+				curl "${baseurl}/${version}/${targetf}" -X PUT -u "$username:$password" --data-binary @"$file"
+			fi
 			if [ "$?" != "0" ]; then
 				echo Upload failure!
 				exit 1
@@ -27,8 +27,8 @@ function uploadToServers() {
 	}
 	
 	upload build/update build/update/
-	echo curl -X PUT "$base/update.info" -u "REDACTED" --data-binary "$version"
-	curl -X PUT "$base/update.info" -u "$username:$password" --data-binary "$version"
+	echo curl -X PUT "$baseurl/update.info" -u "REDACTED" --data-binary "$version"
+	curl -X PUT "$baseurl/update.info" -u "$username:$password" --data-binary "$version"
 
 	source version.info
 }
