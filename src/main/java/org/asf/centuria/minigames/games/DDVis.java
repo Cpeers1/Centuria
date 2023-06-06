@@ -78,8 +78,6 @@ public class DDVis {
 									"<br>" + 
 									ses.grid.getCell(new Vector2i(x, y)).getBooster().toString() + 
 									"<br>" + 
-									ses.grid.getCell(new Vector2i(x, y)).getX().toString() + ", " + ses.grid.getCell(new Vector2i(x, y)).getY().toString() +
-									"<br>" + 
 									ses.calcMoves.floodFillGetToVisit(new Vector2i(x, y)) +
 									"</html>");
 									gameBoardDisplay.get(new Vector2i(x, 8-y)).setForeground(TileColor(ses.grid.getCell(new Vector2i(x, y)).getTileType().toString()));
