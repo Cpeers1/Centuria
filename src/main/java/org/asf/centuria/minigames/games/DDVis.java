@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.minigames.games.GameDizzywingDispatch.GridCell;
-import org.asf.centuria.minigames.games.GameDizzywingDispatch.TileType;
+import org.asf.centuria.minigames.games.GameDizzywingDispatch.TileColor;
 import org.joml.Vector2i;
 
 public class DDVis {
@@ -71,18 +71,21 @@ public class DDVis {
 							for (int x = 0; x < 9; x++)
 							{
 								if(ses != null){
-
-									gameBoardDisplay.get(new Vector2i(x, 8-y)).setText(
-									"<html>" +
-									ses.grid.getCell(new Vector2i(x, y)).getTileType().toString() + 
-									"<br>" + 
-									ses.grid.getCell(new Vector2i(x, y)).getBooster().toString() + 
-									"<br>" + 
-									ses.grid.getCell(new Vector2i(x, y)).getX().toString() + ", " + ses.grid.getCell(new Vector2i(x, y)).getY().toString() +
-									"<br>" + 
-									ses.calcMoves.floodFillGetToVisit(new Vector2i(x, y)) +
-									"</html>");
-									gameBoardDisplay.get(new Vector2i(x, 8-y)).setForeground(TileColor(ses.grid.getCell(new Vector2i(x, y)).getTileType().toString()));
+									if(ses.grid.getCell(new Vector2i(x, y)) != null){
+										gameBoardDisplay.get(new Vector2i(x, 8-y)).setText(
+										"<html>" +
+										ses.grid.getCell(new Vector2i(x, y)).getColor().toString() + 
+										"<br>" + 
+										ses.grid.getCell(new Vector2i(x, y)).getBooster().toString() + 
+										"<br>" + 
+										ses.grid.getCell(new Vector2i(x, y)).getX().toString() + ", " + ses.grid.getCell(new Vector2i(x, y)).getY().toString() +
+										"<br>" + 
+										ses.calcMoves.floodFillGetToVisit(new Vector2i(x, y)) +
+										"</html>");
+										gameBoardDisplay.get(new Vector2i(x, 8-y)).setForeground(TileColor(ses.grid.getCell(new Vector2i(x, y)).getColor().toString()));
+									} else {
+										gameBoardDisplay.get(new Vector2i(x, 8-y)).setText("none");
+									}
 								}
 							}
 						}
@@ -131,13 +134,13 @@ public class DDVis {
 			if(ses != null){
 				GridCell curr = ses.grid.getCell(pos);
 	
-				if(curr.getTileType() != TileType.PinkBird){
-					curr.setColor(TileType.PinkBird);
+				if(curr.getColor() != TileColor.PinkBird){
+					curr.setColor(TileColor.PinkBird);
 				} else if (curr.getHealth() == 0) {
 					curr.setHealth(1);
-				} else if (curr.getTileType() != TileType.HatOrPurse){
+				} else if (curr.getColor() != TileColor.HatOrPurse){
 					curr.setHealth(0);
-					curr.setColor(TileType.HatOrPurse);
+					curr.setColor(TileColor.HatOrPurse);
 				}
 	
 				ses.grid.setCell(pos, curr);

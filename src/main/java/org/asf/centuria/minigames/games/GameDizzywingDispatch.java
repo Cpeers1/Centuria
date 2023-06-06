@@ -117,31 +117,29 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     public class GridCell 
     {
         private int tileHealth;
-        private TileType color;
-        private BoosterType Booster;
-        private Vector2i Position;
+        private TileColor color;
+        private BoosterType booster;
 
-        public GridCell(int health, TileType tileType, BoosterType booster, Vector2i position){
+        public GridCell(int health, TileColor tileColor, BoosterType boosterType){
             tileHealth = health;
-            color = tileType;
-            Booster = booster;
-            Position = position;
+            color = tileColor;
+            booster = boosterType;
         }
 
-        public void setColor(TileType tileType){
+        public void setColor(TileColor tileType){
             color = tileType;
         }
 
-        public TileType getTileType(){
+        public TileColor getColor(){
             return color;
         }
 
-        public void setBooster(BoosterType booster){
-            Booster = booster;
+        public void setBooster(BoosterType boosterType){
+            booster = boosterType;
         }
         
         public BoosterType getBooster(){
-            return Booster;
+            return booster;
         }
 
         public void setHealth(Integer health){
@@ -152,53 +150,60 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             return tileHealth;
         }
 
-        
-        public void setPos(Vector2i newPosition){
-            Vector2i oldPosition = Position;
-            Position = newPosition;
-            grid.setCell(newPosition, this);
-            grid.setCell(oldPosition, null);
+        public void setEmpty(){
+            tileHealth = 0;
+            color = TileColor.None;
+            booster = BoosterType.None; 
         }
-        
-        public Vector2i getPos(){
-            return Position;
+
+        public Boolean getEmpty(){
+            return color == TileColor.None &&  booster == BoosterType.None;
         }
         
         // Convenience functions
 
         public Boolean isBoosted(){
-            return Booster != BoosterType.None;
-        }
-
-        public Integer getX(){
-            return Position.x;
-        }
-
-        public Integer getY(){
-            return Position.y;
+            return booster != BoosterType.None;
         }
 
         public Boolean isBuzzyBird(){
-            return Booster == BoosterType.BuzzyBirdHorizontal || 
-                Booster == BoosterType.BuzzyBirdVertical;
+            return booster == BoosterType.BuzzyBirdHorizontal || 
+                booster == BoosterType.BuzzyBirdVertical;
+        }
+
+        public void setPos(Vector2i newPosition){
+            grid.setCell(newPosition, this);
+        }
+        
+        public Vector2i getPos(){
+            return grid.getCellPos(this);
+        }
+
+        public Integer getX(){
+            return grid.getCellX(this);
+        }
+
+        public Integer getY(){
+            return grid.getCellY(this);
         }
 
         public Integer getIndex(){
-            return Position.x + grid.getX() * Position.y;
+            return grid.getCellIndex(this);
         }
-
-                
+  
     }
 
     public class Grid {
         // game board data
         private GridCell[][] grid;
+        private Map<GridCell, Vector2i> cellToPos;
         private Vector2i gridSize;
 
         public Grid()
         {
             gridSize = new Vector2i(9, 9);
             grid = new GridCell[gridSize.x][gridSize.y];
+            cellToPos = new HashMap<>();
         }
 
         public GridCell getCell(Vector2i pos)
@@ -215,6 +220,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             if (pos.x >= 0 && pos.x < gridSize.x && pos.y >= 0 && pos.y < gridSize.y && cell != null)
             {
                 grid[pos.x][pos.y] = cell;
+                cellToPos.put(cell, pos);
             }
         }
 
@@ -233,18 +239,18 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 objectives.fixedUpdateScore(30);
             }
             if(forceClear){
-                setCell(cell.getPos(), null);
+                cell.setEmpty();
                 return;
             }
             if(cell.getHealth() > 0) {
                 breakEggTile(cell);
                 return;
             }
-            if(cell.getTileType() == TileType.HatOrPurse || cell.getBooster() == BoosterType.PrismPeacock){
+            if(cell.getColor() == TileColor.HatOrPurse || cell.getBooster() == BoosterType.PrismPeacock){
                 return;
             }
             
-            setCell(cell.getPos(), null);
+            cell.setEmpty();
 
             switch (cell.getBooster()) {
                 case BuzzyBirdHorizontal: 
@@ -274,6 +280,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         private void clearGrid(){
             grid = new GridCell[gridSize.x][gridSize.y];
+            cellToPos = new HashMap<>();
         }
 
         // convenience functions
@@ -334,15 +341,36 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             return gridSize.y;
         }
 
+        public Vector2i getCellPos(GridCell cell){
+            return cellToPos.get(cell);
+        }
+
+        public void swap(GridCell cell1, GridCell cell2){
+            setCell(cell1.getPos(), cell2);
+            setCell(cell2.getPos(), cell1);
+        }
+
+        public Integer getCellX(GridCell cell){
+            return cellToPos.get(cell).x;
+        }
+
+        public Integer getCellY(GridCell cell){
+            return cellToPos.get(cell).y;
+        }
+
+        public Integer getCellIndex(GridCell cell){
+            return getCellX(cell) + getX() * getCellY(cell);
+        }
+
         public Integer size(){
             return gridSize.x * gridSize.y;
         }
 
-        public TileType getTileType(Vector2i pos){
+        public TileColor getTileType(Vector2i pos){
             if(getCell(pos) == null){
                 return null;
             } else {
-                return getCell(pos).getTileType();
+                return getCell(pos).getColor();
             }
         }
 
@@ -369,7 +397,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         private byte gridCellByteValueForChecksum(GridCell cell) // level of emulation accuracy uncertain
         {
             int byteValue = 0;
-            Integer tileTypeValue = cell.getTileType().ordinal();
+            Integer tileTypeValue = cell.getColor().ordinal();
     
             if (cell.isBoosted()) {
                 byteValue += (cell.isBoosted() ? 1 : 0) * 20 + tileTypeValue;
@@ -393,15 +421,20 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         public byte gridCellByteValueForBase64String(GridCell cell)
         {
+
+            if(cell.getEmpty()){
+                throw new RuntimeException("There was a blank cell that was not filled.");
+            }
+
             int byteValue = 0;
 
-            if(cell.color == TileType.HatOrPurse){
+            if(cell.color == TileColor.HatOrPurse){
                 byteValue = 18;
-            } else if (cell.Booster == BoosterType.PrismPeacock){
+            } else if (cell.booster == BoosterType.PrismPeacock){
                 byteValue = 88;
             } else {
-                byteValue += ((cell.Booster == BoosterType.None ? 2 : 1) * cell.color.ordinal() + (cell.tileHealth == 0 ? 0 : 1));
-                byteValue += cell.Booster.ordinal() * 20;
+                byteValue += ((cell.booster == BoosterType.None ? 2 : 1) * cell.color.ordinal() + (cell.tileHealth == 0 ? 0 : 1));
+                byteValue += cell.booster.ordinal() * 20;
             }
             
             return (byte)byteValue;
@@ -410,19 +443,19 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
     private class GenerateBoard {
         
-        private List<TileType> spawnTiles;
+        private List<TileColor> spawnTiles;
         
         public GenerateBoard()
         {
-            spawnTiles = new ArrayList<TileType>(Arrays.asList(
-            TileType.GreenBird,
-            TileType.PurpleBird,
-            TileType.RedBird,
-            TileType.SnowyBird,
-            TileType.YellowBird));
+            spawnTiles = new ArrayList<TileColor>(Arrays.asList(
+            TileColor.GreenBird,
+            TileColor.PurpleBird,
+            TileColor.RedBird,
+            TileColor.SnowyBird,
+            TileColor.YellowBird));
         }
 
-        public void addSpawnTile(TileType tileType){
+        public void addSpawnTile(TileColor tileType){
             if(!spawnTiles.contains(tileType)){
                 spawnTiles.add(tileType);
             }
@@ -432,7 +465,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         {
 
             grid.clearGrid();
-            List<TileType> shuffledSpawnTiles = new ArrayList<TileType>(spawnTiles);
+            List<TileColor> shuffledSpawnTiles = new ArrayList<TileColor>(spawnTiles);
 
             for (int y = 0; y < grid.getY(); y++)
             {
@@ -440,7 +473,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 {
                     Collections.shuffle(shuffledSpawnTiles, randomizer);
 
-                    for (TileType spawnTile : shuffledSpawnTiles)
+                    for (TileColor spawnTile : shuffledSpawnTiles)
                     {
                         Boolean validSpawn = true;
 
@@ -455,7 +488,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                         if(validSpawn)
                         {
                             Vector2i curr = new Vector2i(x, y);
-                            grid.setCell(curr, new GridCell(0, spawnTile, BoosterType.None, curr));
+                            grid.setCell(curr, new GridCell(0, spawnTile, BoosterType.None));
                             break;
                         }
                     }
@@ -481,7 +514,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         private void clearHats() {
             for(GridCell cell : grid.verticalIterate()){
-                if(cell.getTileType() == TileType.HatOrPurse){
+                if(cell.getColor() == TileColor.HatOrPurse){
                     grid.clearCell(cell, false, true);
                 } else {
                     break;
@@ -497,7 +530,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             for(List<GridCell> column : grid.verticalNestedIterate()){
                 Integer noGapsInColumn = 0;
                 for(GridCell cell : column){
-                    if(cell == null){
+                    if(cell.getEmpty()){
                         noGapsInColumn++;
                     } else {
                         Vector2i newPos = new Vector2i(cell.getX(), cell.getY()-noGapsInColumn);
@@ -533,10 +566,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
             if(pos2.y != -1){   // if given two tiles as input
 
-                GridCell cell1 = grid.getCell(pos1); // swap the tiles
-                GridCell cell2 = grid.getCell(pos2); // swap the tiles
-                cell2.setPos(pos1);
-                cell1.setPos(pos2);
+                grid.swap(grid.getCell(pos1), grid.getCell(pos2));
 
                 clearMatches(pos1, pos2);   // clear matches formed by the swap
 
@@ -579,7 +609,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                             boosters.boomBirdBehaviour(first, 3);
                             break;
                         case PrismPeacock: 
-                            boosters.prismPeacockBehaviour(first, second.getTileType());
+                            boosters.prismPeacockBehaviour(first, second.getColor());
                             break;
                         default:
                             break;
@@ -612,10 +642,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         private void clearMatches(Vector2i pos1, Vector2i pos2) {
             while(findAndClearMatches(pos1, pos2)){ // for as long as there are still matches on the game board
-                /*
                 generateBoard.fillGaps();
                 generateBoard.clearHats();
-                */
             }
         }
 
@@ -676,7 +704,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     prevNeighbours = getSameTypeNeighbours(cell, false);
                 }
             }
-            /*
+
             // clear all matches
             for(GridCell cell : grid.verticalIterate()){
                 Vector2i cellPos = cell.getPos();
@@ -686,9 +714,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
 
             return isMatch;
-            */
-
-            return false;
 
             
         }
@@ -719,8 +744,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
             for(GridCell nextCell : getNeighbours(cell)){
 
-                if(cell.getTileType() == nextCell.getTileType() && 
-                    cell.getTileType() != TileType.HatOrPurse){
+                if(cell.getColor() == nextCell.getColor() && 
+                    cell.getColor() != TileColor.HatOrPurse){
 
                     if(!checkMatch || 
                     floodFillGetToVisit(cell.getPos()) && floodFillGetToVisit(nextCell.getPos())){
@@ -748,8 +773,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 GridCell nextCell = grid.getCell(curr);
 
                 if(nextCell != null &&
-                    cell.getTileType() == nextCell.getTileType() && 
-                    cell.getTileType() != TileType.HatOrPurse){
+                    cell.getColor() == nextCell.getColor() && 
+                    cell.getColor() != TileColor.HatOrPurse){
 
                     if(floodFillGetToVisit(cell.getPos()) && floodFillGetToVisit(nextCell.getPos())){
                         horizontalNeighbours.add(nextCell);
@@ -763,8 +788,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 GridCell nextCell = grid.getCell(curr);
 
                 if(nextCell != null &&
-                    cell.getTileType() == nextCell.getTileType() && 
-                    cell.getTileType() != TileType.HatOrPurse){
+                    cell.getColor() == nextCell.getColor() && 
+                    cell.getColor() != TileColor.HatOrPurse){
 
                     if(floodFillGetToVisit(cell.getPos()) && floodFillGetToVisit(nextCell.getPos())){
                         horizontalNeighbours.add(nextCell);
@@ -812,7 +837,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         public void floodFill(GridCell cell, Integer matchType, Vector2i swap1, Vector2i swap2){
             
-            TileType refType = cell.getTileType();
+            TileColor refType = cell.getColor();
             BoosterType refBooster = BoosterType.None;
             
             List<GridCell> connectedNodes = new ArrayList<>();
@@ -827,13 +852,15 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
                 if(nextCell == null) continue;
                 if(!floodFillGetVisited(nextCell.getPos())) continue;
-                if(nextCell.getTileType() != nextCell.getTileType()) continue;
+                if(nextCell.getColor() != nextCell.getColor()) continue;
 
                 floodFillSetVisited(nextCell.getPos());
                 connectedNodes.add(nextCell);
                 floodFillQueue.addAll(getSameTypeNeighbours(nextCell, true));
 
-                containsEgg ^= nextCell.getHealth() > 0;
+                if(nextCell.getHealth() > 0){
+                    containsEgg = true;
+                }
                 
                 // detect tiles connected to other tiles in an L or T shape
                 if(floodFillIsBoomBird(nextCell) && matchTileSize != 5) {   // do not change to boom bird if a prism peacock would form
@@ -881,24 +908,18 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             if(refBooster != BoosterType.None){
 
                 if(refBooster == BoosterType.PrismPeacock){
-                    refType = TileType.None;
+                    refType = TileColor.None;
                 }
 
                 if(connectedNodes.contains(grid.getCell(swap1))){
-                    grid.setCell(swap1, new GridCell(0, refType, refBooster, swap1));
+                    grid.setCell(swap1, new GridCell(0, refType, refBooster));
                 } else if(connectedNodes.contains(grid.getCell(swap2))){
-                    grid.setCell(swap2, new GridCell(0, refType, refBooster, swap2));
+                    grid.setCell(swap2, new GridCell(0, refType, refBooster));
                 } else {
-                    grid.setCell(cell.getPos(), new GridCell(0, refType, refBooster, cell.getPos()));
+                    grid.setCell(cell.getPos(), new GridCell(0, refType, refBooster));
                 }
             }
-
         }
-
-        // functions that clear or fill tiles by iterating through the entire board with nested for loops instead of flood fill
-
-                
-        // identifies continuous lines of tiles with the same color, main function called by calculateMove
 
     }
 
@@ -935,7 +956,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         }
 
         public void prismBuzzyComboBehaviours(GridCell first, GridCell second){
-            TileType refType = second.color;
+            TileColor refType = second.color;
 
             grid.clearCell(first, false, true);
             grid.clearCell(second, true, true);
@@ -945,7 +966,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             List<GridCell> newBuzzyBirds = new ArrayList<>();
 
             for(GridCell cell : grid.verticalIterate()){
-                if(cell.getTileType() == refType && !cell.isBoosted()) {
+                if(cell.getColor() == refType && !cell.isBoosted()) {
                     newBuzzyBirds.add(cell);
                 }
             }
@@ -962,7 +983,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         }
 
         public void prismBoomComboBehaviours(GridCell first, GridCell second){
-            TileType refType = second.color;
+            TileColor refType = second.color;
 
             grid.clearCell(first, false, true);
             grid.clearCell(second, true, true);
@@ -972,8 +993,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             List<Vector2i> newBoomBirds = new ArrayList<>();
 
             for(GridCell cell : grid.verticalIterate()){
-                if(cell.getTileType() == refType && !cell.isBoosted()) {
-                    if(cell.getTileType() == refType && !cell.isBoosted()) {
+                if(cell.getColor() == refType && !cell.isBoosted()) {
+                    if(cell.getColor() == refType && !cell.isBoosted()) {
                         cell.setBooster(BoosterType.BoomBird);
                         grid.setCell(cell.getPos(), cell);
                         newBoomBirds.add(cell.getPos());
@@ -1000,7 +1021,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             newBoomBirds.clear();
 
             for(GridCell cell : grid.verticalIterate()){
-                if(cell.getTileType() == refType && cell.getBooster() == BoosterType.BoomBird) {
+                if(cell.getColor() == refType && cell.getBooster() == BoosterType.BoomBird) {
                     newBoomBirds.add(cell.getPos());
                 }
             }
@@ -1109,7 +1130,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             generateBoard.fillGaps();
         }
 
-        private void prismPeacockBehaviour(GridCell cell, TileType refType) {
+        private void prismPeacockBehaviour(GridCell cell, TileColor refType) {
 
             grid.clearCell(cell, false, true);
 
@@ -1199,10 +1220,10 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 for(GridCell cell : grid.horizontalTopDownIterate()){
 
                     if(!cell.isBoosted()) {
-                        if(cell.getTileType() != TileType.HatOrPurse && 
+                        if(cell.getColor() != TileColor.HatOrPurse && 
                             !cell.isBoosted() && clothing > 0){
 
-                            cell.setColor(TileType.HatOrPurse);
+                            cell.setColor(TileColor.HatOrPurse);
                             clothing--;
                         } else if(cell.getHealth() == 0 && !cell.isBoosted() && eggs > 0){
                             cell.setHealth(1);
@@ -1253,13 +1274,13 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 // add new bird types to be placed on to the board
 
                 if(level > 25){
-                    generateBoard.addSpawnTile(TileType.AquaBird);
+                    generateBoard.addSpawnTile(TileColor.AquaBird);
                 }
                 if (level > 75){
-                    generateBoard.addSpawnTile(TileType.BlueBird);
+                    generateBoard.addSpawnTile(TileColor.BlueBird);
                 }
                 if (level > 10){
-                    generateBoard.addSpawnTile(TileType.PinkBird);
+                    generateBoard.addSpawnTile(TileColor.PinkBird);
                 }
                 
                 // get the objectives for the new level
@@ -1297,7 +1318,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             if(isObjective(LevelObjectiveType.ClothingLeft)){
                 Integer numberOfClothing = 0;
                 for(GridCell cell : grid.horizontalTopDownIterate()){
-                    if(cell.getTileType() == TileType.HatOrPurse) {
+                    if(cell.getColor() == TileColor.HatOrPurse) {
                         numberOfClothing++;
                     }
                 }
@@ -1418,7 +1439,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         }
 
         private void clearCellUpdateObjective(GridCell cell) {
-            switch(cell.getTileType()){
+            switch(cell.getColor()){
                 case RedBird:
                     incrementPuzzle(PuzzleObjectiveType.ClearRedBirds);
                     break;
@@ -1448,7 +1469,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         }
         
         private void clearedWithPeacockUpdateObjective(GridCell cell) {
-            switch(cell.getTileType()){
+            switch(cell.getColor()){
                 case RedBird:
                     incrementPuzzle(PuzzleObjectiveType.ClearedWithPeacockRed);
                     break;
@@ -1643,7 +1664,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         PrismPeacock
     }
 
-    enum TileType 
+    enum TileColor 
     {
         AquaBird,
         BlueBird,
