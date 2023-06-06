@@ -1,9 +1,9 @@
 {
 "specialOrders": [
 	{
-		"levelIndex": 1,
-		"endLevelIndex": 9,
-		"isEndLevelInfinite": false,
+		"_fromLevelNumber": 1,
+		"_toLevelNumber": 9,
+		"_isToLevelInfinite": false,
 		"_regularLevelAppearancePercent": 100,
 		"_accessoriesAppearancePercent": 0,
 		"_eggsAppearancePercent": 0,
@@ -11,9 +11,9 @@
 		"_comboAppearancePercent": 0
 	},
 	{
-		"levelIndex": 10,
-		"endLevelIndex": 24,
-		"isEndLevelInfinite": false,
+		"_fromLevelNumber": 10,
+		"_toLevelNumber": 24,
+		"_isToLevelInfinite": false,
 		"_regularLevelAppearancePercent": 20,
 		"_accessoriesAppearancePercent": 30,
 		"_eggsAppearancePercent": 30,
@@ -21,9 +21,9 @@
 		"_comboAppearancePercent": 15
 	},
 	{
-		"levelIndex": 25,
-		"endLevelIndex": 49,
-		"isEndLevelInfinite": false,
+		"_fromLevelNumber": 25,
+		"_toLevelNumber": 49,
+		"_isToLevelInfinite": false,
 		"_regularLevelAppearancePercent": 20,
 		"_accessoriesAppearancePercent": 18,
 		"_eggsAppearancePercent": 17,
@@ -31,9 +31,9 @@
 		"_comboAppearancePercent": 15
 	},
 	{
-		"levelIndex": 50,
-		"endLevelIndex": 74,
-		"isEndLevelInfinite": false,
+		"_fromLevelNumber": 50,
+		"_toLevelNumber": 74,
+		"_isToLevelInfinite": false,
 		"_regularLevelAppearancePercent": 10,
 		"_accessoriesAppearancePercent": 18,
 		"_eggsAppearancePercent": 17,
@@ -41,9 +41,9 @@
 		"_comboAppearancePercent": 25
 	},
 	{
-		"levelIndex": 75,
-		"endLevelIndex": 149,
-		"isEndLevelInfinite": false,
+		"_fromLevelNumber": 75,
+		"_toLevelNumber": 149,
+		"_isToLevelInfinite": false,
 		"_regularLevelAppearancePercent": 20,
 		"_accessoriesAppearancePercent": 13,
 		"_eggsAppearancePercent": 12,
@@ -51,9 +51,9 @@
 		"_comboAppearancePercent": 25
 	},
 	{
-		"levelIndex": 150,
-		"endLevelIndex": 249,
-		"isEndLevelInfinite": false,
+		"_fromLevelNumber": 150,
+		"_toLevelNumber": 249,
+		"_isToLevelInfinite": false,
 		"_regularLevelAppearancePercent": 5,
 		"_accessoriesAppearancePercent": 8,
 		"_eggsAppearancePercent": 7,
@@ -61,9 +61,9 @@
 		"_comboAppearancePercent": 45
 	},
 	{
-		"levelIndex": 250,
-		"endLevelIndex": 300,
-		"isEndLevelInfinite": true,
+		"_fromLevelNumber": 250,
+		"_toLevelNumber": 300,
+		"_isToLevelInfinite": true,
 		"_regularLevelAppearancePercent": 0,
 		"_accessoriesAppearancePercent": 8,
 		"_eggsAppearancePercent": 7,
@@ -73,9 +73,9 @@
 ],
 "specialOrderCountRanges": [
 	{
-		"levelIndex": 1,
-		"endLevelIndex": 9,
-		"isEndLevelInfinite": false,
+		"_fromLevelNumber": 1,
+		"_toLevelNumber": 9,
+		"_isToLevelInfinite": false,
 		"_minimumAccessoryCount": 0,
 		"_maximumAccessoryCount": 0,
 		"_minimumEggRowCount": 0,
@@ -86,9 +86,9 @@
 		"_maximumLimitedMovesComboCount": 0
 	},
 	{
-		"levelIndex": 10,
-		"endLevelIndex": 49,
-		"isEndLevelInfinite": false,
+		"_fromLevelNumber": 10,
+		"_toLevelNumber": 49,
+		"_isToLevelInfinite": false,
 		"_minimumAccessoryCount": 1,
 		"_maximumAccessoryCount": 5,
 		"_minimumEggRowCount": 0,
@@ -99,9 +99,9 @@
 		"_maximumLimitedMovesComboCount": 35
 	},
 	{
-		"levelIndex": 50,
-		"endLevelIndex": 74,
-		"isEndLevelInfinite": false,
+		"_fromLevelNumber": 50,
+		"_toLevelNumber": 74,
+		"_isToLevelInfinite": false,
 		"_minimumAccessoryCount": 5,
 		"_maximumAccessoryCount": 10,
 		"_minimumEggRowCount": 1,
@@ -112,9 +112,9 @@
 		"_maximumLimitedMovesComboCount": 35
 	},
 	{
-		"levelIndex": 75,
-		"endLevelIndex": 149,
-		"isEndLevelInfinite": false,
+		"_fromLevelNumber": 75,
+		"_toLevelNumber": 149,
+		"_isToLevelInfinite": false,
 		"_minimumAccessoryCount": 1,
 		"_maximumAccessoryCount": 7,
 		"_minimumEggRowCount": 0,
@@ -125,9 +125,9 @@
 		"_maximumLimitedMovesComboCount": 30
 	},
 	{
-		"levelIndex": 150,
-		"endLevelIndex": 249,
-		"isEndLevelInfinite": false,
+		"_fromLevelNumber": 150,
+		"_toLevelNumber": 249,
+		"_isToLevelInfinite": false,
 		"_minimumAccessoryCount": 5,
 		"_maximumAccessoryCount": 10,
 		"_minimumEggRowCount": 2,
@@ -138,9 +138,9 @@
 		"_maximumLimitedMovesComboCount": 25
 	},
 	{
-		"levelIndex": 250,
-		"endLevelIndex": 300,
-		"isEndLevelInfinite": true,
+		"_fromLevelNumber": 250,
+		"_toLevelNumber": 300,
+		"_isToLevelInfinite": true,
 		"_minimumAccessoryCount": 5,
 		"_maximumAccessoryCount": 15,
 		"_minimumEggRowCount": 3,
