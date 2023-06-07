@@ -12,7 +12,6 @@ import javax.swing.JLabel;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.minigames.games.GameDizzywingDispatch.GameState.GridCell;
-import org.asf.centuria.minigames.games.GameDizzywingDispatch.GameState.LevelObjectiveType;
 import org.asf.centuria.minigames.games.GameDizzywingDispatch.GameState.TileType;
 import org.joml.Vector2i;
 

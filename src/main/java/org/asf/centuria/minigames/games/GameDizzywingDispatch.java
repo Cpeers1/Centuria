@@ -46,7 +46,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     private int moveCount = 0;
     private int dizzyBirdMeter = 0;
 
-    private boolean pieceRedemption[][] = new boolean[20][20];
     private int puzzleCurrentProgress[] = new int[100];
 
     static private JsonArray specialOrders;
@@ -673,6 +672,11 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             if (getCell(pos) == null) {
                 return;
             }
+            
+            clearCellUpdateObjective(pos);
+            if(isClearedByPeacock){
+                clearedWithPeacockUpdateObjective(pos);
+            }
 
             if(forceClear){
                 setCell(pos, new GridCell(0, TileType.None, BoosterType.None));
@@ -699,10 +703,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     boomBirdBehaviour(pos, 3);
                     break;
                 default:
-                    clearCellUpdateObjective(pos);
-                    if(isClearedByPeacock){
-                        clearedWithPeacockUpdateObjective(pos);
-                    }
+                    
                     break;
             }
         }
@@ -1186,7 +1187,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
             Integer matchTileSize = matchType;
 
-            Boolean containsEgg = false;
+            //Boolean containsEgg = false;
 
             while(!floodFillQueue.isEmpty()){
                 Vector2i curr = floodFillQueue.poll();
@@ -1200,7 +1201,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 floodFillSetVisited(curr);
                 connectedNodes.add(curr);
 
-                containsEgg ^= getCell(curr).getHealth() > 0;
+                //containsEgg ^= getCell(curr).getHealth() > 0;
                 
                 floodFillQueue.add(new Vector2i(curr.x-1, curr.y));
                 floodFillQueue.add(new Vector2i(curr.x+1, curr.y));
@@ -1253,7 +1254,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     break;
             }
 
-            if(containsEgg && matchTileSize > 3){
+            //if(containsEgg && matchTileSize > 3){
+            if(matchTileSize > 3){ // I am not sure what type of goal "Hatch Powerups" is
                 incrementPuzzleTemp(PuzzleObjectiveType.HatchPowerups);
                 incrementPuzzleTemp(PuzzleObjectiveType.HatchPowerups_SingleGame);
             }
@@ -1457,6 +1459,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     incrementPuzzleTemp(PuzzleObjectiveType.ClearAquaBirds);
                     incrementPuzzleTemp(PuzzleObjectiveType.ClearAquaBirds_SingleGame);
                     break;
+                case None:
+                    break;
                 default:
                     break;
             }
@@ -1495,6 +1499,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockAqua);
                     incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockAqua_SingleGame);
                     break;
+                case None:
+                    break;
                 default:
                     break;
             }
@@ -1502,6 +1508,10 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         public void incrementPuzzleTemp(PuzzleObjectiveType puzzle){
             puzzleCurrentProgress[puzzle.getVal()]++;
+        }
+
+        public void setPuzzleTemp(PuzzleObjectiveType puzzle, Integer value){
+            puzzleCurrentProgress[puzzle.getVal()] = value;
         }
 
         public void clearPuzzleTemp(PuzzleObjectiveType puzzle){
@@ -1609,19 +1619,27 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     // these are called when the game starts.
 
     private void saveSavedGameUserVar(Player player) {
+        
+        gameState.setPuzzleTemp(PuzzleObjectiveType.HighScore, score);
+        gameState.setPuzzleTemp(PuzzleObjectiveType.TotalScore, score);
 
         // write into the player inventory the number of moves made in the level, send inventory item packet
         player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(UserVarIDs.savedGameUserVarDefId.getVal(), level, moveCount);
 
         // write into the player inventory the puzzle objectives
         for(PuzzleObjectiveType puzzleType : PuzzleObjectiveType.values()){
+            if(gameState.getPuzzleTemp(puzzleType) > 0){
+                Centuria.logger.info(puzzleType.toString(), Integer.toString(gameState.getPuzzleTemp(puzzleType)));
+            }
+        }
+        for(PuzzleObjectiveType puzzleType : PuzzleObjectiveType.values()){
             if(puzzleType.toString().contains("SingleGame") || 
-                puzzleType == PuzzleObjectiveType.HighScore){
+                puzzleType == PuzzleObjectiveType.HighScore){   // highest in a game
 
                 setPuzzleObjectiveUserVar(player, puzzleType, 
                     Math.max(gameState.getPuzzleTemp(puzzleType), 
                     getPuzzleObjectiveUserVar(player, puzzleType)));
-            } else {
+            } else {    // cumulative
                 setPuzzleObjectiveUserVar(player, puzzleType, 
                     gameState.getPuzzleTemp(puzzleType) +
                     getPuzzleObjectiveUserVar(player, puzzleType));
@@ -1723,6 +1741,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         if (clientChecksum != gameState.calculateBoardChecksum()) {
             syncClient(player, rd);
         }
+
+        saveSavedGameUserVar(player);
         
         // check if level should increase
         if (gameState.isNextLevel()) {
@@ -1807,23 +1827,22 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
     @MinigameMessage("redeemPiece")
 	public void redeemPiece(Player player, XtReader rd) {   // need to keep track of what has already been redeemed
-        int paintingIndex = rd.readInt(); // 0 - 6
-        int pieceIndex = rd.readInt(); // 0 - 16
+        int packetPaintingIndex = rd.readInt(); // 0 - 6
+        int packetPieceIndex = rd.readInt(); // 0 - 16
 
-        pieceRedemption[paintingIndex][pieceIndex] = true;
         player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(
-            UserVarIDs.puzzlePieceRedemptionStatusUserVarDefId.getVal(), paintingIndex*16+pieceIndex, 1);
+            UserVarIDs.puzzlePieceRedemptionStatusUserVarDefId.getVal(), packetPaintingIndex*16+packetPieceIndex, 1);
   
-        for(int painting = 0; painting < 6; painting++){
+        for(int currPaintingIndex = 0; currPaintingIndex < 6; currPaintingIndex++){ 
             Boolean fullPainting = true;
-            for(int piece = 0; piece < 16; piece++){
+            for(int currPieceIndex = 0; currPieceIndex < 16; currPieceIndex++){
                 fullPainting &= player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
-                    UserVarIDs.puzzlePieceRedemptionStatusUserVarDefId.getVal(), paintingIndex*16+pieceIndex) != null;
+                    UserVarIDs.puzzlePieceRedemptionStatusUserVarDefId.getVal(), currPaintingIndex*16+currPieceIndex) != null;
             }
             if(fullPainting && player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
-                UserVarIDs.puzzleRedemptionStatusUserVarDefId.getVal(), paintingIndex) == null){
+                UserVarIDs.puzzleRedemptionStatusUserVarDefId.getVal(), currPaintingIndex) == null){
                 
-                Integer rewardID = puzzleRewards.get(painting).getAsInt();
+                Integer rewardID = puzzleRewards.get(currPaintingIndex).getAsInt();
 
                 // give player the item
                 player.account.getSaveSpecificInventory().getItemAccessor(player)
@@ -1843,7 +1862,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 player.client.sendPacket(p1);
 
                 player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(
-                    UserVarIDs.puzzleRedemptionStatusUserVarDefId.getVal(), paintingIndex, 1);
+                    UserVarIDs.puzzleRedemptionStatusUserVarDefId.getVal(), currPaintingIndex, 1);
             }      
         }
         if (player.client != null && player.client.isConnected()) {
