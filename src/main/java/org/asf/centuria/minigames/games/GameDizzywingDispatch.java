@@ -64,12 +64,11 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 			strm.close();
 
 			// Load all level data
-			JsonObject componentJSON = helper.getAsJsonObject();
-			specialOrders = componentJSON.getAsJsonArray("specialOrders");
-			specialOrderCountRanges = componentJSON.getAsJsonArray("specialOrderCountRanges");
-			levelRewards = componentJSON.getAsJsonArray("levelRewards");
-			puzzleRewards = componentJSON.getAsJsonArray("puzzleRewards");
-			achievementToUserVarIndexList = componentJSON.getAsJsonArray("achievementToUserVarIndexList");
+			specialOrders = helper.getAsJsonArray("specialOrders");
+			specialOrderCountRanges = helper.getAsJsonArray("specialOrderCountRanges");
+			levelRewards = helper.getAsJsonArray("levelRewards");
+			puzzleRewards = helper.getAsJsonArray("puzzleRewards");
+			achievementToUserVarIndexList = helper.getAsJsonArray("achievementToUserVarIndexList");
             
 		} catch (IOException e) {
 			// This is very bad, should not start allow the server to continue otherwise
@@ -782,14 +781,14 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 setCell(pos1, getCell(pos2));
                 setCell(pos2, cell1);
 
-
+/*
                 while(findAndClearMatches(pos1, pos2)){ // for as long as there are still matches on the game board
 
                     fillGaps();
                     clearHats();
 
                 }
-    
+*/
                 floodFillClearVisited();    // reset the visited array
     
                 // Guarantee pos1 to have a more powerful or as powerful booster as pos2
@@ -1112,10 +1111,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             GridCell cell1 = getCell(pos1);
             GridCell cell2 = getCell(pos2);
 
-            if(cell1 == null || cell2 == null){
+            if(cell1 == null || cell2 == null || cell1.getTileType() == TileType.HatOrPurse || cell2.getTileType() == TileType.HatOrPurse){
                 return false;
-            } else if (cell1.getTileType() == cell2.getTileType() && 
-                        cell1.getTileType() != TileType.HatOrPurse){
+            } else if (cell1.getTileType() == cell2.getTileType()){
                          //!cell1.isBoosted() && !cell2.isBoosted() &&
                          //cell1.getHealth() == 0 && cell1.getHealth() == 0
                 
@@ -1176,7 +1174,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 if(getCell(curr) == null) continue;
                 if(!floodFillGetVisited(curr)) continue;
                 if(getCell(pos).getTileType() != getCell(curr).getTileType()) continue;
-                if(getCell(curr).getTileType() == TileType.HatOrPurse) continue;
                 //if(getCell(pos).getBooster() != getCell(curr).getBooster()) continue;
                 //if(getCell(pos).getHealth() > 0 && getCell(curr).getHealth() > 0) continue;
 
