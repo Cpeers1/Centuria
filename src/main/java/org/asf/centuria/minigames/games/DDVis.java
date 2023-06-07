@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.minigames.games.GameDizzywingDispatch.GameState.GridCell;
+import org.asf.centuria.minigames.games.GameDizzywingDispatch.GameState.LevelObjectiveType;
 import org.asf.centuria.minigames.games.GameDizzywingDispatch.GameState.TileType;
 import org.joml.Vector2i;
 
@@ -151,8 +152,14 @@ public class DDVis {
 		public void mousePressed(MouseEvent e) 
 		{
 			if(ses.gameState != null){
-				ses.level++;
-				ses.gameState.objectives.newLevelNewObjectives();
+				ses.gameState.objectives.objectivesTracker[0][0] = 1;
+				ses.gameState.objectives.objectivesTracker[0][1] = 2;
+				ses.gameState.objectives.objectivesTracker[1][0] = -1;
+				ses.gameState.objectives.objectivesTracker[1][1] = -1;
+				ses.gameState.objectives.objectivesTracker[2][0] = -1;
+				ses.gameState.objectives.objectivesTracker[2][1] = -1;
+				ses.gameState.objectives.objectivesTracker[3][0] = -1;
+				ses.gameState.objectives.objectivesTracker[3][1] = -1;
 				ses.syncClient(Centuria.gameServer.getPlayers()[0], new XtReader(""));
 			}
 		}

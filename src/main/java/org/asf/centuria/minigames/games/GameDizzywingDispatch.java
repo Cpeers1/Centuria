@@ -23,6 +23,7 @@ import org.asf.centuria.minigames.AbstractMinigame;
 import org.asf.centuria.minigames.MinigameMessage;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
+import org.asf.centuria.packets.xt.gameserver.minigame.MinigameCurrencyPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigamePrizePacket;
 import org.asf.centuria.interactions.modules.ResourceCollectionModule;
@@ -225,7 +226,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         }
 
         public class LevelObjectives {
-            private int objectivesTracker[][] = { {-1, -1, 0},
+            public int objectivesTracker[][] = { {-1, -1, 0},
                                                 {-1, -1, 1},
                                                 {-1, -1, 2},
                                                 {-1, -1, 3}};
@@ -380,9 +381,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                     }
 
                     for(JsonElement ele : levelRewards){
-                        JsonArray rewardData = (JsonArray)ele;
-                        JsonObject levelData = (JsonObject)rewardData.get(0);
-                        rewardData.remove(0);
+                        JsonObject levelData = (JsonObject)ele;
+                        JsonArray rewardData = levelData.getAsJsonArray("lootData");
 
                         Integer randNo = randomizer.nextInt(100);
                         Integer sumWeight = 0;
@@ -394,33 +394,53 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                             for(JsonElement eleReward : rewardData){
                                 JsonObject reward = (JsonObject)eleReward;
 
-                                if(sumWeight < randNo && randNo <= reward.get("weight").getAsInt()){
-                                    LootInfo chosenReward = ResourceCollectionModule.getLootReward(reward.get("lootTableDefID").getAsString());
+                                if(sumWeight < randNo && randNo <= sumWeight+reward.get("weight").getAsInt()){
+
+                                    String lootTableDefID = reward.get("lootTableDefID").getAsString();
+                                    Centuria.logger.info(lootTableDefID, "lootTableDefId");
+                                    LootInfo chosenReward = ResourceCollectionModule.getLootReward(lootTableDefID);
                                     
                                     // Give reward
                                     String itemId = chosenReward.reward.itemId;
+                                    while(itemId == null){
+                                        chosenReward = ResourceCollectionModule.getLootReward(chosenReward.reward.referencedTableId);
+                                        itemId = chosenReward.reward.itemId;
+                                    }
+                                    Centuria.logger.info(itemId, "itemID");
+
                                     Integer count = chosenReward.count;
-    
+                                    
                                     player.account.getSaveSpecificInventory().getItemAccessor(player)
                                     .add(Integer.parseInt(itemId), count);
         
                                     // XP
                                     LevelEventBus.dispatch(new LevelEvent("levelevents.minigames.dizzywingdispatch",
-                                            new String[] { "level:" + level }, player));
-        
-                                    // Send packet
-                                    MinigamePrizePacket p1 = new MinigamePrizePacket();
-                                    p1.given = true;
-                                    p1.itemDefId = itemId;
-                                    p1.itemCount = count;
-                                    p1.prizeIndex1 = 1;
-                                    p1.prizeIndex2 = 0;
-                                    player.client.sendPacket(p1);
+                                    new String[] { "level:" + level }, player));
+                                    
+                                    if(lootTableDefID != "13629"){
+                                        // Send packet
+                                        MinigamePrizePacket p1 = new MinigamePrizePacket();
+                                        p1.given = true;
+                                        p1.itemDefId = itemId;
+                                        p1.itemCount = count;
+                                        p1.prizeIndex1 = 1;
+                                        p1.prizeIndex2 = 0;
+                                        player.client.sendPacket(p1);
+                                    } else {
+                                        MinigameCurrencyPacket currency = new MinigameCurrencyPacket();
+                                        currency.Currency = Integer.parseInt(itemId);
+                                        player.client.sendPacket(currency);
+                                    }
+
+                                    break;
+
                                 } else {
                                     sumWeight += reward.get("weight").getAsInt();
                                 }
 
                             }
+                            break;
+
 
                         }
                     }

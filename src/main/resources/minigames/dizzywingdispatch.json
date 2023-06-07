@@ -410,167 +410,171 @@
 	}
 ],
 "levelRewards":[
-	[
-		{
-			"levelIndex": 1,
-			"endLevelIndex": 25,
-			"isEndLevelInfinite": false
-		},
-		{
-			"weight": 35,
-			"lootTableDefID": "13629",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 35,
-			"lootTableDefID": "13635",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 20,
-			"lootTableDefID": "13636",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 5,
-			"lootTableDefID": "13637",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 5,
-			"lootTableDefID": "13638",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		}
-	],
-	[
-		{
-			"levelIndex": 26,
-			"endLevelIndex": 50,
-			"isEndLevelInfinite": false
-		},
-		{
-			"weight": 20,
-			"lootTableDefID": "13629",
-			"itemDefID": "-1",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 25,
-			"lootTableDefID": "13635",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 20,
-			"lootTableDefID": "13636",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 10,
-			"lootTableDefID": "13637",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 25,
-			"lootTableDefID": "13638",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		}
-	],
-	[
-		{
-			"levelIndex": 51,
-			"endLevelIndex": 100,
-			"isEndLevelInfinite": false
-		},
-		{
-			"weight": 5,
-			"lootTableDefID": "13629",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 20,
-			"lootTableDefID": "13635",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 15,
-			"lootTableDefID": "13636",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 10,
-			"lootTableDefID": "13637",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 50,
-			"lootTableDefID": "13638",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		}
-	],
-	[
-		{
-			"levelIndex": 101,
-			"endLevelIndex": 300,
-			"isEndLevelInfinite": true
-		},
-		{
-			"weight": 10,
-			"lootTableDefID": "13635",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 10,
-			"lootTableDefID": "13636",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 5,
-			"lootTableDefID": "13637",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		},
-		{
-			"weight": 75,
-			"lootTableDefID": "13638",
-			"itemDefID": "",
-			"minCount": 1,
-			"maxCount": 1
-		}
-	]
+	{
+		"levelIndex": 1,
+		"endLevelIndex": 25,
+		"isEndLevelInfinite": false,
+		"lootData": 
+		[
+			{
+				"weight": 35,
+				"lootTableDefID": "13629",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 35,
+				"lootTableDefID": "13635",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 20,
+				"lootTableDefID": "13636",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 5,
+				"lootTableDefID": "13637",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 5,
+				"lootTableDefID": "13638",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			}
+		]
+	},
+	{
+		"levelIndex": 26,
+		"endLevelIndex": 50,
+		"isEndLevelInfinite": false,
+		"lootData": 
+		[
+			{
+				"weight": 20,
+				"lootTableDefID": "13629",
+				"itemDefID": "-1",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 25,
+				"lootTableDefID": "13635",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 20,
+				"lootTableDefID": "13636",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 10,
+				"lootTableDefID": "13637",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 25,
+				"lootTableDefID": "13638",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			}
+		]
+	},
+	{
+		"levelIndex": 51,
+		"endLevelIndex": 100,
+		"isEndLevelInfinite": false,
+		"lootData":
+		[
+			{
+				"weight": 5,
+				"lootTableDefID": "13629",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 20,
+				"lootTableDefID": "13635",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 15,
+				"lootTableDefID": "13636",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 10,
+				"lootTableDefID": "13637",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 50,
+				"lootTableDefID": "13638",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			}
+		]
+	},
+	{
+		"levelIndex": 101,
+		"endLevelIndex": 300,
+		"isEndLevelInfinite": true,
+		"lootData":
+		[
+			{
+				"weight": 10,
+				"lootTableDefID": "13635",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 10,
+				"lootTableDefID": "13636",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 5,
+				"lootTableDefID": "13637",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 75,
+				"lootTableDefID": "13638",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			}
+		]
+	}
 ],
 "puzzleRewards": ["12591", "12594", "12597", "12600", "12603", "12606"]
 }
