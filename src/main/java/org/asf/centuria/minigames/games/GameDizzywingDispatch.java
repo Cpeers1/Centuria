@@ -1427,6 +1427,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         // functions related to the puzzle objectives
 
         private void clearCellUpdateObjective(Vector2i pos) {
+            if(getCell(pos).getTileType() == TileType.None){
+                return;
+            }
             switch(getCell(pos).getTileType()){
                 case RedBird:
                     incrementPuzzleTemp(PuzzleObjectiveType.ClearRedBirds);
@@ -1467,6 +1470,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         }
         
         private void clearedWithPeacockUpdateObjective(Vector2i pos) {
+            if(getCell(pos).getTileType() == TileType.None){
+                return;
+            }
             switch(getCell(pos).getTileType()){
                 case RedBird:
                     incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockRed);
@@ -1626,6 +1632,16 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         // write into the player inventory the number of moves made in the level, send inventory item packet
         player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(UserVarIDs.savedGameUserVarDefId.getVal(), level, moveCount);
 
+        // in case no puzzle objective has ever been written to the player inventory
+        if(player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
+            UserVarIDs.persistentAchievementDataUserVarDefId.getVal()) == null){
+
+            for(int i = 0; i < PuzzleObjectiveType.values().length; i++){
+                player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(
+                    UserVarIDs.persistentAchievementDataUserVarDefId.getVal(), i, 0);
+            }
+        }
+
         // write into the player inventory the puzzle objectives
         for(PuzzleObjectiveType puzzleType : PuzzleObjectiveType.values()){
             if(gameState.getPuzzleTemp(puzzleType) > 0){
@@ -1742,7 +1758,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             syncClient(player, rd);
         }
 
-        saveSavedGameUserVar(player);
+        saveGame(player, rd);
         
         // check if level should increase
         if (gameState.isNextLevel()) {
@@ -1829,19 +1845,49 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 	public void redeemPiece(Player player, XtReader rd) {   // need to keep track of what has already been redeemed
         int packetPaintingIndex = rd.readInt(); // 0 - 6
         int packetPieceIndex = rd.readInt(); // 0 - 16
+        int packetOverallIndex = packetPaintingIndex*16+packetPieceIndex;
 
+        Centuria.logger.info("Painting " + Integer.toString(packetPaintingIndex) + " Piece " + Integer.toString(packetPieceIndex) + " Index " + Integer.toString(packetOverallIndex));
+
+        // if no puzzle piece data has ever been written into the player inventory
+        if(player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
+            UserVarIDs.puzzlePieceRedemptionStatusUserVarDefId.getVal()) == null){
+
+            for(int i = 0; i < 6*16; i++){
+                player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(
+                    UserVarIDs.puzzlePieceRedemptionStatusUserVarDefId.getVal(), i, 0);
+            }
+        }
+        if(player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
+            UserVarIDs.puzzleRedemptionStatusUserVarDefId.getVal()) == null){
+
+            for(int i = 0; i < 6; i++){
+                player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(
+                    UserVarIDs.puzzleRedemptionStatusUserVarDefId.getVal(), i, 0);
+            }
+        }
+
+        // write the piece data sent by the client packet into the player inventory
         player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(
-            UserVarIDs.puzzlePieceRedemptionStatusUserVarDefId.getVal(), packetPaintingIndex*16+packetPieceIndex, 1);
+            UserVarIDs.puzzlePieceRedemptionStatusUserVarDefId.getVal(), packetOverallIndex, 1);
   
+        // loop through all pieces to see if a painting should be given to the player
         for(int currPaintingIndex = 0; currPaintingIndex < 6; currPaintingIndex++){ 
+
             Boolean fullPainting = true;
             for(int currPieceIndex = 0; currPieceIndex < 16; currPieceIndex++){
-                fullPainting &= player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
-                    UserVarIDs.puzzlePieceRedemptionStatusUserVarDefId.getVal(), currPaintingIndex*16+currPieceIndex) != null;
+
+                UserVarValue puzzleRedemptionStatus = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
+                    UserVarIDs.puzzlePieceRedemptionStatusUserVarDefId.getVal(), currPaintingIndex*16+currPieceIndex);
+                fullPainting &= (puzzleRedemptionStatus != null && puzzleRedemptionStatus.value == 1);
             }
-            if(fullPainting && player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
-                UserVarIDs.puzzleRedemptionStatusUserVarDefId.getVal(), currPaintingIndex) == null){
+
+            UserVarValue paintingRedemptionStatus = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
+                UserVarIDs.puzzleRedemptionStatusUserVarDefId.getVal(), currPaintingIndex);
+            if(fullPainting && paintingRedemptionStatus.value == 0){
                 
+                // give the painting
+
                 Integer rewardID = puzzleRewards.get(currPaintingIndex).getAsInt();
 
                 // give player the item
