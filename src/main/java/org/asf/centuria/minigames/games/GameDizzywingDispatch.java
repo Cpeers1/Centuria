@@ -422,7 +422,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                                         p1.given = true;
                                         p1.itemDefId = itemId;
                                         p1.itemCount = count;
-                                        p1.prizeIndex1 = 1;
+                                        p1.given = true;
+                                        p1.prizeIndex1 = 0;
                                         p1.prizeIndex2 = 0;
                                         player.client.sendPacket(p1);
                                     } else {
@@ -1893,10 +1894,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 // give player the item
                 player.account.getSaveSpecificInventory().getItemAccessor(player)
                 .add(rewardID, 1);
-
-                // XP
-                LevelEventBus.dispatch(new LevelEvent("levelevents.minigames.dizzywingdispatch",
-                new String[] { "level:" + level }, player));
                 
                 // send player a notification
                 MinigamePrizePacket p1 = new MinigamePrizePacket();
