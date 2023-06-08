@@ -41,12 +41,11 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
     private String currentGameUUID;
     public GameState gameState;
+    public PuzzleObjectives puzzleObjectives;
     public int level = 0;
     private int score = 0;
     private int moveCount = 0;
     private int dizzyBirdMeter = 0;
-
-    private int puzzleCurrentProgress[] = new int[100];
 
     static private JsonArray specialOrders;
     static private JsonArray specialOrderCountRanges;
@@ -346,28 +345,28 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
                     if(isAchieved(LevelObjectiveType.ClothingLeft) && 
                         isObjective(LevelObjectiveType.ClothingLeft)){
-                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteSpecialOrders);
-                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteSpecialOrders_SingleGame);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.CompleteSpecialOrders);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.CompleteSpecialOrders_SingleGame);
                         numberOfOrders++;
                     }
                     if(isAchieved(LevelObjectiveType.MovesLeft) && 
                         isObjective(LevelObjectiveType.MovesLeft)){
-                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteRushHourOrders);
-                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteRushHourOrders_SingleGame);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.CompleteRushHourOrders);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.CompleteRushHourOrders_SingleGame);
                         numberOfOrders++;
                     }
                     if(isAchieved(LevelObjectiveType.EggsLeft) && 
                         isObjective(LevelObjectiveType.EggsLeft)){
-                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteShortStaffedOrders);
-                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteShortStaffedOrders_SingleGame);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.CompleteShortStaffedOrders);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.CompleteShortStaffedOrders_SingleGame);
                         numberOfOrders++;
                     }
                     if(numberOfOrders > 1){
-                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteComboOrders);
-                        incrementPuzzleTemp(PuzzleObjectiveType.CompleteComboOrders_SingleGame);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.CompleteComboOrders);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.CompleteComboOrders_SingleGame);
                     }
-                    incrementPuzzleTemp(PuzzleObjectiveType.CompleteOrders);
-                    incrementPuzzleTemp(PuzzleObjectiveType.CompleteOrders_SingleGame);
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.CompleteOrders);
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.CompleteOrders_SingleGame);
 
                     // add new bird types to be placed on to the board
 
@@ -396,7 +395,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                                 if(sumWeight < randNo && randNo <= sumWeight+reward.get("weight").getAsInt()){
 
                                     String lootTableDefID = reward.get("lootTableDefID").getAsString();
-                                    Centuria.logger.debug(lootTableDefID, "lootTableDefId");
+                                    Centuria.logger.info(lootTableDefID, "lootTableDefId");
                                     LootInfo chosenReward = ResourceCollectionModule.getLootReward(lootTableDefID);
                                     
                                     // Give reward
@@ -405,7 +404,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                                         chosenReward = ResourceCollectionModule.getLootReward(chosenReward.reward.referencedTableId);
                                         itemId = chosenReward.reward.itemId;
                                     }
-                                    Centuria.logger.debug(itemId, "itemID");
+                                    Centuria.logger.info(itemId, "itemID");
 
                                     Integer count = chosenReward.count;
                                     
@@ -624,7 +623,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         // used to keep track of level objectives
         public LevelObjectives objectives;
 
-        // writing to inventory
+        // to send level rewards to the player
         private Player player;
 
         public GameState(Player Player){
@@ -639,7 +638,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             initializeGameBoard();
             floodFillClearVisited();
             objectives = new LevelObjectives();
-            puzzleCurrentProgress = new int[100];
             player = Player;
         }
 
@@ -673,9 +671,83 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 return;
             }
             
-            clearCellUpdateObjective(pos);
+            switch(getCell(pos).getTileType()){
+                case RedBird:
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearRedBirds);
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearRedBirds_SingleGame);
+                    break;
+                case BlueBird:
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearBlueBirds);
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearBlueBirds_SingleGame);
+                    break;
+                case GreenBird:
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearGreenBirds);
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearGreenBirds_SingleGame);
+                    break;
+                case YellowBird:
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearYellowBirds);
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearYellowBirds_SingleGame);
+                    break;
+                case PinkBird:
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearPinkBirds);
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearPinkBirds_SingleGame);
+                    break;
+                case SnowyBird:
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearWhiteBirds);
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearWhiteBirds_SingleGame);
+                    break;
+                case PurpleBird:
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearPurpleBirds);
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearPurpleBirds_SingleGame);
+                    break;
+                case AquaBird:
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearAquaBirds);
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearAquaBirds_SingleGame);
+                    break;
+                case None:
+                    break;
+                default:
+                    break;
+            }
             if(isClearedByPeacock){
-                clearedWithPeacockUpdateObjective(pos);
+                switch(getCell(pos).getTileType()){
+                    case RedBird:
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockRed);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockRed_SingleGame);
+                        break;
+                    case BlueBird:
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockBlue);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockBlue_SingleGame);
+                        break;
+                    case GreenBird:
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockGreen);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockGreen_SingleGame);
+                        break;
+                    case YellowBird:
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockYellow);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockYellow_SingleGame);
+                        break;
+                    case PinkBird:
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockPink);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockPink_SingleGame);
+                        break;
+                    case SnowyBird:
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockWhite);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockWhite_SingleGame);
+                        break;
+                    case PurpleBird:
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockPurple);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockPurple_SingleGame);
+                        break;
+                    case AquaBird:
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockAqua);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockAqua_SingleGame);
+                        break;
+                    case None:
+                        break;
+                    default:
+                        break;
+                }
             }
 
             if(forceClear){
@@ -1077,8 +1149,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
             Integer matchTileSize = matchType;
 
-            //Boolean containsEgg = false;
-
             while(!floodFillQueue.isEmpty()){
                 Vector2i curr = floodFillQueue.poll();
 
@@ -1090,8 +1160,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
                 floodFillSetVisited(curr);
                 connectedNodes.add(curr);
-
-                //containsEgg ^= getCell(curr).getHealth() > 0;
                 
                 floodFillQueue.add(new Vector2i(curr.x-1, curr.y));
                 floodFillQueue.add(new Vector2i(curr.x+1, curr.y));
@@ -1118,37 +1186,39 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
             
             // keep track of puzzle objectives
-            switch(matchTileSize) {
-                case 3:
-                    scoreCombo(30);
-                    break;
-                case 4:
-                    refBooster = randomizer.nextInt(2) == 0 ? BoosterType.BuzzyBirdHorizontal : BoosterType.BuzzyBirdVertical;
-                    scoreCombo(150);
-                    incrementPuzzleTemp(PuzzleObjectiveType.MakeFlyers);
-                    incrementPuzzleTemp(PuzzleObjectiveType.MakeFlyers_SingleGame);
-                    break;
-                case 5:
-                    refBooster = BoosterType.PrismPeacock;
-                    scoreCombo(150);
-                    incrementPuzzleTemp(PuzzleObjectiveType.MakePeacocks);
-                    incrementPuzzleTemp(PuzzleObjectiveType.MakePeacocks_SingleGame);
-                    break;
-                case 6:
-                    refBooster = BoosterType.BoomBird;
-                    scoreCombo(150);
-                    incrementPuzzleTemp(PuzzleObjectiveType.MakeBombBirds);
-                    incrementPuzzleTemp(PuzzleObjectiveType.MakeBombBirds_SingleGame);
-                    break;
-                default:
-                    break;
+            if(getCell(pos).getTileType() != TileType.None){
+                switch(matchTileSize) {
+                    case 3:
+                        scoreCombo(30);
+                        break;
+                    case 4:
+                        refBooster = randomizer.nextInt(2) == 0 ? BoosterType.BuzzyBirdHorizontal : BoosterType.BuzzyBirdVertical;
+                        scoreCombo(150);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.MakeFlyers);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.MakeFlyers_SingleGame);
+                        break;
+                    case 5:
+                        refBooster = BoosterType.PrismPeacock;
+                        scoreCombo(150);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.MakePeacocks);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.MakePeacocks_SingleGame);
+                        break;
+                    case 6:
+                        refBooster = BoosterType.BoomBird;
+                        scoreCombo(150);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.MakeBombBirds);
+                        puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.MakeBombBirds_SingleGame);
+                        break;
+                    default:
+                        break;
+                }
+                
+                if(matchTileSize > 3){ // I am not sure what type of goal "Hatch Powerups" is
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.HatchPowerups);
+                    puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.HatchPowerups_SingleGame);
+                }
             }
 
-            //if(containsEgg && matchTileSize > 3){
-            if(matchTileSize > 3){ // I am not sure what type of goal "Hatch Powerups" is
-                incrementPuzzleTemp(PuzzleObjectiveType.HatchPowerups);
-                incrementPuzzleTemp(PuzzleObjectiveType.HatchPowerups_SingleGame);
-            }
 
            
             for(Vector2i node : connectedNodes){
@@ -1329,8 +1399,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             clearCell(pos1, false, true);
             clearCell(pos2, false, true);
 
-            incrementPuzzleTemp(PuzzleObjectiveType.ComboBombPeacock);
-            incrementPuzzleTemp(PuzzleObjectiveType.ComboBombPeacock_SingleGame);
+            puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ComboPeacockPeacock);
+            puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ComboPeacockPeacock_SingleGame);
 
             for(int x = 0; x < gridSize.x; x++){
                 for(int y = 0; y < gridSize.y; y++){
@@ -1348,8 +1418,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             clearCell(pos1, false, true);
             clearCell(pos2, true, true);
 
-            incrementPuzzleTemp(PuzzleObjectiveType.ComboPeacockPeacock);
-            incrementPuzzleTemp(PuzzleObjectiveType.ComboPeacockPeacock_SingleGame);
+            puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ComboBombPeacock);
+            puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ComboBombPeacock_SingleGame);
    
             List<Vector2i> newBoomBirds = new ArrayList<>();
    
@@ -1416,8 +1486,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             clearCell(pos1, false, true);
             clearCell(pos2, true, true);
 
-            incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerPeacock);
-            incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerPeacock_SingleGame);
+            puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerPeacock);
+            puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerPeacock_SingleGame);
    
             List<Vector2i> newBuzzyBirds = new ArrayList<>();
    
@@ -1449,8 +1519,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             buzzyBirdHorizontalBehaviour(pos1, 1);
             buzzyBirdVerticalBehaviour(pos1, 1);
 
-            incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerFlyer);
-            incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerFlyer_SingleGame);
+            puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerFlyer);
+            puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerFlyer_SingleGame);
         }
 
         private void ComboBoomBoomBirdBehaviour(Vector2i pos1, Vector2i pos2) {
@@ -1459,8 +1529,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             
             boomBirdBehaviour(pos1, 5);
 
-            incrementPuzzleTemp(PuzzleObjectiveType.ComboBombBomb);
-            incrementPuzzleTemp(PuzzleObjectiveType.ComboBombBomb_SingleGame);
+            puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ComboBombBomb);
+            puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ComboBombBomb_SingleGame);
         }
 
         private void ComboBuzzyBoomBirdBehaviour(Vector2i pos1, Vector2i pos2) {
@@ -1470,8 +1540,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             buzzyBirdHorizontalBehaviour(pos1, 3);
             buzzyBirdVerticalBehaviour(pos1, 3);
 
-            incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerBomb);
-            incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerBomb_SingleGame);
+            puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerBomb);
+            puzzleObjectives.incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerBomb_SingleGame);
         }
  
 
@@ -1507,93 +1577,20 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         
 
 
-        // functions related to the puzzle objectives
 
-        private void clearCellUpdateObjective(Vector2i pos) {
-            if(getCell(pos).getTileType() == TileType.None){
-                return;
-            }
-            switch(getCell(pos).getTileType()){
-                case RedBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearRedBirds);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearRedBirds_SingleGame);
-                    break;
-                case BlueBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearBlueBirds);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearBlueBirds_SingleGame);
-                    break;
-                case GreenBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearGreenBirds);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearGreenBirds_SingleGame);
-                    break;
-                case YellowBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearYellowBirds);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearYellowBirds_SingleGame);
-                    break;
-                case PinkBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearPinkBirds);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearPinkBirds_SingleGame);
-                    break;
-                case SnowyBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearWhiteBirds);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearWhiteBirds_SingleGame);
-                    break;
-                case PurpleBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearPurpleBirds);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearPurpleBirds_SingleGame);
-                case AquaBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearAquaBirds);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearAquaBirds_SingleGame);
-                    break;
-                case None:
-                    break;
-                default:
-                    break;
-            }
+        // functions related to updating the board when a syncClient message is sent
+
+    }
+
+    public class PuzzleObjectives {
+
+        private int puzzleCurrentProgress[];
+
+        public PuzzleObjectives(){
+            puzzleCurrentProgress = new int[100];
         }
-        
-        private void clearedWithPeacockUpdateObjective(Vector2i pos) {
-            if(getCell(pos).getTileType() == TileType.None){
-                return;
-            }
-            switch(getCell(pos).getTileType()){
-                case RedBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockRed);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockRed_SingleGame);
-                    break;
-                case BlueBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockBlue);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockBlue_SingleGame);
-                    break;
-                case GreenBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockGreen);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockGreen_SingleGame);
-                    break;
-                case YellowBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockYellow);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockYellow_SingleGame);
-                    break;
-                case PinkBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockPink);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockPink_SingleGame);
-                    break;
-                case SnowyBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockWhite);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockWhite_SingleGame);
-                    break;
-                case PurpleBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockPurple);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockPurple_SingleGame);
-                case AquaBird:
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockAqua);
-                    incrementPuzzleTemp(PuzzleObjectiveType.ClearedWithPeacockAqua_SingleGame);
-                    break;
-                case None:
-                    break;
-                default:
-                    break;
-            }
-        }
+
+        // functions keeping track of changes to be made to the player inventory in relation to puzzle objectives
 
         public void incrementPuzzleTemp(PuzzleObjectiveType puzzle){
             puzzleCurrentProgress[puzzle.getVal()]++;
@@ -1612,107 +1609,107 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         }
 
 
-        // functions related to updating the board when a syncClient message is sent
 
-    }
+        // functions related to saving puzzle objectives data to the player inventory.
 
-  
-    // functions related to saving the saved game user variable to the player inventory.
-
-    private Integer puzzleTypeToUserVarIndex(PuzzleObjectiveType puzzle){
-        for(JsonElement ele : achievementToUserVarIndexList){
-            JsonObject dataPair = (JsonObject) ele;
-            if(dataPair.get("achievementType").getAsInt() == puzzle.getVal()){
-                return dataPair.get("userVarIndex").getAsInt();
+        private Integer puzzleTypeToUserVarIndex(PuzzleObjectiveType puzzle){
+            for(JsonElement ele : achievementToUserVarIndexList){
+                JsonObject dataPair = (JsonObject) ele;
+                if(dataPair.get("achievementType").getAsInt() == puzzle.getVal()){
+                    return dataPair.get("userVarIndex").getAsInt();
+                }
             }
+            return -1;
         }
-        return -1;
-    }
 
-    private void setPuzzleObjectiveUserVar(Player player, PuzzleObjectiveType puzzle, Integer value){ 
-        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(UserVarIDs.persistentAchievementDataUserVarDefId.getVal(), puzzleTypeToUserVarIndex(puzzle), value);
-    }
-
-    private Integer getPuzzleObjectiveUserVar(Player player, PuzzleObjectiveType puzzle){
-
-        UserVarValue value = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(UserVarIDs.persistentAchievementDataUserVarDefId.getVal(), puzzle.getVal());
-        if(value == null){
-            setPuzzleObjectiveUserVar(player, puzzle, 0);
-            return 0;
-        } else {
-            return player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(UserVarIDs.persistentAchievementDataUserVarDefId.getVal(), puzzle.getVal()).value;
+        private void setPuzzleObjectiveUserVar(Player player, PuzzleObjectiveType puzzle, Integer value){ 
+            player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(UserVarIDs.persistentAchievementDataUserVarDefId.getVal(), puzzleTypeToUserVarIndex(puzzle), value);
         }
-    }
 
-    // these are called when the game starts.
+        private Integer getPuzzleObjectiveUserVar(Player player, PuzzleObjectiveType puzzle){
 
-    private void saveSavedGameUserVar(Player player) {
-        
-        gameState.setPuzzleTemp(PuzzleObjectiveType.HighScore, score);
-        gameState.setPuzzleTemp(PuzzleObjectiveType.TotalScore, score);
-
-        // write into the player inventory the number of moves made in the level, send inventory item packet
-        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(UserVarIDs.savedGameUserVarDefId.getVal(), level, moveCount);
-
-        // in case no puzzle objective has ever been written to the player inventory
-        if(player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
-            UserVarIDs.persistentAchievementDataUserVarDefId.getVal()) == null){
-
-            for(int i = 0; i < PuzzleObjectiveType.values().length; i++){
-                player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(
-                    UserVarIDs.persistentAchievementDataUserVarDefId.getVal(), i, 0);
+            UserVarValue value = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(UserVarIDs.persistentAchievementDataUserVarDefId.getVal(), puzzle.getVal());
+            if(value == null){
+                setPuzzleObjectiveUserVar(player, puzzle, 0);
+                return 0;
+            } else {
+                return player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(UserVarIDs.persistentAchievementDataUserVarDefId.getVal(), puzzle.getVal()).value;
             }
         }
 
-        // write into the player inventory the puzzle objectives
-        for(PuzzleObjectiveType puzzleType : PuzzleObjectiveType.values()){
-            if(gameState.getPuzzleTemp(puzzleType) > 0){
-                Centuria.logger.debug(puzzleType.toString(), Integer.toString(gameState.getPuzzleTemp(puzzleType)));
+        // these are called when the game starts and ends.
+
+        private void saveSavedGameUserVar(Player player) {
+            
+            setPuzzleTemp(PuzzleObjectiveType.HighScore, score);
+            setPuzzleTemp(PuzzleObjectiveType.TotalScore, score);
+
+            // write into the player inventory the number of moves made in the level, send inventory item packet
+            player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(UserVarIDs.savedGameUserVarDefId.getVal(), level, moveCount);
+
+            // in case no puzzle objective has ever been written to the player inventory
+            if(player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
+                UserVarIDs.persistentAchievementDataUserVarDefId.getVal()) == null){
+
+                for(int i = 0; i < PuzzleObjectiveType.values().length; i++){
+                    player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(
+                        UserVarIDs.persistentAchievementDataUserVarDefId.getVal(), i, 0);
+                }
+            }
+
+            // write into the player inventory the puzzle objectives
+            for(PuzzleObjectiveType puzzleType : PuzzleObjectiveType.values()){
+                if(getPuzzleTemp(puzzleType) > 0){
+                    Centuria.logger.info(puzzleType.toString(), Integer.toString(getPuzzleTemp(puzzleType)));
+                }
+            }
+            for(PuzzleObjectiveType puzzleType : PuzzleObjectiveType.values()){
+                if(puzzleType.toString().contains("SingleGame") || 
+                    puzzleType == PuzzleObjectiveType.HighScore){   // highest in a game
+
+                    setPuzzleObjectiveUserVar(player, puzzleType, 
+                        Math.max(getPuzzleTemp(puzzleType), 
+                        getPuzzleObjectiveUserVar(player, puzzleType)));
+                } else if (puzzleType != PuzzleObjectiveType.TotalScore){    // cumulative, total score handled in resetSavedGameUserVar
+                    setPuzzleObjectiveUserVar(player, puzzleType, 
+                        getPuzzleTemp(puzzleType) +
+                        getPuzzleObjectiveUserVar(player, puzzleType));
+                    clearPuzzleTemp(puzzleType);
+                }
             }
         }
-        for(PuzzleObjectiveType puzzleType : PuzzleObjectiveType.values()){
-            if(puzzleType.toString().contains("SingleGame") || 
-                puzzleType == PuzzleObjectiveType.HighScore){   // highest in a game
 
-                setPuzzleObjectiveUserVar(player, puzzleType, 
-                    Math.max(gameState.getPuzzleTemp(puzzleType), 
-                    getPuzzleObjectiveUserVar(player, puzzleType)));
-            } else {    // cumulative
-                setPuzzleObjectiveUserVar(player, puzzleType, 
-                    gameState.getPuzzleTemp(puzzleType) +
-                    getPuzzleObjectiveUserVar(player, puzzleType));
-                gameState.clearPuzzleTemp(puzzleType);
-            }
-        }
-    }
+        private void resetSavedGameUserVar(Player player) {
 
-    private void resetSavedGameUserVar(Player player) { // this function is something of a leftover and doed not reset any user var
-
-        // reset these values as a new game has been started
-        level = 0;
-        score = 0;
-        moveCount = 0;
-        dizzyBirdMeter = 0;
-
-        
-        // initialise user vars
-        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(UserVarIDs.savedGameUserVarDefId.getVal(), 0, 1);
-        player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(UserVarIDs.tutorial.getVal(), 0, 1);
-    }
-
-    private void loadSavedGameUserVar(Player player) {  // the game only keeps track of the highest score ever and I'm not sure what the continue game button should do
-
-        // retrieve the data from the player inventory
-        UserVarValue[] savedGame = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(UserVarIDs.savedGameUserVarDefId.getVal());
-        Integer prevScore = getPuzzleObjectiveUserVar(player, PuzzleObjectiveType.HighScore);
-
-        // load in the values associated with a previous game
-        if(savedGame != null){
-            level = Math.max(1, savedGame.length-1);
-            score = prevScore;
-            moveCount = savedGame[savedGame.length-1].value;
+            // reset these values as a new game has been started
+            level = 0;
+            score = 0;
+            moveCount = 0;
             dizzyBirdMeter = 0;
+
+            
+            // initialise user vars
+            player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(UserVarIDs.savedGameUserVarDefId.getVal(), 0, 1);
+            player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(UserVarIDs.tutorial.getVal(), 0, 1);
+            setPuzzleObjectiveUserVar(player, PuzzleObjectiveType.TotalScore, 
+                getPuzzleTemp(PuzzleObjectiveType.TotalScore) + getPuzzleObjectiveUserVar(player, PuzzleObjectiveType.TotalScore));
         }
+
+        private void loadSavedGameUserVar(Player player) {  // the game only keeps track of the highest score ever and I'm not sure what the continue game button should do
+
+            // retrieve the data from the player inventory
+            UserVarValue[] savedGame = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(UserVarIDs.savedGameUserVarDefId.getVal());
+            Integer prevScore = getPuzzleObjectiveUserVar(player, PuzzleObjectiveType.HighScore);
+
+            // load in the values associated with a previous game
+            if(savedGame != null){
+                level = Math.max(1, savedGame.length-1);
+                score = prevScore;
+                moveCount = savedGame[savedGame.length-1].value;
+                dizzyBirdMeter = 0;
+            }
+        }
+
     }
 
 
@@ -1742,7 +1739,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         // save score and number of moves made on this level
         saveGame(player, rd);
         
-        resetSavedGameUserVar(player);
+        puzzleObjectives = new PuzzleObjectives();
+        puzzleObjectives.resetSavedGameUserVar(player);
         
         // The GUID is used as the seed for the random number generator.
         currentGameUUID = UUID.randomUUID().toString();
@@ -1818,7 +1816,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 	public void continueGame(Player player, XtReader rd) {
         
         // send start game client with previous values
-        loadSavedGameUserVar(player);
+        puzzleObjectives = new PuzzleObjectives();
+        puzzleObjectives.loadSavedGameUserVar(player);
 
         // The GUID is used as the seed for the random number generator.
         currentGameUUID = UUID.randomUUID().toString();
@@ -1850,7 +1849,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         if(gameState != null){
 
-            saveSavedGameUserVar(player);
+            puzzleObjectives.saveSavedGameUserVar(player);
             
             if (player.client != null && player.client.isConnected()) {
                 // Send to client
@@ -1869,7 +1868,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         int packetPieceIndex = rd.readInt(); // 0 - 16
         int packetOverallIndex = packetPaintingIndex*16+packetPieceIndex;
 
-        Centuria.logger.debug("Painting " + Integer.toString(packetPaintingIndex) + " Piece " + Integer.toString(packetPieceIndex) + " Index " + Integer.toString(packetOverallIndex));
+        Centuria.logger.info("Painting " + Integer.toString(packetPaintingIndex) + " Piece " + Integer.toString(packetPieceIndex) + " Index " + Integer.toString(packetOverallIndex));
 
         // if no puzzle piece data has ever been written into the player inventory
         if(player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
