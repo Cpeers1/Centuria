@@ -396,7 +396,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                                 if(sumWeight < randNo && randNo <= sumWeight+reward.get("weight").getAsInt()){
 
                                     String lootTableDefID = reward.get("lootTableDefID").getAsString();
-                                    Centuria.logger.info(lootTableDefID, "lootTableDefId");
+                                    Centuria.logger.debug(lootTableDefID, "lootTableDefId");
                                     LootInfo chosenReward = ResourceCollectionModule.getLootReward(lootTableDefID);
                                     
                                     // Give reward
@@ -405,7 +405,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                                         chosenReward = ResourceCollectionModule.getLootReward(chosenReward.reward.referencedTableId);
                                         itemId = chosenReward.reward.itemId;
                                     }
-                                    Centuria.logger.info(itemId, "itemID");
+                                    Centuria.logger.debug(itemId, "itemID");
 
                                     Integer count = chosenReward.count;
                                     
@@ -626,7 +626,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         // writing to inventory
         private Player player;
-        
 
         public GameState(Player Player){
             gridSize = new Vector2i(9, 9);
@@ -718,14 +717,13 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
         }
 
-
-
-        // functions related to generating a game board
-
         private void clearGrid(){
             grid = new GridCell[gridSize.x][gridSize.y];
         }
         
+
+        // functions that generate some type of string representation of the game board
+
         public int calculateBoardChecksum() // level of emulation accuracy uncertain
         {
             byte[] inArray = new byte[gridSize.x * gridSize.y];
@@ -759,6 +757,39 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             return (byte)byteValue;
         }
 
+        public String toBase64String(){
+            byte[] inArray = new byte[gridSize.x * gridSize.y];
+            
+            for(int x = 0; x < gridSize.x; x++){
+                for(int y = 0; y < gridSize.y; y++){
+                    inArray[x + gridSize.x * y] = gridCellByteValueForBase64String(new Vector2i(x, y));
+                }
+            }
+
+            return Base64.getEncoder().encodeToString(inArray);
+        }
+
+        public byte gridCellByteValueForBase64String(Vector2i pos)
+        {
+            int byteValue = 0;
+            GridCell cell = getCell(pos);
+
+            if(cell.TileType == TileType.HatOrPurse){
+                byteValue = 18;
+            } else if (cell.Booster == BoosterType.PrismPeacock){
+                byteValue = 88;
+            } else {
+                byteValue += ((cell.Booster == BoosterType.None ? 2 : 1) * cell.TileType.ordinal() + (cell.tileHealth == 0 ? 0 : 1));
+                byteValue += cell.Booster.ordinal() * 20;
+            }
+            
+            
+            return (byte)byteValue;
+        }
+
+
+        // functions that generate new game boards
+
         private void initializeGameBoard() // level of emulation accuracy uncertain
         {
 
@@ -786,10 +817,74 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
         }
 
+        public void scrambleTiles() {
+            List<GridCell> scrambledTiles = new ArrayList<>();
+
+            for(int x = 0; x < gridSize.x; x++){
+                for(int y = 0; y < gridSize.y; y++){  
+                    Vector2i curr = new Vector2i(x, y);
+                    scrambledTiles.add(getCell(curr));
+                }
+            }
+
+            Collections.shuffle(scrambledTiles, randomizer);
+
+            Integer tileNumber = 0;
+            for(GridCell tile : scrambledTiles){
+                setCell(new Vector2i(tileNumber % gridSize.y, tileNumber / gridSize.y), tile);
+                tileNumber++;
+            }
+
+            while(true){ // copied over from the calculateMoves function
+
+                Boolean isMatches = findAndClearMatches(new Vector2i(-1, -1), new Vector2i(-1, -1)); // blank input
+                fillGaps();
+                clearHats();
+                fillGaps(); // replace tiles marked as having being cleared
+
+                if(!isMatches){
+                    break;
+                }
+
+            }
+        }
+    
+        private void clearHats() { // level of emulation accuracy uncertain
+            for(int x = 0; x < gridSize.x; x++){
+                for(int y = 0; y < gridSize.y; y++){ // for each column
+                    Vector2i curr = new Vector2i(x, y);
+                    if(getCell(curr).getTileType() == TileType.HatOrPurse){
+                        clearCell(curr, false, true);
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            fillGaps();
+            objectives.trackEggsAndClothing();
+        }
+
+        public void fillGaps(){
+            for(int x = 0; x < gridSize.x; x++){
+                Integer noGapsInColumn = 0;
+                for(int y = 0; y < gridSize.y; y++){ // for each column
+                    GridCell currCell = getCell(new Vector2i(x, y));
+                    if(currCell.TileType == TileType.None && currCell.Booster == BoosterType.None){
+                        noGapsInColumn++;
+                    } else {
+                        setCell(new Vector2i(x, y - noGapsInColumn), currCell); // move all the tiles down to eliminate gaps
+                    }
+                }
+                for(int y = gridSize.y; y >= gridSize.y-noGapsInColumn; y--){
+                    setCell(new Vector2i(x, y), new GridCell(0, spawnTiles.get(randomizer.nextInt(spawnTiles.size())), BoosterType.None)); // now fill the gaps
+                }
+            }
+        }
+       
 
 
         // functions related to responding to a move from the player
-
         public void calculateMove(Vector2i pos1, Vector2i pos2){
 
             moveCount++;
@@ -1029,152 +1124,72 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
                 
         }
+       
+        // identifies continuous lines of tiles with the same color, main function called by calculateMove
+        public Boolean findAndClearMatches(Vector2i pos1, Vector2i pos2){ // Returns true if a match is found.
 
-        // functions related to how boosters clear tiles
-
-        private void buzzyBirdHorizontalBehaviour(Vector2i pos, Integer size){
-            buzzyBirdHorizontalBehaviour(pos, size, false);
-        }
-
-        private void buzzyBirdHorizontalBehaviour(Vector2i pos, Integer size, boolean isClearedByPeacock) {
+            floodFillClearVisited();
             
-            clearCell(pos, false, true);
+            Boolean isMatch = false;
 
-            Integer d = Math.floorDiv(size, 2);
-            
-            for(int y = pos.y-d; y <= pos.y+d; y++){
-                for(int x = 0; x < gridSize.x; x++){
-                    Vector2i curr = new Vector2i(x, y);
-                    if(getCell(curr) != null){
-                        if(getCell(curr).getBooster() != BoosterType.BuzzyBirdHorizontal){
-                            clearCell(curr, true, false, isClearedByPeacock);
-                        } else {
-                            clearCell(curr, true, true, isClearedByPeacock);
-                            buzzyBirdVerticalBehaviour(curr, 1);
+            Map<Vector2i, Integer> matchType = new HashMap<>();
+
+            // find all vertical matches
+            for(int x = 0; x < gridSize.x; x++){
+                Integer sameTiles = 1;
+                for(int y = 0; y < gridSize.y; y++){ // for each column
+                    if(floodFillIsNeighbourCell(new Vector2i(x, y), new Vector2i(x, y+1), false)){ // keep track of number of tiles with the same tile type next to each other
+                        sameTiles++;
+                    } else if (sameTiles > 2) {
+                        isMatch = true;
+                        
+                        for(int backtrack = y-sameTiles+1; backtrack <= y; backtrack++){
+                            Vector2i back = new Vector2i(x, backtrack);
+
+                            floodFillSetToVisit(back);
+                            matchType.put(back, sameTiles);
                         }
+                        sameTiles = 1;
+                    } else {
+                        sameTiles = 1;
                     }
                 }
             }
-            fillGaps();
-        }
+            
+            // find all horizontal matches
+            for(int y = 0; y < gridSize.y; y++){ // for each row
+                Integer sameTiles = 1;
+                for(int x = 0; x < gridSize.x; x++){
+                if(floodFillIsNeighbourCell(new Vector2i(x+1, y), new Vector2i(x, y), false)){ // keep track of number of tiles with the same tile type next to each other
+                        sameTiles++;
+                    } else if (sameTiles > 2) {
+                        isMatch = true;
+                        
+                        for(int backtrack = x-sameTiles+1; backtrack <= x; backtrack++){
+                            Vector2i back = new Vector2i(backtrack, y);
 
-        private void buzzyBirdVerticalBehaviour(Vector2i pos, Integer size){
-            buzzyBirdVerticalBehaviour(pos, size, false);
-        }
+                            floodFillSetToVisit(back);
+                            matchType.put(back, sameTiles);
+                        }
+                        sameTiles = 1;
+                    } else {
+                        sameTiles = 1;
+                    }
+                }
+            }
 
-        private void buzzyBirdVerticalBehaviour(Vector2i pos, Integer size, boolean isClearedByPeacock) {
-            
-            clearCell(pos, false, true);
-            
-            Integer d = Math.floorDiv(size, 2);
-            
-            for(int x = pos.x-d; x <= pos.x+d; x++){
+            // clear all matches
+            for(int x = 0; x < gridSize.x; x++){
                 for(int y = 0; y < gridSize.y; y++){
                     Vector2i curr = new Vector2i(x, y);
-                    if(getCell(curr) != null){
-                        if(getCell(curr).getBooster() != BoosterType.BuzzyBirdVertical){
-                            clearCell(curr, true, false, isClearedByPeacock);
-                        } else {
-                            clearCell(curr, true, true, isClearedByPeacock);
-                            buzzyBirdHorizontalBehaviour(curr, 1);
-                        }
+
+                    if(floodFillGetVisited(curr)) {
+                        floodFill(curr, matchType.get(curr), pos1, pos2);
                     }
                 }
             }
-            fillGaps();
-        }
-        
-        private void boomBirdBehaviour(Vector2i pos, Integer size) {
-            
-            clearCell(pos, false, true);
 
-            Integer d = Math.floorDiv(size, 2);
-
-            for(int x = pos.x-d; x <= pos.x+d; x++){
-                for(int y = pos.y-d; y <= pos.y+d; y++){
-
-                    Vector2i curr = new Vector2i(x, y);
-
-                    if(x != pos.x && y != pos.y) {
-                        clearCell(curr, true, false);
-                    }
-                }
-            }
-            fillGaps();
-            for(int x = pos.x-d; x <= pos.x+d; x++){
-                for(int y = pos.y-d-1; y <= pos.y+d-1; y++){
-                    Vector2i curr = new Vector2i(x, y);
-                    clearCell(curr, true, false);
-                }
-            }
-            fillGaps();
-        }
-
-        private void prismPeacockBehaviour(Vector2i pos, TileType refType) {
-
-            clearCell(pos, false, true);
-
-            for(int y = 0; y < gridSize.y; y++){
-                for(int x = 0; x < gridSize.x; x++){
-                    Vector2i curr = new Vector2i(x, y);
-                    GridCell currCell = getCell(curr);
-
-                    if(currCell.TileType == refType && !currCell.isBoosted()) {
-                        clearCell(curr, true, false, true);
-                    }
-                }
-            }
-            fillGaps();
-        }
-
-        // functions related to the flood fill algorithm used to clear groups of tiles
-
-        public Boolean floodFillIsNeighbourCell(Vector2i pos1, Vector2i pos2, Boolean checkMatch){
-            GridCell cell1 = getCell(pos1);
-            GridCell cell2 = getCell(pos2);
-
-            if(cell1 == null || cell2 == null || cell1.getTileType() == TileType.HatOrPurse || cell2.getTileType() == TileType.HatOrPurse){
-                return false;
-            } else if (cell1.getTileType() == cell2.getTileType()){
-                         //!cell1.isBoosted() && !cell2.isBoosted() &&
-                         //cell1.getHealth() == 0 && cell1.getHealth() == 0
-                
-                return checkMatch ? floodFillGetToVisit(pos2) && floodFillGetToVisit(pos2) : true;
-            }
-
-            return false;
-        }
-
-        // false = don't visit this cell/cell has been visited
-        // true = visit this cell/cell has not been visited
-        public void floodFillSetToVisit(Vector2i pos){
-            toVisit[pos.x][pos.y] = true;
-            visited[pos.x][pos.y] = true;
-        }
-
-        public boolean floodFillGetToVisit(Vector2i pos){ // also returns true if uninitialized
-            if (pos.x >= 0 && pos.x < gridSize.x && pos.y >= 0 && pos.y < gridSize.y)
-            {
-                return toVisit[pos.x][pos.y];
-            }
-            return false;
-        }
-
-        public void floodFillSetVisited(Vector2i pos){
-            visited[pos.x][pos.y] = false;
-        }
-
-        public boolean floodFillGetVisited(Vector2i pos){
-            if (pos.x >= 0 && pos.x < gridSize.x && pos.y >= 0 && pos.y < gridSize.y)
-            {
-                return visited[pos.x][pos.y];
-            }
-            return false;
-        }
-
-        public void floodFillClearVisited(){
-            toVisit = new boolean[gridSize.x][gridSize.y];
-            visited = new boolean[gridSize.x][gridSize.y];
+            return isMatch;
         }
 
         public void floodFill(Vector2i pos, Integer matchType, Vector2i swap1, Vector2i swap2){
@@ -1288,116 +1303,160 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         }
 
-        // functions that clear or fill tiles by iterating through the entire board with nested for loops instead of flood fill
+        // flood fill helper functions
+        public Boolean floodFillIsNeighbourCell(Vector2i pos1, Vector2i pos2, Boolean checkMatch){
+            GridCell cell1 = getCell(pos1);
+            GridCell cell2 = getCell(pos2);
 
-        private void clearHats() {
-            for(int x = 0; x < gridSize.x; x++){
-                for(int y = 0; y < gridSize.y; y++){ // for each column
-                    Vector2i curr = new Vector2i(x, y);
-                    if(getCell(curr).getTileType() == TileType.HatOrPurse){
-                        clearCell(curr, false, true);
-                    } else {
-                        break;
-                    }
-                }
+            if(cell1 == null || cell2 == null || cell1.getTileType() == TileType.HatOrPurse || cell2.getTileType() == TileType.HatOrPurse){
+                return false;
+            } else if (cell1.getTileType() == cell2.getTileType()){
+                         //!cell1.isBoosted() && !cell2.isBoosted() &&
+                         //cell1.getHealth() == 0 && cell1.getHealth() == 0
+                
+                return checkMatch ? floodFillGetToVisit(pos2) && floodFillGetToVisit(pos2) : true;
             }
 
-            fillGaps();
-            objectives.trackEggsAndClothing();
+            return false;
         }
 
-        public void fillGaps(){
-            for(int x = 0; x < gridSize.x; x++){
-                Integer noGapsInColumn = 0;
-                for(int y = 0; y < gridSize.y; y++){ // for each column
-                    GridCell currCell = getCell(new Vector2i(x, y));
-                    if(currCell.TileType == TileType.None && currCell.Booster == BoosterType.None){
-                        noGapsInColumn++;
-                    } else {
-                        setCell(new Vector2i(x, y - noGapsInColumn), currCell); // move all the tiles down to eliminate gaps
-                    }
-                }
-                for(int y = gridSize.y; y >= gridSize.y-noGapsInColumn; y--){
-                    setCell(new Vector2i(x, y), new GridCell(0, spawnTiles.get(randomizer.nextInt(spawnTiles.size())), BoosterType.None)); // now fill the gaps
-                }
-            }
+        // false = don't visit this cell/cell has been visited
+        // true = visit this cell/cell has not been visited
+        public void floodFillSetToVisit(Vector2i pos){
+            toVisit[pos.x][pos.y] = true;
+            visited[pos.x][pos.y] = true;
         }
-              
-        // identifies continuous lines of tiles with the same color, main function called by calculateMove
 
-        public Boolean findAndClearMatches(Vector2i pos1, Vector2i pos2){ // Returns true if a match is found.
-
-            floodFillClearVisited();
-            
-            Boolean isMatch = false;
-
-            Map<Vector2i, Integer> matchType = new HashMap<>();
-
-            // find all vertical matches
-            for(int x = 0; x < gridSize.x; x++){
-                Integer sameTiles = 1;
-                for(int y = 0; y < gridSize.y; y++){ // for each column
-                    if(floodFillIsNeighbourCell(new Vector2i(x, y), new Vector2i(x, y+1), false)){ // keep track of number of tiles with the same tile type next to each other
-                        sameTiles++;
-                    } else if (sameTiles > 2) {
-                        isMatch = true;
-                        
-                        for(int backtrack = y-sameTiles+1; backtrack <= y; backtrack++){
-                            Vector2i back = new Vector2i(x, backtrack);
-
-                            floodFillSetToVisit(back);
-                            matchType.put(back, sameTiles);
-                        }
-                        sameTiles = 1;
-                    } else {
-                        sameTiles = 1;
-                    }
-                }
+        public boolean floodFillGetToVisit(Vector2i pos){ // also returns true if uninitialized
+            if (pos.x >= 0 && pos.x < gridSize.x && pos.y >= 0 && pos.y < gridSize.y)
+            {
+                return toVisit[pos.x][pos.y];
             }
+            return false;
+        }
+
+        public void floodFillSetVisited(Vector2i pos){
+            visited[pos.x][pos.y] = false;
+        }
+
+        public boolean floodFillGetVisited(Vector2i pos){
+            if (pos.x >= 0 && pos.x < gridSize.x && pos.y >= 0 && pos.y < gridSize.y)
+            {
+                return visited[pos.x][pos.y];
+            }
+            return false;
+        }
+
+        public void floodFillClearVisited(){
+            toVisit = new boolean[gridSize.x][gridSize.y];
+            visited = new boolean[gridSize.x][gridSize.y];
+        }
+
+
+
+        // functions that define booster tile behaviours
+
+        private void buzzyBirdHorizontalBehaviour(Vector2i pos, Integer size){
+            buzzyBirdHorizontalBehaviour(pos, size, false);
+        }
+
+        private void buzzyBirdHorizontalBehaviour(Vector2i pos, Integer size, boolean isClearedByPeacock) {
             
-            // find all horizontal matches
-            for(int y = 0; y < gridSize.y; y++){ // for each row
-                Integer sameTiles = 1;
+            clearCell(pos, false, true);
+
+            Integer d = Math.floorDiv(size, 2);
+            
+            for(int y = pos.y-d; y <= pos.y+d; y++){
                 for(int x = 0; x < gridSize.x; x++){
-                if(floodFillIsNeighbourCell(new Vector2i(x+1, y), new Vector2i(x, y), false)){ // keep track of number of tiles with the same tile type next to each other
-                        sameTiles++;
-                    } else if (sameTiles > 2) {
-                        isMatch = true;
-                        
-                        for(int backtrack = x-sameTiles+1; backtrack <= x; backtrack++){
-                            Vector2i back = new Vector2i(backtrack, y);
-
-                            floodFillSetToVisit(back);
-                            matchType.put(back, sameTiles);
+                    Vector2i curr = new Vector2i(x, y);
+                    if(getCell(curr) != null){
+                        if(getCell(curr).getBooster() != BoosterType.BuzzyBirdHorizontal){
+                            clearCell(curr, true, false, isClearedByPeacock);
+                        } else {
+                            clearCell(curr, true, true, isClearedByPeacock);
+                            buzzyBirdVerticalBehaviour(curr, 1);
                         }
-                        sameTiles = 1;
-                    } else {
-                        sameTiles = 1;
                     }
                 }
             }
+            fillGaps();
+        }
 
-            // clear all matches
-            for(int x = 0; x < gridSize.x; x++){
+        private void buzzyBirdVerticalBehaviour(Vector2i pos, Integer size){
+            buzzyBirdVerticalBehaviour(pos, size, false);
+        }
+
+        private void buzzyBirdVerticalBehaviour(Vector2i pos, Integer size, boolean isClearedByPeacock) {
+            
+            clearCell(pos, false, true);
+            
+            Integer d = Math.floorDiv(size, 2);
+            
+            for(int x = pos.x-d; x <= pos.x+d; x++){
                 for(int y = 0; y < gridSize.y; y++){
                     Vector2i curr = new Vector2i(x, y);
-
-                    if(floodFillGetVisited(curr)) {
-                        floodFill(curr, matchType.get(curr), pos1, pos2);
+                    if(getCell(curr) != null){
+                        if(getCell(curr).getBooster() != BoosterType.BuzzyBirdVertical){
+                            clearCell(curr, true, false, isClearedByPeacock);
+                        } else {
+                            clearCell(curr, true, true, isClearedByPeacock);
+                            buzzyBirdHorizontalBehaviour(curr, 1);
+                        }
                     }
                 }
             }
+            fillGaps();
+        }
+        
+        private void boomBirdBehaviour(Vector2i pos, Integer size) {
+            
+            clearCell(pos, false, true);
 
-            return isMatch;
+            Integer d = Math.floorDiv(size, 2);
+
+            for(int x = pos.x-d; x <= pos.x+d; x++){
+                for(int y = pos.y-d; y <= pos.y+d; y++){
+
+                    Vector2i curr = new Vector2i(x, y);
+
+                    if(x != pos.x && y != pos.y) {
+                        clearCell(curr, true, false);
+                    }
+                }
+            }
+            fillGaps();
+            for(int x = pos.x-d; x <= pos.x+d; x++){
+                for(int y = pos.y-d-1; y <= pos.y+d-1; y++){
+                    Vector2i curr = new Vector2i(x, y);
+                    clearCell(curr, true, false);
+                }
+            }
+            fillGaps();
+        }
+
+        private void prismPeacockBehaviour(Vector2i pos, TileType refType) {
+
+            clearCell(pos, false, true);
+
+            for(int y = 0; y < gridSize.y; y++){
+                for(int x = 0; x < gridSize.x; x++){
+                    Vector2i curr = new Vector2i(x, y);
+                    GridCell currCell = getCell(curr);
+
+                    if(currCell.TileType == refType && !currCell.isBoosted()) {
+                        clearCell(curr, true, false, true);
+                    }
+                }
+            }
+            fillGaps();
         }
 
 
-
-        // functions related to scores and level progression
+        // functions related to level objectives, or call functions in the level objectives class
 
         private void scoreCombo(int scoreIncrease) {
             matchComboScore += scoreIncrease;
-
+            
             dizzyBirdMeter += scoreIncrease / 30;
             score += matchComboScore;
             objectives.addScore(matchComboScore);
@@ -1532,67 +1591,6 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         // functions related to updating the board when a syncClient message is sent
 
-        public String toBase64String(){
-            byte[] inArray = new byte[gridSize.x * gridSize.y];
-            
-            for(int x = 0; x < gridSize.x; x++){
-                for(int y = 0; y < gridSize.y; y++){
-                    inArray[x + gridSize.x * y] = gridCellByteValueForBase64String(new Vector2i(x, y));
-                }
-            }
-
-            return Base64.getEncoder().encodeToString(inArray);
-        }
-
-        public byte gridCellByteValueForBase64String(Vector2i pos)
-        {
-            int byteValue = 0;
-            GridCell cell = getCell(pos);
-
-            if(cell.TileType == TileType.HatOrPurse){
-                byteValue = 18;
-            } else if (cell.Booster == BoosterType.PrismPeacock){
-                byteValue = 88;
-            } else {
-                byteValue += ((cell.Booster == BoosterType.None ? 2 : 1) * cell.TileType.ordinal() + (cell.tileHealth == 0 ? 0 : 1));
-                byteValue += cell.Booster.ordinal() * 20;
-            }
-            
-            
-            return (byte)byteValue;
-        }
-
-        public void scrambleTiles() {
-            List<GridCell> scrambledTiles = new ArrayList<>();
-
-            for(int x = 0; x < gridSize.x; x++){
-                for(int y = 0; y < gridSize.y; y++){  
-                    Vector2i curr = new Vector2i(x, y);
-                    scrambledTiles.add(getCell(curr));
-                }
-            }
-
-            Collections.shuffle(scrambledTiles, randomizer);
-
-            Integer tileNumber = 0;
-            for(GridCell tile : scrambledTiles){
-                setCell(new Vector2i(tileNumber % gridSize.y, tileNumber / gridSize.y), tile);
-                tileNumber++;
-            }
-
-            while(true){ // copied over from the calculateMoves function
-
-                Boolean isMatches = findAndClearMatches(new Vector2i(-1, -1), new Vector2i(-1, -1)); // blank input
-                fillGaps();
-                clearHats();
-                fillGaps(); // replace tiles marked as having being cleared
-
-                if(!isMatches){
-                    break;
-                }
-
-            }
-        }
     }
 
   
@@ -1646,7 +1644,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         // write into the player inventory the puzzle objectives
         for(PuzzleObjectiveType puzzleType : PuzzleObjectiveType.values()){
             if(gameState.getPuzzleTemp(puzzleType) > 0){
-                Centuria.logger.info(puzzleType.toString(), Integer.toString(gameState.getPuzzleTemp(puzzleType)));
+                Centuria.logger.debug(puzzleType.toString(), Integer.toString(gameState.getPuzzleTemp(puzzleType)));
             }
         }
         for(PuzzleObjectiveType puzzleType : PuzzleObjectiveType.values()){
@@ -1848,7 +1846,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         int packetPieceIndex = rd.readInt(); // 0 - 16
         int packetOverallIndex = packetPaintingIndex*16+packetPieceIndex;
 
-        Centuria.logger.info("Painting " + Integer.toString(packetPaintingIndex) + " Piece " + Integer.toString(packetPieceIndex) + " Index " + Integer.toString(packetOverallIndex));
+        Centuria.logger.debug("Painting " + Integer.toString(packetPaintingIndex) + " Piece " + Integer.toString(packetPieceIndex) + " Index " + Integer.toString(packetOverallIndex));
 
         // if no puzzle piece data has ever been written into the player inventory
         if(player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
