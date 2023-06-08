@@ -921,161 +921,35 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                         getCell(pos2).getBooster() == BoosterType.BuzzyBirdVertical) &&
                         getCell(pos1).getBooster() == BoosterType.BoomBird){    // Buzzy bird and boom bird
     
-                        clearCell(pos1, false, true);
-                        clearCell(pos2, true, true);
-        
-                        buzzyBirdHorizontalBehaviour(pos1, 3);
-                        buzzyBirdVerticalBehaviour(pos1, 3);
-
-                        incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerBomb);
-                        incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerBomb_SingleGame);
+                        ComboBuzzyBoomBirdBehaviour(pos1, pos2);
                         
                     } else if (getCell(pos1).getBooster() == BoosterType.BoomBird &&
                         getCell(pos2).getBooster() == BoosterType.BoomBird){    // Boom bird and boom bird
                         
-                        clearCell(pos1, false, true);
-                        clearCell(pos2, true, true);
-                        
-                        boomBirdBehaviour(pos1, 5);
-
-                        incrementPuzzleTemp(PuzzleObjectiveType.ComboBombBomb);
-                        incrementPuzzleTemp(PuzzleObjectiveType.ComboBombBomb_SingleGame);
+                        ComboBoomBoomBirdBehaviour(pos1, pos2);
                         
                     } else if ((getCell(pos1).getBooster() == BoosterType.BuzzyBirdHorizontal || 
                         getCell(pos1).getBooster() == BoosterType.BuzzyBirdVertical) &&
                         (getCell(pos2).getBooster() == BoosterType.BuzzyBirdHorizontal || 
                         getCell(pos2).getBooster() == BoosterType.BuzzyBirdVertical)){  // Buzzy bird and buzzy bird
                         
-                        clearCell(pos1, false, true);
-                        clearCell(pos2, true, true);
-                        
-                        buzzyBirdHorizontalBehaviour(pos1, 1);
-                        buzzyBirdVerticalBehaviour(pos1, 1);
-
-                        incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerFlyer);
-                        incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerFlyer_SingleGame);
+                        ComboBuzzyBuzzyBirdBehaviour(pos1, pos2);
     
                     } else if (getCell(pos1).getBooster() == BoosterType.PrismPeacock &&
                         (getCell(pos2).getBooster() == BoosterType.BuzzyBirdHorizontal || 
                         getCell(pos2).getBooster() == BoosterType.BuzzyBirdVertical)){  // Prism peacock and buzzy bird
     
-                        TileType refType = getCell(pos2).TileType;
-    
-                        clearCell(pos1, false, true);
-                        clearCell(pos2, true, true);
-
-                        incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerPeacock);
-                        incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerPeacock_SingleGame);
-    
-                        List<Vector2i> newBuzzyBirds = new ArrayList<>();
-    
-                        for(int x = 0; x < gridSize.x; x++){
-                            for(int y = 0; y < gridSize.y; y++){
-                                Vector2i curr = new Vector2i(x, y);
-    
-                                if(getCell(curr).getTileType() == refType && !getCell(curr).isBoosted()) {
-                                    newBuzzyBirds.add(curr);
-                                }
-                            }
-                        }
-    
-                        for (Vector2i newBuzzyBird : newBuzzyBirds) {
-                            Boolean coinflip = randomizer.nextInt(2) == 1;
-                            
-                            if(coinflip) {
-                                buzzyBirdHorizontalBehaviour(newBuzzyBird, 1, true);
-                            } else {
-                                buzzyBirdVerticalBehaviour(newBuzzyBird, 1, true);
-                            }
-                        }
+                        ComboPrismBuzzyBirdBehaviour(pos1, pos2);
     
                     } else if (getCell(pos1).getBooster() == BoosterType.PrismPeacock &&
                         (getCell(pos2).getBooster() == BoosterType.BoomBird)){  // Prism peacock and boom bird
     
-                        TileType refType = getCell(pos2).TileType;
-    
-                        clearCell(pos1, false, true);
-                        clearCell(pos2, true, true);
-
-                        incrementPuzzleTemp(PuzzleObjectiveType.ComboPeacockPeacock);
-                        incrementPuzzleTemp(PuzzleObjectiveType.ComboPeacockPeacock_SingleGame);
-    
-                        List<Vector2i> newBoomBirds = new ArrayList<>();
-    
-                        for(int x = 0; x < gridSize.x; x++){
-                            for(int y = 0; y < gridSize.y; y++){
-                                Vector2i curr = new Vector2i(x, y);
-                                GridCell currCell = getCell(curr);
-    
-                                if(currCell.getTileType() == refType && !currCell.isBoosted()) {
-                                    currCell.setBooster(BoosterType.BoomBird);  // presumably no need to check for tile health
-                                    setCell(curr, currCell);
-                                    newBoomBirds.add(curr);
-                                }
-                            }
-                        }
-    
-                        Integer d = Math.floorDiv(3, 2);
-    
-                        for (Vector2i pos : newBoomBirds) {     // first explosions
-                
-                            for(int x = pos.x-d; x <= pos.x+d; x++){
-                                for(int y = pos.y-d; y <= pos.y+d; y++){
-        
-                                    Vector2i curr = new Vector2i(x, y);
-        
-                                    if(getCell(curr) != null && !newBoomBirds.contains(curr) && getCell(curr).getTileType() != TileType.None) {
-                                        clearCell(curr, true, false, true);
-                                    }
-                                }
-                            }
-                        }
-                        fillGaps();
-    
-                        newBoomBirds.clear();
-    
-                        for(int x = 0; x < gridSize.x; x++){
-                            for(int y = 0; y < gridSize.y; y++){
-                                Vector2i curr = new Vector2i(x, y);
-                                GridCell currCell = getCell(curr);
-    
-                                if(currCell.getTileType() == refType && currCell.getBooster() == BoosterType.BoomBird) {
-                                    newBoomBirds.add(curr);
-                                }
-                            }
-                        }
-    
-                        for (Vector2i pos : newBoomBirds) {    // second explosions
-                
-                            for(int x = pos.x-d; x <= pos.x+d; x++){
-                                for(int y = pos.y-d; y <= pos.y+d; y++){
-        
-                                    Vector2i curr = new Vector2i(x, y);
-                                    clearCell(curr, true, true, true);
-                                }
-                            }
-                        }
-
-                        fillGaps();
-    
+                        ComboPrismBoomBirdBehaviour(pos1, pos2);
     
                     } else if (getCell(pos1).getBooster() == BoosterType.PrismPeacock &&
                         getCell(pos1).getBooster() == BoosterType.PrismPeacock){    // Prism peacock and prism peacock
                         
-                        clearCell(pos1, false, true);
-                        clearCell(pos2, false, true);
-
-                        incrementPuzzleTemp(PuzzleObjectiveType.ComboBombPeacock);
-                        incrementPuzzleTemp(PuzzleObjectiveType.ComboBombPeacock_SingleGame);
-
-                        for(int x = 0; x < gridSize.x; x++){
-                            for(int y = 0; y < gridSize.y; y++){
-                                Vector2i curr = new Vector2i(x, y);
-                                clearCell(curr, true, false, true);
-                            }
-                        }
-
-                        fillGaps();
+                        ComboPrismPrismPeacockBehaviour(pos1, pos2);
                     }
     
                 } else if(getCell(pos1).isBoosted() && !getCell(pos2).isBoosted()){    // single booster behaviours
@@ -1124,7 +998,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
                 
         }
-       
+
         // identifies continuous lines of tiles with the same color, main function called by calculateMove
         public Boolean findAndClearMatches(Vector2i pos1, Vector2i pos2){ // Returns true if a match is found.
 
@@ -1235,9 +1109,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 if(floodFillIsNeighbourCell(curr, new Vector2i(curr.x, curr.y-1), true)) verticalConnections++; 
                 if(floodFillIsNeighbourCell(curr, new Vector2i(curr.x, curr.y+1), true)) verticalConnections++; 
 
-                if((horizontalConnections == 1 && verticalConnections == 1) || 
+                if(((horizontalConnections == 1 && verticalConnections == 1) || 
                     (horizontalConnections == 2 && verticalConnections == 1) || 
-                    (horizontalConnections == 1 && verticalConnections == 2) &&
+                    (horizontalConnections == 1 && verticalConnections == 2)) &&
                     matchTileSize != 5) {   // do not change to boom bird if a prism peacock would form
                         matchTileSize = 6;
                     }
@@ -1451,6 +1325,155 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             fillGaps();
         }
 
+        private void ComboPrismPrismPeacockBehaviour(Vector2i pos1, Vector2i pos2) {
+            clearCell(pos1, false, true);
+            clearCell(pos2, false, true);
+
+            incrementPuzzleTemp(PuzzleObjectiveType.ComboBombPeacock);
+            incrementPuzzleTemp(PuzzleObjectiveType.ComboBombPeacock_SingleGame);
+
+            for(int x = 0; x < gridSize.x; x++){
+                for(int y = 0; y < gridSize.y; y++){
+                    Vector2i curr = new Vector2i(x, y);
+                    clearCell(curr, true, false, true);
+                }
+            }
+
+            fillGaps();
+        }
+
+        private void ComboPrismBoomBirdBehaviour(Vector2i pos1, Vector2i pos2) {
+            TileType refType = getCell(pos2).TileType;
+   
+            clearCell(pos1, false, true);
+            clearCell(pos2, true, true);
+
+            incrementPuzzleTemp(PuzzleObjectiveType.ComboPeacockPeacock);
+            incrementPuzzleTemp(PuzzleObjectiveType.ComboPeacockPeacock_SingleGame);
+   
+            List<Vector2i> newBoomBirds = new ArrayList<>();
+   
+            for(int x = 0; x < gridSize.x; x++){
+                for(int y = 0; y < gridSize.y; y++){
+                    Vector2i curr = new Vector2i(x, y);
+                    GridCell currCell = getCell(curr);
+   
+                    if(currCell.getTileType() == refType && !currCell.isBoosted()) {
+                        currCell.setBooster(BoosterType.BoomBird);  // presumably no need to check for tile health
+                        setCell(curr, currCell);
+                        newBoomBirds.add(curr);
+                    }
+                }
+            }
+   
+            Integer d = Math.floorDiv(3, 2);
+   
+            for (Vector2i pos : newBoomBirds) {     // first explosions
+            
+                for(int x = pos.x-d; x <= pos.x+d; x++){
+                    for(int y = pos.y-d; y <= pos.y+d; y++){
+      
+                        Vector2i curr = new Vector2i(x, y);
+      
+                        if(getCell(curr) != null && !newBoomBirds.contains(curr) && getCell(curr).getTileType() != TileType.None) {
+                            clearCell(curr, true, false, true);
+                        }
+                    }
+                }
+            }
+            fillGaps();
+   
+            newBoomBirds.clear();
+   
+            for(int x = 0; x < gridSize.x; x++){
+                for(int y = 0; y < gridSize.y; y++){
+                    Vector2i curr = new Vector2i(x, y);
+                    GridCell currCell = getCell(curr);
+   
+                    if(currCell.getTileType() == refType && currCell.getBooster() == BoosterType.BoomBird) {
+                        newBoomBirds.add(curr);
+                    }
+                }
+            }
+   
+            for (Vector2i pos : newBoomBirds) {    // second explosions
+            
+                for(int x = pos.x-d; x <= pos.x+d; x++){
+                    for(int y = pos.y-d; y <= pos.y+d; y++){
+      
+                        Vector2i curr = new Vector2i(x, y);
+                        clearCell(curr, true, true, true);
+                    }
+                }
+            }
+
+            fillGaps();
+        }
+
+        private void ComboPrismBuzzyBirdBehaviour(Vector2i pos1, Vector2i pos2) {
+            TileType refType = getCell(pos2).TileType;
+   
+            clearCell(pos1, false, true);
+            clearCell(pos2, true, true);
+
+            incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerPeacock);
+            incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerPeacock_SingleGame);
+   
+            List<Vector2i> newBuzzyBirds = new ArrayList<>();
+   
+            for(int x = 0; x < gridSize.x; x++){
+                for(int y = 0; y < gridSize.y; y++){
+                    Vector2i curr = new Vector2i(x, y);
+   
+                    if(getCell(curr).getTileType() == refType && !getCell(curr).isBoosted()) {
+                        newBuzzyBirds.add(curr);
+                    }
+                }
+            }
+   
+            for (Vector2i newBuzzyBird : newBuzzyBirds) {
+                Boolean coinflip = randomizer.nextInt(2) == 1;
+                
+                if(coinflip) {
+                    buzzyBirdHorizontalBehaviour(newBuzzyBird, 1, true);
+                } else {
+                    buzzyBirdVerticalBehaviour(newBuzzyBird, 1, true);
+                }
+            }
+        }
+
+        private void ComboBuzzyBuzzyBirdBehaviour(Vector2i pos1, Vector2i pos2) {
+            clearCell(pos1, false, true);
+            clearCell(pos2, true, true);
+            
+            buzzyBirdHorizontalBehaviour(pos1, 1);
+            buzzyBirdVerticalBehaviour(pos1, 1);
+
+            incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerFlyer);
+            incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerFlyer_SingleGame);
+        }
+
+        private void ComboBoomBoomBirdBehaviour(Vector2i pos1, Vector2i pos2) {
+            clearCell(pos1, false, true);
+            clearCell(pos2, true, true);
+            
+            boomBirdBehaviour(pos1, 5);
+
+            incrementPuzzleTemp(PuzzleObjectiveType.ComboBombBomb);
+            incrementPuzzleTemp(PuzzleObjectiveType.ComboBombBomb_SingleGame);
+        }
+
+        private void ComboBuzzyBoomBirdBehaviour(Vector2i pos1, Vector2i pos2) {
+            clearCell(pos1, false, true);
+            clearCell(pos2, true, true);
+      
+            buzzyBirdHorizontalBehaviour(pos1, 3);
+            buzzyBirdVerticalBehaviour(pos1, 3);
+
+            incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerBomb);
+            incrementPuzzleTemp(PuzzleObjectiveType.ComboFlyerBomb_SingleGame);
+        }
+ 
 
         // functions related to level objectives, or call functions in the level objectives class
 
