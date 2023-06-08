@@ -56,13 +56,13 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     static {
         // Load level info
 		try {
-			// Load the helper
+			// Load all level info into a JsonObject
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
 					.getResourceAsStream("minigames/dizzywingdispatch.json");
 			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
 			strm.close();
 
-			// Load all level data
+			// Seperate the level data by Json key
 			specialOrders = helper.getAsJsonArray("specialOrders");
 			specialOrderCountRanges = helper.getAsJsonArray("specialOrderCountRanges");
 			levelRewards = helper.getAsJsonArray("levelRewards");
@@ -81,6 +81,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         }
     }
 
+    // Types of puzzles objectives to be kept track by the server
     enum PuzzleObjectiveType
     {
         HighScore(0),
@@ -158,6 +159,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     
     }
 
+    // Short hand for constants used in saving to player inventory
     enum UserVarIDs
     {
         persistentAchievementDataUserVarDefId(13392),
@@ -177,11 +179,12 @@ public class GameDizzywingDispatch extends AbstractMinigame{
     
     }
     
-
+    // all game logic is stored in this class
     public class GameState {
 
         // helper classes
 
+        // represents a tile in the game board
         public class GridCell {
             private int tileHealth;
             private TileType TileType;
@@ -223,6 +226,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                  
         }
 
+        // keep tracks of the types of orders that need to be cleared before a level may end
         public class LevelObjectives {
             public int objectivesTracker[][] = { {-1, -1, 0},
                                                 {-1, -1, 1},
@@ -326,7 +330,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 
             }
 
-            public boolean isNextLevel(){   // returns true if level is incermented
+            public boolean isNextLevel(){   // returns true if level has increased
                 trackEggsAndClothing();
 
                 boolean goToNextLevel = true;
@@ -378,6 +382,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                         spawnTiles.add(TileType.PinkBird);
                     }
 
+                    // perform a loot table lookup to give a reward to the player
+
                     for(JsonElement ele : levelRewards){
                         JsonObject levelData = (JsonObject)ele;
                         JsonArray rewardData = levelData.getAsJsonArray("lootData");
@@ -395,7 +401,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                                 if(sumWeight < randNo && randNo <= sumWeight+reward.get("weight").getAsInt()){
 
                                     String lootTableDefID = reward.get("lootTableDefID").getAsString();
-                                    Centuria.logger.info(lootTableDefID, "lootTableDefId");
+                                    Centuria.logger.debug(lootTableDefID, "lootTableDefId");
                                     LootInfo chosenReward = ResourceCollectionModule.getLootReward(lootTableDefID);
                                     
                                     // Give reward
@@ -404,7 +410,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                                         chosenReward = ResourceCollectionModule.getLootReward(chosenReward.reward.referencedTableId);
                                         itemId = chosenReward.reward.itemId;
                                     }
-                                    Centuria.logger.info(itemId, "itemID");
+                                    Centuria.logger.debug(itemId, "itemID");
 
                                     int count = chosenReward.count;
                                     
@@ -451,18 +457,18 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 return goToNextLevel;
             }
 
-            public void addScore(int increase){
+            public void addScore(int increase){ // called externally to keep track of score
                 currScore += increase;
                 updateObjective(LevelObjectiveType.ScoreRequirement, currScore);
             }
 
-            public void trackMoves(){   // to be called whenever a moves is made
+            public void trackMoves(){   // called externally to keep track of moves remaining
                 if(isObjective(LevelObjectiveType.MovesLeft)){
                     updateObjectiveByChange(LevelObjectiveType.MovesLeft, 1);
                 }
             }
 
-            public boolean hasRunOutOfMoves(){
+            public boolean hasRunOutOfMoves(){  
                 if(isObjective(LevelObjectiveType.MovesLeft)){
                     return objectivesTracker[LevelObjectiveType.MovesLeft.ordinal()][1] < 0;
                 } else {
@@ -470,7 +476,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 }
             }
 
-            private void trackEggsAndClothing(){
+            private void trackEggsAndClothing(){   // called to keep track of remaining eggs and clothing
                 if(isObjective(LevelObjectiveType.EggsLeft)){
                     int numberOfEggs = 0;
                     for(int x = 0; x < gridSize.x; x++){
@@ -547,6 +553,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 return (int) (r * Math.round((s * Math.log1p(g * (level + o) - g + 1f) + s) / r));
             }         
 
+            // These are internal functions for changing objectives in a level or update their progression
+
             private void initObjective(LevelObjectiveType objectiveType, int requirement){
                 objectivesTracker[objectiveType.ordinal()][0] = requirement;
                 objectivesTracker[objectiveType.ordinal()][1] = 0;
@@ -571,6 +579,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
         } 
 
+        // the "power ups" in the game
         enum BoosterType
         {
             None,
@@ -580,6 +589,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             PrismPeacock
         }
 
+        // the tile "colors" in the game
         enum TileType {
             AquaBird,
             BlueBird,
@@ -593,6 +603,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             None
         }
 
+        // the types of orders in a level, including the score equirement
         enum LevelObjectiveType
         {
             ScoreRequirement,
@@ -601,7 +612,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             ClothingLeft
         }
 
-        // initializing the object
+
+
+        // class fields
 
         // game board data
         private GridCell[][] grid;
@@ -617,7 +630,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         // source of all randomness in the game
         private Random randomizer;
 
-        // used to calculate current score
+        // used to calculate current score as multiple matches in a row give more points
         private int matchComboScore;
 
         // used to keep track of level objectives
@@ -661,6 +674,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
         }
 
+        // template function with one less argument to avoid errors
         private void clearCell(Vector2i pos, boolean isScore, boolean forceClear){
             clearCell(pos, isScore, forceClear, false);
         }
@@ -876,6 +890,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
                     for (TileType spawnTile : shuffledSpawnTiles)
                     {
+                        // checks so that matches don't naturally form
                         if ((x < 2 || !(getCell(new Vector2i(x - 1, y)).TileType == spawnTile) || 
                             !(getCell(new Vector2i(x - 2, y)).TileType == spawnTile)) && 
                             (y < 2 || !(getCell(new Vector2i(x, y - 1)).TileType == spawnTile) || 
@@ -889,6 +904,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             }
         }
 
+        // used by the scramble tiles command
         public void scrambleTiles() {
             List<GridCell> scrambledTiles = new ArrayList<>();
 
@@ -937,7 +953,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             levelObjectives.trackEggsAndClothing();
         }
 
-        public void fillGaps(){
+        public void fillGaps(){ // called whenever tiles have been removed, it shifts down tiles suspended midair and generates new ones
             for(int x = 0; x < gridSize.x; x++){
                 int noGapsInColumn = 0;
                 for(int y = 0; y < gridSize.y; y++){ // for each column
@@ -957,6 +973,8 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
 
         // functions related to responding to a move from the player
+
+        // first function called by the move command handling function
         public void calculateMove(Vector2i pos1, Vector2i pos2){
 
             moveCount++;
@@ -1138,6 +1156,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             return isMatch;
         }
 
+        // a breadth-first search algorithm designed to clear matches and place a booster tile (doesn't always place in correct position)
         public void floodFill(Vector2i pos, int matchType, Vector2i swap1, Vector2i swap2){
             
             TileType refType = getCell(pos).getTileType();
@@ -1298,8 +1317,9 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 
 
 
-        // functions that define booster tile behaviours
+        // functions that define booster tile behaviours, as in how they clear surrounding tiles
 
+        // template function to avoid errors
         private void buzzyBirdHorizontalBehaviour(Vector2i pos, int size){
             buzzyBirdHorizontalBehaviour(pos, size, false);
         }
@@ -1314,7 +1334,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
                 for(int x = 0; x < gridSize.x; x++){
                     Vector2i curr = new Vector2i(x, y);
                     if(getCell(curr) != null){
-                        if(getCell(curr).getBooster() != BoosterType.BuzzyBirdHorizontal){
+                        if(getCell(curr).getBooster() != BoosterType.BuzzyBirdHorizontal){  // two buzzy birds in the same direction results in an X instead
                             clearCell(curr, true, false, isClearedByPeacock);
                         } else {
                             clearCell(curr, true, true, isClearedByPeacock);
@@ -1354,7 +1374,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         
         private void boomBirdBehaviour(Vector2i pos, int size) {
             
-            clearCell(pos, false, true);
+            clearCell(pos, false, true);    // sometimes the original booster needs to be removed to prevent an infinte loop
 
             int d = Math.floorDiv(size, 2);
 
@@ -1560,7 +1580,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             return levelObjectives.isNextLevel();
         }
 
-        public List<int[]> getObjectiveProgress(){
+        public List<int[]> getObjectiveProgress(){  // called externally when building a syncClient packet
             levelObjectives.trackEggsAndClothing();
             List<int[]> progress = new ArrayList<>();
             for(LevelObjectiveType objectiveType : LevelObjectiveType.values()){
@@ -1663,7 +1683,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
             // write into the player inventory the puzzle objectives
             for(PuzzleObjectiveType puzzleType : PuzzleObjectiveType.values()){
                 if(getPuzzleTemp(puzzleType) > 0){
-                    Centuria.logger.info(puzzleType.toString(), Integer.toString(getPuzzleTemp(puzzleType)));
+                    Centuria.logger.debug(puzzleType.toString(), Integer.toString(getPuzzleTemp(puzzleType)));
                 }
             }
             for(PuzzleObjectiveType puzzleType : PuzzleObjectiveType.values()){
@@ -1876,7 +1896,7 @@ public class GameDizzywingDispatch extends AbstractMinigame{
         int packetPieceIndex = rd.readInt(); // 0 - 16
         int packetOverallIndex = packetPaintingIndex*16+packetPieceIndex;
 
-        Centuria.logger.info("Painting " + Integer.toString(packetPaintingIndex) + " Piece " + Integer.toString(packetPieceIndex) + " Index " + Integer.toString(packetOverallIndex));
+        Centuria.logger.debug("Painting " + Integer.toString(packetPaintingIndex) + " Piece " + Integer.toString(packetPieceIndex) + " Index " + Integer.toString(packetOverallIndex));
 
         // if no puzzle piece data has ever been written into the player inventory
         if(player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(
