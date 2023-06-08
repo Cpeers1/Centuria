@@ -151,14 +151,14 @@ public class DDVis {
 		public void mousePressed(MouseEvent e) 
 		{
 			if(ses.gameState != null){
-				ses.gameState.objectives.objectivesTracker[0][0] = 1;
-				ses.gameState.objectives.objectivesTracker[0][1] = 2;
-				ses.gameState.objectives.objectivesTracker[1][0] = -1;
-				ses.gameState.objectives.objectivesTracker[1][1] = -1;
-				ses.gameState.objectives.objectivesTracker[2][0] = -1;
-				ses.gameState.objectives.objectivesTracker[2][1] = -1;
-				ses.gameState.objectives.objectivesTracker[3][0] = -1;
-				ses.gameState.objectives.objectivesTracker[3][1] = -1;
+				ses.gameState.levelObjectives.objectivesTracker[0][0] = 1;
+				ses.gameState.levelObjectives.objectivesTracker[0][1] = 2;
+				ses.gameState.levelObjectives.objectivesTracker[1][0] = -1;
+				ses.gameState.levelObjectives.objectivesTracker[1][1] = -1;
+				ses.gameState.levelObjectives.objectivesTracker[2][0] = -1;
+				ses.gameState.levelObjectives.objectivesTracker[2][1] = -1;
+				ses.gameState.levelObjectives.objectivesTracker[3][0] = -1;
+				ses.gameState.levelObjectives.objectivesTracker[3][1] = -1;
 				ses.syncClient(Centuria.gameServer.getPlayers()[0], new XtReader(""));
 			}
 		}
