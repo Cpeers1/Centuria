@@ -40,6 +40,10 @@ public class ChatServer {
 	}
 
 	protected void registerPackets() {
+		// Allow modules to register packets and to override existing packets
+		ChatServerStartupEvent ev = new ChatServerStartupEvent(this, t -> registerPacket(t));
+		EventBus.getInstance().dispatchEvent(ev);
+
 		// Packet registry
 		registerPacket(new PingPacket());
 		registerPacket(new JoinRoomPacket());
@@ -49,10 +53,6 @@ public class ChatServer {
 		registerPacket(new SendMessage());
 		registerPacket(new OpenDMPacket());
 		registerPacket(new CreateConversationPacket());
-
-		// Allow modules to register packets
-		ChatServerStartupEvent ev = new ChatServerStartupEvent(this, t -> registerPacket(t));
-		EventBus.getInstance().dispatchEvent(ev);
 	}
 
 	public ChatClient[] getClients() {

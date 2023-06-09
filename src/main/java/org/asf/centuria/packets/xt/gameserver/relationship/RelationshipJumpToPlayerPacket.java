@@ -13,10 +13,6 @@ public class RelationshipJumpToPlayerPacket implements IXtPacket<RelationshipJum
 	private static final String PACKET_ID = "rfjtr";
 
 	public String accountID;
-	
-	public boolean success;
-	public int roomIssId = -1;
-	public String otherNode = "";
 
 	@Override
 	public RelationshipJumpToPlayerPacket instantiate() {
@@ -30,7 +26,7 @@ public class RelationshipJumpToPlayerPacket implements IXtPacket<RelationshipJum
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
-		accountID = reader.readRemaining();
+		accountID = reader.read();
 	}
 
 	@Override

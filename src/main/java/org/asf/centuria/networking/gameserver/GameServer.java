@@ -117,6 +117,10 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new ClientToServerHandshake(mapper));
 		registerPacket(new ClientToServerAuthPacket(mapper));
 
+		// Allow modules to register packets and override existing packets
+		GameServerStartupEvent ev = new GameServerStartupEvent(this, t -> registerPacket(t));
+		EventBus.getInstance().dispatchEvent(ev);
+
 		// Game
 		registerPacket(new KeepAlive());
 		registerPacket(new PrefixedPacket());
@@ -170,10 +174,6 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new TradeReadyPacket());
 		registerPacket(new TradeReadyRejectPacket());
 		registerPacket(new TradeReadyAcceptPacket());
-
-		// Allow modules to register packets
-		GameServerStartupEvent ev = new GameServerStartupEvent(this, t -> registerPacket(t));
-		EventBus.getInstance().dispatchEvent(ev);
 	}
 
 	@Override
