@@ -75,10 +75,12 @@ public class GameDizzywingDispatch extends AbstractMinigame{
 			throw new RuntimeException(e);
 		}
 
+        /*
         if (Centuria.debugMode) {
             DDVis vis = new DDVis();
             new Thread(() -> vis.frame.setVisible(true)).start();
         }
+        */
     }
 
     // Types of puzzles objectives to be kept track by the server

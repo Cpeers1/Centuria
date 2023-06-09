@@ -14,6 +14,11 @@
 			"xp": 10
 		}
 	],
+	"levelevents.minigames.kinoparlor": [
+		{
+			"xp": 15
+		}
+	],
 	"levelevents.harvest": [
 		{
 			"xp": 10,

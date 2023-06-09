@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.minigames.games.GameDoOrDye;
+import org.asf.centuria.minigames.games.GameKinoParlor;
 import org.asf.centuria.minigames.games.GameTwiggleBuilders;
 import org.asf.centuria.minigames.games.GameWhatTheHex;
 import org.asf.centuria.minigames.games.GameDizzywingDispatch;
@@ -25,6 +26,7 @@ public class MinigameManager {
 		registerMinigame(new GameTwiggleBuilders());
 		registerMinigame(new GameDoOrDye());
 		registerMinigame(new GameDizzywingDispatch());
+		registerMinigame(new GameKinoParlor());
 	}
 
 	/**
