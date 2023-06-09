@@ -1,0 +1,580 @@
+{
+"specialOrders": [
+	{
+		"_fromLevelNumber": 1,
+		"_toLevelNumber": 9,
+		"_isToLevelInfinite": false,
+		"_regularLevelAppearancePercent": 100,
+		"_accessoriesAppearancePercent": 0,
+		"_eggsAppearancePercent": 0,
+		"_limitedMovesAppearancePercent": 0,
+		"_comboAppearancePercent": 0
+	},
+	{
+		"_fromLevelNumber": 10,
+		"_toLevelNumber": 24,
+		"_isToLevelInfinite": false,
+		"_regularLevelAppearancePercent": 20,
+		"_accessoriesAppearancePercent": 30,
+		"_eggsAppearancePercent": 30,
+		"_limitedMovesAppearancePercent": 0,
+		"_comboAppearancePercent": 15
+	},
+	{
+		"_fromLevelNumber": 25,
+		"_toLevelNumber": 49,
+		"_isToLevelInfinite": false,
+		"_regularLevelAppearancePercent": 20,
+		"_accessoriesAppearancePercent": 18,
+		"_eggsAppearancePercent": 17,
+		"_limitedMovesAppearancePercent": 25,
+		"_comboAppearancePercent": 15
+	},
+	{
+		"_fromLevelNumber": 50,
+		"_toLevelNumber": 74,
+		"_isToLevelInfinite": false,
+		"_regularLevelAppearancePercent": 10,
+		"_accessoriesAppearancePercent": 18,
+		"_eggsAppearancePercent": 17,
+		"_limitedMovesAppearancePercent": 30,
+		"_comboAppearancePercent": 25
+	},
+	{
+		"_fromLevelNumber": 75,
+		"_toLevelNumber": 149,
+		"_isToLevelInfinite": false,
+		"_regularLevelAppearancePercent": 20,
+		"_accessoriesAppearancePercent": 13,
+		"_eggsAppearancePercent": 12,
+		"_limitedMovesAppearancePercent": 30,
+		"_comboAppearancePercent": 25
+	},
+	{
+		"_fromLevelNumber": 150,
+		"_toLevelNumber": 249,
+		"_isToLevelInfinite": false,
+		"_regularLevelAppearancePercent": 5,
+		"_accessoriesAppearancePercent": 8,
+		"_eggsAppearancePercent": 7,
+		"_limitedMovesAppearancePercent": 35,
+		"_comboAppearancePercent": 45
+	},
+	{
+		"_fromLevelNumber": 250,
+		"_toLevelNumber": 300,
+		"_isToLevelInfinite": true,
+		"_regularLevelAppearancePercent": 0,
+		"_accessoriesAppearancePercent": 8,
+		"_eggsAppearancePercent": 7,
+		"_limitedMovesAppearancePercent": 50,
+		"_comboAppearancePercent": 35
+	}
+],
+"specialOrderCountRanges": [
+	{
+		"_fromLevelNumber": 1,
+		"_toLevelNumber": 9,
+		"_isToLevelInfinite": false,
+		"_minimumAccessoryCount": 0,
+		"_maximumAccessoryCount": 0,
+		"_minimumEggRowCount": 0,
+		"_maximumEggRowCount": 0,
+		"_minimumLimitedMovesOnlyCount": 0,
+		"_maximumLimitedMovesOnlyCount": 0,
+		"_minimumLimitedMovesComboCount": 0,
+		"_maximumLimitedMovesComboCount": 0
+	},
+	{
+		"_fromLevelNumber": 10,
+		"_toLevelNumber": 49,
+		"_isToLevelInfinite": false,
+		"_minimumAccessoryCount": 1,
+		"_maximumAccessoryCount": 5,
+		"_minimumEggRowCount": 0,
+		"_maximumEggRowCount": 1,
+		"_minimumLimitedMovesOnlyCount": 10,
+		"_maximumLimitedMovesOnlyCount": 20,
+		"_minimumLimitedMovesComboCount": 30,
+		"_maximumLimitedMovesComboCount": 35
+	},
+	{
+		"_fromLevelNumber": 50,
+		"_toLevelNumber": 74,
+		"_isToLevelInfinite": false,
+		"_minimumAccessoryCount": 5,
+		"_maximumAccessoryCount": 10,
+		"_minimumEggRowCount": 1,
+		"_maximumEggRowCount": 3,
+		"_minimumLimitedMovesOnlyCount": 10,
+		"_maximumLimitedMovesOnlyCount": 15,
+		"_minimumLimitedMovesComboCount": 30,
+		"_maximumLimitedMovesComboCount": 35
+	},
+	{
+		"_fromLevelNumber": 75,
+		"_toLevelNumber": 149,
+		"_isToLevelInfinite": false,
+		"_minimumAccessoryCount": 1,
+		"_maximumAccessoryCount": 7,
+		"_minimumEggRowCount": 0,
+		"_maximumEggRowCount": 4,
+		"_minimumLimitedMovesOnlyCount": 10,
+		"_maximumLimitedMovesOnlyCount": 15,
+		"_minimumLimitedMovesComboCount": 25,
+		"_maximumLimitedMovesComboCount": 30
+	},
+	{
+		"_fromLevelNumber": 150,
+		"_toLevelNumber": 249,
+		"_isToLevelInfinite": false,
+		"_minimumAccessoryCount": 5,
+		"_maximumAccessoryCount": 10,
+		"_minimumEggRowCount": 2,
+		"_maximumEggRowCount": 4,
+		"_minimumLimitedMovesOnlyCount": 7,
+		"_maximumLimitedMovesOnlyCount": 10,
+		"_minimumLimitedMovesComboCount": 20,
+		"_maximumLimitedMovesComboCount": 25
+	},
+	{
+		"_fromLevelNumber": 250,
+		"_toLevelNumber": 300,
+		"_isToLevelInfinite": true,
+		"_minimumAccessoryCount": 5,
+		"_maximumAccessoryCount": 15,
+		"_minimumEggRowCount": 3,
+		"_maximumEggRowCount": 6,
+		"_minimumLimitedMovesOnlyCount": 5,
+		"_maximumLimitedMovesOnlyCount": 7,
+		"_minimumLimitedMovesComboCount": 15,
+		"_maximumLimitedMovesComboCount": 20
+	}
+],
+"achievementToUserVarIndexList": [
+	{
+		"achievementType": 0,
+		"userVarIndex": 0
+	},
+	{
+		"achievementType": 1,
+		"userVarIndex": 1
+	},
+	{
+		"achievementType": 2,
+		"userVarIndex": 2
+	},
+	{
+		"achievementType": 3,
+		"userVarIndex": 13
+	},
+	{
+		"achievementType": 4,
+		"userVarIndex": 3
+	},
+	{
+		"achievementType": 5,
+		"userVarIndex": 14
+	},
+	{
+		"achievementType": 6,
+		"userVarIndex": 4
+	},
+	{
+		"achievementType": 7,
+		"userVarIndex": 15
+	},
+	{
+		"achievementType": 8,
+		"userVarIndex": 5
+	},
+	{
+		"achievementType": 9,
+		"userVarIndex": 21
+	},
+	{
+		"achievementType": 10,
+		"userVarIndex": 6
+	},
+	{
+		"achievementType": 11,
+		"userVarIndex": 17
+	},
+	{
+		"achievementType": 12,
+		"userVarIndex": 7
+	},
+	{
+		"achievementType": 13,
+		"userVarIndex": 18
+	},
+	{
+		"achievementType": 14,
+		"userVarIndex": 8
+	},
+	{
+		"achievementType": 15,
+		"userVarIndex": 23
+	},
+	{
+		"achievementType": 17,
+		"userVarIndex": 9
+	},
+	{
+		"achievementType": 18,
+		"userVarIndex": 19
+	},
+	{
+		"achievementType": 19,
+		"userVarIndex": 10
+	},
+	{
+		"achievementType": 20,
+		"userVarIndex": 22
+	},
+	{
+		"achievementType": 21,
+		"userVarIndex": 11
+	},
+	{
+		"achievementType": 22,
+		"userVarIndex": 20
+	},
+	{
+		"achievementType": 23,
+		"userVarIndex": 12
+	},
+	{
+		"achievementType": 24,
+		"userVarIndex": 16
+	},
+	{
+		"achievementType": 25,
+		"userVarIndex": 24
+	},
+	{
+		"achievementType": 26,
+		"userVarIndex": 25
+	},
+	{
+		"achievementType": 27,
+		"userVarIndex": 26
+	},
+	{
+		"achievementType": 28,
+		"userVarIndex": 27
+	},
+	{
+		"achievementType": 29,
+		"userVarIndex": 28
+	},
+	{
+		"achievementType": 31,
+		"userVarIndex": 29
+	},
+	{
+		"achievementType": 32,
+		"userVarIndex": 30
+	},
+	{
+		"achievementType": 33,
+		"userVarIndex": 31
+	},
+	{
+		"achievementType": 34,
+		"userVarIndex": 32
+	},
+	{
+		"achievementType": 35,
+		"userVarIndex": 33
+	},
+	{
+		"achievementType": 36,
+		"userVarIndex": 44
+	},
+	{
+		"achievementType": 37,
+		"userVarIndex": 45
+	},
+	{
+		"achievementType": 38,
+		"userVarIndex": 36
+	},
+	{
+		"achievementType": 39,
+		"userVarIndex": 37
+	},
+	{
+		"achievementType": 40,
+		"userVarIndex": 38
+	},
+	{
+		"achievementType": 41,
+		"userVarIndex": 39
+	},
+	{
+		"achievementType": 42,
+		"userVarIndex": 48
+	},
+	{
+		"achievementType": 43,
+		"userVarIndex": 49
+	},
+	{
+		"achievementType": 44,
+		"userVarIndex": 40
+	},
+	{
+		"achievementType": 45,
+		"userVarIndex": 41
+	},
+	{
+		"achievementType": 46,
+		"userVarIndex": 46
+	},
+	{
+		"achievementType": 47,
+		"userVarIndex": 47
+	},
+	{
+		"achievementType": 48,
+		"userVarIndex": 42
+	},
+	{
+		"achievementType": 49,
+		"userVarIndex": 43
+	},
+	{
+		"achievementType": 50,
+		"userVarIndex": 34
+	},
+	{
+		"achievementType": 51,
+		"userVarIndex": 35
+	},
+	{
+		"achievementType": 52,
+		"userVarIndex": 51
+	},
+	{
+		"achievementType": 53,
+		"userVarIndex": 50
+	},
+	{
+		"achievementType": 54,
+		"userVarIndex": 54
+	},
+	{
+		"achievementType": 55,
+		"userVarIndex": 55
+	},
+	{
+		"achievementType": 56,
+		"userVarIndex": 56
+	},
+	{
+		"achievementType": 57,
+		"userVarIndex": 57
+	},
+	{
+		"achievementType": 58,
+		"userVarIndex": 52
+	},
+	{
+		"achievementType": 59,
+		"userVarIndex": 53
+	},
+	{
+		"achievementType": 60,
+		"userVarIndex": 58
+	},
+	{
+		"achievementType": 61,
+		"userVarIndex": 59
+	},
+	{
+		"achievementType": 62,
+		"userVarIndex": 60
+	},
+	{
+		"achievementType": 63,
+		"userVarIndex": 61
+	},
+	{
+		"achievementType": 64,
+		"userVarIndex": 62
+	},
+	{
+		"achievementType": 65,
+		"userVarIndex": 63
+	}
+],
+"levelRewards":[
+	{
+		"levelIndex": 1,
+		"endLevelIndex": 25,
+		"isEndLevelInfinite": false,
+		"lootData": 
+		[
+			{
+				"weight": 35,
+				"lootTableDefID": "13629",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 35,
+				"lootTableDefID": "13635",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 20,
+				"lootTableDefID": "13636",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 5,
+				"lootTableDefID": "13637",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 5,
+				"lootTableDefID": "13638",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			}
+		]
+	},
+	{
+		"levelIndex": 26,
+		"endLevelIndex": 50,
+		"isEndLevelInfinite": false,
+		"lootData": 
+		[
+			{
+				"weight": 20,
+				"lootTableDefID": "13629",
+				"itemDefID": "-1",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 25,
+				"lootTableDefID": "13635",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 20,
+				"lootTableDefID": "13636",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 10,
+				"lootTableDefID": "13637",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 25,
+				"lootTableDefID": "13638",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			}
+		]
+	},
+	{
+		"levelIndex": 51,
+		"endLevelIndex": 100,
+		"isEndLevelInfinite": false,
+		"lootData":
+		[
+			{
+				"weight": 5,
+				"lootTableDefID": "13629",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 20,
+				"lootTableDefID": "13635",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 15,
+				"lootTableDefID": "13636",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 10,
+				"lootTableDefID": "13637",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 50,
+				"lootTableDefID": "13638",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			}
+		]
+	},
+	{
+		"levelIndex": 101,
+		"endLevelIndex": 300,
+		"isEndLevelInfinite": true,
+		"lootData":
+		[
+			{
+				"weight": 10,
+				"lootTableDefID": "13635",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 10,
+				"lootTableDefID": "13636",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 5,
+				"lootTableDefID": "13637",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			},
+			{
+				"weight": 75,
+				"lootTableDefID": "13638",
+				"itemDefID": "",
+				"minCount": 1,
+				"maxCount": 1
+			}
+		]
+	}
+],
+"puzzleRewards": ["12591", "12594", "12597", "12600", "12603", "12606"]
+}
