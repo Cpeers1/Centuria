@@ -151,11 +151,13 @@ public class ModuleManager {
 		Centuria.logger.info("Loading Centuria modules...");
 		for (Class<? extends ICenturiaModule> mod : moduleClasses) {
 			try {
-				ICenturiaModule module = mod.getConstructor().newInstance();
-				module.preInit();
-				Centuria.logger.info("Loading module: " + module.id());
-				this.modules.put(module.id(), module);
-				EventBus.getInstance().addEventReceiver(module);
+				if (!java.lang.reflect.Modifier.isAbstract(mod.getModifiers())) {
+					ICenturiaModule module = mod.getConstructor().newInstance();
+					module.preInit();
+					Centuria.logger.info("Loading module: " + module.id());
+					this.modules.put(module.id(), module);
+					EventBus.getInstance().addEventReceiver(module);
+				}
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				Centuria.logger.error("Module loading failure: " + mod.getTypeName(), e);

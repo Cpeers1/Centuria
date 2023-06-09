@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.stream.Stream;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
@@ -219,12 +220,18 @@ public class ChatServer {
 		} else {
 			// Build participants object
 			JsonArray members = new JsonArray();
-			for (String participant : manager.getDMParticipants(room)) {
+			String[] participants = manager.getDMParticipants(room);
+			if (!Stream.of(participants).anyMatch(t -> t.equalsIgnoreCase(requester)))
+				return null;
+			for (String participant : participants) {
 				if (participant.startsWith("plaintext:")
 						|| AccountManager.getInstance().getAccount(participant) != null)
 					members.add(participant);
 			}
-			if (members.size() == 0)
+
+			// if its only one, the client will bug, bc if its only one its likely only the
+			// person thats requesting the dm
+			if (members.size() <= 1)
 				return null;
 			roomData.add("participants", members);
 
