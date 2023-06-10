@@ -212,7 +212,6 @@ public class Player {
 		}
 
 		if (lookObj != null) {
-
 			// Spawn player
 			AvatarObjectInfoPacket packet = new AvatarObjectInfoPacket();
 
@@ -642,7 +641,7 @@ public class Player {
 						ObjectUpdatePacket pkt = new ObjectUpdatePacket();
 						pkt.action = 0;
 						pkt.mode = 2;
-						pkt.targetUUID = player.account.getAccountID();
+						pkt.id = player.account.getAccountID();
 						pkt.position = plr.lastPos;
 						pkt.rotation = plr.lastRot;
 						pkt.heading = plr.lastHeading;

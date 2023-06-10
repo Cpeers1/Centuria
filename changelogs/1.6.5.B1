@@ -2,6 +2,7 @@ Fixes in 1.6.5:
  - Fixed account unpair issues with account deletion
  - Fix dms and gcs having ghost entries if accounts get deleted
  - Fixed levels not being refreshed on logout and save switch
+ - Fixed server not fully teleporting players
  - Fixed invalid unread counts
 
 Changes in 1.6.5:
