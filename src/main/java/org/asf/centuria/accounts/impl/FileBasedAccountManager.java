@@ -522,13 +522,15 @@ public class FileBasedAccountManager extends AccountManager {
 		// Find all accounts
 		for (File accFile : new File("accounts").listFiles(t -> !t.isDirectory())) {
 			try {
+				// Verify id
 				UUID.fromString(accFile.getName());
-
-				// Run action
-				action.accept(getAccount(accFile.getName()));
 			} catch (Exception e) {
 				// Not a account file
+				continue;
 			}
+
+			// Run action
+			action.accept(getAccount(accFile.getName()));
 		}
 	}
 
