@@ -666,6 +666,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 		migrateItem(sharedInv, "303", inv);
 		migrateItem(sharedInv, "304", inv);
 		migrateItem(sharedInv, "311", inv);
+		migrateItem(sharedInv, "315", inv);
 		migrateItem(sharedInv, "4", inv);
 		migrateItem(sharedInv, "400", inv);
 		migrateItem(sharedInv, "5", inv);
