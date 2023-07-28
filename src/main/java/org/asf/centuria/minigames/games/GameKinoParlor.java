@@ -104,6 +104,39 @@ public class GameKinoParlor extends AbstractMinigame {
 	public void loadGame(Player player, XtReader rd){
         gameType = GameType.values()[rd.readInt()-1];
         Centuria.logger.debug(gameType.toString());
+
+        int maximumWager = 1;
+
+        // generate additional parameters
+        switch(gameType){
+            case QueensDuel:
+                additionalParameters = queensDuel.getParams();
+                maximumWager = 100;
+                break;
+            case FourCrows:
+                additionalParameters = fourCrows.getParams();
+                maximumWager = 200;
+                break;
+            case MothsAndFlames:
+                additionalParameters = mothsAndFlames.getParams();
+                maximumWager = 100;
+                break;
+            case LunarPhases:
+                additionalParameters = lunarPhases.getParams();
+                maximumWager = 200;
+                break;
+            default:
+                break;
+        }
+
+        // load game
+        List<Integer> loadGameArgs = new ArrayList<>();
+        loadGameArgs.add(maximumWager);
+        loadGameArgs.add(additionalParameters.size());
+        loadGameArgs.addAll(additionalParameters);
+        List<String> loadGameArgsStrings = loadGameArgs.stream().map(Object::toString).collect(Collectors.toUnmodifiableList());
+
+        sendGameCommand("loadGame", loadGameArgsStrings.toArray(new String[0]), player);
     }
 
     @MinigameMessage("leaveGame")
@@ -126,33 +159,6 @@ public class GameKinoParlor extends AbstractMinigame {
 
         // accept wager
         sendGameCommand("wagerAccepted", String.valueOf(wager), player);
-
-        // generate additional parameters
-        switch(gameType){
-            case QueensDuel:
-                additionalParameters = queensDuel.getParams();
-                break;
-            case FourCrows:
-                additionalParameters = fourCrows.getParams();
-                break;
-            case MothsAndFlames:
-                additionalParameters = mothsAndFlames.getParams();
-                break;
-            case LunarPhases:
-                additionalParameters = lunarPhases.getParams();
-                break;
-            default:
-                break;
-        }
-
-        // load game
-        List<Integer> loadGameArgs = new ArrayList<>();
-        loadGameArgs.add(wager);
-        loadGameArgs.add(additionalParameters.size());
-        loadGameArgs.addAll(additionalParameters);
-        List<String> loadGameArgsStrings = loadGameArgs.stream().map(Object::toString).collect(Collectors.toUnmodifiableList());
-
-        sendGameCommand("loadGame", loadGameArgsStrings.toArray(new String[0]), player);
     }
 
     @MinigameMessage("doubleUp")
@@ -584,6 +590,8 @@ public class GameKinoParlor extends AbstractMinigame {
         static final int numCardsPerPlayer = 5;
         static int totalNumCards;
 
+        int turn = 0;
+
         static {
             totalNumCards = 0;
 
@@ -681,8 +689,10 @@ public class GameKinoParlor extends AbstractMinigame {
             int kinosPlay = -1; // index of card in hand
 
             for(int i = 0; i < kinosHand.size(); i++){
+                FourCrowsCardType currCard = deck[kinosHand.get(i)];
                 float currWinProb = getChangeInKinoWinProb(mostLikelyDeal, 
-                    deck[kinosHand.get(i)]);
+                    currCard) * (float) Math.pow(Math.abs(currCard.getVal()) + 1f,
+                     -1f/turn);
                 if(currWinProb > highestWinProb){
                     highestWinProb = currWinProb;
                     kinosPlay = i;
@@ -757,8 +767,12 @@ public class GameKinoParlor extends AbstractMinigame {
                     dealCardsResponse[2*numCardsPerPlayer+2] = Integer.toString(getKinosPlay());
 
                     sendGameCommand("gameResponse", dealCardsResponse, player);
+
+                    turn = 0;
                     break;
                 case "playerPlay":
+
+                    turn++;
 
                     int playersPlay = Integer.parseInt(gameCommandParameters[0]); // index of card in hand
                     playersPlayedCards.add(deck[playersHand.get(playersPlay)]);
@@ -867,13 +881,13 @@ public class GameKinoParlor extends AbstractMinigame {
 
     private class LunarPhases{
 
-        List<Integer> playersHand;  // array of indices from the card deck
-        List<Integer> kinosHand;
-        List<Integer> remainingDeck;
+        List<LunarPhasesTile> playersHand;  // array of indices from the card deck
+        List<LunarPhasesTile> kinosHand;
         List<LunarPhasesTile> playersPlayedCards;
         List<LunarPhasesTile> kinosPlayedCards;
+        List<LunarPhasesTile> removeDeck; // cards that are withdrawn from the deck are temporarily placed here
+        List<LunarPhasesTile> deck;
 
-        LunarPhasesTile[] deck;
         static final int[] suitOfCards = {4, 4, 4, 4, 4, 4, 4, 4};
         static final int numCardsPerPlayer = 5;
         static int totalNumCards;
@@ -936,42 +950,98 @@ public class GameKinoParlor extends AbstractMinigame {
         public LunarPhases(){
             playersHand = new ArrayList<>();
             kinosHand = new ArrayList<>();
-            remainingDeck = new ArrayList<>();
             playersPlayedCards = new ArrayList<>();
             kinosPlayedCards = new ArrayList<>();
+            removeDeck = new ArrayList<>();
+            deck = new ArrayList<>();
 
             totalNumCards = 0;
+        }
 
-            // generate the deck.
-            List<LunarPhasesTile> deckList = new ArrayList<>();
-            for(int i = 0; i < suitOfCards.length; i++){
-                totalNumCards += suitOfCards[i];
-                for(int j = 0; j < suitOfCards[i]; j++){
-                    deckList.add(new LunarPhasesTile(i));
-                } 
+        private void removeCardsFromDeck(){
+            for(LunarPhasesTile removeCard : removeDeck){
+                deck.remove(removeCard);
             }
-            //for(LunarPhasesTile card : deckList){
-            //    Centuria.logger.debug(card.getTileType().toString());
-            //}
-            deck = deckList.toArray(new LunarPhasesTile[0]);
+        }
+
+        private int kinoPlayRandCard(){
+            int kinoDraw = random.nextInt(deck.size());
+            LunarPhasesTile kinoCard = deck.get(kinoDraw);
+
+            while(removeDeck.contains(kinoCard)){
+                kinoDraw = random.nextInt(deck.size());
+                kinoCard = deck.get(kinoDraw);
+            }
+            
+            kinosPlayedCards.add(kinoCard);
+            removeDeck.add(kinoCard);
+            return kinoDraw;
+        }
+
+        private int kinoGiveRandCard(){
+            int kinoDraw = random.nextInt(deck.size());
+            LunarPhasesTile kinoCard = deck.get(kinoDraw);
+
+            while(removeDeck.contains(kinoCard)){
+                kinoDraw = random.nextInt(deck.size());
+                kinoCard = deck.get(kinoDraw);
+            }
+            
+            kinosHand.add(kinoCard);
+            removeDeck.add(kinoCard);
+            return kinoDraw;
+        }
+        
+        private int playerPlayRandCard(){
+            int playerDraw = random.nextInt(deck.size());
+            LunarPhasesTile playerCard = deck.get(playerDraw);
+            
+            while(removeDeck.contains(playerCard)){
+                playerDraw = random.nextInt(deck.size());
+                playerCard = deck.get(playerDraw);
+            }
+
+            playersPlayedCards.add(playerCard);
+            removeDeck.add(playerCard);
+            return playerDraw;
+        }
+
+        private int playerGiveRandCard(){
+            int playerDraw = random.nextInt(deck.size());
+            LunarPhasesTile playerCard = deck.get(playerDraw);
+            
+            while(removeDeck.contains(playerCard)){
+                playerDraw = random.nextInt(deck.size());
+                playerCard = deck.get(playerDraw);
+            }
+
+            playersHand.add(playerCard);
+            removeDeck.add(playerCard);
+            return playerDraw;
         }
 
         private int getKinosFirstPick(){
-            int bestCard = 1;
+
+            LunarPhasesTile bestCard = null;
+            int bestCardIdx = -1;
             int highestDistFromPlayer = -100;
             int playerPos = getPlayerPos();
-            for(int i = 1; i <= 3; i++){
-                LunarPhasesTile currCard = deck[kinosHand.get(i)];
+
+            for(int i = 0; i < 3; i++){
+                
+                LunarPhasesTile currCard = kinosHand.get(i);
                 int currDist = getNewKinoPos(currCard) - playerPos;
+
                 if(currDist > highestDistFromPlayer){
                     currDist = highestDistFromPlayer;
-                    bestCard = i;
+                    bestCard = currCard;
+                    bestCardIdx = i;
                 }
             }
 
-            kinosPlayedCards.add(deck[kinosHand.get(bestCard)]);
-            remainingDeck.remove(kinosHand.get(bestCard));
-            return bestCard-1;
+            kinosPlayedCards.add(bestCard);
+            removeDeck.add(bestCard);
+            return bestCardIdx;
         }
 
         private int getNewKinoPos(LunarPhasesTile newTile){
@@ -1033,14 +1103,13 @@ public class GameKinoParlor extends AbstractMinigame {
         }
 
         private int getKinosNextPick(){
-            int kinosNextDraw = random.nextInt(remainingDeck.size());
-            LunarPhasesTile card = deck[remainingDeck.get(kinosNextDraw)];
-            if(getNewKinoPos(card) > getKinoPos()){ // simpler than performinh 
-                remainingDeck.remove(kinosNextDraw);
-                kinosPlayedCards.add(card);
-                return kinosNextDraw;
+            LunarPhasesTile kinoCard = kinosHand.get(3);
+            
+            if(getNewKinoPos(kinoCard) > getKinoPos()){ // simpler than actually doing the math
+                kinosPlayedCards.add(kinoCard);
+                return 1;
             } else {
-                return -1;
+                return 0;
             }
         }
 
@@ -1053,84 +1122,74 @@ public class GameKinoParlor extends AbstractMinigame {
             switch(command){
                 case "requestDeal":
 
+                    
                     playersHand = new ArrayList<>();
                     kinosHand = new ArrayList<>();
                     playersPlayedCards = new ArrayList<>();
                     kinosPlayedCards = new ArrayList<>();
+                    removeDeck = new ArrayList<>();
 
+                    // generate the deck.
+                    deck = new ArrayList<>();
+                    for(int i = 0; i < suitOfCards.length; i++){
+                        totalNumCards += suitOfCards[i];
+                        for(int j = 0; j < suitOfCards[i]; j++){
+                            deck.add(new LunarPhasesTile(i));
+                        } 
+                    }
+                    
+                    // generate the packet
                     String[] dealCardsResponse = new String[2*numCardsPerPlayer+4];
                     dealCardsResponse[0] = "dealCardsResponse";
                     
-                    // dealIndexes
-                    dealCardsResponse[1] = Integer.toString(2*numCardsPerPlayer);
+                    dealCardsResponse[1] = Integer.toString(2*numCardsPerPlayer); // number of elements
+                    dealCardsResponse[2] = Integer.toString(playerPlayRandCard());
 
-                    // generate the player's and Kino's decks of cards
-                    for (int i = 0; i < totalNumCards; i++) {
-                        remainingDeck.add(i);
-                    }
-                    Collections.shuffle(remainingDeck);
-                    for (int i = 0; i < numCardsPerPlayer; i++) {
-                        playersHand.add(remainingDeck.get(i));
-                        kinosHand.add(remainingDeck.get(numCardsPerPlayer+i));
-
-                        //LunarPhasesTile card = deck[playersHand.get(i)];
-                        //Centuria.logger.debug(card.getTileType().toString() + " -player card- " + Integer.toString(card.getValue()));
-                        //card = deck[kinosHand.get(i)];
-                        //Centuria.logger.debug(card.getTileType().toString() + " -kino card- " + Integer.toString(card.getValue()));
+                    for (int i = 1; i < numCardsPerPlayer; i++) {
+                        dealCardsResponse[i+2] = Integer.toString(playerGiveRandCard());
                     }
 
-                    // write the decks to the packet
-                    for (int i = 0; i < 2*numCardsPerPlayer; i++) {
-                        dealCardsResponse[i+2] = Integer.toString(remainingDeck.get(i));
+                    dealCardsResponse[7] = Integer.toString(kinoPlayRandCard());
+
+                    for (int i = 1; i < numCardsPerPlayer; i++) {
+                        dealCardsResponse[i+7] = Integer.toString(kinoGiveRandCard());
                     }
 
                     // dealerPlay
                     dealCardsResponse[2*numCardsPerPlayer+2] = "0";
-                    playersPlayedCards.add(deck[playersHand.get(0)]);
                     dealCardsResponse[2*numCardsPerPlayer+3] = "0";
-                    kinosPlayedCards.add(deck[kinosHand.get(0)]);
-
-                    remainingDeck.remove(0);
-                    remainingDeck.remove(numCardsPerPlayer);
 
                     sendGameCommand("gameResponse", dealCardsResponse, player);
+                    removeCardsFromDeck();
                     break;
                 case "playerPlay":
 
                     int playersPlay = Integer.parseInt(gameCommandParameters[0]); // index of card in hand
-                    remainingDeck.remove(playersHand.get(playersPlay+1));
-                    playersPlayedCards.add(deck[playersHand.get(playersPlay+1)]); // do not remove card from deck
+                    playersPlayedCards.add(playersHand.get(playersPlay)); // do not remove card from deck
                     
                     String[] playerResponse = new String[3];
                     playerResponse[0] = "playerResponse";
                     playerResponse[1] = Integer.toString(playersPlay);
                     playerResponse[2] = Integer.toString(getKinosFirstPick()); // dealerPlay
                     sendGameCommand("gameResponse", playerResponse, player);
+                    removeCardsFromDeck();
                     
                     Centuria.logger.debug(Integer.toString(getPlayerPos()) + " is the player's position");
                     Centuria.logger.debug(Integer.toString(getKinoPos()) + " is Kino's position");
-                    //if (getKinoPos() > getPlayerPos() || playersHand.isEmpty()) {
-                    //    sendGameCommand("multiplierResults", Integer.toString(2), player);
-                    //}
                     
                     break;
                 case "drawTile":
                     int drawOrStand = Integer.parseInt(gameCommandParameters[0]);
-                    int playersNextDraw = -1;
                     if (drawOrStand == 1){ // draw tile
-                        playersNextDraw = random.nextInt(remainingDeck.size());
-                        remainingDeck.remove(playersNextDraw);
-                        playersPlayedCards.add(deck[remainingDeck.get(playersNextDraw)]);
+                        playersPlayedCards.add(playersHand.get(3));
                     }
 
-                    int kinosNextDraw = getKinosNextPick();
-                    String[] drawResponse = new String[5];
+                    String[] drawResponse = new String[3];
                     drawResponse[0] = "drawResponse";
-                    drawResponse[1] = Integer.toString(drawOrStand);
-                    drawResponse[2] = Integer.toString(playersNextDraw);
-                    drawResponse[3] = kinosNextDraw != -1 ? "1" : "0";
-                    drawResponse[4] = Integer.toString(kinosNextDraw);
+                    drawResponse[1] = gameCommandParameters[0];
+                    drawResponse[2] = Integer.toString(getKinosNextPick());
                     sendGameCommand("gameResponse", drawResponse, player);
+
                     break;
                 case "requestCompare":
                     if(getPlayerPos() == 9){
@@ -1144,35 +1203,22 @@ public class GameKinoParlor extends AbstractMinigame {
                     } else if (getPlayerPos() == getKinoPos()) {
                         String[] compareResults = {"compareResults", "tie"}; // "win", "lose" or "tie"
                         sendGameCommand("gameResponse", compareResults, player);
-                    } else {
+                    } else if (getPlayerPos() < getKinoPos()){
                         String[] compareResults = {"compareResults", "lose"}; // "win", "lose" or "tie"
                         sendGameCommand("gameResponse", compareResults, player);
                     }
                     break;
                 case "requestTieRoll":
-                    int playerTieDraw = random.nextInt(remainingDeck.size());
-                    LunarPhasesTile playerCard = deck[remainingDeck.get(playerTieDraw)];
-                    remainingDeck.remove(playerTieDraw);
-                    playersPlayedCards.add(playerCard);
-                    
-                    int kinoTieDraw = random.nextInt(remainingDeck.size());
-                    LunarPhasesTile kinoCard = deck[remainingDeck.get(kinoTieDraw)];
-                    remainingDeck.remove(kinoTieDraw);
-                    kinosPlayedCards.add(kinoCard);
-                    
-                    String tieResult;
-                    if (getPlayerPos() > getKinoPos()) {
-                        tieResult = "win";
-                    } else {
-                        tieResult = "lose";
-                    }
-
                     String[] tieResponse = new String[5];
                     tieResponse[0] = "tieResponse";
                     tieResponse[1] = "1";
-                    tieResponse[2] = Integer.toString(playerTieDraw);
-                    tieResponse[3] = Integer.toString(kinoTieDraw);
-                    tieResponse[4] = tieResult;
+                    tieResponse[2] = Integer.toString(playerPlayRandCard());
+                    tieResponse[3] = Integer.toString(kinoPlayRandCard());
+                    if (getPlayerPos() > getKinoPos()) {
+                        tieResponse[4] = "win";
+                    } else {
+                        tieResponse[4] = "lose";
+                    }
                     
                     sendGameCommand("gameResponse", tieResponse, player);
                     break;
