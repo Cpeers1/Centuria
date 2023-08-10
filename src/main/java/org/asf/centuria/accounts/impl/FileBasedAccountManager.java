@@ -38,9 +38,6 @@ import com.google.gson.JsonSyntaxException;
 
 public class FileBasedAccountManager extends AccountManager {
 
-	private static String[] nameBlacklist = new String[] { "kit", "kitsendragn", "kitsendragon", "fera", "fero",
-			"wwadmin", "ayli", "komodorihero", "wwsam", "blinky", "fer.ocity" };
-
 	private static ArrayList<String> muteWords = new ArrayList<String>();
 	private static ArrayList<String> filterWords = new ArrayList<String>();
 
@@ -139,9 +136,13 @@ public class FileBasedAccountManager extends AccountManager {
 
 	@Override
 	public String authenticate(String username, char[] password) {
+		
+		//no point in regexing if its blank
+		if(username.isBlank() || username.length() > 320)
+			return null;
+		
 		// Check name validity
-		if (!username.matches("^[A-Za-z0-9@._#]+$") || username.contains(".cred")
-				|| !username.matches(".*[A-Za-z0-9]+.*") || username.isBlank())
+		if (!username.matches("^[A-Za-z0-9@._#]+$"))
 			return null;
 
 		// Find the account
@@ -259,9 +260,12 @@ public class FileBasedAccountManager extends AccountManager {
 
 	@Override
 	public String register(String username) {
+		//no point in regexing if its blank
+		if(username.isBlank() || username.length() > 320)
+			return null;
+		
 		// Check name validity
-		if (!username.matches("^[A-Za-z0-9@._#]+$") || username.contains(".cred")
-				|| !username.matches(".*[A-Za-z0-9]+.*") || username.isBlank() || username.length() > 320)
+		if (!username.matches("^[A-Za-z0-9@._#]+$"))
 			return null;
 
 		// Prevent banned and filtered words
@@ -273,12 +277,6 @@ public class FileBasedAccountManager extends AccountManager {
 			if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 				return null;
 			}
-		}
-
-		// Prevent blacklisted names from being used
-		for (String name : nameBlacklist) {
-			if (username.equalsIgnoreCase(name))
-				return null;
 		}
 
 		try {
@@ -402,9 +400,12 @@ public class FileBasedAccountManager extends AccountManager {
 
 	@Override
 	public String getUserByLoginName(String loginName) {
+		//no point in regexing if its blank
+		if(username.isBlank() || username.length() > 320)
+			return null;
+		
 		// Check name validity
-		if (!loginName.matches("^[A-Za-z0-9@._#]+$") || loginName.contains(".cred")
-				|| !loginName.matches(".*[A-Za-z0-9]+.*") || loginName.isBlank())
+		if (!username.matches("^[A-Za-z0-9@._#]+$"))
 			return null;
 
 		// Find the account
@@ -428,8 +429,11 @@ public class FileBasedAccountManager extends AccountManager {
 
 	@Override
 	public String getUserByDisplayName(String displayName) {
-		// Check validity
-		if (!displayName.matches("^[0-9A-Za-z\\-_. ]+") || displayName.length() > 16 || displayName.length() < 2)
+		
+		if(displayName.length() > 16 || displayName.length() < 2)
+			return null;
+		
+		if (!displayName.matches("^[0-9A-Za-z\\-_. ]+"))
 			return null;
 
 		// Find file
@@ -465,12 +469,6 @@ public class FileBasedAccountManager extends AccountManager {
 	public boolean isDisplayNameInUse(String displayName) {
 		if (new File("displaynames/" + displayName).exists())
 			return true;
-
-		// Prevent blacklisted names from being used
-		for (String name : nameBlacklist) {
-			if (displayName.equalsIgnoreCase(name))
-				return true;
-		}
 
 		// Attempt to find using a case-insensitive method
 		if (new File("displaynames").exists())
@@ -534,10 +532,15 @@ public class FileBasedAccountManager extends AccountManager {
 
 	@Override
 	public void releaseLoginName(String username) {
-		// Check name validity
-		if (!username.matches("^[A-Za-z0-9@._#]+$") || username.contains(".cred")
-				|| !username.matches(".*[A-Za-z0-9]+.*") || username.isBlank() || username.length() > 320)
+		
+		//no point in regexing if its blank
+		if(username.isBlank() || username.length() > 320)
 			return;
+		
+		// Check name validity
+		if (!username.matches("^[A-Za-z0-9@._#]+$"))
+			return;
+		
 		File f = new File("accounts/" + username);
 		if (f.exists())
 			f.delete();
