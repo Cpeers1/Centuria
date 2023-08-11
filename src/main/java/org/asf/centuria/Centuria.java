@@ -87,7 +87,7 @@ import com.google.gson.JsonObject;
 public class Centuria {
 	// Update
 	public static String SERVER_UPDATE_VERSION = "1.6.5.B1";
-	public static String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/centuria";
+	public static String DOWNLOAD_BASE_URL = "https://emuferal.ddns.net";
 
 	// Configuration
 	public static Logger logger;

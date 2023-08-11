@@ -34,7 +34,6 @@ ext.buildyear = cal.get(Calendar.YEAR).toString();
 
 repositories {
 	mavenCentral()
-	maven { name = "AerialWorks"; url = "https://aerialworks.ddns.net/maven" }
 	flatDir {
 		dirs 'libraries'
 	}

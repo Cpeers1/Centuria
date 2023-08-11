@@ -1,6 +1,6 @@
 #!/bin/bash
 
-serverurl="https://aerialworks.ddns.net/extra/centuria"
+serverurl="https://emuferal.ddns.net"
 
 function uploadToServers() {
 	version="$1"

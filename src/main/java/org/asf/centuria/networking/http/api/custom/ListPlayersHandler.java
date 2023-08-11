@@ -46,7 +46,7 @@ public class ListPlayersHandler extends HttpUploadProcessor {
 			maps.forEach((k, v) -> mapData.addProperty(k, v));
 			response.add("maps", mapData);
 			setBody("text/json", response.toString());
-			getResponse().setHeader("Access-Control-Allow-Origin", "https://aerialworks.ddns.net");
+			getResponse().setHeader("Access-Control-Allow-Origin", "https://emuferal.ddns.net");
 		} catch (Exception e) {
 			setResponseCode(500);
 			setResponseMessage("Internal Server Error");

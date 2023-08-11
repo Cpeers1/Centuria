@@ -95,7 +95,7 @@ public class LegacyClientPacketTranslatorWindow {
 		panel.add(lblNewLabel);
 		
 		txtHttpaerialworksddnsnet = new JTextField();
-		txtHttpaerialworksddnsnet.setText("http://aerialworks.ddns.net:6969");
+		txtHttpaerialworksddnsnet.setText("http://emuferal.ddns.net:6969");
 		txtHttpaerialworksddnsnet.setBounds(10, 28, 580, 20);
 		panel.add(txtHttpaerialworksddnsnet);
 		txtHttpaerialworksddnsnet.setColumns(10);
@@ -105,13 +105,13 @@ public class LegacyClientPacketTranslatorWindow {
 		panel.add(lblNewLabel_1);
 		
 		txtHttpsaerialworksddnsnet = new JTextField();
-		txtHttpsaerialworksddnsnet.setText("https://aerialworks.ddns.net:6970");
+		txtHttpsaerialworksddnsnet.setText("https://emuferal.ddns.net:6970");
 		txtHttpsaerialworksddnsnet.setColumns(10);
 		txtHttpsaerialworksddnsnet.setBounds(10, 75, 580, 20);
 		panel.add(txtHttpsaerialworksddnsnet);
 		
 		txtAerialworksddnsnet = new JTextField();
-		txtAerialworksddnsnet.setText("aerialworks.ddns.net");
+		txtAerialworksddnsnet.setText("emuferal.ddns.net");
 		txtAerialworksddnsnet.setColumns(10);
 		txtAerialworksddnsnet.setBounds(10, 122, 580, 20);
 		panel.add(txtAerialworksddnsnet);
