@@ -1,3 +1,9 @@
+New features in 1.6.5:
+- Implemented Dizzywing Dispatch partially (credits to animal animalson)
+- Implemented Kino minigames (credits to animal animalson, unclear if its fully in place, needs testing)
+- Saves can now have different colors, you will be able to tell if someone is in experience mode or creative by the name colors
+- Staff now have different name colors and a tag before their name showing their rank
+
 Fixes in 1.6.5:
 - Fixed account unpair issues with account deletion
 - Fix dms and gcs having ghost entries if accounts get deleted
@@ -15,14 +21,8 @@ Changes in 1.6.5:
 - Made it that maintenance mode doesnt automatically shut the server down when everyone is offline
 - Maintenance mode no longer allows staff login apart from admins
  
-New features in 1.6.5:
-- Implemented Dizzywing Dispatch partially (credits to animal animalson)
-- Implemented Kino minigames (credits to animal animalson, unclear if its fully in place, needs testing)
-- Saves can now have different colors, you will be able to tell if someone is in experience mode or creative by the name colors
-
 Staff utility changes:
 - The 'toggleghostmode' command no longer requires admin clearance
-- Staff now have different name colors and a tag before their name showing their rank
 - New staff command: startmaintenancetimer: command to schedule server maintenance (minutes)
 - New staff command: schedulemaintenance: command to schedule server maintenance (date/time)
 - New staff command: cancelmaintenance: cancels scheduled server maintenance
