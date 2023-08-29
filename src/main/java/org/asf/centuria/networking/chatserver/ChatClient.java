@@ -224,8 +224,21 @@ public class ChatClient {
 
 		// Check maintenance mode
 		if (Centuria.gameServer.maintenance) {
-			disconnect();
-			return;
+			boolean lockout = true;
+
+			// Check permissions
+			if (acc.getSaveSharedInventory().containsItem("permissions")) {
+				String permLevel = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+						.get("permissionLevel").getAsString();
+				if (GameServer.hasPerm(permLevel, "admin")) {
+					lockout = false;
+				}
+			}
+
+			if (lockout || Centuria.gameServer.shutdown) {
+				disconnect();
+				return;
+			}
 		}
 
 		// Check bans

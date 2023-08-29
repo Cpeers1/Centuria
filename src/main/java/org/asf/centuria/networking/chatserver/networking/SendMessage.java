@@ -1822,16 +1822,28 @@ public class SendMessage extends AbstractChatPacket {
 
 							// Disconnect everyone but the staff
 							for (Player plr : Centuria.gameServer.getPlayers()) {
-								// Dispatch event
-								EventBus.getInstance().dispatchEvent(
-										new AccountDisconnectEvent(plr.account, null, DisconnectType.MAINTENANCE));
+								if (!plr.account.getSaveSharedInventory().containsItem("permissions")
+										|| !GameServer.hasPerm(
+												plr.account.getSaveSharedInventory().getItem("permissions")
+														.getAsJsonObject().get("permissionLevel").getAsString(),
+												"admin")) {
+									// Dispatch event
+									EventBus.getInstance().dispatchEvent(
+											new AccountDisconnectEvent(plr.account, null, DisconnectType.MAINTENANCE));
 
-								plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
+									plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
+								}
 							}
 
 							// Wait a bit
 							int i = 0;
-							while (Centuria.gameServer.getPlayers().length != 0) {
+							while (Stream.of(Centuria.gameServer.getPlayers())
+									.filter(plr -> !plr.account.getSaveSharedInventory().containsItem("permissions")
+											|| !GameServer.hasPerm(
+													plr.account.getSaveSharedInventory().getItem("permissions")
+															.getAsJsonObject().get("permissionLevel").getAsString(),
+													"admin"))
+									.findFirst().isPresent()) {
 								i++;
 								if (i == 30)
 									break;
@@ -1842,13 +1854,19 @@ public class SendMessage extends AbstractChatPacket {
 								}
 							}
 							for (Player plr : Centuria.gameServer.getPlayers()) {
-								// Disconnect from the game server
-								plr.client.disconnect();
+								if (!plr.account.getSaveSharedInventory().containsItem("permissions")
+										|| !GameServer.hasPerm(
+												plr.account.getSaveSharedInventory().getItem("permissions")
+														.getAsJsonObject().get("permissionLevel").getAsString(),
+												"admin")) {
+									// Disconnect from the game server
+									plr.client.disconnect();
 
-								// Disconnect it from the chat server
-								for (ChatClient cl : client.getServer().getClients()) {
-									if (cl.getPlayer().getAccountID().equals(plr.account.getAccountID())) {
-										cl.disconnect();
+									// Disconnect it from the chat server
+									for (ChatClient cl : client.getServer().getClients()) {
+										if (cl.getPlayer().getAccountID().equals(plr.account.getAccountID())) {
+											cl.disconnect();
+										}
 									}
 								}
 							}

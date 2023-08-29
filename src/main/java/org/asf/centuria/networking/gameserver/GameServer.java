@@ -253,9 +253,23 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// If under maintenance, send error
 		if (maintenance) {
-			sendLoginResponse(client, auth, acc, -16, 0, params);
-			client.disconnect();
-			return;
+			boolean lockout = true;
+
+			// Check permissions
+			if (acc.getSaveSharedInventory().containsItem("permissions")) {
+				String permLevel = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+						.get("permissionLevel").getAsString();
+				if (hasPerm(permLevel, "admin")) {
+					lockout = false;
+				}
+			}
+
+			if (lockout || shutdown) {
+				sendLoginResponse(client, auth, acc, -16, 0, params);
+
+				client.disconnect();
+				return;
+			}
 		}
 
 		// If the client is out of date, send error
