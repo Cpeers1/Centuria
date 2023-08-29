@@ -741,6 +741,28 @@ public class GameServer extends BaseSmartfoxServer {
 		return false;
 	}
 
+	// Used to generate names with permission/save prefixes
+	public static String getPlayerNameWithPrefix(CenturiaAccount account) {
+		// Load permission level
+		String permLevel = "member";
+		if (account.getSaveSharedInventory().containsItem("permissions")) {
+			permLevel = account.getSaveSharedInventory().getItem("permissions").getAsJsonObject().get("permissionLevel")
+					.getAsString();
+		}
+
+		// Build prefix
+		String prefix = "";
+		if (GameServer.hasPerm(permLevel, "developer"))
+			prefix = "<color=\"green\">[dev] ";
+		else if (GameServer.hasPerm(permLevel, "admin"))
+			prefix = "<color=\"red\">[admin] ";
+		else if (GameServer.hasPerm(permLevel, "moderator"))
+			prefix = "<color=\"orange\">[mod] ";
+
+		// Return
+		return prefix + account.getDisplayName();
+	}
+
 	/**
 	 * Retrieves a online player by ID
 	 * 

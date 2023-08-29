@@ -231,7 +231,7 @@ public class Player {
 			// Look and name
 			packet.look = lookObj.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject().get("info")
 					.getAsJsonObject();
-			packet.displayName = account.getDisplayName();
+			packet.displayName = GameServer.getPlayerNameWithPrefix(account);
 			packet.unknownValue = 0; // TODO: What is this??
 
 			player.client.sendPacket(packet);

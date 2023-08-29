@@ -14,6 +14,7 @@ Changes in 1.6.5:
 New features in 1.6.5:
  - Implemented Dizzywing Dispatch partially (credits to animal animalson)
  - Implemented Kino minigames (credits to animal animalson, unclear if its fully in place, needs testing)
+ - Staff now have different name colors in-world and in chat
 
 Modloader changes:
  - Removed patches that caused the game to lag

@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.connective.RemoteClient;
 import org.asf.connective.processors.HttpPushProcessor;
 
@@ -71,11 +72,13 @@ public class DisplayNamesRequestHandler extends HttpPushProcessor {
 				}
 				CenturiaAccount acc = manager.getAccount(id);
 				if (acc != null) {
+					// Add user entry
 					JsonObject d = new JsonObject();
-					d.addProperty("display_name", acc.getDisplayName());
+					d.addProperty("display_name", GameServer.getPlayerNameWithPrefix(acc));
 					d.addProperty("uuid", id);
 					found.add(d);
 				} else if (id.startsWith("plaintext:")) {
+					// Add plain entry
 					JsonObject d = new JsonObject();
 					d.addProperty("display_name", id.substring("plaintext:".length()));
 					d.addProperty("uuid", id);
