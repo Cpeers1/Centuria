@@ -9,6 +9,7 @@ Changes in 1.6.5:
  - Made it that modules can override existing packets
  - FTL (modloader) has been overhauled
  - Updated Connective libraries, this will help with stability
+ - Updated the FeralTweaks server module data processor so that it doesnt require authorization for chart patch downloads
  
 New features in 1.6.5:
  - Implemented Dizzywing Dispatch partially (credits to animal animalson)
