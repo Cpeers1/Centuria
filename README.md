@@ -9,6 +9,12 @@ To build Centuria you will need to have Java 17 JDK installed. Centuria is build
 ## Building on Windows
 On windows, run the following commands in cmd or powershell::
 
+Download dependencies:
+```powershell
+mkdir deps
+git clone https://github.com/SkySwimmer/connective-http deps/connective-http
+```
+
 Set up a development environment (optional):
 ```powershell
 .\gradlew eclipse
@@ -27,6 +33,12 @@ Configure permissions:
 chmod +x gradlew
 ```
 
+Download dependencies:
+```bash
+mkdir deps
+git clone https://github.com/SkySwimmer/connective-http deps/connective-http
+```
+
 Set up a development environment (optional):
 ```bash
 ./gradlew eclipse createEclipseLaunches
@@ -43,7 +55,7 @@ After building, you can find the compiled server in `build/Installations`, you c
 <br/>
 
 ## Note about self-hosted servers
-Due to the lack of a easy-to-use launcher, hosting a server yourself may prove difficult. You will need to edit your client's `Fer.al_Data/sharedassets1.assets` and swap out the server endpoints, however this can be tricky, you may run into string length issues. You can obtain a localhost sharedassets patch from the [AerialWorks Centuria Server](https://aerialworks.ddns.net/emuferal/sharedassets1.assets).
+Due to the lack of a easy-to-use launcher, hosting a server yourself may prove difficult. You will need to edit your client's `Fer.al_Data/sharedassets1.assets` and swap out the server endpoints, however this can be tricky, you may run into string length issues. (a guide will be made in the near-future)
 
 <br/>
 
