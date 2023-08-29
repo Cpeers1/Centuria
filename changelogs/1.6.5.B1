@@ -8,9 +8,11 @@ Fixes in 1.6.5:
 Changes in 1.6.5:
  - Made it that modules can override existing packets
  - FTL (modloader) has been overhauled
+ - Updated Connective libraries, this will help with stability
  
 New features in 1.6.5:
  - Implemented Dizzywing Dispatch partially (credits to animal animalson)
+ - Implemented Kino minigames (credits to animal animalson, unclear if its fully in place, needs testing)
 
 Modloader changes:
  - Removed patches that caused the game to lag

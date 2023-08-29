@@ -1,26 +1,26 @@
 package org.asf.centuria.networking.http.api;
 
 import java.io.ByteArrayOutputStream;
-import java.net.Socket;
+import java.io.IOException;
 import java.util.Base64;
 import java.util.UUID;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
-import org.asf.rats.ConnectiveHTTPServer;
-import org.asf.rats.processors.HttpUploadProcessor;
+import org.asf.connective.RemoteClient;
+import org.asf.connective.processors.HttpPushProcessor;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class AuthenticateHandler extends HttpUploadProcessor {
+public class AuthenticateHandler extends HttpPushProcessor {
 	@Override
-	public void process(String contentType, Socket client, String method) {
+	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
 		try {
 			// Parse body
 			ByteArrayOutputStream strm = new ByteArrayOutputStream();
-			ConnectiveHTTPServer.transferRequestBody(getHeaders(), getRequestBodyStream(), strm);
+			getRequest().transferRequestBody(strm);
 			byte[] body = strm.toByteArray();
 			strm.close();
 
@@ -37,8 +37,7 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 
 				// Parse token
 				if (token.isBlank()) {
-					this.setResponseCode(403);
-					this.setResponseMessage("Access denied");
+					this.setResponseStatus(403, "Access denied");
 					return;
 				}
 
@@ -46,8 +45,7 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 				String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
 				String sig = token.split("\\.")[2];
 				if (!Centuria.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-					this.setResponseCode(403);
-					this.setResponseMessage("Access denied");
+					this.setResponseStatus(403, "Access denied");
 					return;
 				}
 
@@ -56,8 +54,7 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 						.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
 						.getAsJsonObject();
 				if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
-					this.setResponseCode(403);
-					this.setResponseMessage("Access denied");
+					this.setResponseStatus(403, "Access denied");
 					return;
 				}
 
@@ -79,8 +76,8 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 				// Check if registration is enabled, if not, prevent login
 				if (!Centuria.allowRegistration || Centuria.gameServer.maintenance) {
 					// Invalid details
-					this.setBody("text/json", "{\"error\":\"invalid_credential\"}");
-					this.setResponseCode(422);
+					this.setResponseContent("text/json", "{\"error\":\"invalid_credential\"}");
+					this.setResponseStatus(401, "Unauthorized");
 					return;
 				}
 
@@ -88,8 +85,8 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 				id = manager.register(login.get("username").getAsString());
 				if (id == null) {
 					// Invalid details
-					this.setBody("text/json", "{\"error\":\"invalid_credential\"}");
-					this.setResponseCode(422);
+					this.setResponseContent("text/json", "{\"error\":\"invalid_credential\"}");
+					this.setResponseStatus(401, "Unauthorized");
 					return;
 				}
 			}
@@ -103,8 +100,7 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 			// Find account
 			CenturiaAccount acc = manager.getAccount(id);
 			if (acc == null) {
-				this.setResponseCode(401);
-				this.setResponseMessage("Access denied");
+				this.setResponseStatus(401, "Access denied");
 				return;
 			}
 
@@ -158,16 +154,15 @@ public class AuthenticateHandler extends HttpUploadProcessor {
 			response.addProperty("rename_required_key", "");
 			response.addProperty("email_update_required", false);
 			response.addProperty("email_update_required_key", "");
-			setBody("text/json", response.toString());
+			setResponseContent("text/json", response.toString());
 		} catch (Exception e) {
-			setResponseCode(500);
-			setResponseMessage("Internal Server Error");
-			Centuria.logger.error(getRequest().path + " failed: 500: Internal Server Error", e);
+			setResponseStatus(500, "Internal Server Error");
+			Centuria.logger.error(getRequest().getRequestPath() + " failed: 500: Internal Server Error", e);
 		}
 	}
 
 	@Override
-	public HttpUploadProcessor createNewInstance() {
+	public HttpPushProcessor createNewInstance() {
 		return new AuthenticateHandler();
 	}
 

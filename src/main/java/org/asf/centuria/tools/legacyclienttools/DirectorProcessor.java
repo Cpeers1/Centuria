@@ -1,22 +1,24 @@
 package org.asf.centuria.tools.legacyclienttools;
 
-import java.net.Socket;
+import java.io.IOException;
 
-import org.asf.rats.processors.HttpUploadProcessor;
+import org.asf.connective.RemoteClient;
+import org.asf.connective.processors.HttpPushProcessor;
 
 import com.google.gson.JsonObject;
 
-public class DirectorProcessor extends HttpUploadProcessor {
+public class DirectorProcessor extends HttpPushProcessor {
 
-	public void process(String contentType, Socket client, String method) {
+	@Override
+	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
 		// Send response
 		JsonObject response = new JsonObject();
 		response.addProperty("smartfoxServer", "localhost");
-		setBody(response.toString());
+		setResponseContent("text/json", response.toString());
 	}
 
 	@Override
-	public HttpUploadProcessor createNewInstance() {
+	public HttpPushProcessor createNewInstance() {
 		return new DirectorProcessor();
 	}
 
@@ -26,7 +28,7 @@ public class DirectorProcessor extends HttpUploadProcessor {
 	}
 
 	@Override
-	public boolean supportsGet() {
+	public boolean supportsNonPush() {
 		return true;
 	}
 

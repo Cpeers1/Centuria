@@ -1,6 +1,6 @@
 package org.asf.centuria.networking.http.api;
 
-import java.net.Socket;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
@@ -11,16 +11,17 @@ import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.seasonpasses.SeasonPassDefinition;
 import org.asf.centuria.seasonpasses.SeasonPassManager;
-import org.asf.rats.processors.HttpUploadProcessor;
+import org.asf.connective.RemoteClient;
+import org.asf.connective.processors.HttpPushProcessor;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class SeasonPassRequestHandler extends HttpUploadProcessor {
+public class SeasonPassRequestHandler extends HttpPushProcessor {
 
 	@Override
-	public void process(String contentType, Socket client, String method) {
+	public void process(String pth, String method, RemoteClient client, String contentType) throws IOException {
 		try {
 			// Parse JWT payload
 			String token = this.getHeader("Authorization").substring("Bearer ".length());
@@ -29,8 +30,7 @@ public class SeasonPassRequestHandler extends HttpUploadProcessor {
 			String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
 			String sig = token.split("\\.")[2];
 			if (!Centuria.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-				this.setResponseCode(401);
-				this.setResponseMessage("Access denied");
+				this.setResponseStatus(401, "Unauthorized");
 				return;
 			}
 
@@ -39,8 +39,7 @@ public class SeasonPassRequestHandler extends HttpUploadProcessor {
 					.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
 					.getAsJsonObject();
 			if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
-				this.setResponseCode(401);
-				this.setResponseMessage("Access denied");
+				this.setResponseStatus(401, "Unauthorized");
 				return;
 			}
 
@@ -92,7 +91,7 @@ public class SeasonPassRequestHandler extends HttpUploadProcessor {
 					// Add ID
 					res.addProperty("uuid", acc.getAccountID());
 
-					this.setBody("text/json", res.toString());
+					this.setResponseContent("text/json", res.toString());
 					return;
 				} else if (path.equals("/challenges/" + acc.getAccountID() + "/player-challenges")) {
 					// Challenge request
@@ -111,7 +110,7 @@ public class SeasonPassRequestHandler extends HttpUploadProcessor {
 					}
 
 					res.add("challenges", challenges);
-					this.setBody("text/json", res.toString());
+					this.setResponseContent("text/json", res.toString());
 					return;
 				} else if (path.equals("/challenges/" + acc.getAccountID() + "/player-challenges/completed")) {
 					// Completed challenge request
@@ -123,7 +122,7 @@ public class SeasonPassRequestHandler extends HttpUploadProcessor {
 					// TODO: populate
 
 					res.add("challenges", completedChallenges);
-					this.setBody("text/json", res.toString());
+					this.setResponseContent("text/json", res.toString());
 					return;
 				}
 			} else {
@@ -131,22 +130,21 @@ public class SeasonPassRequestHandler extends HttpUploadProcessor {
 				getResponse().setResponseStatus(404, "Not Found");
 				JsonObject res = new JsonObject();
 				res.addProperty("error", "none_active");
-				this.setBody("text/json", res.toString());
+				this.setResponseContent("text/json", res.toString());
 				return;
 			}
 
 			// Set response
 			getResponse().setResponseStatus(400, "Bad Reqeust");
-			this.setBody("text/json", "{}");
+			this.setResponseContent("text/json", "{}");
 		} catch (Exception e) {
-			setResponseCode(500);
-			setResponseMessage("Internal Server Error");
-			Centuria.logger.error(getRequest().path + " failed: 500: Internal Server Error", e);
+			setResponseStatus(500, "Internal Server Error");
+			Centuria.logger.error(getRequest().getRequestPath() + " failed: 500: Internal Server Error", e);
 		}
 	}
 
 	@Override
-	public boolean supportsGet() {
+	public boolean supportsNonPush() {
 		return true;
 	}
 
@@ -156,7 +154,7 @@ public class SeasonPassRequestHandler extends HttpUploadProcessor {
 	}
 
 	@Override
-	public HttpUploadProcessor createNewInstance() {
+	public HttpPushProcessor createNewInstance() {
 		return new SeasonPassRequestHandler();
 	}
 

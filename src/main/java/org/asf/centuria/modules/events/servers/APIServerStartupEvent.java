@@ -2,7 +2,7 @@ package org.asf.centuria.modules.events.servers;
 
 import org.asf.centuria.modules.eventbus.EventObject;
 import org.asf.centuria.modules.eventbus.EventPath;
-import org.asf.rats.ConnectiveHTTPServer;
+import org.asf.connective.ConnectiveHttpServer;
 
 /**
  * 
@@ -15,9 +15,9 @@ import org.asf.rats.ConnectiveHTTPServer;
 @EventPath("api.startup")
 public class APIServerStartupEvent extends EventObject {
 
-	private ConnectiveHTTPServer server;
+	private ConnectiveHttpServer server;
 
-	public APIServerStartupEvent(ConnectiveHTTPServer server) {
+	public APIServerStartupEvent(ConnectiveHttpServer server) {
 		this.server = server;
 	}
 
@@ -29,9 +29,9 @@ public class APIServerStartupEvent extends EventObject {
 	/**
 	 * Retrieves the API server
 	 * 
-	 * @return ConnectiveHTTPServer instance
+	 * @return ConnectiveHttpServer instance
 	 */
-	public ConnectiveHTTPServer getServer() {
+	public ConnectiveHttpServer getServer() {
 		return server;
 	}
 

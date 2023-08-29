@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.Socket;
 import java.util.Base64;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -13,14 +12,15 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.PlayerInventory;
-import org.asf.rats.processors.HttpUploadProcessor;
+import org.asf.connective.RemoteClient;
+import org.asf.connective.processors.HttpPushProcessor;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class PlayerDataDownloadHandler extends HttpUploadProcessor {
+public class PlayerDataDownloadHandler extends HttpPushProcessor {
 	@Override
-	public void process(String contentType, Socket client, String method) {
+	public void process(String pth, String method, RemoteClient client, String contentType) throws IOException {
 		try {
 			// Load manager
 			AccountManager manager = AccountManager.getInstance();
@@ -28,15 +28,13 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 			// Parse JWT payload
 			String token = this.getHeader("Authorization").substring("Bearer ".length());
 			if (token.isBlank()) {
-				this.setResponseCode(403);
-				this.setResponseMessage("Access denied");
+				this.setResponseStatus(403, "Access denied");
 				return;
 			}
 
 			// Parse token
 			if (token.isBlank()) {
-				this.setResponseCode(403);
-				this.setResponseMessage("Access denied");
+				this.setResponseStatus(403, "Access denied");
 				return;
 			}
 
@@ -44,8 +42,7 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 			String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
 			String sig = token.split("\\.")[2];
 			if (!Centuria.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-				this.setResponseCode(403);
-				this.setResponseMessage("Access denied");
+				this.setResponseStatus(403, "Access denied");
 				return;
 			}
 
@@ -54,8 +51,7 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 					.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
 					.getAsJsonObject();
 			if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
-				this.setResponseCode(403);
-				this.setResponseMessage("Access denied");
+				this.setResponseStatus(403, "Access denied");
 				return;
 			}
 
@@ -69,26 +65,24 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 			// Check existence
 			if (id == null) {
 				// Invalid details
-				this.setBody("text/json", "{\"error\":\"invalid_account\"}");
-				this.setResponseCode(422);
+				this.setResponseContent("text/json", "{\"error\":\"invalid_account\"}");
+				this.setResponseStatus(401, "Unauthorized");
 				return;
 			}
 
 			// Find account
 			CenturiaAccount acc = manager.getAccount(id);
 			if (acc == null) {
-				this.setResponseCode(401);
-				this.setResponseMessage("Access denied");
+				this.setResponseStatus(401, "Unauthorized");
 				return;
 			}
 
 			// Handle request
-			String path = getRequest().path.substring(path().length());
+			String path = getRequest().getRequestPath().substring(path().length());
 			if (path.isEmpty()) {
 				// Invalid request
-				this.setBody("text/json", "{\"error\":\"missing_item\"}");
-				this.setResponseCode(400);
-				this.setResponseMessage("Bad request");
+				this.setResponseContent("text/json", "{\"error\":\"missing_item\"}");
+				this.setResponseStatus(400, "Bad request");
 				return;
 			}
 			path = path.substring(1);
@@ -135,18 +129,16 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 			} else {
 				if (!acc.getSaveSpecificInventory().containsItem(path)) {
 					// Invalid request
-					this.setBody("text/json", "{\"error\":\"item_not_found\"}");
-					this.setResponseCode(404);
-					this.setResponseMessage("Not found");
+					this.setResponseContent("text/json", "{\"error\":\"item_not_found\"}");
+					this.setResponseStatus(404, "Not found");
 					return;
 				} else {
-					this.setBody("text/json", acc.getSaveSpecificInventory().getItem(path).toString());
+					this.setResponseContent("text/json", acc.getSaveSpecificInventory().getItem(path).toString());
 				}
 			}
 		} catch (Exception e) {
-			setResponseCode(500);
-			setResponseMessage("Internal Server Error");
-			Centuria.logger.error(getRequest().path + " failed: 500: Internal Server Error", e);
+			setResponseStatus(500, "Internal Server Error");
+			Centuria.logger.error(getRequest().getRequestPath() + " failed: 500: Internal Server Error", e);
 		}
 	}
 
@@ -163,7 +155,7 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 	}
 
 	@Override
-	public boolean supportsGet() {
+	public boolean supportsNonPush() {
 		return true;
 	}
 
@@ -173,7 +165,7 @@ public class PlayerDataDownloadHandler extends HttpUploadProcessor {
 	}
 
 	@Override
-	public HttpUploadProcessor createNewInstance() {
+	public HttpPushProcessor createNewInstance() {
 		return new PlayerDataDownloadHandler();
 	}
 

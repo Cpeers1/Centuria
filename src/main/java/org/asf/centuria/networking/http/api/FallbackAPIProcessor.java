@@ -1,14 +1,14 @@
 package org.asf.centuria.networking.http.api;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
@@ -17,20 +17,20 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
 import org.asf.centuria.social.SocialEntry;
 import org.asf.centuria.social.SocialManager;
-import org.asf.rats.ConnectiveHTTPServer;
-import org.asf.rats.processors.HttpUploadProcessor;
+import org.asf.connective.RemoteClient;
+import org.asf.connective.processors.HttpPushProcessor;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
-public class FallbackAPIProcessor extends HttpUploadProcessor {
+public class FallbackAPIProcessor extends HttpPushProcessor {
 
 	public static String KeyID = UUID.randomUUID().toString();
 
 	@Override
-	public void process(String contentType, Socket client, String method) {
+	public void process(String pth, String method, RemoteClient client, String contentType) throws IOException {
 		String path = this.getRequestPath();
 		AccountManager manager = AccountManager.getInstance();
 
@@ -39,7 +39,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 			byte[] body = new byte[0];
 			if (method.toUpperCase().equals("POST")) {
 				ByteArrayOutputStream strm = new ByteArrayOutputStream();
-				ConnectiveHTTPServer.transferRequestBody(getHeaders(), getRequestBodyStream(), strm);
+				getRequest().transferRequestBody(strm);
 				body = strm.toByteArray();
 				strm.close();
 			}
@@ -65,13 +65,12 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				JsonObject response = new JsonObject();
 				response.addProperty("autorization_key", headerD + "." + payloadD + "." + Base64.getUrlEncoder()
 						.withoutPadding().encodeToString(Centuria.sign((headerD + "." + payloadD).getBytes("UTF-8"))));
-				setBody("text/json", response.toString());
+				setResponseContent("text/json", response.toString());
 			} else if (path.startsWith("/r/block/")) {
 				// Find account
 				CenturiaAccount acc = verifyAndGetAcc(manager);
 				if (acc == null) {
-					this.setResponseCode(401);
-					this.setResponseMessage("Access denied");
+					this.setResponseStatus(401, "Unauthorized");
 					return;
 				}
 
@@ -112,9 +111,8 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 					// check existing block
 					if (socialListManager.getPlayerIsBlocked(sourcePlayerID, targetPlayerID)) {
 						// error
-						setResponseCode(200);
-						setResponseMessage("No Content");
-						setBody("text/json", "{\"error\":\"already_blocked\"}");
+						setResponseStatus(200, "OK");
+						setResponseContent("text/json", "{\"error\":\"already_blocked\"}");
 						return;
 					}
 
@@ -138,9 +136,8 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 						System.out.println("[API] [r/block] [" + method + "] | Processed block Request ");
 					}
 
-					setResponseCode(201);
-					setResponseMessage("No Content");
-					setBody("");
+					setResponseStatus(201, "No Content");
+					setResponseContent("");
 
 					break;
 				}
@@ -161,9 +158,8 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 					// check block
 					if (!socialListManager.getPlayerIsBlocked(sourcePlayerID, targetPlayerID)) {
 						// error
-						setResponseCode(200);
-						setResponseMessage("No Content");
-						setBody("text/json", "{\"error\":\"not_blocked\"}");
+						setResponseStatus(200, "OK");
+						setResponseContent("text/json", "{\"error\":\"not_blocked\"}");
 						return;
 					}
 
@@ -180,14 +176,13 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				}
 				}
 
-				setBody("text/json", response.toString());
+				setResponseContent("text/json", response.toString());
 			} else if (path.startsWith("/r/follow/")) {
 
 				// Find account
 				CenturiaAccount acc = verifyAndGetAcc(manager);
 				if (acc == null) {
-					this.setResponseCode(401);
-					this.setResponseMessage("Access denied");
+					this.setResponseStatus(401, "Unauthorized");
 					return;
 				}
 
@@ -214,26 +209,23 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 					// check follow state
 					if (SocialManager.getInstance().getPlayerIsFollowing(sourcePlayerID, targetPlayerID)) {
 						// error
-						setResponseCode(200);
-						setResponseMessage("No Content");
-						setBody("text/json", "{\"error\":\"already_following\"}");
+						setResponseStatus(200, "OK");
+						setResponseContent("text/json", "{\"error\":\"already_following\"}");
 						return;
 					}
 
 					// check follow count
 					if (SocialManager.getInstance().getFollowingPlayers(sourcePlayerID).length > 1000) {
 						// error
-						setResponseCode(200);
-						setResponseMessage("No Content");
-						setBody("text/json", "{\"error\":\"limit_reached\"}");
+						setResponseStatus(200, "OK");
+						setResponseContent("text/json", "{\"error\":\"limit_reached\"}");
 						return;
 					}
 
 					SocialManager.getInstance().setFollowingPlayer(sourcePlayerID, targetPlayerID, true);
 					SocialManager.getInstance().setFollowerPlayer(targetPlayerID, sourcePlayerID, true);
 
-					setResponseCode(201);
-					setResponseMessage("No Content");
+					setResponseStatus(201, "No content");
 
 					// inform the client if possible
 					Player plr = acc.getOnlinePlayerInstance();
@@ -247,9 +239,8 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 					// check follow state
 					if (!SocialManager.getInstance().getPlayerIsFollowing(sourcePlayerID, targetPlayerID)) {
 						// error
-						setResponseCode(200);
-						setResponseMessage("No Content");
-						setBody("text/json", "{\"error\":\"not_following\"}");
+						setResponseStatus(200, "OK");
+						setResponseContent("text/json", "{\"error\":\"not_following\"}");
 						return;
 					}
 
@@ -270,8 +261,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				// verify token and get the account.
 				var acc = verifyAndGetAcc(manager);
 				if (acc == null) {
-					this.setResponseCode(401);
-					this.setResponseMessage("Access denied");
+					this.setResponseStatus(401, "Unauthorized");
 					return;
 				}
 
@@ -295,14 +285,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				JsonArray jsonArray = new JsonArray();
 
 				// parse query
-				HashMap<String, String> query = new HashMap<String, String>();
-				for (String querySegment : getRequest().query.split("&")) {
-					if (querySegment.isEmpty())
-						continue;
-					String key = querySegment.substring(0, querySegment.indexOf("="));
-					String value = querySegment.substring(querySegment.indexOf("=") + 1);
-					query.put(key, value);
-				}
+				Map<String, String> query = getRequest().getRequestQueryParameters();
 
 				// find entries
 				int page = Integer.parseInt(query.getOrDefault("page", "1"));
@@ -330,7 +313,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				}
 
 				// send response packet
-				setBody("text/json", jsonArray.toString());
+				setResponseContent("text/json", jsonArray.toString());
 
 				// log interaction details
 				if (Centuria.debugMode) {
@@ -343,8 +326,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				var acc = verifyAndGetAcc(manager);
 
 				if (acc == null) {
-					this.setResponseCode(401);
-					this.setResponseMessage("Access denied");
+					this.setResponseStatus(401, "Unauthorized");
 					return;
 				}
 
@@ -366,14 +348,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				JsonArray jsonArray = new JsonArray();
 
 				// parse query
-				HashMap<String, String> query = new HashMap<String, String>();
-				for (String querySegment : getRequest().query.split("&")) {
-					if (querySegment.isEmpty())
-						continue;
-					String key = querySegment.substring(0, querySegment.indexOf("="));
-					String value = querySegment.substring(querySegment.indexOf("=") + 1);
-					query.put(key, value);
-				}
+				Map<String, String> query = getRequest().getRequestQueryParameters();
 
 				// find entries
 				int page = Integer.parseInt(query.getOrDefault("page", "1"));
@@ -398,7 +373,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				}
 
 				// send response packet
-				setBody("text/json", jsonArray.toString());
+				setResponseContent("text/json", jsonArray.toString());
 
 				// log interaction details
 				if (Centuria.debugMode) {
@@ -410,8 +385,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				var acc = verifyAndGetAcc(manager);
 
 				if (acc == null) {
-					this.setResponseCode(401);
-					this.setResponseMessage("Access denied");
+					this.setResponseStatus(401, "Unauthorized");
 					return;
 				}
 
@@ -432,8 +406,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 				case "post": {
 					friendListManager.setFavoritePlayer(sourcePlayerID, targetPlayerID, true);
 
-					setResponseCode(201);
-					setResponseMessage("No Content");
+					setResponseStatus(201, "No content");
 
 					// log details
 					if (Centuria.debugMode) {
@@ -475,17 +448,16 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 							+ " ) ( body: " + new String(body, "UTF-8") + " )");
 				}
 
-				setResponseCode(400);
-				setResponseMessage("Bad Request");
-				setBody("text/json", "{}");
+				setResponseStatus(400, "Bad request");
+				setResponseContent("text/json", "{}");
 			}
 		} catch (Exception e) {
-			Centuria.logger.error(getRequest().path + " failed", e);
+			Centuria.logger.error(getRequest().getRequestPath() + " failed", e);
 		}
 	}
 
 	@Override
-	public HttpUploadProcessor createNewInstance() {
+	public HttpPushProcessor createNewInstance() {
 		return new FallbackAPIProcessor();
 	}
 
@@ -495,7 +467,7 @@ public class FallbackAPIProcessor extends HttpUploadProcessor {
 	}
 
 	@Override
-	public boolean supportsGet() {
+	public boolean supportsNonPush() {
 		return true;
 	}
 

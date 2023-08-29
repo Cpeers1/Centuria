@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -17,13 +16,13 @@ import org.asf.centuria.accounts.registration.RegistrationVerificationHelper;
 import org.asf.centuria.accounts.registration.RegistrationVerificationResult;
 import org.asf.centuria.accounts.registration.RegistrationVerificationStatus;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.rats.ConnectiveHTTPServer;
-import org.asf.rats.processors.HttpUploadProcessor;
+import org.asf.connective.RemoteClient;
+import org.asf.connective.processors.HttpPushProcessor;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class GameRegistrationHandler extends HttpUploadProcessor {
+public class GameRegistrationHandler extends HttpPushProcessor {
 
 	private static String[] nameBlacklist = new String[] { "kit", "kitsendragn", "kitsendragon", "fera", "fero",
 			"wwadmin", "ayli", "komodorihero", "wwsam", "blinky", "fer.ocity" };
@@ -74,11 +73,11 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 	}
 
 	@Override
-	public void process(String contentType, Socket client, String method) {
+	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
 		try {
 			// Parse body
 			ByteArrayOutputStream strm = new ByteArrayOutputStream();
-			ConnectiveHTTPServer.transferRequestBody(getHeaders(), getRequestBodyStream(), strm);
+			getRequest().transferRequestBody(strm);
 			byte[] body = strm.toByteArray();
 			strm.close();
 
@@ -101,9 +100,8 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 				if (accountName.equalsIgnoreCase(name)) {
 					// Reply with error
 					response.addProperty("error", "invalid_username");
-					setBody("text/json", response.toString());
-					this.setResponseCode(400);
-					this.setResponseMessage("Bad request");
+					setResponseContent("text/json", response.toString());
+					this.setResponseStatus(400, "Bad request");
 					return;
 				}
 			}
@@ -113,9 +111,8 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 				if (displayName.equalsIgnoreCase(name)) {
 					// Reply with error
 					response.addProperty("error", "display_name_sift_rejected");
-					setBody("text/json", response.toString());
-					this.setResponseCode(400);
-					this.setResponseMessage("Bad request");
+					setResponseContent("text/json", response.toString());
+					this.setResponseStatus(400, "Bad request");
 					return;
 				}
 			}
@@ -125,18 +122,16 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 				if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 					// Reply with error
 					response.addProperty("error", "invalid_username");
-					setBody("text/json", response.toString());
-					this.setResponseCode(400);
-					this.setResponseMessage("Bad request");
+					setResponseContent("text/json", response.toString());
+					this.setResponseStatus(400, "Bad request");
 					return;
 				}
 
 				if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 					// Reply with error
 					response.addProperty("error", "invalid_username");
-					setBody("text/json", response.toString());
-					this.setResponseCode(400);
-					this.setResponseMessage("Bad request");
+					setResponseContent("text/json", response.toString());
+					this.setResponseStatus(400, "Bad request");
 					return;
 				}
 			}
@@ -146,18 +141,16 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 				if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 					// Reply with error
 					response.addProperty("error", "display_name_sift_rejected");
-					setBody("text/json", response.toString());
-					this.setResponseCode(400);
-					this.setResponseMessage("Bad request");
+					setResponseContent("text/json", response.toString());
+					this.setResponseStatus(400, "Bad request");
 					return;
 				}
 
 				if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 					// Reply with error
 					response.addProperty("error", "display_name_sift_rejected");
-					setBody("text/json", response.toString());
-					this.setResponseCode(400);
-					this.setResponseMessage("Bad request");
+					setResponseContent("text/json", response.toString());
+					this.setResponseStatus(400, "Bad request");
 					return;
 				}
 			}
@@ -168,9 +161,8 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 					|| accountName.length() > 320) {
 				// Reply with error
 				response.addProperty("error", "invalid_username");
-				setBody("text/json", response.toString());
-				this.setResponseCode(400);
-				this.setResponseMessage("Bad request");
+				setResponseContent("text/json", response.toString());
+				this.setResponseStatus(400, "Bad request");
 				return;
 			}
 
@@ -178,9 +170,8 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 			if (!displayName.matches("^[0-9A-Za-z\\-_. ]+") || displayName.length() > 16 || displayName.length() < 2) {
 				// Reply with error
 				response.addProperty("error", "display_name_invalid_format");
-				setBody("text/json", response.toString());
-				this.setResponseCode(400);
-				this.setResponseMessage("Bad request");
+				setResponseContent("text/json", response.toString());
+				this.setResponseStatus(400, "Bad request");
 				return;
 			}
 
@@ -188,9 +179,8 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 			if (manager.getUserByLoginName(accountName) != null) {
 				// Reply with error
 				response.addProperty("error", "username_already_exists");
-				setBody("text/json", response.toString());
-				this.setResponseCode(400);
-				this.setResponseMessage("Bad request");
+				setResponseContent("text/json", response.toString());
+				this.setResponseStatus(400, "Bad request");
 				return;
 			}
 
@@ -198,9 +188,8 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 			if (manager.isDisplayNameInUse(displayName)) {
 				// Reply with error
 				response.addProperty("error", "display_name_already_taken");
-				setBody("text/json", response.toString());
-				this.setResponseCode(400);
-				this.setResponseMessage("Bad request");
+				setResponseContent("text/json", response.toString());
+				this.setResponseStatus(400, "Bad request");
 				return;
 			}
 
@@ -285,9 +274,8 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 						// Reply with error
 						response.addProperty("error",
 								"Unable to verify with that name. Please use a different login name format.");
-						setBody("text/json", response.toString());
-						this.setResponseCode(400);
-						this.setResponseMessage("Bad request");
+						setResponseContent("text/json", response.toString());
+						this.setResponseStatus(400, "Bad request");
 						return;
 					}
 
@@ -335,7 +323,7 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 
 						// Call helper post registration
 						helper.postRegistration(manager.getAccount(accountID), accountID, displayName, verifyPayload);
-						setBody("text/json", response.toString());
+						setResponseContent("text/json", response.toString());
 						return;
 					} else {
 						// Set error
@@ -362,32 +350,29 @@ public class GameRegistrationHandler extends HttpUploadProcessor {
 						}
 						response.addProperty("error", result.error);
 						response.addProperty("error_message", result.errorMessage);
-						this.setResponseCode(400);
-						this.setResponseMessage("Bad request");
-						setBody("text/json", response.toString());
+						this.setResponseStatus(400, "Bad request");
+						setResponseContent("text/json", response.toString());
 						return;
 					}
 				}
 				// Reply with error
 				response.addProperty("error",
 						"Unable to verify with that name. Please use a different login name format.");
-				setBody("text/json", response.toString());
-				this.setResponseCode(400);
-				this.setResponseMessage("Bad request");
+				setResponseContent("text/json", response.toString());
+				this.setResponseStatus(400, "Bad request");
 				return;
 			}
 
 			// Send response
-			setBody("text/json", response.toString());
+			setResponseContent("text/json", response.toString());
 		} catch (Exception e) {
-			setResponseCode(500);
-			setResponseMessage("Internal Server Error");
-			Centuria.logger.error(getRequest().path + " failed: 500: Internal Server Error", e);
+			setResponseStatus(500, "Internal Server Error");
+			Centuria.logger.error(getRequest().getRequestPath() + " failed: 500: Internal Server Error", e);
 		}
 	}
 
 	@Override
-	public HttpUploadProcessor createNewInstance() {
+	public HttpPushProcessor createNewInstance() {
 		return new GameRegistrationHandler();
 	}
 

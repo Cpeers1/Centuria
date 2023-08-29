@@ -58,7 +58,7 @@ dependencies {
 	testImplementation group: 'junit', name: 'junit', version: '4.13.2'
 
 	implementation name: "Centuria"
-	implementation name: "ConnectiveHTTP"
+	implementation name: "connective-http"
 }
 
 createEclipseLaunches {

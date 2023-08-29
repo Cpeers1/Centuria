@@ -618,7 +618,7 @@ public class GameServer extends BaseSmartfoxServer {
 	protected void onStart() {
 		// Anti-expiry (kicks players who go past token expiry)
 		Thread th = new Thread(() -> {
-			while (Centuria.directorServer.isActive()) {
+			while (Centuria.directorServer.isRunning()) {
 				// Find players who are logged in for longer than two days
 				for (Player plr : getPlayers()) {
 					long loginTimestamp = plr.account.getLastLoginTime();
@@ -638,7 +638,7 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Resource respawn
 		th = new Thread(() -> {
-			while (Centuria.directorServer.isActive()) {
+			while (Centuria.directorServer.isRunning()) {
 				// Loop through all players
 				for (Player plr : getPlayers()) {
 					if (!plr.roomReady)
