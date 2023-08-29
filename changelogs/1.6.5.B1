@@ -20,13 +20,14 @@ Changes in 1.6.5:
 - Updated the FeralTweaks server module data processor so that it doesnt require authorization for chart patch downloads
 - Made it that maintenance mode doesnt automatically shut the server down when everyone is offline
 - Maintenance mode no longer allows staff login apart from admins
+- FeralTweaks server code has been overhaulled to be more clean and easier to navigate through
  
-Staff utility changes:
+Command changes:
 - The 'toggleghostmode' command no longer requires admin clearance
 - New staff command: startmaintenancetimer: command to schedule server maintenance (minutes)
 - New staff command: schedulemaintenance: command to schedule server maintenance (date/time)
 - New staff command: cancelmaintenance: cancels scheduled server maintenance
-- New staff command: liststaff: lists all staff users on the server
+- New player-usable command: stafflist: lists all staff users on the server (with online status)
 
 Modloader changes:
 - Removed patches that caused the game to lag

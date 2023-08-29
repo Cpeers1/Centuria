@@ -562,7 +562,7 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("takelevels <amount> [\"<player>\"]");
 			commandMessages.add("takeitem <itemDefId> [<quantity>] [<player>]");
 			commandMessages.add("questskip [<amount>] [<player>]");
-			commandMessages.add("liststaff");
+			commandMessages.add("stafflist");
 			if (GameServer.hasPerm(permLevel, "admin")) {
 				commandMessages.add("generateclearancecode");
 				commandMessages.add("addxp <amount> [\"<player>\"]");
@@ -1354,7 +1354,7 @@ public class SendMessage extends AbstractChatPacket {
 						}
 						return true;
 					}
-					case "liststaff": {
+					case "stafflist": {
 						// Staff list
 						HashMap<CenturiaAccount, String> staffAccounts = new HashMap<CenturiaAccount, String>();
 						AccountManager.getInstance().runForAllAccounts(t -> {
@@ -1386,7 +1386,8 @@ public class SendMessage extends AbstractChatPacket {
 								}
 
 								// Add
-								msg += "\n - " + acc.getDisplayName();
+								msg += "\n - " + acc.getDisplayName() + " ["
+										+ (acc.getOnlinePlayerInstance() == null ? "OFFLINE" : "ONLINE") + "]";
 							}
 						}
 
@@ -1406,7 +1407,8 @@ public class SendMessage extends AbstractChatPacket {
 								}
 
 								// Add
-								msg += "\n - " + acc.getDisplayName();
+								msg += "\n - " + acc.getDisplayName() + " ["
+										+ (acc.getOnlinePlayerInstance() == null ? "OFFLINE" : "ONLINE") + "]";
 							}
 						}
 
@@ -1426,7 +1428,8 @@ public class SendMessage extends AbstractChatPacket {
 								}
 
 								// Add
-								msg += "\n - " + acc.getDisplayName();
+								msg += "\n - " + acc.getDisplayName() + " ["
+										+ (acc.getOnlinePlayerInstance() == null ? "OFFLINE" : "ONLINE") + "]";
 							}
 						}
 
