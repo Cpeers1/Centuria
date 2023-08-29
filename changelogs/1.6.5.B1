@@ -42,4 +42,3 @@ Modloader changes:
 Launcher fixes:
 - Fixed issues where on some systems the modloader could freeze
 - Fixed issues with the start scripts, making them more compatible with installers
-
