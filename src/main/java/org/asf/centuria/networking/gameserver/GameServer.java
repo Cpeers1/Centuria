@@ -31,7 +31,6 @@ import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.AccountLoginEvent;
 import org.asf.centuria.modules.events.accounts.AccountPreloginEvent;
-import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
 import org.asf.centuria.modules.events.players.PlayerJoinEvent;
 import org.asf.centuria.modules.events.players.PlayerLeaveEvent;
 import org.asf.centuria.modules.events.servers.GameServerStartupEvent;
@@ -254,23 +253,9 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// If under maintenance, send error
 		if (maintenance) {
-			boolean lockout = true;
-
-			// Check permissions
-			if (acc.getSaveSharedInventory().containsItem("permissions")) {
-				String permLevel = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-						.get("permissionLevel").getAsString();
-				if (hasPerm(permLevel, "moderator")) {
-					lockout = false;
-				}
-			}
-
-			if (lockout || shutdown) {
-				sendLoginResponse(client, auth, acc, -16, 0, params);
-
-				client.disconnect();
-				return;
-			}
+			sendLoginResponse(client, auth, acc, -16, 0, params);
+			client.disconnect();
+			return;
 		}
 
 		// If the client is out of date, send error
@@ -602,17 +587,6 @@ public class GameServer extends BaseSmartfoxServer {
 		if (client.container != null && client.container instanceof Player) {
 			Player plr = (Player) client.container;
 			playerLeft(plr);
-
-			// Check maintenance, exit server if noone is online during maintenance
-			if (maintenance && players.size() == 0) {
-				if (!shutdown) {
-					// Dispatch maintenance end event
-					EventBus.getInstance().dispatchEvent(new MaintenanceEndEvent());
-				}
-
-				// Exit
-				System.exit(0);
-			}
 		}
 	}
 

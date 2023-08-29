@@ -11,12 +11,17 @@ Changes in 1.6.5:
 - FTL (modloader) has been overhauled
 - Updated Connective libraries, this will help with stability
 - Updated the FeralTweaks server module data processor so that it doesnt require authorization for chart patch downloads
+- Made it that maintenance mode doesnt automatically shut the server down when everyone is offline
+- Maintenance mode no longer allows staff login from now on
  
 New features in 1.6.5:
 - Implemented Dizzywing Dispatch partially (credits to animal animalson)
 - Implemented Kino minigames (credits to animal animalson, unclear if its fully in place, needs testing)
 - Saves can now have different colors, you will be able to tell if someone is in experience mode or creative by the name colors
 - Staff now have different name colors and a tag before their name showing their rank
+
+Staff utility changes:
+- The 'toggleghostmode' command no longer requires admin clearance
 - New staff command: liststaff: lists all staff users on the server
 
 Modloader changes:
