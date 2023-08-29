@@ -23,6 +23,7 @@ public class SaveSettings {
 	public boolean giveAllSanctuaryTypes = true;
 	public boolean giveAllCurrency = true;
 	public boolean giveAllResources = true;
+	public JsonObject saveColors = null;
 	public String tradeLockID = "default";
 
 	public SaveSettings() {
@@ -52,6 +53,8 @@ public class SaveSettings {
 		this.giveAllCurrency = data.get("giveAllCurrency").getAsBoolean();
 		this.giveAllResources = data.get("giveAllResources").getAsBoolean();
 		this.tradeLockID = data.get("tradeLockID").getAsString();
+		if (data.has("saveColors") && !data.get("saveColors").isJsonNull())
+			this.saveColors = data.get("saveColors").getAsJsonObject();
 	}
 
 	/**
@@ -71,6 +74,8 @@ public class SaveSettings {
 		obj.addProperty("giveAllCurrency", giveAllCurrency);
 		obj.addProperty("giveAllResources", giveAllResources);
 		obj.addProperty("tradeLockID", tradeLockID);
+		if (saveColors != null)
+			obj.add("saveColors", saveColors);
 		return obj;
 	}
 

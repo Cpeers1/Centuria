@@ -19,6 +19,20 @@ public abstract class SaveManager {
 	public abstract PlayerInventory getSaveSpecificInventoryOf(String save);
 
 	/**
+	 * Retrieves the settings of a specific save
+	 * 
+	 * @since Beta 1.6.5
+	 * @param save Save name
+	 * @return SaveSettings instance or null if invalid
+	 */
+	public SaveSettings getSaveSettingsOf(String save) {
+		PlayerInventory inv = getSaveSpecificInventoryOf(save);
+		if (inv == null)
+			return null;
+		return inv.getSaveSettings();
+	}
+
+	/**
 	 * Retrieves the current active save name
 	 * 
 	 * @return Active save name

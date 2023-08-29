@@ -1,6 +1,8 @@
 package org.asf.centuria;
 
+import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.accounts.SaveMode;
+import org.asf.centuria.accounts.SaveSettings;
 import org.asf.centuria.modules.ICenturiaModule;
 import org.asf.centuria.modules.eventbus.EventListener;
 import org.asf.centuria.modules.events.accounts.AccountPreloginEvent;
@@ -41,6 +43,8 @@ public class TestModule implements ICenturiaModule {
 	public void registerCommands(ModuleCommandSyntaxListEvent event) {
 		event.addCommandSyntaxMessage("test");
 		event.addCommandSyntaxMessage("migrate");
+		event.addCommandSyntaxMessage("creativesave");
+		event.addCommandSyntaxMessage("switchsave");
 	}
 
 	@EventListener
@@ -57,6 +61,36 @@ public class TestModule implements ICenturiaModule {
 			event.getAccount().getOnlinePlayerInstance().client
 					.sendPacket("%xt%mod:ft%-1%disconnect%Disconnected%Account data migration in progress%Log out%");
 			event.getAccount().migrateSaveDataToManagedMode();
+		} else if (event.getCommandID().equals("creativesave")) {
+			if (event.getAccount().getSaveMode() != SaveMode.MANAGED) {
+				event.respond("Not using managed data");
+				return;
+			}
+
+			if (event.getAccount().getSaveManager().createSave("creative")) {
+				PlayerInventory inv = event.getAccount().getSaveManager().getSaveSpecificInventoryOf("creative");
+				SaveSettings settings = inv.getSaveSettings();
+				settings.giveAllAvatars = true;
+				settings.giveAllClothes = true;
+				settings.giveAllCurrency = true;
+				settings.giveAllFurnitureItems = true;
+				settings.giveAllMods = true;
+				settings.giveAllResources = true;
+				settings.giveAllSanctuaryTypes = true;
+				settings.giveAllWings = true;
+				inv.writeSaveSettings();
+				event.respond("Done");
+			} else
+				event.respond("Failed");
+		} else if (event.getCommandID().equals("switchsave")) {
+			if (event.getAccount().getSaveMode() != SaveMode.MANAGED) {
+				event.respond("Not using managed data");
+				return;
+			}
+
+			event.getAccount().getSaveManager().switchSave(event.getCommandArguments()[0]);
+			event.getAccount().getOnlinePlayerInstance().client
+					.sendPacket("%xt%mod:ft%-1%disconnect%Disconnected%Save switched%Log out%");
 		}
 	}
 

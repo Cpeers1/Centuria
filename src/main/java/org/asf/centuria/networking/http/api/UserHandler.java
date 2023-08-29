@@ -6,6 +6,7 @@ import java.util.Base64;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.connective.RemoteClient;
 import org.asf.connective.processors.HttpPushProcessor;
 
@@ -58,7 +59,7 @@ public class UserHandler extends HttpPushProcessor {
 			JsonObject privacy = acc.getPrivacySettings();
 			JsonObject response = new JsonObject();
 			response.addProperty("country_code", "US");
-			response.addProperty("display_name", acc.getDisplayName());
+			response.addProperty("display_name", GameServer.getPlayerNameWithPrefix(acc));
 			response.addProperty("enhanced_customization", true);
 			response.addProperty("language", "en");
 			response.add("privacy", privacy);

@@ -467,6 +467,11 @@ public class Centuria {
 
 			// Create save array
 			JsonObject saves = new JsonObject();
+			JsonObject colors = new JsonObject();
+			colors.addProperty("developer", "#ff00e6");
+			colors.addProperty("admin", "red");
+			colors.addProperty("moderator", "orange");
+			colors.addProperty("player", "default");
 			JsonObject save = new JsonObject();
 			save.addProperty("sanctuaryLimitOverride", -1);
 			save.addProperty("giveAllAvatars", defaultGiveAllAvatars);
@@ -477,6 +482,7 @@ public class Centuria {
 			save.addProperty("giveAllSanctuaryTypes", defaultGiveAllSanctuaryTypes);
 			save.addProperty("giveAllCurrency", defaultGiveAllCurrency);
 			save.addProperty("giveAllResources", defaultGiveAllResources);
+			save.add("saveColors", colors);
 			saves.add(defaultSaveName, save);
 
 			// Set basics

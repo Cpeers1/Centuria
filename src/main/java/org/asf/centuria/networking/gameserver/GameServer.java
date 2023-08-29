@@ -20,6 +20,8 @@ import java.util.stream.Stream;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.accounts.SaveMode;
+import org.asf.centuria.accounts.SaveSettings;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.enums.players.OnlineStatus;
@@ -752,12 +754,55 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Build prefix
 		String prefix = "";
+
+		// Load save color settings
+		String color = "default";
 		if (GameServer.hasPerm(permLevel, "developer"))
-			prefix = "<color=\"green\">[dev] ";
+			color = "#ff00e6";
 		else if (GameServer.hasPerm(permLevel, "admin"))
-			prefix = "<color=\"red\">[admin] ";
+			color = "red";
 		else if (GameServer.hasPerm(permLevel, "moderator"))
-			prefix = "<color=\"orange\">[mod] ";
+			color = "orange";
+
+		SaveSettings saveSettings = account.getSaveSpecificInventory().getSaveSettings();
+		if (saveSettings != null && saveSettings.saveColors != null) {
+			if (GameServer.hasPerm(permLevel, "developer") && saveSettings.saveColors.has("developer"))
+				color = saveSettings.saveColors.get("developer").getAsString();
+			else if (GameServer.hasPerm(permLevel, "admin") && saveSettings.saveColors.has("admin"))
+				color = saveSettings.saveColors.get("admin").getAsString();
+			else if (GameServer.hasPerm(permLevel, "moderator") && saveSettings.saveColors.has("moderator"))
+				color = saveSettings.saveColors.get("moderator").getAsString();
+			else if (GameServer.hasPerm(permLevel, "player") && saveSettings.saveColors.has("player"))
+				color = saveSettings.saveColors.get("player").getAsString();
+		}
+
+		// Check color
+		if (color.equals("default") && account.getSaveMode() == SaveMode.MANAGED) {
+			if (saveSettings.giveAllAvatars && saveSettings.giveAllMods && saveSettings.giveAllWings
+					&& saveSettings.giveAllSanctuaryTypes) {
+				// Creative
+				color = "yellow";
+			} else if (!saveSettings.giveAllAvatars && !saveSettings.giveAllMods && !saveSettings.giveAllClothes
+					&& !saveSettings.giveAllWings && !saveSettings.giveAllSanctuaryTypes
+					&& !saveSettings.giveAllFurnitureItems && !saveSettings.giveAllResources
+					&& !saveSettings.giveAllCurrency) {
+				// Experience
+				color = "green";
+			}
+		}
+
+		// Add color to prefix
+		if (!color.equals("default")) {
+			prefix = "<color=" + color + ">";
+		}
+
+		// Build prefix
+		if (GameServer.hasPerm(permLevel, "developer"))
+			prefix += "[dev] ";
+		else if (GameServer.hasPerm(permLevel, "admin"))
+			prefix += "[admin] ";
+		else if (GameServer.hasPerm(permLevel, "moderator"))
+			prefix += "[mod] ";
 
 		// Return
 		return prefix + account.getDisplayName();
