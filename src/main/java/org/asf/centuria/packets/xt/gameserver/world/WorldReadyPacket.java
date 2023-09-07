@@ -16,6 +16,7 @@ import org.asf.centuria.entities.objects.WorldObjectMoveNodeData;
 import org.asf.centuria.entities.objects.WorldObjectPositionInfo;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.sanctuaries.SanctuaryObjectData;
+import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.enums.sanctuaries.SanctuaryObjectType;
 import org.asf.centuria.interactions.InteractionManager;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -111,7 +112,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		GameServer server = (GameServer) client.getServer();
 		for (Player player : server.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				player.syncTo(plr);
+				player.syncTo(plr, WorldObjectMoverNodeType.InitPosition);
 				Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
 						"Syncing player " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
 			}
@@ -140,7 +141,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			// Sync spawn
 			for (Player player : server.getPlayers()) {
 				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-					plr.syncTo(player);
+					plr.syncTo(player, WorldObjectMoverNodeType.InitPosition);
 					Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
 							"Syncing spawn " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
 				}
@@ -188,7 +189,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Sync spawn
 		for (Player player : server.getPlayers()) {
 			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				plr.syncTo(player);
+				plr.syncTo(player, WorldObjectMoverNodeType.InitPosition);
 				Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
 						"Syncing spawn " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
 			}

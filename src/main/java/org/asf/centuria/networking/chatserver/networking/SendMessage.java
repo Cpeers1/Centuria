@@ -28,6 +28,7 @@ import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.uservars.UserVarValue;
+import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -1450,7 +1451,7 @@ public class SendMessage extends AbstractChatPacket {
 							for (Player player : server.getPlayers()) {
 								if (plr.room != null && player.room != null && player.room.equals(plr.room)
 										&& player != plr) {
-									plr.syncTo(player);
+									plr.syncTo(player, WorldObjectMoverNodeType.InitPosition);
 									Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"), "Syncing player "
 											+ player.account.getDisplayName() + " to " + plr.account.getDisplayName());
 								}

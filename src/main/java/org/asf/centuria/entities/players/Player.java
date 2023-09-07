@@ -118,7 +118,7 @@ public class Player {
 				// If the player is ingame, show this player to them
 				Player plr = blockedPlayer.getOnlinePlayerInstance();
 				if (plr != null && roomReady && plr.roomReady && plr.room.equals(room) && plr.levelID == levelID) {
-					syncTo(plr);
+					syncTo(plr, WorldObjectMoverNodeType.InitPosition);
 				}
 			}
 		}
@@ -190,7 +190,7 @@ public class Player {
 		lastAction = 0;
 	}
 
-	public void syncTo(Player player) {
+	public void syncTo(Player player, WorldObjectMoverNodeType nodeType) {
 		if (ghostMode && !player.hasModPerms || player.disableSync)
 			return; // Ghosting
 
@@ -225,7 +225,7 @@ public class Player {
 			packet.lastMove.positionInfo = new WorldObjectPositionInfo(lastPos.x, lastPos.y, lastPos.z, lastRot.x,
 					lastRot.y, lastRot.z, lastRot.w);
 			packet.lastMove.velocity = new Velocity();
-			packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition;
+			packet.lastMove.nodeType = nodeType;
 			packet.lastMove.actorActionType = lastAction;
 
 			// Look and name
