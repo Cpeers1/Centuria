@@ -74,7 +74,8 @@ public class AuthenticateHandler extends HttpPushProcessor {
 			// Check existence
 			if (id == null) {
 				// Check if registration is enabled, if not, prevent login
-				if (!Centuria.allowRegistration || Centuria.gameServer.maintenance) {
+				if (!Centuria.allowRegistration || Centuria.gameServer.maintenance || AccountManager.getInstance()
+						.getUserByLoginName(login.get("username").getAsString()) != null) {
 					// Invalid details
 					this.setResponseContent("text/json", "{\"error\":\"invalid_credential\"}");
 					this.setResponseStatus(401, "Unauthorized");
@@ -100,7 +101,7 @@ public class AuthenticateHandler extends HttpPushProcessor {
 			// Find account
 			CenturiaAccount acc = manager.getAccount(id);
 			if (acc == null) {
-				this.setResponseStatus(401, "Access denied");
+				this.setResponseStatus(422, "Unauthorized");
 				return;
 			}
 
