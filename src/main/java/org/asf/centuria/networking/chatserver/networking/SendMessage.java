@@ -574,6 +574,7 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("removeperms \"<player>\"");
 				commandMessages.add("startmaintenance");
 				commandMessages.add("endmaintenance");
+				commandMessages.add("stopserver");
 				commandMessages.add("updatewarning <minutes-remaining>");
 				commandMessages.add("updateshutdown");
 				commandMessages.add("update <60|30|15|10|5|3|1>");
@@ -1806,6 +1807,22 @@ public class SendMessage extends AbstractChatPacket {
 										"Server has been shut down.", DisconnectType.SERVER_SHUTDOWN));
 							}
 							Centuria.updateShutdown();
+							return true;
+						} else {
+							break;
+						}
+					}
+					case "stopserver": {
+						// Check perms
+						if (GameServer.hasPerm(permLevel, "admin")) {
+							// Shut down the server
+							for (Player plr : Centuria.gameServer.getPlayers()) {
+								// Dispatch event
+								EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
+										"Server has been shut down.", DisconnectType.SERVER_SHUTDOWN));
+							}
+							Centuria.disconnectPlayersForShutdown();
+							System.exit(0);
 							return true;
 						} else {
 							break;

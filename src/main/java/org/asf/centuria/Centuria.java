@@ -285,6 +285,7 @@ public class Centuria {
 						message = "%xt%ua%-1%7390|1%";
 						break;
 					case 0:
+						// Shut down
 						updateShutdown();
 						cancelUpdate = false;
 						return;
@@ -329,6 +330,20 @@ public class Centuria {
 			EventBus.getInstance().dispatchEvent(new ServerUpdateEvent(nextVersion, -1));
 		}
 
+		// Shut down the server
+		disconnectPlayersForShutdown();
+
+		// Dispatch completion event
+		EventBus.getInstance().dispatchEvent(new ServerUpdateCompletionEvent(nextVersion));
+
+		// Exit
+		System.exit(0);
+	}
+
+	/**
+	 * Disconnects all players with a update message
+	 */
+	public static void disconnectPlayersForShutdown() {
 		// Disconnect everyone
 		for (Player plr : Centuria.gameServer.getPlayers()) {
 			plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
@@ -357,7 +372,7 @@ public class Centuria {
 			plr.client.disconnect();
 		}
 
-		// Wait for log off and exit
+		// Wait for log off
 		int l = 0;
 		while (Centuria.gameServer.getPlayers().length != 0) {
 			l++;
@@ -369,12 +384,6 @@ public class Centuria {
 			} catch (InterruptedException e) {
 			}
 		}
-
-		// Dispatch completion event
-		EventBus.getInstance().dispatchEvent(new ServerUpdateCompletionEvent(nextVersion));
-
-		// Exit
-		System.exit(0);
 	}
 
 	public static void startServer()
