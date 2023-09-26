@@ -31,7 +31,6 @@ public class InspirationCollectionModule extends InteractionModule {
 					if (stateInfo.params[0].equals("1") && stateInfo.params[1].equals("4")) {
 						return true;
 					}
-
 				} else {
 					// check if any branches do
 					if (!stateInfo.branches.isEmpty()) {
@@ -66,7 +65,6 @@ public class InspirationCollectionModule extends InteractionModule {
 			return 1; // Safe to run
 		}
 		return -1;
-
 	}
 
 	@Override

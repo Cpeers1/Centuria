@@ -566,8 +566,6 @@ public class InteractionManager {
 				break;
 			}
 			case "35":
-			case "84":
-				// Handled by group objects
 			case "3":
 				// Build quest command
 				XtWriter pk = new XtWriter();
