@@ -12,23 +12,20 @@ import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 
 import org.asf.centuria.packets.smartfox.ISmartfoxPacket;
-import org.asf.centuria.util.TaskThread;
 
 public class SocketSmartfoxClient extends SmartfoxClient {
 
 	private Socket client;
 	private BaseSmartfoxServer server;
+
+	private Object sendLock = new Object();
+
 	InputStream input;
 	OutputStream output;
-
-	TaskThread taskThread;
 
 	public SocketSmartfoxClient(Socket client, BaseSmartfoxServer server) {
 		this.client = client;
 		this.server = server;
-
-		taskThread = new TaskThread(client.toString());
-		taskThread.start();
 
 		try {
 			input = client.getInputStream();
@@ -46,7 +43,6 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 
 	@Override
 	protected void stop() {
-		taskThread.stopCleanly();
 		client = null;
 	}
 
@@ -57,19 +53,20 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 
 	@Override
 	public void disconnect() {
-		taskThread.flush(3);
-		try {
-			if (client != null)
-				client.close();
-		} catch (IOException e) {
+		synchronized (sendLock) {
+			try {
+				if (client != null)
+					client.close();
+			} catch (IOException e) {
+			}
+			server.clientDisconnect(this);
+			stop();
 		}
-		server.clientDisconnect(this);
-		stop();
 	}
 
 	@Override
 	public void sendPacket(ISmartfoxPacket packet) {
-		taskThread.schedule(() -> {
+		synchronized (sendLock) {
 			try {
 				// Instantiate the packet and build
 				String content = packet.build();
@@ -81,12 +78,12 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 				output.flush();
 			} catch (Exception e) {
 			}
-		});
+		}
 	}
 
 	@Override
 	public void sendPacket(String packet) {
-		taskThread.schedule(() -> {
+		synchronized (sendLock) {
 			try {
 				// Send packet
 				byte[] payload = packet.getBytes("UTF-8");
@@ -97,7 +94,7 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 				output.flush();
 			} catch (Exception e) {
 			}
-		});
+		}
 	}
 
 	@Override
