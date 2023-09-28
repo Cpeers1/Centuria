@@ -35,7 +35,7 @@ function uploadToServers() {
 
 # Current channel
 source version.info
-rm -rf build/Update
+rm -rf build/update
 read -rp "Server username: " username
 read -rsp "Server upload password: " password
 echo
