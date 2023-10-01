@@ -6,8 +6,10 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.stream.Stream;
 
 import org.asf.centuria.Centuria;
+import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -38,6 +40,10 @@ public class ChatServer {
 	}
 
 	protected void registerPackets() {
+		// Allow modules to register packets and to override existing packets
+		ChatServerStartupEvent ev = new ChatServerStartupEvent(this, t -> registerPacket(t));
+		EventBus.getInstance().dispatchEvent(ev);
+
 		// Packet registry
 		registerPacket(new PingPacket());
 		registerPacket(new JoinRoomPacket());
@@ -47,10 +53,6 @@ public class ChatServer {
 		registerPacket(new SendMessage());
 		registerPacket(new OpenDMPacket());
 		registerPacket(new CreateConversationPacket());
-
-		// Allow modules to register packets
-		ChatServerStartupEvent ev = new ChatServerStartupEvent(this, t -> registerPacket(t));
-		EventBus.getInstance().dispatchEvent(ev);
 	}
 
 	public ChatClient[] getClients() {
@@ -218,9 +220,19 @@ public class ChatServer {
 		} else {
 			// Build participants object
 			JsonArray members = new JsonArray();
-			for (String participant : manager.getDMParticipants(room)) {
-				members.add(participant);
+			String[] participants = manager.getDMParticipants(room);
+			if (!Stream.of(participants).anyMatch(t -> t.equalsIgnoreCase(requester)))
+				return null;
+			for (String participant : participants) {
+				if (participant.startsWith("plaintext:")
+						|| AccountManager.getInstance().getAccount(participant) != null)
+					members.add(participant);
 			}
+
+			// if its only one, the client will bug, bc if its only one its likely only the
+			// person thats requesting the dm
+			if (members.size() <= 1)
+				return null;
 			roomData.add("participants", members);
 
 			// Find recent message

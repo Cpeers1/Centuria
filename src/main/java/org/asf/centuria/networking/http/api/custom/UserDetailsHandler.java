@@ -3,7 +3,6 @@ package org.asf.centuria.networking.http.api.custom;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
 import java.util.Base64;
 
 import org.asf.centuria.Centuria;
@@ -11,27 +10,26 @@ import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.SaveMode;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.rats.ConnectiveHTTPServer;
-import org.asf.rats.processors.HttpUploadProcessor;
+import org.asf.connective.RemoteClient;
+import org.asf.connective.processors.HttpPushProcessor;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class UserDetailsHandler extends HttpUploadProcessor {
+public class UserDetailsHandler extends HttpPushProcessor {
 	@Override
-	public void process(String contentType, Socket client, String method) {
+	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
 		try {
-			if (!getRequest().method.equalsIgnoreCase("post")) {
-				this.setResponseCode(400);
-				this.setResponseMessage("Bad request");
+			if (!method.equalsIgnoreCase("post")) {
+				this.setResponseStatus(400, "Bad request");
 				return;
 			}
 
 			// Parse body
 			ByteArrayOutputStream strm = new ByteArrayOutputStream();
-			ConnectiveHTTPServer.transferRequestBody(getHeaders(), getRequestBodyStream(), strm);
+			getRequest().transferRequestBody(strm);
 			byte[] body = strm.toByteArray();
 			strm.close();
 
@@ -41,8 +39,7 @@ public class UserDetailsHandler extends HttpUploadProcessor {
 			// Parse body
 			JsonObject request = JsonParser.parseString(new String(body, "UTF-8")).getAsJsonObject();
 			if (!request.has("id") && !request.has("name")) {
-				this.setResponseCode(400);
-				this.setResponseMessage("Bad request");
+				this.setResponseStatus(400, "Bad request");
 				return;
 			}
 			String id = null;
@@ -53,14 +50,12 @@ public class UserDetailsHandler extends HttpUploadProcessor {
 
 			// Find account
 			if (id == null) {
-				this.setResponseCode(404);
-				this.setResponseMessage("Account not found");
+				this.setResponseStatus(404, "Account not found");
 				return;
 			}
 			CenturiaAccount acc = manager.getAccount(id);
 			if (acc == null) {
-				this.setResponseCode(404);
-				this.setResponseMessage("Account not found");
+				this.setResponseStatus(404, "Account not found");
 				return;
 			}
 
@@ -73,7 +68,7 @@ public class UserDetailsHandler extends HttpUploadProcessor {
 			// Sensitive fields
 			// Check authorization
 			boolean isSelf = false;
-			if (getRequest().headers.containsKey("Authorization")) {
+			if (getRequest().hasHeader("Authorization")) {
 				// Parse JWT payload
 				String token = this.getHeader("Authorization").substring("Bearer ".length());
 				if (!token.isBlank()) {
@@ -81,8 +76,7 @@ public class UserDetailsHandler extends HttpUploadProcessor {
 					String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
 					String sig = token.split("\\.")[2];
 					if (!Centuria.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-						this.setResponseCode(403);
-						this.setResponseMessage("Access denied");
+						this.setResponseStatus(401, "Unauthorized");
 						return;
 					}
 
@@ -176,21 +170,20 @@ public class UserDetailsHandler extends HttpUploadProcessor {
 			if (obj != null)
 				response.add("active_look",
 						obj.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject());
-			setBody("text/json", response.toString());
+			setResponseContent("text/json", response.toString());
 		} catch (Exception e) {
-			setResponseCode(500);
-			setResponseMessage("Internal Server Error");
-			Centuria.logger.error(getRequest().path + " failed: 500: Internal Server Error", e);
+			setResponseStatus(500, "Internal Server Error");
+			Centuria.logger.error(getRequest().getRequestPath() + " failed: 500: Internal Server Error", e);
 		}
 	}
 
 	@Override
-	public boolean supportsGet() {
+	public boolean supportsNonPush() {
 		return true;
 	}
 
 	@Override
-	public HttpUploadProcessor createNewInstance() {
+	public HttpPushProcessor createNewInstance() {
 		return new UserDetailsHandler();
 	}
 

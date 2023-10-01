@@ -24,13 +24,13 @@ function exitmeth() {
 
 function execute() {
     chmod +x gradlew
+    mkdir deps
+    git clone https://github.com/SkySwimmer/connective-http deps/connective-http
     ./gradlew installation || return $?
     if [ ! -d "$dir/server" ]; then
         mkdir "$dir/server"
     fi
     cp -rf "build/Installations/." "$dir/server"
-    cp -rf "libraries/"*-javadoc.jar "$dir/server/libs"
-    cp -rf "libraries/"*-sources.jar "$dir/server/libs"
     cp "build/Installations/Centuria.jar" "$dir/server/libs"
 
     if [ ! -d "$dir/libraries" ]; then

@@ -3,13 +3,13 @@ package org.asf.centuria.tools.legacyclienttools;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.Socket;
 import java.net.URL;
 import java.util.UUID;
 
-import org.asf.rats.processors.HttpUploadProcessor;
+import org.asf.connective.RemoteClient;
+import org.asf.connective.processors.HttpPushProcessor;
 
-public class ProxyHttpProcessor extends HttpUploadProcessor {
+public class ProxyHttpProcessor extends HttpPushProcessor {
 	private String proxy;
 
 	public ProxyHttpProcessor(String proxy) {
@@ -17,7 +17,7 @@ public class ProxyHttpProcessor extends HttpUploadProcessor {
 	}
 
 	@Override
-	public void process(String contentType, Socket client, String method) {
+	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
 		byte[] body = new byte[0];
 		if (method.equals("POST")) {
 			ByteArrayOutputStream strm = new ByteArrayOutputStream();
@@ -30,7 +30,7 @@ public class ProxyHttpProcessor extends HttpUploadProcessor {
 
 		// Proxy request
 		try {
-			String rq = getRequest().path;
+			String rq = getRequest().getRawRequestResource();
 			System.out.println("Proxy HTTP: " + rq);
 			if (rq.startsWith("/r/player/")) {
 				String plr = rq.substring("/r/player/".length());
@@ -47,8 +47,9 @@ public class ProxyHttpProcessor extends HttpUploadProcessor {
 			}
 			HttpURLConnection conn = (HttpURLConnection) new URL(proxy + "/" + rq).openConnection();
 			conn.setRequestMethod(method);
-			for (String header : getRequest().headers.keySet()) {
-				conn.addRequestProperty(header, getRequest().headers.get(header));
+			for (String header : getRequest().getHeaderNames()) {
+				for (String value : getRequest().getHeader(header).getValues())
+					conn.addRequestProperty(header, value);
 			}
 			if (body.length != 0) {
 				conn.setDoOutput(true);
@@ -66,16 +67,15 @@ public class ProxyHttpProcessor extends HttpUploadProcessor {
 			conn.getHeaderFields().forEach((k, v) -> {
 				if (k == null)
 					return;
-				v.forEach(t -> getResponse().setHeader(k, t, true));
+				v.forEach(t -> getResponse().addHeader(k, t, true));
 			});
 		} catch (IOException e) {
-			setResponseCode(503);
-			setResponseMessage("Service unavailable");
+			setResponseStatus(503, "Service unavailable");
 		}
 	}
 
 	@Override
-	public HttpUploadProcessor createNewInstance() {
+	public HttpPushProcessor createNewInstance() {
 		return new ProxyHttpProcessor(proxy);
 	}
 
@@ -85,7 +85,7 @@ public class ProxyHttpProcessor extends HttpUploadProcessor {
 	}
 
 	@Override
-	public boolean supportsGet() {
+	public boolean supportsNonPush() {
 		return true;
 	}
 
@@ -93,4 +93,5 @@ public class ProxyHttpProcessor extends HttpUploadProcessor {
 	public boolean supportsChildPaths() {
 		return true;
 	}
+
 }

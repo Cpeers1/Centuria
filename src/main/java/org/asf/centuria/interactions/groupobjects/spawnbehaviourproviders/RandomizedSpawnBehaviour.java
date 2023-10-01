@@ -174,7 +174,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 				return obj;
 			}).toArray(t -> new GroupObject[t]);
 
-			// Create rotation object
+			// Create rotation spawn memory object
 			GroupObjectRotation newRot = new GroupObjectRotation();
 			newRot.time = System.currentTimeMillis();
 
@@ -184,9 +184,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 
 			int minLockpicks = Integer.parseInt(properties.getOrDefault("lockpicks-min", "8"));
 			int maxLockpicks = Integer.parseInt(properties.getOrDefault("lockpicks-max", "11"));
-			int lockpicksToSpawn = rnd.nextInt(maxLockpicks + 1);
-			while (lockpicksToSpawn < minLockpicks)
-				lockpicksToSpawn = rnd.nextInt(maxLockpicks + 1);
+			int lockpicksToSpawn = rnd.nextInt(minLockpicks, maxLockpicks + 1);
 
 			// Find lockpicks
 			GroupObject[] lockpicks = Stream.of(objects).filter(t -> {
@@ -203,14 +201,19 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			distanceBetweenLockpicks = (int) ((100d / (double) remainingLockpickObjects)
 					* (double) distanceBetweenLockpicks);
 			for (int i = 0; i < lockpicksToSpawn && remainingLockpickObjects > 0; i++) {
-				while (true) {
-					GroupObject lockpick = RandomSelectorUtil.selectRandom(Stream.of(lockpicks).toList());
+				// Create list of possible spawns
+				ArrayList<GroupObject> safeToSpawn = new ArrayList<GroupObject>();
+				for (GroupObject lockpick : lockpicks) {
 					if (!overlaps(lockpick, newRot.objects, distanceBetweenLockpicks)
-							&& isSafeToSpawn(lockpick, newRot)) {
-						newRot.objects.add(lockpick);
-						remainingLockpickObjects--;
-						break;
-					}
+							&& isSafeToSpawn(lockpick, newRot))
+						safeToSpawn.add(lockpick);
+				}
+
+				// Spawn
+				if (safeToSpawn.size() != 0) {
+					GroupObject lockpick = RandomSelectorUtil.selectRandom(safeToSpawn);
+					newRot.objects.add(lockpick);
+					remainingLockpickObjects--;
 				}
 			}
 
@@ -220,9 +223,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 
 			int minWaystonePaths = Integer.parseInt(properties.getOrDefault("waystone-paths-min", "3"));
 			int maxWaystonePaths = Integer.parseInt(properties.getOrDefault("waystone-paths-max", "4"));
-			int waystonePathsToSpawn = rnd.nextInt(maxWaystonePaths + 1);
-			while (waystonePathsToSpawn < minWaystonePaths)
-				waystonePathsToSpawn = rnd.nextInt(maxWaystonePaths + 1);
+			int waystonePathsToSpawn = rnd.nextInt(minWaystonePaths, maxWaystonePaths + 1);
 
 			// Find waystone paths
 			GroupObject[] waystonePaths = Stream.of(objects).filter(t -> {
@@ -241,15 +242,20 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 					* 1.5);
 			ArrayList<GroupObject> waystones = new ArrayList<GroupObject>();
 			for (int i = 0; i < waystonePathsToSpawn && remainingWaystonePaths > 0; i++) {
-				while (true) {
-					GroupObject waystonePath = RandomSelectorUtil.selectRandom(Stream.of(waystonePaths).toList());
+				// Create list of possible spawns
+				ArrayList<GroupObject> safeToSpawn = new ArrayList<GroupObject>();
+				for (GroupObject waystonePath : waystonePaths) {
 					if (!overlaps(waystonePath, waystones, distanceWaystonePaths)
-							&& isSafeToSpawn(waystonePath, newRot)) {
-						newRot.objects.add(waystonePath);
-						remainingWaystonePaths--;
-						waystones.add(waystonePath);
-						break;
-					}
+							&& isSafeToSpawn(waystonePath, newRot))
+						safeToSpawn.add(waystonePath);
+				}
+
+				// Spawn
+				if (safeToSpawn.size() != 0) {
+					GroupObject waystonePath = RandomSelectorUtil.selectRandom(safeToSpawn);
+					newRot.objects.add(waystonePath);
+					remainingWaystonePaths--;
+					waystones.add(waystonePath);
 				}
 			}
 
@@ -259,9 +265,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 
 			int minDigspots = Integer.parseInt(properties.getOrDefault("digspot-min", "6"));
 			int maxDigspots = Integer.parseInt(properties.getOrDefault("digspot-max", "8"));
-			int digspotsToSpawn = rnd.nextInt(maxDigspots + 1);
-			while (digspotsToSpawn < minDigspots)
-				digspotsToSpawn = rnd.nextInt(maxDigspots + 1);
+			int digspotsToSpawn = rnd.nextInt(minDigspots, maxDigspots + 1);
 
 			// Find dig spots
 			GroupObject[] digspots = Stream.of(objects).filter(t -> {
@@ -279,37 +283,41 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			distanceDigspots = (int) (((100d / (double) remainingDigspots) * (double) distanceDigspots) / 1.7d);
 			ArrayList<GroupObject> spawnedDigspots = new ArrayList<GroupObject>();
 			for (int i = 0; i < digspotsToSpawn && remainingDigspots > 0; i++) {
-				while (true) {
-					GroupObject digspot = RandomSelectorUtil.selectRandom(Stream.of(digspots).toList());
-					if (!overlaps(digspot, spawnedDigspots, distanceDigspots) && isSafeToSpawn(digspot, newRot)) {
-						newRot.objects.add(digspot);
-						remainingDigspots--;
-						spawnedDigspots.add(digspot);
+				// Create list of possible spawns
+				ArrayList<GroupObject> safeToSpawn = new ArrayList<GroupObject>();
+				for (GroupObject digspot : digspots) {
+					if (!overlaps(digspot, spawnedDigspots, distanceDigspots) && isSafeToSpawn(digspot, newRot))
+						safeToSpawn.add(digspot);
+				}
 
-						// Find related interactables
-						for (String objId : linearObjects.objects.keySet()) {
-							NetworkedObject nObj = linearObjects.objects.get(objId);
+				// Spawn
+				if (safeToSpawn.size() != 0) {
+					GroupObject digspot = RandomSelectorUtil.selectRandom(safeToSpawn);
+					newRot.objects.add(digspot);
+					remainingDigspots--;
+					spawnedDigspots.add(digspot);
 
-							// Check states
-							for (ArrayList<StateInfo> states : nObj.stateInfo.values()) {
-								boolean found = false;
-								for (StateInfo state : states) {
-									if (state.command.equals("35") && state.params.length == 2
-											&& state.params[1].equals(digspot.id)) {
-										found = true;
-										break;
-									}
-								}
-								if (found) {
-									GroupObject obj = new GroupObject();
-									obj.id = objId;
-									obj.type = nObj.subObjectInfo.type;
-									newRot.objects.add(obj);
+					// Find related interactables
+					for (String objId : linearObjects.objects.keySet()) {
+						NetworkedObject nObj = linearObjects.objects.get(objId);
+
+						// Check states
+						for (ArrayList<StateInfo> states : nObj.stateInfo.values()) {
+							boolean found = false;
+							for (StateInfo state : states) {
+								if (state.command.equals("35") && state.params.length == 2
+										&& state.params[1].equals(digspot.id)) {
+									found = true;
+									break;
 								}
 							}
+							if (found) {
+								GroupObject obj = new GroupObject();
+								obj.id = objId;
+								obj.type = nObj.subObjectInfo.type;
+								newRot.objects.add(obj);
+							}
 						}
-
-						break;
 					}
 				}
 			}
@@ -320,9 +328,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 
 			int minChests = Integer.parseInt(properties.getOrDefault("lockedchests-min", "18"));
 			int maxChests = Integer.parseInt(properties.getOrDefault("lockedchests-max", "20"));
-			int chestsToSpawn = rnd.nextInt(maxChests + 1);
-			while (chestsToSpawn < minChests)
-				chestsToSpawn = rnd.nextInt(maxChests + 1);
+			int chestsToSpawn = rnd.nextInt(minChests, maxChests + 1);
 
 			// Find chests
 			GroupObject[] lockedChests = Stream.of(objects).filter(t -> {
@@ -340,55 +346,63 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			distanceChests = (int) (((100d / (double) remainingChests) * (double) distanceChests) / 1.7d);
 			ArrayList<GroupObject> chests = new ArrayList<GroupObject>();
 			for (int i = 0; i < chestsToSpawn && remainingChests > 0; i++) {
-				while (true) {
-					GroupObject chest = RandomSelectorUtil.selectRandom(Stream.of(lockedChests).toList());
-					if (!overlaps(chest, chests, distanceChests) && isSafeToSpawn(chest, newRot)) {
-						newRot.objects.add(chest);
-						remainingChests--;
-						chests.add(chest);
+				// Create list of possible spawns
+				ArrayList<GroupObject> safeToSpawn = new ArrayList<GroupObject>();
+				for (GroupObject chest : lockedChests) {
+					if (!overlaps(chest, chests, distanceChests) && isSafeToSpawn(chest, newRot))
+						safeToSpawn.add(chest);
+				}
 
-						// Okay tricky mess time
-						// There is no way to know, other than via deduction, what interactions are
-						// related
-						// Usually its: interaction (main), use lockpick, gamesuccess
-						// We are following that chain
+				// Spawn
+				if (safeToSpawn.size() != 0) {
+					GroupObject chest = RandomSelectorUtil.selectRandom(safeToSpawn);
+					newRot.objects.add(chest);
+					remainingChests--;
+					chests.add(chest);
 
-						// Find index
-						NetworkedObject obj = linearObjects.objects.get(chest.id);
-						NetworkedObject[] objs = linearObjects.objects.values().toArray(t -> new NetworkedObject[t]);
-						String[] keys = linearObjects.objects.keySet().toArray(t -> new String[t]);
-						int i2 = 0;
-						for (NetworkedObject o : objs) {
-							if (o == obj)
-								break;
-							i2++;
-						}
+					//
+					// Okay tricky mess time
+					//
+					// There is no way to know, other than via deduction, what interactions are
+					// related
+					//
+					// Usually its: interaction (main), use lockpick, gamesuccess
+					// We are following that chain here to add the chest child objects
+					//
 
-						// Find objects
-						NetworkedObject useLockpick = objs[i2 + 1];
-						if (!useLockpick.objectName.equals("Use Lockpick"))
-							throw new RuntimeException(
-									"Chest failed to load: " + chest.id + ", chart deduction was incorrect!");
-						NetworkedObject gameSuccess = objs[i2 + 2];
-						if (!gameSuccess.objectName.equals("GameSuccess"))
-							throw new RuntimeException(
-									"Chest failed to load: " + chest.id + ", chart deduction was incorrect!");
-
-						// Add objects
-						GroupObject gobj = new GroupObject();
-						gobj.id = keys[i2 + 1];
-						gobj.type = useLockpick.subObjectInfo.type;
-						newRot.objects.add(gobj);
-						gobj = new GroupObject();
-						gobj.id = keys[i2 + 2];
-						gobj.type = gameSuccess.subObjectInfo.type;
-						newRot.objects.add(gobj);
-
-						// Mapping
-						newRot.mapping.put(chest.id, keys[i2 + 2]);
-
-						break;
+					// Find index
+					NetworkedObject obj = linearObjects.objects.get(chest.id);
+					NetworkedObject[] objs = linearObjects.objects.values().toArray(t -> new NetworkedObject[t]);
+					String[] keys = linearObjects.objects.keySet().toArray(t -> new String[t]);
+					int i2 = 0;
+					for (NetworkedObject o : objs) {
+						if (o == obj)
+							break;
+						i2++;
 					}
+
+					// Find objects
+					NetworkedObject useLockpick = objs[i2 + 1];
+					if (!useLockpick.objectName.equals("Use Lockpick"))
+						throw new RuntimeException(
+								"Chest failed to load: " + chest.id + ", chart deduction was incorrect!");
+					NetworkedObject gameSuccess = objs[i2 + 2];
+					if (!gameSuccess.objectName.equals("GameSuccess"))
+						throw new RuntimeException(
+								"Chest failed to load: " + chest.id + ", chart deduction was incorrect!");
+
+					// Add objects
+					GroupObject gobj = new GroupObject();
+					gobj.id = keys[i2 + 1];
+					gobj.type = useLockpick.subObjectInfo.type;
+					newRot.objects.add(gobj);
+					gobj = new GroupObject();
+					gobj.id = keys[i2 + 2];
+					gobj.type = gameSuccess.subObjectInfo.type;
+					newRot.objects.add(gobj);
+
+					// Mapping
+					newRot.mapping.put(chest.id, keys[i2 + 2]);
 				}
 			}
 

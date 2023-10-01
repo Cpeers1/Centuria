@@ -37,7 +37,7 @@ import java.util.UUID;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
-import org.asf.connective.https.ConnectiveHTTPSServer;
+import org.asf.connective.ConnectiveHttpServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asf.centuria.entities.components.ComponentManager;
@@ -78,16 +78,14 @@ import org.asf.centuria.networking.http.api.custom.SaveManagerHandler;
 import org.asf.centuria.networking.http.api.custom.UserDetailsHandler;
 import org.asf.centuria.networking.http.director.GameServerRequestHandler;
 import org.asf.centuria.seasonpasses.SeasonPassManager;
-import org.asf.rats.ConnectiveHTTPServer;
-import org.asf.rats.ConnectiveServerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 public class Centuria {
 	// Update
-	public static String SERVER_UPDATE_VERSION = "1.6.4.B3";
-	public static String DOWNLOAD_BASE_URL = "https://aerialworks.ddns.net/extra/centuria";
+	public static String SERVER_UPDATE_VERSION = "b1.7";
+	public static String DOWNLOAD_BASE_URL = "https://emuferal.ddns.net";
 
 	// Configuration
 	public static Logger logger;
@@ -108,8 +106,8 @@ public class Centuria {
 	public static String spawnBehaviour;
 
 	// Servers
-	private static ConnectiveHTTPServer apiServer;
-	public static ConnectiveHTTPServer directorServer;
+	private static ConnectiveHttpServer apiServer;
+	public static ConnectiveHttpServer directorServer;
 	public static GameServer gameServer;
 	public static ChatServer chatServer;
 
@@ -143,7 +141,7 @@ public class Centuria {
 		System.out.println("                              Centuria                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                          Version 1.6.4.B3                          "); // not doing this
+		System.out.println("                            Version b1.7                            "); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain
@@ -235,8 +233,8 @@ public class Centuria {
 		startServer();
 
 		// Wait for exit
-		directorServer.waitExit();
-		apiServer.waitExit();
+		directorServer.waitForExit();
+		apiServer.waitForExit();
 		chatServer.getServerSocket().close();
 		gameServer.getServerSocket().close();
 	}
@@ -287,6 +285,7 @@ public class Centuria {
 						message = "%xt%ua%-1%7390|1%";
 						break;
 					case 0:
+						// Shut down
 						updateShutdown();
 						cancelUpdate = false;
 						return;
@@ -331,6 +330,20 @@ public class Centuria {
 			EventBus.getInstance().dispatchEvent(new ServerUpdateEvent(nextVersion, -1));
 		}
 
+		// Shut down the server
+		disconnectPlayersForShutdown();
+
+		// Dispatch completion event
+		EventBus.getInstance().dispatchEvent(new ServerUpdateCompletionEvent(nextVersion));
+
+		// Exit
+		System.exit(0);
+	}
+
+	/**
+	 * Disconnects all players with a update message
+	 */
+	public static void disconnectPlayersForShutdown() {
 		// Disconnect everyone
 		for (Player plr : Centuria.gameServer.getPlayers()) {
 			plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
@@ -359,7 +372,7 @@ public class Centuria {
 			plr.client.disconnect();
 		}
 
-		// Wait for log off and exit
+		// Wait for log off
 		int l = 0;
 		while (Centuria.gameServer.getPlayers().length != 0) {
 			l++;
@@ -371,12 +384,6 @@ public class Centuria {
 			} catch (InterruptedException e) {
 			}
 		}
-
-		// Dispatch completion event
-		EventBus.getInstance().dispatchEvent(new ServerUpdateCompletionEvent(nextVersion));
-
-		// Exit
-		System.exit(0);
 	}
 
 	public static void startServer()
@@ -469,6 +476,11 @@ public class Centuria {
 
 			// Create save array
 			JsonObject saves = new JsonObject();
+			JsonObject colors = new JsonObject();
+			colors.addProperty("developer", "#ff00e6");
+			colors.addProperty("admin", "red");
+			colors.addProperty("moderator", "orange");
+			colors.addProperty("player", "default");
 			JsonObject save = new JsonObject();
 			save.addProperty("sanctuaryLimitOverride", -1);
 			save.addProperty("giveAllAvatars", defaultGiveAllAvatars);
@@ -479,6 +491,7 @@ public class Centuria {
 			save.addProperty("giveAllSanctuaryTypes", defaultGiveAllSanctuaryTypes);
 			save.addProperty("giveAllCurrency", defaultGiveAllCurrency);
 			save.addProperty("giveAllResources", defaultGiveAllResources);
+			save.add("saveColors", colors);
 			saves.add(defaultSaveName, save);
 
 			// Set basics
@@ -502,117 +515,100 @@ public class Centuria {
 
 		//
 		// Start API server
-		ConnectiveServerFactory factory;
 		try {
-			factory = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("api-port")))
-					.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
-					.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT);
+			// Create properties
+			HashMap<String, String> props = new HashMap<String, String>();
+			props.put("address", "0.0.0.0");
+			props.put("port", properties.get("api-port"));
 
+			// Check HTTPS
 			if (properties.getOrDefault("encrypt-api", "false").equals("true") && new File("keystore.jks").exists()
 					&& new File("keystore.jks.password").exists()) {
-				factory = factory.setImplementation(ConnectiveHTTPSServer.class);
+				// Start HTTPS
+				props.put("keystore", "keystore.jks");
+				props.put("keystore-password", Files.readString(Path.of("keystore.jks.password")));
+				apiServer = ConnectiveHttpServer.createNetworked("HTTPS/1.1", props);
+				setupAPI(apiServer);
+				apiServer.start();
+			} else {
+				// Start HTTP
+				apiServer = ConnectiveHttpServer.createNetworked("HTTP/1.1", props);
+				setupAPI(apiServer);
+				apiServer.start();
 			}
-
-			apiServer = factory.build();
 		} catch (Exception e) {
 			Centuria.logger.fatal("Unable to start on port " + Integer.parseInt(properties.get("api-port"))
 					+ "! Switching to debug mode!");
 			Centuria.logger.fatal("If you are not attempting to debug the server, please run as root.");
 
-			factory = new ConnectiveServerFactory().setPort(6970).setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
-					.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT);
+			HashMap<String, String> props = new HashMap<String, String>();
+			props.put("address", "0.0.0.0");
+			props.put("port", "6970");
 			if (properties.getOrDefault("encrypt-api", "false").equals("true") && new File("keystore.jks").exists()
 					&& new File("keystore.jks.password").exists()) {
-				factory = factory.setImplementation(ConnectiveHTTPSServer.class);
+				props.put("keystore", "keystore.jks");
+				props.put("keystore-password", Files.readString(Path.of("keystore.jks.password")));
+				apiServer = ConnectiveHttpServer.createNetworked("HTTPS/1.1", props);
+				setupAPI(apiServer);
+				apiServer.start();
+			} else {
+				apiServer = ConnectiveHttpServer.createNetworked("HTTP/1.1", props);
+				setupAPI(apiServer);
+				apiServer.start();
 			}
-
-			apiServer = factory.build();
 		}
-
-		// Allow modules to register handlers
-		EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
-
-		// API processors
-		apiServer.registerProcessor(new UserHandler());
-		apiServer.registerProcessor(new XPDetailsHandler());
-		apiServer.registerProcessor(new AuthenticateHandler());
-		apiServer.registerProcessor(new UpdateDisplayNameHandler());
-		apiServer.registerProcessor(new DisplayNamesRequestHandler());
-		apiServer.registerProcessor(new DisplayNameValidationHandler());
-		apiServer.registerProcessor(new RequestTokenHandler());
-		apiServer.registerProcessor(new GameRegistrationHandler());
-		apiServer.registerProcessor(new SeasonPassRequestHandler());
-
-		// Custom API
-		apiServer.registerProcessor(new LoginRefreshHandler());
-		apiServer.registerProcessor(new ChangePasswordHandler());
-		apiServer.registerProcessor(new ChangeDisplayNameHandler());
-		apiServer.registerProcessor(new ChangeLoginNameHandler());
-		apiServer.registerProcessor(new DeleteAccountHandler());
-		apiServer.registerProcessor(new UserDetailsHandler());
-		apiServer.registerProcessor(new ListPlayersHandler());
-		apiServer.registerProcessor(new RegistrationHandler());
-		apiServer.registerProcessor(new PlayerDataDownloadHandler());
-		apiServer.registerProcessor(new SaveManagerHandler());
-
-		// Fallback
-		apiServer.registerProcessor(new FallbackAPIProcessor());
 
 		//
 		// Debug API
 		if (System.getProperty("debugAPI") != null) {
 			Centuria.logger.info("Starting debug api...");
-			factory = new ConnectiveServerFactory().setPort(Integer.parseInt(System.getProperty("debugAPI")))
-					.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
-					.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT);
-			var apiServer = factory.build();
-
-			// Allow modules to register handlers
-			EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
-
-			// API processors
-			apiServer.registerProcessor(new UserHandler());
-			apiServer.registerProcessor(new XPDetailsHandler());
-			apiServer.registerProcessor(new AuthenticateHandler());
-			apiServer.registerProcessor(new UpdateDisplayNameHandler());
-			apiServer.registerProcessor(new DisplayNamesRequestHandler());
-			apiServer.registerProcessor(new DisplayNameValidationHandler());
-			apiServer.registerProcessor(new RequestTokenHandler());
-			apiServer.registerProcessor(new GameRegistrationHandler());
-			apiServer.registerProcessor(new SeasonPassRequestHandler());
-
-			// Custom API
-			apiServer.registerProcessor(new LoginRefreshHandler());
-			apiServer.registerProcessor(new ChangePasswordHandler());
-			apiServer.registerProcessor(new ChangeDisplayNameHandler());
-			apiServer.registerProcessor(new ChangeLoginNameHandler());
-			apiServer.registerProcessor(new DeleteAccountHandler());
-			apiServer.registerProcessor(new UserDetailsHandler());
-			apiServer.registerProcessor(new ListPlayersHandler());
-			apiServer.registerProcessor(new RegistrationHandler());
-			apiServer.registerProcessor(new PlayerDataDownloadHandler());
-			apiServer.registerProcessor(new SaveManagerHandler());
-
-			// Fallback
-			apiServer.registerProcessor(new FallbackAPIProcessor());
+			HashMap<String, String> props = new HashMap<String, String>();
+			props.put("address", "0.0.0.0");
+			props.put("port", System.getProperty("debugAPI"));
+			ConnectiveHttpServer apiServer = ConnectiveHttpServer.createNetworked("HTTP/1.1", props);
+			setupAPI(apiServer);
+			apiServer.start();
 		}
 
 		//
 		// Start director server
 		Centuria.logger
 				.info("Starting Director server on port " + Integer.parseInt(properties.get("director-port")) + "...");
-		factory = new ConnectiveServerFactory().setPort(Integer.parseInt(properties.get("director-port")))
-				.setOption(ConnectiveServerFactory.OPTION_AUTOSTART)
-				.setOption(ConnectiveServerFactory.OPTION_ASSIGN_PORT);
 
+		// Create properties
+		HashMap<String, String> props = new HashMap<String, String>();
+		props.put("address", "0.0.0.0");
+		props.put("port", properties.get("director-port"));
+
+		// Check HTTPS
 		if (properties.getOrDefault("encrypt-director", "false").equals("true") && new File("keystore.jks").exists()
 				&& new File("keystore.jks.password").exists()) {
-			factory = factory.setImplementation(ConnectiveHTTPSServer.class);
-		}
-		directorServer = factory.build();
-		directorServer.registerProcessor(new GameServerRequestHandler());
-		EventBus.getInstance().dispatchEvent(new DirectorServerStartupEvent(directorServer));
+			// Start HTTPS
+			props.put("keystore", "keystore.jks");
+			props.put("keystore-password", Files.readString(Path.of("keystore.jks.password")));
+			directorServer = ConnectiveHttpServer.createNetworked("HTTPS/1.1", props);
 
+			// Register handlers
+			directorServer.registerProcessor(new GameServerRequestHandler());
+
+			// Dispatch event
+			EventBus.getInstance().dispatchEvent(new DirectorServerStartupEvent(directorServer));
+
+			// Start
+			directorServer.start();
+		} else {
+			// Start HTTP
+			directorServer = ConnectiveHttpServer.createNetworked("HTTP/1.1", props);
+
+			// Register handlers
+			directorServer.registerProcessor(new GameServerRequestHandler());
+
+			// Dispatch event
+			EventBus.getInstance().dispatchEvent(new DirectorServerStartupEvent(directorServer));
+
+			// Start
+			directorServer.start();
+		}
 		//
 		// Load game server
 		ServerSocket sock;
@@ -706,6 +702,37 @@ public class Centuria {
 
 		// Log completion
 		Centuria.logger.info("Successfully started emulated servers.");
+	}
+
+	private static void setupAPI(ConnectiveHttpServer apiServer) {
+		// Allow modules to register handlers
+		EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
+
+		// API processors
+		apiServer.registerProcessor(new UserHandler());
+		apiServer.registerProcessor(new XPDetailsHandler());
+		apiServer.registerProcessor(new AuthenticateHandler());
+		apiServer.registerProcessor(new UpdateDisplayNameHandler());
+		apiServer.registerProcessor(new DisplayNamesRequestHandler());
+		apiServer.registerProcessor(new DisplayNameValidationHandler());
+		apiServer.registerProcessor(new RequestTokenHandler());
+		apiServer.registerProcessor(new GameRegistrationHandler());
+		apiServer.registerProcessor(new SeasonPassRequestHandler());
+
+		// Custom API
+		apiServer.registerProcessor(new LoginRefreshHandler());
+		apiServer.registerProcessor(new ChangePasswordHandler());
+		apiServer.registerProcessor(new ChangeDisplayNameHandler());
+		apiServer.registerProcessor(new ChangeLoginNameHandler());
+		apiServer.registerProcessor(new DeleteAccountHandler());
+		apiServer.registerProcessor(new UserDetailsHandler());
+		apiServer.registerProcessor(new ListPlayersHandler());
+		apiServer.registerProcessor(new RegistrationHandler());
+		apiServer.registerProcessor(new PlayerDataDownloadHandler());
+		apiServer.registerProcessor(new SaveManagerHandler());
+
+		// Fallback
+		apiServer.registerProcessor(new FallbackAPIProcessor());
 	}
 
 	private static SSLContext getContext(File keystore, char[] password)

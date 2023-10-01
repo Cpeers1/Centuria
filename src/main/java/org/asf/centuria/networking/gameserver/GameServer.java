@@ -20,6 +20,8 @@ import java.util.stream.Stream;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.accounts.SaveMode;
+import org.asf.centuria.accounts.SaveSettings;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.enums.players.OnlineStatus;
@@ -29,7 +31,6 @@ import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.AccountLoginEvent;
 import org.asf.centuria.modules.events.accounts.AccountPreloginEvent;
-import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
 import org.asf.centuria.modules.events.players.PlayerJoinEvent;
 import org.asf.centuria.modules.events.players.PlayerLeaveEvent;
 import org.asf.centuria.modules.events.servers.GameServerStartupEvent;
@@ -117,6 +118,10 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new ClientToServerHandshake(mapper));
 		registerPacket(new ClientToServerAuthPacket(mapper));
 
+		// Allow modules to register packets and override existing packets
+		GameServerStartupEvent ev = new GameServerStartupEvent(this, t -> registerPacket(t));
+		EventBus.getInstance().dispatchEvent(ev);
+
 		// Game
 		registerPacket(new KeepAlive());
 		registerPacket(new PrefixedPacket());
@@ -170,10 +175,6 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new TradeReadyPacket());
 		registerPacket(new TradeReadyRejectPacket());
 		registerPacket(new TradeReadyAcceptPacket());
-
-		// Allow modules to register packets
-		GameServerStartupEvent ev = new GameServerStartupEvent(this, t -> registerPacket(t));
-		EventBus.getInstance().dispatchEvent(ev);
 	}
 
 	@Override
@@ -258,7 +259,7 @@ public class GameServer extends BaseSmartfoxServer {
 			if (acc.getSaveSharedInventory().containsItem("permissions")) {
 				String permLevel = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 						.get("permissionLevel").getAsString();
-				if (hasPerm(permLevel, "moderator")) {
+				if (hasPerm(permLevel, "admin")) {
 					lockout = false;
 				}
 			}
@@ -600,17 +601,6 @@ public class GameServer extends BaseSmartfoxServer {
 		if (client.container != null && client.container instanceof Player) {
 			Player plr = (Player) client.container;
 			playerLeft(plr);
-
-			// Check maintenance, exit server if noone is online during maintenance
-			if (maintenance && players.size() == 0) {
-				if (!shutdown) {
-					// Dispatch maintenance end event
-					EventBus.getInstance().dispatchEvent(new MaintenanceEndEvent());
-				}
-
-				// Exit
-				System.exit(0);
-			}
 		}
 	}
 
@@ -618,7 +608,7 @@ public class GameServer extends BaseSmartfoxServer {
 	protected void onStart() {
 		// Anti-expiry (kicks players who go past token expiry)
 		Thread th = new Thread(() -> {
-			while (Centuria.directorServer.isActive()) {
+			while (Centuria.directorServer.isRunning()) {
 				// Find players who are logged in for longer than two days
 				for (Player plr : getPlayers()) {
 					long loginTimestamp = plr.account.getLastLoginTime();
@@ -638,7 +628,7 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Resource respawn
 		th = new Thread(() -> {
-			while (Centuria.directorServer.isActive()) {
+			while (Centuria.directorServer.isRunning()) {
 				// Loop through all players
 				for (Player plr : getPlayers()) {
 					if (!plr.roomReady)
@@ -739,6 +729,71 @@ public class GameServer extends BaseSmartfoxServer {
 		}
 
 		return false;
+	}
+
+	// Used to generate names with permission/save prefixes
+	public static String getPlayerNameWithPrefix(CenturiaAccount account) {
+		// Load permission level
+		String permLevel = "member";
+		if (account.getSaveSharedInventory().containsItem("permissions")) {
+			permLevel = account.getSaveSharedInventory().getItem("permissions").getAsJsonObject().get("permissionLevel")
+					.getAsString();
+		}
+
+		// Build prefix
+		String prefix = "";
+
+		// Load save color settings
+		String color = "default";
+		if (GameServer.hasPerm(permLevel, "developer"))
+			color = "#ff00e6";
+		else if (GameServer.hasPerm(permLevel, "admin"))
+			color = "red";
+		else if (GameServer.hasPerm(permLevel, "moderator"))
+			color = "orange";
+
+		SaveSettings saveSettings = account.getSaveSpecificInventory().getSaveSettings();
+		if (saveSettings != null && saveSettings.saveColors != null) {
+			if (GameServer.hasPerm(permLevel, "developer") && saveSettings.saveColors.has("developer"))
+				color = saveSettings.saveColors.get("developer").getAsString();
+			else if (GameServer.hasPerm(permLevel, "admin") && saveSettings.saveColors.has("admin"))
+				color = saveSettings.saveColors.get("admin").getAsString();
+			else if (GameServer.hasPerm(permLevel, "moderator") && saveSettings.saveColors.has("moderator"))
+				color = saveSettings.saveColors.get("moderator").getAsString();
+			else if (GameServer.hasPerm(permLevel, "player") && saveSettings.saveColors.has("player"))
+				color = saveSettings.saveColors.get("player").getAsString();
+		}
+
+		// Check color
+		if (color.equals("default") && account.getSaveMode() == SaveMode.MANAGED) {
+			if (saveSettings.giveAllAvatars && saveSettings.giveAllMods && saveSettings.giveAllWings
+					&& saveSettings.giveAllSanctuaryTypes) {
+				// Creative
+				color = "yellow";
+			} else if (!saveSettings.giveAllAvatars && !saveSettings.giveAllMods && !saveSettings.giveAllClothes
+					&& !saveSettings.giveAllWings && !saveSettings.giveAllSanctuaryTypes
+					&& !saveSettings.giveAllFurnitureItems && !saveSettings.giveAllResources
+					&& !saveSettings.giveAllCurrency) {
+				// Experience
+				color = "green";
+			}
+		}
+
+		// Add color to prefix
+		if (!color.equals("default")) {
+			prefix = "<color=" + color + ">";
+		}
+
+		// Build prefix
+		if (GameServer.hasPerm(permLevel, "developer"))
+			prefix += "[dev] ";
+		else if (GameServer.hasPerm(permLevel, "admin"))
+			prefix += "[admin] ";
+		else if (GameServer.hasPerm(permLevel, "moderator"))
+			prefix += "[mod] ";
+
+		// Return
+		return prefix + account.getDisplayName();
 	}
 
 	/**

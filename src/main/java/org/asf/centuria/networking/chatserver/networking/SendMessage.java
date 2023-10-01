@@ -28,6 +28,7 @@ import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.uservars.UserVarValue;
+import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -573,6 +574,7 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("removeperms \"<player>\"");
 				commandMessages.add("startmaintenance");
 				commandMessages.add("endmaintenance");
+				commandMessages.add("stopserver");
 				commandMessages.add("updatewarning <minutes-remaining>");
 				commandMessages.add("updateshutdown");
 				commandMessages.add("update <60|30|15|10|5|3|1>");
@@ -585,6 +587,7 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("staffroom");
 			commandMessages.add("listplayers");
 		}
+		commandMessages.add("stafflist");
 		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
 				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllCurrency
 				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllFurnitureItems
@@ -729,6 +732,91 @@ public class SendMessage extends AbstractChatPacket {
 							+ QuestManager.getQuest(QuestManager.getActiveQuest(client.getPlayer())).name
 							+ "' is now your active quest! Please log out and log back in to complete the process.",
 							cmd, client);
+
+					return true;
+				} else if (cmdId.equalsIgnoreCase("stafflist")) {
+					// Staff list
+					HashMap<CenturiaAccount, String> staffAccounts = new HashMap<CenturiaAccount, String>();
+					AccountManager.getInstance().runForAllAccounts(t -> {
+						String lvl = "member";
+						if (t.getSaveSharedInventory().containsItem("permissions")) {
+							lvl = t.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+									.get("permissionLevel").getAsString();
+						}
+						if (GameServer.hasPerm(lvl, "moderator"))
+							staffAccounts.put(t, lvl);
+					});
+
+					// Create message
+					String msg = "";
+
+					// Go through developers
+					boolean foundAny = false;
+					for (CenturiaAccount acc : staffAccounts.keySet()) {
+						String lvl = staffAccounts.get(acc);
+						if (lvl.equals("developer")) {
+							// Check
+							if (!foundAny) {
+								foundAny = true;
+								if (msg.isEmpty())
+									msg += "Staff list:\n\n";
+								else
+									msg += "\n\n";
+								msg += "List of developers:";
+							}
+
+							// Add
+							msg += "\n - " + acc.getDisplayName() + " ["
+									+ (acc.getOnlinePlayerInstance() == null ? "OFFLINE" : "ONLINE") + "]";
+						}
+					}
+
+					// Go through admins
+					foundAny = false;
+					for (CenturiaAccount acc : staffAccounts.keySet()) {
+						String lvl = staffAccounts.get(acc);
+						if (lvl.equals("admin")) {
+							// Check
+							if (!foundAny) {
+								foundAny = true;
+								if (msg.isEmpty())
+									msg += "Staff list:\n\n";
+								else
+									msg += "\n\n";
+								msg += "List of administrators:";
+							}
+
+							// Add
+							msg += "\n - " + acc.getDisplayName() + " ["
+									+ (acc.getOnlinePlayerInstance() == null ? "OFFLINE" : "ONLINE") + "]";
+						}
+					}
+
+					// Go through moderators
+					foundAny = false;
+					for (CenturiaAccount acc : staffAccounts.keySet()) {
+						String lvl = staffAccounts.get(acc);
+						if (lvl.equals("moderator")) {
+							// Check
+							if (!foundAny) {
+								foundAny = true;
+								if (msg.isEmpty())
+									msg += "Staff list:\n\n";
+								else
+									msg += "\n\n";
+								msg += "List of moderators:";
+							}
+
+							// Add
+							msg += "\n - " + acc.getDisplayName() + " ["
+									+ (acc.getOnlinePlayerInstance() == null ? "OFFLINE" : "ONLINE") + "]";
+						}
+					}
+
+					// Default
+					if (msg.isEmpty())
+						msg = "There are no staff users.";
+					systemMessage(msg, cmd, client);
 
 					return true;
 				}
@@ -1364,7 +1452,7 @@ public class SendMessage extends AbstractChatPacket {
 							for (Player player : server.getPlayers()) {
 								if (plr.room != null && player.room != null && player.room.equals(plr.room)
 										&& player != plr) {
-									plr.syncTo(player);
+									plr.syncTo(player, WorldObjectMoverNodeType.InitPosition);
 									Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"), "Syncing player "
 											+ player.account.getDisplayName() + " to " + plr.account.getDisplayName());
 								}
@@ -1375,34 +1463,10 @@ public class SendMessage extends AbstractChatPacket {
 									.dispatchEvent(new MiscModerationEvent("ghostmode.disabled", "Ghost Mode Disabled",
 											Map.of("Ghost mode status", "Disabled"), plr.account.getAccountID(), null));
 						} else {
-							// Check clearance
-							if (!GameServer.hasPerm(permLevel, "admin")) {
-								// Check arguments
-								if (args.size() < 1) {
-									systemMessage(
-											"Error: clearance code required, please add a admin-issued clearance code to the command.",
-											cmd, client);
-									return true;
-								}
-
-								// Check code
-								while (true) {
-									try {
-										if (clearanceCodes.contains(args.get(0))) {
-											clearanceCodes.remove(args.get(0));
-										} else {
-											systemMessage("Error: invalid clearance code.", cmd, client);
-											return true;
-										}
-										break;
-									} catch (ConcurrentModificationException e) {
-									}
-								}
-							}
-
+							// Enable ghost mode
 							plr.ghostMode = true;
 
-							// Spawn for everyone in room
+							// Despawn for everyone in room
 							GameServer server = (GameServer) plr.client.getServer();
 							for (Player player : server.getPlayers()) {
 								if (plr.room != null && player.room != null && player.room.equals(plr.room)
@@ -1748,6 +1812,22 @@ public class SendMessage extends AbstractChatPacket {
 							break;
 						}
 					}
+					case "stopserver": {
+						// Check perms
+						if (GameServer.hasPerm(permLevel, "admin")) {
+							// Shut down the server
+							for (Player plr : Centuria.gameServer.getPlayers()) {
+								// Dispatch event
+								EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
+										"Server has been shut down.", DisconnectType.SERVER_SHUTDOWN));
+							}
+							Centuria.disconnectPlayersForShutdown();
+							System.exit(0);
+							return true;
+						} else {
+							break;
+						}
+					}
 					case "startmaintenance": {
 						// Check perms
 						if (GameServer.hasPerm(permLevel, "admin")) {
@@ -1766,7 +1846,7 @@ public class SendMessage extends AbstractChatPacket {
 										|| !GameServer.hasPerm(
 												plr.account.getSaveSharedInventory().getItem("permissions")
 														.getAsJsonObject().get("permissionLevel").getAsString(),
-												"moderator")) {
+												"admin")) {
 									// Dispatch event
 									EventBus.getInstance().dispatchEvent(
 											new AccountDisconnectEvent(plr.account, null, DisconnectType.MAINTENANCE));
@@ -1782,7 +1862,7 @@ public class SendMessage extends AbstractChatPacket {
 											|| !GameServer.hasPerm(
 													plr.account.getSaveSharedInventory().getItem("permissions")
 															.getAsJsonObject().get("permissionLevel").getAsString(),
-													"moderator"))
+													"admin"))
 									.findFirst().isPresent()) {
 								i++;
 								if (i == 30)
@@ -1798,7 +1878,7 @@ public class SendMessage extends AbstractChatPacket {
 										|| !GameServer.hasPerm(
 												plr.account.getSaveSharedInventory().getItem("permissions")
 														.getAsJsonObject().get("permissionLevel").getAsString(),
-												"moderator")) {
+												"admin")) {
 									// Disconnect from the game server
 									plr.client.disconnect();
 

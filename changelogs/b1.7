@@ -1,0 +1,48 @@
+New features in 1.7:
+- Implemented Dizzywing Dispatch partially (credits to animal animalson)
+- Implemented Kino minigames (credits to animal animalson, unclear if its fully in place, needs testing)
+- Saves can now have different colors, you will be able to tell if someone is in experience mode or creative by the name colors
+- Staff now have different name colors and a tag before their name showing their rank
+
+Fixes in 1.7:
+- Fixed account unpair issues with account deletion
+- Fixed loot spawning locking up sometimes which caused loot not to respawn every now and then
+- Fixed True Friendship inspiration and some others not being given to the player
+- Fix dms and gcs having ghost entries if accounts get deleted (chat has been fixed)
+- Fixed levels not being refreshed on logout and save switch
+- Fixed server not fully teleporting players
+- Fixed invalid unread counts
+- Fixed player name changes not synchronizing immediately
+- Corrected time bonus of Do or Dye level 104
+- Patched account registration
+
+Changes in 1.7:
+- FTL (modloader) has been overhauled
+- Made it that modules can override existing network packets
+- Updated Connective libraries, this will help with stability
+- Updated the FeralTweaks server module data processor so that it doesnt require authorization for chart patch downloads
+- Made it that maintenance mode doesnt automatically shut the server down when everyone is offline
+- Maintenance mode no longer allows staff login apart from admins
+- FeralTweaks server code has been overhaulled to be more clean and easier to navigate through
+ 
+Command changes:
+- The 'toggleghostmode' command no longer requires admin clearance
+- New staff command: startmaintenancetimer: command to schedule server maintenance (minutes)
+- New staff command: schedulemaintenance: command to schedule server maintenance (date/time)
+- New staff command: cancelmaintenance: cancels scheduled server maintenance
+- new staff command: stopserver: stops the server (uses a update shutdown message without feraltweaks, but uses a custom message with feraltweaks)
+- New player-usable command: stafflist: lists all staff users on the server (with online status)
+
+Modloader changes:
+- Removed patches that caused the game to lag
+- Overhauled inner workings of feraltweaks making it much more stable
+- Implemented asset injection and chart injection for mods
+- Implemented mod packages and packaging system
+- Implemented a mod networking framework
+- Fixed issues preventing multiple of the same client from starting
+- Added support for command line arguments
+- Logging overhaul
+
+Launcher fixes:
+- Fixed issues where on some systems the modloader could freeze
+- Fixed issues with the start scripts, making them more compatible with installers

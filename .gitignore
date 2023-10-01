@@ -2,6 +2,9 @@
 build/
 .gradle
 
+# Dependencies
+deps/
+
 # Eclipse
 bin/
 .settings/

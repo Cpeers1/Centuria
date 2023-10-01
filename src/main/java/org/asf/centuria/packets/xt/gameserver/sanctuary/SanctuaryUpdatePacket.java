@@ -160,8 +160,6 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		// uhh yeah ok
 		// send il and sanctuaryUpdatePacket response for the main player
 
-		XtWriter writer = null;
-
 		if (additions.size() > 0 || removals.size() > 0) {
 			var il = plr.account.getSaveSpecificInventory().getItem("201");
 			var ilPacket = new InventoryItemPacket();

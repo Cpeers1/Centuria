@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = "1.6.4.B3"
+version = "b1.7"
 group = "org.asf.centuria"
 
 sourceCompatibility = '1.17'
@@ -17,7 +17,7 @@ apply plugin: 'idea'
 repositories {
     mavenCentral()
     flatDir {
-       dirs 'libraries', 'fluid'
+       dirs 'fluid'
    }
 }
 
@@ -60,8 +60,7 @@ artifacts {
 }
 
 dependencies {
-	implementation name: "ConnectiveHTTP"
-	implementation name: "RatsMemory"
+	implementation project(":deps:connective-http")
 	
 	implementation group: 'org.asf.cyan', name: 'Fluid', version: '1.0.0.A33'
 	
@@ -71,8 +70,9 @@ dependencies {
 	implementation 'org.ow2.asm:asm:9.1'
 	implementation 'org.ow2.asm:asm-tree:9.1'
 	implementation 'org.ow2.asm:asm-commons:9.1'
+
 	implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
-	implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.13.3'
+	implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.15.2'
 	
 	implementation group: 'javax.activation', name: 'activation', version: '1.1.1'
 	

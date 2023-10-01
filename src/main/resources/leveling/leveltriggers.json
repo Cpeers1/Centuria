@@ -4,9 +4,19 @@
 			"xp": 8
 		}
 	],
+	"levelevents.minigames.dizzywingdispatch": [
+		{
+			"xp": 8
+		}
+	],
 	"levelevents.minigames.doordye": [
 		{
 			"xp": 10
+		}
+	],
+	"levelevents.minigames.kinoparlor": [
+		{
+			"xp": 15
 		}
 	],
 	"levelevents.harvest": [

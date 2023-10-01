@@ -307,7 +307,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 				looks.addProperty("activeSanctuaryLook", UUID.randomUUID().toString());
 				mainInv.setItem("activelooks", looks);
 			}
-			if (!looks.has("activeLook")){
+			if (!looks.has("activeLook")) {
 				looks.addProperty("activeLook", UUID.randomUUID().toString());
 				mainInv.setItem("activelooks", looks);
 			}
@@ -344,7 +344,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 				looks.addProperty("activeSanctuaryLook", UUID.randomUUID().toString());
 				mainInv.setItem("activelooks", looks);
 			}
-			if (!looks.has("activeSanctuaryLook")){
+			if (!looks.has("activeSanctuaryLook")) {
 				looks.addProperty("activeSanctuaryLook", UUID.randomUUID().toString());
 				mainInv.setItem("activelooks", looks);
 			}
@@ -448,7 +448,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 	@Override
 	public Player getOnlinePlayerInstance() {
-		return Centuria.gameServer.getPlayer(getAccountID());
+		return Centuria.gameServer != null ? Centuria.gameServer.getPlayer(getAccountID()) : null;
 	}
 
 	@Override
@@ -666,6 +666,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 		migrateItem(sharedInv, "303", inv);
 		migrateItem(sharedInv, "304", inv);
 		migrateItem(sharedInv, "311", inv);
+		migrateItem(sharedInv, "315", inv);
 		migrateItem(sharedInv, "4", inv);
 		migrateItem(sharedInv, "400", inv);
 		migrateItem(sharedInv, "5", inv);

@@ -1,20 +1,21 @@
 package org.asf.centuria.networking.http.api.custom;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
 import java.util.HashMap;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.rats.processors.HttpUploadProcessor;
+import org.asf.connective.RemoteClient;
+import org.asf.connective.processors.HttpPushProcessor;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class ListPlayersHandler extends HttpUploadProcessor {
+public class ListPlayersHandler extends HttpPushProcessor {
 	@Override
-	public void process(String contentType, Socket client, String method) {
+	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
 		try {
 			// Load spawn helper
 			JsonObject helper = null;
@@ -45,22 +46,21 @@ public class ListPlayersHandler extends HttpUploadProcessor {
 			JsonObject mapData = new JsonObject();
 			maps.forEach((k, v) -> mapData.addProperty(k, v));
 			response.add("maps", mapData);
-			setBody("text/json", response.toString());
-			getResponse().setHeader("Access-Control-Allow-Origin", "https://aerialworks.ddns.net");
+			setResponseContent("text/json", response.toString());
+			getResponse().addHeader("Access-Control-Allow-Origin", "https://emuferal.ddns.net");
 		} catch (Exception e) {
-			setResponseCode(500);
-			setResponseMessage("Internal Server Error");
-			Centuria.logger.error(getRequest().path + " failed: 500: Internal Server Error", e);
+			setResponseStatus(500, "Internal Server Error");
+			Centuria.logger.error(getRequest().getRequestPath() + " failed: 500: Internal Server Error", e);
 		}
 	}
 
 	@Override
-	public boolean supportsGet() {
+	public boolean supportsNonPush() {
 		return true;
 	}
 
 	@Override
-	public HttpUploadProcessor createNewInstance() {
+	public HttpPushProcessor createNewInstance() {
 		return new ListPlayersHandler();
 	}
 

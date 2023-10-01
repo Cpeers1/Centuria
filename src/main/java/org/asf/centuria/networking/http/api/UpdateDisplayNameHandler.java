@@ -1,7 +1,7 @@
 package org.asf.centuria.networking.http.api;
 
 import java.io.ByteArrayOutputStream;
-import java.net.Socket;
+import java.io.IOException;
 import java.util.Base64;
 import java.util.stream.Stream;
 
@@ -9,23 +9,23 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.networking.chatserver.networking.SendMessage;
-import org.asf.rats.ConnectiveHTTPServer;
-import org.asf.rats.processors.HttpUploadProcessor;
+import org.asf.connective.RemoteClient;
+import org.asf.connective.processors.HttpPushProcessor;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class UpdateDisplayNameHandler extends HttpUploadProcessor {
+public class UpdateDisplayNameHandler extends HttpPushProcessor {
 
 	private static String[] nameBlacklist = new String[] { "kit", "kitsendragn", "kitsendragon", "fera", "fero",
 			"wwadmin", "ayli", "komodorihero", "wwsam", "blinky", "fer.ocity" };
 
 	@Override
-	public void process(String contentType, Socket client, String method) {
+	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
 		try {
 			// Parse body
 			ByteArrayOutputStream strm = new ByteArrayOutputStream();
-			ConnectiveHTTPServer.transferRequestBody(getHeaders(), getRequestBodyStream(), strm);
+			getRequest().transferRequestBody(strm);
 			byte[] body = strm.toByteArray();
 			strm.close();
 
@@ -51,8 +51,7 @@ public class UpdateDisplayNameHandler extends HttpUploadProcessor {
 					.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
 					.getAsJsonObject();
 			if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
-				this.setResponseCode(401);
-				this.setResponseMessage("Access denied");
+				this.setResponseStatus(401, "Unauthorized");
 				return;
 			}
 
@@ -63,15 +62,14 @@ public class UpdateDisplayNameHandler extends HttpUploadProcessor {
 			// Find account
 			CenturiaAccount acc = manager.getAccount(jP.get("uuid").getAsString());
 			if (acc == null) {
-				this.setResponseCode(401);
-				this.setResponseMessage("Access denied");
+				this.setResponseStatus(401, "Unauthorized");
 				return;
 			}
 
 			// Check if the name is in use
 			if (manager.isDisplayNameInUse(newName) && !manager.getUserByDisplayName(newName).equals(acc.getAccountID())
 					|| (manager.isDisplayNameInUse(newName) && acc.isRenameRequired())) {
-				setBody("text/json", "{\"error\":\"display_name_already_taken\"}");
+				setResponseContent("text/json", "{\"error\":\"display_name_already_taken\"}");
 				return; // Name is in use
 			}
 
@@ -94,7 +92,7 @@ public class UpdateDisplayNameHandler extends HttpUploadProcessor {
 				JsonObject response = new JsonObject();
 				if (!newName.matches("^[0-9A-Za-z\\-_. ]+") || newName.length() > 16 || newName.length() < 2) {
 					response.addProperty("error", "display_name_invalid_format");
-					setBody("text/json", response.toString());
+					setResponseContent("text/json", response.toString());
 					return;
 				}
 
@@ -102,7 +100,7 @@ public class UpdateDisplayNameHandler extends HttpUploadProcessor {
 				for (String nm : nameBlacklist) {
 					if (newName.equalsIgnoreCase(nm)) {
 						response.addProperty("error", "display_name_sift_rejected");
-						setBody("text/json", response.toString());
+						setResponseContent("text/json", response.toString());
 						return;
 					}
 				}
@@ -112,20 +110,19 @@ public class UpdateDisplayNameHandler extends HttpUploadProcessor {
 					if (Stream.of(SendMessage.getInvalidWords())
 							.anyMatch(t -> t.toLowerCase().equals(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase()))) {
 						response.addProperty("error", "display_name_sift_rejected");
-						setBody("text/json", response.toString());
+						setResponseContent("text/json", response.toString());
 						return;
 					}
 				}
 			}
 		} catch (Exception e) {
-			setResponseCode(500);
-			setResponseMessage("Internal Server Error");
-			Centuria.logger.error(getRequest().path + " failed: 500: Internal Server Error", e);
+			setResponseStatus(500, "Internal Server Error");
+			Centuria.logger.error(getRequest().getRequestPath() + " failed: 500: Internal Server Error", e);
 		}
 	}
 
 	@Override
-	public HttpUploadProcessor createNewInstance() {
+	public HttpPushProcessor createNewInstance() {
 		return new UpdateDisplayNameHandler();
 	}
 

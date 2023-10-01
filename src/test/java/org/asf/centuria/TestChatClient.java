@@ -152,13 +152,13 @@ public class TestChatClient {
 		panel_1.add(lblDirectorIp);
 
 		txtDirectorServer = new JTextField();
-		txtDirectorServer.setText("http://aerialworks.ddns.net:6969/v1/bestGameServer");
+		txtDirectorServer.setText("http://emuferal.ddns.net:6969/v1/bestGameServer");
 		txtDirectorServer.setColumns(10);
 		txtDirectorServer.setBounds(246, 28, 272, 19);
 		panel_1.add(txtDirectorServer);
 
 		txtAPIServer = new JTextField();
-		txtAPIServer.setText("https://aerialworks.ddns.net:6970");
+		txtAPIServer.setText("https://emuferal.ddns.net:6970");
 		txtAPIServer.setColumns(10);
 		txtAPIServer.setBounds(246, 80, 272, 19);
 		panel_1.add(txtAPIServer);

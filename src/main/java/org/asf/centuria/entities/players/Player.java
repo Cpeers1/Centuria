@@ -118,7 +118,7 @@ public class Player {
 				// If the player is ingame, show this player to them
 				Player plr = blockedPlayer.getOnlinePlayerInstance();
 				if (plr != null && roomReady && plr.roomReady && plr.room.equals(room) && plr.levelID == levelID) {
-					syncTo(plr);
+					syncTo(plr, WorldObjectMoverNodeType.InitPosition);
 				}
 			}
 		}
@@ -190,7 +190,7 @@ public class Player {
 		lastAction = 0;
 	}
 
-	public void syncTo(Player player) {
+	public void syncTo(Player player, WorldObjectMoverNodeType nodeType) {
 		if (ghostMode && !player.hasModPerms || player.disableSync)
 			return; // Ghosting
 
@@ -212,7 +212,6 @@ public class Player {
 		}
 
 		if (lookObj != null) {
-
 			// Spawn player
 			AvatarObjectInfoPacket packet = new AvatarObjectInfoPacket();
 
@@ -226,13 +225,13 @@ public class Player {
 			packet.lastMove.positionInfo = new WorldObjectPositionInfo(lastPos.x, lastPos.y, lastPos.z, lastRot.x,
 					lastRot.y, lastRot.z, lastRot.w);
 			packet.lastMove.velocity = new Velocity();
-			packet.lastMove.nodeType = WorldObjectMoverNodeType.InitPosition;
+			packet.lastMove.nodeType = nodeType;
 			packet.lastMove.actorActionType = lastAction;
 
 			// Look and name
 			packet.look = lookObj.get("components").getAsJsonObject().get("AvatarLook").getAsJsonObject().get("info")
 					.getAsJsonObject();
-			packet.displayName = account.getDisplayName();
+			packet.displayName = GameServer.getPlayerNameWithPrefix(account);
 			packet.unknownValue = 0; // TODO: What is this??
 
 			player.client.sendPacket(packet);
@@ -642,7 +641,7 @@ public class Player {
 						ObjectUpdatePacket pkt = new ObjectUpdatePacket();
 						pkt.action = 0;
 						pkt.mode = 2;
-						pkt.targetUUID = player.account.getAccountID();
+						pkt.id = player.account.getAccountID();
 						pkt.position = plr.lastPos;
 						pkt.rotation = plr.lastRot;
 						pkt.heading = plr.lastHeading;

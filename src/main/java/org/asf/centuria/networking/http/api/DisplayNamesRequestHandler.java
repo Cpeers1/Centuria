@@ -1,31 +1,32 @@
 package org.asf.centuria.networking.http.api;
 
 import java.io.ByteArrayOutputStream;
-import java.net.Socket;
+import java.io.IOException;
 import java.util.Base64;
 import java.util.UUID;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
-import org.asf.rats.ConnectiveHTTPServer;
-import org.asf.rats.processors.HttpUploadProcessor;
+import org.asf.centuria.networking.gameserver.GameServer;
+import org.asf.connective.RemoteClient;
+import org.asf.connective.processors.HttpPushProcessor;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class DisplayNamesRequestHandler extends HttpUploadProcessor {
+public class DisplayNamesRequestHandler extends HttpPushProcessor {
 
 	private static String NIL_UUID = new UUID(0, 0).toString();
 
 	@Override
-	public void process(String contentType, Socket client, String method) {
+	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
 		try {
 			// Parse body
 			ByteArrayOutputStream strm = new ByteArrayOutputStream();
-			ConnectiveHTTPServer.transferRequestBody(getHeaders(), getRequestBodyStream(), strm);
+			getRequest().transferRequestBody(strm);
 			byte[] body = strm.toByteArray();
 			strm.close();
 
@@ -39,8 +40,7 @@ public class DisplayNamesRequestHandler extends HttpUploadProcessor {
 			String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
 			String sig = token.split("\\.")[2];
 			if (!Centuria.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-				this.setResponseCode(401);
-				this.setResponseMessage("Access denied");
+				this.setResponseStatus(401, "Unauthorized");
 				return;
 			}
 
@@ -49,8 +49,7 @@ public class DisplayNamesRequestHandler extends HttpUploadProcessor {
 					.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
 					.getAsJsonObject();
 			if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
-				this.setResponseCode(401);
-				this.setResponseMessage("Access denied");
+				this.setResponseStatus(401, "Unauthorized");
 				return;
 			}
 
@@ -73,11 +72,13 @@ public class DisplayNamesRequestHandler extends HttpUploadProcessor {
 				}
 				CenturiaAccount acc = manager.getAccount(id);
 				if (acc != null) {
+					// Add user entry
 					JsonObject d = new JsonObject();
-					d.addProperty("display_name", acc.getDisplayName());
+					d.addProperty("display_name", GameServer.getPlayerNameWithPrefix(acc));
 					d.addProperty("uuid", id);
 					found.add(d);
 				} else if (id.startsWith("plaintext:")) {
+					// Add plain entry
 					JsonObject d = new JsonObject();
 					d.addProperty("display_name", id.substring("plaintext:".length()));
 					d.addProperty("uuid", id);
@@ -89,16 +90,15 @@ public class DisplayNamesRequestHandler extends HttpUploadProcessor {
 
 			response.add("found", found);
 			response.add("not_found", (unrecognized.size() == 0 ? null : unrecognized));
-			setBody("text/json", response.toString());
+			setResponseContent("text/json", response.toString());
 		} catch (Exception e) {
-			setResponseCode(500);
-			setResponseMessage("Internal Server Error");
-			Centuria.logger.error(getRequest().path + " failed: 500: Internal Server Error", e);
+			setResponseStatus(500, "Internal Server Error");
+			Centuria.logger.error(getRequest().getRequestPath() + " failed: 500: Internal Server Error", e);
 		}
 	}
 
 	@Override
-	public HttpUploadProcessor createNewInstance() {
+	public HttpPushProcessor createNewInstance() {
 		return new DisplayNamesRequestHandler();
 	}
 

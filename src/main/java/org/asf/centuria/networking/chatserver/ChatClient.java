@@ -14,6 +14,7 @@ import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.chat.ChatLoginEvent;
@@ -167,6 +168,51 @@ public class ChatClient {
 			return;
 		}
 
+		// Load DMs into memory
+		if (acc.getSaveSharedInventory().containsItem("dms")) {
+			// Load and sanitize dms
+			JsonObject dms = acc.getSaveSharedInventory().getItem("dms").getAsJsonObject();
+			ArrayList<String> toRemove = new ArrayList<String>();
+			for (String user : dms.keySet()) {
+				// Clean DM participants
+				String dmID = dms.get(user).getAsString();
+				int participantC = 0;
+				if (DMManager.getInstance().dmExists(dmID)) {
+					String[] participants = DMManager.getInstance().getDMParticipants(dmID);
+					participantC = participants.length;
+					for (String participant : participants) {
+						if (!participant.startsWith("plaintext:")) {
+							// Check account
+							if (AccountManager.getInstance().getAccount(participant) == null) {
+								participantC--;
+								DMManager.getInstance().removeParticipant(dmID, participant);
+							}
+						}
+					}
+				}
+
+				// Check validity
+				if (AccountManager.getInstance().getAccount(user) == null || participantC <= 1) {
+					toRemove.add(user);
+					continue;
+				}
+
+				// Join room
+				joinRoom(dms.get(user).getAsString(), true);
+			}
+
+			// Remove nonexistent and invalid dms
+			for (String user : toRemove) {
+				if (DMManager.getInstance().dmExists(dms.get(user).getAsString()))
+					DMManager.getInstance().deleteDM(dms.get(user).getAsString());
+				dms.remove(user);
+			}
+
+			// Save if needed
+			if (toRemove.size() != 0)
+				acc.getSaveSharedInventory().setItem("dms", dms);
+		}
+
 		// Remove sensitive info and fire event
 		handshakeStart.remove("auth_token");
 		ChatLoginEvent evt = new ChatLoginEvent(server, acc, this, handshakeStart);
@@ -184,7 +230,7 @@ public class ChatClient {
 			if (acc.getSaveSharedInventory().containsItem("permissions")) {
 				String permLevel = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 						.get("permissionLevel").getAsString();
-				if (GameServer.hasPerm(permLevel, "moderator")) {
+				if (GameServer.hasPerm(permLevel, "admin")) {
 					lockout = false;
 				}
 			}
@@ -234,14 +280,6 @@ public class ChatClient {
 		// Save account in memory
 		player = acc;
 		Centuria.logger.info("Player " + getPlayer().getDisplayName() + " connected to the chat server.");
-
-		// Load DMs into memory
-		if (getPlayer().getSaveSharedInventory().containsItem("dms")) {
-			JsonObject dms = getPlayer().getSaveSharedInventory().getItem("dms").getAsJsonObject();
-			for (String user : dms.keySet()) {
-				joinRoom(dms.get(user).getAsString(), true);
-			}
-		}
 
 		// Send success
 		JsonObject res = new JsonObject();
@@ -324,8 +362,6 @@ public class ChatClient {
 				for (char ch : d) {
 					client.getOutputStream().write((byte) ch);
 				}
-				client.getOutputStream().write(0x0d);
-				client.getOutputStream().write(0x0a);
 				client.getOutputStream().write(0);
 				client.getOutputStream().flush();
 				Centuria.logger.debug(MarkerManager.getMarker("CHAT"),
