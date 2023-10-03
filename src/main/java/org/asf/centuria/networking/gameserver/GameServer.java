@@ -793,7 +793,7 @@ public class GameServer extends BaseSmartfoxServer {
 			prefix += "[mod] ";
 
 		// Return
-		return prefix + account.getDisplayName();
+		return prefix + account.getDisplayName() + (color.equals("default") ? "" : "</color>");
 	}
 
 	/**

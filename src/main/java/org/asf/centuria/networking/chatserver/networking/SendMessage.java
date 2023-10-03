@@ -587,7 +587,6 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("staffroom");
 			commandMessages.add("listplayers");
 		}
-		commandMessages.add("stafflist");
 		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
 				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllCurrency
 				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllFurnitureItems
@@ -732,91 +731,6 @@ public class SendMessage extends AbstractChatPacket {
 							+ QuestManager.getQuest(QuestManager.getActiveQuest(client.getPlayer())).name
 							+ "' is now your active quest! Please log out and log back in to complete the process.",
 							cmd, client);
-
-					return true;
-				} else if (cmdId.equalsIgnoreCase("stafflist")) {
-					// Staff list
-					HashMap<CenturiaAccount, String> staffAccounts = new HashMap<CenturiaAccount, String>();
-					AccountManager.getInstance().runForAllAccounts(t -> {
-						String lvl = "member";
-						if (t.getSaveSharedInventory().containsItem("permissions")) {
-							lvl = t.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-									.get("permissionLevel").getAsString();
-						}
-						if (GameServer.hasPerm(lvl, "moderator"))
-							staffAccounts.put(t, lvl);
-					});
-
-					// Create message
-					String msg = "";
-
-					// Go through developers
-					boolean foundAny = false;
-					for (CenturiaAccount acc : staffAccounts.keySet()) {
-						String lvl = staffAccounts.get(acc);
-						if (lvl.equals("developer")) {
-							// Check
-							if (!foundAny) {
-								foundAny = true;
-								if (msg.isEmpty())
-									msg += "Staff list:\n\n";
-								else
-									msg += "\n\n";
-								msg += "List of developers:";
-							}
-
-							// Add
-							msg += "\n - " + acc.getDisplayName() + " ["
-									+ (acc.getOnlinePlayerInstance() == null ? "OFFLINE" : "ONLINE") + "]";
-						}
-					}
-
-					// Go through admins
-					foundAny = false;
-					for (CenturiaAccount acc : staffAccounts.keySet()) {
-						String lvl = staffAccounts.get(acc);
-						if (lvl.equals("admin")) {
-							// Check
-							if (!foundAny) {
-								foundAny = true;
-								if (msg.isEmpty())
-									msg += "Staff list:\n\n";
-								else
-									msg += "\n\n";
-								msg += "List of administrators:";
-							}
-
-							// Add
-							msg += "\n - " + acc.getDisplayName() + " ["
-									+ (acc.getOnlinePlayerInstance() == null ? "OFFLINE" : "ONLINE") + "]";
-						}
-					}
-
-					// Go through moderators
-					foundAny = false;
-					for (CenturiaAccount acc : staffAccounts.keySet()) {
-						String lvl = staffAccounts.get(acc);
-						if (lvl.equals("moderator")) {
-							// Check
-							if (!foundAny) {
-								foundAny = true;
-								if (msg.isEmpty())
-									msg += "Staff list:\n\n";
-								else
-									msg += "\n\n";
-								msg += "List of moderators:";
-							}
-
-							// Add
-							msg += "\n - " + acc.getDisplayName() + " ["
-									+ (acc.getOnlinePlayerInstance() == null ? "OFFLINE" : "ONLINE") + "]";
-						}
-					}
-
-					// Default
-					if (msg.isEmpty())
-						msg = "There are no staff users.";
-					systemMessage(msg, cmd, client);
 
 					return true;
 				}
