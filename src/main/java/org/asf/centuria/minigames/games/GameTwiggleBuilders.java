@@ -76,7 +76,7 @@ public class GameTwiggleBuilders extends AbstractMinigame {
 		
 		//Prize
 		givePrize(plr);	
-		plr.account.getSaveSpecificInventory().getCurrencyAccessor.addLikes(plr.client,score);
+		plr.account.getSaveSpecificInventory().getCurrencyAccessor().addLikes(plr.client,score);
 		
 		
 		//End
