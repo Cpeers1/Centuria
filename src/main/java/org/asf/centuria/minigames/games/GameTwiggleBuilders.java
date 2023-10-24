@@ -56,7 +56,8 @@ public class GameTwiggleBuilders extends AbstractMinigame {
 			score = 0;
 		}
 		else{
-			score = 30;
+			//15 per star * 3
+			score = 45;
 		}
 		
 		// Save score
@@ -75,6 +76,8 @@ public class GameTwiggleBuilders extends AbstractMinigame {
 		
 		//Prize
 		givePrize(plr);	
+		plr.account.getSaveSpecificInventory().getCurrencyAccessor().addLikes(plr.client,score);
+		
 		
 		//End
 		XtWriter wr1 = new XtWriter();
