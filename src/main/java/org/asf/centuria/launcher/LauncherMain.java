@@ -378,6 +378,7 @@ public class LauncherMain {
 				} catch (InvocationTargetException | InterruptedException e) {
 				}
 				String jvm = ProcessHandle.current().info().command().get();
+				
 				// Scan libs
 				String libs = server.getName();
 				for (File lib : new File("libs").listFiles()) {
