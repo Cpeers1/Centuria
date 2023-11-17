@@ -274,14 +274,18 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			JsonArray item = new JsonArray();
 
 			// Add all emotes
-			InventoryManager.addEmote(item, "9122");
-			InventoryManager.addEmote(item, "9151");
-			InventoryManager.addEmote(item, "9108");
-			InventoryManager.addEmote(item, "9121");
-			InventoryManager.addEmote(item, "9143");
-			InventoryManager.addEmote(item, "9190");
 			InventoryManager.addEmote(item, "8930");
+			InventoryManager.addEmote(item, "9108");
 			InventoryManager.addEmote(item, "9116");
+			InventoryManager.addEmote(item, "9121");
+			InventoryManager.addEmote(item, "9122");
+			InventoryManager.addEmote(item, "9143");
+			InventoryManager.addEmote(item, "9151");
+			InventoryManager.addEmote(item, "9190");
+			InventoryManager.addEmote(item, "9147");
+			InventoryManager.addEmote(item, "9131");
+			InventoryManager.addEmote(item, "9135");
+			InventoryManager.addEmote(item, "9139");
 
 			// Send the item to the client
 			InventoryItemPacket pkt = new InventoryItemPacket();

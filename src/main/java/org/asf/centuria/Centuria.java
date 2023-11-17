@@ -84,7 +84,7 @@ import com.google.gson.JsonObject;
 
 public class Centuria {
 	// Update
-	public static String SERVER_UPDATE_VERSION = "b1.7.1";
+	public static String SERVER_UPDATE_VERSION = "b1.7.2";
 	public static String DOWNLOAD_BASE_URL = "https://emuferal.ddns.net";
 
 	// Configuration
@@ -141,7 +141,7 @@ public class Centuria {
 		System.out.println("                              Centuria                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                           Version b1.7.1                           "); // not doing this
+		System.out.println("                           Version b1.7.2                           "); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain
