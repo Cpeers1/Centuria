@@ -55,6 +55,7 @@ import org.asf.centuria.modules.events.updates.ServerUpdateEvent;
 import org.asf.centuria.modules.events.updates.UpdateCancelEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.ChatServer;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.http.api.FallbackAPIProcessor;
 import org.asf.centuria.networking.http.api.GameRegistrationHandler;
@@ -77,7 +78,10 @@ import org.asf.centuria.networking.http.api.custom.RegistrationHandler;
 import org.asf.centuria.networking.http.api.custom.SaveManagerHandler;
 import org.asf.centuria.networking.http.api.custom.UserDetailsHandler;
 import org.asf.centuria.networking.http.director.GameServerRequestHandler;
+import org.asf.centuria.networking.voicechatserver.VoiceChatServer;
 import org.asf.centuria.seasonpasses.SeasonPassManager;
+import org.asf.centuria.textfilter.TextFilterService;
+import org.asf.centuria.util.CorsWildcardContentSource;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -89,6 +93,7 @@ public class Centuria {
 
 	// Configuration
 	public static Logger logger;
+	public static HashMap<String, String> serverProperties;
 	public static boolean defaultUseManagedSaves = false;
 	public static boolean allowRegistration = true;
 	public static boolean defaultGiveAllAvatars = true;
@@ -100,6 +105,7 @@ public class Centuria {
 	public static boolean defaultGiveAllCurrency = true;
 	public static boolean defaultGiveAllResources = true;
 	public static boolean encryptChat = false;
+	public static boolean encryptVoiceChat = false;
 	public static boolean encryptGame = false;
 	public static boolean debugMode = false;
 	public static String discoveryAddress = "localhost";
@@ -110,6 +116,7 @@ public class Centuria {
 	public static ConnectiveHttpServer directorServer;
 	public static GameServer gameServer;
 	public static ChatServer chatServer;
+	public static VoiceChatServer voiceChatServer;
 
 	// Keys
 	private static PrivateKey privateKey;
@@ -148,6 +155,14 @@ public class Centuria {
 		System.out.println("                                                                    ");
 		System.out.println("--------------------------------------------------------------------");
 		System.out.println("");
+
+		// Delete old logs
+		if (new File("logs", "latest.log").exists())
+			new File("logs", "latest.log").delete();
+		if (new File("logs", "debug.log").exists())
+			new File("logs", "debug.log").delete();
+		if (new File("logs", "debug.log").exists())
+			new File("logs", "chatlog.bin").delete();
 
 		// Setup logging
 		if (System.getProperty("debugMode") != null) {
@@ -226,6 +241,7 @@ public class Centuria {
 
 		// Managers
 
+		TextFilterService.getInstance().initService();
 		ComponentManager.registerAllComponents();
 		InventoryItemManager.registerAllItems();
 
@@ -235,8 +251,9 @@ public class Centuria {
 		// Wait for exit
 		directorServer.waitForExit();
 		apiServer.waitForExit();
-		chatServer.getServerSocket().close();
-		gameServer.getServerSocket().close();
+		chatServer.stop();
+		voiceChatServer.stop();
+		gameServer.stop();
 	}
 
 	/**
@@ -368,7 +385,10 @@ public class Centuria {
 			// Dispatch event
 			EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account, "Server has been shut down.",
 					DisconnectType.SERVER_SHUTDOWN));
-
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+			}
 			plr.client.disconnect();
 		}
 
@@ -393,17 +413,20 @@ public class Centuria {
 		if (!serverConf.exists()) {
 			Files.writeString(serverConf.toPath(),
 					"api-port=6\n" + "director-port=6969\n" + "game-port=6968\n" + "chat-port=6972\n"
+							+ "voice-chat-port=6973\n" + "room-preferred-min-players=15\n"
+							+ "room-preferred-max-players=50" + "room-preferred-upper-player-limit=75\n"
 							+ "allow-registration=true\n" + "give-all-avatars=false\n" + "give-all-mods=false\n"
 							+ "give-all-clothes=false\n" + "give-all-wings=false\n" + "give-all-sanctuary-types=false\n"
 							+ "give-all-furniture=false\n" + "give-all-currency=false\n" + "give-all-resources=false\n"
 							+ "server-spawn-behaviour=random\ndefault-save-behaviour=single\n"
 							+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
-							+ "encrypt-game=false\nencrypt-director=false\n" + "debug-mode=false\n"
-							+ "\nvpn-user-whitelist=vpn-whitelist\n" + "vpn-ipv4-banlist=\n" + "vpn-ipv6-banlist=");
+							+ "encrypt-voice-chat=true\n" + "encrypt-game=false\nencrypt-director=false\n"
+							+ "debug-mode=false\n" + "\nvpn-user-whitelist=vpn-whitelist\n" + "vpn-ipv4-banlist=\n"
+							+ "vpn-ipv6-banlist=");
 		}
 
 		// Parse properties
-		HashMap<String, String> properties = new HashMap<String, String>();
+		serverProperties = new HashMap<String, String>();
 		for (String line : Files.readAllLines(serverConf.toPath())) {
 			String key = line;
 			String value = "";
@@ -411,7 +434,7 @@ public class Centuria {
 				value = key.substring(key.indexOf("=") + 1);
 				key = key.substring(0, key.indexOf("="));
 			}
-			properties.put(key, value);
+			serverProperties.put(key, value);
 		}
 
 		// Load or generate keys for JWT signatures
@@ -437,23 +460,25 @@ public class Centuria {
 		}
 
 		// Load properties into memory
-		allowRegistration = properties.getOrDefault("allow-registration", "true").equals("true");
-		defaultGiveAllAvatars = properties.getOrDefault("give-all-avatars", "true").equals("true");
-		defaultGiveAllMods = properties.getOrDefault("give-all-mods", "true").equals("true");
-		defaultGiveAllClothes = properties.getOrDefault("give-all-clothes", "true").equals("true");
-		defaultGiveAllWings = properties.getOrDefault("give-all-wings", "true").equals("true");
-		defaultGiveAllSanctuaryTypes = properties.getOrDefault("give-all-sanctuary-types", "true").equals("true");
-		defaultGiveAllFurnitureItems = properties.getOrDefault("give-all-furniture", "true").equals("true");
-		defaultGiveAllResources = properties.getOrDefault("give-all-resources", "true").equals("true");
-		defaultGiveAllCurrency = properties.getOrDefault("give-all-currency", "true").equals("true");
-		encryptChat = properties.getOrDefault("encrypt-chat", "false").equals("true")
+		allowRegistration = serverProperties.getOrDefault("allow-registration", "true").equals("true");
+		defaultGiveAllAvatars = serverProperties.getOrDefault("give-all-avatars", "true").equals("true");
+		defaultGiveAllMods = serverProperties.getOrDefault("give-all-mods", "true").equals("true");
+		defaultGiveAllClothes = serverProperties.getOrDefault("give-all-clothes", "true").equals("true");
+		defaultGiveAllWings = serverProperties.getOrDefault("give-all-wings", "true").equals("true");
+		defaultGiveAllSanctuaryTypes = serverProperties.getOrDefault("give-all-sanctuary-types", "true").equals("true");
+		defaultGiveAllFurnitureItems = serverProperties.getOrDefault("give-all-furniture", "true").equals("true");
+		defaultGiveAllResources = serverProperties.getOrDefault("give-all-resources", "true").equals("true");
+		defaultGiveAllCurrency = serverProperties.getOrDefault("give-all-currency", "true").equals("true");
+		encryptChat = serverProperties.getOrDefault("encrypt-chat", "false").equals("true")
 				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
-		encryptGame = properties.getOrDefault("encrypt-game", "false").equals("true")
+		encryptVoiceChat = serverProperties.getOrDefault("encrypt-voice-chat", "true").equals("true")
 				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
-		discoveryAddress = properties.getOrDefault("discovery-server-address", discoveryAddress);
-		debugMode = properties.getOrDefault("debug-mode", "false").equals("true");
-		spawnBehaviour = properties.getOrDefault("server-spawn-behaviour", "random");
-		defaultUseManagedSaves = properties.getOrDefault("default-save-behaviour", "single").equals("managed");
+		encryptGame = serverProperties.getOrDefault("encrypt-game", "false").equals("true")
+				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
+		discoveryAddress = serverProperties.getOrDefault("discovery-server-address", discoveryAddress);
+		debugMode = serverProperties.getOrDefault("debug-mode", "false").equals("true");
+		spawnBehaviour = serverProperties.getOrDefault("server-spawn-behaviour", "random");
+		defaultUseManagedSaves = serverProperties.getOrDefault("default-save-behaviour", "single").equals("managed");
 		if (spawnBehaviour == null)
 			spawnBehaviour = "random";
 		if (System.getProperty("debugMode", "false").equals("true"))
@@ -511,7 +536,8 @@ public class Centuria {
 		SeasonPassManager.getCurrentPass();
 
 		// Start the servers
-		Centuria.logger.info("Starting API server on port " + Integer.parseInt(properties.get("api-port")) + "...");
+		Centuria.logger
+				.info("Starting API server on port " + Integer.parseInt(serverProperties.get("api-port")) + "...");
 
 		//
 		// Start API server
@@ -519,40 +545,44 @@ public class Centuria {
 			// Create properties
 			HashMap<String, String> props = new HashMap<String, String>();
 			props.put("address", "0.0.0.0");
-			props.put("port", properties.get("api-port"));
+			props.put("port", serverProperties.get("api-port"));
 
 			// Check HTTPS
-			if (properties.getOrDefault("encrypt-api", "false").equals("true") && new File("keystore.jks").exists()
-					&& new File("keystore.jks.password").exists()) {
+			if (serverProperties.getOrDefault("encrypt-api", "false").equals("true")
+					&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists()) {
 				// Start HTTPS
 				props.put("keystore", "keystore.jks");
 				props.put("keystore-password", Files.readString(Path.of("keystore.jks.password")));
 				apiServer = ConnectiveHttpServer.createNetworked("HTTPS/1.1", props);
+				apiServer.setContentSource(new CorsWildcardContentSource());
 				setupAPI(apiServer);
 				apiServer.start();
 			} else {
 				// Start HTTP
 				apiServer = ConnectiveHttpServer.createNetworked("HTTP/1.1", props);
+				apiServer.setContentSource(new CorsWildcardContentSource());
 				setupAPI(apiServer);
 				apiServer.start();
 			}
 		} catch (Exception e) {
-			Centuria.logger.fatal("Unable to start on port " + Integer.parseInt(properties.get("api-port"))
+			Centuria.logger.fatal("Unable to start on port " + Integer.parseInt(serverProperties.get("api-port"))
 					+ "! Switching to debug mode!");
 			Centuria.logger.fatal("If you are not attempting to debug the server, please run as root.");
 
 			HashMap<String, String> props = new HashMap<String, String>();
 			props.put("address", "0.0.0.0");
 			props.put("port", "6970");
-			if (properties.getOrDefault("encrypt-api", "false").equals("true") && new File("keystore.jks").exists()
-					&& new File("keystore.jks.password").exists()) {
+			if (serverProperties.getOrDefault("encrypt-api", "false").equals("true")
+					&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists()) {
 				props.put("keystore", "keystore.jks");
 				props.put("keystore-password", Files.readString(Path.of("keystore.jks.password")));
 				apiServer = ConnectiveHttpServer.createNetworked("HTTPS/1.1", props);
+				apiServer.setContentSource(new CorsWildcardContentSource());
 				setupAPI(apiServer);
 				apiServer.start();
 			} else {
 				apiServer = ConnectiveHttpServer.createNetworked("HTTP/1.1", props);
+				apiServer.setContentSource(new CorsWildcardContentSource());
 				setupAPI(apiServer);
 				apiServer.start();
 			}
@@ -566,27 +596,29 @@ public class Centuria {
 			props.put("address", "0.0.0.0");
 			props.put("port", System.getProperty("debugAPI"));
 			ConnectiveHttpServer apiServer = ConnectiveHttpServer.createNetworked("HTTP/1.1", props);
+			apiServer.setContentSource(new CorsWildcardContentSource());
 			setupAPI(apiServer);
 			apiServer.start();
 		}
 
 		//
 		// Start director server
-		Centuria.logger
-				.info("Starting Director server on port " + Integer.parseInt(properties.get("director-port")) + "...");
+		Centuria.logger.info(
+				"Starting Director server on port " + Integer.parseInt(serverProperties.get("director-port")) + "...");
 
 		// Create properties
 		HashMap<String, String> props = new HashMap<String, String>();
 		props.put("address", "0.0.0.0");
-		props.put("port", properties.get("director-port"));
+		props.put("port", serverProperties.get("director-port"));
 
 		// Check HTTPS
-		if (properties.getOrDefault("encrypt-director", "false").equals("true") && new File("keystore.jks").exists()
-				&& new File("keystore.jks.password").exists()) {
+		if (serverProperties.getOrDefault("encrypt-director", "false").equals("true")
+				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists()) {
 			// Start HTTPS
 			props.put("keystore", "keystore.jks");
 			props.put("keystore-password", Files.readString(Path.of("keystore.jks.password")));
 			directorServer = ConnectiveHttpServer.createNetworked("HTTPS/1.1", props);
+			directorServer.setContentSource(new CorsWildcardContentSource());
 
 			// Register handlers
 			directorServer.registerProcessor(new GameServerRequestHandler());
@@ -599,6 +631,7 @@ public class Centuria {
 		} else {
 			// Start HTTP
 			directorServer = ConnectiveHttpServer.createNetworked("HTTP/1.1", props);
+			directorServer.setContentSource(new CorsWildcardContentSource());
 
 			// Register handlers
 			directorServer.registerProcessor(new GameServerRequestHandler());
@@ -609,23 +642,26 @@ public class Centuria {
 			// Start
 			directorServer.start();
 		}
+
 		//
 		// Load game server
 		ServerSocket sock;
-		Centuria.logger.info("Starting Game server on port " + Integer.parseInt(properties.get("game-port")) + "...");
+		Centuria.logger
+				.info("Starting Game server on port " + Integer.parseInt(serverProperties.get("game-port")) + "...");
 		if (encryptGame)
 			try {
 				sock = getContext(new File("keystore.jks"),
 						Files.readString(Path.of("keystore.jks.password")).toCharArray()).getServerSocketFactory()
-						.createServerSocket(Integer.parseInt(properties.get("game-port")), 0,
+						.createServerSocket(Integer.parseInt(serverProperties.get("game-port")), 0,
 								InetAddress.getByName("0.0.0.0"));
 			} catch (UnrecoverableKeyException | KeyManagementException | NumberFormatException | KeyStoreException
 					| NoSuchAlgorithmException | CertificateException | IOException e) {
-				sock = new ServerSocket(Integer.parseInt(properties.get("game-port")), 0,
+				sock = new ServerSocket(Integer.parseInt(serverProperties.get("game-port")), 0,
 						InetAddress.getByName("0.0.0.0"));
 			}
 		else
-			sock = new ServerSocket(Integer.parseInt(properties.get("game-port")), 0, InetAddress.getByName("0.0.0.0"));
+			sock = new ServerSocket(Integer.parseInt(serverProperties.get("game-port")), 0,
+					InetAddress.getByName("0.0.0.0"));
 		for (ICenturiaModule module : ModuleManager.getInstance().getAllModules()) {
 			gameServer = module.replaceGameServer(sock);
 			if (gameServer != null)
@@ -635,11 +671,11 @@ public class Centuria {
 			gameServer = new GameServer(sock);
 
 		// Server settings
-		gameServer.whitelistFile = properties.get("vpn-user-whitelist");
+		gameServer.whitelistFile = serverProperties.get("vpn-user-whitelist");
 
 		// Download VPN ips
 		try {
-			String vpnIpv4 = properties.getOrDefault("vpn-ipv4-banlist", "");
+			String vpnIpv4 = serverProperties.getOrDefault("vpn-ipv4-banlist", "");
 			if (!vpnIpv4.isEmpty()) {
 				InputStream strm = new URL(vpnIpv4).openStream();
 				String data = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
@@ -650,7 +686,7 @@ public class Centuria {
 				}
 				strm.close();
 			}
-			String vpnIpv6 = properties.getOrDefault("vpn-ipv6-banlist", "");
+			String vpnIpv6 = serverProperties.getOrDefault("vpn-ipv6-banlist", "");
 			if (!vpnIpv6.isEmpty()) {
 				InputStream strm = new URL(vpnIpv6).openStream();
 				String data = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
@@ -669,20 +705,21 @@ public class Centuria {
 
 		//
 		// Start chat server
-		Centuria.logger.info("Starting Chat server on port " + Integer.parseInt(properties.get("chat-port")) + "...");
+		Centuria.logger
+				.info("Starting Chat server on port " + Integer.parseInt(serverProperties.get("chat-port")) + "...");
 		if (encryptChat)
 			try {
 				sock = getContext(new File("keystore.jks"),
 						Files.readString(Path.of("keystore.jks.password")).toCharArray()).getServerSocketFactory()
-						.createServerSocket(Integer.parseInt(properties.getOrDefault("chat-port", "6972")), 0,
+						.createServerSocket(Integer.parseInt(serverProperties.getOrDefault("chat-port", "6972")), 0,
 								InetAddress.getByName("0.0.0.0"));
 			} catch (UnrecoverableKeyException | KeyManagementException | NumberFormatException | KeyStoreException
 					| NoSuchAlgorithmException | CertificateException | IOException e) {
-				sock = new ServerSocket(Integer.parseInt(properties.getOrDefault("chat-port", "6972")), 0,
+				sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("chat-port", "6972")), 0,
 						InetAddress.getByName("0.0.0.0"));
 			}
 		else
-			sock = new ServerSocket(Integer.parseInt(properties.getOrDefault("chat-port", "6972")), 0,
+			sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("chat-port", "6972")), 0,
 					InetAddress.getByName("0.0.0.0"));
 		for (ICenturiaModule module : ModuleManager.getInstance().getAllModules()) {
 			chatServer = module.replaceChatServer(sock);
@@ -692,6 +729,33 @@ public class Centuria {
 		if (chatServer == null)
 			chatServer = new ChatServer(sock);
 		chatServer.start();
+
+		//
+		// Start chat server
+		Centuria.logger.info("Starting Voice Chat server on port "
+				+ Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "6973")) + "...");
+		if (encryptVoiceChat)
+			try {
+				sock = getContext(new File("keystore.jks"),
+						Files.readString(Path.of("keystore.jks.password")).toCharArray()).getServerSocketFactory()
+						.createServerSocket(Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "6973")),
+								0, InetAddress.getByName("0.0.0.0"));
+			} catch (UnrecoverableKeyException | KeyManagementException | NumberFormatException | KeyStoreException
+					| NoSuchAlgorithmException | CertificateException | IOException e) {
+				sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "6973")), 0,
+						InetAddress.getByName("0.0.0.0"));
+			}
+		else
+			sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "6973")), 0,
+					InetAddress.getByName("0.0.0.0"));
+		for (ICenturiaModule module : ModuleManager.getInstance().getAllModules()) {
+			voiceChatServer = module.replaceVoiceChatServer(sock);
+			if (voiceChatServer != null)
+				break;
+		}
+		if (voiceChatServer == null)
+			voiceChatServer = new VoiceChatServer(sock);
+		voiceChatServer.start();
 
 		// Post-initialize modules
 		Centuria.logger.info("Post-initializing Centuria modules...");
@@ -869,13 +933,14 @@ public class Centuria {
 				res.addProperty("eventId", "conversations.create");
 				res.addProperty("success", true);
 				client.sendPacket(res);
-				client.joinRoom(NIL_UUID, true);
+				client.joinRoom(NIL_UUID, ChatRoomTypes.PRIVATE_CHAT);
 			}
 
 			// Send response
 			JsonObject res = new JsonObject();
 			res.addProperty("conversationType", inDm ? "private" : "room");
-			res.addProperty("conversationId", inDm ? NIL_UUID : "room_" + player.levelID);
+			res.addProperty("conversationId",
+					inDm ? NIL_UUID : player.pendingRoom != null ? player.pendingRoom : player.room);
 			res.addProperty("message", message);
 			res.addProperty("source", NIL_UUID);
 			res.addProperty("sentAt", LocalDateTime.now().toString());

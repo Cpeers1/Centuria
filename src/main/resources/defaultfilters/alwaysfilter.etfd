@@ -1,0 +1,205 @@
+
+# Filter configuration
+Name Default text filter
+Description This filter contains NSFW words and other terms that must always be filtered 
+Reason With our software being for a target audience that includes minors, the chat may never be used for NSFW
+
+# Severity can be ALWAYS_FILTERED, USER_STRICT_MODE and INSTAMUTE
+Severity ALWAYS_FILTERED
+
+#
+# Define phrases
+# Phrases can be defined with `Phrase phrase here`, eg `Phrase example`, if it starts with `R:` its a regex match, `RR:` makes it a raw match
+# Phrase bodies look like this:
+#    # Define example
+#    Phrase example
+#        # Set filtering mode, they can be:
+#        #   WHOLE_PHRASE : filters only if the whole phrase is a match, this does not tag unless all words are on their own, unless its a single word, then it checks if the word is present in the sentence, doesnt work if attached to another word, eg. `exam` and `example` arent a match to the system
+#        #   PHRASE_COMBINED : similar to WHOLE_PHRASE but also filters if the phrase without spaces is present in the text
+#        #   WORD_CONTAINS : most recommended in most cases, filters only if a word contains the phrase or variant, unlike WHOLE_PHRASE this DOES tag if the filter words are present attached to other words
+#        #   WORD_COMBINED : similar to WORD_CONTAINS but also filters if the phrase without spaces is present in the text
+#        Mode WHOLE_PHRASE
+#        
+#        # Define variants
+#        # Same rules as initial definition
+#        Variant ex4mple
+# 
+#        # Filtering reason (optional)
+#        Reason Example filter
+#    # Endphrase marks the end of the phrase
+#    Endphrase
+#
+# There wont be commenting much after this because writing filters ABSOLUTELY SUCKS due to all the words that are defined
+#
+
+
+Phrase anal
+	Mode WHOLE_PHRASE
+	Variant an4l
+	Variant 4nal
+	Variant 4n4l
+Endphrase
+
+Phrase boner
+	Mode WHOLE_PHRASE
+Endphrase
+
+Phrase blowjob
+    Mode WHOLE_PHRASE
+    Variant blow job
+Endphrase
+
+Phrase boob
+	Mode WORD_CONTAINS
+	Variant b00b
+	Variant bo0b
+	Variant b0ob
+	Variant boobs
+	Variant b00bs
+	Variant bo0bs
+	Variant b0obs
+Endphrase
+
+Phrase vagina
+	Mode WORD_CONTAINS    
+	Variant v4gina
+	Variant vag1na
+	Variant vagin4
+	Variant vag1n4
+	Variant v4g1na
+	Variant v4g1n4
+Endphrase
+
+Phrase wank
+	Mode WHOLE_PHRASE  
+	Variant w4nk
+Endphrase
+
+Phrase porn
+	Mode WHOLE_PHRASE  
+	Variant p0rn
+Endphrase
+
+Phrase whore
+	Mode WORD_CONTAINS  
+	Variant wh0re  
+	Variant wh0r3  
+	Variant whor3
+Endphrase
+
+Phrase dick
+	Mode WHOLE_PHRASE
+    Variant d1ck
+    Variant cock
+    Variant c0ck
+    Variant penis
+Endphrase
+
+Phrase dildo
+	Mode WHOLE_PHRASE
+	Variant d1ldo
+	Variant d1ld0
+	Variant dild0
+Endphrase
+
+Phrase tit
+	Mode WHOLE_PHRASE
+	Variant t1t
+	Variant t1ts
+	Variant tits
+Endphrase
+
+Phrase jizz
+	Mode WHOLE_PHRASE
+	Variant j1zz
+Endphrase
+
+Phrase pussy
+	Mode WHOLE_PHRASE
+Endphrase
+
+Phrase slut
+	Mode WORD_CONTAINS
+Endphrase
+
+Phrase fellate
+	Mode WHOLE_PHRASE
+Endphrase
+
+Phrase fellatio
+	Mode WHOLE_PHRASE
+Endphrase
+
+Phrase felching
+	Mode WHOLE_PHRASE
+Endphrase
+
+Phrase sex
+	Mode WORD_CONTAINS
+	Variant s3x
+Endphrase
+
+Phrase sex
+	Mode WHOLE_PHRASE
+	Variant s3x
+	Variant s e x
+	Variant s ex
+	Variant se x
+Endphrase
+
+Phrase buttplug
+	Mode WHOLE_PHRASE
+Endphrase
+
+Phrase clitoris
+	Mode WHOLE_PHRASE
+Endphrase
+
+Phrase smegma
+	Mode WHOLE_PHRASE
+Endphrase
+
+Phrase spunk
+	Mode WHOLE_PHRASE
+Endphrase
+
+Phrase retard
+	Mode WORD_CONTAINS
+Endphrase
+
+Phrase cunt
+	Mode WORD_CONTAINS
+Endphrase
+
+Phrase bussay
+	Mode WHOLE_PHRASE
+	Variant bussy
+	Variant bssy
+	Variant bssay
+Endphrase
+
+Phrase titty
+	Mode WHOLE_PHRASE
+	Variant t1tty
+	Variant t1tt7
+Endphrase
+
+Phrase titt
+	Mode WHOLE_PHRASE
+	Variant t1tt
+Endphrase
+
+Phrase clit
+	Mode WHOLE_PHRASE
+	Variant cl1t
+Endphrase
+
+Phrase ballsack
+	Mode WORD_CONTAINS
+	Variant b4llsack
+	Variant b4lls4ck
+	Variant ballsack
+	Variant b4llsacks
+	Variant b4lls4cks
+	Variant ballsacks
+Endphrase

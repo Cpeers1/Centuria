@@ -1,0 +1,78 @@
+
+# Filter configuration
+Name Blocked name filter
+Description This filter contains names that are blocked for registration and name chanegs 
+Reason Some names we reserve to prevent impersonation
+Add-Tag USERNAMEFILTER
+
+# Severity can be ALWAYS_FILTERED, USER_STRICT_MODE and INSTAMUTE
+Severity ALWAYS_FILTERED
+
+#
+# Define phrases
+# Phrases can be defined with `Phrase phrase here`, eg `Phrase example`, if it starts with `R:` its a regex match, `RR:` makes it a raw match
+# Phrase bodies look like this:
+#    # Define example
+#    Phrase example
+#        # Set filtering mode, they can be:
+#        #   WHOLE_PHRASE : filters only if the whole phrase is a match, this does not tag unless all words are on their own, unless its a single word, then it checks if the word is present in the sentence, doesnt work if attached to another word, eg. `exam` and `example` arent a match to the system
+#        #   PHRASE_COMBINED : similar to WHOLE_PHRASE but also filters if the phrase without spaces is present in the text
+#        #   WORD_CONTAINS : most recommended in most cases, filters only if a word contains the phrase or variant, unlike WHOLE_PHRASE this DOES tag if the filter words are present attached to other words
+#        #   WORD_COMBINED : similar to WORD_CONTAINS but also filters if the phrase without spaces is present in the text
+#        Mode WHOLE_PHRASE
+#        
+#        # Define variants
+#        # Same rules as initial definition
+#        Variant ex4mple
+# 
+#        # Filtering reason (optional)
+#        Reason Example filter
+#    # Endphrase marks the end of the phrase
+#    Endphrase
+#
+# There wont be commenting much after this because writing filters ABSOLUTELY SUCKS due to all the words that are defined
+#
+
+
+Phrase kitsendragon
+	Mode WHOLE_PHRASE
+	Variant kit
+	Variant kitsendragn
+	Variant kitsendragon
+Endphrase
+
+Phrase fera
+	Mode WHOLE_PHRASE
+	Variant fera
+Endphrase
+
+Phrase fero
+	Mode WHOLE_PHRASE
+	Variant fero
+	Variant fer.ocity
+Endphrase
+
+Phrase wwadmin
+	Mode WHOLE_PHRASE
+	Variant wwadmin
+Endphrase
+
+Phrase ayli
+	Mode WHOLE_PHRASE
+	Variant ayli
+Endphrase
+
+Phrase komodorihero
+	Mode WHOLE_PHRASE
+	Variant komodorihero
+Endphrase
+
+Phrase wwsam
+	Mode WHOLE_PHRASE
+	Variant wwsam
+Endphrase
+
+Phrase blinky
+	Mode WHOLE_PHRASE
+	Variant blinky
+Endphrase

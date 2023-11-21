@@ -1,24 +1,27 @@
 package org.asf.centuria.networking.smartfox;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.packets.smartfox.ISmartfoxPacket;
 
 public class SocketSmartfoxClient extends SmartfoxClient {
 
 	private Socket client;
 	private BaseSmartfoxServer server;
+	private String messageBuffer = "";
 
 	private Object sendLock = new Object();
+	private Object readLock = new Object();
 
 	InputStream input;
 	OutputStream output;
@@ -83,6 +86,8 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 
 	@Override
 	public void sendPacket(String packet) {
+		if (Centuria.debugMode)
+			Centuria.logger.debug("S->C: " + packet);
 		synchronized (sendLock) {
 			try {
 				// Send packet
@@ -109,32 +114,68 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 
 	@Override
 	public String readRawPacket() throws IOException {
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		while (true) {
-			int b = input.read();
-			if (b == -1) {
-				throw new IOException("Stream closed");
-			} else if (b == 0) {
-				String payload = new String(buffer.toByteArray(), "UTF-8");
+		synchronized (readLock) {
+			// Go over received messages
+			String res = findFirstPacket(messageBuffer);
+			if (res != null)
+				return res; // Received a message
 
-				// Solve for the XT issue
-				if (payload.startsWith("%xt|n%"))
-					payload = "%xt%" + payload.substring("%xt|n%".length());
+			// Read messages
+			while (true) {
+				// Read bytes
+				byte[] buffer = new byte[20480];
+				int read = input.read(buffer);
+				if (read <= -1) {
+					// Go over received messages
+					res = findFirstPacket(messageBuffer);
+					if (res != null)
+						return res; // Received a message
 
-				// Compression
-				if (payload.startsWith("$")) {
-					// Decompress packet
-					byte[] compressedData = Base64.getDecoder().decode(payload.substring(1));
-					GZIPInputStream dc = new GZIPInputStream(new ByteArrayInputStream(compressedData));
-					byte[] newData = dc.readAllBytes();
-					dc.close();
-					payload = new String(newData, "UTF-8");
+					// Throw exception
+					throw new IOException("Stream closed");
 				}
+				buffer = Arrays.copyOfRange(buffer, 0, read);
 
-				return payload;
-			} else
-				buffer.write(b);
+				// Load messages string, combining the previous buffer with the current one
+				String messages = messageBuffer + new String(buffer, "UTF-8");
+				res = findFirstPacket(messages);
+				if (res != null)
+					return res; // Received a message
+
+				// Push remaining bytes to the next message
+				messageBuffer = messages;
+			}
 		}
+	}
+
+	private String findFirstPacket(String messages) throws IOException {
+		// Go over received messages
+		if (messages.contains("\0")) {
+			// Pending message found
+			String message = messages.substring(0, messages.indexOf("\0"));
+
+			// Push remaining bytes to the next message
+			messages = messages.substring(messages.indexOf("\0") + 1);
+			messageBuffer = messages;
+
+			// Solve for the XT issue
+			if (message.startsWith("%xt|n%"))
+				message = "%xt%" + message.substring("%xt|n%".length());
+
+			// Compression
+			if (message.startsWith("$")) {
+				// Decompress packet
+				byte[] compressedData = Base64.getDecoder().decode(message.substring(1));
+				GZIPInputStream dc = new GZIPInputStream(new ByteArrayInputStream(compressedData));
+				byte[] newData = dc.readAllBytes();
+				dc.close();
+				message = new String(newData, "UTF-8");
+			}
+
+			// Handle
+			return message;
+		}
+		return null;
 	}
 
 	@Override

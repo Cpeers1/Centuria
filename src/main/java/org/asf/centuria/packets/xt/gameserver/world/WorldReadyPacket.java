@@ -22,6 +22,7 @@ import org.asf.centuria.interactions.InteractionManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.levels.LevelJoinEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
@@ -164,13 +165,13 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		if (chClient != null) {
 			// Leave old public rooms
 			for (String room : chClient.getRooms()) {
-				if (!chClient.isRoomPrivate(room))
+				if (chClient.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT))
 					chClient.leaveRoom(room);
 			}
 
 			// Join room
 			if (!chClient.isInRoom(plr.room))
-				chClient.joinRoom(plr.room, false);
+				chClient.joinRoom(plr.room, ChatRoomTypes.ROOM_CHAT);
 
 			// Make the player know its in the chat
 			plr.wasInChat = true;

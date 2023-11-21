@@ -1,11 +1,10 @@
 package org.asf.centuria.networking.chatserver;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.stream.Stream;
 
 import org.asf.centuria.Centuria;
@@ -14,7 +13,6 @@ import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.servers.ChatServerStartupEvent;
-import org.asf.centuria.networking.chatserver.networking.AbstractChatPacket;
 import org.asf.centuria.networking.chatserver.networking.CreateConversationPacket;
 import org.asf.centuria.networking.chatserver.networking.GetConversation;
 import org.asf.centuria.networking.chatserver.networking.HistoryPacket;
@@ -23,20 +21,19 @@ import org.asf.centuria.networking.chatserver.networking.OpenDMPacket;
 import org.asf.centuria.networking.chatserver.networking.PingPacket;
 import org.asf.centuria.networking.chatserver.networking.SendMessage;
 import org.asf.centuria.networking.chatserver.networking.UserConversations;
+import org.asf.centuria.networking.chatserver.networking.moderator.InitModeratorClient;
+import org.asf.centuria.networking.chatserver.networking.moderator.GetChatRoomList;
+import org.asf.centuria.networking.chatserver.networking.moderator.GetPlayerList;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
+import org.asf.centuria.networking.persistentservice.BasePersistentServiceServer;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 
-public class ChatServer {
-
-	private ServerSocket server;
-	private ArrayList<ChatClient> clients = new ArrayList<ChatClient>();
-	ArrayList<AbstractChatPacket> registry = new ArrayList<AbstractChatPacket>();
+public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServer> {
 
 	public ChatServer(ServerSocket socket) {
-		server = socket;
-		registerPackets();
+		super(socket, ChatClient.class);
 	}
 
 	protected void registerPackets() {
@@ -53,153 +50,20 @@ public class ChatServer {
 		registerPacket(new SendMessage());
 		registerPacket(new OpenDMPacket());
 		registerPacket(new CreateConversationPacket());
-	}
-
-	public ChatClient[] getClients() {
-		while (true) {
-			try {
-				ArrayList<ChatClient> clients = new ArrayList<ChatClient>(this.clients);
-				var cls = clients;
-				for (ChatClient cl : cls) {
-					if (cl == null || cl.getPlayer() == null) {
-						clients.remove(cl);
-					}
-					if (cl == null) {
-						this.clients.remove(cl);
-					}
-				}
-				return clients.toArray(t -> new ChatClient[t]);
-			} catch (ConcurrentModificationException e) {
-			}
-		}
-	}
-
-	/**
-	 * Runs the server
-	 */
-	public void start() {
-		Thread serverProcessor = new Thread(() -> {
-			// Server loop
-			while (server != null) {
-				try {
-					Socket client = server.accept();
-					runClient(client);
-				} catch (IOException ex) {
-					server = null;
-					break;
-				}
-			}
-		}, "Chat Server Thread: " + this.getClass().getSimpleName());
-		serverProcessor.setDaemon(true);
-		serverProcessor.start();
-	}
-
-	// Adds packets to the registry
-	protected void registerPacket(AbstractChatPacket packet) {
-		registry.add(packet);
-	}
-
-	// Client system
-	private void runClient(Socket clientSocket) throws IOException {
-		ChatClient client = new ChatClient(clientSocket, this);
-
-		// Start the client thread
-		Thread th = new Thread(() -> {
-			try {
-				// Run start code
-				client.runClient();
-
-				// Add client
-				if (client.isConnected())
-					clients.add(client);
-
-				// Client loop
-				while (client.getSocket() != null) {
-					JsonObject obj;
-					try {
-						obj = client.readRawPacket();
-					} catch (IllegalArgumentException | JsonIOException e) {
-						throw new IOException("Read failure");
-					}
-
-					try {
-						client.handle(obj);
-					} catch (Exception e) {
-						if (client.isConnected())
-							Centuria.logger.error("Error handling chat packet from "
-									+ client.getPlayer().getDisplayName() + ": " + obj, e);
-					}
-				}
-
-				// Remove client
-				if (clients.contains(client)) {
-					Centuria.logger.info(
-							"Player " + client.getPlayer().getDisplayName() + " disconnected from the chat server.");
-					clients.remove(client);
-				}
-
-				// Mark disconnected
-				if (client.isConnected())
-					client.disconnect();
-			} catch (Exception e) {
-				// Close connection
-				try {
-					if (client.getSocket() != null)
-						client.getSocket().close();
-				} catch (IOException e2) {
-				}
-
-				// Remove client
-				if (clients.contains(client)) {
-					Centuria.logger.info(
-							"Player " + client.getPlayer().getDisplayName() + " disconnected from the chat server.");
-					clients.remove(client);
-				}
-
-				// Log disconnect
-				if (!(e instanceof IOException) && !(e instanceof SocketException)) {
-					Centuria.logger.error("Chat connection died!", e);
-					e.printStackTrace();
-				}
-
-				// Mark disconnected
-				if (client.isConnected())
-					client.disconnect();
-			}
-		}, "Chat Client Thread: " + client);
-		th.setDaemon(true);
-		th.start();
-	}
-
-	/**
-	 * Stops the server
-	 */
-	public void stop() {
-		try {
-			server.close();
-		} catch (IOException e) {
-		}
-		server = null;
-	}
-
-	/**
-	 * Retrieves the server socket
-	 * 
-	 * @return ServerSocket instance or null
-	 */
-	public ServerSocket getServerSocket() {
-		return server;
+		registerPacket(new GetPlayerList());
+		registerPacket(new InitModeratorClient());
+		registerPacket(new GetChatRoomList());
 	}
 
 	/**
 	 * Generates a room info object
 	 * 
 	 * @param room      Room ID
-	 * @param isPrivate True if the room is private, false otherwise
+	 * @param type      Room type
 	 * @param requester Player making the request
 	 * @return JsonObject instance
 	 */
-	public JsonObject roomObject(String room, boolean isPrivate, String requester) {
+	public JsonObject roomObject(String room, String type, String requester) {
 		// Build object
 		JsonObject roomData = new JsonObject();
 		roomData.addProperty("conversation_id", room);
@@ -209,7 +73,7 @@ public class ChatServer {
 		DMManager manager = DMManager.getInstance();
 
 		// Check type and validity
-		if (!isPrivate || !manager.dmExists(room)) {
+		if (type.equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT) || !manager.dmExists(room)) {
 			// Build participants object
 			JsonArray members = new JsonArray();
 			for (ChatClient cl : getClients()) {
@@ -229,6 +93,10 @@ public class ChatServer {
 					members.add(participant);
 			}
 
+			// Time format
+			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+
 			// if its only one, the client will bug, bc if its only one its likely only the
 			// person thats requesting the dm
 			if (members.size() <= 1)
@@ -242,13 +110,16 @@ public class ChatServer {
 				PrivateChatMessage recent = msgs[msgs.length - 1];
 				JsonObject msg = new JsonObject();
 				msg.addProperty("body", recent.content);
-				msg.addProperty("sent_at", recent.sentAt);
+				msg.addProperty("sent_at", fmt.format(new Date(recent.sentAt)));
 				msg.addProperty("source", recent.source);
 				roomData.add("recent_message", msg);
 			}
 		}
 
-		roomData.addProperty("conversationType", isPrivate ? "private" : "room");
+		// Add type
+		roomData.addProperty("conversationType", type);
+
+		// Return
 		return roomData;
 	}
 
@@ -263,6 +134,16 @@ public class ChatServer {
 			if (cl.getPlayer().getAccountID().equals(accountID))
 				return cl;
 		return null;
+	}
+
+	@Override
+	protected ChatClient createClient(Socket clientSocket) {
+		return new ChatClient(clientSocket, this);
+	}
+
+	@Override
+	protected void logDisconnect(ChatClient client) {
+		Centuria.logger.info("Player " + client.getPlayer().getDisplayName() + " disconnected from the chat server.");
 	}
 
 }

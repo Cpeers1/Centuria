@@ -84,7 +84,7 @@ public class FallbackAPIProcessor extends HttpPushProcessor {
 					// open friend list
 					socialListManager.openSocialList(targetPlayerID);
 					if (socialListManager.getPlayerIsBlocked(sourcePlayerID, targetPlayerID)) {
-						SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
+						SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 						fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 						String createdAt = fmt.format(new Date());
 
@@ -440,6 +440,23 @@ public class FallbackAPIProcessor extends HttpPushProcessor {
 				// log details
 				if (Centuria.debugMode) {
 					System.out.println("[API] [/s/desktop] [" + method + "] DUD");
+				}
+			} else if (path.equalsIgnoreCase("/u/settings")) {
+				// Settings update
+				var acc = verifyAndGetAcc(manager);
+				if (acc == null) {
+					this.setResponseStatus(401, "Unauthorized");
+					return;
+				}
+
+				// Parse
+				JsonObject settingsUpdate = JsonParser.parseString(new String(body, "UTF-8")).getAsJsonObject();
+
+				// Update
+				setResponseStatus(200, "OK");
+				if (settingsUpdate.has("privacy")) {
+					// Update privacy settings
+					acc.savePrivacySettings(settingsUpdate.get("privacy").getAsJsonObject());
 				}
 			} else {
 				// log details

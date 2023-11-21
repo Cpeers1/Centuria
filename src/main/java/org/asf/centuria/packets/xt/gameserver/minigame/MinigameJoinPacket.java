@@ -8,6 +8,7 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.minigames.AbstractMinigame;
 import org.asf.centuria.minigames.MinigameManager;
+import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
@@ -66,8 +67,11 @@ public class MinigameJoinPacket implements IXtPacket<MinigameJoinPacket> {
 		join.success = isMinigameSupported;
 		join.levelType = 1;
 		join.levelID = minigameID;
-		join.roomIdentifier = "room_" + plr.levelID;
+		join.roomIdentifier = ((GameServer) client.getServer()).getRoomManager().findBestRoom(minigameID, plr).getID();
 		client.sendPacket(join);
+
+		// Log
+		Centuria.logger.info("Player " + plr.account.getDisplayName() + " is joining minigame " + join.levelID);
 
 		// Start game
 		MinigameStartPacket start = new MinigameStartPacket();

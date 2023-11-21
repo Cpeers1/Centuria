@@ -295,6 +295,9 @@ public class CurrencyAccessor {
 
 	// Called to update the player
 	private void updatePlayer(SmartfoxClient client) {
+		if (client == null)
+			return;
+
 		// Update currency object in client inventory
 		InventoryItemPacket pkt = new InventoryItemPacket();
 		pkt.item = inventory.getItem("104");

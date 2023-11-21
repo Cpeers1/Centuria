@@ -11,19 +11,20 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Component;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.ListDataListener;
 
 import org.asf.centuria.data.XtReader;
-import org.asf.centuria.util.TaskThread;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.net.ssl.SSLSocketFactory;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
@@ -33,6 +34,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
@@ -58,8 +61,11 @@ public class TestChatClient {
 	private JTextField txtGamePort;
 	private JTextField txtChatPort;
 
+	private JTextField txtTPLevel;
+
 	private JButton btnNewButton;
 	private JButton btnNewButton_1;
+	private JButton btnTeleport;
 
 	private String localUUID;
 	private String localToken;
@@ -69,7 +75,32 @@ public class TestChatClient {
 	private String levelId;
 	private String pendingChatRoom;
 
-	private TaskThread clientOutputs = new TaskThread();
+	private JList<String> playersList;
+	private ArrayList<String> onlinePlayerNames = new ArrayList<String>();
+
+	private void reloadPlayerList() {
+		playersList.setModel(new ListModel<String>() {
+
+			@Override
+			public int getSize() {
+				return onlinePlayerNames.size();
+			}
+
+			@Override
+			public String getElementAt(int index) {
+				return onlinePlayerNames.get(index);
+			}
+
+			@Override
+			public void addListDataListener(ListDataListener l) {
+			}
+
+			@Override
+			public void removeListDataListener(ListDataListener l) {
+			}
+
+		});
+	}
 
 	/**
 	 * Launch the application.
@@ -228,25 +259,32 @@ public class TestChatClient {
 		panel.add(panel_1_1_1);
 
 		txtRoom = new JTextField();
-		txtRoom.setBounds(10, 379, 155, 19);
+		txtRoom.setBounds(10, 311, 147, 19);
 		panel_1_1_1.add(txtRoom);
 		txtRoom.setColumns(10);
 
 		btnNewButton_1 = new JButton("Join");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Join room
-				JsonObject pk = new JsonObject();
-				pk.addProperty("cmd", "conversations.addParticipant");
-				pk.addProperty("conversationId", txtRoom.getText());
-				pk.addProperty("participant", localUUID);
-				sendChatPacket(pk);
+
+				if (chatClient != null) {
+					// Join room
+					try {
+						JsonObject pk = new JsonObject();
+						pk.addProperty("cmd", "conversations.addParticipant");
+						pk.addProperty("conversationId", txtRoom.getText());
+						pk.addProperty("participant", localUUID);
+						sendChatPacket(pk);
+						room = txtRoom.getText();
+					} catch (IOException e2) {
+					}
+				}
 
 				room = txtRoom.getText();
 			}
 		});
 		btnNewButton_1.setEnabled(false);
-		btnNewButton_1.setBounds(175, 378, 85, 21);
+		btnNewButton_1.setBounds(165, 310, 85, 21);
 		panel_1_1_1.add(btnNewButton_1);
 
 		btnNewButton.addActionListener(new ActionListener() {
@@ -258,10 +296,9 @@ public class TestChatClient {
 						textPane.setText("");
 						btnNewButton.setEnabled(false);
 						btnNewButton_1.setEnabled(false);
-
-						clientOutputs.stopCleanly();
-						clientOutputs = new TaskThread();
-						clientOutputs.start();
+						btnTeleport.setEnabled(false);
+						entryComplete = false;
+						joinedRoom = false;
 
 						btnNewButton.setText("Connecting...");
 						log("[system] Connecting to API server...");
@@ -288,7 +325,6 @@ public class TestChatClient {
 							data = downloadJSON(txtAPIServer.getText() + "/u/user", null, token);
 							JsonObject user = JsonParser.parseString(data).getAsJsonObject();
 							log("[system] Logged in as: " + user.get("display_name").getAsString());
-							displayNames.put(uuid, user.get("display_name").getAsString());
 
 							// Find game server
 							log("[system] Finding servers...");
@@ -300,6 +336,7 @@ public class TestChatClient {
 							// Connect the game server
 							log("[system] Connecting to the game server...");
 							gameClient = new Socket(server, Integer.valueOf(txtGamePort.getText()));
+							messageBuffer = "";
 							sendPacket("<msg t='sys'><body action='verChk' r='0'><ver v='165' /></body></msg>");
 							readRawPacket();
 							sendPacket("<msg t='sys'><body action='rndK' r='-1'></body></msg>");
@@ -330,19 +367,104 @@ public class TestChatClient {
 
 											// Handle
 											switch (id) {
-											case "rj": {
-												rd.readBoolean();
-												levelId = rd.read();
-												rd.read();
-												rd.read();
-												rd.read();
-												pendingChatRoom = rd.read();
 
-												log("[system] Joining room: " + levelId);
-												joinedRoom = true;
+											// Spawn object
+											case "oi": {
+												String uid = rd.read();
+												String defID = rd.read();
+												if (defID.equals("852")) {
+													String dsp = getDisplayName(uid);
+													if (!onlinePlayerNames.contains(dsp)) {
+														onlinePlayerNames.add(dsp);
+														SwingUtilities.invokeLater(() -> {
+															reloadPlayerList();
+														});
+													}
+													break;
+												}
+											}
+
+											// Remove object
+											case "od": {
+												String uid = rd.read();
+												String dsp = getDisplayName(uid);
+												if (onlinePlayerNames.contains(dsp)) {
+													onlinePlayerNames.remove(dsp);
+													SwingUtilities.invokeLater(() -> {
+														reloadPlayerList();
+													});
+												}
 												break;
 											}
+
+											// Room join
+											case "rj": {
+												boolean success = rd.readBoolean();
+												if (success) {
+													// Parse
+													levelId = rd.read();
+													txtTPLevel.setText(levelId);
+													rd.read();
+													rd.read();
+													rd.read();
+													pendingChatRoom = rd.read();
+
+													// Log
+													log("[system] Joining room: " + levelId);
+
+													// Reset players
+													onlinePlayerNames.clear();
+													SwingUtilities.invokeLater(() -> {
+														reloadPlayerList();
+													});
+
+													// Check chat join
+													if (chatClient != null) {
+														// Switch chat
+														log("[system] Switching chat room to: " + pendingChatRoom);
+
+														// Set room
+														txtRoom.setText(pendingChatRoom);
+
+														// Join room
+														JsonObject pk = new JsonObject();
+														pk.addProperty("cmd", "conversations.addParticipant");
+														pk.addProperty("conversationId", pendingChatRoom);
+														pk.addProperty("participant", localUUID);
+														sendChatPacket(pk);
+
+														room = txtRoom.getText();
+													}
+
+													// Full world entry
+													log("[system] Entering world...");
+													sendPacket("%xt%o%wr%-1%3b8493d7-5077-4e90-880c-ed2974513a2f%");
+
+													// Mark joined
+													joinedRoom = true;
+												} else {
+													log("[system] Room join failure!");
+													joinedRoom = true;
+													entryComplete = true;
+												}
+
+												break;
+											}
+
+											// ObjectInfo Avatar Local
 											case "oial": {
+												// Log completion
+												log("[system] World join complete");
+
+												String dsp = getDisplayName(localUUID);
+												if (!onlinePlayerNames.contains(dsp)) {
+													onlinePlayerNames.add(dsp);
+													SwingUtilities.invokeLater(() -> {
+														reloadPlayerList();
+													});
+												}
+
+												// Mark done
 												entryComplete = true;
 												break;
 											}
@@ -415,14 +537,18 @@ public class TestChatClient {
 							// Start keep alive thread
 							kaThread = new Thread(() -> {
 								while (chatClient != null && chatClient.isConnected()) {
-									JsonObject res = new JsonObject();
-									res.addProperty("eventId", "ping");
-									res.addProperty("success", true);
-									sendChatPacket(res);
-
 									try {
-										Thread.sleep(10000);
-									} catch (InterruptedException e2) {
+										JsonObject res = new JsonObject();
+										res.addProperty("cmd", "ping");
+										res.addProperty("success", true);
+										sendChatPacket(res);
+
+										try {
+											Thread.sleep(10000);
+										} catch (InterruptedException e2) {
+										}
+									} catch (IOException e2) {
+										break;
 									}
 								}
 							}, "Chat keep-alive");
@@ -434,7 +560,11 @@ public class TestChatClient {
 								while (chatClient != null && chatClient.isConnected()) {
 									try {
 										JsonObject packet = readChatPacket();
-										if (packet.get("eventId").getAsString().equals("chat.postMessage")) {
+
+										// Handle packet
+										switch (packet.get("eventId").getAsString()) {
+
+										case "chat.postMessage": {
 											// Received a chat message, verify it
 											if (room != null
 													&& packet.get("conversationId").getAsString().equals(room)) {
@@ -442,6 +572,9 @@ public class TestChatClient {
 												log(getDisplayName(packet.get("source").getAsString()) + ": "
 														+ packet.get("message").getAsString());
 											}
+											break;
+										}
+
 										}
 									} catch (IOException e2) {
 										disconnect();
@@ -451,9 +584,6 @@ public class TestChatClient {
 							}, "Chat packet handler");
 							kaThread.setDaemon(true);
 							kaThread.start();
-
-							// Log success
-							log("[system] Chat server connection established.");
 
 							// Join chat room
 							if (pendingChatRoom != null) {
@@ -470,19 +600,17 @@ public class TestChatClient {
 								room = txtRoom.getText();
 							}
 
-							// Full world entry
-							log("[system] Entering world...");
-							sendPacket("%xt%o%wr%-1%3b8493d7-5077-4e90-880c-ed2974513a2f%");
-
 							// Wait for entry
 							while (!entryComplete)
 								Thread.sleep(100);
 
-							// Log completion
-							log("[system] World join complete");
+							// Log success
+							log("[system] Chat server connection established.");
+							log("");
 
 							btnNewButton.setEnabled(true);
 							btnNewButton_1.setEnabled(true);
+							btnTeleport.setEnabled(true);
 							btnNewButton.setText("Disconnect");
 						} catch (Exception e1) {
 							// Error
@@ -491,6 +619,7 @@ public class TestChatClient {
 							btnNewButton.setText("Connect");
 							btnNewButton.setEnabled(true);
 							btnNewButton_1.setEnabled(false);
+							btnTeleport.setEnabled(false);
 
 							// Cleanup
 							try {
@@ -515,13 +644,60 @@ public class TestChatClient {
 				th.start();
 			}
 		});
+
+		lblNewLabel_4 = new JLabel("Players");
+		lblNewLabel_4.setBounds(10, 12, 240, 13);
+		panel_1_1_1.add(lblNewLabel_4);
+
+		playersList = new JList<String>();
+		JScrollPane pan = new JScrollPane(playersList);
+		pan.setBounds(10, 31, 240, 117);
+		panel_1_1_1.add(pan);
+
 		JLabel lblNewLabel_3 = new JLabel("Rooms");
-		lblNewLabel_3.setBounds(10, 264, 240, 13);
+		lblNewLabel_3.setBounds(10, 158, 240, 13);
 		panel_1_1_1.add(lblNewLabel_3);
 
-		JLabel lblNewLabel_3_1 = new JLabel("Players");
-		lblNewLabel_3_1.setBounds(10, 10, 240, 13);
-		panel_1_1_1.add(lblNewLabel_3_1);
+		JLabel lblNewLabel_3_2 = new JLabel("Map teleporter");
+		lblNewLabel_3_2.setBounds(10, 358, 240, 13);
+		panel_1_1_1.add(lblNewLabel_3_2);
+
+		txtTPLevel = new JTextField();
+		txtTPLevel.setColumns(10);
+		txtTPLevel.setBounds(10, 376, 147, 19);
+		panel_1_1_1.add(txtTPLevel);
+
+		btnTeleport = new JButton("Teleport");
+		btnTeleport.setEnabled(false);
+		btnTeleport.setBounds(165, 375, 85, 21);
+		btnTeleport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (gameClient != null) {
+					Thread th = new Thread(() -> {
+						try {
+							// Join room
+							joinedRoom = false;
+							entryComplete = false;
+							sendPacket("%xt%o%rj%-1%" + txtTPLevel.getText() + "%0%");
+
+							// Wait for success
+							while (!joinedRoom) {
+								Thread.sleep(100);
+							}
+
+							// Wait for entry
+							while (!entryComplete)
+								Thread.sleep(100);
+						} catch (Exception e2) {
+						}
+					});
+					th.setDaemon(true);
+					th.start();
+				}
+			}
+		});
+		panel_1_1_1.add(btnTeleport);
+
 	}
 
 	private String getDisplayName(String ID) {
@@ -531,18 +707,14 @@ public class TestChatClient {
 
 		// Contact the API
 		JsonObject req = new JsonObject();
-		JsonArray uuids = new JsonArray();
-		uuids.add(ID);
-		req.add("uuids", uuids);
+		req.addProperty("id", ID);
 		try {
-			JsonArray foundNames = JsonParser
-					.parseString(downloadJSON(txtAPIServer.getText() + "/i/display_names", req.toString(), localToken))
-					.getAsJsonObject().get("found").getAsJsonArray();
-			if (foundNames.size() == 1) {
-				String name = foundNames.get(0).getAsJsonObject().get("display_name").getAsString();
-				displayNames.put(ID, name);
-				return name;
-			}
+			JsonObject res = JsonParser
+					.parseString(downloadJSON(txtAPIServer.getText() + "/centuria/getuser", req.toString(), localToken))
+					.getAsJsonObject();
+			String name = res.get("display_name").getAsString();
+			displayNames.put(ID, name);
+			return name;
 		} catch (JsonSyntaxException | IOException e) {
 		}
 
@@ -554,9 +726,6 @@ public class TestChatClient {
 		if (gameClient == null)
 			return;
 
-		// Disconnect
-		clientOutputs.stopCleanly();
-
 		try {
 			if (gameClient != null)
 				gameClient.close();
@@ -564,6 +733,7 @@ public class TestChatClient {
 				chatClient.close();
 		} catch (IOException e1) {
 		}
+		displayNames.clear();
 		gameClient = null;
 		chatClient = null;
 		room = null;
@@ -571,17 +741,26 @@ public class TestChatClient {
 		log("[system] Disconnected from game and chat servers.");
 		btnNewButton.setEnabled(true);
 		btnNewButton_1.setEnabled(false);
+		btnTeleport.setEnabled(false);
 		btnNewButton.setText("Connect");
+
+		this.onlinePlayerNames.clear();
+		SwingUtilities.invokeLater(() -> {
+			this.reloadPlayerList();
+		});
 	}
 
-	private void sendChatPacket(JsonObject packet) {
-		clientOutputs.schedule(() -> {
+	private Object chatSendLock = new Object();
+
+	private void sendChatPacket(JsonObject packet) throws IOException {
+		synchronized (chatSendLock) {
 			try {
 				chatClient.getOutputStream().write(packet.toString().getBytes("UTF-8"));
 			} catch (IOException e) {
 				disconnect();
+				throw e;
 			}
-		});
+		}
 	}
 
 	private synchronized JsonObject readChatPacket() throws IOException {
@@ -592,28 +771,16 @@ public class TestChatClient {
 			if (b == -1) {
 				throw new IOException("Stream closed");
 			} else if (b == 0) {
-				// Solve for the XT issue
-				if (payload.startsWith("%xt|n%"))
-					payload = "%xt%" + payload.substring("%xt|n%".length());
-
-				// Compression
-				if (payload.startsWith("$")) {
-					// Decompress packet
-					byte[] compressedData = Base64.getDecoder().decode(payload.substring(1));
-					GZIPInputStream dc = new GZIPInputStream(new ByteArrayInputStream(compressedData));
-					byte[] newData = dc.readAllBytes();
-					dc.close();
-					payload = new String(newData, "UTF-8");
-				}
-
 				return JsonParser.parseString(payload).getAsJsonObject();
 			} else
 				payload += (char) b;
 		}
 	}
 
+	private Object gameSendLock = new Object();
+
 	private void sendPacket(String packet) throws IOException {
-		clientOutputs.schedule(() -> {
+		synchronized (gameSendLock) {
 			try {
 				// Send packet
 				byte[] payload = packet.getBytes("UTF-8");
@@ -622,34 +789,105 @@ public class TestChatClient {
 				gameClient.getOutputStream().flush();
 			} catch (IOException e) {
 			}
-		});
+		}
 	}
 
+	private String messageBuffer = "";
+	private Object readLock = new Object();
+	private JLabel lblNewLabel_4;
+
 	private String readRawPacket() throws IOException {
-		// Read packet
-		String payload = new String();
-		while (true) {
-			int b = gameClient.getInputStream().read();
-			if (b == -1) {
-				throw new IOException("Stream closed");
-			} else if (b == 0) {
+		synchronized (readLock) {
+			// Go over received messages
+			if (messageBuffer.contains("\0")) {
+				String message = messageBuffer.substring(0, messageBuffer.indexOf("\0"));
+				messageBuffer = messageBuffer.substring(messageBuffer.indexOf("\0") + 1);
+
 				// Solve for the XT issue
-				if (payload.startsWith("%xt|n%"))
-					payload = "%xt%" + payload.substring("%xt|n%".length());
+				if (message.startsWith("%xt|n%"))
+					message = "%xt%" + message.substring("%xt|n%".length());
 
 				// Compression
-				if (payload.startsWith("$")) {
+				if (message.startsWith("$")) {
 					// Decompress packet
-					byte[] compressedData = Base64.getDecoder().decode(payload.substring(1));
+					byte[] compressedData = Base64.getDecoder().decode(message.substring(1));
 					GZIPInputStream dc = new GZIPInputStream(new ByteArrayInputStream(compressedData));
 					byte[] newData = dc.readAllBytes();
 					dc.close();
-					payload = new String(newData, "UTF-8");
+					message = new String(newData, "UTF-8");
 				}
 
-				return payload;
-			} else
-				payload += (char) b;
+				// Handle
+				return message;
+			}
+
+			// Read messages
+			while (true) {
+				// Read bytes
+				byte[] buffer = new byte[20480];
+				int read = gameClient.getInputStream().read(buffer);
+				if (read <= -1) {
+					// Go over received messages
+					if (messageBuffer.contains("\0")) {
+						String message = messageBuffer.substring(0, messageBuffer.indexOf("\0"));
+						messageBuffer = messageBuffer.substring(messageBuffer.indexOf("\0") + 1);
+
+						// Solve for the XT issue
+						if (message.startsWith("%xt|n%"))
+							message = "%xt%" + message.substring("%xt|n%".length());
+
+						// Compression
+						if (message.startsWith("$")) {
+							// Decompress packet
+							byte[] compressedData = Base64.getDecoder().decode(message.substring(1));
+							GZIPInputStream dc = new GZIPInputStream(new ByteArrayInputStream(compressedData));
+							byte[] newData = dc.readAllBytes();
+							dc.close();
+							message = new String(newData, "UTF-8");
+						}
+
+						// Handle
+						return message;
+					}
+
+					// Throw exception
+					throw new IOException("Stream closed");
+				}
+				buffer = Arrays.copyOfRange(buffer, 0, read);
+
+				// Load messages string, combining the previous buffer with the current one
+				String messages = messageBuffer + new String(buffer, "UTF-8");
+
+				// Go over received messages
+				if (messages.contains("\0")) {
+					// Pending message found
+					String message = messages.substring(0, messages.indexOf("\0"));
+
+					// Push remaining bytes to the next message
+					messages = messages.substring(messages.indexOf("\0") + 1);
+					messageBuffer = messages;
+
+					// Solve for the XT issue
+					if (message.startsWith("%xt|n%"))
+						message = "%xt%" + message.substring("%xt|n%".length());
+
+					// Compression
+					if (message.startsWith("$")) {
+						// Decompress packet
+						byte[] compressedData = Base64.getDecoder().decode(message.substring(1));
+						GZIPInputStream dc = new GZIPInputStream(new ByteArrayInputStream(compressedData));
+						byte[] newData = dc.readAllBytes();
+						dc.close();
+						message = new String(newData, "UTF-8");
+					}
+
+					// Handle
+					return message;
+				}
+
+				// Push remaining bytes to the next message
+				messageBuffer = messages;
+			}
 		}
 	}
 

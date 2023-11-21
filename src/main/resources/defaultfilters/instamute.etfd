@@ -1,0 +1,75 @@
+
+# Filter configuration
+Name Default instamute text filter
+Description This filter contains slurs and other words that result in a mute
+Reason Muted for extremely bad language, slurs and such may never be used
+
+# Severity can be ALWAYS_FILTERED, USER_STRICT_MODE and INSTAMUTE
+Severity INSTAMUTE
+
+#
+# Define phrases
+# Phrases can be defined with `Phrase phrase here`, eg `Phrase example`, if it starts with `R:` its a regex match, `RR:` makes it a raw match
+# Phrase bodies look like this:
+#    # Define example
+#    Phrase example
+#        # Set filtering mode, they can be:
+#        #   WHOLE_PHRASE : filters only if the whole phrase is a match, this does not tag unless all words are on their own, unless its a single word, then it checks if the word is present in the sentence, doesnt work if attached to another word, eg. `exam` and `example` arent a match to the system
+#        #   PHRASE_COMBINED : similar to WHOLE_PHRASE but also filters if the phrase without spaces is present in the text
+#        #   WORD_CONTAINS : most recommended in most cases, filters only if a word contains the phrase or variant, unlike WHOLE_PHRASE this DOES tag if the filter words are present attached to other words
+#        #   WORD_COMBINED : similar to WORD_CONTAINS but also filters if the phrase without spaces is present in the text
+#        Mode WHOLE_PHRASE
+#        
+#        # Define variants
+#        # Same rules as initial definition
+#        Variant ex4mple
+# 
+#        # Filtering reason (optional)
+#        Reason Example filter
+#    # Endphrase marks the end of the phrase
+#    Endphrase
+#
+# There wont be commenting much after this because writing filters ABSOLUTELY SUCKS due to all the words that are defined
+#
+
+
+Phrase nigger
+    Mode WORD_CONTAINS
+    Variant n1gger
+    Variant n1gg3r
+    Variant nigg3r
+    Variant nigga
+    Variant n1gg4
+    Variant nigg4
+    Variant n1gg4
+Endphrase
+
+Phrase nigger
+    Mode WHOLE_PHRASE
+    Variant nigg
+    Variant n1gg
+Endphrase
+
+Phrase faggot
+    Mode WORD_CONTAINS
+    Variant f4ggot
+    Variant fagg0t
+    Variant f4gg0t
+    Variant fa99ot
+    Variant fa990t
+Endphrase
+
+Phrase faggot
+    Mode WHOLE_PHRASE
+    Variant fag
+    Variant f4g
+Endphrase
+
+Phrase beaner
+    Mode WORD_CONTAINS
+    Variant b3eaner
+    Variant b3e4n3r
+    Variant b3ean3r
+    Variant be4ner
+Endphrase
+

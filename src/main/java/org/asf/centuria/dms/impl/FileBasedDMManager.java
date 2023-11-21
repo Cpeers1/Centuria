@@ -5,7 +5,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.asf.centuria.dms.DMManager;
@@ -20,6 +23,7 @@ import com.google.gson.JsonParser;
 public class FileBasedDMManager extends DMManager {
 
 	private ArrayList<String> activeIDs = new ArrayList<String>();
+	private static final int HISTORY_LIMIT = 5500;
 
 	@Override
 	public void openDM(String dmID, String[] participants) {
@@ -63,16 +67,30 @@ public class FileBasedDMManager extends DMManager {
 			ArrayList<PrivateChatMessage> messages = new ArrayList<PrivateChatMessage>();
 			for (JsonElement ele : data) {
 				JsonObject msg = ele.getAsJsonObject();
-				String source = msg.get("source").getAsString();
+				String source;
+				if (msg.has("source"))
+					source = msg.get("source").getAsString();
+				else
+					source = msg.get("s").getAsString();
 
 				if (SocialManager.getInstance().socialListExists(requester)
 						&& SocialManager.getInstance().getPlayerIsBlocked(requester, source))
 					continue;
 
 				PrivateChatMessage message = new PrivateChatMessage();
-				message.content = msg.get("content").getAsString();
+				message.content = msg.has("content") ? msg.get("content").getAsString() : msg.get("c").getAsString();
 				message.source = source;
-				message.sentAt = msg.get("sentAt").getAsString();
+				if (msg.has("sentAt")) {
+					// Parse old format
+					SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+					fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+					message.sentAt = 0;
+					try {
+						message.sentAt = fmt.parse(msg.get("sentAt").getAsString()).getTime();
+					} catch (ParseException e) {
+					}
+				} else
+					message.sentAt = msg.get("a").getAsLong();
 				messages.add(message);
 			}
 			return messages.toArray(t -> new PrivateChatMessage[t]);
@@ -94,14 +112,14 @@ public class FileBasedDMManager extends DMManager {
 			reader.close();
 
 			// Remove first message if the chat is too long
-			if (data.size() >= 20)
+			if (data.size() >= HISTORY_LIMIT)
 				data.remove(0);
 
 			// Add message
 			JsonObject msg = new JsonObject();
-			msg.addProperty("content", message.content);
-			msg.addProperty("source", message.source);
-			msg.addProperty("sentAt", message.sentAt);
+			msg.addProperty("c", message.content);
+			msg.addProperty("s", message.source);
+			msg.addProperty("a", message.sentAt);
 			data.add(msg);
 
 			// Save to disk

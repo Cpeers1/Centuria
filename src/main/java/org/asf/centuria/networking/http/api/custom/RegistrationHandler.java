@@ -2,15 +2,12 @@ package org.asf.centuria.networking.http.api.custom;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.registration.RegistrationVerificationHelper;
 import org.asf.centuria.accounts.registration.RegistrationVerificationResult;
 import org.asf.centuria.accounts.registration.RegistrationVerificationStatus;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.centuria.textfilter.TextFilterService;
 import org.asf.connective.RemoteClient;
 import org.asf.connective.processors.HttpPushProcessor;
 
@@ -18,54 +15,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class RegistrationHandler extends HttpPushProcessor {
-
-	private static String[] nameBlacklist = new String[] { "kit", "kitsendragn", "kitsendragon", "fera", "fero",
-			"wwadmin", "ayli", "komodorihero", "wwsam", "blinky", "fer.ocity" };
-
-	private static ArrayList<String> muteWords = new ArrayList<String>();
-	private static ArrayList<String> filterWords = new ArrayList<String>();
-
-	static {
-		// Load filter
-		try {
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("textfilter/filter.txt");
-			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
-			for (String line : lines.split("\n")) {
-				if (line.isEmpty() || line.startsWith("#"))
-					continue;
-
-				String data = line.trim();
-				while (data.contains("  "))
-					data = data.replace("  ", "");
-
-				for (String word : data.split(" "))
-					filterWords.add(word.toLowerCase());
-			}
-			strm.close();
-		} catch (IOException e) {
-		}
-
-		// Load ban words
-		try {
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("textfilter/instamute.txt");
-			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
-			for (String line : lines.split("\n")) {
-				if (line.isEmpty() || line.startsWith("#"))
-					continue;
-
-				String data = line.trim();
-				while (data.contains("  "))
-					data = data.replace("  ", "");
-
-				for (String word : data.split(" "))
-					muteWords.add(word.toLowerCase());
-			}
-			strm.close();
-		} catch (IOException e) {
-		}
-	}
 
 	@Override
 	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
@@ -100,81 +49,27 @@ public class RegistrationHandler extends HttpPushProcessor {
 			char[] password = request.get("password").getAsString().toCharArray();
 
 			// Verify login name blacklist
-			for (String name : nameBlacklist) {
-				if (accountName.equalsIgnoreCase(name)) {
-					// Reply with error
-					response.addProperty("status", "failure");
-					response.addProperty("error", "invalid_login_name");
-					response.addProperty("error_message",
-							"Invalid login name: this name may not be used as it may not be appropriate.");
-					setResponseContent("text/json", response.toString());
-					this.setResponseStatus(400, "Bad request");
-					return;
-				}
+			if (TextFilterService.getInstance().isFiltered(accountName, true, "USERNAMEFILTER")) {
+				// Reply with error
+				response.addProperty("status", "failure");
+				response.addProperty("error", "invalid_login_name");
+				response.addProperty("error_message",
+						"Invalid login name: this name may not be used as it may not be appropriate.");
+				setResponseContent("text/json", response.toString());
+				this.setResponseStatus(400, "Bad request");
+				return;
 			}
 
 			// Verify name blacklist
-			for (String name : nameBlacklist) {
-				if (displayName.equalsIgnoreCase(name)) {
-					// Reply with error
-					response.addProperty("status", "failure");
-					response.addProperty("error", "invalid_display_name");
-					response.addProperty("error_message",
-							"Invalid display name: this name may not be used as it may not be appropriate.");
-					setResponseContent("text/json", response.toString());
-					this.setResponseStatus(400, "Bad request");
-					return;
-				}
-			}
-
-			// Verify login name with filters
-			for (String word : accountName.split(" ")) {
-				if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-					// Reply with error
-					response.addProperty("status", "failure");
-					response.addProperty("error", "invalid_login_name");
-					response.addProperty("error_message",
-							"Invalid login name: this name may not be used as it may not be appropriate.");
-					setResponseContent("text/json", response.toString());
-					this.setResponseStatus(400, "Bad request");
-					return;
-				}
-
-				if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-					// Reply with error
-					response.addProperty("status", "failure");
-					response.addProperty("error", "invalid_login_name");
-					response.addProperty("error_message",
-							"Invalid login name: this name may not be used as it may not be appropriate.");
-					setResponseContent("text/json", response.toString());
-					this.setResponseStatus(400, "Bad request");
-					return;
-				}
-			}
-
-			// Verify name with filters
-			for (String word : displayName.split(" ")) {
-				if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-					// Reply with error
-					response.addProperty("status", "failure");
-					response.addProperty("error", "invalid_display_name");
-					response.addProperty("error_message",
-							"Invalid display name: this name may not be used as it may not be appropriate.");
-					setResponseContent("text/json", response.toString());
-					this.setResponseStatus(400, "Bad request");
-					return;
-				}
-
-				if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-					// Reply with error
-					response.addProperty("status", "failure");
-					response.addProperty("error", "invalid_display_name");
-					response.addProperty("error_message",
-							"Invalid display name: this name may not be used as it may not be appropriate.");
-					setResponseContent("text/json", response.toString());
-					this.setResponseStatus(400, "Bad request");
-					return;
-				}
+			if (TextFilterService.getInstance().isFiltered(displayName, true, "USERNAMEFILTER")) {
+				// Reply with error
+				response.addProperty("status", "failure");
+				response.addProperty("error", "invalid_display_name");
+				response.addProperty("error_message",
+						"Invalid display name: this name may not be used as it may not be appropriate.");
+				setResponseContent("text/json", response.toString());
+				this.setResponseStatus(400, "Bad request");
+				return;
 			}
 
 			// Verify login name validity

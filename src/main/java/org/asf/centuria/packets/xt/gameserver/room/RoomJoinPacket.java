@@ -6,6 +6,7 @@ import java.io.InputStream;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
@@ -67,7 +68,7 @@ public class RoomJoinPacket implements IXtPacket<RoomJoinPacket> {
 			client.sendPacket(this);
 		} else {
 			Player plr = (Player) client.container;
-			roomIdentifier = "room_" + levelID;
+			roomIdentifier = ((GameServer) client.getServer()).getRoomManager().findBestRoom(levelID, plr).getID();
 			plr.teleportToRoom(levelID, levelType, issRoomID, roomIdentifier, teleport);
 		}
 		return true;

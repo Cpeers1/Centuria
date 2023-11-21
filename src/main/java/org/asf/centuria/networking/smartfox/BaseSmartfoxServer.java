@@ -108,6 +108,8 @@ public abstract class BaseSmartfoxServer {
 					// Client loop
 					while (client.isConnected()) {
 						String data = readRawPacket(client);
+						if (Centuria.debugMode)
+							Centuria.logger.debug("C->S: " + data);
 						try {
 							handle(data, client);
 						} catch (Exception e) {
@@ -150,6 +152,8 @@ public abstract class BaseSmartfoxServer {
 						client.closeClient();
 						return;
 					}
+					if (Centuria.debugMode)
+						Centuria.logger.debug("C->S: " + data);
 					try {
 						handle(data, client);
 					} catch (IOException e) {
@@ -243,6 +247,8 @@ public abstract class BaseSmartfoxServer {
 			throws IOException {
 		// Read data
 		String data = readRawPacket(AbstractSmartfoxClient);
+		if (Centuria.debugMode)
+			Centuria.logger.debug("C->S: " + data);
 
 		// Parse packet
 		return parsePacketPayload(data, packetType);

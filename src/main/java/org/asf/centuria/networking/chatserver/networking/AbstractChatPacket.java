@@ -1,17 +1,10 @@
 package org.asf.centuria.networking.chatserver.networking;
 
 import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.networking.chatserver.ChatServer;
+import org.asf.centuria.networking.persistentservice.networking.AbstractPersistentServicePacket;
 
-import com.google.gson.JsonObject;
-
-public abstract class AbstractChatPacket {
-
-	/**
-	 * Defines the packet ID
-	 * 
-	 * @return Packet ID string
-	 */
-	public abstract String id();
+public abstract class AbstractChatPacket extends AbstractPersistentServicePacket<ChatClient, ChatServer> {
 
 	/**
 	 * Creates a new packet instance
@@ -19,20 +12,6 @@ public abstract class AbstractChatPacket {
 	 * @return AbstractChatPacket instance
 	 */
 	public abstract AbstractChatPacket instantiate();
-
-	/**
-	 * Parses the packet content
-	 * 
-	 * @param data Packet content
-	 */
-	public abstract void parse(JsonObject data);
-
-	/**
-	 * Builds the packet content
-	 * 
-	 * @param data Output packet content
-	 */
-	public abstract void build(JsonObject data);
 
 	/**
 	 * Handles the packet

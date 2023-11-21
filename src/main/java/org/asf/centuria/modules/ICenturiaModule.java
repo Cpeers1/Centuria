@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import org.asf.centuria.modules.eventbus.IEventReceiver;
 import org.asf.centuria.networking.chatserver.ChatServer;
 import org.asf.centuria.networking.gameserver.GameServer;
+import org.asf.centuria.networking.voicechatserver.VoiceChatServer;
 
 public interface ICenturiaModule extends IEventReceiver {
 
@@ -54,6 +55,17 @@ public interface ICenturiaModule extends IEventReceiver {
 	 * @return ChatServer instance or null
 	 */
 	public default ChatServer replaceChatServer(ServerSocket socket) {
+		return null;
+	}
+
+	/**
+	 * Called for modules to allow them to replace the voice chat server implementation or
+	 * to extend it
+	 * 
+	 * @param socket Server socket
+	 * @return VoiceChatServer instance or null
+	 */
+	public default VoiceChatServer replaceVoiceChatServer(ServerSocket socket) {
 		return null;
 	}
 

@@ -86,6 +86,10 @@ public class SanctuaryLookSwitchPacket implements IXtPacket<SanctuaryLookSwitchP
 				player.pendingRoom = "sanctuary_" + plr.account.getAccountID();
 				player.levelType = join.levelType;
 
+				// Log
+				Centuria.logger.info("Player " + player.account.getDisplayName() + " is joining sanctuary room "
+						+ plr.account.getDisplayName());
+
 				// Send packet
 				player.client.sendPacket(join);
 			}

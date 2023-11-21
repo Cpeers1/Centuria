@@ -1,16 +1,13 @@
 package org.asf.centuria.networking.chatserver;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 
-import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
@@ -18,53 +15,19 @@ import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.chat.ChatLoginEvent;
-import org.asf.centuria.networking.chatserver.networking.AbstractChatPacket;
+import org.asf.centuria.networking.chatserver.networking.moderator.ModeratorClient;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.networking.gameserver.GameServer;
-import org.asf.centuria.util.TaskThread;
+import org.asf.centuria.networking.persistentservice.BasePersistentServiceClient;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
 
-public class ChatClient {
+public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServer> {
 
-	private Socket client;
-	private ChatServer server;
-	private JsonReader reader;
 	private CenturiaAccount player;
-	private ArrayList<String> rooms = new ArrayList<String>();
-	private HashMap<String, Boolean> privateChat = new HashMap<String, Boolean>();
-
-	private ArrayList<Object> objects = new ArrayList<Object>();
-
-	/**
-	 * Retrieves objects from the connection container, used to store information in
-	 * clients.
-	 * 
-	 * @since Beta 1.5.3
-	 * @param type Object type
-	 * @return Object instance or null
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T getObject(Class<T> type) {
-		for (Object obj : objects) {
-			if (type.isAssignableFrom(obj.getClass()))
-				return (T) obj;
-		}
-		return null;
-	}
-
-	/**
-	 * Adds objects to the connection container, used to store information in
-	 * clients.
-	 * 
-	 * @since Beta 1.5.3
-	 * @param obj Object to add
-	 */
-	public void addObject(Object obj) {
-		if (getObject(obj.getClass()) == null)
-			objects.add(obj);
-	}
+	private HashMap<String, ChatRoom> rooms = new HashMap<String, ChatRoom>();
 
 	// Anti-hack
 	public int banCounter = 0;
@@ -72,32 +35,8 @@ public class ChatClient {
 	// Room lock
 	public boolean isReady = false;
 
-	private TaskThread taskThread;
-
 	public ChatClient(Socket client, ChatServer server) {
-		this.client = client;
-		this.server = server;
-
-		taskThread = new TaskThread(client.toString());
-		taskThread.start();
-
-		reader = new JsonReader(new Reader() {
-
-			@Override
-			public int read(char[] cbuf, int off, int len) throws IOException {
-				byte[] data = new byte[cbuf.length];
-				int l = client.getInputStream().read(data);
-				for (int i = 0; i < l; i++) {
-					cbuf[off + i] = (char) data[i];
-				}
-				return l;
-			}
-
-			@Override
-			public void close() throws IOException {
-			}
-
-		});
+		super(client, server);
 
 		Thread th = new Thread(() -> {
 			while (isConnected()) {
@@ -112,14 +51,37 @@ public class ChatClient {
 		th.start();
 	}
 
-	void stop() {
-		taskThread.stopCleanly();
-		rooms.clear();
-		privateChat.clear();
+	@Override
+	protected void stop() {
+		synchronized (rooms) {
+			rooms.clear();
+		}
+
+		// Send to moderator clients
+		for (ChatClient client : getServer().getClients()) {
+			if (client.getObject(ModeratorClient.class) == null)
+				continue;
+
+			// Check moderator perms
+			String permLevel = "member";
+			if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+				permLevel = client.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+						.get("permissionLevel").getAsString();
+			}
+			if (!GameServer.hasPerm(permLevel, "moderator"))
+				continue;
+
+			// Send packet
+			JsonObject response = new JsonObject();
+			response.addProperty("eventId", "centuria.moderatorclient.playerdisconnected");
+			response.addProperty("success", true);
+			response.addProperty("uuid", getPlayer().getAccountID());
+			client.sendPacket(response);
+		}
 	}
 
-	// Client init
-	void runClient() throws IOException {
+	@Override
+	protected void runClient() throws IOException {
 		// Read initial packet
 		JsonObject handshakeStart = readRawPacket();
 
@@ -198,7 +160,7 @@ public class ChatClient {
 				}
 
 				// Join room
-				joinRoom(dms.get(user).getAsString(), true);
+				joinRoom(dms.get(user).getAsString(), ChatRoomTypes.PRIVATE_CHAT);
 			}
 
 			// Remove nonexistent and invalid dms
@@ -215,7 +177,7 @@ public class ChatClient {
 
 		// Remove sensitive info and fire event
 		handshakeStart.remove("auth_token");
-		ChatLoginEvent evt = new ChatLoginEvent(server, acc, this, handshakeStart);
+		ChatLoginEvent evt = new ChatLoginEvent(getServer(), acc, this, handshakeStart);
 		EventBus.getInstance().dispatchEvent(evt);
 		if (evt.isCancelled()) {
 			disconnect(); // Cancelled
@@ -248,7 +210,7 @@ public class ChatClient {
 		}
 
 		// Check ip ban
-		InetSocketAddress ip = (InetSocketAddress) client.getRemoteSocketAddress();
+		InetSocketAddress ip = (InetSocketAddress) getSocket().getRemoteSocketAddress();
 		InetAddress addr = ip.getAddress();
 		String ipaddr = addr.getHostAddress();
 		if (GameServer.isIPBanned(ipaddr, acc, Centuria.gameServer.vpnIpsV4, Centuria.gameServer.vpnIpsV6,
@@ -259,14 +221,10 @@ public class ChatClient {
 
 		// Check if the player is ingame
 		Player plr = acc.getOnlinePlayerInstance();
-		if (plr == null) {
-			// The player is offline
-			disconnect();
-			return;
-		} else {
+		if (plr != null) {
 			// Check if the player was in chat
 			if (plr.wasInChat && plr.room != null)
-				joinRoom(plr.room, false);
+				joinRoom(plr.room, ChatRoomTypes.ROOM_CHAT);
 		}
 
 		// Disconnect connected instances
@@ -275,7 +233,7 @@ public class ChatClient {
 				cl.disconnect();
 
 		// Log the login attempt
-		Centuria.logger.info("Chat login from IP: " + client.getRemoteSocketAddress() + ": " + acc.getLoginName());
+		Centuria.logger.info("Chat login from IP: " + getSocket().getRemoteSocketAddress() + ": " + acc.getLoginName());
 
 		// Save account in memory
 		player = acc;
@@ -286,129 +244,6 @@ public class ChatClient {
 		res.addProperty("eventId", "sessions.start");
 		res.addProperty("success", true);
 		sendPacket(res);
-	}
-
-	// Packet handling code
-	void handle(JsonObject packet) {
-		Centuria.logger.debug(MarkerManager.getMarker("CHAT"),
-				"Client to server (user " + player.getDisplayName() + "): " + packet);
-		if (!handlePacket(packet)) {
-			// Packet not found
-			// Allow debug mode to re-register packets
-			if (Centuria.debugMode) {
-				server.registry.clear();
-				server.registerPackets();
-			}
-
-			Centuria.logger.error("Unhandled packet: client " + client + " sent: " + packet.toString());
-		}
-	}
-
-	private boolean handlePacket(JsonObject packet) {
-		// Find packet in registry
-		for (AbstractChatPacket pkt : server.registry) {
-			if (pkt.id().equals(packet.get("cmd").getAsString())) {
-				// Found a compatible packet, instantiate it
-				AbstractChatPacket res = pkt.instantiate();
-
-				// Parse packet
-				res.parse(packet);
-
-				// Handle packet
-				if (res.handle(this))
-					return true; // Packet was handled, lets end the loop
-			}
-		}
-
-		// Packet was not handled
-		return false;
-	}
-
-	/**
-	 * Retrieves the client socket
-	 * 
-	 * @return Socket instance
-	 */
-	public Socket getSocket() {
-		return client;
-	}
-
-	/**
-	 * Disconnects the client
-	 */
-	public void disconnect() {
-		taskThread.flush(3);
-		try {
-			if (client != null)
-				client.close();
-		} catch (IOException e) {
-		}
-		stop();
-		client = null;
-	}
-
-	/**
-	 * Sends a packet to the client
-	 * 
-	 * @param packet Raw packet to send
-	 */
-	public void sendPacket(JsonObject packet) {
-		taskThread.schedule(() -> {
-			try {
-				// Send packet
-				if (getSocket() == null)
-					return;
-				char[] d = packet.toString().toCharArray();
-				for (char ch : d) {
-					client.getOutputStream().write((byte) ch);
-				}
-				client.getOutputStream().write(0);
-				client.getOutputStream().flush();
-				Centuria.logger.debug(MarkerManager.getMarker("CHAT"),
-						"Server to client (user " + player.getDisplayName() + "): " + packet);
-			} catch (Exception e) {
-			}
-		});
-	}
-
-	/**
-	 * Sends a packet to the client
-	 * 
-	 * @param packet Packet to send
-	 */
-	public void sendPacket(AbstractChatPacket packet) {
-		JsonObject data = new JsonObject();
-		data.addProperty("eventId", packet.id());
-		packet.build(data);
-		sendPacket(data);
-	}
-
-	/**
-	 * Reads a single raw packet
-	 * 
-	 * @return JsonObject instance
-	 * @throws IOException If reading fails
-	 */
-	public JsonObject readRawPacket() throws IOException {
-		return JsonParser.parseReader(reader).getAsJsonObject();
-	}
-
-	/**
-	 * Retrieves the server object
-	 * 
-	 * @return ChatServer instance
-	 */
-	public ChatServer getServer() {
-		return server;
-	}
-
-	/**
-	 * Checks if the client is still connected
-	 * 
-	 * @return True if connected, false otherwise
-	 */
-	public boolean isConnected() {
-		return client != null;
 	}
 
 	/**
@@ -427,34 +262,10 @@ public class ChatClient {
 	 * @return True if the client is in the specified room, false otherwise
 	 */
 	public boolean isInRoom(String room) {
-		ArrayList<String> rooms;
-
-		while (true) {
-			try {
-				rooms = new ArrayList<String>(this.rooms);
-				break;
-			} catch (ConcurrentModificationException e) {
-			}
-		}
-
-		if (rooms.contains(room))
-			return true; // Player is part of this chat room
-
-		return false; // Player is not part of this chat room
-	}
-
-	/**
-	 * Checks if a room is private or not
-	 * 
-	 * @param room Room ID
-	 * @return True if private, false otherwise
-	 */
-	public boolean isRoomPrivate(String room) {
-		while (true) {
-			try {
-				return privateChat.getOrDefault(room, false);
-			} catch (ConcurrentModificationException e) {
-			}
+		synchronized (rooms) {
+			if (rooms.containsKey(room))
+				return true; // Player is part of this chat room
+			return false; // Player is not part of this chat room
 		}
 	}
 
@@ -464,14 +275,38 @@ public class ChatClient {
 	 * @param room Room to leave
 	 */
 	public void leaveRoom(String room) {
-		while (true) {
-			try {
-				if (rooms.contains(room)) {
-					rooms.remove(room);
-					privateChat.remove(room);
+		boolean left = false;
+		String oldType = null;
+		synchronized (rooms) {
+			if (rooms.containsKey(room)) {
+				oldType = rooms.get(room).getType();
+				rooms.remove(room);
+				left = true;
+			}
+		}
+		if (left && !oldType.equals(ChatRoomTypes.PRIVATE_CHAT)) {
+			// Send to moderator clients
+			for (ChatClient client : getServer().getClients()) {
+				if (client.getObject(ModeratorClient.class) == null)
+					continue;
+
+				// Check moderator perms
+				String permLevel = "member";
+				if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+					permLevel = client.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+							.get("permissionLevel").getAsString();
 				}
-				break;
-			} catch (ConcurrentModificationException e) {
+				if (!GameServer.hasPerm(permLevel, "moderator"))
+					continue;
+
+				// Send packet
+				JsonObject response = new JsonObject();
+				response.addProperty("eventId", "centuria.moderatorclient.playerleftroom");
+				response.addProperty("success", true);
+				response.addProperty("conversationId", room);
+				response.addProperty("conversationType", oldType);
+				response.addProperty("uuid", getPlayer().getAccountID());
+				client.sendPacket(response);
 			}
 		}
 	}
@@ -479,18 +314,40 @@ public class ChatClient {
 	/**
 	 * Joins a chat room
 	 * 
-	 * @param room      Room to join
-	 * @param isPrivate True if the room is a private room, false otherwise
+	 * @param roomID Room ID to join
+	 * @param type   Room type
 	 */
-	public void joinRoom(String room, boolean isPrivate) {
-		while (true) {
-			try {
-				if (!rooms.contains(room)) {
-					rooms.add(room);
-					privateChat.put(room, isPrivate);
+	public void joinRoom(String roomID, String type) {
+		boolean joined = false;
+		synchronized (rooms) {
+			if (!rooms.containsKey(roomID)) {
+				rooms.put(roomID, new ChatRoom(roomID, type));
+				joined = true;
+			}
+		}
+		if (joined && !type.equals(ChatRoomTypes.PRIVATE_CHAT)) {
+			// Send to moderator clients
+			for (ChatClient client : getServer().getClients()) {
+				if (client.getObject(ModeratorClient.class) == null)
+					continue;
+
+				// Check moderator perms
+				String permLevel = "member";
+				if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+					permLevel = client.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+							.get("permissionLevel").getAsString();
 				}
-				break;
-			} catch (ConcurrentModificationException e) {
+				if (!GameServer.hasPerm(permLevel, "moderator"))
+					continue;
+
+				// Send packet
+				JsonObject response = new JsonObject();
+				response.addProperty("eventId", "centuria.moderatorclient.playerjoinedroom");
+				response.addProperty("success", true);
+				response.addProperty("conversationId", roomID);
+				response.addProperty("conversationType", type);
+				response.addProperty("uuid", getPlayer().getAccountID());
+				client.sendPacket(response);
 			}
 		}
 	}
@@ -501,17 +358,21 @@ public class ChatClient {
 	 * @return Array of chat room IDs
 	 */
 	public String[] getRooms() {
-		ArrayList<String> rooms;
-
-		while (true) {
-			try {
-				rooms = new ArrayList<String>(this.rooms);
-				break;
-			} catch (ConcurrentModificationException e) {
-			}
+		synchronized (rooms) {
+			return rooms.keySet().toArray(t -> new String[t]);
 		}
+	}
 
-		return rooms.toArray(t -> new String[t]);
+	/**
+	 * Retrieves chat rooms by ID
+	 * 
+	 * @param id Room ID
+	 * @return ChatRoom instance or null
+	 */
+	public ChatRoom getRoom(String id) {
+		synchronized (rooms) {
+			return rooms.get(id);
+		}
 	}
 
 }

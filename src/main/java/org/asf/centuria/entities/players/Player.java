@@ -29,6 +29,7 @@ import org.asf.centuria.packets.xt.gameserver.object.ObjectDeletePacket;
 import org.asf.centuria.packets.xt.gameserver.object.ObjectUpdatePacket;
 import org.asf.centuria.packets.xt.gameserver.relationship.RelationshipJumpToPlayerPacket;
 import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
+import org.asf.centuria.rooms.GameRoom;
 import org.asf.centuria.social.SocialManager;
 
 import com.google.gson.JsonArray;
@@ -322,6 +323,10 @@ public class Player {
 				return false;
 			}
 
+			// Log
+			Centuria.logger.info("Player " + player.account.getDisplayName() + " is joining sanctuary room "
+					+ sancOwner.getDisplayName());
+
 			// Send packet
 			client.sendPacket(join);
 
@@ -365,7 +370,7 @@ public class Player {
 
 			plr.roomReady = false;
 			plr.pendingLevelID = levelID;
-			plr.pendingRoom = "room_" + levelID;
+			plr.pendingRoom = roomIdentifier;
 			plr.levelType = levelType;
 
 			// Reset quest data
@@ -390,8 +395,9 @@ public class Player {
 			plr.respawnItems.clear();
 
 			// Log
-			Centuria.logger.debug(MarkerManager.getMarker("JOINROOM"),
-					"Client to server (room: " + plr.pendingRoom + ", level: " + plr.pendingLevelID + ")");
+			GameRoom room = srv.getRoomManager().getRoom(plr.pendingRoom);
+			Centuria.logger.info("Player " + plr.account.getDisplayName() + " is joining room "
+					+ (room != null ? room.getInstanceID() : plr.pendingRoom) + " of level " + plr.pendingLevelID);
 
 			// Send response
 			client.sendPacket(join);
@@ -440,7 +446,7 @@ public class Player {
 
 			plr.roomReady = false;
 			plr.pendingLevelID = levelID;
-			plr.pendingRoom = "room_" + levelID;
+			plr.pendingRoom = roomIdentifier;
 			plr.levelType = levelType;
 
 			plr.teleportDestination = targetedPlayer.account.getAccountID();
@@ -469,8 +475,9 @@ public class Player {
 			groupOjects.clear();
 
 			// Log
-			Centuria.logger.debug(MarkerManager.getMarker("JOINROOM"),
-					" Client to server (room: " + plr.pendingRoom + ", level: " + plr.pendingLevelID + ")");
+			GameRoom room = srv.getRoomManager().getRoom(plr.pendingRoom);
+			Centuria.logger.info("Player " + plr.account.getDisplayName() + " is joining room "
+					+ (room != null ? room.getInstanceID() : plr.pendingRoom) + " of level " + plr.pendingLevelID);
 
 			// Send response
 			client.sendPacket(join);
@@ -512,8 +519,9 @@ public class Player {
 			client.sendPacket(join);
 
 			// Log
-			Centuria.logger.debug(MarkerManager.getMarker("JOINROOM"),
-					"Client to server (room: " + plr.pendingRoom + ", level: " + plr.pendingLevelID + ")");
+			GameRoom room = ((GameServer) client.getServer()).getRoomManager().getRoom(plr.pendingRoom);
+			Centuria.logger.info("Player " + plr.account.getDisplayName() + " is joining room "
+					+ (room != null ? room.getInstanceID() : plr.pendingRoom) + " of level " + plr.pendingLevelID);
 
 			return true;
 		} catch (Exception e) {
@@ -536,7 +544,7 @@ public class Player {
 			// Find player
 			for (Player plr : ((GameServer) client.getServer()).getPlayers()) {
 				if ((plr.account.getAccountID().equals(accountID) && plr.roomReady && plr.levelType != 1)
-						&& ((!plr.room.equals("room_STAFFROOM")
+						&& ((!plr.room.startsWith("room_STAFFROOM_")
 								&& (!SocialManager.getInstance().socialListExists(accountID) || !SocialManager
 										.getInstance().getPlayerIsBlocked(accountID, player.account.getAccountID())))
 								|| (player.overrideTpLocks && player.hasModPerms))) {
@@ -626,6 +634,11 @@ public class Player {
 						player.pendingRoom = plr.room;
 						player.levelType = plr.levelType;
 
+						// Log
+						Centuria.logger.info("Player " + player.account.getDisplayName() + " is joining room "
+								+ (plr.getRoom() != null ? plr.getRoom().getInstanceID() : plr.getRoom()) + " of level "
+								+ plr.levelID);
+
 						// Send packet
 						client.sendPacket(join);
 					} else {
@@ -646,6 +659,10 @@ public class Player {
 						pkt.rotation = plr.lastRot;
 						pkt.heading = plr.lastHeading;
 						pkt.time = System.currentTimeMillis() / 1000;
+
+						// Log
+						Centuria.logger.info("Player teleport: " + player.account.getDisplayName() + ": "
+								+ plr.account.getDisplayName());
 
 						// Broadcast sync
 						GameServer srv = (GameServer) client.getServer();
@@ -692,6 +709,17 @@ public class Player {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	/**
+	 * Retrieves the current MMO sync room
+	 * 
+	 * @return GameRoom instance or null
+	 */
+	public GameRoom getRoom() {
+		if (room == null)
+			return null;
+		return ((GameServer) client.getServer()).getRoomManager().getRoom(room);
 	}
 
 }

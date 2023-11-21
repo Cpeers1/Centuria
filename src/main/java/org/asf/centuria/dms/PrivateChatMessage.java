@@ -4,6 +4,6 @@ public class PrivateChatMessage {
 
 	public String content;
 	public String source;
-	public String sentAt;
+	public long sentAt;
 
 }

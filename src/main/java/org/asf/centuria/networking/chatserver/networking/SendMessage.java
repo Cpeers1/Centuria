@@ -1,16 +1,15 @@
 package org.asf.centuria.networking.chatserver.networking;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,10 +41,18 @@ import org.asf.centuria.modules.events.chatcommands.ModuleCommandSyntaxListEvent
 import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
 import org.asf.centuria.modules.events.maintenance.MaintenanceStartEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.networking.chatserver.networking.moderator.ModeratorClient;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
+import org.asf.centuria.rooms.GameRoom;
 import org.asf.centuria.social.SocialManager;
+import org.asf.centuria.textfilter.FilterSeverity;
+import org.asf.centuria.textfilter.TextFilterService;
+import org.asf.centuria.textfilter.result.FilterResult;
+import org.asf.centuria.textfilter.result.WordMatch;
+import org.asf.centuria.util.io.DataWriter;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -54,177 +61,27 @@ import com.google.gson.JsonParser;
 public class SendMessage extends AbstractChatPacket {
 
 	private static String NIL_UUID = new UUID(0, 0).toString();
-	private static ArrayList<String> muteWords = new ArrayList<String>();
-	private static ArrayList<String> filterWords = new ArrayList<String>();
-	private static ArrayList<String> alwaysfilterWords = new ArrayList<String>();
 
 	public static ArrayList<String> clearanceCodes = new ArrayList<String>();
 	private static Random rnd = new Random();
 
-	public static String[] getInvalidWords() {
-		ArrayList<String> fullList = new ArrayList<String>();
-		fullList.addAll(muteWords);
-		fullList.addAll(filterWords);
-		fullList.addAll(alwaysfilterWords);
-		return fullList.toArray(t -> new String[t]);
-	}
-
-	static {
-		reloadFilter();
-	}
-
-	private static void reloadFilter() {
-		muteWords.clear();
-		filterWords.clear();
-		alwaysfilterWords.clear();
-
-		// Load filter
-		try {
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("textfilter/filter.txt");
-			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
-			for (String line : lines.split("\n")) {
-				if (line.isEmpty() || line.startsWith("#"))
-					continue;
-
-				String data = line.trim();
-				while (data.contains("  "))
-					data = data.replace("  ", "");
-
-				for (String word : data.split(";"))
-					filterWords.add(word.toLowerCase());
-			}
-			strm.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		// Load ban words
-		try {
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("textfilter/instamute.txt");
-			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
-			for (String line : lines.split("\n")) {
-				if (line.isEmpty() || line.startsWith("#"))
-					continue;
-
-				String data = line.trim();
-				while (data.contains("  "))
-					data = data.replace("  ", "");
-
-				for (String word : data.split(";"))
-					muteWords.add(word.toLowerCase());
-			}
-			strm.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		// Load always filtered words
-		try {
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("textfilter/alwaysfilter.txt");
-			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
-			for (String line : lines.split("\n")) {
-				if (line.isEmpty() || line.startsWith("#"))
-					continue;
-
-				String data = line.trim();
-				while (data.contains("  "))
-					data = data.replace("  ", "");
-
-				for (String word : data.split(";"))
-					alwaysfilterWords.add(word.toLowerCase());
-			}
-			strm.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		// Load local filters
-		if (!new File("textfilter").exists()) {
-			new File("textfilter").mkdirs();
-			try {
-				Files.writeString(Path.of("textfilter/filter.txt"), "");
-				Files.writeString(Path.of("textfilter/alwaysfilter.txt"), "");
-				Files.writeString(Path.of("textfilter/instamute.txt"), "");
-			} catch (IOException e) {
-			}
-		}
-		try {
-			filterLastChange = Files.getLastModifiedTime(Path.of("textfilter/filter.txt")).toMillis();
-			alwaysFilterLastChange = Files.getLastModifiedTime(Path.of("textfilter/alwaysfilter.txt")).toMillis();
-			instaMuteLastChange = Files.getLastModifiedTime(Path.of("textfilter/instamute.txt")).toMillis();
-
-			// Load filter
-			try {
-				InputStream strm = new FileInputStream("textfilter/filter.txt");
-				String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
-				for (String line : lines.split("\n")) {
-					if (line.isEmpty() || line.startsWith("#"))
-						continue;
-
-					String data = line.trim();
-					while (data.contains("  "))
-						data = data.replace("  ", "");
-
-					for (String word : data.split(";"))
-						filterWords.add(word.toLowerCase());
-				}
-				strm.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			// Load ban words
-			try {
-				InputStream strm = new FileInputStream("textfilter/instamute.txt");
-				String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
-				for (String line : lines.split("\n")) {
-					if (line.isEmpty() || line.startsWith("#"))
-						continue;
-
-					String data = line.trim();
-					while (data.contains("  "))
-						data = data.replace("  ", "");
-
-					for (String word : data.split(";"))
-						muteWords.add(word.toLowerCase());
-				}
-				strm.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			// Load always filtered words
-			try {
-				InputStream strm = new FileInputStream("textfilter/alwaysfilter.txt");
-				String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
-				for (String line : lines.split("\n")) {
-					if (line.isEmpty() || line.startsWith("#"))
-						continue;
-
-					String data = line.trim();
-					while (data.contains("  "))
-						data = data.replace("  ", "");
-
-					for (String word : data.split(";"))
-						alwaysfilterWords.add(word.toLowerCase());
-				}
-				strm.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} catch (IOException e) {
-		}
-	}
-
-	private static long filterLastChange;
-	private static long alwaysFilterLastChange;
-	private static long instaMuteLastChange;
-
 	private String message;
 	private String room;
+
+	private static OutputStream chatLogBinary;
+
+	static {
+		try {
+			// Open chat log binary file
+			File chatLogFile = new File("logs/chatlog.bin");
+			chatLogFile.getParentFile().mkdirs();
+			chatLogBinary = new FileOutputStream(chatLogFile);
+		} catch (IOException e) {
+			// Log
+			Centuria.logger.warn(
+					"Could not open the chat log binary! Chat logging will not be available for this session!", e);
+		}
+	}
 
 	@Override
 	public String id() {
@@ -250,18 +107,47 @@ public class SendMessage extends AbstractChatPacket {
 	public boolean handle(ChatClient client) {
 		DMManager manager = DMManager.getInstance();
 
-		// Ignore 'limbo' players
-		Player gameClient = client.getPlayer().getOnlinePlayerInstance();
-		if (gameClient == null) {
-			// Ok-
-			client.disconnect();
-			return true;
-		} else if (!gameClient.roomReady || gameClient.room == null) {
-			// Limbo player
-			return true;
+		// Check moderator perms
+		String permLevel = "member";
+		if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+			permLevel = client.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+					.get("permissionLevel").getAsString();
+		}
+
+		// Security checks
+		// Check moderator perms
+		if (!GameServer.hasPerm(permLevel, "moderator")) {
+			// Ignore 'limbo' players
+			Player gameClient = client.getPlayer().getOnlinePlayerInstance();
+			if (gameClient == null) {
+				// Ok-
+				// Bye bye, you're not ingame
+				client.disconnect();
+				return true;
+			} else if (!gameClient.roomReady || gameClient.room == null) {
+				// Limbo player
+				return true;
+			}
+
+			// Check room type
+			//
+			// If its not a mod and its a room the player isnt in, they shouldnt receive the
+			// messages
+			if ((!client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)
+					|| !manager.dmExists(room))
+					&& !client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.TRANSIENT_CHAT)) {
+				// Check game room
+				GameRoom gameRoom = Centuria.gameServer.getRoomManager().getRoom(room);
+				if (gameRoom != null && gameRoom.getLevelID() != gameClient.levelID) {
+					// Invalid
+					return true;
+				}
+			}
 		}
 
 		// Clean message
+		message = replaceCaseInsensitive(message, "<noparse>", "");
+		message = replaceCaseInsensitive(message, "</noparse>", "");
 		message = message.trim();
 
 		// Check content
@@ -277,29 +163,88 @@ public class SendMessage extends AbstractChatPacket {
 			return true; // Cancelled
 
 		// Chat commands
-		if (message.startsWith(">")) {
+		if (message.startsWith(">") || message.startsWith(">")) {
 			String cmd = message.substring(1).trim();
 			if (handleCommand(cmd, client))
 				return true;
 		}
 
+		// Find type
+		String type = "";
+
+		// Find other player in this room first
+		boolean found = false;
+		for (ChatClient cl : client.getServer().getClients()) {
+			if (cl.isInRoom(room)) {
+				found = true;
+				type = cl.getRoom(room).getType();
+				break;
+			}
+		}
+
+		// Find by room
+		if (!found) {
+			// Check sanctuary
+			if (room.startsWith("sanctuary_")) {
+				// Sanctuary
+				type = ChatRoomTypes.ROOM_CHAT;
+				found = true;
+			} else {
+				// Find room in room manager
+				Player plr = client.getPlayer().getOnlinePlayerInstance();
+				if (plr != null) {
+					GameServer server = (GameServer) plr.client.getServer();
+					if (server.getRoomManager().getRoom(room) != null) {
+						// Found room chat
+						room = ChatRoomTypes.ROOM_CHAT;
+						found = true;
+					}
+				}
+
+				// Check
+				if (!found) {
+					// DMs
+					if (DMManager.getInstance().dmExists(room)) {
+						// Found DM chat
+						room = ChatRoomTypes.PRIVATE_CHAT;
+						found = true;
+					} else {
+						// Transient
+						room = ChatRoomTypes.TRANSIENT_CHAT;
+						found = true;
+					}
+				}
+			}
+		}
+
 		// Log
-		if (!client.isRoomPrivate(room))
+		if (!client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
+			// Log to server log
 			Centuria.logger.info("Chat: " + client.getPlayer().getDisplayName() + ": " + message);
 
-		// Check times of the filter update
-		try {
-			long filterLastChange = Files.getLastModifiedTime(Path.of("textfilter/filter.txt")).toMillis();
-			long alwaysFilterLastChange = Files.getLastModifiedTime(Path.of("textfilter/alwaysfilter.txt")).toMillis();
-			long instaMuteLastChange = Files.getLastModifiedTime(Path.of("textfilter/instamute.txt")).toMillis();
-			if (SendMessage.filterLastChange != filterLastChange
-					|| SendMessage.alwaysFilterLastChange != alwaysFilterLastChange
-					|| SendMessage.instaMuteLastChange != instaMuteLastChange) {
-				// Reload
-				Centuria.logger.info("Updating chat filter...");
-				reloadFilter();
+			// Log to chat log
+			if (chatLogBinary != null) {
+				try {
+					// Create entry
+					// Room: string
+					// Type: string
+					// User ID: string
+					// Message: string
+					// Timestamp: long
+					ByteArrayOutputStream bO = new ByteArrayOutputStream();
+					DataWriter writer = new DataWriter(bO);
+					writer.writeString(room);
+					writer.writeString(client.getPlayer().getAccountID());
+					writer.writeString(message);
+					writer.writeLong(System.currentTimeMillis());
+					synchronized (chatLogBinary) {
+						writer = new DataWriter(chatLogBinary);
+						writer.writeBytes(bO.toByteArray());
+						chatLogBinary.flush();
+					}
+				} catch (IOException e) {
+				}
 			}
-		} catch (IOException e) {
 		}
 
 		// Increase ban counter
@@ -314,14 +259,14 @@ public class SendMessage extends AbstractChatPacket {
 
 		// Check mute
 		CenturiaAccount acc = client.getPlayer();
-		if (!client.isRoomPrivate(room) && acc.getSaveSharedInventory().containsItem("penalty")
-				&& acc.getSaveSharedInventory().getItem("penalty").getAsJsonObject().get("type").getAsString()
-						.equals("mute")) {
-			JsonObject banInfo = acc.getSaveSharedInventory().getItem("penalty").getAsJsonObject();
-			if (banInfo.get("unmuteTimestamp").getAsLong() == -1
-					|| banInfo.get("unmuteTimestamp").getAsLong() > System.currentTimeMillis()) {
+		if (client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT)
+				&& acc.getSaveSharedInventory().containsItem("penalty") && acc.getSaveSharedInventory()
+						.getItem("penalty").getAsJsonObject().get("type").getAsString().equals("mute")) {
+			JsonObject muteInfo = acc.getSaveSharedInventory().getItem("penalty").getAsJsonObject();
+			if (muteInfo.get("unmuteTimestamp").getAsLong() == -1
+					|| muteInfo.get("unmuteTimestamp").getAsLong() > System.currentTimeMillis()) {
 				// Time format
-				SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 				// System message
@@ -342,158 +287,186 @@ public class SendMessage extends AbstractChatPacket {
 		}
 
 		// Check filter
-		String newMessage = "";
-		for (String word : message.split(" ")) {
-			if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-				// Mute
-				client.getPlayer().mute(0, 0, 30, "SYSTEM", "Illegal word in chat");
-
-				// Send system message
-				if (client.isRoomPrivate(room)) {
-					// DM message
-					Centuria.systemMessage(gameClient,
-							"You have been automatically muted for violating the emulator rules, mute will last 30 minutes.\nReason: illegal word in chat.",
-							true);
-				} else {
-					// Public chat
-					Centuria.systemMessage(gameClient,
-							"You have been automatically muted for violating the emulator rules, mute will last 30 minutes.\nReason: illegal word in chat.");
+		if (TextFilterService.getInstance().shouldFilterMute(message)) {
+			// Mod log
+			FilterResult fres = TextFilterService.getInstance().filter(message, false);
+			String matchedWords = "";
+			for (WordMatch match : fres.getMatches()) {
+				if (match.getSeverity().ordinal() >= FilterSeverity.INSTAMUTE.ordinal()) {
+					if (matchedWords.isEmpty())
+						matchedWords = match.getMatchedPhrase();
+					else
+						matchedWords += ", " + match.getMatchedPhrase();
 				}
-
-				return true;
 			}
+			EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
+					"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+					Map.of("Chat message", message, "Matched word(s)", matchedWords, "Resulting action", "muted"),
+					"SYSTEM", client.getPlayer()));
 
-			if (!newMessage.isEmpty())
-				newMessage += " " + word;
-			else
-				newMessage = word;
+			// Mute
+			client.getPlayer().mute(0, 0, 30, "SYSTEM",
+					"Muted due to an illegal word said in the chat, we request you to keep your chat respectful, safe and clean!");
+
+			// Send system message
+			JsonObject res = new JsonObject();
+			res.addProperty("conversationType", client.getRoom(room).getType());
+			res.addProperty("conversationId", room);
+			res.addProperty("message",
+					"You have been automatically muted in public chat for violating the server rules, mute will last 30 minutes.\nReason: Muted due to an illegal word said in the chat, we request you to keep your chat respectful, safe and clean!");
+			res.addProperty("source", NIL_UUID);
+			res.addProperty("sentAt", LocalDateTime.now().toString());
+			res.addProperty("eventId", "chat.postMessage");
+			res.addProperty("success", true);
+			client.sendPacket(res);
+			return true;
 		}
-		message = newMessage;
 
 		// Fire event
 		ChatMessageBroadcastEvent evt2 = new ChatMessageBroadcastEvent(client.getServer(), client.getPlayer(), client,
-				message, room);
+				message, room, type);
 		EventBus.getInstance().dispatchEvent(evt2);
 		if (evt2.isCancelled())
 			return true; // Cancelled
 
 		// Check room
-		if (client.isInRoom(room)) {
+		SocialManager socialManager = SocialManager.getInstance();
+		if (client.isInRoom(room) || GameServer.hasPerm(permLevel, "moderator")) {
 			// Time format
-			SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");
+			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 			// If it is a DM, save message
-			if (client.isRoomPrivate(room) && manager.dmExists(room)) {
+			if (client.isInRoom(room) && client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)
+					&& manager.dmExists(room)) {
+				// Save message
 				PrivateChatMessage msg = new PrivateChatMessage();
 				msg.content = message;
-				msg.sentAt = fmt.format(new Date());
+				msg.sentAt = System.currentTimeMillis();
 				msg.source = client.getPlayer().getAccountID();
 				manager.saveDMMessge(room, msg);
 			}
 
 			// Send to all in room
-			Player cPlayer = gameClient;
-			SocialManager socialManager = SocialManager.getInstance();
-			for (ChatClient cl : client.getServer().getClients()) {
-				if (cl.isInRoom(room)) {
-					if (!socialManager.socialListExists(cl.getPlayer().getAccountID()) || !socialManager
-							.getPlayerIsBlocked(cl.getPlayer().getAccountID(), client.getPlayer().getAccountID())) {
+			Player cPlayer = client.getPlayer().getOnlinePlayerInstance();
+			for (ChatClient receiver : client.getServer().getClients()) {
+				// Fetch receiver moderator perms
+				String permLevel2 = "member";
+				if (receiver.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+					permLevel2 = receiver.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+							.get("permissionLevel").getAsString();
+				}
+
+				// Check if in room
+				if (receiver.isInRoom(room)) {
+					// Check if the receiver has blocked the sender and that neither is a moderator
+					if (!socialManager.socialListExists(receiver.getPlayer().getAccountID())
+							|| !socialManager.getPlayerIsBlocked(receiver.getPlayer().getAccountID(),
+									client.getPlayer().getAccountID())
+							|| GameServer.hasPerm(permLevel2, "moderator")
+							|| GameServer.hasPerm(permLevel, "moderator")) {
 						// Check limbo player
-						gameClient = cl.getPlayer().getOnlinePlayerInstance();
-						if (gameClient == null || !gameClient.roomReady || gameClient.room == null)
+						Player gameClient = receiver.getPlayer().getOnlinePlayerInstance();
+						if ((gameClient != null && (!gameClient.roomReady || gameClient.room == null))
+								|| (gameClient == null && !GameServer.hasPerm(permLevel2, "moderator")))
 							continue;
 
 						// Check ghost mode
-						if (cPlayer.ghostMode && !gameClient.hasModPerms && !client.isRoomPrivate(room))
+						if (cPlayer != null && cPlayer.ghostMode && !GameServer.hasPerm(permLevel2, "moderator")
+								&& client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT))
 							continue;
 
-						// Filter
-						String filteredMessage = "";
-
-						// Load filter settings
-						int filterSetting = 0;
-						UserVarValue val = cl.getPlayer().getSaveSpecificInventory().getUserVarAccesor()
-								.getPlayerVarValue(9362, 0);
-						if (val != null)
-							filterSetting = val.value;
-
-						// Check filter
-						for (String word : message.split(" ")) {
-							if (filterSetting != 0) {
-								if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-									// Filter it
-									for (String filter : filterWords) {
-										while (word.toLowerCase().contains(filter.toLowerCase())) {
-											String start = word.substring(0,
-													word.toLowerCase().indexOf(filter.toLowerCase()));
-											String rest = word.substring(
-													word.toLowerCase().indexOf(filter.toLowerCase()) + filter.length());
-											String tag = "";
-											for (int i = 0; i < filter.length(); i++) {
-												tag += "#";
-											}
-											word = start + tag + rest;
-										}
-									}
-								}
-							}
-
-							// check always filtered
-							if (alwaysfilterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-								// Filter it
-								for (String filter : alwaysfilterWords) {
-									while (word.toLowerCase().contains(filter.toLowerCase())) {
-										String start = word.substring(0,
-												word.toLowerCase().indexOf(filter.toLowerCase()));
-										String rest = word.substring(
-												word.toLowerCase().indexOf(filter.toLowerCase()) + filter.length());
-										String tag = "";
-										for (int i = 0; i < filter.length(); i++) {
-											tag += "#";
-										}
-										word = start + tag + rest;
-									}
-								}
-							}
-
-							if (!filteredMessage.isEmpty())
-								filteredMessage += " " + word;
-							else
-								filteredMessage = word;
-						}
-
-						// Check if the source blocked this player, if so, prevent them form receiving
+						// Check if the sender has blocked this receiver, if so, prevent the receiver
+						// from receiving the message that was sent, also applies to moderator-sent
+						// messages unless its a dm and the player is a moderator
 						if (socialManager.getPlayerIsBlocked(client.getPlayer().getAccountID(),
-								cl.getPlayer().getAccountID())) {
-							// Check mod perms
-							String permLevel = "member";
-							if (cl.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
-								permLevel = cl.getPlayer().getSaveSharedInventory().getItem("permissions")
-										.getAsJsonObject().get("permissionLevel").getAsString();
-							}
-							if (!GameServer.hasPerm(permLevel, "moderator"))
+								receiver.getPlayer().getAccountID())) {
+							// Check mod perms and room type
+							if (GameServer.hasPerm(permLevel, "moderator")) {
+								if (client.isInRoom(room)
+										&& client.getRoom(room).getType().equals(ChatRoomTypes.ROOM_CHAT)) {
+									continue; // Blocked
+								}
+							} else
 								continue; // Blocked
 						}
 
+						// Load filter settings
+						int filterSetting = 0;
+						UserVarValue val = receiver.getPlayer().getSaveSpecificInventory().getUserVarAccesor()
+								.getPlayerVarValue(9362, 0);
+						if (val != null)
+							filterSetting = val.value;
+						boolean isStrict = filterSetting != 0;
+
+						// Filter
+						String filteredMessage = TextFilterService.getInstance().filterString(message, isStrict);
+
 						// Send response
 						JsonObject res = new JsonObject();
-						res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
+						res.addProperty("conversationType", type);
 						res.addProperty("conversationId", room);
 						res.addProperty("message", filteredMessage);
+						if (GameServer.hasPerm(permLevel2, "moderator")
+								&& receiver.getObject(ModeratorClient.class) != null)
+							res.addProperty("unfilteredMessage", message);
 						res.addProperty("source", client.getPlayer().getAccountID());
 						res.addProperty("sentAt", fmt.format(new Date()));
 						res.addProperty("eventId", "chat.postMessage");
 						res.addProperty("success", true);
 
 						// Send message
-						cl.sendPacket(res);
+						receiver.sendPacket(res);
+					}
+				} else {
+					// Not in room
+
+					// Check moderator client
+					if (receiver.getObject(ModeratorClient.class) != null) {
+						if (GameServer.hasPerm(permLevel2, "moderator")) {
+							// Send through centuria moderator protocol if needed
+							if (!type.equals(ChatRoomTypes.PRIVATE_CHAT)) {
+								// Load filter settings
+								int filterSetting = 0;
+								UserVarValue val = receiver.getPlayer().getSaveSpecificInventory().getUserVarAccesor()
+										.getPlayerVarValue(9362, 0);
+								if (val != null)
+									filterSetting = val.value;
+								boolean isStrict = filterSetting != 0;
+
+								// Filter
+								String filteredMessage = TextFilterService.getInstance().filterString(message,
+										isStrict);
+
+								// Send
+								JsonObject res = new JsonObject();
+								res.addProperty("eventId", "centuria.moderatorclient.postedMessageInOtherRoom");
+								res.addProperty("conversationType", type);
+								res.addProperty("conversationId", room);
+								res.addProperty("message", filteredMessage);
+								res.addProperty("unfilteredMessage", message);
+								res.addProperty("source", client.getPlayer().getAccountID());
+								res.addProperty("sentAt", fmt.format(new Date()));
+								res.addProperty("success", true);
+
+								// Send message
+								receiver.sendPacket(res);
+							}
+						}
 					}
 				}
 			}
 		}
 
 		return true;
+	}
+
+	private String replaceCaseInsensitive(String msg, String target, String replacement) {
+		while (msg.toLowerCase().contains(target.toLowerCase())) {
+			int i = msg.toLowerCase().indexOf(target.toLowerCase());
+			msg = msg.substring(0, i) + replacement + msg.substring(i + target.length());
+		}
+		return msg;
 	}
 
 	// Command parser
@@ -563,12 +536,12 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("takelevels <amount> [\"<player>\"]");
 			commandMessages.add("takeitem <itemDefId> [<quantity>] [<player>]");
 			commandMessages.add("questskip [<amount>] [<player>]");
+			commandMessages.add("tpm <levelDefID> [<room id>] [<level type>] [\\\"<player>\\\"]");
 			if (GameServer.hasPerm(permLevel, "admin")) {
 				commandMessages.add("generateclearancecode");
 				commandMessages.add("addxp <amount> [\"<player>\"]");
 				commandMessages.add("addlevels <amount> [\"<player>\"]");
 				commandMessages.add("resetalllevels [confirm]");
-				commandMessages.add("tpm <levelDefID> [<levelType>] [<player>]");
 				commandMessages.add("makeadmin \"<player>\"");
 				commandMessages.add("makemoderator \"<player>\"");
 				commandMessages.add("removeperms \"<player>\"");
@@ -640,45 +613,39 @@ public class SendMessage extends AbstractChatPacket {
 					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
 							|| GameServer.hasPerm(permLevel, "admin")) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
+						var accessor = client.getPlayer().getSaveSpecificInventory().getItemAccessor(onlinePlayer);
 
-						if (onlinePlayer != null) {
-							var accessor = client.getPlayer().getSaveSpecificInventory().getItemAccessor(onlinePlayer);
+						accessor.add(6691, 1000);
+						accessor.add(6692, 1000);
+						accessor.add(6693, 1000);
+						accessor.add(6694, 1000);
+						accessor.add(6695, 1000);
+						accessor.add(6696, 1000);
+						accessor.add(6697, 1000);
+						accessor.add(6698, 1000);
+						accessor.add(6699, 1000);
+						accessor.add(6700, 1000);
+						accessor.add(6701, 1000);
+						accessor.add(6702, 1000);
+						accessor.add(6703, 1000);
+						accessor.add(6704, 1000);
+						accessor.add(6705, 1000);
 
-							accessor.add(6691, 1000);
-							accessor.add(6692, 1000);
-							accessor.add(6693, 1000);
-							accessor.add(6694, 1000);
-							accessor.add(6695, 1000);
-							accessor.add(6696, 1000);
-							accessor.add(6697, 1000);
-							accessor.add(6698, 1000);
-							accessor.add(6699, 1000);
-							accessor.add(6700, 1000);
-							accessor.add(6701, 1000);
-							accessor.add(6702, 1000);
-							accessor.add(6703, 1000);
-							accessor.add(6704, 1000);
-							accessor.add(6705, 1000);
-
-							// TODO: Check result
-							systemMessage("You have been given 1000 of every basic material. Have fun!", cmd, client);
-						}
+						// TODO: Check result
+						systemMessage("You have been given 1000 of every basic material. Have fun!", cmd, client);
 						return true;
 					}
 				} else if (cmdId.equals("givebasiccurrency")) {
 					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllCurrency
 							|| GameServer.hasPerm(permLevel, "admin")) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
+						var accessor = client.getPlayer().getSaveSpecificInventory().getCurrencyAccessor();
 
-						if (onlinePlayer != null) {
-							var accessor = client.getPlayer().getSaveSpecificInventory().getCurrencyAccessor();
+						accessor.addLikes(onlinePlayer == null ? null : onlinePlayer.client, 1000);
+						accessor.addStarFragments(onlinePlayer == null ? null : onlinePlayer.client, 1000);
 
-							accessor.addLikes(onlinePlayer.client, 1000);
-							accessor.addStarFragments(onlinePlayer.client, 1000);
-
-							// TODO: Check result
-							systemMessage("You have been given 1000 star fragments and likes. Have fun!", cmd, client);
-						}
+						// TODO: Check result
+						systemMessage("You have been given 1000 star fragments and likes. Have fun!", cmd, client);
 						return true;
 					}
 				} else if (cmdId.equals("questrewind")) {
@@ -764,29 +731,114 @@ public class SendMessage extends AbstractChatPacket {
 								suspiciousClients.put(cl, "limbo");
 							}
 						}
-						// Build message
-						String response = Centuria.gameServer.getPlayers().length + " player(s) online:";
+
+						// Find level IDs
+						int ingame = 0;
+						ArrayList<Integer> levelIDs = new ArrayList<Integer>();
+						HashMap<Integer, ArrayList<String>> rooms = new HashMap<Integer, ArrayList<String>>();
 						for (ChatClient cl : client.getServer().getClients()) {
 							Player plr = cl.getPlayer().getOnlinePlayerInstance();
 							if (plr != null && !suspiciousClients.containsKey(cl)) {
-								String map = "UNKOWN: " + plr.levelID;
-								if (plr.levelID == 25280)
-									map = "Tutorial";
-								else if (helper.has(Integer.toString(plr.levelID)))
-									map = helper.get(Integer.toString(plr.levelID)).getAsString();
-								response += "\n - " + plr.account.getDisplayName() + " (" + map + ")"
-										+ (plr.ghostMode ? " [GHOSTING]" : "");
-							} else if (!suspiciousClients.containsKey(cl)) {
-								suspiciousClients.put(cl, "no gameserver connection");
+								// Increase count
+								ingame++;
+
+								// Add
+								if (!levelIDs.contains(plr.levelID)) {
+									levelIDs.add(plr.levelID);
+									rooms.put(plr.levelID, new ArrayList<String>());
+								}
+								ArrayList<String> rLst = rooms.get(plr.levelID);
+
+								// Find room instances
+								GameRoom room = plr.getRoom();
+								if (room != null && room.getLevelID() == plr.levelID
+										&& !rLst.contains(room.getInstanceID())) {
+									rLst.add(room.getInstanceID());
+								}
 							}
 						}
+
+						// Build message
+						String response = Centuria.gameServer.getPlayers().length + " player(s) connected, " + ingame
+								+ " player(s) in world:";
+						for (int levelID : levelIDs) {
+							// Find rooms
+							for (String roomID : rooms.get(levelID)) {
+								for (ChatClient cl : client.getServer().getClients()) {
+									// Get player
+									Player plr = cl.getPlayer().getOnlinePlayerInstance();
+									if (plr != null && !suspiciousClients.containsKey(cl)) {
+										// Check
+										GameRoom room = plr.getRoom();
+										if (room != null && room.getLevelID() == levelID
+												&& room.getInstanceID().equals(roomID)) {
+											// Get map name
+											String map = "UNKOWN: " + plr.levelID;
+											if (plr.levelID == 25280)
+												map = "Tutorial [" + plr.levelID + "]";
+											else if (helper.has(Integer.toString(plr.levelID)))
+												map = helper.get(Integer.toString(plr.levelID)).getAsString() + " ["
+														+ plr.levelID + "]";
+
+											// Add to response
+											response += "\n- " + plr.account.getDisplayName() + " - " + map + " - room "
+													+ room.getInstanceID() + (plr.ghostMode ? " [GHOSTING]" : "");
+										}
+									} else if (!suspiciousClients.containsKey(cl)) {
+										suspiciousClients.put(cl, "no gameserver connection");
+									}
+								}
+							}
+
+							// Default players
+							for (ChatClient cl : client.getServer().getClients()) {
+								// Get player
+								Player plr = cl.getPlayer().getOnlinePlayerInstance();
+								if (plr != null && !suspiciousClients.containsKey(cl)) {
+									// Check
+									GameRoom room = plr.getRoom();
+									if (room == null && plr.levelID == levelID) {
+										// Get map name
+										String map = "UNKOWN: " + plr.levelID;
+										if (plr.levelID == 25280)
+											map = "Tutorial [" + plr.levelID + "]";
+										else if (helper.has(Integer.toString(plr.levelID)))
+											map = helper.get(Integer.toString(plr.levelID)).getAsString() + " ["
+													+ plr.levelID + "]";
+
+										// Add to response
+										response += "\n - " + plr.account.getDisplayName() + " - " + map
+												+ (plr.ghostMode ? " [GHOSTING]" : "");
+									}
+								} else if (!suspiciousClients.containsKey(cl)) {
+									suspiciousClients.put(cl, "no gameserver connection");
+								}
+							}
+						}
+
 						// Add suspicious clients
 						if (suspiciousClients.size() != 0) {
-							response += "\n";
-							response += "\nSuspicious clients:";
-							for (ChatClient cl : suspiciousClients.keySet())
-								response += "\n - " + cl.getPlayer().getDisplayName() + " [" + suspiciousClients.get(cl)
-										+ "]";
+							int added = 0;
+							String susClientsStr = "";
+							susClientsStr += "\n";
+							susClientsStr += "\nSuspicious clients:";
+							for (ChatClient cl : suspiciousClients.keySet()) {
+								// Check moderator perms
+								String permLevel2 = "member";
+								if (cl.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+									permLevel2 = cl.getPlayer().getSaveSharedInventory().getItem("permissions")
+											.getAsJsonObject().get("permissionLevel").getAsString();
+								}
+								if (GameServer.hasPerm(permLevel2, "moderator"))
+									continue;
+
+								// Add
+								susClientsStr += "\n - " + cl.getPlayer().getDisplayName() + " ["
+										+ suspiciousClients.get(cl) + "]";
+								added++;
+							}
+							if (added != 0)
+								response += susClientsStr;
 						}
 						// Send response
 						systemMessage(response, cmd, client);
@@ -976,16 +1028,12 @@ public class SendMessage extends AbstractChatPacket {
 							}
 
 							// Check code
-							while (true) {
-								try {
-									if (clearanceCodes.contains(args.get(2))) {
-										clearanceCodes.remove(args.get(2));
-									} else {
-										systemMessage("Error: invalid clearance code.", cmd, client);
-										return true;
-									}
-									break;
-								} catch (ConcurrentModificationException e) {
+							synchronized (clearanceCodes) {
+								if (clearanceCodes.contains(args.get(2))) {
+									clearanceCodes.remove(args.get(2));
+								} else {
+									systemMessage("Error: invalid clearance code.", cmd, client);
+									return true;
 								}
 							}
 						}
@@ -1063,13 +1111,19 @@ public class SendMessage extends AbstractChatPacket {
 								}
 
 								// Assign room
+								GameRoom room = ((GameServer) plr.client.getServer()).getRoomManager()
+										.getOrCreateRoom(plr.pendingLevelID, "STAFFROOM");
 								plr.roomReady = false;
 								plr.pendingLevelID = 1718;
-								plr.pendingRoom = "room_STAFFROOM";
-								join.roomIdentifier = "room_STAFFROOM";
+								plr.pendingRoom = room.getID();
+								join.roomIdentifier = plr.pendingRoom;
 
 								// Send response
 								plr.client.sendPacket(join);
+
+								// Log
+								Centuria.logger.info("Player " + plr.account.getDisplayName() + " is joining room "
+										+ "STAFFROOM" + " of level 1718");
 
 								break;
 							}
@@ -1095,16 +1149,12 @@ public class SendMessage extends AbstractChatPacket {
 							}
 
 							// Check code
-							while (true) {
-								try {
-									if (clearanceCodes.contains(args.get(1))) {
-										clearanceCodes.remove(args.get(1));
-									} else {
-										systemMessage("Error: invalid clearance code.", cmd, client);
-										return true;
-									}
-									break;
-								} catch (ConcurrentModificationException e) {
+							synchronized (clearanceCodes) {
+								if (clearanceCodes.contains(args.get(1))) {
+									clearanceCodes.remove(args.get(1));
+								} else {
+									systemMessage("Error: invalid clearance code.", cmd, client);
+									return true;
 								}
 							}
 						}
@@ -1311,6 +1361,10 @@ public class SendMessage extends AbstractChatPacket {
 					case "toggletpoverride": {
 						// Override tp locks
 						Player plr = client.getPlayer().getOnlinePlayerInstance();
+						if (plr == null) {
+							systemMessage("Teleport overrides cannot be toggled unless you are ingame.", cmd, client);
+							return true;
+						}
 						if (plr.overrideTpLocks) {
 							plr.overrideTpLocks = false;
 							systemMessage(
@@ -1331,16 +1385,12 @@ public class SendMessage extends AbstractChatPacket {
 								}
 
 								// Check code
-								while (true) {
-									try {
-										if (clearanceCodes.contains(args.get(0))) {
-											clearanceCodes.remove(args.get(0));
-										} else {
-											systemMessage("Error: invalid clearance code.", cmd, client);
-											return true;
-										}
-										break;
-									} catch (ConcurrentModificationException e) {
+								synchronized (clearanceCodes) {
+									if (clearanceCodes.contains(args.get(0))) {
+										clearanceCodes.remove(args.get(0));
+									} else {
+										systemMessage("Error: invalid clearance code.", cmd, client);
+										return true;
 									}
 								}
 							}
@@ -1358,6 +1408,10 @@ public class SendMessage extends AbstractChatPacket {
 					case "toggleghostmode": {
 						// Ghost mode
 						Player plr = client.getPlayer().getOnlinePlayerInstance();
+						if (plr == null) {
+							systemMessage("Ghost mode cannot be toggled unless you are ingame.", cmd, client);
+							return true;
+						}
 						if (plr.ghostMode) {
 							plr.ghostMode = false;
 
@@ -1412,14 +1466,15 @@ public class SendMessage extends AbstractChatPacket {
 								while (codeLong < 10000)
 									codeLong = rnd.nextLong();
 								code = Long.toString(codeLong, 16);
-								try {
+								synchronized (clearanceCodes) {
 									if (!clearanceCodes.contains(code))
 										break;
-								} catch (ConcurrentModificationException e) {
 								}
 								code = Long.toString(rnd.nextLong(), 16);
 							}
-							clearanceCodes.add(code);
+							synchronized (clearanceCodes) {
+								clearanceCodes.add(code);
+							}
 							EventBus.getInstance()
 									.dispatchEvent(new MiscModerationEvent("clearancecode.generated",
 											"Admin Clearance Code Generated", Map.of(),
@@ -1429,17 +1484,18 @@ public class SendMessage extends AbstractChatPacket {
 							final String cFinal = code;
 							Thread th = new Thread(() -> {
 								for (int i = 0; i < 12000; i++) {
-									try {
+									synchronized (clearanceCodes) {
 										if (!clearanceCodes.contains(cFinal))
 											return;
-									} catch (ConcurrentModificationException e) {
 									}
 									try {
 										Thread.sleep(10);
 									} catch (InterruptedException e) {
 									}
 								}
-								clearanceCodes.remove(cFinal);
+								synchronized (clearanceCodes) {
+									clearanceCodes.remove(cFinal);
+								}
 							}, "Clearance code expiry");
 							th.setDaemon(true);
 							th.start();
@@ -1882,50 +1938,61 @@ public class SendMessage extends AbstractChatPacket {
 						}
 					}
 					case "tpm": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							try {
-								// Teleports a player to a map.
-								String defID = "";
-								if (args.size() < 1) {
-									systemMessage("Missing argument: teleport defID", cmd, client);
-									return true;
-								}
+						try {
+							// Teleports a player to a map.
+							String defID = "";
+							if (args.size() < 1) {
+								systemMessage("Missing argument: map ID", cmd, client);
+								return true;
+							}
 
-								// Parse arguments
-								defID = args.get(0);
-								String type = "0";
-								if (args.size() > 1) {
-									type = args.get(1);
-								}
+							// Parse arguments
+							defID = args.get(0);
+
+							// Check room
+							String room = null;
+							if (args.size() >= 2)
+								room = args.get(1);
+
+							// Check type
+							String type = "0";
+							if (args.size() >= 3)
+								type = args.get(2);
+
+							// Find player
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() >= 4)
+								player = args.get(3);
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// Teleport
+							Player plr = acc.getOnlinePlayerInstance();
+							if (plr != null) {
+								// Find room
+								String roomID;
+								if (room == null)
+									roomID = ((GameServer) plr.client.getServer()).getRoomManager()
+											.findBestRoom(Integer.valueOf(defID), plr).getID();
+								else
+									roomID = ((GameServer) plr.client.getServer()).getRoomManager()
+											.getOrCreateRoom(Integer.valueOf(defID), room).getID();
 
 								// Teleport
-
-								// Find player
-								String player = client.getPlayer().getDisplayName();
-								if (args.size() >= 3) {
-									player = args.get(2);
-								}
-								String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-								if (uuid == null) {
-									// Player not found
-									systemMessage("Specified account could not be located.", cmd, client);
-									return true;
-								}
-								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-								Player plr = acc.getOnlinePlayerInstance();
-								if (plr != null)
-									plr.teleportToRoom(Integer.valueOf(defID), Integer.valueOf(type), -1,
-											"room_" + defID, "");
-								else {
-									// Player not found
-									systemMessage("Specified player is not online.", cmd, client);
-									return true;
-								}
-							} catch (Exception e) {
-								e.printStackTrace();
-								systemMessage("Error: " + e, cmd, client);
+								plr.teleportToRoom(Integer.valueOf(defID), Integer.valueOf(type), -1, roomID, "");
+							} else {
+								// Player not found
+								systemMessage("Specified player is not online.", cmd, client);
+								return true;
 							}
+						} catch (Exception e) {
+							e.printStackTrace();
+							systemMessage("Error: " + e, cmd, client);
 						}
 
 						return true;
@@ -2215,8 +2282,10 @@ public class SendMessage extends AbstractChatPacket {
 
 							// Send packet
 							try {
-								if (acc.getOnlinePlayerInstance() == null)
+								if (acc.getOnlinePlayerInstance() == null) {
 									systemMessage("Error: player not online", cmd, client);
+									return true;
+								}
 								acc.getOnlinePlayerInstance().client.sendPacket(packet);
 								systemMessage("Packet has been sent.", cmd, client);
 							} catch (Exception e) {
@@ -2575,7 +2644,7 @@ public class SendMessage extends AbstractChatPacket {
 	private void systemMessage(String message, String cmd, ChatClient client) {
 		// Send response
 		JsonObject res = new JsonObject();
-		res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
+		res.addProperty("conversationType", client.getRoom(room).getType());
 		res.addProperty("conversationId", room);
 		res.addProperty("message", "Issued chat command: " + cmd + ":\n[system] " + message);
 		res.addProperty("source", client.getPlayer().getAccountID());

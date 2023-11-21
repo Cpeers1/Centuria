@@ -1,0 +1,212 @@
+
+# Filter configuration
+Name Default strict-mode text filter
+Description This filter contains typical swears and other less clean words
+Reason Filtered because of the strict-mode filter, this is a user decision
+
+# Severity can be ALWAYS_FILTERED, USER_STRICT_MODE and INSTAMUTE
+Severity USER_STRICT_MODE
+
+#
+# Define phrases
+# Phrases can be defined with `Phrase phrase here`, eg `Phrase example`, if it starts with `R:` its a regex match, `RR:` makes it a raw match
+# Phrase bodies look like this:
+#    # Define example
+#    Phrase example
+#        # Set filtering mode, they can be:
+#        #   WHOLE_PHRASE : filters only if the whole phrase is a match, this does not tag unless all words are on their own, unless its a single word, then it checks if the word is present in the sentence, doesnt work if attached to another word, eg. `exam` and `example` arent a match to the system
+#        #   PHRASE_COMBINED : similar to WHOLE_PHRASE but also filters if the phrase without spaces is present in the text
+#        #   WORD_CONTAINS : most recommended in most cases, filters only if a word contains the phrase or variant, unlike WHOLE_PHRASE this DOES tag if the filter words are present attached to other words
+#        #   WORD_COMBINED : similar to WORD_CONTAINS but also filters if the phrase without spaces is present in the text
+#        Mode WHOLE_PHRASE
+#        
+#        # Define variants
+#        # Same rules as initial definition
+#        Variant ex4mple
+# 
+#        # Filtering reason (optional)
+#        Reason Example filter
+#    # Endphrase marks the end of the phrase
+#    Endphrase
+#
+# There wont be commenting much after this because writing filters ABSOLUTELY SUCKS due to all the words that are defined
+#
+
+
+Phrase fuck
+    Mode WORD_CONTAINS
+    Variant fucking
+    Variant fuck1ng
+    Variant fuk
+    Variant fuc
+    Variant fck
+    Variant feck
+Endphrase
+
+Phrase fuck
+    Mode WHOLE_PHRASE
+    Variant f u c k
+Endphrase
+
+Phrase anus
+    Mode WORD_CONTAINS
+    Variant 4nus
+Endphrase
+
+Phrase arse
+    Mode WORD_CONTAINS
+    Variant 4rse
+    Variant ars3
+    Variant 4rs3
+Endphrase
+
+Phrase ass
+    Mode WHOLE_PHRASE
+    Variant 4ss
+Endphrase
+
+Phrase bastard
+    Mode WORD_CONTAINS
+    Variant b4stard
+    Variant bast4rd
+    Variant b4st4rd
+Endphrase
+
+Phrase bitch
+    Mode WORD_CONTAINS
+    Variant biatch
+    Variant b1tch
+Endphrase
+
+Phrase bloody
+    Mode WORD_CONTAINS
+Endphrase
+
+Phrase bollock
+    Mode WORD_CONTAINS
+    Variant bollok
+Endphrase
+
+Phrase bum
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase butt
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase coon
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase crap
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase damn
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase damnit 
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase damn it 
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase dyke 
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase fudgepacker
+    Mode WHOLE_PHRASE
+    Variant fudge packer
+Endphrase
+
+Phrase flange
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase goddamn
+    Mode WHOLE_PHRASE
+    Variant god damn
+    Variant goddam
+Endphrase
+
+Phrase hell 
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase knobend 
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase labia
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase lmao 
+    Mode WHOLE_PHRASE
+    Variant lmfao
+Endphrase
+
+Phrase muff
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase omg
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase piss
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase prick
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase prick
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase pube
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase scrotum
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase shit
+    Mode WORD_CONTAINS
+Endphrase
+
+Phrase shit
+    Mode WHOLE_PHRASE
+    Variant sh it
+    Variant s hit
+    Variant shi t
+    Variant s h it
+    Variant sh i t
+    Variant s h i t
+Endphrase
+
+Phrase turd
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase wtf
+    Mode WHOLE_PHRASE
+    Variant w t f
+Endphrase
+
+Phrase wtat
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase wetback
+    Mode WHOLE_PHRASE
+    Variant w3tback
+Endphrase

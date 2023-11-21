@@ -5,13 +5,14 @@ import java.io.IOException;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
 public class RoomJoinTutorialPacket implements IXtPacket<RoomJoinTutorialPacket> {
 
 	private static final String PACKET_ID = "rjt";
-	
+
 	@Override
 	public RoomJoinTutorialPacket instantiate() {
 		return new RoomJoinTutorialPacket();
@@ -34,7 +35,8 @@ public class RoomJoinTutorialPacket implements IXtPacket<RoomJoinTutorialPacket>
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Make the client load the tutorial
 		Player plr = (Player) client.container;
-		plr.teleportToRoom(25280, 4, -1, "room_25280", "");
+		plr.teleportToRoom(25280, 4, -1,
+				((GameServer) client.getServer()).getRoomManager().findBestRoom(25280, plr).getID(), "");
 		return true;
 	}
 

@@ -203,7 +203,7 @@ public class FileBasedSocialManager extends SocialManager {
 				playerObject.addProperty(playerEntryFollowingPropertyName, following);
 
 				// update the updated at too
-				SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 				String updatedAt = fmt.format(new Date());
 
@@ -250,7 +250,7 @@ public class FileBasedSocialManager extends SocialManager {
 				playerObject.addProperty(playerEntryFollowerPropertyName, follower);
 
 				// update the updated at too
-				SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 				String updatedAt = fmt.format(new Date());
 
@@ -297,7 +297,7 @@ public class FileBasedSocialManager extends SocialManager {
 				playerObject.addProperty(playerEntryBlockedPropertyName, blocked);
 
 				// update the updated at too
-				SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 				String updatedAt = fmt.format(new Date());
 
@@ -316,7 +316,7 @@ public class FileBasedSocialManager extends SocialManager {
 				// create a new entry for this player
 				socialList.add(targetPlayerID, createNewPlayerEntry(false, false, blocked, false));
 			}
-			
+
 			// add/remove from ingame player
 			CenturiaAccount acc = AccountManager.getInstance().getAccount(sourcePlayerID);
 			Player plr = acc.getOnlinePlayerInstance();
@@ -351,7 +351,7 @@ public class FileBasedSocialManager extends SocialManager {
 				playerObject.addProperty(playerEntryFavouritedPropertyName, favorite);
 
 				// update the updated at too
-				SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 				String updatedAt = fmt.format(new Date());
 
@@ -511,7 +511,7 @@ public class FileBasedSocialManager extends SocialManager {
 	private JsonObject createNewPlayerEntry(boolean following, boolean follower, boolean blocked, boolean favorite) {
 		JsonObject newEntry = new JsonObject();
 
-		SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.'0Z'");
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 		fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 		String addedAt = fmt.format(new Date());
 

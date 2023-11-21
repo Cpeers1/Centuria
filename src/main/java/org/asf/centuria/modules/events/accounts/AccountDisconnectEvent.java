@@ -21,7 +21,7 @@ public class AccountDisconnectEvent extends EventObject {
 	private DisconnectType type;
 
 	public static enum DisconnectType {
-		UNKNOWN, SERVER_SHUTDOWN, KICKED, BANNED, MAINTENANCE
+		UNKNOWN, SERVER_SHUTDOWN, DUPLICATE_LOGIN, KICKED, BANNED, MAINTENANCE
 	}
 
 	public AccountDisconnectEvent(CenturiaAccount account, String reason, DisconnectType type) {

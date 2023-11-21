@@ -1,18 +1,25 @@
 package org.asf.centuria.networking.chatserver.networking;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public class HistoryPacket extends AbstractChatPacket {
 
-	private String convo;
+	public String convo;
+	public int cursor;
+	public int pageSize;
+	public boolean includeMessages;
 
 	@Override
 	public String id() {
@@ -27,6 +34,10 @@ public class HistoryPacket extends AbstractChatPacket {
 	@Override
 	public void parse(JsonObject data) {
 		convo = data.get("conversationId").getAsString();
+		pageSize = data.get("pageSize").getAsInt();
+		if (data.has("cursor") && !data.get("cursor").getAsString().isEmpty())
+			cursor = data.get("cursor").getAsInt();
+		includeMessages = data.get("include_messages").getAsBoolean();
 	}
 
 	@Override
@@ -38,39 +49,63 @@ public class HistoryPacket extends AbstractChatPacket {
 		// Send response
 		JsonObject res = new JsonObject();
 
-		// Load messages
-		DMManager manager = DMManager.getInstance();
-		if (client.isInRoom(convo) && client.isRoomPrivate(convo) && manager.dmExists(convo)) {
-			JsonArray msgs = new JsonArray();
-			for (PrivateChatMessage msg : manager.getDMHistory(convo, client.getPlayer().getAccountID())) {
-				// Build participant list
-				JsonArray members = new JsonArray();
-				for (String participant : manager.getDMParticipants(convo)) {
-					if (!participant.equals(msg.source))
-						members.add(participant);
-				}
+		// Time format
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+		fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-				// Build message object
-				JsonObject obj = new JsonObject();
-				obj.addProperty("body", msg.content);
-				obj.addProperty("conversation_id", convo);
-				obj.addProperty("conversation_type", "private");
-				obj.add("mask", null);
-				try {
-					obj.addProperty("message_id", UUID.nameUUIDFromBytes(msg.sentAt.getBytes("UTF-8")).toString());
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
+		// Load messages
+		int cursorCurrent = cursor;
+		int messageOffset = cursorCurrent * pageSize;
+		int dmHistorySize = 0;
+		DMManager manager = DMManager.getInstance();
+		if (client.isInRoom(convo) && client.getRoom(convo).getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)
+				&& manager.dmExists(convo)) {
+			if (includeMessages) {
+				JsonArray msgs = new JsonArray();
+				int indexInPage = 0;
+				PrivateChatMessage[] messages = manager.getDMHistory(convo, client.getPlayer().getAccountID());
+				dmHistorySize = messages.length;
+				for (int i = messages.length - 1 - messageOffset; i >= 0; i--) {
+					PrivateChatMessage msg = messages[i];
+
+					// Build participant list
+					JsonArray members = new JsonArray();
+					for (String participant : manager.getDMParticipants(convo)) {
+						if (!participant.equals(msg.source))
+							members.add(participant);
+					}
+
+					// Build message object
+					JsonObject obj = new JsonObject();
+					obj.addProperty("body", msg.content);
+					obj.addProperty("conversation_id", convo);
+					obj.addProperty("conversation_type", "private");
+					obj.add("mask", null);
+					try {
+						obj.addProperty("message_id",
+								UUID.nameUUIDFromBytes(fmt.format(new Date(msg.sentAt)).getBytes("UTF-8")).toString());
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+					obj.add("participants", members);
+					obj.addProperty("sent_at", fmt.format(new Date(msg.sentAt)));
+					obj.addProperty("source", msg.source);
+					msgs.add(obj);
+
+					// Increase index
+					indexInPage++;
+					if (indexInPage >= pageSize)
+						break;
 				}
-				obj.add("participants", members);
-				obj.addProperty("sent_at", msg.sentAt);
-				obj.addProperty("source", msg.source);
-				msgs.add(obj);
-			}
-			res.add("messages", msgs);
-		} else
+				res.add("messages", msgs);
+			} else
+				dmHistorySize = manager.getDMHistory(convo, client.getPlayer().getAccountID()).length;
+		} else if (includeMessages)
 			res.add("messages", new JsonArray());
 
 		res.addProperty("eventId", "conversations.history");
+		if ((cursorCurrent + 1) * pageSize < dmHistorySize)
+			res.addProperty("cursor", cursorCurrent + 1);
 		res.addProperty("success", true);
 		client.sendPacket(res);
 		return true;

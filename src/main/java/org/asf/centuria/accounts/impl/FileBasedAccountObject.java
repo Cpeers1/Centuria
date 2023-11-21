@@ -2,10 +2,8 @@ package org.asf.centuria.accounts.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.UUID;
 
 import org.apache.logging.log4j.MarkerManager;
@@ -21,9 +19,11 @@ import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.AccountDeletionEvent;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.networking.voicechatserver.VoiceChatClient;
 import org.asf.centuria.social.SocialEntry;
 import org.asf.centuria.social.SocialManager;
+import org.asf.centuria.textfilter.TextFilterService;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -44,54 +44,6 @@ public class FileBasedAccountObject extends CenturiaAccount {
 	private long lastLogin = -1;
 	private File userFile;
 
-	private static String[] nameBlacklist = new String[] { "kit", "kitsendragn", "kitsendragon", "fera", "fero",
-			"wwadmin", "ayli", "komodorihero", "wwsam", "blinky", "fer.ocity" };
-
-	private static ArrayList<String> muteWords = new ArrayList<String>();
-	private static ArrayList<String> filterWords = new ArrayList<String>();
-
-	static {
-		// Load filter
-		try {
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("textfilter/filter.txt");
-			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
-			for (String line : lines.split("\n")) {
-				if (line.isEmpty() || line.startsWith("#"))
-					continue;
-
-				String data = line.trim();
-				while (data.contains("  "))
-					data = data.replace("  ", "");
-
-				for (String word : data.split(" "))
-					filterWords.add(word.toLowerCase());
-			}
-			strm.close();
-		} catch (IOException e) {
-		}
-
-		// Load ban words
-		try {
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("textfilter/instamute.txt");
-			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
-			for (String line : lines.split("\n")) {
-				if (line.isEmpty() || line.startsWith("#"))
-					continue;
-
-				String data = line.trim();
-				while (data.contains("  "))
-					data = data.replace("  ", "");
-
-				for (String word : data.split(" "))
-					muteWords.add(word.toLowerCase());
-			}
-			strm.close();
-		} catch (IOException e) {
-		}
-	}
-
 	public FileBasedAccountObject(File uf) throws IOException {
 		// Parse account file
 		userUUID = Files.readAllLines(uf.toPath()).get(0);
@@ -100,10 +52,25 @@ public class FileBasedAccountObject extends CenturiaAccount {
 		displayName = Files.readAllLines(uf.toPath()).get(3);
 		userID = Integer.parseInt(Files.readAllLines(uf.toPath()).get(4));
 
-		// Find existing inventory
-		Player old = getOnlinePlayerInstance();
-		if (old == null || !(old.account.getSaveSharedInventory() instanceof FileBasedPlayerInventory)
-				|| !(old.account.getSaveSpecificInventory() instanceof FileBasedPlayerInventory)) {
+		// Find cached account
+		CenturiaAccount oldA = null;
+		Player oldP = getOnlinePlayerInstance();
+		if (oldP != null)
+			oldA = oldP.account;
+		else {
+			// Find chat client
+			ChatClient oldC = Centuria.chatServer.getClient(getAccountID());
+			if (oldC != null)
+				oldA = oldC.getPlayer();
+			else {
+				// Find voice chat client
+				VoiceChatClient oldVC = Centuria.voiceChatServer.getClient(getAccountID());
+				if (oldVC != null)
+					oldA = oldVC.getPlayer();
+			}
+		}
+		if (oldA == null || !(oldA.getSaveSharedInventory() instanceof FileBasedPlayerInventory)
+				|| !(oldA.getSaveSpecificInventory() instanceof FileBasedPlayerInventory)) {
 			// Load inventories
 			sharedInv = new FileBasedPlayerInventory(userUUID, "");
 			SaveMode mode = getSaveMode();
@@ -116,12 +83,16 @@ public class FileBasedAccountObject extends CenturiaAccount {
 			}
 
 		} else {
-			// Use the existing inventory object
-			sharedInv = (FileBasedPlayerInventory) old.account.getSaveSharedInventory();
-			mainInv = (FileBasedPlayerInventory) old.account.getSaveSpecificInventory();
-			if (old.account.getSaveMode() == SaveMode.MANAGED)
-				manager = old.account.getSaveManager();
+			// Use the existing inventory
+			sharedInv = (FileBasedPlayerInventory) oldA.getSaveSharedInventory();
+			mainInv = (FileBasedPlayerInventory) oldA.getSaveSpecificInventory();
+			if (oldA.getSaveMode() == SaveMode.MANAGED)
+				manager = oldA.getSaveManager();
 		}
+
+		// Use old privacy settings
+		if (oldA != null)
+			privacy = oldA.getPrivacySettings();
 
 		// Load manager
 		if (manager == null && getSaveMode() == SaveMode.MANAGED) {
@@ -186,21 +157,8 @@ public class FileBasedAccountObject extends CenturiaAccount {
 			return false;
 
 		// Prevent blacklisted names from being used
-		for (String name : nameBlacklist) {
-			if (username.equalsIgnoreCase(name))
-				return false;
-		}
-
-		// Prevent banned and filtered words
-		for (String word : username.split(" ")) {
-			if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-				return false;
-			}
-
-			if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-				return false;
-			}
-		}
+		if (TextFilterService.getInstance().isFiltered(username, true, "USERNAMEFILTER"))
+			return false;
 
 		// Set login name
 		File f = new File("accounts/" + username);
@@ -227,21 +185,8 @@ public class FileBasedAccountObject extends CenturiaAccount {
 			return false;
 
 		// Prevent blacklisted names from being used
-		for (String nm : nameBlacklist) {
-			if (name.equalsIgnoreCase(nm))
-				return false;
-		}
-
-		// Prevent banned and filtered words
-		for (String word : name.split(" ")) {
-			if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-				return false;
-			}
-
-			if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-				return false;
-			}
-		}
+		if (TextFilterService.getInstance().isFiltered(name, true, "USERNAMEFILTER"))
+			return false;
 
 		// Remove lockout
 		if (isRenameRequired())

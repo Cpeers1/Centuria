@@ -15,7 +15,6 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.TimeZone;
-import java.util.stream.Stream;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
@@ -29,8 +28,10 @@ import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
+import org.asf.centuria.modules.events.accounts.AccountDisconnectEvent;
 import org.asf.centuria.modules.events.accounts.AccountLoginEvent;
 import org.asf.centuria.modules.events.accounts.AccountPreloginEvent;
+import org.asf.centuria.modules.events.accounts.AccountDisconnectEvent.DisconnectType;
 import org.asf.centuria.modules.events.players.PlayerJoinEvent;
 import org.asf.centuria.modules.events.players.PlayerLeaveEvent;
 import org.asf.centuria.modules.events.servers.GameServerStartupEvent;
@@ -47,6 +48,7 @@ import org.asf.centuria.packets.xt.gameserver.*;
 import org.asf.centuria.packets.xt.gameserver.avatar.*;
 import org.asf.centuria.packets.xt.gameserver.inventory.*;
 import org.asf.centuria.packets.xt.gameserver.item.*;
+import org.asf.centuria.packets.xt.gameserver.messages.GenericMessagePacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.*;
 import org.asf.centuria.packets.xt.gameserver.object.*;
 import org.asf.centuria.packets.xt.gameserver.relationship.*;
@@ -57,6 +59,7 @@ import org.asf.centuria.packets.xt.gameserver.shop.*;
 import org.asf.centuria.packets.xt.gameserver.trade.*;
 import org.asf.centuria.packets.xt.gameserver.user.*;
 import org.asf.centuria.packets.xt.gameserver.world.*;
+import org.asf.centuria.rooms.GameRoomManager;
 import org.asf.centuria.security.AddressChecker;
 import org.asf.centuria.security.IpAddressMatcher;
 import org.asf.centuria.social.SocialEntry;
@@ -74,9 +77,11 @@ public class GameServer extends BaseSmartfoxServer {
 
 	public boolean maintenance = false;
 	public boolean shutdown = false;
+
 	private Random rnd = new Random();
 	private XmlMapper mapper = new XmlMapper();
 	private HashMap<String, Player> players = new HashMap<String, Player>();
+	private GameRoomManager roomManager = new GameRoomManager(this);
 
 	public ArrayList<String> vpnIpsV4 = new ArrayList<String>();
 	public ArrayList<String> vpnIpsV6 = new ArrayList<String>();
@@ -84,30 +89,9 @@ public class GameServer extends BaseSmartfoxServer {
 	public String whitelistFile = null;
 
 	public Player[] getPlayers() {
-		while (true) {
-			try {
-				return Stream.of(players.values().toArray(t -> new Player[t])).filter(t -> {
-					if (t != null)
-						return true;
-					else {
-						while (true) {
-							try {
-								String[] ids = players.keySet().toArray(t2 -> new String[t2]);
-								for (String id : ids) {
-									if (id == null || players.get(id) == null)
-										players.remove(id);
-								}
-								break;
-							} catch (ConcurrentModificationException e) {
-							}
-						}
-						return false;
-					}
-				}).toArray(t -> new Player[t]);
-			} catch (ConcurrentModificationException e) {
-			}
+		synchronized (players) {
+			return players.values().toArray(t -> new Player[t]);
 		}
-
 	}
 
 	@Override
@@ -163,6 +147,7 @@ public class GameServer extends BaseSmartfoxServer {
 		registerPacket(new SettingsSetPacket());
 		registerPacket(new InventoryItemInspirationCombinePacket());
 		registerPacket(new GiftRedeemPacket());
+		registerPacket(new GenericMessagePacket());
 
 		// Trading Packets
 		registerPacket(new TradeListPacket());
@@ -325,8 +310,15 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Disconnect an already connected instance
 		Player ePlr = getPlayer(acc.getAccountID());
-		if (ePlr != null)
+		if (ePlr != null) {
+			EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(ePlr.account,
+					"Logged in from another location.", DisconnectType.DUPLICATE_LOGIN));
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+			}
 			ePlr.client.disconnect();
+		}
 
 		// Log the login attempt
 		Centuria.logger.info("Login from IP: " + client.getAddress() + ": " + acc.getLoginName());
@@ -418,7 +410,9 @@ public class GameServer extends BaseSmartfoxServer {
 		}
 
 		// Add player
-		players.put(plr.account.getAccountID(), plr);
+		synchronized (players) {
+			players.put(plr.account.getAccountID(), plr);
+		}
 
 		// Dispatch join event
 		EventBus.getInstance().dispatchEvent(new PlayerJoinEvent(this, plr, acc, client));
@@ -432,11 +426,16 @@ public class GameServer extends BaseSmartfoxServer {
 	 * @param plr Player instance
 	 */
 	protected void playerLeft(Player plr) {
-		if (players.containsKey(plr.account.getAccountID())) {
-			players.remove(plr.account.getAccountID());
-			Centuria.logger.info("Player disconnected: " + plr.account.getLoginName() + " (was "
-					+ plr.account.getDisplayName() + ")");
-
+		boolean wasPresent = false;
+		synchronized (players) {
+			if (players.containsKey(plr.account.getAccountID())) {
+				players.remove(plr.account.getAccountID());
+				Centuria.logger.info("Player disconnected: " + plr.account.getLoginName() + " (was "
+						+ plr.account.getDisplayName() + ")");
+				wasPresent = true;
+			}
+		}
+		if (wasPresent) {
 			// Dispatch leave event
 			EventBus.getInstance().dispatchEvent(new PlayerLeaveEvent(this, plr, plr.account, plr.client));
 		}
@@ -803,15 +802,20 @@ public class GameServer extends BaseSmartfoxServer {
 	 * @return Player instance or null if offline
 	 */
 	public Player getPlayer(String accountID) {
-		while (true) {
-			try {
-				if (players.containsKey(accountID))
-					return players.get(accountID);
-				return null;
-			} catch (Exception e) {
-				continue;
-			}
+		synchronized (players) {
+			if (players.containsKey(accountID))
+				return players.get(accountID);
+			return null;
 		}
+	}
+
+	/**
+	 * Retrieves the room manager of this server
+	 * 
+	 * @return GameRoomManager instance
+	 */
+	public GameRoomManager getRoomManager() {
+		return roomManager;
 	}
 
 	@Override

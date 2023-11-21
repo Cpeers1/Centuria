@@ -7,6 +7,8 @@ import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
+import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.social.SocialManager;
 
 import com.google.gson.JsonArray;
@@ -117,7 +119,7 @@ public class CreateConversationPacket extends AbstractChatPacket {
 			for (ChatClient plr : client.getServer().getClients()) {
 				if (plr.getPlayer().getAccountID().equals(participant.getAccountID())) {
 					// Join room
-					plr.joinRoom(dmID, true);
+					plr.joinRoom(dmID, ChatRoomTypes.PRIVATE_CHAT);
 
 					// Send response
 					plr.sendPacket(res);
@@ -132,7 +134,6 @@ public class CreateConversationPacket extends AbstractChatPacket {
 		// Mostly used for trade chat.
 
 		// Managers
-		DMManager manager = DMManager.getInstance();
 		AccountManager accounts = AccountManager.getInstance();
 
 		// Participant list
@@ -142,50 +143,30 @@ public class CreateConversationPacket extends AbstractChatPacket {
 			return;
 
 		// Create conversation ID
-		String dmID = UUID.randomUUID().toString();
-		while (manager.dmExists(dmID)) {
-			dmID = UUID.randomUUID().toString();
-		}
+		String rID = "t_"
+				+ (participants.size() == 0 ? client.getPlayer().getAccountID() : participants.get(0).getAsString());
 
 		for (var member : members) {
 			// If the members have active trades..
-			if (member.getOnlinePlayerInstance().tradeEngagedIn != null) {
+			if (member.getOnlinePlayerInstance() != null && member.getOnlinePlayerInstance().tradeEngagedIn != null) {
 				// Set their trade's chat ID to this new conversation ID.
-				member.getOnlinePlayerInstance().tradeEngagedIn.chatConversationId = dmID;
+				member.getOnlinePlayerInstance().tradeEngagedIn.chatConversationId = rID;
 			}
 		}
 
-		// Open DM
-		manager.openDM(dmID, members.stream().map(t -> t.getAccountID()).toArray(t -> new String[t]));
-
 		// Build response
 		JsonObject res = new JsonObject();
-		res.addProperty("conversationId", dmID);
+		res.addProperty("conversationId", rID);
 		res.addProperty("eventId", "conversations.create");
 		res.addProperty("success", true);
 
 		// Open DM for all participants
 		for (CenturiaAccount participant : members) {
-			// Load info
-			if (!participant.getSaveSharedInventory().containsItem("dms"))
-				participant.getSaveSharedInventory().setItem("dms", new JsonObject());
-			JsonObject dms = participant.getSaveSharedInventory().getItem("dms").getAsJsonObject();
-
-			// Save DM info
-			for (CenturiaAccount mem : members) {
-				if (!mem.getAccountID().equals(participant.getAccountID())) {
-					if (dms.has(mem.getAccountID()))
-						dms.remove(mem.getAccountID());
-					dms.addProperty(mem.getAccountID(), dmID);
-				}
-			}
-			participant.getSaveSharedInventory().setItem("dms", dms);
-
 			// Find online player
 			for (ChatClient plr : client.getServer().getClients()) {
 				if (plr.getPlayer().getAccountID().equals(participant.getAccountID())) {
 					// Join room
-					plr.joinRoom(dmID, true);
+					plr.joinRoom(rID, ChatRoomTypes.TRANSIENT_CHAT);
 
 					// Send response
 					plr.sendPacket(res);
@@ -203,43 +184,51 @@ public class CreateConversationPacket extends AbstractChatPacket {
 		for (JsonElement participant : participants) {
 			String id = participant.getAsString();
 
-			// Block check
-			if (SocialManager.getInstance().socialListExists(id)
-					&& SocialManager.getInstance().getPlayerIsBlocked(id, client.getPlayer().getAccountID())) {
-
-				// Send response
-				JsonObject res = new JsonObject();
-				res.addProperty("eventId", "conversations.create");
-				res.addProperty("error", "blocked");
-				res.addProperty("success", false);
-				client.sendPacket(res);
-				return null;
-			}
-
-			// Find online player
-			boolean found = false;
-			for (ChatClient plr : client.getServer().getClients()) {
-				if (plr.getPlayer().getAccountID().equals(id)) {
-					members.add(plr.getPlayer());
-					found = true;
-					break;
+			// Get account
+			CenturiaAccount acc = accounts.getAccount(id);
+			if (acc != null) {
+				// Get permissions of account
+				String permLevel = "member";
+				if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+					permLevel = client.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+							.get("permissionLevel").getAsString();
 				}
-			}
 
-			// Find offline player
-			if (!found) {
-				CenturiaAccount acc = accounts.getAccount(id);
-				if (acc == null) {
-					// Participant doesnt exist
+				// Block check
+				if (SocialManager.getInstance().socialListExists(id)
+						&& SocialManager.getInstance().getPlayerIsBlocked(id, client.getPlayer().getAccountID())
+						&& !GameServer.hasPerm(permLevel, "moderator")) {
+					// Send response
 					JsonObject res = new JsonObject();
-					res.addProperty("error", "unrecognized_participant");
 					res.addProperty("eventId", "conversations.create");
+					res.addProperty("error", "not_allowed");
 					res.addProperty("success", false);
 					client.sendPacket(res);
 					return null;
-				} else {
+				}
+
+				// Find online player
+				boolean found = false;
+				for (ChatClient plr : client.getServer().getClients()) {
+					if (plr.getPlayer().getAccountID().equals(id)) {
+						members.add(plr.getPlayer());
+						found = true;
+						break;
+					}
+				}
+
+				// Find offline player
+				if (!found) {
 					members.add(acc);
 				}
+			} else {
+				// Participant doesnt exist
+				JsonObject res = new JsonObject();
+				res.addProperty("error", "unrecognized_participant");
+				res.addProperty("eventId", "conversations.create");
+				res.addProperty("success", false);
+				client.sendPacket(res);
+				return null;
 			}
 		}
 		return members;
