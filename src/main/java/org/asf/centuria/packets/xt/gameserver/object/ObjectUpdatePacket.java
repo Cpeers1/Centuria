@@ -2,12 +2,14 @@ package org.asf.centuria.packets.xt.gameserver.object;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.generic.Quaternion;
 import org.asf.centuria.entities.generic.Vector3;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
@@ -151,6 +153,23 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 		Player plr = (Player) client.container;
 		if (plr.room == null)
 			return true;
+
+		// Check if awaiting players
+		if (plr.awaitingPlayerSync) {
+			// Sync current player to others
+			for (Player player : ((GameServer) client.getServer()).getPlayers()) {
+				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+					plr.syncTo(player, WorldObjectMoverNodeType.InitPosition);
+					Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"), "Syncing player "
+							+ player.account.getDisplayName() + " to " + plr.account.getDisplayName());
+				}
+			}
+			plr.awaitingPlayerSync = false;
+
+			// Notify if ghosting
+			if (plr.ghostMode)
+				Centuria.systemMessage(plr, "Reminder: you are ghosting", true);
+		}
 
 		// Add fields
 		id = plr.account.getAccountID();

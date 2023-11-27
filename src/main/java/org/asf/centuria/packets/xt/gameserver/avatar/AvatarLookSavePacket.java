@@ -24,7 +24,6 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 	private String lookID;
 	private String lookName;
 	private String lookData;
-	private boolean success;
 
 	@Override
 	public AvatarLookSavePacket instantiate() {
@@ -46,11 +45,8 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 
 	@Override
 	public void build(XtWriter writer) throws IOException {
-
 		writer.writeInt(DATA_PREFIX);
-
-		writer.writeBoolean(success);
-
+		writer.writeString(lookID);
 		writer.writeString(DATA_SUFFIX);
 	}
 
@@ -68,10 +64,6 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 
 			// Parse avatar
 			JsonObject lookData = JsonParser.parseString(this.lookData).getAsJsonObject();
-
-			// Save look file to look database
-			plr.activeLook = lookID;
-			plr.account.setActiveLook(plr.activeLook);
 
 			// Save avatar to inventory
 			JsonArray items = plr.account.getSaveSpecificInventory().getItem("avatars").getAsJsonArray();
@@ -116,20 +108,19 @@ public class AvatarLookSavePacket implements IXtPacket<AvatarLookSavePacket> {
 
 			// Sync
 			GameServer srv = (GameServer) client.getServer();
+			plr.lastAction = 0;
 			for (Player player : srv.getPlayers()) {
 				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-					plr.syncTo(player, WorldObjectMoverNodeType.Move);
+					plr.syncTo(player, WorldObjectMoverNodeType.InitPosition);
 				}
 			}
 
 			// Send response
-			success = true;
 			client.sendPacket(this);
 		} catch (Exception exception) {
 			System.out.println("[AVATAREDITOR] [SAVELOOK] Exception Caught: ");
 			exception.printStackTrace();
-
-			success = false;
+			lookID = "";
 			client.sendPacket(this);
 		}
 

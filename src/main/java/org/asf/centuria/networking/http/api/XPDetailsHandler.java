@@ -2,7 +2,6 @@ package org.asf.centuria.networking.http.api;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Base64;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
@@ -25,26 +24,6 @@ public class XPDetailsHandler extends HttpPushProcessor {
 			getRequest().transferRequestBody(strm);
 			byte[] body = strm.toByteArray();
 			strm.close();
-
-			// Parse JWT payload
-			String token = this.getHeader("Authorization").substring("Bearer ".length());
-
-			// Verify signature
-			String verifyD = token.split("\\.")[0] + "." + token.split("\\.")[1];
-			String sig = token.split("\\.")[2];
-			if (!Centuria.verify(verifyD.getBytes("UTF-8"), Base64.getUrlDecoder().decode(sig))) {
-				this.setResponseStatus(401, "Unauthorized");
-				return;
-			}
-
-			// Verify expiry
-			JsonObject jwtPl = JsonParser
-					.parseString(new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), "UTF-8"))
-					.getAsJsonObject();
-			if (!jwtPl.has("exp") || jwtPl.get("exp").getAsLong() < System.currentTimeMillis() / 1000) {
-				this.setResponseStatus(401, "Unauthorized");
-				return;
-			}
 
 			// Parse body
 			JsonArray req = JsonParser.parseString(new String(body, "UTF-8")).getAsJsonArray();

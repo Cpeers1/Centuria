@@ -55,7 +55,8 @@ public class GetChatRoomList extends AbstractChatPacket {
 		JsonObject helper = null;
 		try {
 			// Load helper
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("spawns.json");
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("content/world/spawns.json");
 			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("Maps")
 					.getAsJsonObject();
 			strm.close();

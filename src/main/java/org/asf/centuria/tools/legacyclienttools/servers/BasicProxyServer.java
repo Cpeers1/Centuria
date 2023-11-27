@@ -1,4 +1,4 @@
-package org.asf.centuria.tools.legacyclienttools;
+package org.asf.centuria.tools.legacyclienttools.servers;
 
 import java.io.IOException;
 import java.net.InetAddress;

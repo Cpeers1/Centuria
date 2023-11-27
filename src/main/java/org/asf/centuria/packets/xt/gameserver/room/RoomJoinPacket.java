@@ -58,7 +58,8 @@ public class RoomJoinPacket implements IXtPacket<RoomJoinPacket> {
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Check room
 		// Load helper
-		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("spawns.json");
+		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+				.getResourceAsStream("content/world/spawns.json");
 		JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 				.get("Maps").getAsJsonObject();
 		strm.close();

@@ -16,9 +16,17 @@ import org.asf.centuria.interactions.NetworkedObjects;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.interactions.dataobjects.ObjectCollection;
 import org.asf.centuria.interactions.dataobjects.StateInfo;
+import org.asf.centuria.interactions.modules.quests.AbstractQuestPlugin;
 import org.asf.centuria.interactions.modules.quests.QuestDefinition;
 import org.asf.centuria.interactions.modules.quests.QuestObjective;
 import org.asf.centuria.interactions.modules.quests.QuestTask;
+import org.asf.centuria.interactions.modules.quests.plugins.UltimateRefreshmentPlugin;
+import org.asf.centuria.modules.eventbus.EventBus;
+import org.asf.centuria.modules.events.quests.QuestCompleteEvent;
+import org.asf.centuria.modules.events.quests.QuestObjectiveCompletedEvent;
+import org.asf.centuria.modules.events.quests.QuestStartEvent;
+import org.asf.centuria.modules.events.quests.QuestTaskCompletedEvent;
+import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemRemovedPacket;
@@ -40,10 +48,23 @@ public class QuestManager extends InteractionModule {
 	private static String firstQuest = "7537";
 	private static LinkedHashMap<String, String> questMap = new LinkedHashMap<String, String>();
 	private static HashMap<String, QuestDefinition> questDefinitions = new HashMap<String, QuestDefinition>();
+	private static ArrayList<AbstractQuestPlugin> plugins = new ArrayList<AbstractQuestPlugin>();
+
+	/**
+	 * Retrieves all registered quest plugins
+	 * 
+	 * @since Beta 1.8
+	 * @return Array of AbstractQuestPlugin instances
+	 */
+	public static AbstractQuestPlugin[] getPlugins() {
+		return plugins.toArray(t -> new AbstractQuestPlugin[t]);
+	}
+
 	static {
 		try {
 			// Load the quest map
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("questline.json");
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("content/quests/questline.json");
 			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
 			JsonObject quests = helper.get("QuestMap").getAsJsonObject();
 			for (String key : quests.keySet()) {
@@ -52,7 +73,7 @@ public class QuestManager extends InteractionModule {
 			strm.close();
 
 			// Load quest definitions
-			strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("quests.json");
+			strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("content/quests/quests.json");
 			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
 			quests = helper.get("Quests").getAsJsonObject();
 			for (String key : quests.keySet()) {
@@ -88,6 +109,20 @@ public class QuestManager extends InteractionModule {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+
+		// Default plugins
+		plugins.add(new UltimateRefreshmentPlugin());
+	}
+
+	/**
+	 * Registers a quest plugin
+	 * 
+	 * @since Beta 1.8
+	 * @param plugin Quest plugin to register
+	 */
+	public static void registerPlugin(AbstractQuestPlugin plugin) {
+		if (!plugins.contains(plugin))
+			plugins.add(plugin);
 	}
 
 	/**
@@ -152,7 +187,10 @@ public class QuestManager extends InteractionModule {
 	 *         current one
 	 */
 	public String getNextQuest(CenturiaAccount player) {
-		return questMap.get(getActiveQuest(player));
+		String active = getActiveQuest(player);
+		if (active == null)
+			return null;
+		return questMap.get(active);
 	}
 
 	@Override
@@ -183,7 +221,7 @@ public class QuestManager extends InteractionModule {
 	}
 
 	// For checking if a object is a NPC
-	public static boolean isNPC(NetworkedObject object) {
+	public static boolean isQuestNPC(NetworkedObject object) {
 		// Check commands, command 3 is dialogue so then its a NPC
 		for (ArrayList<StateInfo> states : object.stateInfo.values()) {
 			for (StateInfo state : states) {
@@ -274,7 +312,7 @@ public class QuestManager extends InteractionModule {
 				}
 
 				// Check if its a npc and if the quest is locked
-				if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
+				if (quest.defID == questLock && isQuestNPC(object) && !Centuria.debugMode) {
 					// Inform the user
 					Centuria.systemMessage(player,
 							"Quest not implemented yet\nRead the private message sent by the server for more info\n"
@@ -284,12 +322,16 @@ public class QuestManager extends InteractionModule {
 							true);
 
 					// Block running the interaction
+					int oState = player.states.getOrDefault(id, 0);
 					player.states.put(id, -1);
+					for (InteractionModule mod : InteractionManager.getModules()) {
+						mod.onStateChange(player, id, NetworkedObjects.getObject(id), oState, -1);
+					}
 					return true;
 				}
 
 				if (object.primaryObjectInfo != null && object.primaryObjectInfo.type == 31
-						&& object.subObjectInfo != null) {
+						&& object.subObjectInfo != null && player.questStarted) {
 					// Check for harvest trackers
 					QuestObjective objective = quest.objectives.get(player.questObjective);
 					for (QuestTask task : objective.tasks) {
@@ -329,7 +371,7 @@ public class QuestManager extends InteractionModule {
 				QuestDefinition quest = questDefinitions.get(activeQuest);
 
 				// Check if its a npc and if the quest is locked
-				if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
+				if (quest.defID == questLock && isQuestNPC(object) && !Centuria.debugMode) {
 					return true;
 				}
 
@@ -361,6 +403,21 @@ public class QuestManager extends InteractionModule {
 							// Log start
 							Centuria.logger.info(MarkerManager.getMarker("QUESTS"), "Quest started: '" + quest.name
 									+ "', started by " + player.account.getDisplayName());
+
+							// Dispatch event
+							EventBus.getInstance()
+									.dispatchEvent(new QuestStartEvent(((GameServer) player.client.getServer()), player,
+											player.account, player.client, activeQuest, quest));
+
+							// Call all plugins that match the quest
+							for (AbstractQuestPlugin plugin : getPlugins()) {
+								if (plugin.questDefID().equals(Integer.toString(quest.defID))) {
+									plugin.onStartQuest(player, quest);
+									plugin.onStartObjective(player, quest, objective);
+									for (QuestTask task : objective.tasks)
+										plugin.onStartTask(player, quest, objective, task);
+								}
+							}
 						}
 						return true;
 					}
@@ -387,17 +444,41 @@ public class QuestManager extends InteractionModule {
 
 	private void updateQuest(QuestTask task, QuestObjective objective, QuestDefinition quest, Player player, int taskID,
 			int objectiveID, String id, NetworkedObject object, StateInfo stateInfo) {
-		// Update
-		player.questProgress++;
-
 		// Get max
 		int max = 0;
 		for (QuestTask tsk : objective.tasks) {
 			max += tsk.targetProgress;
 		}
 
-		// Set task progress
-		player.taskProgress.put(taskID, player.taskProgress.getOrDefault(taskID, 0) + 1);
+		// Check progress
+		int taskProgress = player.taskProgress.getOrDefault(taskID, 0) + 1;
+		if (taskProgress <= task.targetProgress) {
+			// Progress
+			player.taskProgress.put(taskID, taskProgress);
+			player.questProgress++;
+
+			// Call all plugins that match the quest
+			for (AbstractQuestPlugin plugin : getPlugins()) {
+				if (plugin.questDefID().equals(Integer.toString(quest.defID))) {
+					plugin.onTaskProgression(player, quest, objective, task, taskProgress);
+				}
+			}
+
+			// Check task completion
+			if (taskProgress == task.targetProgress) {
+				// Dispatch event
+				EventBus.getInstance()
+						.dispatchEvent(new QuestTaskCompletedEvent(((GameServer) player.client.getServer()), player,
+								player.account, player.client, Integer.toString(quest.defID), quest, objective, task));
+
+				// Call all plugins that match the quest
+				for (AbstractQuestPlugin plugin : getPlugins()) {
+					if (plugin.questDefID().equals(Integer.toString(quest.defID))) {
+						plugin.onTaskCompleted(player, quest, objective, task);
+					}
+				}
+			}
+		}
 
 		// Send progress update
 		QuestCommandPacket qcmd = new QuestCommandPacket();
@@ -428,7 +509,30 @@ public class QuestManager extends InteractionModule {
 					+ "', quest: '" + quest.name + "', completed by " + player.account.getDisplayName());
 
 			// Update
+			QuestObjective objectiveLast = objective;
 			objective = quest.objectives.get(objectiveID);
+
+			// Call all plugins that match the quest
+			for (AbstractQuestPlugin plugin : getPlugins()) {
+				if (plugin.questDefID().equals(Integer.toString(quest.defID))) {
+					// Call complete
+					plugin.onObjectiveCompleted(player, quest, objectiveLast,
+							objective.isLastObjective ? null : objective);
+
+					// Call start if needed
+					if (!objective.isLastObjective) {
+						// Start
+						plugin.onStartObjective(player, quest, objective);
+						for (QuestTask t : objective.tasks)
+							plugin.onStartTask(player, quest, objective, t);
+					}
+				}
+			}
+
+			// Dispatch event
+			EventBus.getInstance()
+					.dispatchEvent(new QuestObjectiveCompletedEvent(((GameServer) player.client.getServer()), player,
+							player.account, player.client, Integer.toString(quest.defID), quest, objective));
 
 			// Update objects
 			reloadObjects(player, quest);
@@ -441,6 +545,18 @@ public class QuestManager extends InteractionModule {
 				// Log completion
 				Centuria.logger.info(MarkerManager.getMarker("QUESTS"),
 						"Quest completed: '" + quest.name + "', completed by " + player.account.getDisplayName());
+
+				// Dispatch event
+				EventBus.getInstance().dispatchEvent(new QuestCompleteEvent(((GameServer) player.client.getServer()),
+						player, player.account, player.client, Integer.toString(quest.defID), quest));
+
+				// Call all plugins that match the quest
+				for (AbstractQuestPlugin plugin : getPlugins()) {
+					if (plugin.questDefID().equals(Integer.toString(quest.defID))) {
+						// Call complete
+						plugin.onQuestCompleted(player, quest);
+					}
+				}
 
 				// Finish quest
 				if (player.levelID != 25280) {
@@ -497,7 +613,7 @@ public class QuestManager extends InteractionModule {
 							|| (player.levelID == 9687 && quest.questLocation == 1)
 							|| (player.levelID == 2364 && quest.questLocation == 2)
 							|| (player.levelID == 25280 && quest.questLocation == -1)) {
-						if (quest.defID == questLock && isNPC(object) && !Centuria.debugMode) {
+						if (quest.defID == questLock && isQuestNPC(object) && !Centuria.debugMode) {
 							return 0;
 						}
 						return 1;
@@ -517,7 +633,7 @@ public class QuestManager extends InteractionModule {
 				NetworkedObject obj = objs.objects.get(key);
 
 				// Update quest NPCs
-				if (isNPC(obj)) {
+				if (isQuestNPC(obj)) {
 					// Update
 					QuestCommandPacket cmd = new QuestCommandPacket();
 					cmd.type = 1;
@@ -526,6 +642,34 @@ public class QuestManager extends InteractionModule {
 					cmd.params.add("1");
 					cmd.params.add("1");
 					player.client.sendPacket(cmd);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void onStateChange(Player player, String objectID, NetworkedObject object, int oldState, int newState) {
+		// Find quest
+		String questID = getActiveQuest(player.account);
+		if (questID != null) {
+			// Get quest object
+			QuestDefinition quest = getQuest(questID);
+
+			// Check object
+			String[] collections = NetworkedObjects
+					.getCollectionIdsForOverride(Integer.toString(quest.levelOverrideID));
+			for (String colID : collections) {
+				ObjectCollection objs = NetworkedObjects.getObjects(colID);
+				for (String uuid : objs.objects.keySet()) {
+					if (uuid.equals(objectID)) {
+						// Valid
+						// Call all plugins that match the quest
+						for (AbstractQuestPlugin plugin : getPlugins()) {
+							if (plugin.questDefID().equals(questID))
+								plugin.onStateChange(player, quest, objectID, object, oldState, newState);
+						}
+						break;
+					}
 				}
 			}
 		}

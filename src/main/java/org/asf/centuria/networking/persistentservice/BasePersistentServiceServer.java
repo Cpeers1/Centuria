@@ -62,6 +62,7 @@ public abstract class BasePersistentServiceServer<T extends BasePersistentServic
 	 * Runs the server
 	 */
 	public void start() {
+		// Server logic
 		Thread serverProcessor = new Thread(() -> {
 			// Server loop
 			while (server != null) {
@@ -74,6 +75,25 @@ public abstract class BasePersistentServiceServer<T extends BasePersistentServic
 				}
 			}
 		}, "Persistent Service Thread: " + this.getClass().getSimpleName());
+		serverProcessor.setDaemon(true);
+		serverProcessor.start();
+
+		// Start watchdog
+		serverProcessor = new Thread(() -> {
+			// Server watchdog loop
+			while (server != null) {
+				// Tick all client PPS rates
+				for (T client : getClients()) {
+					client.updatePPS();
+				}
+
+				// Wait
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
+			}
+		}, "Smartfox Server Watchdog Thread: " + this.getClass().getSimpleName());
 		serverProcessor.setDaemon(true);
 		serverProcessor.start();
 	}
@@ -162,11 +182,19 @@ public abstract class BasePersistentServiceServer<T extends BasePersistentServic
 	 * Stops the server
 	 */
 	public void stop() {
+		// Close server
 		try {
 			server.close();
 		} catch (IOException e) {
 		}
 		server = null;
+
+		// Disconnect clients
+		for (T client : getClients())
+			client.disconnect();
+		synchronized (clients) {
+			clients.clear();
+		}
 	}
 
 	/**

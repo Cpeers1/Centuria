@@ -1,4 +1,4 @@
-package org.asf.centuria.tools.legacyclienttools;
+package org.asf.centuria.tools.legacyclienttools.packets;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,6 +11,7 @@ import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
+import org.asf.centuria.tools.legacyclienttools.translation.InventoryTranslators;
 
 public class ProxiedInventoryListPacket implements IXtPacket<ProxiedInventoryListPacket> {
 
@@ -53,7 +54,7 @@ public class ProxiedInventoryListPacket implements IXtPacket<ProxiedInventoryLis
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		item = DataTranslators.translateILToBeta(item);
+		item = InventoryTranslators.translateILToBeta(item);
 		
 		// Send forward
 		((SmartfoxClient) client.container).sendPacket(this);

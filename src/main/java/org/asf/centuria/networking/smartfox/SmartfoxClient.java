@@ -9,6 +9,59 @@ public abstract class SmartfoxClient {
 
 	private ArrayList<Object> objects = new ArrayList<Object>();
 
+	// Rates
+	private int ppsHighest;
+	private long ppsHighestLastChange;
+	private int ppsCurrent;
+	private int ppsLast;
+
+	/**
+	 * Retrieves the amount of packets received in the last second
+	 * 
+	 * @return Amount of packets received in the last second
+	 */
+	public int getPacketsPerSecondRate() {
+		return ppsLast;
+	}
+
+	/**
+	 * Retrieves the highest amount of packets that were received in the last PPS
+	 * cycle (cycles are around 30 seconds of no increase in highest PPS)
+	 * 
+	 * @return Amount of packets received in the last cycle
+	 */
+	public int getHighestPacketsPerSecondRate() {
+		return ppsHighest;
+	}
+
+	void updatePPS() {
+		// Update
+		int cPPS = ppsCurrent;
+		ppsLast = cPPS;
+		ppsCurrent = 0;
+
+		// Check highest count and if its been long enough since the last time the
+		// packet rate was high
+		if (cPPS > ppsHighest || (System.currentTimeMillis() - ppsHighestLastChange) >= 30000) {
+			// Increase highest rate
+			ppsHighest = cPPS;
+			ppsHighestLastChange = System.currentTimeMillis();
+		} else if ((ppsHighest < 50 && ppsHighest >= 30 && cPPS + 10 >= ppsHighest)
+				|| (ppsHighest >= 50 && cPPS + (ppsHighest / 10) >= ppsHighest)) {
+			// Close to the last number, dont remove the highest count until the amount of
+			// packets drops more significantly
+			ppsHighestLastChange = System.currentTimeMillis();
+		}
+	}
+
+	/**
+	 * Should be called whenever a packet is read
+	 */
+	protected void onPacketReceived() {
+		// Increase PPS
+		ppsCurrent++;
+	}
+
 	/**
 	 * Retrieves objects from the connection container, used to store information in
 	 * clients.
@@ -49,7 +102,7 @@ public abstract class SmartfoxClient {
 	 * @return Client address string
 	 */
 	public abstract String getAddress();
-	
+
 	/**
 	 * Cleanly stops the client
 	 */

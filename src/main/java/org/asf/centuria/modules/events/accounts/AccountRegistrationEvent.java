@@ -2,7 +2,6 @@ package org.asf.centuria.modules.events.accounts;
 
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 
 /**
  * 
@@ -11,18 +10,12 @@ import org.asf.centuria.modules.eventbus.EventPath;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("accounts.register")
 public class AccountRegistrationEvent extends EventObject {
 
 	private CenturiaAccount account;
 
 	public AccountRegistrationEvent(CenturiaAccount account) {
 		this.account = account;
-	}
-
-	@Override
-	public String eventPath() {
-		return "accounts.register";
 	}
 
 	/**

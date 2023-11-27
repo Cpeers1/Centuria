@@ -138,7 +138,7 @@ public class ShopManager {
 	static {
 		try {
 			// Load the helper
-			InputStream strm = ShopManager.class.getClassLoader().getResourceAsStream("shops.json");
+			InputStream strm = ShopManager.class.getClassLoader().getResourceAsStream("content/items/shops.json");
 			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
 			strm.close();
 
@@ -287,8 +287,8 @@ public class ShopManager {
 			// Skip enigma IDs
 			if (shop.enigmas.contains(id))
 				return;
-			
-			if (item.stock != -1) {				
+
+			if (item.stock != -1) {
 				// Check mode
 				if (item.stock == 1 && shop.restockTime == -1) {
 					// Only add if not in the player inventory

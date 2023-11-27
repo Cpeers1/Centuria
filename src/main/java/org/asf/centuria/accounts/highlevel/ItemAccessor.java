@@ -111,7 +111,7 @@ public class ItemAccessor {
 		try {
 			// Load the helper
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("itemdefinitions.json");
+					.getResourceAsStream("content/items/itemdefinitions.json");
 			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 					.get("Definitions").getAsJsonObject();
 			strm.close();
@@ -129,9 +129,10 @@ public class ItemAccessor {
 			});
 
 			// Load bundles
-			strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("bundles.json");
-			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("bundles")
-					.getAsJsonObject();
+			strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("content/items/itembundles.json");
+			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+					.get("ItemBundles").getAsJsonObject();
 			strm.close();
 
 			// Load all bundles

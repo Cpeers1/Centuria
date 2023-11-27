@@ -10,6 +10,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import org.apache.logging.log4j.LogManager;
+import org.asf.centuria.Centuria;
+import org.asf.centuria.tools.legacyclienttools.http.DirectorProcessor;
+import org.asf.centuria.tools.legacyclienttools.http.ProxyHttpProcessor;
+import org.asf.centuria.tools.legacyclienttools.servers.BasicProxyServer;
+import org.asf.centuria.tools.legacyclienttools.servers.TranslatorGameServer;
 import org.asf.connective.ConnectiveHttpServer;
 
 import com.google.gson.JsonObject;
@@ -84,6 +90,7 @@ public class LegacyClientPacketTranslatorWindow {
 		frmLegacyClientPacket.setBounds(100, 100, 648, 466);
 		frmLegacyClientPacket.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmLegacyClientPacket.getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		Centuria.logger = LogManager.getLogger("Proxy");
 
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(600, 400));

@@ -194,6 +194,13 @@ Phrase clit
 	Variant cl1t
 Endphrase
 
+Phrase nude
+	Mode WHOLE_PHRASE
+	Variant nudes
+	Variant nud3s
+	Variant nud3
+Endphrase
+
 Phrase ballsack
 	Mode WORD_CONTAINS
 	Variant b4llsack

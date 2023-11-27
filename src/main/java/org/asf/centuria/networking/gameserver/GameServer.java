@@ -66,6 +66,8 @@ import org.asf.centuria.social.SocialEntry;
 import org.asf.centuria.social.SocialManager;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -88,6 +90,11 @@ public class GameServer extends BaseSmartfoxServer {
 
 	public String whitelistFile = null;
 
+	/**
+	 * Retrieves all connected players
+	 * 
+	 * @return Array of Player instances
+	 */
 	public Player[] getPlayers() {
 		synchronized (players) {
 			return players.values().toArray(t -> new Player[t]);
@@ -95,7 +102,7 @@ public class GameServer extends BaseSmartfoxServer {
 	}
 
 	@Override
-	protected void registerPackets() {
+	protected void registerServerPackets() {
 		mapper = new XmlMapper();
 
 		// Handshake
@@ -357,15 +364,55 @@ public class GameServer extends BaseSmartfoxServer {
 		Player plr = new Player();
 
 		// Build Player object
+		plr.client = client;
+		plr.account = acc;
+		plr.activeLook = acc.getActiveLook();
+		plr.activeSanctuaryLook = acc.getActiveSanctuaryLook();
+
+		// Avatar look failsafe, check if the active look is actually a primary look
+		// If not, switch to the first primary look of the same species
+		//
+		// This is to resolve those currently being affected by the avatar look
+		// overwrite bug thats been plaguing EmuFeral online
+		if (acc.getSaveSpecificInventory().containsItem("avatars")) {
+			JsonArray avatars = acc.getSaveSpecificInventory().getItem("avatars").getAsJsonArray();
+			for (JsonElement ele : avatars) {
+				// Read avatar
+				JsonObject ava = ele.getAsJsonObject();
+				String dID = ava.get("defId").getAsString();
+				String lID = ava.get("id").getAsString();
+
+				// Check if active look
+				if (lID.equals(plr.activeLook)) {
+					// Check if its a primary look
+					if (!ava.get("components").getAsJsonObject().has("PrimaryLook")) {
+						// Find first primary look
+						for (JsonElement ele2 : avatars) {
+							JsonObject ava2 = ele2.getAsJsonObject();
+							String dID2 = ava2.get("defId").getAsString();
+							String lID2 = ava2.get("id").getAsString();
+							if (ava2.get("components").getAsJsonObject().has("PrimaryLook") && dID.equals(dID2)) {
+								// Found the primary look
+								// Set as active look
+								plr.activeLook = lID2;
+								plr.account.setActiveLook(lID2);
+								break;
+							}
+						}
+					}
+					
+					// Found the active look so we can end the loop
+					break;
+				}
+			}
+		}
+
+		// Assign permissions
 		if (acc.getSaveSharedInventory().containsItem("permissions")) {
 			String permLevel = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 					.get("permissionLevel").getAsString();
 			plr.hasModPerms = GameServer.hasPerm(permLevel, "moderator");
 		}
-		plr.client = client;
-		plr.account = acc;
-		plr.activeLook = acc.getActiveLook();
-		plr.activeSanctuaryLook = acc.getActiveSanctuaryLook();
 
 		// Update login timestamp
 		acc.login();
@@ -377,8 +424,16 @@ public class GameServer extends BaseSmartfoxServer {
 		Centuria.logger.info("Player connected: " + plr.account.getLoginName() + " (as " + plr.account.getDisplayName()
 				+ ", uuid: " + acc.getAccountID() + ")");
 
+		// Init with ghost mode if previously enabled
+		if (plr.hasModPerms) {
+			// Load last ghost mode setting
+			if (acc.getSaveSharedInventory().containsItem("ghostmode"))
+				plr.ghostMode = true;
+		} else if (acc.getSaveSharedInventory().containsItem("ghostmode"))
+			acc.getSaveSharedInventory().deleteItem("ghostmode");
+
 		// Notify followers
-		if (SocialManager.getInstance().socialListExists(plr.account.getAccountID())) {
+		if (!plr.ghostMode && SocialManager.getInstance().socialListExists(plr.account.getAccountID())) {
 			// Find all followers
 			for (SocialEntry ent : SocialManager.getInstance().getFollowerPlayers(plr.account.getAccountID())) {
 				// Send online status update
@@ -456,27 +511,40 @@ public class GameServer extends BaseSmartfoxServer {
 			}
 		}
 
-		// Disconnect from chat server
-		for (ChatClient cl : Centuria.chatServer.getClients()) {
-			if (cl.getPlayer().getAccountID().equals(plr.account.getAccountID())) {
-				Thread th = new Thread(() -> {
-					int i = 0;
-					while (cl.isConnected()) {
-						if (i == 3)
-							break;
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-						}
-						i++;
-					}
+		// Disconnect from chat server if not
+		// Check moderator perms
+		String permLevel = "member";
+		if (plr.account.getSaveSharedInventory().containsItem("permissions")) {
+			permLevel = plr.account.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+					.get("permissionLevel").getAsString();
+		}
 
-					if (cl.isConnected())
-						cl.disconnect();
-				}, "Chat Client Cleanup: " + cl.getPlayer().getAccountID());
-				th.setDaemon(true);
-				th.start();
-				break;
+		// Security checks
+		// Check moderator perms
+		if (!GameServer.hasPerm(permLevel, "moderator")) {
+			for (ChatClient cl : Centuria.chatServer.getClients()) {
+				if (cl.getPlayer().getAccountID().equals(plr.account.getAccountID())) {
+					Thread th = new Thread(() -> {
+						// Try letting it disconnect on its own
+						int i = 0;
+						while (cl.isConnected()) {
+							if (i == 5)
+								break;
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+							}
+							i++;
+						}
+
+						// Terminate the connection instead
+						if (cl.isConnected())
+							cl.disconnect();
+					}, "Chat Client Cleanup: " + cl.getPlayer().getAccountID());
+					th.setDaemon(true);
+					th.start();
+					break;
+				}
 			}
 		}
 

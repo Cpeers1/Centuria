@@ -30,7 +30,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	static {
 		// Load helper
 		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-				.getResourceAsStream("defaultitems/sanctuaryclasseshelper.json");
+				.getResourceAsStream("content/sanctuaries.json");
 		try {
 			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 					.get("SanctuaryClasses").getAsJsonObject();
@@ -1390,7 +1390,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	public JsonArray getHouseExpandedRoomsArray(String houseInvId) {
 
 		if (!inventory.containsItem("5"))
-			inventory.setItem("5", new JsonArray()); 
+			inventory.setItem("5", new JsonArray());
 
 		var houseInv = inventory.getItem("5").getAsJsonArray();
 		JsonElement houseObject = null;
@@ -1407,8 +1407,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			return null;
 
 		return houseObject.getAsJsonObject().getAsJsonObject(InventoryItem.COMPONENTS_PROPERTY_NAME)
-				.getAsJsonObject("House")
-				.get("enlargedAreas").getAsJsonArray();
+				.getAsJsonObject("House").get("enlargedAreas").getAsJsonArray();
 	}
 
 	@Override

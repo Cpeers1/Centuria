@@ -14,7 +14,6 @@ import java.util.List;
 
 public class LinearObjectHandler extends InteractionModule {
 
-	// TODO: rotation spawning (og game spawning mechanics)
 	// TODO: new rewards for chests etc
 
 	@Override
@@ -99,7 +98,12 @@ public class LinearObjectHandler extends InteractionModule {
 				if (obj.stateInfo.containsKey(Integer.toString(stateId))
 						|| obj.stateInfo.containsKey(Integer.toString(stateId - 1))) {
 					// Update
+					int oState = player.states.getOrDefault(st.params[0], 0);
 					player.states.put(st.params[1], stateId);
+					for (InteractionModule mod : InteractionManager.getModules()) {
+						mod.onStateChange(player, st.params[1], NetworkedObjects.getObject(st.params[1]), oState,
+								stateId);
+					}
 
 					// Send state info
 					QuestCommandPacket qcmd = new QuestCommandPacket();

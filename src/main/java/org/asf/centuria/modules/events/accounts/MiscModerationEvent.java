@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 
 /**
  * 
@@ -14,7 +13,6 @@ import org.asf.centuria.modules.eventbus.EventPath;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("accounts.moderate")
 public class MiscModerationEvent extends EventObject {
 
 	private String issuerID;
@@ -30,11 +28,6 @@ public class MiscModerationEvent extends EventObject {
 		this.issuerID = issuerID;
 		this.target = target;
 		this.details = details;
-	}
-
-	@Override
-	public String eventPath() {
-		return "accounts.moderate";
 	}
 
 	/**

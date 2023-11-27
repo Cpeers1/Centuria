@@ -22,15 +22,15 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 	static {
 		try {
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("defaultitems/avatarhelper.json");
+					.getResourceAsStream("content/avatars/avatars.json");
 			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("Avatars")
 					.getAsJsonObject();
 			strm.close();
 
 			strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("defaultitems/avatardefaultshelper.json");
+					.getResourceAsStream("content/avatars/defaultavatarparts.json");
 			defaultsHelper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-					.get("AvatarDefaults").getAsJsonObject();
+					.get("DefaultAvatarParts").getAsJsonObject();
 			strm.close();
 		} catch (JsonSyntaxException | IOException e) {
 			throw new RuntimeException(e);
@@ -57,7 +57,6 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 			// Make sure to only do this for a primary look
 			if (avatar.get("components").getAsJsonObject().has("PrimaryLook")) {
 				// Create the slot
-
 				String type = avatar.get("defId").getAsString();
 
 				// Translate defID to a type

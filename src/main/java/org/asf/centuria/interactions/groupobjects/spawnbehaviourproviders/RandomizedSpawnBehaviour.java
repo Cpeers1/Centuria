@@ -419,7 +419,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 					rot.mapping.getOrDefault(t.id, t.id))) {
 				long lastUnlock = plr.account.getSaveSpecificInventory().getInteractionMemory()
 						.getLastTreasureUnlockTime(levelID, rot.mapping.getOrDefault(t.id, t.id));
-				if (lastUnlock < System.currentTimeMillis() + (rotationHours * 60 * 60 * 1000) || lastUnlock < rot.time)
+				if (lastUnlock > rot.time && System.currentTimeMillis() < lastUnlock + (rotationHours * 60 * 60 * 1000))
 					return false;
 			}
 			return true;

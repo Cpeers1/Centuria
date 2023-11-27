@@ -10,6 +10,7 @@ import org.asf.centuria.packets.smartfox.ISmartfoxPacket;
 public abstract class BaseSmartfoxServer {
 
 	private ServerSocket server;
+	private ArrayList<SmartfoxClient> clients = new ArrayList<SmartfoxClient>();
 	private ArrayList<ISmartfoxPacket> packets = new ArrayList<ISmartfoxPacket>();
 	private boolean setupComplete = false;
 
@@ -17,7 +18,7 @@ public abstract class BaseSmartfoxServer {
 		server = socket;
 
 		// Register packets
-		registerPackets();
+		registerServerPackets();
 
 		// Lock the registry
 		setupComplete = true;
@@ -34,7 +35,7 @@ public abstract class BaseSmartfoxServer {
 	/**
 	 * Registers the server packets (internal)
 	 */
-	protected abstract void registerPackets();
+	protected abstract void registerServerPackets();
 
 	/**
 	 * Client start event (internal)
@@ -71,6 +72,7 @@ public abstract class BaseSmartfoxServer {
 	 * Runs the server
 	 */
 	public void start() {
+		// Server logic
 		Thread serverProcessor = new Thread(() -> {
 			// Run start code
 			onStart();
@@ -91,13 +93,38 @@ public abstract class BaseSmartfoxServer {
 		}, "Smartfox Server Thread: " + this.getClass().getSimpleName());
 		serverProcessor.setDaemon(true);
 		serverProcessor.start();
+
+		// Start watchdog
+		serverProcessor = new Thread(() -> {
+			// Server watchdog loop
+			while (server != null) {
+				// Tick all client PPS rates
+				for (SmartfoxClient client : getClients()) {
+					client.updatePPS();
+				}
+
+				// Wait
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
+			}
+		}, "Smartfox Server Watchdog Thread: " + this.getClass().getSimpleName());
+		serverProcessor.setDaemon(true);
+		serverProcessor.start();
 	}
 
 	// Client system
 	private void runClient(Socket clientSocket) {
 		// Start the client thread
 		Thread th = new Thread(() -> {
+			// Create socket client
 			SmartfoxClient client = createSocketClient(clientSocket);
+
+			// Add client
+			synchronized (clients) {
+				clients.add(client);
+			}
 
 			// Non-debug
 			if (!Centuria.debugMode) {
@@ -117,20 +144,32 @@ public abstract class BaseSmartfoxServer {
 								Centuria.logger.error("Connection died!", e);
 							}
 							client.closeClient();
-							return;
+							break;
 						}
 					}
 
+					// Disconnect
 					if (client.isConnected()) {
 						// Disconnected
 						clientDisconnect(client);
 						client.stop();
 					}
+
+					// Remove from list
+					synchronized (clients) {
+						clients.remove(client);
+					}
 				} catch (Exception e) {
+					// Disconnected before handshake
 					if (!(e instanceof IOException)) {
 						Centuria.logger.error("Connection died!", e);
 					}
 					client.closeClient();
+
+					// Remove from list
+					synchronized (clients) {
+						clients.remove(client);
+					}
 					return;
 				}
 			} else {
@@ -140,6 +179,10 @@ public abstract class BaseSmartfoxServer {
 				try {
 					startClient(client);
 				} catch (IOException e1) {
+					// Remove from list
+					synchronized (clients) {
+						clients.remove(client);
+					}
 					throw new RuntimeException(e1);
 				}
 
@@ -158,14 +201,20 @@ public abstract class BaseSmartfoxServer {
 						handle(data, client);
 					} catch (IOException e) {
 						client.closeClient();
-						return;
+						break;
 					}
 				}
 
+				// Disconnect
 				if (client.isConnected()) {
 					// Disconnected
 					clientDisconnect(client);
 					client.stop();
+				}
+
+				// Remove from list
+				synchronized (clients) {
+					clients.remove(client);
 				}
 			}
 		}, "Smartfox Client Thread: " + clientSocket);
@@ -186,10 +235,9 @@ public abstract class BaseSmartfoxServer {
 			if (Centuria.debugMode) {
 				packets.clear();
 				setupComplete = false;
-				registerPackets();
+				registerServerPackets();
 				setupComplete = true;
 			}
-
 			Centuria.logger.error("Unhandled packet: client " + client.getAddress() + " sent: " + data);
 		}
 	}
@@ -198,11 +246,20 @@ public abstract class BaseSmartfoxServer {
 	 * Stops the server
 	 */
 	public void stop() {
+		// Stop server
 		try {
 			server.close();
 		} catch (IOException e) {
 		}
 		server = null;
+
+		// Disconnect clients
+		for (SmartfoxClient client : getClients()) {
+			client.disconnect();
+		}
+		synchronized (clients) {
+			clients.clear();
+		}
 	}
 
 	/**
@@ -315,5 +372,16 @@ public abstract class BaseSmartfoxServer {
 	 */
 	public String readRawPacket(SmartfoxClient client) throws IOException {
 		return client.readRawPacket();
+	}
+
+	/**
+	 * Retrieves all connected clients
+	 * 
+	 * @return Array of SmartfoxClient instances
+	 */
+	public SmartfoxClient[] getClients() {
+		synchronized (clients) {
+			return clients.toArray(t -> new SmartfoxClient[t]);
+		}
 	}
 }

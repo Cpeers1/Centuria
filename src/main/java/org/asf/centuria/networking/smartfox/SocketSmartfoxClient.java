@@ -73,6 +73,8 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 			try {
 				// Instantiate the packet and build
 				String content = packet.build();
+				if (Centuria.debugMode)
+					Centuria.logger.debug("S->C: " + content);
 
 				// Send packet
 				byte[] payload = content.getBytes("UTF-8");
@@ -128,8 +130,10 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 				if (read <= -1) {
 					// Go over received messages
 					res = findFirstPacket(messageBuffer);
-					if (res != null)
+					if (res != null) {
+						onPacketReceived();
 						return res; // Received a message
+					}
 
 					// Throw exception
 					throw new IOException("Stream closed");
@@ -139,8 +143,10 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 				// Load messages string, combining the previous buffer with the current one
 				String messages = messageBuffer + new String(buffer, "UTF-8");
 				res = findFirstPacket(messages);
-				if (res != null)
+				if (res != null) {
+					onPacketReceived();
 					return res; // Received a message
+				}
 
 				// Push remaining bytes to the next message
 				messageBuffer = messages;

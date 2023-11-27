@@ -36,8 +36,7 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 		try {
 
-			InputStream strm = UserVarAccessorImpl.class.getClassLoader()
-					.getResourceAsStream("itemlists/uservars.json");
+			InputStream strm = UserVarAccessorImpl.class.getClassLoader().getResourceAsStream("content/uservars.json");
 			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("UserVars")
 					.getAsJsonObject();
 			strm.close();
@@ -408,10 +407,9 @@ public class UserVarAccessorImpl extends UserVarAccessor {
 
 			UserVarComponent userVarComponent = userVarItem.getUserVarComponent();
 
-			try{
+			try {
 				return userVarComponent.getUserVarValue(index);
-			}
-			catch (IndexOutOfBoundsException e){
+			} catch (IndexOutOfBoundsException e) {
 				return null;
 			}
 		} catch (Exception exception) {

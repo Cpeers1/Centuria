@@ -18,7 +18,7 @@ public class FurnitureItemAccessorImpl extends FurnitureItemAccessor {
 		try {
 			// Load helper
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("defaultitems/furniturehelper.json");
+					.getResourceAsStream("content/items/furniture.json");
 			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("Furniture")
 					.getAsJsonObject();
 			strm.close();
@@ -103,11 +103,11 @@ public class FurnitureItemAccessorImpl extends FurnitureItemAccessor {
 
 	@Override
 	public int getDefIDFromUUID(String placeableUUID) {
-		
-		//unfortunately we have to loop through objects to find it..
-		
+
+		// unfortunately we have to loop through objects to find it..
+
 		var object = inventory.getAccessor().findInventoryObject("102", placeableUUID);
-				
+
 		return object.get("defId").getAsInt();
 	}
 

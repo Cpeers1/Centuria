@@ -29,9 +29,11 @@ import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -88,7 +90,7 @@ import com.google.gson.JsonObject;
 
 public class Centuria {
 	// Update
-	public static String SERVER_UPDATE_VERSION = "b1.7.2";
+	public static String SERVER_UPDATE_VERSION = "b1.8";
 	public static String DOWNLOAD_BASE_URL = "https://emuferal.ddns.net";
 
 	// Configuration
@@ -148,7 +150,7 @@ public class Centuria {
 		System.out.println("                              Centuria                              ");
 		System.out.println("                       Fer.al Server Emulator                       ");
 		System.out.println("                                                                    ");
-		System.out.println("                           Version b1.7.2                           "); // not doing this
+		System.out.println("                            Version b1.8                            "); // not doing this
 																									// dynamically as
 																									// centering is a
 																									// pain
@@ -174,7 +176,7 @@ public class Centuria {
 		logger = LogManager.getLogger("CENTURIA");
 
 		// Load modules
-		ModuleManager.getInstance().initializeComponents();
+		ModuleManager.getInstance().init();
 
 		// Update configuration
 		String updateChannel = "beta";
@@ -658,6 +660,7 @@ public class Centuria {
 					| NoSuchAlgorithmException | CertificateException | IOException e) {
 				sock = new ServerSocket(Integer.parseInt(serverProperties.get("game-port")), 0,
 						InetAddress.getByName("0.0.0.0"));
+				encryptGame = false;
 			}
 		else
 			sock = new ServerSocket(Integer.parseInt(serverProperties.get("game-port")), 0,
@@ -717,6 +720,7 @@ public class Centuria {
 					| NoSuchAlgorithmException | CertificateException | IOException e) {
 				sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("chat-port", "6972")), 0,
 						InetAddress.getByName("0.0.0.0"));
+				encryptChat = false;
 			}
 		else
 			sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("chat-port", "6972")), 0,
@@ -744,6 +748,7 @@ public class Centuria {
 					| NoSuchAlgorithmException | CertificateException | IOException e) {
 				sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "6973")), 0,
 						InetAddress.getByName("0.0.0.0"));
+				encryptVoiceChat = false;
 			}
 		else
 			sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "6973")), 0,
@@ -758,11 +763,7 @@ public class Centuria {
 		voiceChatServer.start();
 
 		// Post-initialize modules
-		Centuria.logger.info("Post-initializing Centuria modules...");
-		for (ICenturiaModule module : ModuleManager.getInstance().getAllModules()) {
-			Centuria.logger.info("Post-initializing module: " + module.id());
-			module.postInit();
-		}
+		ModuleManager.getInstance().runModulePostInit();
 
 		// Log completion
 		Centuria.logger.info("Successfully started emulated servers.");
@@ -936,6 +937,10 @@ public class Centuria {
 				client.joinRoom(NIL_UUID, ChatRoomTypes.PRIVATE_CHAT);
 			}
 
+			// Time format
+			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+
 			// Send response
 			JsonObject res = new JsonObject();
 			res.addProperty("conversationType", inDm ? "private" : "room");
@@ -943,7 +948,7 @@ public class Centuria {
 					inDm ? NIL_UUID : player.pendingRoom != null ? player.pendingRoom : player.room);
 			res.addProperty("message", message);
 			res.addProperty("source", NIL_UUID);
-			res.addProperty("sentAt", LocalDateTime.now().toString());
+			res.addProperty("sentAt", fmt.format(new Date()));
 			res.addProperty("eventId", "chat.postMessage");
 			res.addProperty("success", true);
 			client.sendPacket(res);

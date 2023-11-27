@@ -131,6 +131,8 @@ public class Player {
 
 	public SmartfoxClient client;
 	public CenturiaAccount account;
+	
+	public boolean awaitingPlayerSync;
 
 	public String activeLook;
 	public String activeSanctuaryLook;

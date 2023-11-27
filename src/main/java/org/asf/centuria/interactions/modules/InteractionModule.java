@@ -10,6 +10,7 @@ import org.asf.centuria.networking.smartfox.SmartfoxClient;
 public abstract class InteractionModule {
 
 	/**
+	 * Defines if a resource should be destroyed after the interaction finishes
 	 * 
 	 * @param player              Player making the interaction
 	 * @param id                  Interaction ID
@@ -79,7 +80,8 @@ public abstract class InteractionModule {
 	 * @param parent  Parent command state
 	 * @return True if the command was handled, false otherwise
 	 */
-	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo command, StateInfo parent) {
+	public boolean handleCommand(Player player, String id, NetworkedObject object, StateInfo command,
+			StateInfo parent) {
 		return false;
 	}
 
@@ -93,6 +95,20 @@ public abstract class InteractionModule {
 	 */
 	public boolean initializeWorldObjects(SmartfoxClient client, String id, NetworkedObject obj) {
 		return false;
+	}
+
+	/**
+	 * Called when the state of a networked object is changed
+	 * 
+	 * @param player   Player instance
+	 * @param objectID ID of the object
+	 * @param object   Object that the state was changed of
+	 * @param oldState Old object state
+	 * @param newState New object state
+	 * 
+	 * @since Beta 1.8
+	 */
+	public void onStateChange(Player player, String objectID, NetworkedObject object, int oldState, int newState) {
 	}
 
 }

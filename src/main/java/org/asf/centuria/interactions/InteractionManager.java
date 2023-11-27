@@ -14,6 +14,7 @@ import org.asf.centuria.interactions.groupobjects.GroupObject;
 import org.asf.centuria.interactions.groupobjects.spawnbehaviourproviders.FallbackSpawnBehaviour;
 import org.asf.centuria.interactions.groupobjects.spawnbehaviourproviders.ISpawnBehaviourProvider;
 import org.asf.centuria.interactions.groupobjects.spawnbehaviourproviders.RandomizedSpawnBehaviour;
+import org.asf.centuria.interactions.modules.EventsModule;
 import org.asf.centuria.interactions.modules.InspirationCollectionModule;
 import org.asf.centuria.interactions.modules.InteractionModule;
 import org.asf.centuria.interactions.modules.QuestManager;
@@ -38,10 +39,31 @@ public class InteractionManager {
 		modules.add(new ResourceCollectionModule());
 		modules.add(new LockpickItemModule());
 		modules.add(new LinearObjectHandler());
+		modules.add(new EventsModule());
 
 		// Spawn behaviours
 		spawnBehaviours.add(new FallbackSpawnBehaviour());
 		spawnBehaviours.add(new RandomizedSpawnBehaviour());
+	}
+
+	/**
+	 * Retrieves all registered interaction modules
+	 * 
+	 * @since Beta 1.8
+	 * @return Array of InteractionModule instances
+	 */
+	public static InteractionModule[] getModules() {
+		return modules.toArray(t -> new InteractionModule[t]);
+	}
+
+	/**
+	 * Retrieves all registered spawn behaviours
+	 * 
+	 * @since Beta 1.8
+	 * @return Array of ISpawnBehaviourProvider instances
+	 */
+	public static ISpawnBehaviourProvider[] getSpawnBehaviours() {
+		return spawnBehaviours.toArray(t -> new ISpawnBehaviourProvider[t]);
 	}
 
 	/**
@@ -59,7 +81,7 @@ public class InteractionManager {
 	 * 
 	 * @param behaviour Spawn behaviour to register
 	 */
-	public static void registerModule(ISpawnBehaviourProvider behaviour) {
+	public static void registerSpawnBehaviour(ISpawnBehaviourProvider behaviour) {
 		if (!spawnBehaviours.contains(behaviour))
 			spawnBehaviours.add(behaviour);
 	}
@@ -325,23 +347,32 @@ public class InteractionManager {
 					NetworkedObject obj = NetworkedObjects.getObject(t);
 
 					// Check validity
-					if (obj.stateInfo.containsKey(state.params[0])) {
+					if (obj.primaryObjectInfo.type == 7) {
+						// Variable
+						int oState = plr.states.getOrDefault(t, 1);
 						plr.states.put(t, Integer.parseInt(state.params[0]));
+						for (InteractionModule mod : modules) {
+							mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
+						}
 
 						// Build quest command
-						QuestCommandPacket packet = new QuestCommandPacket();
+						QuestCommandVTPacket packet = new QuestCommandVTPacket();
 						packet.id = state.actorId;
 						packet.type = 1;
 						// Parameters
 						for (String param : state.params)
 							packet.params.add(param);
 						plr.client.sendPacket(packet);
-					} else if (obj.primaryObjectInfo.type == 7) {
-						// Counter variable
+					} else if (obj.stateInfo.containsKey(state.params[0])) {
+						// Regular
+						int oState = plr.states.getOrDefault(t, 1);
 						plr.states.put(t, Integer.parseInt(state.params[0]));
+						for (InteractionModule mod : modules) {
+							mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
+						}
 
 						// Build quest command
-						QuestCommandVTPacket packet = new QuestCommandVTPacket();
+						QuestCommandPacket packet = new QuestCommandPacket();
 						packet.id = state.actorId;
 						packet.type = 1;
 						// Parameters
@@ -363,6 +394,10 @@ public class InteractionManager {
 					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"), "Running command: 12");
 					int stateId = plr.states.getOrDefault(state.actorId, 1);
 					plr.states.put(state.actorId, stateId + 1);
+					for (InteractionModule mod : modules) {
+						mod.onStateChange(plr, state.actorId, NetworkedObjects.getObject(state.actorId), stateId,
+								Integer.parseInt(state.params[0]));
+					}
 
 					// Find object
 					NetworkedObject obj = NetworkedObjects.getObject(state.actorId);
@@ -396,7 +431,11 @@ public class InteractionManager {
 						if (plr.states.getOrDefault(t, 0) > 0) {
 							Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
 									"Running command: 13 (decrease counter): " + (plr.states.get(t) - 1));
+							int oState = plr.states.get(t);
 							plr.states.put(t, plr.states.get(t) - 1);
+							for (InteractionModule mod : modules) {
+								mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
+							}
 							QuestCommandVTPacket pkt = new QuestCommandVTPacket();
 							pkt.id = t;
 							pkt.type = 1;
@@ -437,7 +476,12 @@ public class InteractionManager {
 					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
 							"Running command: 52 (SET STATE AND RUN BRANCHES), actor: " + t + ", state: "
 									+ state.params[0]);
+					int oState = plr.states.getOrDefault(t, 0);
 					plr.states.put(t, Integer.parseInt(state.params[0]));
+					for (InteractionModule mod : modules) {
+						mod.onStateChange(plr, t, NetworkedObjects.getObject(t), oState,
+								Integer.parseInt(state.params[0]));
+					}
 					for (String branch : state.branches.keySet())
 						runBranches(plr, state.branches, branch, target, object, state);
 					break;
@@ -464,6 +508,9 @@ public class InteractionManager {
 
 					// Run branch
 					runBranches(plr, state.branches, branchID, t, obj, state);
+
+					// Run current state
+					runBranches(plr, branches, Integer.toString(plr.states.get(t)), t, obj, state);
 					break;
 				}
 				default: {
@@ -540,7 +587,11 @@ public class InteractionManager {
 
 				// Check validity
 				if (obj.stateInfo.containsKey(state.params[0])) {
+					int oState = plr.states.getOrDefault(t, 0);
 					plr.states.put(t, Integer.parseInt(state.params[0]));
+					for (InteractionModule mod : modules) {
+						mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
+					}
 
 					// Build quest command
 					QuestCommandPacket packet = new QuestCommandPacket();
@@ -552,7 +603,11 @@ public class InteractionManager {
 					plr.client.sendPacket(packet);
 				} else if (obj.primaryObjectInfo.type == 7) {
 					// Counter variable
+					int oState = plr.states.getOrDefault(t, 0);
 					plr.states.put(t, Integer.parseInt(state.params[0]));
+					for (InteractionModule mod : modules) {
+						mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
+					}
 
 					// Build quest command
 					QuestCommandVTPacket packet = new QuestCommandVTPacket();
@@ -600,7 +655,11 @@ public class InteractionManager {
 					if (plr.states.getOrDefault(t, 0) > 0) {
 						Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
 								"Running command: 13 (decrease counter): " + (plr.states.get(t) - 1));
+						int oState = plr.states.getOrDefault(t, 0);
 						plr.states.put(t, plr.states.get(t) - 1);
+						for (InteractionModule mod : modules) {
+							mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
+						}
 						QuestCommandVTPacket pkt = new QuestCommandVTPacket();
 						pkt.id = t;
 						pkt.type = 1;
@@ -624,6 +683,10 @@ public class InteractionManager {
 				Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"), "Running command: 12");
 				int stateId = plr.states.getOrDefault(state.actorId, 1);
 				plr.states.put(state.actorId, stateId + 1);
+				for (InteractionModule mod : modules) {
+					mod.onStateChange(plr, state.actorId, NetworkedObjects.getObject(state.actorId), stateId,
+							Integer.parseInt(state.params[0]));
+				}
 
 				// Find object
 				NetworkedObject obj = NetworkedObjects.getObject(state.actorId);

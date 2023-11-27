@@ -181,7 +181,7 @@ public class ResourceCollectionModule extends InteractionModule {
 		try {
 			// Load the vanilla resource data
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("resourcecollection.json");
+					.getResourceAsStream("content/world/resourcecollection.json");
 			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
 			importObjectsIntoMemory(helper);
 			strm.close();

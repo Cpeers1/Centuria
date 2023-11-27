@@ -2,7 +2,6 @@ package org.asf.centuria.modules.events.chat;
 
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.ChatServer;
 
@@ -16,7 +15,6 @@ import org.asf.centuria.networking.chatserver.ChatServer;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("chat.broadcast")
 public class ChatMessageBroadcastEvent extends EventObject {
 
 	private ChatServer server;
@@ -35,11 +33,6 @@ public class ChatMessageBroadcastEvent extends EventObject {
 		this.message = message;
 		this.conversation = conversation;
 		this.conversationType = conversationType;
-	}
-
-	@Override
-	public String eventPath() {
-		return "chat.broadcast";
 	}
 
 	/**

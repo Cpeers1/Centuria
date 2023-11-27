@@ -2,7 +2,6 @@ package org.asf.centuria.modules.events.voicechat;
 
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 import org.asf.centuria.networking.voicechatserver.VoiceChatClient;
 import org.asf.centuria.networking.voicechatserver.VoiceChatServer;
 
@@ -13,11 +12,10 @@ import com.google.gson.JsonObject;
  * Voice Chat Login Event - used to implement custom handshakes, called before
  * handling bans and other security checks.
  * 
- * @since Beta 1.7.2
+ * @since Beta 1.8
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("voicechat.login")
 public class VoiceChatLoginEvent extends EventObject {
 
 	private VoiceChatServer server;
@@ -32,11 +30,6 @@ public class VoiceChatLoginEvent extends EventObject {
 		this.account = account;
 		this.server = server;
 		this.params = params;
-	}
-
-	@Override
-	public String eventPath() {
-		return "voicechat.login";
 	}
 
 	/**

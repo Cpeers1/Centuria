@@ -1,0 +1,136 @@
+package org.asf.centuria.tools.legacyclienttools.packets;
+
+import java.io.IOException;
+
+import org.asf.centuria.data.XtReader;
+import org.asf.centuria.data.XtWriter;
+import org.asf.centuria.networking.smartfox.SmartfoxClient;
+import org.asf.centuria.packets.xt.IXtPacket;
+import org.asf.centuria.tools.legacyclienttools.servers.TranslatorGameServer;
+import org.asf.centuria.tools.legacyclienttools.translation.AvatarTranslators;
+
+import com.google.gson.JsonParser;
+
+public class ProxiedObjectInfoPacket implements IXtPacket<ProxiedObjectInfoPacket> {
+
+	private String msg;
+
+	@Override
+	public ProxiedObjectInfoPacket instantiate() {
+		return new ProxiedObjectInfoPacket();
+	}
+
+	@Override
+	public String id() {
+		return "oi";
+	}
+
+	@Override
+	public void parse(XtReader reader) throws IOException {
+		msg = reader.readRemaining();
+	}
+
+	@Override
+	public void build(XtWriter writer) throws IOException {
+		writer.writeString(msg);
+	}
+
+	@Override
+	public boolean handle(SmartfoxClient client) throws IOException {
+		XtReader rd = new XtReader(msg);
+		TranslatorGameServer server = (TranslatorGameServer) client.getServer();
+		if (!server.isLocalClient(client)) {
+			rd.read();
+
+			// UUID
+			String uuid = rd.read();
+			int defID = rd.readInt();
+			if (defID == 852) {
+				String owner = rd.read();
+
+				// Mode
+				int mode = rd.readInt();
+
+				// Timestamp
+				long time = rd.readLong();
+
+				// Coordinates
+				double x = rd.readDouble();
+				double y = rd.readDouble();
+				double z = rd.readDouble();
+
+				// Rotation
+				double rx = rd.readDouble();
+				double ry = rd.readDouble();
+				double rz = rd.readDouble();
+				double rw = rd.readDouble();
+
+				// Direction
+				double dx = rd.readDouble();
+				double dy = rd.readDouble();
+				double dz = rd.readDouble();
+				float speed = rd.readFloat();
+
+				// Action
+				int action = rd.readInt();
+
+				// Look
+				String look = rd.read();
+				String name = rd.read();
+				int unk = rd.readInt();
+
+				// Check avatar
+				if (defID == 852) {
+					// Avatar
+					look = AvatarTranslators.translateAvatarInfoToBeta(JsonParser.parseString(look).getAsJsonObject())
+							.toString();
+				}
+
+				// Write basics
+				XtWriter wr = new XtWriter();
+				wr.writeString("oi");
+				wr.writeInt(-1);
+				wr.writeString(uuid);
+				wr.writeInt(defID);
+				wr.writeString(owner);
+				wr.writeInt(mode);
+				wr.writeLong(time);
+
+				// Coordinates
+				wr.writeDouble(x);
+				wr.writeDouble(y);
+				wr.writeDouble(z);
+
+				// Rotation
+				wr.writeDouble(rx);
+				wr.writeDouble(ry);
+				wr.writeDouble(rz);
+				wr.writeDouble(rw + 180);
+
+				// Direction
+				wr.writeDouble(dx);
+				wr.writeDouble(dy);
+				wr.writeDouble(dz);
+
+				// Speed
+				wr.writeFloat(speed);
+
+				// Action
+				wr.writeInt(action);
+
+				// Data
+				wr.writeString(look);
+				wr.writeString(name);
+				wr.writeInt(unk);
+
+				wr.writeString("");
+				((SmartfoxClient) client.container).sendPacket(wr.encode());
+			} else
+				((SmartfoxClient) client.container).sendPacket("%xt%oi%" + msg + "%");
+
+			return true;
+		}
+		return false;
+	}
+
+}

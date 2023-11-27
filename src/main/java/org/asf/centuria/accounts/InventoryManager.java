@@ -147,7 +147,7 @@ public class InventoryManager {
 		if (plr != null)
 			Centuria.logger.info("Generating avatar file for " + plr.account.getDisplayName());
 		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-				.getResourceAsStream("defaultitems/avatarhelper.json");
+				.getResourceAsStream("content/avatars/avatars.json");
 		JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 				.get("Avatars").getAsJsonObject();
 		strm.close();

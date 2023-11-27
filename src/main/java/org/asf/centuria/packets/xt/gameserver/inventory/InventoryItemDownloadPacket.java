@@ -201,7 +201,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				try {
 					// Load helper
 					InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-							.getResourceAsStream("defaultitems/clothinghelper.json");
+							.getResourceAsStream("content/items/clothing.json");
 					JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8"))
 							.getAsJsonObject().get("Clothing").getAsJsonObject();
 					strm.close();
@@ -245,7 +245,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 			try {
 				// Load helper
 				InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-						.getResourceAsStream("defaultitems/furniturehelper.json");
+						.getResourceAsStream("content/items/furniture.json");
 				JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 						.get("Furniture").getAsJsonObject();
 				strm.close();

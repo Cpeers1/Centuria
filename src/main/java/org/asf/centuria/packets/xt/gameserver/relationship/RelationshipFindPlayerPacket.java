@@ -60,8 +60,9 @@ public class RelationshipFindPlayerPacket implements IXtPacket<RelationshipFindP
 			moderator = GameServer.hasPerm(permLevel, "moderator");
 		}
 		String id = AccountManager.getInstance().getUserByDisplayName(name);
-		if (id == null || (!moderator && (AccountManager.getInstance().getAccount(id).isBanned() || SocialManager
-				.getInstance().getPlayerIsBlocked(id, ((Player) client.container).account.getAccountID())))) {
+		if (id == null || (!moderator && (AccountManager.getInstance().getAccount(id).isBanned()
+				|| (SocialManager.getInstance().socialListExists(id) && SocialManager.getInstance()
+						.getPlayerIsBlocked(id, ((Player) client.container).account.getAccountID()))))) {
 			client.sendPacket(this);
 
 			// log interaction details

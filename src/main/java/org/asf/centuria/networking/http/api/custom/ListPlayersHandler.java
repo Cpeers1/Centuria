@@ -22,13 +22,13 @@ public class ListPlayersHandler extends HttpPushProcessor {
 			try {
 				// Load helper
 				InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-						.getResourceAsStream("spawns.json");
+						.getResourceAsStream("content/world/spawns.json");
 				helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("Maps")
 						.getAsJsonObject();
 				strm.close();
 			} catch (Exception e) {
 			}
-			
+
 			// Send response
 			int counter = 0;
 			JsonObject response = new JsonObject();

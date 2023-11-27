@@ -3,7 +3,6 @@ package org.asf.centuria.modules.events.interactions;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 
 /**
  * 
@@ -12,7 +11,6 @@ import org.asf.centuria.modules.eventbus.EventPath;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("interaction.success")
 public class InteractionSuccessEvent extends EventObject {
 
 	private String objectId;
@@ -26,11 +24,6 @@ public class InteractionSuccessEvent extends EventObject {
 		this.object = object;
 		this.objectId = objectId;
 		this.state = state;
-	}
-
-	@Override
-	public String eventPath() {
-		return "interaction.success";
 	}
 
 	/**

@@ -1,7 +1,9 @@
-package org.asf.centuria.tools.legacyclienttools;
+package org.asf.centuria.tools.legacyclienttools.packets;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.smartfox.ISmartfoxPacket;
 
@@ -9,6 +11,8 @@ public class XTPacketProxy implements ISmartfoxPacket {
 
 	public static final int DATA_PREFIX = -1;
 	public static final String DATA_SUFFIX = "";
+
+	private static Logger logger = LogManager.getLogger("Proxy");
 
 	public String data;
 
@@ -39,8 +43,8 @@ public class XTPacketProxy implements ISmartfoxPacket {
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		System.out.println("Proxy: " + data);
-		((SmartfoxClient)client.container).sendPacket(this);
+		logger.debug("[C->S] " + build());
+		((SmartfoxClient) client.container).sendPacket(this);
 		return true;
 	}
 

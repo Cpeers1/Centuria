@@ -47,7 +47,7 @@ public abstract class DMManager {
 	 * @param dmID Conversation ID
 	 * @return True if the DM was saved on disk, false otherwise
 	 */
-	public abstract boolean dmExists(String dmID);;
+	public abstract boolean dmExists(String dmID);
 
 	/**
 	 * Retrieves the participants of a DM
@@ -56,6 +56,14 @@ public abstract class DMManager {
 	 * @return Array of Account ID Strings
 	 */
 	public abstract String[] getDMParticipants(String dmID);
+
+	/**
+	 * Updates the participants of a DM
+	 * 
+	 * @param dmID         Conversation ID
+	 * @param participants New participant list
+	 */
+	public abstract void updateDMParticipants(String dmID, String[] participants);
 
 	/**
 	 * Retrieves the messages sent in a DM

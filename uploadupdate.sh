@@ -61,16 +61,19 @@ uploadToServers "$version" "$channel"
 
 # Other channels
 if [ "$channel" == "beta" ]; then
+	uploadToServers "$version" bleedingedge
 	uploadToServers "$version" alpha
 fi
-if [ "$channel" == "prerelease" ]; then
+if [ "$channel" == "staging" ]; then
+	uploadToServers "$version" bleedingedge
 	uploadToServers "$version" alpha
 	uploadToServers "$version" beta
 fi
 if [ "$channel" == "release" ]; then
+	uploadToServers "$version" bleedingedge
 	uploadToServers "$version" alpha
 	uploadToServers "$version" beta
-	uploadToServers "$version" prerelease
+	uploadToServers "$version" staging
 fi
 
 echo

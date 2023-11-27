@@ -29,15 +29,22 @@ public class GameServerRequestHandler extends HttpPushProcessor {
 				SocketAddress ad = sock.getLocalSocketAddress();
 				if (ad instanceof InetSocketAddress) {
 					InetSocketAddress iA = (InetSocketAddress) ad;
-					host = iA.getAddress().getHostAddress();
+					if (Centuria.encryptGame)
+						host = iA.getAddress().getCanonicalHostName();
+					else
+						host = iA.getAddress().getHostAddress();
 					addr = host;
 				}
 			}
-			if (host.equals("localhost"))
+			if (host.equals("localhost") && !Centuria.encryptGame)
 				addr = "127.0.0.1";
 		}
+
+		// Set response
 		JsonObject response = new JsonObject();
-		response.addProperty("smartfoxServer", addr); // load discovery address
+		response.addProperty("smartfoxServer", addr);
+		response.addProperty("isCenturiaServer", true);
+		response.addProperty("isCenturiaTls", Centuria.encryptGame);
 		setResponseContent("text/json", response.toString());
 	}
 

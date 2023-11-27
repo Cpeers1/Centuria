@@ -1,4 +1,4 @@
-package org.asf.centuria.tools.legacyclienttools;
+package org.asf.centuria.tools.legacyclienttools.servers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,10 +6,13 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.asf.centuria.networking.smartfox.BaseSmartfoxServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.networking.smartfox.SocketSmartfoxClient;
@@ -18,6 +21,13 @@ import org.asf.centuria.packets.xml.handshake.auth.ClientToServerAuthPacket;
 import org.asf.centuria.packets.xml.handshake.version.ClientToServerHandshake;
 import org.asf.centuria.packets.xml.handshake.version.ServerToClientOK;
 import org.asf.centuria.packets.xt.gameserver.PrefixedPacket;
+import org.asf.centuria.tools.legacyclienttools.packets.ProxiedAvatarLookGetPacket;
+import org.asf.centuria.tools.legacyclienttools.packets.ProxiedAvatarLookSavePacket;
+import org.asf.centuria.tools.legacyclienttools.packets.ProxiedInventoryListPacket;
+import org.asf.centuria.tools.legacyclienttools.packets.ProxiedObjectInfoPacket;
+import org.asf.centuria.tools.legacyclienttools.packets.ProxiedObjectUpdatePacket;
+import org.asf.centuria.tools.legacyclienttools.packets.ProxiedRoomJoinPacket;
+import org.asf.centuria.tools.legacyclienttools.packets.XTPacketProxy;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.JsonObject;
@@ -30,7 +40,7 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 	public TranslatorGameServer(int localPort) throws IOException {
 		super(new ServerSocket(localPort, 0, InetAddress.getLoopbackAddress()));
 	}
-	
+
 	public boolean isLocalClient(SmartfoxClient client) {
 		return clients.contains(client);
 	}
@@ -41,9 +51,10 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 
 	private Random rnd = new Random();
 	private XmlMapper mapper = new XmlMapper();
+	private static Logger logger = LogManager.getLogger("Proxy");
 
 	@Override
-	protected void registerPackets() {
+	protected void registerServerPackets() {
 		mapper = new XmlMapper();
 
 		// Handshake
@@ -56,6 +67,7 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 		registerPacket(new ProxiedObjectUpdatePacket());
 		registerPacket(new ProxiedObjectInfoPacket());
 		registerPacket(new ProxiedAvatarLookGetPacket());
+		registerPacket(new ProxiedAvatarLookSavePacket());
 		registerPacket(new ProxiedInventoryListPacket());
 		registerPacket(new XTPacketProxy());
 	}
@@ -108,12 +120,14 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 					// Client loop
 					while (remoteClient.getSocket() != null) {
 						String data = readRawPacket(remoteClient);
-						System.out.println("Proxy: " + data);
+						logger.debug("[S->C]: " + data);
 						try {
 							handlePacket(data, remoteClient);
 						} catch (Exception e) {
-							System.err.println("Exception: " + e);
-							e.printStackTrace();
+							if (!(e instanceof SocketException)) {
+								logger.error("An error occurred while proxying", e);
+								e.printStackTrace();
+							}
 							try {
 								remoteClient.getSocket().close();
 							} catch (Exception e2) {
@@ -131,8 +145,10 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 						remoteClient.disconnect();
 					}
 				} catch (Exception e) {
-					System.err.println("Exception: " + e);
-					e.printStackTrace();
+					if (!(e instanceof SocketException)) {
+						logger.error("An error occurred while proxying", e);
+						e.printStackTrace();
+					}
 					try {
 						remoteClient.getSocket().close();
 					} catch (Exception e2) {
@@ -168,11 +184,13 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 
 			// Handle authentication
 			handleAuthentication(localClient, remoteClient, auth, serverResponse);
-			
+
 			// Login complete packet
 			remoteClient.readRawPacket();
-			
+
 			// Request all items from upstream
+			// TODO: make sure the client knows they are NOT knew
+			remoteClient = remoteClient;
 			remoteClient.sendPacket("%xt%o%ilt%-1%1%");
 			remoteClient.sendPacket("%xt%o%ilt%-1%200%");
 			remoteClient.sendPacket("%xt%o%ilt%-1%2%");
@@ -200,7 +218,7 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 			remoteClient.sendPacket("%xt%o%ilt%-1%311%");
 
 			ArrayList<String> packets = new ArrayList<String>();
-			
+
 			// Read all packets except IL
 			int remainingIL = 25;
 			while (remainingIL > 0) {
@@ -209,15 +227,15 @@ public class TranslatorGameServer extends BaseSmartfoxServer {
 					packets.add(packet);
 				else {
 					remainingIL--;
-					
+
 					// Send
 					handlePacket(packet, remoteClient);
 				}
 			}
-			
+
 			// Complete login
 			localClient.sendPacket("%xt%ulc%-1%");
-			
+
 			// Other packets
 			for (String packet : packets) {
 				handlePacket(packet, remoteClient);

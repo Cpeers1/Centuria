@@ -3,7 +3,6 @@ package org.asf.centuria.modules.events.servers;
 import java.util.function.Consumer;
 
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 import org.asf.centuria.networking.voicechatserver.VoiceChatServer;
 import org.asf.centuria.networking.voicechatserver.networking.AbstractVoiceChatPacket;
 
@@ -15,7 +14,6 @@ import org.asf.centuria.networking.voicechatserver.networking.AbstractVoiceChatP
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("voicechatserver.startup")
 public class VoiceChatServerStartupEvent extends EventObject {
 
 	private VoiceChatServer server;
@@ -24,11 +22,6 @@ public class VoiceChatServerStartupEvent extends EventObject {
 	public VoiceChatServerStartupEvent(VoiceChatServer server, Consumer<AbstractVoiceChatPacket> registrationCommand) {
 		this.server = server;
 		this.registrationCommand = registrationCommand;
-	}
-
-	@Override
-	public String eventPath() {
-		return "voicechatserver.startup";
 	}
 
 	/**

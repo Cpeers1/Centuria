@@ -3,7 +3,6 @@ package org.asf.centuria.modules.events.players;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 
@@ -14,7 +13,6 @@ import org.asf.centuria.networking.smartfox.SmartfoxClient;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("players.leave")
 public class PlayerLeaveEvent extends EventObject {
 
 	private Player player;
@@ -27,11 +25,6 @@ public class PlayerLeaveEvent extends EventObject {
 		this.account = account;
 		this.player = player;
 		this.server = server;
-	}
-
-	@Override
-	public String eventPath() {
-		return "players.leave";
 	}
 
 	/**

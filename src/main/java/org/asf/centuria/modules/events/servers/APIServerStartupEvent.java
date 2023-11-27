@@ -1,7 +1,6 @@
 package org.asf.centuria.modules.events.servers;
 
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 import org.asf.connective.ConnectiveHttpServer;
 
 /**
@@ -12,18 +11,12 @@ import org.asf.connective.ConnectiveHttpServer;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("api.startup")
 public class APIServerStartupEvent extends EventObject {
 
 	private ConnectiveHttpServer server;
 
 	public APIServerStartupEvent(ConnectiveHttpServer server) {
 		this.server = server;
-	}
-
-	@Override
-	public String eventPath() {
-		return "api.startup";
 	}
 
 	/**

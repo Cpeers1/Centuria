@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.ChatServer;
 import org.asf.centuria.networking.gameserver.GameServer;
@@ -16,7 +15,6 @@ import org.asf.centuria.networking.gameserver.GameServer;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("chatcommands.helpsyntax")
 public class ModuleCommandSyntaxListEvent extends EventObject {
 
 	private ArrayList<String> commandMessages;
@@ -33,11 +31,6 @@ public class ModuleCommandSyntaxListEvent extends EventObject {
 		this.server = client.getServer();
 		this.account = account;
 		this.permLevel = permLevel;
-	}
-
-	@Override
-	public String eventPath() {
-		return "chatcommands.helpsyntax";
 	}
 
 	/**

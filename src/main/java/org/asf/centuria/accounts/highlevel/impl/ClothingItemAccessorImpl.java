@@ -18,7 +18,7 @@ public class ClothingItemAccessorImpl extends ClothingItemAccessor {
 		try {
 			// Load helper
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("defaultitems/clothinghelper.json");
+					.getResourceAsStream("content/items/clothing.json");
 			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("Clothing")
 					.getAsJsonObject();
 			strm.close();

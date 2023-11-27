@@ -2,16 +2,14 @@ package org.asf.centuria.modules.events.levels;
 
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 
 /**
  * 
- * Maintenance Start Event - called when server maintenance is started.
+ * Level join event - called when a player enters a level.
  * 
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("level.join")
 public class LevelJoinEvent extends EventObject {
 
 	private int levelID;
@@ -22,11 +20,6 @@ public class LevelJoinEvent extends EventObject {
 		this.levelID = levelID;
 		this.room = room;
 		this.player = player;
-	}
-
-	@Override
-	public String eventPath() {
-		return "level.join";
 	}
 
 	/**

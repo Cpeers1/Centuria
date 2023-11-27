@@ -139,15 +139,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 			// Initialize interactions
 			InteractionManager.initInteractionsFor(plr, plr.pendingLevelID);
 
-			// Sync spawn
-			for (Player player : server.getPlayers()) {
-				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-					plr.syncTo(player, WorldObjectMoverNodeType.InitPosition);
-					Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
-							"Syncing spawn " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
-				}
-			}
-
+			// Mark ready
+			plr.awaitingPlayerSync = true;
 			return true;
 		}
 
@@ -187,14 +180,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		plr.targetPos = null;
 		plr.targetRot = null;
 
-		// Sync spawn
-		for (Player player : server.getPlayers()) {
-			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				plr.syncTo(player, WorldObjectMoverNodeType.InitPosition);
-				Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
-						"Syncing spawn " + player.account.getDisplayName() + " to " + plr.account.getDisplayName());
-			}
-		}
+		// Mark ready for syncing players
+		plr.awaitingPlayerSync = true;
 
 		// Sanctuary loading
 		if (plr.levelType == 2 && plr.room.startsWith("sanctuary_")) {
@@ -399,7 +386,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		// Load spawn helper
 		try {
 			// Load helper
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("spawns.json");
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("content/world/spawns.json");
 			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 					.get("Spawns").getAsJsonObject();
 			strm.close();

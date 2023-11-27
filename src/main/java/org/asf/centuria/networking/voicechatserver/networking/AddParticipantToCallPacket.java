@@ -48,7 +48,7 @@ public class AddParticipantToCallPacket extends AbstractVoiceChatPacket {
 			// Blocked
 			JsonObject res = new JsonObject();
 			res.addProperty("eventId", "call.add");
-			res.addProperty("success", "blocked");
+			res.addProperty("error", "not_online");
 			res.addProperty("success", false);
 			client.sendPacket(res);
 			return true;
@@ -60,7 +60,7 @@ public class AddParticipantToCallPacket extends AbstractVoiceChatPacket {
 			// Blocked
 			JsonObject res = new JsonObject();
 			res.addProperty("eventId", "call.add");
-			res.addProperty("success", "blocked");
+			res.addProperty("error", "blocked");
 			res.addProperty("success", false);
 			client.sendPacket(res);
 			return true;
@@ -70,7 +70,7 @@ public class AddParticipantToCallPacket extends AbstractVoiceChatPacket {
 			// Blocked
 			JsonObject res = new JsonObject();
 			res.addProperty("eventId", "call.add");
-			res.addProperty("success", "blocked");
+			res.addProperty("error", "blocked");
 			res.addProperty("success", false);
 			client.sendPacket(res);
 			return true;

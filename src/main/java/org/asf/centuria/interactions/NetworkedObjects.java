@@ -44,7 +44,7 @@ public class NetworkedObjects {
 		try {
 			// Load the helper
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("networkedobjects.json");
+					.getResourceAsStream("content/world/networkedobjects.json");
 			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
 			strm.close();
 			loadObjects(helper);

@@ -1,4 +1,4 @@
-package org.asf.centuria.tools.legacyclienttools;
+package org.asf.centuria.tools.legacyclienttools.http;
 
 import java.io.IOException;
 

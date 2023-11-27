@@ -3,7 +3,6 @@ package org.asf.centuria.modules.events.interactions;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.interactions.dataobjects.NetworkedObject;
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 
 /**
  * 
@@ -13,7 +12,6 @@ import org.asf.centuria.modules.eventbus.EventPath;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("interaction.start")
 public class InteractionStartEvent extends EventObject {
 
 	private String objectId;
@@ -24,11 +22,6 @@ public class InteractionStartEvent extends EventObject {
 		this.player = player;
 		this.object = object;
 		this.objectId = objectId;
-	}
-
-	@Override
-	public String eventPath() {
-		return "interaction.start";
 	}
 
 	/**

@@ -56,6 +56,7 @@ public class AvatarSelectLookPacket implements IXtPacket<AvatarSelectLookPacket>
 		}
 
 		// Save the pending look ID
+		String oldActiveLook = plr.activeLook;
 		plr.pendingLookID = lookID;
 		plr.activeLook = plr.pendingLookID;
 
@@ -84,11 +85,14 @@ public class AvatarSelectLookPacket implements IXtPacket<AvatarSelectLookPacket>
 			plr.pendingLookDefID = lookObj.get("defId").getAsInt();
 		}
 
-		// Sync
-		GameServer srv = (GameServer) client.getServer();
-		for (Player player : srv.getPlayers()) {
-			if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
-				plr.syncTo(player, WorldObjectMoverNodeType.Move);
+		// Sync if updated
+		if (oldActiveLook == null || !oldActiveLook.equals(plr.activeLook)) {
+			plr.lastAction = 0;
+			GameServer srv = (GameServer) client.getServer();
+			for (Player player : srv.getPlayers()) {
+				if (plr.room != null && player.room != null && player.room.equals(plr.room) && player != plr) {
+					plr.syncTo(player, WorldObjectMoverNodeType.InitPosition);
+				}
 			}
 		}
 

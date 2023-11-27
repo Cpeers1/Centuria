@@ -1280,6 +1280,33 @@
           "weight": 1
         }
       ]
+    },
+    "15111": {
+      "objectName": "QuestReward/FogPlant",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q15111",
+          "itemId": "14371",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q15111": {
+      "objectName": "QuestReward/FogPlant",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 50,
+          "maxCount": 70,
+          "weight": 1
+        }
+      ]
     }
   }
 }
