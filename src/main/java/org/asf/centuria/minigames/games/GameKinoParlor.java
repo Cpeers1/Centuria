@@ -947,6 +947,7 @@ public class GameKinoParlor extends AbstractMinigame {
 			for (LunarPhasesTile removeCard : removeDeck) {
 				deck.remove(removeCard);
 			}
+			removeDeck.clear();
 		}
 
 		private int kinoPlayRandCard() {
