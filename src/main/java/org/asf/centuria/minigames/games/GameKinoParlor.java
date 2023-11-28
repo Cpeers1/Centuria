@@ -1260,6 +1260,10 @@ public class GameKinoParlor extends AbstractMinigame {
 
 				// Check cards
 				if (playedCardPlayer == -1 || playedCardKino == -1) {
+					// FIXME: poor solution, but i dont know the codebase enough, bobby tables, when
+					// you can, can you try improving? the old code resulted in a infinite while
+					// loop due to there being no cards in the deck it could pick from
+
 					// Re-generate the deck and try again to break the tie
 					deck.clear();
 					removeDeck.clear();
