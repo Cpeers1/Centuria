@@ -1090,7 +1090,7 @@ public class GameDizzywingDispatch extends AbstractMinigame {
 				for (int y = 0; y < gridSize.y; y++) {
 					Vector2i curr = new Vector2i(x, y);
 
-					if (!floodFillGetVisited(curr)) {
+					if (floodFillGetVisited(curr)) {
 						floodFill(curr, matchType.get(curr), pos1, pos2);
 					}
 				}
