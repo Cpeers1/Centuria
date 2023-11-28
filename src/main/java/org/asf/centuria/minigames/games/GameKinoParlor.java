@@ -871,16 +871,15 @@ public class GameKinoParlor extends AbstractMinigame {
 
 	private class LunarPhases {
 
-		List<LunarPhasesTile> playersHand; // array of indices from the card deck
-		List<LunarPhasesTile> kinosHand;
-		List<LunarPhasesTile> playersPlayedCards;
-		List<LunarPhasesTile> kinosPlayedCards;
-		List<LunarPhasesTile> removeDeck; // cards that are withdrawn from the deck are temporarily placed here
-		List<LunarPhasesTile> deck;
+		private List<LunarPhasesTile> playersHand;
+		private List<LunarPhasesTile> kinosHand;
+		private List<LunarPhasesTile> playersPlayedCards;
+		private List<LunarPhasesTile> kinosPlayedCards;
+		private List<LunarPhasesTile> removeDeck;
+		private List<LunarPhasesTile> deck;
 
 		static final int[] suitOfCards = { 4, 4, 4, 4, 4, 4, 4, 4 };
 		static final int numCardsPerPlayer = 5;
-		static int totalNumCards;
 
 		class LunarPhasesTile {
 			final private LunarPhasesTileType tileType;
@@ -933,88 +932,144 @@ public class GameKinoParlor extends AbstractMinigame {
 		}
 
 		public LunarPhases() {
+			// Initialize the minigame
 			playersHand = new ArrayList<>();
 			kinosHand = new ArrayList<>();
 			playersPlayedCards = new ArrayList<>();
 			kinosPlayedCards = new ArrayList<>();
 			removeDeck = new ArrayList<>();
 			deck = new ArrayList<>();
-
-			totalNumCards = 0;
 		}
 
 		private void removeCardsFromDeck() {
+			// Remove all cards from the lock list
 			for (LunarPhasesTile removeCard : removeDeck) {
 				deck.remove(removeCard);
 			}
+
+			// Clear list
 			removeDeck.clear();
 		}
 
 		private int kinoPlayRandCard() {
+			// Draw and play a random card
+
+			// Check deck size
+			if (deck.size() == 0)
+				return -1;
+
+			// Pick a card
 			int kinoDraw = random.nextInt(deck.size());
 			LunarPhasesTile kinoCard = deck.get(kinoDraw);
-
 			while (removeDeck.contains(kinoCard)) {
+				// Failsafe: check if there are cards left
+				if (removeDeck.size() >= deck.size())
+					return -1; // No cards to play, this is an error
+
+				// Keep picking til we find one
 				kinoDraw = random.nextInt(deck.size());
 				kinoCard = deck.get(kinoDraw);
 			}
 
+			// Add to played cards
 			kinosPlayedCards.add(kinoCard);
+
+			// Make sure it doesnt get picked by another deal/play
 			removeDeck.add(kinoCard);
 			return kinoDraw;
 		}
 
 		private int kinoGiveRandCard() {
+			// Give kino a random card
+
+			// Check deck size
+			if (deck.size() == 0)
+				return -1;
+
+			// Pick a card
 			int kinoDraw = random.nextInt(deck.size());
 			LunarPhasesTile kinoCard = deck.get(kinoDraw);
-
 			while (removeDeck.contains(kinoCard)) {
+				// Failsafe: check if there are cards left
+				if (removeDeck.size() >= deck.size())
+					return -1; // No cards to play, this is an error
+
+				// Keep picking til we find one
 				kinoDraw = random.nextInt(deck.size());
 				kinoCard = deck.get(kinoDraw);
 			}
 
+			// Add to kino's hand
 			kinosHand.add(kinoCard);
+
+			// Make sure it doesnt get picked by another deal/play
 			removeDeck.add(kinoCard);
 			return kinoDraw;
 		}
 
 		private int playerPlayRandCard() {
+			// Draw and play a random card
+
+			// Check deck size
+			if (deck.size() == 0)
+				return -1;
+
+			// Pick a card
 			int playerDraw = random.nextInt(deck.size());
 			LunarPhasesTile playerCard = deck.get(playerDraw);
-
 			while (removeDeck.contains(playerCard)) {
+				// Failsafe: check if there are cards left
+				if (removeDeck.size() >= deck.size())
+					return -1; // No cards to play, this is an error
+
+				// Keep picking til we find one
 				playerDraw = random.nextInt(deck.size());
 				playerCard = deck.get(playerDraw);
 			}
 
+			// Add to played cards
 			playersPlayedCards.add(playerCard);
+
+			// Make sure it doesnt get picked by another deal/play
 			removeDeck.add(playerCard);
 			return playerDraw;
 		}
 
 		private int playerGiveRandCard() {
+			// Give player a random card
+
+			// Check deck size
+			if (deck.size() == 0)
+				return -1;
+
+			// Pick a card
 			int playerDraw = random.nextInt(deck.size());
 			LunarPhasesTile playerCard = deck.get(playerDraw);
-
 			while (removeDeck.contains(playerCard)) {
+				// Failsafe: check if there are cards left
+				if (removeDeck.size() >= deck.size())
+					return -1; // No cards to play, this is an error
+
+				// Keep picking til we find one
 				playerDraw = random.nextInt(deck.size());
 				playerCard = deck.get(playerDraw);
 			}
 
+			// Add to hand
 			playersHand.add(playerCard);
+
+			// Make sure it doesnt get picked by another deal/play
 			removeDeck.add(playerCard);
 			return playerDraw;
 		}
 
 		private int getKinosFirstPick() {
-
 			LunarPhasesTile bestCard = null;
 			int bestCardIdx = -1;
 			int highestDistFromPlayer = -100;
 			int playerPos = getPlayerPos();
 
 			for (int i = 0; i < 3; i++) {
-
 				LunarPhasesTile currCard = kinosHand.get(i);
 				int currDist = getNewKinoPos(currCard) - playerPos;
 
@@ -1102,42 +1157,46 @@ public class GameKinoParlor extends AbstractMinigame {
 		}
 
 		private List<Integer> getParams() {
-
 			return Arrays.asList(0);
 		}
 
 		private void command(Player player, XtReader rd, String command, String[] gameCommandParameters) {
 			switch (command) {
 			case "requestDeal":
-
+				// Re-init lists
 				playersHand = new ArrayList<>();
 				kinosHand = new ArrayList<>();
 				playersPlayedCards = new ArrayList<>();
 				kinosPlayedCards = new ArrayList<>();
 				removeDeck = new ArrayList<>();
 
-				// generate the deck.
+				// Generate the deck
 				deck = new ArrayList<>();
 				for (int i = 0; i < suitOfCards.length; i++) {
-					totalNumCards += suitOfCards[i];
 					for (int j = 0; j < suitOfCards[i]; j++) {
 						deck.add(new LunarPhasesTile(i));
 					}
 				}
 
-				// generate the packet
+				// Build packet headers
 				String[] dealCardsResponse = new String[2 * numCardsPerPlayer + 4];
 				dealCardsResponse[0] = "dealCardsResponse";
 
+				// Card dealing headers
 				dealCardsResponse[1] = Integer.toString(2 * numCardsPerPlayer); // number of elements
+
+				// Play player card
 				dealCardsResponse[2] = Integer.toString(playerPlayRandCard());
 
+				// Player's cards
 				for (int i = 1; i < numCardsPerPlayer; i++) {
 					dealCardsResponse[i + 2] = Integer.toString(playerGiveRandCard());
 				}
 
+				// Play kino's card
 				dealCardsResponse[7] = Integer.toString(kinoPlayRandCard());
 
+				// Give other cards to kino
 				for (int i = 1; i < numCardsPerPlayer; i++) {
 					dealCardsResponse[i + 7] = Integer.toString(kinoGiveRandCard());
 				}
@@ -1150,7 +1209,6 @@ public class GameKinoParlor extends AbstractMinigame {
 				removeCardsFromDeck();
 				break;
 			case "playerPlay":
-
 				int playersPlay = Integer.parseInt(gameCommandParameters[0]); // index of card in hand
 				playersPlayedCards.add(playersHand.get(playersPlay)); // do not remove card from deck
 
@@ -1196,11 +1254,34 @@ public class GameKinoParlor extends AbstractMinigame {
 				}
 				break;
 			case "requestTieRoll":
+				// Try playing cards
+				int playedCardPlayer = playerPlayRandCard();
+				int playedCardKino = kinoPlayRandCard();
+
+				// Check cards
+				if (playedCardPlayer == -1 || playedCardKino == -1) {
+					// Re-generate the deck and try again to break the tie
+					deck.clear();
+					removeDeck.clear();
+					for (int i = 0; i < suitOfCards.length; i++) {
+						for (int j = 0; j < suitOfCards[i]; j++) {
+							deck.add(new LunarPhasesTile(i));
+						}
+					}
+					if (playedCardPlayer == -1)
+						playedCardPlayer = playerPlayRandCard();
+					if (playedCardKino == -1)
+						playedCardKino = kinoPlayRandCard();
+				}
+
+				// Build response
 				String[] tieResponse = new String[5];
 				tieResponse[0] = "tieResponse";
 				tieResponse[1] = "1";
-				tieResponse[2] = Integer.toString(playerPlayRandCard());
-				tieResponse[3] = Integer.toString(kinoPlayRandCard());
+				tieResponse[2] = Integer.toString(playedCardPlayer);
+				tieResponse[3] = Integer.toString(playedCardKino);
+
+				// Check result
 				if (getPlayerPos() > getKinoPos()) {
 					tieResponse[4] = "win";
 				} else {
