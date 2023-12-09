@@ -603,10 +603,11 @@ public class Player {
 							}
 						}
 
+						// Build response
 						XtWriter writer = new XtWriter();
 						writer.writeString("rfjtr");
 						writer.writeInt(-1); // data prefix
-						writer.writeInt(1); // other world
+						writer.writeInt(1); // success
 						writer.writeString("");
 						writer.writeString(""); // data suffix
 						client.sendPacket(writer.encode());
@@ -644,10 +645,11 @@ public class Player {
 						// Send packet
 						client.sendPacket(join);
 					} else {
+						// Build response
 						XtWriter writer = new XtWriter();
 						writer.writeString("rfjtr");
 						writer.writeInt(-1); // data prefix
-						writer.writeInt(1); // other world
+						writer.writeInt(1); // success
 						writer.writeString("");
 						writer.writeString(""); // data suffix
 						client.sendPacket(writer.encode());
@@ -655,7 +657,7 @@ public class Player {
 						// Same room, sync player
 						ObjectUpdatePacket pkt = new ObjectUpdatePacket();
 						pkt.action = 0;
-						pkt.mode = 2;
+						pkt.mode = 0; // InitPosition triggers teleport amims for FT clients, for vanilla it just moves
 						pkt.id = player.account.getAccountID();
 						pkt.position = plr.lastPos;
 						pkt.rotation = plr.lastRot;

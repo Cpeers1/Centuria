@@ -46,15 +46,15 @@ public class InventoryManager {
 		// Build avatars
 		if (inv.getSaveSettings().giveAllAvatars) {
 			// Unlock all avatars
-			inv.getAvatarAccessor().unlockAvatarSpecies("Kitsune");
-			inv.getAvatarAccessor().unlockAvatarSpecies("Senri");
-			inv.getAvatarAccessor().unlockAvatarSpecies("Phoenix");
-			inv.getAvatarAccessor().unlockAvatarSpecies("Dragon");
-			inv.getAvatarAccessor().unlockAvatarSpecies("Kirin");
-			inv.getAvatarAccessor().unlockAvatarSpecies("Fae");
-			inv.getAvatarAccessor().unlockAvatarSpecies("Shinigami");
-			inv.getAvatarAccessor().unlockAvatarSpecies("Werewolf");
-			inv.getAvatarAccessor().unlockAvatarSpecies("Jackalope");
+			for (String species : inv.getAvatarAccessor().getAllAvatarSpeciesTypes())
+			{
+				// Check
+				if (!inv.getAvatarAccessor().isAvatarSpeciesUnlocked(species))
+				{
+					// Unlock
+					inv.getAvatarAccessor().unlockAvatarSpecies(species);
+				}
+			}
 		} else {
 			// Unlock Kitsune, Senri and Phoenix
 			inv.getAvatarAccessor().unlockAvatarSpecies("Kitsune");

@@ -40,11 +40,27 @@ public class GameServerRequestHandler extends HttpPushProcessor {
 				addr = "127.0.0.1";
 		}
 
-		// Set response
+		// Prepare response
 		JsonObject response = new JsonObject();
+
+		// Server endpoint
 		response.addProperty("smartfoxServer", addr);
+
+		// Let clients know this is a Centuria server
 		response.addProperty("isCenturiaServer", true);
+
+		// Centuria-style TLS encryption (just a layer of TLS with nothing else,
+		// incompatible with vanilla clients)
 		response.addProperty("isCenturiaTls", Centuria.encryptGame);
+
+		// We support the enhanced fer.al generic length-prefixed protocol for chat and
+		// game. Any client that has a clientside EFGL implementation (such FT clients)
+		// should use it, clients should only send the EFGL_PROT field if this is true,
+		// they should not include it if false or missing from the response.
+		response.addProperty("efglGameServerSupported", true);
+		response.addProperty("efglChatServerSupported", true);
+
+		// Set response
 		setResponseContent("text/json", response.toString());
 	}
 

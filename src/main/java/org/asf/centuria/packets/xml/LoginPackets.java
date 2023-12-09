@@ -26,7 +26,7 @@ public class LoginPackets {
 		public static class login {
 			@JacksonXmlProperty(isAttribute = true)
 			public String z;
-			
+
 			@JacksonXmlCData
 			public String nick;
 

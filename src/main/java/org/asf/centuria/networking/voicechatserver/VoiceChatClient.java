@@ -97,6 +97,11 @@ public class VoiceChatClient extends BasePersistentServiceClient<VoiceChatClient
 			return;
 		}
 
+		// Rename thread
+		Thread.currentThread().setName("Voice Chat Client Thread: " + acc.getDisplayName() + " [ID "
+				+ acc.getAccountID() + ", Address "
+				+ ((InetSocketAddress) getSocket().getRemoteSocketAddress()).getAddress().getHostAddress() + "]");
+
 		// Remove sensitive info and fire event
 		handshakeStart.remove("auth_token");
 		VoiceChatLoginEvent evt = new VoiceChatLoginEvent(getServer(), acc, this, handshakeStart);

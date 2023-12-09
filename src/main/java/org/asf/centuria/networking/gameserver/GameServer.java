@@ -171,8 +171,20 @@ public class GameServer extends BaseSmartfoxServer {
 
 	@Override
 	protected void startClient(SmartfoxClient client) throws IOException {
+		// Protocol switch possible
+		client.allowProtocolSwitch();
+
 		// Read first handshake packet
 		ClientToServerHandshake pk = client.readPacket(ClientToServerHandshake.class);
+
+		// Check EFGL support
+		if (pk.supportsEfgl) {
+			// Switch protocol
+			client.switchToEfgl();
+		}
+
+		// Disable protocol switching
+		client.disableProtocolSwitch();
 
 		// Check version
 		boolean badClient = false;
@@ -229,6 +241,10 @@ public class GameServer extends BaseSmartfoxServer {
 			client.disconnect();
 			return;
 		}
+
+		// Rename thread
+		Thread.currentThread().setName("Game Client Thread: " + acc.getDisplayName() + " [ID " + acc.getAccountID()
+				+ ", Address " + client.getAddress() + "]");
 
 		// Allow modules to add parameter fields
 		JsonObject params = new JsonObject();
@@ -400,7 +416,7 @@ public class GameServer extends BaseSmartfoxServer {
 							}
 						}
 					}
-					
+
 					// Found the active look so we can end the loop
 					break;
 				}
@@ -768,7 +784,16 @@ public class GameServer extends BaseSmartfoxServer {
 
 	// Used to check permissions
 	public static boolean hasPerm(String level, String perm) {
+		// Check if player
+		if (perm.equals("player"))
+			return true;
+
+		// Check other levels
+		// Check by player permission level
+		// level = level of permissions in player save data
+		// perm = permission to verify
 		switch (level) {
+
 		case "moderator":
 			return perm.equals("moderator");
 
@@ -793,6 +818,7 @@ public class GameServer extends BaseSmartfoxServer {
 			default:
 				return false;
 			}
+
 		}
 
 		return false;

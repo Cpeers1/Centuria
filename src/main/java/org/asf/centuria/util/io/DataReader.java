@@ -78,7 +78,7 @@ public class DataReader {
 				res[c++] = (byte) p;
 			}
 			try {
-				int r = input.read(res, c, num);
+				int r = input.read(res, c, num - c);
 				if (r == -1)
 					break;
 				c += r;

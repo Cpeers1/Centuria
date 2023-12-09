@@ -413,18 +413,43 @@ public class Centuria {
 		// Server configuration
 		File serverConf = new File("server.conf");
 		if (!serverConf.exists()) {
-			Files.writeString(serverConf.toPath(),
-					"api-port=6\n" + "director-port=6969\n" + "game-port=6968\n" + "chat-port=6972\n"
-							+ "voice-chat-port=6973\n" + "room-preferred-min-players=15\n"
-							+ "room-preferred-max-players=50" + "room-preferred-upper-player-limit=75\n"
-							+ "allow-registration=true\n" + "give-all-avatars=false\n" + "give-all-mods=false\n"
-							+ "give-all-clothes=false\n" + "give-all-wings=false\n" + "give-all-sanctuary-types=false\n"
-							+ "give-all-furniture=false\n" + "give-all-currency=false\n" + "give-all-resources=false\n"
-							+ "server-spawn-behaviour=random\ndefault-save-behaviour=single\n"
-							+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
-							+ "encrypt-voice-chat=true\n" + "encrypt-game=false\nencrypt-director=false\n"
-							+ "debug-mode=false\n" + "\nvpn-user-whitelist=vpn-whitelist\n" + "vpn-ipv4-banlist=\n"
-							+ "vpn-ipv6-banlist=");
+			Files.writeString(serverConf.toPath(), "" //
+					+ "api-port=6970\n" //
+					+ "director-port=6969\n" //
+					+ "game-port=6968\n" //
+					+ "chat-port=6972\n"//
+					+ "voice-chat-port=6973\n" //
+					+ "\n" //
+					+ "room-preferred-min-players=15\n" //
+					+ "room-preferred-max-players=50\n" //
+					+ "room-preferred-upper-player-limit=75\n" //
+					+ "\n" //
+					+ "allow-registration=true\n" //
+					+ "\n" //
+					+ "give-all-avatars=false\n" //
+					+ "give-all-mods=false\n" //
+					+ "give-all-clothes=false\n" //
+					+ "give-all-wings=false\n" //
+					+ "give-all-sanctuary-types=false\n" //
+					+ "give-all-furniture=false\n" //
+					+ "give-all-currency=false\n" //
+					+ "give-all-resources=false\n" //
+					+ "\n" //
+					+ "server-spawn-behaviour=random\n" //
+					+ "default-save-behaviour=single\n" //
+					+ "\n" //
+					+ "discovery-server-address=localhost\n" //
+					+ "\n" //
+					+ "encrypt-api=false\n" //
+					+ "encrypt-chat=true\n" //
+					+ "encrypt-voice-chat=true\n" //
+					+ "encrypt-game=false\n" //
+					+ "encrypt-director=false\n" //
+					+ "debug-mode=false\n" //
+					+ "\n" //
+					+ "vpn-user-whitelist=vpn-whitelist\n" //
+					+ "vpn-ipv4-banlist=\n" //
+					+ "vpn-ipv6-banlist=");
 		}
 
 		// Parse properties
@@ -543,58 +568,35 @@ public class Centuria {
 
 		//
 		// Start API server
-		try {
-			// Create properties
-			HashMap<String, String> props = new HashMap<String, String>();
-			props.put("address", "0.0.0.0");
-			props.put("port", serverProperties.get("api-port"));
 
-			// Check HTTPS
-			if (serverProperties.getOrDefault("encrypt-api", "false").equals("true")
-					&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists()) {
-				// Start HTTPS
-				props.put("keystore", "keystore.jks");
-				props.put("keystore-password", Files.readString(Path.of("keystore.jks.password")));
-				apiServer = ConnectiveHttpServer.createNetworked("HTTPS/1.1", props);
-				apiServer.setContentSource(new CorsWildcardContentSource());
-				setupAPI(apiServer);
-				apiServer.start();
-			} else {
-				// Start HTTP
-				apiServer = ConnectiveHttpServer.createNetworked("HTTP/1.1", props);
-				apiServer.setContentSource(new CorsWildcardContentSource());
-				setupAPI(apiServer);
-				apiServer.start();
-			}
-		} catch (Exception e) {
-			Centuria.logger.fatal("Unable to start on port " + Integer.parseInt(serverProperties.get("api-port"))
-					+ "! Switching to debug mode!");
-			Centuria.logger.fatal("If you are not attempting to debug the server, please run as root.");
+		// Create properties
+		HashMap<String, String> props = new HashMap<String, String>();
+		props.put("address", "0.0.0.0");
+		props.put("port", serverProperties.get("api-port"));
 
-			HashMap<String, String> props = new HashMap<String, String>();
-			props.put("address", "0.0.0.0");
-			props.put("port", "6970");
-			if (serverProperties.getOrDefault("encrypt-api", "false").equals("true")
-					&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists()) {
-				props.put("keystore", "keystore.jks");
-				props.put("keystore-password", Files.readString(Path.of("keystore.jks.password")));
-				apiServer = ConnectiveHttpServer.createNetworked("HTTPS/1.1", props);
-				apiServer.setContentSource(new CorsWildcardContentSource());
-				setupAPI(apiServer);
-				apiServer.start();
-			} else {
-				apiServer = ConnectiveHttpServer.createNetworked("HTTP/1.1", props);
-				apiServer.setContentSource(new CorsWildcardContentSource());
-				setupAPI(apiServer);
-				apiServer.start();
-			}
+		// Check HTTPS
+		if (serverProperties.getOrDefault("encrypt-api", "false").equals("true") && new File("keystore.jks").exists()
+				&& new File("keystore.jks.password").exists()) {
+			// Start HTTPS
+			props.put("keystore", "keystore.jks");
+			props.put("keystore-password", Files.readString(Path.of("keystore.jks.password")));
+			apiServer = ConnectiveHttpServer.createNetworked("HTTPS/1.1", props);
+			apiServer.setContentSource(new CorsWildcardContentSource());
+			setupAPI(apiServer);
+			apiServer.start();
+		} else {
+			// Start HTTP
+			apiServer = ConnectiveHttpServer.createNetworked("HTTP/1.1", props);
+			apiServer.setContentSource(new CorsWildcardContentSource());
+			setupAPI(apiServer);
+			apiServer.start();
 		}
 
 		//
 		// Debug API
 		if (System.getProperty("debugAPI") != null) {
 			Centuria.logger.info("Starting debug api...");
-			HashMap<String, String> props = new HashMap<String, String>();
+			props = new HashMap<String, String>();
 			props.put("address", "0.0.0.0");
 			props.put("port", System.getProperty("debugAPI"));
 			ConnectiveHttpServer apiServer = ConnectiveHttpServer.createNetworked("HTTP/1.1", props);
@@ -609,7 +611,7 @@ public class Centuria {
 				"Starting Director server on port " + Integer.parseInt(serverProperties.get("director-port")) + "...");
 
 		// Create properties
-		HashMap<String, String> props = new HashMap<String, String>();
+		props = new HashMap<String, String>();
 		props.put("address", "0.0.0.0");
 		props.put("port", serverProperties.get("director-port"));
 
@@ -735,7 +737,7 @@ public class Centuria {
 		chatServer.start();
 
 		//
-		// Start chat server
+		// Start voice chat server
 		Centuria.logger.info("Starting Voice Chat server on port "
 				+ Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "6973")) + "...");
 		if (encryptVoiceChat)

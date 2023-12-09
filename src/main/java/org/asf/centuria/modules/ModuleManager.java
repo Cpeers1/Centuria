@@ -257,7 +257,7 @@ public class ModuleManager {
 		// Debug modules
 		if (System.getProperty("debugMode") != null) {
 			// Load all debug modules
-			String moduleList = System.getProperty("debugModeLoadModules");
+			String moduleList = System.getProperty("addCpModules");
 			if (moduleList != null) {
 				for (String type : moduleList.split(":")) {
 					// Load type

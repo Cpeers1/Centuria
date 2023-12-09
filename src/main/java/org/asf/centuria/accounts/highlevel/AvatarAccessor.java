@@ -9,6 +9,21 @@ public abstract class AvatarAccessor extends AbstractInventoryAccessor {
 	}
 
 	/**
+	 * Retrieves all avatar species types
+	 * 
+	 * @return Array of species types
+	 */
+	public abstract String[] getAllAvatarSpeciesTypes();
+
+	/**
+	 * Retrieves all default avatar body parts of a avatar species
+	 * 
+	 * @param type Avatar type (either name or defID)
+	 * @return Array of body part IDs
+	 */
+	public abstract String[] getDefaultBodyPartTypes(String type);
+
+	/**
 	 * Gives the player another look slot
 	 */
 	public abstract void addExtraLookSlot();
@@ -33,19 +48,19 @@ public abstract class AvatarAccessor extends AbstractInventoryAccessor {
 	 * 
 	 * @param defID Item ID
 	 */
-	public abstract boolean isAvatarPartUnlocked(int defID);
+	public abstract boolean isAvatarPartUnlocked(String defID);
 
 	/**
 	 * Unlocks a body mod or wings
 	 * 
 	 * @param defID Item ID
 	 */
-	public abstract void unlockAvatarPart(int defID);
+	public abstract void unlockAvatarPart(String defID);
 
 	/**
 	 * Removes a body mod or wings
 	 * 
 	 * @param defID Item ID
 	 */
-	public abstract void lockAvatarPart(int defID);
+	public abstract void lockAvatarPart(String defID);
 }

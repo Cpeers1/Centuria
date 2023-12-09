@@ -130,6 +130,12 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 			return;
 		}
 
+		// Rename thread
+		Thread.currentThread()
+				.setName("Chat Client Thread: " + acc.getDisplayName() + " [ID " + acc.getAccountID() + ", Address "
+						+ ((InetSocketAddress) getSocket().getRemoteSocketAddress()).getAddress().getHostAddress()
+						+ "]");
+
 		// Load DMs into memory
 		if (acc.getSaveSharedInventory().containsItem("dms")) {
 			// Load and sanitize dms
@@ -184,17 +190,20 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 			return;
 		}
 
+		// Check moderator perms
+		String permLevel = "member";
+		if (acc.getSaveSharedInventory().containsItem("permissions")) {
+			permLevel = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject().get("permissionLevel")
+					.getAsString();
+		}
+
 		// Check maintenance mode
 		if (Centuria.gameServer.maintenance) {
 			boolean lockout = true;
 
 			// Check permissions
-			if (acc.getSaveSharedInventory().containsItem("permissions")) {
-				String permLevel = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-						.get("permissionLevel").getAsString();
-				if (GameServer.hasPerm(permLevel, "admin")) {
-					lockout = false;
-				}
+			if (GameServer.hasPerm(permLevel, "admin")) {
+				lockout = false;
 			}
 
 			if (lockout || Centuria.gameServer.shutdown) {
@@ -225,12 +234,15 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 			// Check if the player was in chat
 			if (plr.wasInChat && plr.room != null)
 				joinRoom(plr.room, ChatRoomTypes.ROOM_CHAT);
+		} else {
+			// Security checks
+			// Check moderator perms
+			if (!GameServer.hasPerm(permLevel, "moderator")) {
+				// No access to chat when offline if not a mod
+				disconnect();
+				return;
+			}
 		}
-
-		// Disconnect connected instances
-		for (ChatClient cl : getServer().getClients())
-			if (cl.getPlayer().getAccountID().equals(acc.getAccountID()) && cl != this)
-				cl.disconnect();
 
 		// Log the login attempt
 		Centuria.logger.info("Chat login from IP: " + getSocket().getRemoteSocketAddress() + ": " + acc.getLoginName());

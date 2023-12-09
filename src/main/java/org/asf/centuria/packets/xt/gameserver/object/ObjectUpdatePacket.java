@@ -204,7 +204,8 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 		plr.lastHeading = heading;
 		plr.lastPos = position;
 		plr.lastRot = rotation;
-		plr.lastAction = action;
+		if (mode == 4)
+			plr.lastAction = action;
 
 		// Broadcast sync
 		GameServer srv = (GameServer) client.getServer();

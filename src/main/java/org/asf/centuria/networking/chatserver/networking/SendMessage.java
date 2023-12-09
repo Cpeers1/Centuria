@@ -137,11 +137,19 @@ public class SendMessage extends AbstractChatPacket {
 			if ((!client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)
 					|| !manager.dmExists(room))
 					&& !client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.TRANSIENT_CHAT)) {
-				// Check game room
-				GameRoom gameRoom = Centuria.gameServer.getRoomManager().getRoom(room);
-				if (gameRoom != null && gameRoom.getLevelID() != gameClient.levelID) {
-					// Invalid
-					return true;
+				// Check if sanctuary
+				if (room.startsWith("sanctuary_")) {
+					if (!gameClient.room.equals(room)) {
+						// Invalid
+						return true;
+					}
+				} else {
+					// Check game room
+					GameRoom gameRoom = Centuria.gameServer.getRoomManager().getRoom(room);
+					if (gameRoom != null && gameRoom.getLevelID() != gameClient.levelID) {
+						// Invalid
+						return true;
+					}
 				}
 			}
 		}
@@ -780,6 +788,17 @@ public class SendMessage extends AbstractChatPacket {
 							}
 						}
 
+						// Limbo clients from game server
+						for (Player plr : Centuria.gameServer.getPlayers()) {
+							if (!mapLessClients.contains(plr.account.getAccountID())) {
+								if ((!plr.roomReady || plr.room == null) && plr.levelID != 25280) {
+									// In limbo
+									mapLessClients.add(plr.account.getAccountID());
+									suspiciousClients.put(plr.account, "limbo");
+								}
+							}
+						}
+
 						// Find level IDs
 						int ingame = 0;
 						ArrayList<String> playerIDs = new ArrayList<String>();
@@ -887,28 +906,17 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Add suspicious clients
 						if (suspiciousClients.size() != 0) {
-							int added = 0;
 							String susClientsStr = "";
 							susClientsStr += "\n";
 							susClientsStr += "\nSuspicious clients:";
 							for (CenturiaAccount acc : suspiciousClients.keySet()) {
-								// Check moderator perms
-								String permLevel2 = "member";
-								if (acc.getSaveSharedInventory().containsItem("permissions")) {
-									permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-											.get("permissionLevel").getAsString();
-								}
-								if (GameServer.hasPerm(permLevel2, "moderator"))
-									continue;
-
 								// Add
 								susClientsStr += "\n - " + acc.getDisplayName() + " [" + suspiciousClients.get(acc)
 										+ "]";
-								added++;
 							}
-							if (added != 0)
-								response += susClientsStr;
+							response += susClientsStr;
 						}
+
 						// Send response
 						systemMessage(response, cmd, client);
 						return true;

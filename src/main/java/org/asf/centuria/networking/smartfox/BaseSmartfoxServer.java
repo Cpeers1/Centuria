@@ -294,21 +294,14 @@ public abstract class BaseSmartfoxServer {
 	/**
 	 * Reads a single packet from a client
 	 *
-	 * @param <T>                    Packet return type
-	 * @param AbstractSmartfoxClient Player to read from
-	 * @param packetType             Expected packet class
+	 * @param <T>        Packet return type
+	 * @param client     Player to read from
+	 * @param packetType Expected packet class
 	 * @return ISmartfoxPacket instance or null
 	 * @throws IOException If reading fails
 	 */
-	public <T extends ISmartfoxPacket> T readPacket(SmartfoxClient AbstractSmartfoxClient, Class<T> packetType)
-			throws IOException {
-		// Read data
-		String data = readRawPacket(AbstractSmartfoxClient);
-		if (Centuria.debugMode)
-			Centuria.logger.debug("C->S: " + data);
-
-		// Parse packet
-		return parsePacketPayload(data, packetType);
+	public <T extends ISmartfoxPacket> T readPacket(SmartfoxClient client, Class<T> packetType) throws IOException {
+		return client.readPacket(packetType);
 	}
 
 	/**

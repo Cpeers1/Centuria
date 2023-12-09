@@ -91,6 +91,17 @@ public class GetPlayerList extends AbstractChatPacket {
 			}
 		}
 
+		// Limbo clients from game server
+		for (Player plr : Centuria.gameServer.getPlayers()) {
+			if (!mapLessClients.contains(plr.account.getAccountID())) {
+				if ((!plr.roomReady || plr.room == null) && plr.levelID != 25280) {
+					// In limbo
+					mapLessClients.add(plr.account.getAccountID());
+					suspiciousClients.put(plr.account, "limbo");
+				}
+			}
+		}
+
 		// Find level IDs
 		int ingame = 0;
 		ArrayList<String> playerIDs = new ArrayList<String>();
@@ -205,15 +216,6 @@ public class GetPlayerList extends AbstractChatPacket {
 		// Add suspicious clients
 		if (suspiciousClients.size() != 0) {
 			for (CenturiaAccount acc : suspiciousClients.keySet()) {
-				// Check moderator perms
-				String permLevel2 = "member";
-				if (acc.getSaveSharedInventory().containsItem("permissions")) {
-					permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-							.get("permissionLevel").getAsString();
-				}
-				if (GameServer.hasPerm(permLevel2, "moderator"))
-					continue;
-
 				// Add
 				JsonObject clD = new JsonObject();
 				clD.addProperty("id", acc.getAccountID());

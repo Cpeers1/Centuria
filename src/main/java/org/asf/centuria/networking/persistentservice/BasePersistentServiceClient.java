@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.networking.persistentservice.networking.AbstractPersistentServicePacket;
+import org.asf.centuria.util.io.DataReader;
+import org.asf.centuria.util.io.DataWriter;
+import org.asf.connective.tasks.AsyncTaskManager;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -20,12 +23,76 @@ public abstract class BasePersistentServiceClient<T extends BasePersistentServic
 	private JsonReader reader;
 
 	private ArrayList<Object> objects = new ArrayList<Object>();
+	private ArrayList<JsonObject> sendQueue = new ArrayList<JsonObject>();
 
 	// Rates
 	private int ppsHighest;
 	private long ppsHighestLastChange;
 	private int ppsCurrent;
 	private int ppsLast;
+
+	private boolean protocolSwitchPossible;
+	private boolean useEfglProtocol;
+	private boolean protocolLocked;
+
+	private DataReader dReader;
+	private DataWriter dWriter;
+
+	private boolean ioThreadInited;
+
+	private boolean disconnecting = false;
+
+	/**
+	 * Locks the protocol, should be called on first packet read
+	 */
+	protected void lockProtocol() {
+		protocolLocked = true;
+	}
+
+	/**
+	 * Prepares the client for EFGL protocol switching
+	 */
+	protected void allowProtocolSwitch() {
+		if (protocolLocked)
+			throw new UnsupportedOperationException(
+					"Protocol is locked, this cannot be called after the first packet is read");
+		protocolSwitchPossible = true;
+	}
+
+	/**
+	 * Checks if the EFGL protocol is enabled
+	 * 
+	 * @return True if enabled, false otherwise
+	 */
+	protected boolean shouldUseEfgl() {
+		return useEfglProtocol;
+	}
+
+	/**
+	 * Checks if a protocol switch is still possible, if this is true, packets will
+	 * be read byte-by-byte until protocols are switched.
+	 * 
+	 * @return True if a protocol switch is possible, false otherwise
+	 */
+	protected boolean protocolSwitchPossible() {
+		return protocolSwitchPossible;
+	}
+
+	/**
+	 * Switches to the EFGL protocol
+	 */
+	protected void switchToEfgl() {
+		useEfglProtocol = true;
+		disableProtocolSwitch();
+	}
+
+	/**
+	 * Disables protocol switching, client will either use EFGL or the
+	 * regular-performance smartfox protocol reading methods
+	 */
+	public void disableProtocolSwitch() {
+		protocolSwitchPossible = false;
+	}
 
 	/**
 	 * Retrieves the amount of packets received in the last second
@@ -192,6 +259,31 @@ public abstract class BasePersistentServiceClient<T extends BasePersistentServic
 	 * Disconnects the client
 	 */
 	public void disconnect() {
+		// Wait for queue to flush
+		disconnecting = true;
+		int lastSize = 0;
+		long lastSent = System.currentTimeMillis();
+		boolean hasPackets = true;
+		while (hasPackets) {
+			int lastPSize = lastSize;
+			synchronized (sendQueue) {
+				lastSize = sendQueue.size();
+				hasPackets = lastSize > 0;
+			}
+
+			// Wait
+			if (hasPackets) {
+				// Reset timer
+				if (lastSize != lastPSize)
+					lastSent = System.currentTimeMillis();
+
+				// Check time
+				if (System.currentTimeMillis() - lastSent > 15000)
+					break; // Terminate connection and send logic, taking too long to send
+			}
+		}
+
+		// Disconnect
 		try {
 			if (client != null)
 				client.close();
@@ -199,6 +291,8 @@ public abstract class BasePersistentServiceClient<T extends BasePersistentServic
 		}
 		stop();
 		client = null;
+		sendQueue.clear();
+		disconnecting = false;
 	}
 
 	/**
@@ -207,22 +301,69 @@ public abstract class BasePersistentServiceClient<T extends BasePersistentServic
 	 * @param packet Raw packet to send
 	 */
 	public void sendPacket(JsonObject packet) {
+		if (!ioThreadInited) {
+			ioThreadInited = true;
+
+			// Start IO
+			AsyncTaskManager.runAsync(() -> {
+				// IO Logic
+				while (client != null) {
+					// Pick up next packet awaiting transmission
+					JsonObject pkt = null;
+					synchronized (sendLock) {
+						// Check
+						if (sendQueue.size() != 0) {
+							// Get packet
+							pkt = sendQueue.get(0);
+						}
+					}
+
+					// Check result
+					if (pkt == null) {
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+						}
+						continue;
+					}
+
+					try {
+						// Send packet
+						if (getSocket() == null)
+							return;
+						char[] p = pkt.toString().toCharArray();
+						byte[] b = new byte[p.length];
+						for (int i = 0; i < p.length; i++)
+							b[i] = (byte) p[i];
+						client.getOutputStream().write(b);
+						client.getOutputStream().write(0);
+						client.getOutputStream().flush();
+						if (Centuria.debugMode)
+							Centuria.logger.debug(MarkerManager.getMarker(getClass().getSimpleName()), "S->C: " + pkt);
+
+						// Remove from queue
+						synchronized (sendLock) {
+							sendQueue.remove(0);
+						}
+					} catch (Exception e) {
+						// Failed to send
+						// Assume disconnect
+						sendQueue.clear();
+						break;
+					}
+				}
+
+				// End
+				ioThreadInited = false;
+			});
+		}
+		if (!isConnected())
+			return;
 		synchronized (sendLock) {
-			try {
-				// Send packet
-				if (getSocket() == null)
-					return;
-				char[] p = packet.toString().toCharArray();
-				byte[] b = new byte[p.length];
-				for (int i = 0; i < p.length; i++)
-					b[i] = (byte) p[i];
-				client.getOutputStream().write(b);
-				client.getOutputStream().write(0);
-				client.getOutputStream().flush();
-				if (Centuria.debugMode)
-					Centuria.logger.debug(MarkerManager.getMarker(getClass().getSimpleName()), "S->C: " + packet);
-			} catch (Exception e) {
-			}
+			// Add
+			if (!isConnected())
+				return;
+			sendQueue.add(packet);
 		}
 	}
 
@@ -267,7 +408,7 @@ public abstract class BasePersistentServiceClient<T extends BasePersistentServic
 	 * @return True if connected, false otherwise
 	 */
 	public boolean isConnected() {
-		return client != null;
+		return client != null && !disconnecting;
 	}
 
 }

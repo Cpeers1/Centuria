@@ -36,6 +36,7 @@ public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServ
 		super(socket, ChatClient.class);
 	}
 
+	@Override
 	protected void registerPackets() {
 		// Allow modules to register packets and to override existing packets
 		ChatServerStartupEvent ev = new ChatServerStartupEvent(this, t -> registerPacket(t));

@@ -12,6 +12,7 @@ public class ClientToServerHandshake implements ISmartfoxPacket {
 	public String rField;
 	public String actionField;
 	public String clientBuild;
+	public boolean supportsEfgl = false;
 
 	public ClientToServerHandshake(XmlMapper mapper) {
 		this.mapper = mapper;
@@ -38,6 +39,7 @@ public class ClientToServerHandshake implements ISmartfoxPacket {
 			VersionHandshakePackets.Request.msg data = mapper.readValue(content,
 					VersionHandshakePackets.Request.msg.class);
 			tField = data.t;
+			supportsEfgl = data.supportsEfgl;
 			rField = data.body.r;
 			actionField = data.body.action;
 			clientBuild = data.body.ver.v;
