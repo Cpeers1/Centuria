@@ -785,7 +785,7 @@ public class GameServer extends BaseSmartfoxServer {
 	// Used to check permissions
 	public static boolean hasPerm(String level, String perm) {
 		// Check if player
-		if (perm.equals("player"))
+		if (perm.equals("player") || perm.equals("member"))
 			return true;
 
 		// Check other levels
@@ -853,6 +853,8 @@ public class GameServer extends BaseSmartfoxServer {
 				color = saveSettings.saveColors.get("admin").getAsString();
 			else if (GameServer.hasPerm(permLevel, "moderator") && saveSettings.saveColors.has("moderator"))
 				color = saveSettings.saveColors.get("moderator").getAsString();
+			else if (GameServer.hasPerm(permLevel, "member") && saveSettings.saveColors.has("member"))
+				color = saveSettings.saveColors.get("member").getAsString();
 			else if (GameServer.hasPerm(permLevel, "player") && saveSettings.saveColors.has("player"))
 				color = saveSettings.saveColors.get("player").getAsString();
 		}

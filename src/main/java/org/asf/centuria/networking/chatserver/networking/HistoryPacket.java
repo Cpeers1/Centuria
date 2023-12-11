@@ -83,7 +83,7 @@ public class HistoryPacket extends AbstractChatPacket {
 					obj.add("mask", null);
 					try {
 						obj.addProperty("message_id",
-								UUID.nameUUIDFromBytes(fmt.format(new Date(msg.sentAt)).getBytes("UTF-8")).toString());
+								UUID.nameUUIDFromBytes((fmt.format(new Date(msg.sentAt)) + convo + msg.content).getBytes("UTF-8")).toString());
 					} catch (UnsupportedEncodingException e) {
 						e.printStackTrace();
 					}

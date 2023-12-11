@@ -336,204 +336,205 @@ public class InteractionManager {
 			plr.stateObjects.put(target, states);
 			for (StateInfo state : states) {
 				switch (state.command) {
-				case "1": {
-					// Switch state
-					String t = target;
-					if (!state.actorId.equals("0"))
-						t = state.actorId;
-					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-							"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
-					// Check state
-					NetworkedObject obj = NetworkedObjects.getObject(t);
+					case "1": {
+						// Switch state
+						String t = target;
+						if (!state.actorId.equals("0"))
+							t = state.actorId;
+						Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+								"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
+						// Check state
+						NetworkedObject obj = NetworkedObjects.getObject(t);
 
-					// Check validity
-					if (obj.primaryObjectInfo.type == 7) {
-						// Variable
-						int oState = plr.states.getOrDefault(t, 1);
-						plr.states.put(t, Integer.parseInt(state.params[0]));
-						for (InteractionModule mod : modules) {
-							mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
-						}
-
-						// Build quest command
-						QuestCommandVTPacket packet = new QuestCommandVTPacket();
-						packet.id = state.actorId;
-						packet.type = 1;
-						// Parameters
-						for (String param : state.params)
-							packet.params.add(param);
-						plr.client.sendPacket(packet);
-					} else if (obj.stateInfo.containsKey(state.params[0])) {
-						// Regular
-						int oState = plr.states.getOrDefault(t, 1);
-						plr.states.put(t, Integer.parseInt(state.params[0]));
-						for (InteractionModule mod : modules) {
-							mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
-						}
-
-						// Build quest command
-						QuestCommandPacket packet = new QuestCommandPacket();
-						packet.id = state.actorId;
-						packet.type = 1;
-						// Parameters
-						for (String param : state.params)
-							packet.params.add(param);
-						plr.client.sendPacket(packet);
-					}
-					break;
-				}
-				case "41": {
-					// Give table
-					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-							"Running command: 41 (give loot), GIVE TABLE " + state.params[0]);
-					ResourceCollectionModule.giveLootReward(plr, state.params[0], 2, object.primaryObjectInfo.defId);
-					break;
-				}
-				case "12": {
-					// Run commands and progress
-					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"), "Running command: 12");
-					int stateId = plr.states.getOrDefault(state.actorId, 1);
-					plr.states.put(state.actorId, stateId + 1);
-					for (InteractionModule mod : modules) {
-						mod.onStateChange(plr, state.actorId, NetworkedObjects.getObject(state.actorId), stateId,
-								Integer.parseInt(state.params[0]));
-					}
-
-					// Find object
-					NetworkedObject obj = NetworkedObjects.getObject(state.actorId);
-					var stateObjs = obj.stateInfo.get(Integer.toString(stateId));
-					if (stateObjs != null)
-						for (var st : stateObjs) {
-							if (st.branches.size() != 0)
-								runBranches(plr, st.branches, "1", target, obj, state);
-						}
-
-					// Send state
-					QuestCommandPacket packet = new QuestCommandPacket();
-					packet.id = state.actorId;
-					packet.type = 1;
-					packet.params.add(Integer.toString(stateId + 1));
-					plr.client.sendPacket(packet);
-
-					break;
-				}
-				case "13": {
-					// Run other states and decrease counter
-					String t = target;
-					if (!state.actorId.equals("0"))
-						t = state.actorId;
-
-					// Find target
-					NetworkedObject obj = NetworkedObjects.getObject(t);
-
-					// Check counter
-					if (obj.primaryObjectInfo.type == 7) {
-						if (plr.states.getOrDefault(t, 0) > 0) {
-							Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-									"Running command: 13 (decrease counter): " + (plr.states.get(t) - 1));
-							int oState = plr.states.get(t);
-							plr.states.put(t, plr.states.get(t) - 1);
+						// Check validity
+						if (obj.primaryObjectInfo.type == 7) {
+							// Variable
+							int oState = plr.states.getOrDefault(t, 1);
+							plr.states.put(t, Integer.parseInt(state.params[0]));
 							for (InteractionModule mod : modules) {
 								mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
 							}
-							QuestCommandVTPacket pkt = new QuestCommandVTPacket();
-							pkt.id = t;
-							pkt.type = 1;
-							pkt.params.add(plr.states.get(t).toString());
-							plr.client.sendPacket(pkt);
-							if (plr.states.getOrDefault(t, 0) > 0)
-								break;
+
+							// Build quest command
+							QuestCommandVTPacket packet = new QuestCommandVTPacket();
+							packet.id = state.actorId;
+							packet.type = 1;
+							// Parameters
+							for (String param : state.params)
+								packet.params.add(param);
+							plr.client.sendPacket(packet);
+						} else if (obj.stateInfo.containsKey(state.params[0])) {
+							// Regular
+							int oState = plr.states.getOrDefault(t, 1);
+							plr.states.put(t, Integer.parseInt(state.params[0]));
+							for (InteractionModule mod : modules) {
+								mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
+							}
+
+							// Build quest command
+							QuestCommandPacket packet = new QuestCommandPacket();
+							packet.id = state.actorId;
+							packet.type = 1;
+							// Parameters
+							for (String param : state.params)
+								packet.params.add(param);
+							plr.client.sendPacket(packet);
 						}
+						break;
 					}
-
-					// Find state
-					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-							"Running command: 13 (run states): " + state.params[0]);
-					if (obj.stateInfo.containsKey(state.params[0]))
-						runBranches(plr, obj.stateInfo, state.params[0], t, obj, state);
-
-					break;
-				}
-				case "26": {
-					// Run states (branch-level elevation)
-					String t = target;
-					if (!state.actorId.equals("0"))
-						t = state.actorId;
-					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-							"Running command: 26 (RUN STATES), actor: " + t + ", state: " + state.params[0]);
-					NetworkedObject obj = NetworkedObjects.getObject(t);
-					runBranches(plr, obj.stateInfo, state.params[0], t, obj, state);
-					break;
-				}
-				case "52": {
-					// Set state and run branches???
-					// I fr expect this implementation to come back and bite me in the future
-					// But i cant figure this quest command out
-					String t = target;
-					if (!state.actorId.equals("0"))
-						t = state.actorId;
-
-					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-							"Running command: 52 (SET STATE AND RUN BRANCHES), actor: " + t + ", state: "
-									+ state.params[0]);
-					int oState = plr.states.getOrDefault(t, 0);
-					plr.states.put(t, Integer.parseInt(state.params[0]));
-					for (InteractionModule mod : modules) {
-						mod.onStateChange(plr, t, NetworkedObjects.getObject(t), oState,
-								Integer.parseInt(state.params[0]));
-					}
-					for (String branch : state.branches.keySet())
-						runBranches(plr, state.branches, branch, target, object, state);
-					break;
-				}
-				case "29": {
-					// Randomize
-					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-							"Running command: 29 (RANDOMIZE)");
-
-					// Find object
-					String t = target;
-					if (!state.actorId.equals("0"))
-						t = state.actorId;
-					NetworkedObject obj = NetworkedObjects.getObject(t);
-
-					// Build weight map
-					HashMap<String, Integer> weights = new HashMap<String, Integer>();
-					for (String st : state.branches.keySet()) {
-						weights.put(st, Integer.parseInt(st));
-					}
-
-					// Select branch
-					String branchID = RandomSelectorUtil.selectWeighted(weights);
-
-					// Run branch
-					runBranches(plr, state.branches, branchID, t, obj, state);
-
-					// Run current state
-					runBranches(plr, branches, Integer.toString(plr.states.get(t)), t, obj, state);
-					break;
-				}
-				default: {
-					// Log
-					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-							"Running command: " + state.command);
-
-					// Find module
-					boolean warn = true;
-					for (InteractionModule mod : modules) {
-						// Run interaction
-						if (mod.handleCommand(plr, target, object, state, parent)) {
-							warn = false;
-							break;
-						}
-					}
-
-					// Unhandled if true
-					if (warn)
+					case "41": {
+						// Give table
 						Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-								"Unhandled command: " + state.command);
-					break;
-				}
+								"Running command: 41 (give loot), GIVE TABLE " + state.params[0]);
+						ResourceCollectionModule.giveLootReward(plr, state.params[0], 2,
+								object.primaryObjectInfo.defId);
+						break;
+					}
+					case "12": {
+						// Run commands and progress
+						Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"), "Running command: 12");
+						int stateId = plr.states.getOrDefault(state.actorId, 1);
+						plr.states.put(state.actorId, stateId + 1);
+						for (InteractionModule mod : modules) {
+							mod.onStateChange(plr, state.actorId, NetworkedObjects.getObject(state.actorId), stateId,
+									Integer.parseInt(state.params[0]));
+						}
+
+						// Find object
+						NetworkedObject obj = NetworkedObjects.getObject(state.actorId);
+						var stateObjs = obj.stateInfo.get(Integer.toString(stateId));
+						if (stateObjs != null)
+							for (var st : stateObjs) {
+								if (st.branches.size() != 0)
+									runBranches(plr, st.branches, "1", target, obj, state);
+							}
+
+						// Send state
+						QuestCommandPacket packet = new QuestCommandPacket();
+						packet.id = state.actorId;
+						packet.type = 1;
+						packet.params.add(Integer.toString(stateId + 1));
+						plr.client.sendPacket(packet);
+
+						break;
+					}
+					case "13": {
+						// Run other states and decrease counter
+						String t = target;
+						if (!state.actorId.equals("0"))
+							t = state.actorId;
+
+						// Find target
+						NetworkedObject obj = NetworkedObjects.getObject(t);
+
+						// Check counter
+						if (obj.primaryObjectInfo.type == 7) {
+							if (plr.states.getOrDefault(t, 0) > 0) {
+								Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+										"Running command: 13 (decrease counter): " + (plr.states.get(t) - 1));
+								int oState = plr.states.get(t);
+								plr.states.put(t, plr.states.get(t) - 1);
+								for (InteractionModule mod : modules) {
+									mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
+								}
+								QuestCommandVTPacket pkt = new QuestCommandVTPacket();
+								pkt.id = t;
+								pkt.type = 1;
+								pkt.params.add(plr.states.get(t).toString());
+								plr.client.sendPacket(pkt);
+								if (plr.states.getOrDefault(t, 0) > 0)
+									break;
+							}
+						}
+
+						// Find state
+						Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+								"Running command: 13 (run states): " + state.params[0]);
+						if (obj.stateInfo.containsKey(state.params[0]))
+							runBranches(plr, obj.stateInfo, state.params[0], t, obj, state);
+
+						break;
+					}
+					case "26": {
+						// Run states (branch-level elevation)
+						String t = target;
+						if (!state.actorId.equals("0"))
+							t = state.actorId;
+						Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+								"Running command: 26 (RUN STATES), actor: " + t + ", state: " + state.params[0]);
+						NetworkedObject obj = NetworkedObjects.getObject(t);
+						runBranches(plr, obj.stateInfo, state.params[0], t, obj, state);
+						break;
+					}
+					case "52": {
+						// Set state and run branches???
+						// I fr expect this implementation to come back and bite me in the future
+						// But i cant figure this quest command out
+						String t = target;
+						if (!state.actorId.equals("0"))
+							t = state.actorId;
+
+						Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+								"Running command: 52 (SET STATE AND RUN BRANCHES), actor: " + t + ", state: "
+										+ state.params[0]);
+						int oState = plr.states.getOrDefault(t, 0);
+						plr.states.put(t, Integer.parseInt(state.params[0]));
+						for (InteractionModule mod : modules) {
+							mod.onStateChange(plr, t, NetworkedObjects.getObject(t), oState,
+									Integer.parseInt(state.params[0]));
+						}
+						for (String branch : state.branches.keySet())
+							runBranches(plr, state.branches, branch, target, object, state);
+						break;
+					}
+					case "29": {
+						// Randomize
+						Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+								"Running command: 29 (RANDOMIZE)");
+
+						// Find object
+						String t = target;
+						if (!state.actorId.equals("0"))
+							t = state.actorId;
+						NetworkedObject obj = NetworkedObjects.getObject(t);
+
+						// Build weight map
+						HashMap<String, Integer> weights = new HashMap<String, Integer>();
+						for (String st : state.branches.keySet()) {
+							weights.put(st, Integer.parseInt(st));
+						}
+
+						// Select branch
+						String branchID = RandomSelectorUtil.selectWeighted(weights);
+
+						// Run branch
+						runBranches(plr, state.branches, branchID, t, obj, state);
+
+						// Run current state
+						runBranches(plr, branches, Integer.toString(plr.states.get(t)), t, obj, state);
+						break;
+					}
+					default: {
+						// Log
+						Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+								"Running command: " + state.command);
+
+						// Find module
+						boolean warn = true;
+						for (InteractionModule mod : modules) {
+							// Run interaction
+							if (mod.handleCommand(plr, target, object, state, parent)) {
+								warn = false;
+								break;
+							}
+						}
+
+						// Unhandled if true
+						if (warn)
+							Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+									"Unhandled command: " + state.command);
+						break;
+					}
 				}
 
 				// Check if it needs to be sent to the client
@@ -575,176 +576,193 @@ public class InteractionManager {
 
 			// Handle states
 			switch (state.command) {
-			case "1": {
-				// Switch state
-				String t = target;
-				if (!state.actorId.equals("0"))
-					t = state.actorId;
-				Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-						"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
-				// Check state
-				NetworkedObject obj = NetworkedObjects.getObject(t);
+				case "1": {
+					// Switch state
+					String t = target;
+					if (!state.actorId.equals("0"))
+						t = state.actorId;
+					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+							"Running command: 1 (set state), SET " + t + " TO " + state.params[0]);
+					// Check state
+					NetworkedObject obj = NetworkedObjects.getObject(t);
 
-				// Check validity
-				if (obj.stateInfo.containsKey(state.params[0])) {
-					int oState = plr.states.getOrDefault(t, 0);
-					plr.states.put(t, Integer.parseInt(state.params[0]));
-					for (InteractionModule mod : modules) {
-						mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
-					}
-
-					// Build quest command
-					QuestCommandPacket packet = new QuestCommandPacket();
-					packet.id = state.actorId;
-					packet.type = 1;
-					// Parameters
-					for (String param : state.params)
-						packet.params.add(param);
-					plr.client.sendPacket(packet);
-				} else if (obj.primaryObjectInfo.type == 7) {
-					// Counter variable
-					int oState = plr.states.getOrDefault(t, 0);
-					plr.states.put(t, Integer.parseInt(state.params[0]));
-					for (InteractionModule mod : modules) {
-						mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
-					}
-
-					// Build quest command
-					QuestCommandVTPacket packet = new QuestCommandVTPacket();
-					packet.id = state.actorId;
-					packet.type = 1;
-					// Parameters
-					for (String param : state.params)
-						packet.params.add(param);
-					plr.client.sendPacket(packet);
-				}
-				break;
-			}
-			case "35":
-			case "3":
-				// Build quest command
-				XtWriter pk = new XtWriter();
-				pk.writeString("qcmd");
-				pk.writeInt(-1); // Data prefix
-				pk.writeString(state.command); // command
-				pk.writeInt(0); // State
-				pk.writeString(target); // Interactable
-				pk.writeInt(0); // Position
-
-				// Parameters
-				for (String param : state.params)
-					pk.writeString(param);
-				pk.writeString(""); // Data suffix
-				plr.client.sendPacket(pk.encode());
-				Centuria.logger.debug("QCMD sent: " + pk.encode());
-				break;
-			case "41":
-				// Not allowed
-				break;
-			case "13": {
-				// Run other states and decrease counter
-				String t = target;
-				if (!state.actorId.equals("0"))
-					t = state.actorId;
-
-				// Find target
-				NetworkedObject obj = NetworkedObjects.getObject(t);
-
-				// Check counter
-				if (obj.primaryObjectInfo.type == 7) {
-					if (plr.states.getOrDefault(t, 0) > 0) {
-						Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-								"Running command: 13 (decrease counter): " + (plr.states.get(t) - 1));
+					// Check validity
+					if (obj.stateInfo.containsKey(state.params[0])) {
 						int oState = plr.states.getOrDefault(t, 0);
-						plr.states.put(t, plr.states.get(t) - 1);
+						plr.states.put(t, Integer.parseInt(state.params[0]));
 						for (InteractionModule mod : modules) {
 							mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
 						}
-						QuestCommandVTPacket pkt = new QuestCommandVTPacket();
-						pkt.id = t;
-						pkt.type = 1;
-						pkt.params.add(plr.states.get(t).toString());
-						plr.client.sendPacket(pkt);
-						if (plr.states.getOrDefault(t, 0) > 0)
+
+						// Build quest command
+						QuestCommandPacket packet = new QuestCommandPacket();
+						packet.id = state.actorId;
+						packet.type = 1;
+						// Parameters
+						for (String param : state.params)
+							packet.params.add(param);
+						plr.client.sendPacket(packet);
+					} else if (obj.primaryObjectInfo.type == 7) {
+						// Counter variable
+						int oState = plr.states.getOrDefault(t, 0);
+						plr.states.put(t, Integer.parseInt(state.params[0]));
+						for (InteractionModule mod : modules) {
+							mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
+						}
+
+						// Build quest command
+						QuestCommandVTPacket packet = new QuestCommandVTPacket();
+						packet.id = state.actorId;
+						packet.type = 1;
+						// Parameters
+						for (String param : state.params)
+							packet.params.add(param);
+						plr.client.sendPacket(packet);
+					}
+					break;
+				}
+				case "3": {
+					// Build quest command
+					XtWriter pk = new XtWriter();
+					pk.writeString("qcmd");
+					pk.writeInt(-1); // Data prefix
+					pk.writeString(state.command); // command
+					pk.writeInt(0); // State
+					pk.writeString(target); // Interactable
+					pk.writeInt(0); // Position
+
+					// Parameters
+					for (String param : state.params)
+						pk.writeString(param);
+					pk.writeString(""); // Data suffix
+					plr.client.sendPacket(pk.encode());
+					Centuria.logger.debug("QCMD sent: " + pk.encode());
+					break;
+				}
+				case "41":
+					// Not allowed
+					break;
+				case "13": {
+					// Run other states and decrease counter
+					String t = target;
+					if (!state.actorId.equals("0"))
+						t = state.actorId;
+
+					// Find target
+					NetworkedObject obj = NetworkedObjects.getObject(t);
+
+					// Check counter
+					if (obj.primaryObjectInfo.type == 7) {
+						if (plr.states.getOrDefault(t, 0) > 0) {
+							Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+									"Running command: 13 (decrease counter): " + (plr.states.get(t) - 1));
+							int oState = plr.states.getOrDefault(t, 0);
+							plr.states.put(t, plr.states.get(t) - 1);
+							for (InteractionModule mod : modules) {
+								mod.onStateChange(plr, t, obj, oState, Integer.parseInt(state.params[0]));
+							}
+							QuestCommandVTPacket pkt = new QuestCommandVTPacket();
+							pkt.id = t;
+							pkt.type = 1;
+							pkt.params.add(plr.states.get(t).toString());
+							plr.client.sendPacket(pkt);
+							if (plr.states.getOrDefault(t, 0) > 0)
+								break;
+						}
+					}
+
+					// Find state
+					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+							"Running command: 13 (run states): " + state.params[0]);
+					if (obj.stateInfo.containsKey(state.params[0]))
+						runBranches(plr, obj.stateInfo, state.params[0], t, obj, state);
+
+					break;
+				}
+				case "12": {
+					// Run commands and progress
+					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"), "Running command: 12");
+					int stateId = plr.states.getOrDefault(state.actorId, 1);
+					plr.states.put(state.actorId, stateId + 1);
+					for (InteractionModule mod : modules) {
+						mod.onStateChange(plr, state.actorId, NetworkedObjects.getObject(state.actorId), stateId,
+								Integer.parseInt(state.params[0]));
+					}
+
+					// Find object
+					NetworkedObject obj = NetworkedObjects.getObject(state.actorId);
+					var stateObjs = obj.stateInfo.get(Integer.toString(stateId));
+					for (var st : stateObjs) {
+						if (st.branches.size() != 0)
+							runBranches(plr, st.branches, "1", target, obj, state);
+					}
+
+					break;
+				}
+				case "26": {
+					// Run states (branch-level elevation)
+					String t = target;
+					if (!state.actorId.equals("0"))
+						t = state.actorId;
+					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+							"Running command: 26 (BRANCH EVAL), actor: " + t + ", state: " + state.params[0]);
+					NetworkedObject obj = NetworkedObjects.getObject(t);
+
+					// Find module
+					boolean handled = false;
+					for (InteractionModule mod : modules) {
+						// Check if the interaction is not blocked
+						int v = mod.isDataRequestValid(plr, t, obj, Integer.parseInt(state.params[0]));
+						if (v != -1)
+							handled = true;
+						if (v == 0)
+							return;
+						else if (v == 1)
 							break;
 					}
-				}
-
-				// Find state
-				Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-						"Running command: 13 (run states): " + state.params[0]);
-				if (obj.stateInfo.containsKey(state.params[0]))
-					runBranches(plr, obj.stateInfo, state.params[0], t, obj, state);
-
-				break;
-			}
-			case "12": {
-				// Run commands and progress
-				Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"), "Running command: 12");
-				int stateId = plr.states.getOrDefault(state.actorId, 1);
-				plr.states.put(state.actorId, stateId + 1);
-				for (InteractionModule mod : modules) {
-					mod.onStateChange(plr, state.actorId, NetworkedObjects.getObject(state.actorId), stateId,
-							Integer.parseInt(state.params[0]));
-				}
-
-				// Find object
-				NetworkedObject obj = NetworkedObjects.getObject(state.actorId);
-				var stateObjs = obj.stateInfo.get(Integer.toString(stateId));
-				for (var st : stateObjs) {
-					if (st.branches.size() != 0)
-						runBranches(plr, st.branches, "1", target, obj, state);
-				}
-
-				break;
-			}
-			case "26": {
-				// Run states (branch-level elevation)
-				String t = target;
-				if (!state.actorId.equals("0"))
-					t = state.actorId;
-				Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-						"Running command: 26 (BRANCH EVAL), actor: " + t + ", state: " + state.params[0]);
-				NetworkedObject obj = NetworkedObjects.getObject(t);
-
-				// Find module
-				boolean handled = false;
-				for (InteractionModule mod : modules) {
-					// Check if the interaction is not blocked
-					int v = mod.isDataRequestValid(plr, t, obj, Integer.parseInt(state.params[0]));
-					if (v != -1)
-						handled = true;
-					if (v == 0)
-						return;
-					else if (v == 1)
-						break;
-				}
-				if (!handled) {
-					if (Centuria.debugMode)
-						Centuria.logger.warn(MarkerManager.getMarker("INTERACTIONS"), "BRANCH EVAL for " + t
-								+ " did not have its validity checked by any interaction module!");
-				}
-
-				runBranches(plr, obj.stateInfo, state.params[0], t, obj, state);
-				break;
-			}
-			default: {
-				// Find module
-				boolean warn = true;
-				for (InteractionModule mod : modules) {
-					// Run interaction
-					if (mod.handleCommand(plr, target, object, state, null)) {
-						warn = false;
-						break;
+					if (!handled) {
+						if (Centuria.debugMode)
+							Centuria.logger.warn(MarkerManager.getMarker("INTERACTIONS"), "BRANCH EVAL for " + t
+									+ " did not have its validity checked by any interaction module!");
 					}
-				}
 
-				// Unhandled if true
-				if (warn)
-					Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
-							"Unhandled state command (OAF packet): " + state.command);
-				break;
-			}
+					runBranches(plr, obj.stateInfo, state.params[0], t, obj, state);
+					break;
+				}
+				default: {
+					// Find module
+					boolean warn = true;
+					for (InteractionModule mod : modules) {
+						// Run interaction
+						if (mod.handleCommand(plr, target, object, state, null)) {
+							warn = false;
+							break;
+						}
+					}
+
+					// Unhandled if true
+					if (warn && !state.command.equals("35"))
+						Centuria.logger.debug(MarkerManager.getMarker("INTERACTION COMMANDS"),
+								"Unhandled state command (OAF packet): " + state.command);
+					else if (warn && state.command.equals("35")) {
+						// Send qcmd
+						XtWriter pk = new XtWriter();
+						pk.writeString("qcmd");
+						pk.writeInt(-1); // Data prefix
+						pk.writeString(state.command); // command
+						pk.writeInt(0); // State
+						pk.writeString(target); // Interactable
+						pk.writeInt(0); // Position
+
+						// Parameters
+						for (String param : state.params)
+							pk.writeString(param);
+						pk.writeString(""); // Data suffix
+						plr.client.sendPacket(pk.encode());
+						Centuria.logger.debug("QCMD sent: " + pk.encode());
+					}
+					break;
+				}
 			}
 
 			// Check if it needs to be sent to the client

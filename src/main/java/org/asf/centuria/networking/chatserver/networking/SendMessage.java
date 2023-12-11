@@ -1603,6 +1603,13 @@ public class SendMessage extends AbstractChatPacket {
 							}
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
+							// Get permissions
+							String permLevel2 = "member";
+							if (acc.getSaveSharedInventory().containsItem("permissions")) {
+								permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+										.get("permissionLevel").getAsString();
+							}
+
 							// Check
 							if (acc.getSaveSharedInventory().containsItem("permissions")) {
 								if (GameServer
@@ -1635,6 +1642,12 @@ public class SendMessage extends AbstractChatPacket {
 									break;
 								}
 							}
+
+							// Log
+							EventBus.getInstance().dispatchEvent(new MiscModerationEvent("permissions.update",
+									"Made " + client.getPlayer().getDisplayName() + " administrator!",
+									Map.of("Former permission level", permLevel2, "New permission level", "admin"),
+									client.getPlayer().getAccountID(), acc));
 
 							// Completed
 							systemMessage("Made " + acc.getDisplayName() + " administrator.", cmd, client);
@@ -1672,6 +1685,13 @@ public class SendMessage extends AbstractChatPacket {
 								}
 							}
 
+							// Get permissions
+							String permLevel2 = "member";
+							if (acc.getSaveSharedInventory().containsItem("permissions")) {
+								permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+										.get("permissionLevel").getAsString();
+							}
+
 							// Make moderator
 							if (!acc.getSaveSharedInventory().containsItem("permissions"))
 								acc.getSaveSharedInventory().setItem("permissions", new JsonObject());
@@ -1693,6 +1713,12 @@ public class SendMessage extends AbstractChatPacket {
 									break;
 								}
 							}
+
+							// Log
+							EventBus.getInstance().dispatchEvent(new MiscModerationEvent("permissions.update",
+									"Made " + client.getPlayer().getDisplayName() + " moderator!",
+									Map.of("Former permission level", permLevel2, "New permission level", "moderator"),
+									client.getPlayer().getAccountID(), acc));
 
 							// Completed
 							systemMessage("Made " + acc.getDisplayName() + " moderator.", cmd, client);
@@ -1718,6 +1744,13 @@ public class SendMessage extends AbstractChatPacket {
 								return true;
 							}
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// Get permissions
+							String permLevel2 = "member";
+							if (acc.getSaveSharedInventory().containsItem("permissions")) {
+								permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+										.get("permissionLevel").getAsString();
+							}
 
 							// Take permissions away
 							if (acc.getSaveSharedInventory().containsItem("permissions")) {
@@ -1750,6 +1783,12 @@ public class SendMessage extends AbstractChatPacket {
 									break;
 								}
 							}
+
+							// Log
+							EventBus.getInstance().dispatchEvent(new MiscModerationEvent("permissions.update",
+									"Removed all permissions from " + client.getPlayer().getDisplayName() + "!",
+									Map.of("Former permission level", permLevel2, "New permission level", "member"),
+									client.getPlayer().getAccountID(), acc));
 
 							// Completed
 							systemMessage("Removed all permissions from " + acc.getDisplayName() + ".", cmd, client);
@@ -2007,6 +2046,13 @@ public class SendMessage extends AbstractChatPacket {
 							}
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
+							// Get permissions
+							String permLevel2 = "member";
+							if (acc.getSaveSharedInventory().containsItem("permissions")) {
+								permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+										.get("permissionLevel").getAsString();
+							}
+
 							// Make developer
 							if (!acc.getSaveSharedInventory().containsItem("permissions"))
 								acc.getSaveSharedInventory().setItem("permissions", new JsonObject());
@@ -2028,6 +2074,12 @@ public class SendMessage extends AbstractChatPacket {
 									break;
 								}
 							}
+
+							// Log
+							EventBus.getInstance().dispatchEvent(new MiscModerationEvent("permissions.update",
+									"Made " + client.getPlayer().getDisplayName() + " developer!",
+									Map.of("Former permission level", permLevel2, "New permission level", "developer"),
+									client.getPlayer().getAccountID(), acc));
 
 							// Completed
 							systemMessage("Made " + acc.getDisplayName() + " developer.", cmd, client);
