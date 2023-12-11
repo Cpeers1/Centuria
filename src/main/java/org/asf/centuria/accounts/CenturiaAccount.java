@@ -2,6 +2,7 @@ package org.asf.centuria.accounts;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.impl.SelectiveInventory;
+import org.asf.centuria.accounts.tags.AccountTag;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -210,6 +211,50 @@ public abstract class CenturiaAccount {
 	 */
 	public abstract Player getOnlinePlayerInstance();
 
+	/**
+	 * Retrieves the tags of this account
+	 * 
+	 * @return Array of AccountTag instances
+	 */
+	public abstract AccountTag[] getAccountTags();
+
+	/**
+	 * Retrieves tags by ID
+	 * 
+	 * @param id Tag ID
+	 * @return AccountTag instance or null
+	 */
+	public abstract AccountTag getAccountTag(String id);
+
+	/**
+	 * Checks if tags are present
+	 * 
+	 * @param id Tag ID
+	 * @return True if present, false otherwise
+	 */
+	public abstract boolean hasAccountTag(String id);
+
+	/**
+	 * Assigns tags by ID
+	 * 
+	 * @param id Tag ID
+	 * @param value Tag value
+	 * @return AccountTag instance
+	 */
+	public abstract AccountTag setAccountTag(String id, JsonObject value);
+
+	/**
+	 * Deletes tags by ID
+	 * 
+	 * @param id Tag ID to delete
+	 */
+	public void deleteAccountTag(String id)
+	{
+		AccountTag tag = getAccountTag(id);
+		if (tag != null)
+			tag.deleteTag();		
+	}
+	
 	/**
 	 * Deletes the account from disk and kicks all connected instances
 	 */

@@ -108,8 +108,8 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 				al.add("info", speciesData.get("info").getAsJsonObject());
 
 				// Add the look slot
-				inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsString(),
-						new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
+				inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsInt(),
+						new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm)); // FIXME
 			}
 		}
 
@@ -202,9 +202,9 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 					al.add("info", speciesData.get("info").getAsJsonObject());
 
 					// Add the look slot
-					inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsString(),
+					inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsInt(),
 							new ItemComponent("PrimaryLook", new JsonObject()), new ItemComponent("AvatarLook", al),
-							new ItemComponent("Name", nm));
+							new ItemComponent("Name", nm)); // FIXME
 				}
 
 				// Add slots
@@ -219,8 +219,8 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 					al.add("info", speciesData.get("info").getAsJsonObject());
 
 					// Add the look slot
-					inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsString(),
-							new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
+					inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsInt(),
+							new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm)); // FIXME
 				}
 			}
 
@@ -234,9 +234,9 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 			}
 
 			// Update the species list
-			if (!inventory.getAccessor().hasInventoryObject("1", actorDefID)) {
+			if (!inventory.getAccessor().hasInventoryObject("1", Integer.parseInt(actorDefID))) { // FIXME
 				// Add species
-				inventory.getAccessor().createInventoryObject("1", actorDefID);
+				inventory.getAccessor().createInventoryObject("1", Integer.parseInt(actorDefID)); // FIXME
 			}
 		}
 	}
@@ -254,13 +254,13 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 
 		// Find species
 		if (defID.matches("^[0-9]+$"))
-			return inventory.getAccessor().hasInventoryObject("avatars", defID);
+			return inventory.getAccessor().hasInventoryObject("avatars", Integer.parseInt(defID)); // FIXME
 		return false;
 	}
 
 	@Override
 	public boolean isAvatarPartUnlocked(String defID) {
-		return inventory.getAccessor().hasInventoryObject("2", defID);
+		return inventory.getAccessor().hasInventoryObject("2", Integer.parseInt(defID)); // FIXME
 	}
 
 	@Override
@@ -269,12 +269,12 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 			return;
 
 		// Unlock part
-		inventory.getAccessor().createInventoryObject("2", defID);
+		inventory.getAccessor().createInventoryObject("2", Integer.parseInt(defID)); // FIXME
 	}
 
 	@Override
 	public void lockAvatarPart(String defID) {
 		// Lock part
-		inventory.getAccessor().removeInventoryObject("2", defID);
+		inventory.getAccessor().removeInventoryObject("2",Integer.parseInt(defID)); // FIXME
 	}
 }

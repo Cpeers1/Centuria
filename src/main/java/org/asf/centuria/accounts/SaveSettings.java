@@ -24,6 +24,7 @@ public class SaveSettings {
 	public boolean giveAllCurrency = true;
 	public boolean giveAllResources = true;
 	public JsonObject saveColors = null;
+	public JsonObject saveNamePrefixes = null;
 	public String tradeLockID = "default";
 
 	public SaveSettings() {
@@ -55,6 +56,8 @@ public class SaveSettings {
 		this.tradeLockID = data.get("tradeLockID").getAsString();
 		if (data.has("saveColors") && !data.get("saveColors").isJsonNull())
 			this.saveColors = data.get("saveColors").getAsJsonObject();
+		if (data.has("saveNamePrefixes") && !data.get("saveNamePrefixes").isJsonNull())
+			this.saveNamePrefixes = data.get("saveNamePrefixes").getAsJsonObject();
 	}
 
 	/**
@@ -76,6 +79,8 @@ public class SaveSettings {
 		obj.addProperty("tradeLockID", tradeLockID);
 		if (saveColors != null)
 			obj.add("saveColors", saveColors);
+		if (saveNamePrefixes != null)
+			obj.add("saveNamePrefixes", saveNamePrefixes);
 		return obj;
 	}
 

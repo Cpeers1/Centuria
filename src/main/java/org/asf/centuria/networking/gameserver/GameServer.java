@@ -15,6 +15,7 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.TimeZone;
+import java.util.stream.Stream;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
@@ -806,38 +807,101 @@ public class GameServer extends BaseSmartfoxServer {
 		// perm = permission to verify
 		switch (level) {
 
-		case "moderator":
-			return perm.equals("moderator");
-
-		case "admin":
-			switch (perm) {
 			case "moderator":
-				return true;
-			case "admin":
-				return true;
-			default:
-				return false;
-			}
+				return perm.equals("moderator");
 
-		case "developer":
-			switch (perm) {
-			case "moderator":
-				return true;
 			case "admin":
-				return true;
+				switch (perm) {
+					case "moderator":
+						return true;
+					case "admin":
+						return true;
+					default:
+						return false;
+				}
+
 			case "developer":
-				return true;
-			default:
-				return false;
-			}
+				switch (perm) {
+					case "moderator":
+						return true;
+					case "admin":
+						return true;
+					case "developer":
+						return true;
+					default:
+						return false;
+				}
 
 		}
 
 		return false;
 	}
 
+	private static class PrefixedNameCacheContainer {
+		public String playerNameWithPrefix;
+	}
+
 	// Used to generate names with permission/save prefixes
 	public static String getPlayerNameWithPrefix(CenturiaAccount account) {
+		// Check if disabled
+		if (account.getSaveSharedInventory().containsItem("prefixdisabled")) {
+			// Build player prefix
+			String prefix = "";
+
+			// Load save color settings
+			String color = "default";
+			SaveSettings saveSettings = account.getSaveSpecificInventory().getSaveSettings();
+			if (saveSettings != null && saveSettings.saveColors != null) {
+				if (saveSettings.saveColors.has("member"))
+					color = saveSettings.saveColors.get("member").getAsString();
+				else if (saveSettings.saveColors.has("player"))
+					color = saveSettings.saveColors.get("player").getAsString();
+			}
+
+			// Check color
+			if (color.equals("default") && account.getSaveMode() == SaveMode.MANAGED) {
+				if (saveSettings.giveAllAvatars && saveSettings.giveAllMods && saveSettings.giveAllWings
+						&& saveSettings.giveAllSanctuaryTypes) {
+					// Creative
+					color = "yellow";
+				} else if (!saveSettings.giveAllAvatars && !saveSettings.giveAllMods && !saveSettings.giveAllClothes
+						&& !saveSettings.giveAllWings && !saveSettings.giveAllSanctuaryTypes
+						&& !saveSettings.giveAllFurnitureItems && !saveSettings.giveAllResources
+						&& !saveSettings.giveAllCurrency) {
+					// Experience
+					color = "green";
+				}
+			}
+
+			// Add color to prefix
+			if (!color.equals("default")) {
+				prefix = "<color=" + color + ">";
+			}
+
+			// Build prefix
+			String customPrefix = "";
+			if (saveSettings != null && saveSettings.saveNamePrefixes != null) {
+				if (saveSettings.saveNamePrefixes.has("member"))
+					customPrefix = saveSettings.saveNamePrefixes.get("member").getAsString();
+				else if (saveSettings.saveNamePrefixes.has("player"))
+					customPrefix = saveSettings.saveNamePrefixes.get("player").getAsString();
+			}
+			if (!customPrefix.isEmpty())
+				prefix += customPrefix + " ";
+
+			// Return
+			return prefix + account.getDisplayName() + (color.equals("default") ? "" : "</color>");
+		}
+
+		// Find ingame player
+		Player plr = account.getOnlinePlayerInstance();
+		if (plr != null) {
+			// From cache
+			PrefixedNameCacheContainer cache = plr.getObject(PrefixedNameCacheContainer.class);
+			if (cache != null)
+				return cache.playerNameWithPrefix;
+		}
+
 		// Load permission level
 		String permLevel = "member";
 		if (account.getSaveSharedInventory().containsItem("permissions")) {
@@ -847,6 +911,9 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Build prefix
 		String prefix = "";
+
+		// Get tags
+		String[] tags = Stream.of(account.getAccountTags()).map(t -> t.getTagID()).toArray(t -> new String[t]);
 
 		// Load save color settings
 		String color = "default";
@@ -865,10 +932,80 @@ public class GameServer extends BaseSmartfoxServer {
 				color = saveSettings.saveColors.get("admin").getAsString();
 			else if (GameServer.hasPerm(permLevel, "moderator") && saveSettings.saveColors.has("moderator"))
 				color = saveSettings.saveColors.get("moderator").getAsString();
-			else if (GameServer.hasPerm(permLevel, "member") && saveSettings.saveColors.has("member"))
-				color = saveSettings.saveColors.get("member").getAsString();
-			else if (GameServer.hasPerm(permLevel, "player") && saveSettings.saveColors.has("player"))
-				color = saveSettings.saveColors.get("player").getAsString();
+			else {
+				// By tag
+				boolean foundTag = false;
+				for (String tag : tags) {
+					if (saveSettings.saveColors.has("#" + tag)) {
+						// Update
+						color = saveSettings.saveColors.get("#" + tag).getAsString();
+						foundTag = true;
+						break;
+					}
+				}
+
+				// Find by tag configuration
+				if (!foundTag) {
+					// Go through tags
+					for (String tag : tags) {
+						// Find tag globals
+						try {
+							File tagGlobals = new File("tags/" + tag + ".json");
+							if (tagGlobals.exists()) {
+								JsonObject globals = JsonParser.parseString(Files.readString(tagGlobals.toPath()))
+										.getAsJsonObject();
+
+								// Verify globals
+								if (globals.has("playerNameColor")) {
+									// Update
+									color = globals.get("playerNameColor").getAsString();
+									foundTag = true;
+									break;
+								}
+							}
+						} catch (Exception e) {
+						}
+					}
+
+					// Player fallback
+					if (!foundTag) {
+						if (GameServer.hasPerm(permLevel, "member") && saveSettings.saveColors.has("member"))
+							color = saveSettings.saveColors.get("member").getAsString();
+						else if (GameServer.hasPerm(permLevel, "player") && saveSettings.saveColors.has("player"))
+							color = saveSettings.saveColors.get("player").getAsString();
+					}
+				}
+			}
+		} else {
+			// Go through tags
+			boolean foundTag = false;
+			for (String tag : tags) {
+				// Find tag globals
+				try {
+					File tagGlobals = new File("tags/" + tag + ".json");
+					if (tagGlobals.exists()) {
+						JsonObject globals = JsonParser.parseString(Files.readString(tagGlobals.toPath()))
+								.getAsJsonObject();
+
+						// Verify globals
+						if (globals.has("playerNameColor")) {
+							// Update
+							color = globals.get("playerNameColor").getAsString();
+							foundTag = true;
+							break;
+						}
+					}
+				} catch (Exception e) {
+				}
+			}
+
+			// Player fallback
+			if (!foundTag && saveSettings.saveColors != null) {
+				if (GameServer.hasPerm(permLevel, "member") && saveSettings.saveColors.has("member"))
+					color = saveSettings.saveColors.get("member").getAsString();
+				else if (GameServer.hasPerm(permLevel, "player") && saveSettings.saveColors.has("player"))
+					color = saveSettings.saveColors.get("player").getAsString();
+			}
 		}
 
 		// Check color
@@ -892,15 +1029,109 @@ public class GameServer extends BaseSmartfoxServer {
 		}
 
 		// Build prefix
-		if (GameServer.hasPerm(permLevel, "developer"))
+		String customPrefix = "";
+		if (saveSettings != null && saveSettings.saveNamePrefixes != null) {
+			if (GameServer.hasPerm(permLevel, "developer") && saveSettings.saveNamePrefixes.has("developer"))
+				customPrefix = saveSettings.saveNamePrefixes.get("developer").getAsString();
+			else if (GameServer.hasPerm(permLevel, "admin") && saveSettings.saveNamePrefixes.has("admin"))
+				customPrefix = saveSettings.saveNamePrefixes.get("admin").getAsString();
+			else if (GameServer.hasPerm(permLevel, "moderator") && saveSettings.saveNamePrefixes.has("moderator"))
+				customPrefix = saveSettings.saveNamePrefixes.get("moderator").getAsString();
+			else {
+				// By tag
+				boolean foundTag = false;
+				for (String tag : tags) {
+					if (saveSettings.saveNamePrefixes.has("#" + tag)) {
+						// Update
+						customPrefix = saveSettings.saveNamePrefixes.get("#" + tag).getAsString();
+						foundTag = true;
+						break;
+					}
+				}
+
+				// Find by tag configuration
+				if (!foundTag) {
+					// Go through tags
+					for (String tag : tags) {
+						// Find tag globals
+						try {
+							File tagGlobals = new File("tags/" + tag + ".json");
+							if (tagGlobals.exists()) {
+								JsonObject globals = JsonParser.parseString(Files.readString(tagGlobals.toPath()))
+										.getAsJsonObject();
+
+								// Verify globals
+								if (globals.has("playerNamePrefix")) {
+									// Update
+									customPrefix = globals.get("playerNamePrefix").getAsString();
+									foundTag = true;
+									break;
+								}
+							}
+						} catch (Exception e) {
+						}
+					}
+
+					// Player fallback
+					if (!foundTag) {
+						if (GameServer.hasPerm(permLevel, "member") && saveSettings.saveNamePrefixes.has("member"))
+							customPrefix = saveSettings.saveNamePrefixes.get("member").getAsString();
+						else if (GameServer.hasPerm(permLevel, "player") && saveSettings.saveNamePrefixes.has("player"))
+							customPrefix = saveSettings.saveNamePrefixes.get("player").getAsString();
+					}
+				}
+			}
+		} else {
+			// Go through tags
+			boolean foundTag = false;
+			for (String tag : tags) {
+				// Find tag globals
+				try {
+					File tagGlobals = new File("tags/" + tag + ".json");
+					if (tagGlobals.exists()) {
+						JsonObject globals = JsonParser.parseString(Files.readString(tagGlobals.toPath()))
+								.getAsJsonObject();
+
+						// Verify globals
+						if (globals.has("playerNamePrefix")) {
+							// Update
+							customPrefix = globals.get("playerNamePrefix").getAsString();
+							foundTag = true;
+							break;
+						}
+					}
+				} catch (Exception e) {
+				}
+			}
+
+			// Player fallback
+			if (!foundTag && saveSettings.saveNamePrefixes != null) {
+				if (GameServer.hasPerm(permLevel, "member") && saveSettings.saveNamePrefixes.has("member"))
+					customPrefix = saveSettings.saveNamePrefixes.get("member").getAsString();
+				else if (GameServer.hasPerm(permLevel, "player") && saveSettings.saveNamePrefixes.has("player"))
+					customPrefix = saveSettings.saveNamePrefixes.get("player").getAsString();
+			}
+		}
+		if (!customPrefix.isEmpty())
+			prefix += customPrefix + " ";
+		else if (GameServer.hasPerm(permLevel, "developer"))
 			prefix += "[dev] ";
 		else if (GameServer.hasPerm(permLevel, "admin"))
 			prefix += "[admin] ";
 		else if (GameServer.hasPerm(permLevel, "moderator"))
 			prefix += "[mod] ";
 
+		// Build
+		String name = prefix + account.getDisplayName() + (color.equals("default") ? "" : "</color>");
+
+		// Cache
+		PrefixedNameCacheContainer cache = new PrefixedNameCacheContainer();
+		cache.playerNameWithPrefix = name;
+		if (plr != null)
+			plr.addObject(cache);
+
 		// Return
-		return prefix + account.getDisplayName() + (color.equals("default") ? "" : "</color>");
+		return name;
 	}
 
 	/**
@@ -930,5 +1161,4 @@ public class GameServer extends BaseSmartfoxServer {
 	protected SmartfoxClient createSocketClient(Socket client) {
 		return new SocketSmartfoxClient(client, this);
 	}
-
 }

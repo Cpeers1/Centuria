@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.apache.logging.log4j.MarkerManager;
@@ -15,6 +16,7 @@ import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.accounts.SaveManager;
 import org.asf.centuria.accounts.SaveMode;
 import org.asf.centuria.accounts.SaveSettings;
+import org.asf.centuria.accounts.tags.AccountTag;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -25,6 +27,8 @@ import org.asf.centuria.social.SocialEntry;
 import org.asf.centuria.social.SocialManager;
 import org.asf.centuria.textfilter.TextFilterService;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -43,6 +47,8 @@ public class FileBasedAccountObject extends CenturiaAccount {
 	private LevelInfo level;
 	private long lastLogin = -1;
 	private File userFile;
+
+	private HashMap<String, AccountTag> tags = new HashMap<String, AccountTag>();
 
 	public FileBasedAccountObject(File uf) throws IOException {
 		// Parse account file
@@ -648,4 +654,259 @@ public class FileBasedAccountObject extends CenturiaAccount {
 		}
 	}
 
+	private boolean tagsInited;
+
+	private void initTags() {
+		synchronized (tags) {
+			if (tagsInited)
+				return;
+			tagsInited = true;
+
+			// Find all tags
+			JsonElement ele = getSaveSharedInventory().getItem("taglist");
+			if (ele != null) {
+				JsonArray tagList = ele.getAsJsonArray();
+				for (JsonElement tagID : tagList) {
+					// Update tag
+					JsonElement tagData = getSaveSharedInventory().getItem("tag-" + tagID.getAsString());
+					if (tagData != null) {
+						tags.put(tagID.getAsString(), tagObj(tagID.getAsString(), tagData.getAsJsonObject()));
+					}
+				}
+			}
+		}
+	}
+
+	private AccountTag tagObj(String id, JsonObject tagData) {
+		return new AccountTag() {
+
+			private JsonObject value = tagData;
+
+			@Override
+			public String getTagID() {
+				return id;
+			}
+
+			@Override
+			public JsonObject getTagValue() {
+				return value;
+			}
+
+			@Override
+			public void setTagValue(JsonObject value) {
+				// Update
+				if (!getSaveSharedInventory().containsItem("tag-" + id))
+					throw new IllegalArgumentException("Tag was deleted");
+				this.value = value;
+				getSaveSharedInventory().setItem("tag-" + id, tagData);
+			}
+
+			@Override
+			public void deleteTag() {
+				if (!getSaveSharedInventory().containsItem("tag-" + id))
+					return;
+
+				// Delete
+				getSaveSharedInventory().deleteItem(id);
+
+				// Remove from list
+				JsonElement ele = getSaveSharedInventory().getItem("taglist");
+				if (ele != null) {
+					JsonArray tagList = ele.getAsJsonArray();
+					for (JsonElement tagID : tagList) {
+						if (tagID.getAsString().equals(id)) {
+							// Remove
+							tagList.remove(tagID);
+
+							// Save
+							getSaveSharedInventory().setItem("taglist", tagList);
+
+							// Break
+							break;
+						}
+					}
+				}
+			}
+
+		};
+	}
+
+	@Override
+	public AccountTag[] getAccountTags() {
+		initTags();
+		synchronized (tags) {
+			return tags.values().toArray(t -> new AccountTag[t]);
+		}
+	}
+
+	@Override
+	public AccountTag getAccountTag(String id) {
+		if (!id.matches("^[A-Za-z0-9_\\-.]+")) {
+			// Invalid ID
+			throw new IllegalArgumentException("Invalid tag ID, ID contains illegal characters");
+		}
+
+		initTags();
+		synchronized (tags) {
+			if (tags.containsKey(id))
+				return tags.get(id);
+
+			// Load tag list
+			JsonArray tagList = new JsonArray();
+			if (getSaveSharedInventory().containsItem("taglist"))
+				tagList = getSaveSharedInventory().getItem("taglist").getAsJsonArray();
+
+			// Find existing tag
+			if (getSaveSharedInventory().containsItem("tag-" + id)) {
+				// Already exists
+				// Find in tag list
+				boolean found = false;
+				for (JsonElement ele : tagList) {
+					if (ele.getAsString().equals(id)) {
+						found = true;
+						break;
+					}
+				}
+
+				// Add to list if needed
+				if (!found) {
+					tagList.add(id);
+					getSaveSharedInventory().setItem("taglist", tagList);
+				}
+
+				// Load
+				JsonObject value = getSaveSharedInventory().getItem("tag-" + id).getAsJsonObject();
+				AccountTag tag = tagObj(id, value);
+
+				// Save to memory
+				tags.put(id, tag);
+
+				// Return
+				return tag;
+			}
+
+			// Not found
+			return null;
+		}
+	}
+
+	@Override
+	public boolean hasAccountTag(String id) {
+		if (!id.matches("^[A-Za-z0-9_\\-.]+")) {
+			// Invalid ID
+			throw new IllegalArgumentException("Invalid tag ID, ID contains illegal characters");
+		}
+
+		initTags();
+		synchronized (tags) {
+			if (tags.containsKey(id))
+				return true;
+
+			// Load tag list
+			JsonArray tagList = new JsonArray();
+			if (getSaveSharedInventory().containsItem("taglist"))
+				tagList = getSaveSharedInventory().getItem("taglist").getAsJsonArray();
+
+			// Find existing tag
+			if (getSaveSharedInventory().containsItem("tag-" + id)) {
+				// Already exists
+				// Find in tag list
+				boolean found = false;
+				for (JsonElement ele : tagList) {
+					if (ele.getAsString().equals(id)) {
+						found = true;
+						break;
+					}
+				}
+
+				// Add to list if needed
+				if (!found) {
+					tagList.add(id);
+					getSaveSharedInventory().setItem("taglist", tagList);
+				}
+
+				// Load
+				JsonObject value = getSaveSharedInventory().getItem("tag-" + id).getAsJsonObject();
+				AccountTag tag = tagObj(id, value);
+
+				// Save to memory
+				tags.put(id, tag);
+
+				// Return
+				return true;
+			}
+
+			// Not found
+			return false;
+		}
+	}
+
+	@Override
+	public AccountTag setAccountTag(String id, JsonObject value) {
+		if (!id.matches("^[A-Za-z0-9_\\-.]+")) {
+			// Invalid ID
+			throw new IllegalArgumentException("Invalid tag ID, ID contains illegal characters");
+		}
+
+		// Find tag
+		initTags();
+		synchronized (tags) {
+			AccountTag tag = tags.get(id);
+			if (tag != null) {
+				// Update
+				tag.setTagValue(value);
+				return tag;
+			}
+
+			// Load tag list
+			JsonArray tagList = new JsonArray();
+			if (getSaveSharedInventory().containsItem("taglist"))
+				tagList = getSaveSharedInventory().getItem("taglist").getAsJsonArray();
+
+			// Find existing tag
+			if (getSaveSharedInventory().containsItem("tag-" + id)) {
+				// Already exists
+				// Find in tag list
+				boolean found = false;
+				for (JsonElement ele : tagList) {
+					if (ele.getAsString().equals(id)) {
+						found = true;
+						break;
+					}
+				}
+
+				// Add to list if needed
+				if (!found) {
+					tagList.add(id);
+					getSaveSharedInventory().setItem("taglist", tagList);
+				}
+
+				// Save
+				getSaveSharedInventory().setItem("tag-" + id, value);
+				tag = tagObj(id, value);
+
+				// Save to memory
+				tags.put(id, tag);
+
+				// Return
+				return tag;
+			}
+
+			// Create tag
+			tag = tagObj(id, value);
+
+			// Save
+			getSaveSharedInventory().setItem("tag-" + id, value);
+
+			// Save to tag list
+			tagList.add(id);
+			getSaveSharedInventory().setItem("taglist", tagList);
+
+			// Save to memory
+			tags.put(id, tag);
+
+			// Return
+			return tag;
+		}
+	}
 }

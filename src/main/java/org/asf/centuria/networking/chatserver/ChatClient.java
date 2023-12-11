@@ -16,6 +16,7 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.chat.ChatLoginEvent;
 import org.asf.centuria.networking.chatserver.networking.moderator.ModeratorClient;
+import org.asf.centuria.networking.chatserver.proxies.OcProxyInfo;
 import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
 import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.networking.gameserver.GameServer;
@@ -34,6 +35,45 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 
 	// Room lock
 	public boolean isReady = false;
+
+	private ArrayList<OcProxyMetadata> proxies = new ArrayList<OcProxyMetadata>();
+
+	public static class OcProxyMetadata {
+		public String name;
+		public String prefix;
+		public String suffix;
+	}
+
+	/**
+	 * Retrieves all OC proxy metadata
+	 * 
+	 * @return Array of OcProxyMetadata instances
+	 */
+	public OcProxyMetadata[] getOcProxyMetadata() {
+		synchronized (proxies) {
+			return proxies.toArray(t -> new OcProxyMetadata[t]);
+		}
+	}
+
+	/**
+	 * Reloads all OC proxies
+	 */
+	public void reloadProxies() {
+		// Reload
+		synchronized (proxies) {
+			// Clear
+			proxies.clear();
+
+			// Retrieve all
+			for (OcProxyInfo proxy : OcProxyInfo.allOfUser(getPlayer())) {
+				OcProxyMetadata d = new OcProxyMetadata();
+				d.name = proxy.displayName;
+				d.prefix = proxy.triggerPrefix;
+				d.suffix = proxy.triggerSuffix;
+				proxies.add(d);
+			}
+		}
+	}
 
 	public ChatClient(Socket client, ChatServer server) {
 		super(client, server);
@@ -256,6 +296,9 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 		res.addProperty("eventId", "sessions.start");
 		res.addProperty("success", true);
 		sendPacket(res);
+
+		// Reload proxies
+		reloadProxies();
 	}
 
 	/**

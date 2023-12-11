@@ -292,6 +292,7 @@ public class FileBasedAccountManager extends AccountManager {
 			}
 
 			// Dispatch event
+			getAccount(id).getSaveSharedInventory().setItem("dmsystemupdated", new JsonObject());
 			EventBus.getInstance().dispatchEvent(new AccountRegistrationEvent(getAccount(id)));
 
 			// Log

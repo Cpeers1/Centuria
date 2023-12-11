@@ -8,12 +8,18 @@ import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import org.asf.centuria.Centuria;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
+import org.asf.centuria.modules.eventbus.EventBus;
+import org.asf.centuria.modules.events.chat.ChatConversationDeletionWarningEvent;
+import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.social.SocialManager;
+import org.asf.connective.tasks.AsyncTaskManager;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -22,8 +28,140 @@ import com.google.gson.JsonParser;
 
 public class FileBasedDMManager extends DMManager {
 
-	private ArrayList<String> activeIDs = new ArrayList<String>();
-	private static final int HISTORY_LIMIT = 5500;
+	private static ArrayList<String> activeIDs = new ArrayList<String>();
+
+	static {
+		// Start watchdog
+		AsyncTaskManager.runAsync(() -> {
+			if (!new File("dms").exists())
+				new File("dms").mkdirs();
+			while (true) {
+				// Go through DMs
+				for (File f : new File("dms").listFiles()) {
+					if (f.isFile() && f.getName().endsWith(".json")) {
+						String dmID = f.getName().replace(".json", "");
+						try {
+							UUID.fromString(dmID);
+							dmExpiryVerificationLogic(dmID);
+						} catch (Exception e) {
+						}
+					}
+				}
+				try {
+					Thread.sleep(24 * 60 * 60 * 1000);
+				} catch (InterruptedException e) {
+					break;
+				}
+			}
+		});
+	}
+
+	private static void dmExpiryVerificationLogic(String dmID) {
+		try {
+			// Parse DM
+			FileReader reader = new FileReader("dms/" + dmID + ".json");
+			JsonObject dm = JsonParser.parseReader(reader).getAsJsonObject();
+			reader.close();
+
+			// Check
+			if (!dm.has("lastUpdate")) {
+				// Update DM
+				dm.addProperty("lastUpdate", System.currentTimeMillis());
+				dm.addProperty("warnedExpiry", false);
+				Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
+				return;
+			}
+
+			// Check expiry
+			long timeSinceLastMessage = System.currentTimeMillis() - dm.get("lastUpdate").getAsLong();
+			if (timeSinceLastMessage >= (30 * 24 * 60 * 60 * 1000l)) {
+				// 30 days of inactivity
+				// Save warning if needed
+				if (!dm.get("warnedExpiry").getAsBoolean()) {
+					// Create message
+					SimpleDateFormat fmt = new SimpleDateFormat("HH:mm:ss MM/dd/yyyy");
+					fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+					String msgT = "WARNING! This private chat has been inactive for over 30 days, should it remain inactive for 30 more days, it will be deleted! Please send a message if you wish this chat to remain to exist. (this was sent on "
+							+ fmt.format(new Date()) + " UTC";
+
+					// Send notification to all participants that are connected
+					fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+					fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+					for (String participant : getInstance().getDMParticipants(dmID)) {
+						ChatClient client = Centuria.chatServer.getClient(participant);
+						if (client != null) {
+							JsonObject res = new JsonObject();
+							res.addProperty("conversationType", "private");
+							res.addProperty("conversationId", dmID);
+							res.addProperty("message", msgT);
+							res.addProperty("source", new UUID(0, 0).toString());
+							res.addProperty("sentAt", fmt.format(new Date()));
+							res.addProperty("eventId", "chat.postMessage");
+							res.addProperty("success", true);
+							client.sendPacket(res);
+						}
+					}
+
+					// Dispatch event
+					EventBus.getInstance().dispatchEvent(new ChatConversationDeletionWarningEvent(dmID));
+
+					// Save message
+					JsonArray data = dm.get("messages").getAsJsonArray();
+
+					// Add message
+					JsonObject msg = new JsonObject();
+					msg.addProperty("c", msgT);
+					msg.addProperty("s", new UUID(0, 0).toString());
+					msg.addProperty("a", System.currentTimeMillis());
+					data.add(msg);
+
+					// Mark warned
+					dm.addProperty("warnedExpiry", true);
+
+					// Save to disk
+					while (activeIDs.contains(dmID))
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							break;
+						}
+					activeIDs.add(dmID);
+					Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
+					activeIDs.remove(dmID);
+				}
+			}
+
+			if (timeSinceLastMessage >= (60 * 24 * 60 * 60 * 1000l)) {
+				// 2 months of inactivity
+				// Delete this private chat
+
+				// Create message
+				String msgT = "This private chat has been deleted due to inactivity and wont accept further messages";
+
+				// Send notification to all participants that are connected
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+				for (String participant : getInstance().getDMParticipants(dmID)) {
+					ChatClient client = Centuria.chatServer.getClient(participant);
+					if (client != null) {
+						JsonObject res = new JsonObject();
+						res.addProperty("conversationType", "private");
+						res.addProperty("conversationId", dmID);
+						res.addProperty("message", msgT);
+						res.addProperty("source", new UUID(0, 0).toString());
+						res.addProperty("sentAt", fmt.format(new Date()));
+						res.addProperty("eventId", "chat.postMessage");
+						res.addProperty("success", true);
+						client.sendPacket(res);
+					}
+				}
+
+				// Delete the conversation
+				getInstance().deleteDM(dmID);
+			}
+		} catch (Exception e) {
+		}
+	}
 
 	@Override
 	public void openDM(String dmID, String[] participants) {
@@ -37,6 +175,8 @@ public class FileBasedDMManager extends DMManager {
 					participantObjects.add(p);
 				dm.add("participants", participantObjects);
 				dm.add("messages", new JsonArray());
+				dm.addProperty("lastUpdate", System.currentTimeMillis());
+				dm.addProperty("warnedExpiry", false);
 				Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
 			}
 		} catch (Exception e) {
@@ -111,10 +251,6 @@ public class FileBasedDMManager extends DMManager {
 			JsonArray data = dm.get("messages").getAsJsonArray();
 			reader.close();
 
-			// Remove first message if the chat is too long
-			if (data.size() >= HISTORY_LIMIT)
-				data.remove(0);
-
 			// Add message
 			JsonObject msg = new JsonObject();
 			msg.addProperty("c", message.content);
@@ -130,6 +266,8 @@ public class FileBasedDMManager extends DMManager {
 					break;
 				}
 			activeIDs.add(dmID);
+			dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
+			dm.addProperty("warnedExpiry", false);
 			Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
 			activeIDs.remove(dmID);
 		} catch (IOException e) {
@@ -191,6 +329,8 @@ public class FileBasedDMManager extends DMManager {
 					break;
 				}
 			activeIDs.add(dmID);
+			dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
+			dm.addProperty("warnedExpiry", false);
 			Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
 			activeIDs.remove(dmID);
 		} catch (IOException e) {
@@ -226,6 +366,8 @@ public class FileBasedDMManager extends DMManager {
 					break;
 				}
 			activeIDs.add(dmID);
+			dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
+			dm.addProperty("warnedExpiry", false);
 			Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
 			activeIDs.remove(dmID);
 		} catch (IOException e) {
@@ -258,6 +400,8 @@ public class FileBasedDMManager extends DMManager {
 					break;
 				}
 			activeIDs.add(dmID);
+			dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
+			dm.addProperty("warnedExpiry", false);
 			Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
 			activeIDs.remove(dmID);
 		} catch (IOException e) {

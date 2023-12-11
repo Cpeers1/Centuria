@@ -89,7 +89,7 @@ public class ChatMessageBroadcastEvent extends EventObject {
 	}
 
 	/**
-	 * Retrieves the account that is being logged into
+	 * Retrieves the account that is broadcasting the message
 	 * 
 	 * @return CenturiaAccount instance
 	 */

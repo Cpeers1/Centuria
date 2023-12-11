@@ -77,7 +77,7 @@ public class ChatMessageReceivedEvent extends EventObject {
 	}
 
 	/**
-	 * Retrieves the account that is being logged into
+	 * Retrieves the account that is sending the message
 	 * 
 	 * @return CenturiaAccount instance
 	 */

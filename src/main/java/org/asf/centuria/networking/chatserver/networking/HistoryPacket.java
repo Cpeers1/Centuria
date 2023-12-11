@@ -68,13 +68,6 @@ public class HistoryPacket extends AbstractChatPacket {
 				for (int i = messages.length - 1 - messageOffset; i >= 0; i--) {
 					PrivateChatMessage msg = messages[i];
 
-					// Build participant list
-					JsonArray members = new JsonArray();
-					for (String participant : manager.getDMParticipants(convo)) {
-						if (!participant.equals(msg.source))
-							members.add(participant);
-					}
-
 					// Build message object
 					JsonObject obj = new JsonObject();
 					obj.addProperty("body", msg.content);
@@ -87,7 +80,6 @@ public class HistoryPacket extends AbstractChatPacket {
 					} catch (UnsupportedEncodingException e) {
 						e.printStackTrace();
 					}
-					obj.add("participants", members);
 					obj.addProperty("sent_at", fmt.format(new Date(msg.sentAt)));
 					obj.addProperty("source", msg.source);
 					msgs.add(obj);

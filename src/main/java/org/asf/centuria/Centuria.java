@@ -42,6 +42,7 @@ import javax.net.ssl.SSLContext;
 import org.asf.connective.ConnectiveHttpServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.entities.components.ComponentManager;
 import org.asf.centuria.entities.inventoryitems.InventoryItemManager;
 import org.asf.centuria.entities.players.Player;
@@ -242,7 +243,7 @@ public class Centuria {
 		}
 
 		// Managers
-
+		DMManager.getInstance();
 		TextFilterService.getInstance().initService();
 		ComponentManager.registerAllComponents();
 		InventoryItemManager.registerAllItems();
@@ -533,6 +534,11 @@ public class Centuria {
 			colors.addProperty("admin", "red");
 			colors.addProperty("moderator", "orange");
 			colors.addProperty("player", "default");
+			JsonObject prefixes = new JsonObject();
+			prefixes.addProperty("developer", "[dev]");
+			prefixes.addProperty("admin", "[admin]");
+			prefixes.addProperty("moderator", "[mod]");
+			prefixes.addProperty("player", "");
 			JsonObject save = new JsonObject();
 			save.addProperty("sanctuaryLimitOverride", -1);
 			save.addProperty("giveAllAvatars", defaultGiveAllAvatars);
@@ -544,6 +550,7 @@ public class Centuria {
 			save.addProperty("giveAllCurrency", defaultGiveAllCurrency);
 			save.addProperty("giveAllResources", defaultGiveAllResources);
 			save.add("saveColors", colors);
+			save.add("saveNamePrefixes", prefixes);
 			saves.add(defaultSaveName, save);
 
 			// Set basics

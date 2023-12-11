@@ -41,7 +41,10 @@ import org.asf.centuria.modules.events.chatcommands.ModuleCommandSyntaxListEvent
 import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
 import org.asf.centuria.modules.events.maintenance.MaintenanceStartEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.networking.chatserver.ChatClient.OcProxyMetadata;
 import org.asf.centuria.networking.chatserver.networking.moderator.ModeratorClient;
+import org.asf.centuria.networking.chatserver.proxies.OcProxyInfo;
+import org.asf.centuria.networking.chatserver.proxies.ProxySession;
 import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.voicechatserver.VoiceChatClient;
@@ -340,6 +343,73 @@ public class SendMessage extends AbstractChatPacket {
 		if (evt2.isCancelled())
 			return true; // Cancelled
 
+		// OC proxying
+		String ocProxyName = null;
+		
+		// Get proxy session
+		ProxySession session = client.getObject(ProxySession.class);
+		if (session == null) {
+			// Create if missing
+			session = new ProxySession();
+			client.addObject(session);
+		}
+
+		// Check sticky status
+		ProxySession.RoomProxySession roomSes = null;
+		if (session.roomSessions.containsKey(room)) {
+			// Check sticky
+			roomSes = session.roomSessions.get(room);
+			if (roomSes.sticky) {
+				// Update oc proxy thats being used
+				ocProxyName = roomSes.lastUsedOcName;
+			}
+		}
+
+		// Find proxy
+		for (OcProxyMetadata md : client.getOcProxyMetadata()) {
+			// Check message
+			if (message.startsWith(md.prefix) && message.endsWith(md.suffix)) {
+				// Found OC
+				ocProxyName = md.name;
+
+				// Update message
+				message = message.substring(md.prefix.length());
+				if (!md.suffix.isEmpty()) {
+					// Remove suffix
+					message = message.substring(0, message.lastIndexOf(md.suffix));
+				}
+
+				// Check content
+				if (message.isBlank()) {
+					return true; // ignore chat
+				}
+				break;
+			}
+		}
+		
+		// Check result
+		if (ocProxyName != null) {
+			// Get proxy
+			OcProxyInfo proxy = OcProxyInfo.ofUser(client.getPlayer(), ocProxyName);
+			if (proxy != null) {
+				// Update name string for it to be used in the chat itself
+				ocProxyName = "<color=#00f7ff><noparse>" + proxy.displayName + "</noparse>"
+						+ (proxy.characterPronouns.toLowerCase().equals("n/a")
+								|| proxy.characterPronouns.toLowerCase().isEmpty() ? ""
+										: " [<noparse>" + proxy.characterPronouns + "</noparse>]")
+						+ "</color> <color=#daa520>["
+						+ client.getPlayer().getDisplayName() + "]</color>";
+
+				// Update sticky proxying
+				if (roomSes != null)
+					roomSes.lastUsedOcName = proxy.displayName;
+			} else {
+				// Refresh
+				ocProxyName = null;
+				client.reloadProxies();
+			}
+		}
+
 		// Check room
 		SocialManager socialManager = SocialManager.getInstance();
 		if (client.isInRoom(room) || GameServer.hasPerm(permLevel, "moderator")) {
@@ -355,6 +425,8 @@ public class SendMessage extends AbstractChatPacket {
 				msg.content = message;
 				msg.sentAt = System.currentTimeMillis();
 				msg.source = client.getPlayer().getAccountID();
+				if (ocProxyName != null)
+					msg.source = "plaintext:" + ocProxyName;
 				manager.saveDMMessge(room, msg);
 			}
 
@@ -425,6 +497,10 @@ public class SendMessage extends AbstractChatPacket {
 						res.addProperty("sentAt", fmt.format(new Date()));
 						res.addProperty("eventId", "chat.postMessage");
 						res.addProperty("success", true);
+						if (ocProxyName != null) {
+							res.addProperty("source", "plaintext:" + ocProxyName);
+							res.addProperty("author", client.getPlayer().getAccountID());
+						}
 
 						// Send message
 						receiver.sendPacket(res);
@@ -459,6 +535,10 @@ public class SendMessage extends AbstractChatPacket {
 								res.addProperty("source", client.getPlayer().getAccountID());
 								res.addProperty("sentAt", fmt.format(new Date()));
 								res.addProperty("success", true);
+								if (ocProxyName != null) {
+									res.addProperty("source", "plaintext:" + ocProxyName);
+									res.addProperty("author", client.getPlayer().getAccountID());
+								}
 
 								// Send message
 								receiver.sendPacket(res);
@@ -529,6 +609,7 @@ public class SendMessage extends AbstractChatPacket {
 				|| GameServer.hasPerm(permLevel, "admin"))
 			commandMessages.add("giveBasicCurrency");
 
+		commandMessages.add("togglenameprefix");
 		if (GameServer.hasPerm(permLevel, "moderator")) {
 			commandMessages.add("toggleghostmode");
 			commandMessages.add("toggletpoverride");
@@ -548,6 +629,8 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("takeitem <itemDefId> [<quantity>] [<player>]");
 			commandMessages.add("questskip [<amount>] [<player>]");
 			commandMessages.add("tpm <levelDefID> [<room id>] [<level type>] [\\\"<player>\\\"]");
+			commandMessages.add("setplayertag \"<tag id>\" [\"<player>\"] [\"<escaped  tag json data>\"]");
+			commandMessages.add("removeplayertag \"<tag id>\" [\"<player>\"]");
 			if (GameServer.hasPerm(permLevel, "admin")) {
 				commandMessages.add("generateclearancecode");
 				commandMessages.add("addxp <amount> [\"<player>\"]");
@@ -594,6 +677,31 @@ public class SendMessage extends AbstractChatPacket {
 			else
 				commandMessages.add("removeallfiltereditems");
 		commandMessages.add("questrewind <amount-of-quests-to-rewind>");
+
+		// OC proxying
+		commandMessages.add("oc register \"<name>\" \"[<trigger prefix>]message[<trigger suffix>]\" (eg. oc register \"Alice\" \"alice: message\")");
+		commandMessages.add("oc settrigger \"<name>\" \"[<trigger prefix>]message[<trigger suffix>]\" (eg. oc settrigger \"Alice\" \"alice: message\")");
+		if (!GameServer.hasPerm(permLevel, "moderator"))
+			commandMessages.add("oc rename \"<name>\" \"<new name>\"");
+		else
+			commandMessages.add("oc rename \"<name>\" \"<new name>\" [\"<player>\"]");
+		if (!GameServer.hasPerm(permLevel, "moderator"))
+			commandMessages.add("oc delete \"<name>\"");
+		else
+			commandMessages.add("oc delete \"<name>\" [\"<player>\"]");
+		if (!GameServer.hasPerm(permLevel, "moderator"))
+			commandMessages.add("oc bio \"<name>\" \"<new bio>\"");
+		else
+			commandMessages.add("oc bio \"<name>\" \"<new bio>\" [\"<player>\"]");
+		if (!GameServer.hasPerm(permLevel, "moderator"))
+			commandMessages.add("oc pronouns \"<name>\" \"<new pronouns>\"");
+		else
+			commandMessages.add("oc pronouns \"<name>\" \"<new pronouns>\" [\"<player>\"]");
+		commandMessages.add("oc toggleprivate \"<name>\"");
+		commandMessages.add("oc stickyproxy \"<name>\"");
+		commandMessages.add("oc stickyoff");
+		commandMessages.add("oc show \"<name>\" [\"<player>\"]");
+		commandMessages.add("oc list [\"<player>\"]");
 
 		// Add module commands
 		ModuleCommandSyntaxListEvent evMCSL = new ModuleCommandSyntaxListEvent(commandMessages, client,
@@ -648,6 +756,24 @@ public class SendMessage extends AbstractChatPacket {
 						systemMessage("You have been given 1000 of every basic material. Have fun!", cmd, client);
 						return true;
 					}
+				} else if (cmdId.equals("togglenameprefix")) {
+					// Name prefix
+					if (client.getPlayer().getSaveSharedInventory().containsItem("prefixdisabled")) {
+						// Enable prefix
+						client.getPlayer().getSaveSharedInventory().deleteItem("prefixdisabled");
+						systemMessage(
+								"Name prefix and color re-enabled, note this does not fully apply until you and other players relog.",
+								cmd,
+								client);
+					} else {
+						// Disable prefix
+						client.getPlayer().getSaveSharedInventory().setItem("prefixdisabled", new JsonObject());
+						systemMessage(
+								"Name prefix and color disabled, please note this does not fully apply until you and other players relog.",
+								cmd,
+								client);
+					}
+					return true;
 				} else if (cmdId.equals("givebasiccurrency")) {
 					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllCurrency
 							|| GameServer.hasPerm(permLevel, "admin")) {
@@ -713,6 +839,800 @@ public class SendMessage extends AbstractChatPacket {
 							cmd, client);
 
 					return true;
+				} else if (cmdId.equals("oc") && args.size() >= 1) {
+					String task = args.get(0).toLowerCase();
+					switch (task) {
+
+						// Register
+						case "register": {
+							// Remove task argument
+							args.remove(0);
+
+							// Check arguments
+							if (args.size() < 1) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to register a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get name
+							String name = args.get(0);
+							name = name.trim();
+							if (name.isEmpty()) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to register a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Check arguments
+							if (args.size() < 2) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: trigger: the game needs to know when to use this OC.\n"
+												+ "\n"
+												+ "For a trigger, you need to create a template message, with the word 'message' to describe what the game must use as message content.\n"
+												+ "\n"
+												+ "Example: \"Alice: message\", usage example: \"alice: hi\", the chat would say hi as alice\n"
+												+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the OC tied to the trigger",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get trigger string
+							String trigger = args.get(1);
+
+							// Verify trigger
+							if (!trigger.contains("message")) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: trigger: missing the word 'message', the game needs to know when to use this OC.\n"
+												+ "\n"
+												+ "For a trigger, you need to create a template message, with the word 'message' to describe what the game must use as message content.\n"
+												+ "\n"
+												+ "Example: \"Alice: message\", usage example: \"alice: hi\", the chat would say hi as alice\n"
+												+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the OC tied to the trigger",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Create the trigger
+							String prefix = trigger.substring(0, trigger.indexOf("message"));
+							String suffix = trigger.substring(trigger.indexOf("message") + "message".length());
+							if (suffix.contains("message")) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: trigger: unable to determine what instance of 'message' to use as trigger delimiter! Please use the word only once in a trigger text!",
+										cmd + " " + task, client);
+								return true;
+							}
+							if (prefix.isEmpty() && suffix.isEmpty()) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: trigger: please make sure to not only have 'message' in your trigger text",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Verify OC existence
+							if (OcProxyInfo.ocExists(client.getPlayer(), name)) {
+								// Already exists
+								systemMessage(
+										"Invalid argument: name: you already have a OC named " + name
+												+ ", use `oc show` to look it up",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Create OC
+							OcProxyInfo.saveOc(client.getPlayer(), name, prefix, suffix);
+
+							// Reload
+							client.reloadProxies();
+
+							// Success!
+							systemMessage("Successfully created the OC " + name + "!", cmd + " " + task, client);
+
+							// Return
+							return true;
+						}
+
+						// Trigger update
+						case "settrigger": {
+							// Remove task argument
+							args.remove(0);
+
+							// Check arguments
+							if (args.size() < 1) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to update a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get name
+							String name = args.get(0);
+							name = name.trim();
+							if (name.isEmpty()) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to update a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Check arguments
+							if (args.size() < 2) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: trigger: the game needs to know when to use this OC.\n"
+												+ "\n"
+												+ "For a trigger, you need to create a template message, with the word 'message' to describe what the game must use as message content.\n"
+												+ "\n"
+												+ "Example: \"Alice: message\", usage example: \"alice: hi\", the chat would say hi as alice\n"
+												+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the OC tied to the trigger",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get trigger string
+							String trigger = args.get(1);
+
+							// Verify trigger
+							if (!trigger.contains("message")) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: trigger: missing the word 'message', the game needs to know when to use this OC.\n"
+												+ "\n"
+												+ "For a trigger, you need to create a template message, with the word 'message' to describe what the game must use as message content.\n"
+												+ "\n"
+												+ "Example: \"Alice: message\", usage example: \"alice: hi\", the chat would say hi as alice\n"
+												+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the OC tied to the trigger",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Create the trigger
+							String prefix = trigger.substring(0, trigger.indexOf("message"));
+							String suffix = trigger.substring(trigger.indexOf("message") + "message".length());
+							if (suffix.contains("message")) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: trigger: unable to determine what instance of 'message' to use as trigger delimiter! Please use the word only once in a trigger text!",
+										cmd + " " + task, client);
+								return true;
+							}
+							if (prefix.isEmpty() && suffix.isEmpty()) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: trigger: please make sure to not only have 'message' in your trigger text",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Verify OC existence
+							if (!OcProxyInfo.ocExists(client.getPlayer(), name)) {
+								// Already exists
+								systemMessage(
+										"Invalid argument: name: could not find the OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Update OC
+							OcProxyInfo oc = OcProxyInfo.ofUser(client.getPlayer(), name);
+							oc.triggerPrefix = prefix;
+							oc.triggerSuffix = suffix;
+							OcProxyInfo.saveOc(client.getPlayer(), oc);
+
+							// Reload
+							client.reloadProxies();
+
+							// Success!
+							systemMessage("Successfully updated trigger of OC " + name + "!", cmd + " " + task, client);
+
+							// Return
+							return true;
+						}
+
+						// Rename
+						case "rename": {
+							// Remove task argument
+							args.remove(0);
+
+							// Check arguments
+							if (args.size() < 1) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to update a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get name
+							String name = args.get(0);
+							name = name.trim();
+							if (name.isEmpty()) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to update a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Check arguments
+							if (args.size() < 2) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: new name",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get new name
+							String newName = args.get(1);
+							newName = newName.trim();
+							if (newName.isEmpty()) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: new name",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Find ID
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() >= 3 && GameServer.hasPerm(permLevel, "moderator"))
+								player = args.get(2);
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Find account
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+							if (acc == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Verify OC existence
+							if (!OcProxyInfo.ocExists(acc, name)) {
+								// Already exists
+								systemMessage(
+										"Invalid argument: name: could not find the OC",
+										cmd + " " + task, client);
+								return true;
+							}
+							if (OcProxyInfo.ocExists(acc, newName)) {
+								// Already exists
+								systemMessage(
+										"Invalid argument: new name: name already in use by another OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Update OC
+							OcProxyInfo oc = OcProxyInfo.ofUser(acc, name);
+							OcProxyInfo.deleteOc(acc, name);
+							oc.displayName = newName;
+							OcProxyInfo.saveOc(acc, oc);
+
+							// Reload
+							client.reloadProxies();
+
+							// Success!
+							systemMessage("Successfully updated the name of OC " + name + "!", cmd + " " + task, client);
+
+							// Return
+							return true;
+						}
+
+						// Delete
+						case "delete": {
+							// Remove task argument
+							args.remove(0);
+
+							// Check arguments
+							if (args.size() < 1) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to delete a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get name
+							String name = args.get(0);
+							name = name.trim();
+							if (name.isEmpty()) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to delete a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Find ID
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() >= 2 && GameServer.hasPerm(permLevel, "moderator"))
+								player = args.get(1);
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Find account
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+							if (acc == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Verify OC existence
+							if (!OcProxyInfo.ocExists(acc, name)) {
+								// Already exists
+								systemMessage(
+										"Invalid argument: name: could not find the OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Confirm
+							if (!GameServer.hasPerm(permLevel, "moderator")
+									&& (args.size() < 2 || !args.get(1).equals("confirm"))) {
+								systemMessage(
+										"This command will delete the character " + name
+												+ "!\nAre you sure you want to continue?\nAdd 'confirm' to the command to confirm your action.",
+										cmd, client);
+								return true;
+							}
+
+							// Delete OC
+							OcProxyInfo.deleteOc(acc, name);
+
+							// Reload
+							client.reloadProxies();
+
+							// Success!
+							systemMessage("Successfully deleted the OC " + name + "!", cmd + " " + task, client);
+
+							// Return
+							return true;
+						}
+
+						// Bio
+						case "bio": {
+							// Remove task argument
+							args.remove(0);
+
+							// Check arguments
+							if (args.size() < 1) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to update a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get name
+							String name = args.get(0);
+							name = name.trim();
+							if (name.isEmpty()) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to update a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+							
+							// Bio argument
+							// Check arguments
+							if (args.size() < 2) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: bio",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get bio
+							String bio = args.get(1);
+							bio = bio.trim();
+
+							// Find ID
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() >= 3 && GameServer.hasPerm(permLevel, "moderator"))
+								player = args.get(2);
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Find account
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+							if (acc == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Verify OC existence
+							if (!OcProxyInfo.ocExists(acc, name)) {
+								// Already exists
+								systemMessage(
+										"Invalid argument: name: could not find the OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Update OC
+							OcProxyInfo oc = OcProxyInfo.ofUser(acc, name);
+							oc.characterBio = bio;
+							OcProxyInfo.saveOc(acc, oc);
+
+							// Reload
+							client.reloadProxies();
+
+							// Success!
+							systemMessage("Successfully updated the bio of " + name + "!", cmd + " " + task, client);
+
+							// Return
+							return true;
+						}
+
+						// Pronouns
+						case "pronouns": {
+							// Remove task argument
+							args.remove(0);
+
+							// Check arguments
+							if (args.size() < 1) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to update a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get name
+							String name = args.get(0);
+							name = name.trim();
+							if (name.isEmpty()) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to update a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+							
+							// Pronouns argument
+							// Check arguments
+							if (args.size() < 2) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: pronouns",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get bio
+							String pronouns = args.get(1);
+							pronouns = pronouns.trim();
+
+							// Find ID
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() >= 3 && GameServer.hasPerm(permLevel, "moderator"))
+								player = args.get(2);
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Find account
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+							if (acc == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Verify OC existence
+							if (!OcProxyInfo.ocExists(acc, name)) {
+								// Already exists
+								systemMessage(
+										"Invalid argument: name: could not find the OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Update OC
+							OcProxyInfo oc = OcProxyInfo.ofUser(acc, name);
+							oc.characterPronouns = pronouns;
+							OcProxyInfo.saveOc(acc, oc);
+
+							// Reload
+							client.reloadProxies();
+
+							// Success!
+							systemMessage("Successfully updated the pronouns of " + name + "!", cmd + " " + task, client);
+
+							// Return
+							return true;
+						}
+
+						// Sticky proxy
+						case "stickyproxy": {
+							// Remove task argument
+							args.remove(0);
+
+							// Check arguments
+							if (args.size() < 1) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to enable sticky proxy mode",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get name
+							String name = args.get(0);
+							name = name.trim();
+							if (name.isEmpty()) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name toenable sticky proxy mode",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Verify OC existence
+							if (!OcProxyInfo.ocExists(client.getPlayer(), name)) {
+								// Already exists
+								systemMessage(
+										"Invalid argument: name: could not find the OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Enable
+							ProxySession session = client.getObject(ProxySession.class);
+							if (session == null) {
+								// Create if missing
+								session = new ProxySession();
+								client.addObject(session);
+							}
+							ProxySession.RoomProxySession roomSes = session.roomSessions.get(room);
+							if (roomSes == null) {
+								// Create session
+								roomSes = new ProxySession.RoomProxySession();
+								session.roomSessions.put(room, roomSes);
+							}
+							roomSes.sticky = true;
+							roomSes.lastUsedOcName = name;
+							
+							// Reload
+							client.reloadProxies();
+
+							// Success!
+							systemMessage("Successfully enabled sticky proxying mode!", cmd + " " + task, client);
+
+							// Return
+							return true;
+						}
+
+						// Sticky proxy
+						case "stickyoff": {
+							// Remove task argument
+							args.remove(0);
+
+							// Disable
+							ProxySession session = client.getObject(ProxySession.class);
+							if (session == null) {
+								// Create if missing
+								session = new ProxySession();
+								client.addObject(session);
+							}
+							ProxySession.RoomProxySession roomSes = session.roomSessions.get(room);
+							if (roomSes == null) {
+								// Create session
+								roomSes = new ProxySession.RoomProxySession();
+								session.roomSessions.put(room, roomSes);
+							}
+							roomSes.sticky = false;
+							
+							// Reload
+							client.reloadProxies();
+
+							// Success!
+							systemMessage("Successfully disabled sticky proxying mode!", cmd + " " + task, client);
+
+							// Return
+							return true;
+						}
+
+						// Privacy
+						case "toggleprivate": {
+							// Remove task argument
+							args.remove(0);
+
+							// Check arguments
+							if (args.size() < 1) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to update a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get name
+							String name = args.get(0);
+							name = name.trim();
+							if (name.isEmpty()) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to update a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Verify OC existence
+							if (!OcProxyInfo.ocExists(client.getPlayer(), name)) {
+								// Already exists
+								systemMessage(
+										"Invalid argument: name: could not find the OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Toggle
+							OcProxyInfo oc = OcProxyInfo.ofUser(client.getPlayer(), name);
+							oc.publiclyVisible = !oc.publiclyVisible;
+							OcProxyInfo.saveOc(client.getPlayer(), oc);
+
+							// Reload
+							client.reloadProxies();
+
+							// Success!
+							systemMessage(
+									"Privacy status of OC " + oc.displayName + ": "
+											+ (oc.publiclyVisible ? "publicly visible" : "private"),
+									cmd + " " + task, client);
+
+							// Return
+							return true;
+						}
+
+						// Show
+						case "show": {
+							// Remove task argument
+							args.remove(0);
+
+							// Check arguments
+							if (args.size() < 1) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to display OCs",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get name
+							String name = args.get(0);
+							name = name.trim();
+							if (name.isEmpty()) {
+								// Missing argument
+								systemMessage(
+										"Missing argument: name: requiring a OC name to display OCs",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Find ID
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() >= 2)
+								player = args.get(1);
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Find account
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+							if (acc == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Verify OC existence
+							if (!OcProxyInfo.ocExists(acc, name) || (!OcProxyInfo.ofUser(acc, name).publiclyVisible
+									&& !GameServer.hasPerm(permLevel, "moderator"))) {
+								// Already exists
+								systemMessage(
+										"Invalid argument: name: could not find the OC",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Get OC
+							OcProxyInfo oc = OcProxyInfo.ofUser(acc, name);
+							systemMessage("Overview of " + name + ":\n"
+									+ "\nName: " + oc.displayName
+									+ "\nPronouns: " + oc.characterPronouns
+									+ (uuid.equals(client.getPlayer().getAccountID())
+											? "\nTrigger: </noparse><mark><noparse>" + oc.triggerPrefix + "message"
+													+ oc.triggerSuffix + "</noparse></mark><noparse>"
+											: "")
+									+ "\n"
+									+ "\nBio:"
+									+ "\n" + oc.characterBio,
+									cmd + " " + task, client);
+
+							// Return
+							return true;
+						}
+
+						// List
+						case "list": {
+							// Remove task argument
+							args.remove(0);
+
+							// Find ID
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() >= 1)
+								player = args.get(0);
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Find account
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+							if (acc == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// List ocs
+							String msg = "List of OCs:";
+							for (OcProxyInfo oc : OcProxyInfo.allOfUser(acc))
+							{
+								// Check privacy
+								if (oc.publiclyVisible || GameServer.hasPerm(permLevel, "moderator"))
+									msg += "\n - " + oc.displayName;
+							}
+							systemMessage(msg, cmd, client);
+
+							// Return
+							return true;
+						}
+
+						default: {
+							cmd = cmd + " " + task;
+							break;
+						}
+
+					}
 				}
 
 				// Run system command
@@ -2087,6 +3007,89 @@ public class SendMessage extends AbstractChatPacket {
 						} else {
 							break;
 						}
+					}
+					case "setplayertag": {
+						// Tag management
+						String id = "";
+						if (args.size() < 1) {
+							systemMessage("Missing argument: tag ID", cmd, client);
+							return true;
+						}
+
+						// Parse arguments
+						id = args.get(0);
+						if (!id.matches("^[A-Za-z0-9_\\-.]+")) {
+							// Invalid ID
+							systemMessage("Invalid argument: ID: invalid tag ID", cmd, client);
+							return true;
+						}
+
+						// Tag value
+						JsonObject value = new JsonObject();
+						if (args.size() >= 3) {
+							try {
+								value = JsonParser.parseString(args.get(2)).getAsJsonObject();
+							} catch (Exception e) {
+								// Invalid value
+								systemMessage("Invalid argument: value: invalid JSON data", cmd, client);
+								return true;
+							}
+						}
+
+						// Find player
+						String player = client.getPlayer().getDisplayName();
+						if (args.size() >= 2)
+							player = args.get(1);
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Update
+						acc.setAccountTag(id, value);
+						systemMessage("Tag updated successfully.", cmd, client);
+						return true;
+					}
+					case "removeplayertag": {
+						// Tag management
+						String id = "";
+						if (args.size() < 1) {
+							systemMessage("Missing argument: tag ID", cmd, client);
+							return true;
+						}
+
+						// Parse arguments
+						id = args.get(0);
+						if (!id.matches("^[A-Za-z0-9_\\-.]+")) {
+							// Invalid ID
+							systemMessage("Invalid argument: ID: invalid tag ID", cmd, client);
+							return true;
+						}
+
+						// Find player
+						String player = client.getPlayer().getDisplayName();
+						if (args.size() >= 2)
+							player = args.get(1);
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Update
+						if (acc.getAccountTag(id) == null) {
+							// Tag not found
+							systemMessage("Specified tag could not be found for this player.", cmd, client);
+							return true;
+						}
+						acc.deleteAccountTag(id);
+						systemMessage("Tag removed successfully.", cmd, client);
+						return true;
 					}
 					case "tpm": {
 						try {
