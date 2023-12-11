@@ -450,8 +450,8 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Notify followers
 		if (!plr.ghostMode && SocialManager.getInstance().socialListExists(plr.account.getAccountID())) {
-			// Find all followers
-			for (SocialEntry ent : SocialManager.getInstance().getFollowerPlayers(plr.account.getAccountID())) {
+			// Find all followings, notify the current player of which friends are online
+			for (SocialEntry ent : SocialManager.getInstance().getFollowingPlayers(plr.account.getAccountID())) {
 				// Send online status update
 				Player player = getPlayer(ent.playerID);
 				if (player != null) {
@@ -459,6 +459,18 @@ public class GameServer extends BaseSmartfoxServer {
 					res.userUUID = plr.account.getAccountID();
 					res.playerOnlineStatus = OnlineStatus.LoggedInToRoom;
 					client.sendPacket(res);
+				}
+			}
+
+			// Notify followers
+			for (SocialEntry ent : SocialManager.getInstance().getFollowerPlayers(plr.account.getAccountID())) {
+				// Send online status update
+				Player player = getPlayer(ent.playerID);
+				if (player != null) {
+					RelationshipFollowOnlineStatusUpdatePacket res = new RelationshipFollowOnlineStatusUpdatePacket();
+					res.userUUID = plr.account.getAccountID();
+					res.playerOnlineStatus = OnlineStatus.LoggedInToRoom;
+					player.client.sendPacket(res);
 				}
 			}
 
