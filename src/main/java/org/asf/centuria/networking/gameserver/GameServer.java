@@ -932,7 +932,7 @@ public class GameServer extends BaseSmartfoxServer {
 				color = saveSettings.saveColors.get("admin").getAsString();
 			else if (GameServer.hasPerm(permLevel, "moderator") && saveSettings.saveColors.has("moderator"))
 				color = saveSettings.saveColors.get("moderator").getAsString();
-			else {
+			else if (!GameServer.hasPerm(permLevel, "moderator")) {
 				// By tag
 				boolean foundTag = false;
 				for (String tag : tags) {
@@ -976,7 +976,7 @@ public class GameServer extends BaseSmartfoxServer {
 					}
 				}
 			}
-		} else {
+		} else if (!GameServer.hasPerm(permLevel, "moderator")) {
 			// Go through tags
 			boolean foundTag = false;
 			for (String tag : tags) {
@@ -1037,7 +1037,7 @@ public class GameServer extends BaseSmartfoxServer {
 				customPrefix = saveSettings.saveNamePrefixes.get("admin").getAsString();
 			else if (GameServer.hasPerm(permLevel, "moderator") && saveSettings.saveNamePrefixes.has("moderator"))
 				customPrefix = saveSettings.saveNamePrefixes.get("moderator").getAsString();
-			else {
+			else if (!GameServer.hasPerm(permLevel, "moderator")) {
 				// By tag
 				boolean foundTag = false;
 				for (String tag : tags) {
@@ -1081,7 +1081,7 @@ public class GameServer extends BaseSmartfoxServer {
 					}
 				}
 			}
-		} else {
+		} else if (!GameServer.hasPerm(permLevel, "moderator")) {
 			// Go through tags
 			boolean foundTag = false;
 			for (String tag : tags) {

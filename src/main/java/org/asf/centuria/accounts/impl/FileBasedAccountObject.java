@@ -741,7 +741,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 	@Override
 	public AccountTag getAccountTag(String id) {
-		if (!id.matches("^[A-Za-z0-9_\\-.]+")) {
+		if (!id.matches("^[A-Za-z0-9_\\-. ]+")) {
 			// Invalid ID
 			throw new IllegalArgumentException("Invalid tag ID, ID contains illegal characters");
 		}
@@ -792,7 +792,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 	@Override
 	public boolean hasAccountTag(String id) {
-		if (!id.matches("^[A-Za-z0-9_\\-.]+")) {
+		if (!id.matches("^[A-Za-z0-9_\\-. ]+")) {
 			// Invalid ID
 			throw new IllegalArgumentException("Invalid tag ID, ID contains illegal characters");
 		}
@@ -843,7 +843,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 	@Override
 	public AccountTag setAccountTag(String id, JsonObject value) {
-		if (!id.matches("^[A-Za-z0-9_\\-.]+")) {
+		if (!id.matches("^[A-Za-z0-9_\\-. ]+")) {
 			// Invalid ID
 			throw new IllegalArgumentException("Invalid tag ID, ID contains illegal characters");
 		}

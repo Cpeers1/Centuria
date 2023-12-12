@@ -345,7 +345,7 @@ public class SendMessage extends AbstractChatPacket {
 
 		// OC proxying
 		String ocProxyName = null;
-		
+
 		// Get proxy session
 		ProxySession session = client.getObject(ProxySession.class);
 		if (session == null) {
@@ -378,6 +378,7 @@ public class SendMessage extends AbstractChatPacket {
 					// Remove suffix
 					message = message.substring(0, message.lastIndexOf(md.suffix));
 				}
+				message = message.trim();
 
 				// Check content
 				if (message.isBlank()) {
@@ -386,7 +387,7 @@ public class SendMessage extends AbstractChatPacket {
 				break;
 			}
 		}
-		
+
 		// Check result
 		if (ocProxyName != null) {
 			// Get proxy
@@ -679,8 +680,10 @@ public class SendMessage extends AbstractChatPacket {
 		commandMessages.add("questrewind <amount-of-quests-to-rewind>");
 
 		// OC proxying
-		commandMessages.add("oc register \"<name>\" \"[<trigger prefix>]message[<trigger suffix>]\" (eg. oc register \"Alice\" \"alice: message\")");
-		commandMessages.add("oc settrigger \"<name>\" \"[<trigger prefix>]message[<trigger suffix>]\" (eg. oc settrigger \"Alice\" \"alice: message\")");
+		commandMessages.add(
+				"oc register \"<name>\" \"[<trigger prefix>]message[<trigger suffix>]\" (eg. oc register \"Alice\" \"alice: message\")");
+		commandMessages.add(
+				"oc settrigger \"<name>\" \"[<trigger prefix>]message[<trigger suffix>]\" (eg. oc settrigger \"Alice\" \"alice: message\")");
 		if (!GameServer.hasPerm(permLevel, "moderator"))
 			commandMessages.add("oc rename \"<name>\" \"<new name>\"");
 		else
@@ -867,6 +870,22 @@ public class SendMessage extends AbstractChatPacket {
 										cmd + " " + task, client);
 								return true;
 							}
+							if (!name.matches("^[A-Za-z0-9_\\-. ]+")) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: name: contains invalid characters, can only be alphanumeric, contain spaces, dots, dashes and underscores",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Verify name with filters
+							if (TextFilterService.getInstance().isFiltered(name, true, "USERNAMEFILTER")) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: name: this name was blocked as it may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
 
 							// Check arguments
 							if (args.size() < 2) {
@@ -961,6 +980,13 @@ public class SendMessage extends AbstractChatPacket {
 								// Missing argument
 								systemMessage(
 										"Missing argument: name: requiring a OC name to update a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+							if (!name.matches("^[A-Za-z0-9_\\-. ]+")) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: name: contains invalid characters, can only be alphanumeric, contain spaces, dots, dashes and underscores",
 										cmd + " " + task, client);
 								return true;
 							}
@@ -1063,6 +1089,13 @@ public class SendMessage extends AbstractChatPacket {
 										cmd + " " + task, client);
 								return true;
 							}
+							if (!name.matches("^[A-Za-z0-9_\\-. ]+")) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: name: contains invalid characters, can only be alphanumeric, contain spaces, dots, dashes and underscores",
+										cmd + " " + task, client);
+								return true;
+							}
 
 							// Check arguments
 							if (args.size() < 2) {
@@ -1080,6 +1113,22 @@ public class SendMessage extends AbstractChatPacket {
 								// Missing argument
 								systemMessage(
 										"Missing argument: new name",
+										cmd + " " + task, client);
+								return true;
+							}
+							if (!newName.matches("^[A-Za-z0-9_\\-. ]+")) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: new name: contains invalid characters, can only be alphanumeric, contain spaces, dots, dashes and underscores",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							// Verify name with filters
+							if (TextFilterService.getInstance().isFiltered(newName, true, "USERNAMEFILTER")) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: new name: this name was blocked as it may be inappropriate",
 										cmd + " " + task, client);
 								return true;
 							}
@@ -1129,7 +1178,8 @@ public class SendMessage extends AbstractChatPacket {
 							client.reloadProxies();
 
 							// Success!
-							systemMessage("Successfully updated the name of OC " + name + "!", cmd + " " + task, client);
+							systemMessage("Successfully updated the name of OC " + name + "!", cmd + " " + task,
+									client);
 
 							// Return
 							return true;
@@ -1156,6 +1206,13 @@ public class SendMessage extends AbstractChatPacket {
 								// Missing argument
 								systemMessage(
 										"Missing argument: name: requiring a OC name to delete a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+							if (!name.matches("^[A-Za-z0-9_\\-. ]+")) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: name: contains invalid characters, can only be alphanumeric, contain spaces, dots, dashes and underscores",
 										cmd + " " + task, client);
 								return true;
 							}
@@ -1235,7 +1292,14 @@ public class SendMessage extends AbstractChatPacket {
 										cmd + " " + task, client);
 								return true;
 							}
-							
+							if (!name.matches("^[A-Za-z0-9_\\-. ]+")) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: name: contains invalid characters, can only be alphanumeric, contain spaces, dots, dashes and underscores",
+										cmd + " " + task, client);
+								return true;
+							}
+
 							// Bio argument
 							// Check arguments
 							if (args.size() < 2) {
@@ -1249,6 +1313,15 @@ public class SendMessage extends AbstractChatPacket {
 							// Get bio
 							String bio = args.get(1);
 							bio = bio.trim();
+
+							// Verify bio with filters
+							if (TextFilterService.getInstance().isFiltered(bio, false)) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: bio: this bio was blocked as it may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
 
 							// Find ID
 							String player = client.getPlayer().getDisplayName();
@@ -1317,7 +1390,14 @@ public class SendMessage extends AbstractChatPacket {
 										cmd + " " + task, client);
 								return true;
 							}
-							
+							if (!name.matches("^[A-Za-z0-9_\\-. ]+")) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: name: contains invalid characters, can only be alphanumeric, contain spaces, dots, dashes and underscores",
+										cmd + " " + task, client);
+								return true;
+							}
+
 							// Pronouns argument
 							// Check arguments
 							if (args.size() < 2) {
@@ -1328,9 +1408,18 @@ public class SendMessage extends AbstractChatPacket {
 								return true;
 							}
 
-							// Get bio
+							// Get pronouns
 							String pronouns = args.get(1);
 							pronouns = pronouns.trim();
+
+							// Verify pronouns with filters
+							if (TextFilterService.getInstance().isFiltered(pronouns, true)) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: pronouns: these pronouns were blocked as they may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
 
 							// Find ID
 							String player = client.getPlayer().getDisplayName();
@@ -1369,7 +1458,8 @@ public class SendMessage extends AbstractChatPacket {
 							client.reloadProxies();
 
 							// Success!
-							systemMessage("Successfully updated the pronouns of " + name + "!", cmd + " " + task, client);
+							systemMessage("Successfully updated the pronouns of " + name + "!", cmd + " " + task,
+									client);
 
 							// Return
 							return true;
@@ -1399,6 +1489,13 @@ public class SendMessage extends AbstractChatPacket {
 										cmd + " " + task, client);
 								return true;
 							}
+							if (!name.matches("^[A-Za-z0-9_\\-. ]+")) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: name: contains invalid characters, can only be alphanumeric, contain spaces, dots, dashes and underscores",
+										cmd + " " + task, client);
+								return true;
+							}
 
 							// Verify OC existence
 							if (!OcProxyInfo.ocExists(client.getPlayer(), name)) {
@@ -1424,7 +1521,7 @@ public class SendMessage extends AbstractChatPacket {
 							}
 							roomSes.sticky = true;
 							roomSes.lastUsedOcName = name;
-							
+
 							// Reload
 							client.reloadProxies();
 
@@ -1454,7 +1551,7 @@ public class SendMessage extends AbstractChatPacket {
 								session.roomSessions.put(room, roomSes);
 							}
 							roomSes.sticky = false;
-							
+
 							// Reload
 							client.reloadProxies();
 
@@ -1486,6 +1583,13 @@ public class SendMessage extends AbstractChatPacket {
 								// Missing argument
 								systemMessage(
 										"Missing argument: name: requiring a OC name to update a OC",
+										cmd + " " + task, client);
+								return true;
+							}
+							if (!name.matches("^[A-Za-z0-9_\\-. ]+")) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: name: contains invalid characters, can only be alphanumeric, contain spaces, dots, dashes and underscores",
 										cmd + " " + task, client);
 								return true;
 							}
@@ -1541,6 +1645,13 @@ public class SendMessage extends AbstractChatPacket {
 										cmd + " " + task, client);
 								return true;
 							}
+							if (!name.matches("^[A-Za-z0-9_\\-. ]+")) {
+								// Invalid argument
+								systemMessage(
+										"Invalid argument: name: contains invalid characters, can only be alphanumeric, contain spaces, dots, dashes and underscores",
+										cmd + " " + task, client);
+								return true;
+							}
 
 							// Find ID
 							String player = client.getPlayer().getDisplayName();
@@ -1573,6 +1684,20 @@ public class SendMessage extends AbstractChatPacket {
 
 							// Get OC
 							OcProxyInfo oc = OcProxyInfo.ofUser(acc, name);
+
+							// Get filter settings
+							int filterSetting = 0;
+							UserVarValue val = client.getPlayer().getSaveSpecificInventory().getUserVarAccesor()
+									.getPlayerVarValue(9362, 0);
+							if (val != null)
+								filterSetting = val.value;
+							boolean isStrict = filterSetting != 0;
+
+							// Filter
+							String filteredBio = TextFilterService.getInstance().filterString(oc.characterBio,
+									isStrict);
+
+							// Display
 							systemMessage("Overview of " + name + ":\n"
 									+ "\nName: " + oc.displayName
 									+ "\nPronouns: " + oc.characterPronouns
@@ -1582,7 +1707,7 @@ public class SendMessage extends AbstractChatPacket {
 											: "")
 									+ "\n"
 									+ "\nBio:"
-									+ "\n" + oc.characterBio,
+									+ "\n" + filteredBio,
 									cmd + " " + task, client);
 
 							// Return
@@ -1615,8 +1740,7 @@ public class SendMessage extends AbstractChatPacket {
 
 							// List ocs
 							String msg = "List of OCs:";
-							for (OcProxyInfo oc : OcProxyInfo.allOfUser(acc))
-							{
+							for (OcProxyInfo oc : OcProxyInfo.allOfUser(acc)) {
 								// Check privacy
 								if (oc.publiclyVisible || GameServer.hasPerm(permLevel, "moderator"))
 									msg += "\n - " + oc.displayName;
@@ -1639,151 +1763,182 @@ public class SendMessage extends AbstractChatPacket {
 				if (GameServer.hasPerm(permLevel, "moderator")) {
 					switch (cmdId) {
 
-					//
-					// Moderator commands below
-					case "listplayerpps": {
-						// Player packet-per-second rates of game
-						String response = "Player packet-per-second rates for game clients:";
-						for (Player plr : Centuria.gameServer.getPlayers())
-							response += "\n - " + plr.account.getDisplayName() + " - current: "
-									+ plr.client.getPacketsPerSecondRate() + " - peak: "
-									+ plr.client.getHighestPacketsPerSecondRate();
+						//
+						// Moderator commands below
+						case "listplayerpps": {
+							// Player packet-per-second rates of game
+							String response = "Player packet-per-second rates for game clients:";
+							for (Player plr : Centuria.gameServer.getPlayers())
+								response += "\n - " + plr.account.getDisplayName() + " - current: "
+										+ plr.client.getPacketsPerSecondRate() + " - peak: "
+										+ plr.client.getHighestPacketsPerSecondRate();
 
-						// Player packet-per-second rates of chat
-						response += "\n\nChat packet-per-second rates:";
-						for (ChatClient plr : Centuria.chatServer.getClients())
-							response += "\n - " + plr.getPlayer().getDisplayName() + " - current: "
-									+ plr.getPacketsPerSecondRate() + " - peak: "
-									+ plr.getHighestPacketsPerSecondRate();
+							// Player packet-per-second rates of chat
+							response += "\n\nChat packet-per-second rates:";
+							for (ChatClient plr : Centuria.chatServer.getClients())
+								response += "\n - " + plr.getPlayer().getDisplayName() + " - current: "
+										+ plr.getPacketsPerSecondRate() + " - peak: "
+										+ plr.getHighestPacketsPerSecondRate();
 
-						// Player packet-per-second rates of voice chat
-						response += "\n\nVoice chat packet-per-second rates:";
-						for (VoiceChatClient plr : Centuria.voiceChatServer.getClients())
-							response += "\n - " + plr.getPlayer().getDisplayName() + " - current: "
-									+ plr.getPacketsPerSecondRate() + " - peak: "
-									+ plr.getHighestPacketsPerSecondRate();
+							// Player packet-per-second rates of voice chat
+							response += "\n\nVoice chat packet-per-second rates:";
+							for (VoiceChatClient plr : Centuria.voiceChatServer.getClients())
+								response += "\n - " + plr.getPlayer().getDisplayName() + " - current: "
+										+ plr.getPacketsPerSecondRate() + " - peak: "
+										+ plr.getHighestPacketsPerSecondRate();
 
-						// Send response
-						systemMessage(response, cmd, client);
-						return true;
-					}
-					case "listplayers": {
-						// Create list
-						// Load spawn helper
-						JsonObject helper = null;
-						try {
-							// Load helper
-							InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-									.getResourceAsStream("content/world/spawns.json");
-							helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-									.get("Maps").getAsJsonObject();
-							strm.close();
-						} catch (Exception e) {
+							// Send response
+							systemMessage(response, cmd, client);
+							return true;
 						}
+						case "listplayers": {
+							// Create list
+							// Load spawn helper
+							JsonObject helper = null;
+							try {
+								// Load helper
+								InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+										.getResourceAsStream("content/world/spawns.json");
+								helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8"))
+										.getAsJsonObject()
+										.get("Maps").getAsJsonObject();
+								strm.close();
+							} catch (Exception e) {
+							}
 
-						// Locate suspicious clients from chat server
-						ArrayList<String> mapLessClients = new ArrayList<String>();
-						HashMap<CenturiaAccount, String> suspiciousClients = new HashMap<CenturiaAccount, String>();
-						for (ChatClient cl : client.getServer().getClients()) {
-							if (!mapLessClients.contains(cl.getPlayer().getAccountID())) {
-								Player plr = cl.getPlayer().getOnlinePlayerInstance();
-								if (plr == null) {
-									// Check perms
-									String permLevel2 = "member";
-									if (cl.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
-										permLevel2 = cl.getPlayer().getSaveSharedInventory().getItem("permissions")
-												.getAsJsonObject().get("permissionLevel").getAsString();
+							// Locate suspicious clients from chat server
+							ArrayList<String> mapLessClients = new ArrayList<String>();
+							HashMap<CenturiaAccount, String> suspiciousClients = new HashMap<CenturiaAccount, String>();
+							for (ChatClient cl : client.getServer().getClients()) {
+								if (!mapLessClients.contains(cl.getPlayer().getAccountID())) {
+									Player plr = cl.getPlayer().getOnlinePlayerInstance();
+									if (plr == null) {
+										// Check perms
+										String permLevel2 = "member";
+										if (cl.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+											permLevel2 = cl.getPlayer().getSaveSharedInventory().getItem("permissions")
+													.getAsJsonObject().get("permissionLevel").getAsString();
+										}
+										if (GameServer.hasPerm(permLevel2, "moderator"))
+											continue;
+
+										// No game server
+										mapLessClients.add(cl.getPlayer().getAccountID());
+										suspiciousClients.put(cl.getPlayer(), "no gameserver connection");
+									} else if ((!plr.roomReady || plr.room == null) && plr.levelID != 25280) {
+										// In limbo
+										mapLessClients.add(cl.getPlayer().getAccountID());
+										suspiciousClients.put(cl.getPlayer(), "limbo");
 									}
-									if (GameServer.hasPerm(permLevel2, "moderator"))
-										continue;
-
-									// No game server
-									mapLessClients.add(cl.getPlayer().getAccountID());
-									suspiciousClients.put(cl.getPlayer(), "no gameserver connection");
-								} else if ((!plr.roomReady || plr.room == null) && plr.levelID != 25280) {
-									// In limbo
-									mapLessClients.add(cl.getPlayer().getAccountID());
-									suspiciousClients.put(cl.getPlayer(), "limbo");
 								}
 							}
-						}
 
-						// Limbo clients from game server
-						for (Player plr : Centuria.gameServer.getPlayers()) {
-							if (!mapLessClients.contains(plr.account.getAccountID())) {
-								if ((!plr.roomReady || plr.room == null) && plr.levelID != 25280) {
-									// In limbo
-									mapLessClients.add(plr.account.getAccountID());
-									suspiciousClients.put(plr.account, "limbo");
+							// Limbo clients from game server
+							for (Player plr : Centuria.gameServer.getPlayers()) {
+								if (!mapLessClients.contains(plr.account.getAccountID())) {
+									if ((!plr.roomReady || plr.room == null) && plr.levelID != 25280) {
+										// In limbo
+										mapLessClients.add(plr.account.getAccountID());
+										suspiciousClients.put(plr.account, "limbo");
+									}
 								}
 							}
-						}
 
-						// Find level IDs
-						int ingame = 0;
-						ArrayList<String> playerIDs = new ArrayList<String>();
-						ArrayList<Integer> levelIDs = new ArrayList<Integer>();
-						HashMap<Integer, ArrayList<String>> rooms = new HashMap<Integer, ArrayList<String>>();
-						HashMap<Player, String> playersInRooms = new HashMap<Player, String>();
-						for (Player plr : Centuria.gameServer.getPlayers()) {
-							if (!playerIDs.contains(plr.account.getAccountID())
-									&& !mapLessClients.contains(plr.account.getAccountID())
-									&& (plr.roomReady || plr.levelID == 25280)) {
-								// Increase count
-								playerIDs.add(plr.account.getAccountID());
-								ingame++;
+							// Find level IDs
+							int ingame = 0;
+							ArrayList<String> playerIDs = new ArrayList<String>();
+							ArrayList<Integer> levelIDs = new ArrayList<Integer>();
+							HashMap<Integer, ArrayList<String>> rooms = new HashMap<Integer, ArrayList<String>>();
+							HashMap<Player, String> playersInRooms = new HashMap<Player, String>();
+							for (Player plr : Centuria.gameServer.getPlayers()) {
+								if (!playerIDs.contains(plr.account.getAccountID())
+										&& !mapLessClients.contains(plr.account.getAccountID())
+										&& (plr.roomReady || plr.levelID == 25280)) {
+									// Increase count
+									playerIDs.add(plr.account.getAccountID());
+									ingame++;
 
-								// Add level if missing
-								if (!levelIDs.contains(plr.levelID)) {
-									levelIDs.add(plr.levelID);
-									rooms.put(plr.levelID, new ArrayList<String>());
-								}
+									// Add level if missing
+									if (!levelIDs.contains(plr.levelID)) {
+										levelIDs.add(plr.levelID);
+										rooms.put(plr.levelID, new ArrayList<String>());
+									}
 
-								// Add to room map
-								if (plr.room != null)
-									playersInRooms.put(plr, plr.room);
+									// Add to room map
+									if (plr.room != null)
+										playersInRooms.put(plr, plr.room);
 
-								// Get room list
-								ArrayList<String> rLst = rooms.get(plr.levelID);
+									// Get room list
+									ArrayList<String> rLst = rooms.get(plr.levelID);
 
-								// Find room instances
-								GameRoom room = plr.getRoom();
-								if (room != null && room.getLevelID() == plr.levelID
-										&& !rLst.contains(room.getInstanceID())) {
-									rLst.add(room.getInstanceID());
+									// Find room instances
+									GameRoom room = plr.getRoom();
+									if (room != null && room.getLevelID() == plr.levelID
+											&& !rLst.contains(room.getInstanceID())) {
+										rLst.add(room.getInstanceID());
+									}
 								}
 							}
-						}
 
-						// Build message
-						String response = Centuria.gameServer.getPlayers().length + " player(s) connected, " + ingame
-								+ " player(s) in world:";
+							// Build message
+							String response = Centuria.gameServer.getPlayers().length + " player(s) connected, "
+									+ ingame
+									+ " player(s) in world:";
 
-						// Add each level
-						playerIDs = new ArrayList<String>();
-						for (int levelID : levelIDs) {
-							// Determine map name
-							String map = "UNKOWN: " + levelID;
-							if (levelID == 25280)
-								map = "Tutorial [" + levelID + "]";
-							else if (helper.has(Integer.toString(levelID)))
-								map = helper.get(Integer.toString(levelID)).getAsString() + " [" + levelID + "]";
+							// Add each level
+							playerIDs = new ArrayList<String>();
+							for (int levelID : levelIDs) {
+								// Determine map name
+								String map = "UNKOWN: " + levelID;
+								if (levelID == 25280)
+									map = "Tutorial [" + levelID + "]";
+								else if (helper.has(Integer.toString(levelID)))
+									map = helper.get(Integer.toString(levelID)).getAsString() + " [" + levelID + "]";
 
-							// Find rooms
-							for (String roomID : rooms.get(levelID)) {
-								// Find players in rooms
+								// Find rooms
+								for (String roomID : rooms.get(levelID)) {
+									// Find players in rooms
+									for (Player plr : playersInRooms.keySet()) {
+										if (!playerIDs.contains(plr.account.getAccountID())) {
+											// Make sure it doesnt get added more than once
+											playerIDs.add(plr.account.getAccountID());
+
+											// Check
+											GameRoom room = plr.getRoom();
+											if (room != null && room.getLevelID() == levelID
+													&& room.getInstanceID().equals(roomID)) {
+												// Add to response
+												response += "\n- " + plr.account.getDisplayName() + " - " + map
+														+ " - room "
+														+ room.getInstanceID() + (plr.ghostMode ? " [GHOSTING]" : "");
+
+												// Check suspicious
+												Optional<CenturiaAccount> susAcc = suspiciousClients.keySet().stream()
+														.filter(t -> t.getAccountID()
+																.equals(plr.account.getAccountID()))
+														.findFirst();
+												if (susAcc.isPresent()) {
+													// Note it
+													response += " [ WARNING: " + suspiciousClients.get(susAcc.get())
+															+ " ]";
+												}
+											}
+										}
+									}
+								}
+
+								// Players in other rooms
 								for (Player plr : playersInRooms.keySet()) {
-									if (!playerIDs.contains(plr.account.getAccountID())) {
-										// Make sure it doesnt get added more than once
-										playerIDs.add(plr.account.getAccountID());
-
+									String plrRoom = playersInRooms.get(plr);
+									if (!mapLessClients.contains(plr.account.getAccountID())
+											&& !playerIDs.contains(plr.account.getAccountID())) {
 										// Check
-										GameRoom room = plr.getRoom();
-										if (room != null && room.getLevelID() == levelID
-												&& room.getInstanceID().equals(roomID)) {
+										GameRoom room = ((GameServer) plr.client.getServer()).getRoomManager()
+												.getRoom(plrRoom);
+										if (room == null && plr.levelID == levelID) {
 											// Add to response
-											response += "\n- " + plr.account.getDisplayName() + " - " + map + " - room "
-													+ room.getInstanceID() + (plr.ghostMode ? " [GHOSTING]" : "");
+											response += "\n - " + plr.account.getDisplayName() + " - " + map
+													+ (plr.ghostMode ? " [GHOSTING]" : "");
 
 											// Check suspicious
 											Optional<CenturiaAccount> susAcc = suspiciousClients.keySet().stream()
@@ -1798,583 +1953,321 @@ public class SendMessage extends AbstractChatPacket {
 								}
 							}
 
-							// Players in other rooms
-							for (Player plr : playersInRooms.keySet()) {
-								String plrRoom = playersInRooms.get(plr);
-								if (!mapLessClients.contains(plr.account.getAccountID())
-										&& !playerIDs.contains(plr.account.getAccountID())) {
-									// Check
-									GameRoom room = ((GameServer) plr.client.getServer()).getRoomManager()
-											.getRoom(plrRoom);
-									if (room == null && plr.levelID == levelID) {
-										// Add to response
-										response += "\n - " + plr.account.getDisplayName() + " - " + map
-												+ (plr.ghostMode ? " [GHOSTING]" : "");
+							// Add suspicious clients
+							if (suspiciousClients.size() != 0) {
+								String susClientsStr = "";
+								susClientsStr += "\n";
+								susClientsStr += "\nSuspicious clients:";
+								for (CenturiaAccount acc : suspiciousClients.keySet()) {
+									// Add
+									susClientsStr += "\n - " + acc.getDisplayName() + " [" + suspiciousClients.get(acc)
+											+ "]";
+								}
+								response += susClientsStr;
+							}
 
-										// Check suspicious
-										Optional<CenturiaAccount> susAcc = suspiciousClients.keySet().stream()
-												.filter(t -> t.getAccountID().equals(plr.account.getAccountID()))
-												.findFirst();
-										if (susAcc.isPresent()) {
-											// Note it
-											response += " [ WARNING: " + suspiciousClients.get(susAcc.get()) + " ]";
-										}
-									}
+							// Send response
+							systemMessage(response, cmd, client);
+							return true;
+						}
+						case "mute": {
+							// Mute
+							if (args.size() < 1) {
+								systemMessage("Missing argument: player", cmd, client);
+								return true;
+							} else if (args.size() < 2) {
+								systemMessage("Missing argument: minutes", cmd, client);
+								return true;
+							}
+
+							int minutes;
+							try {
+								minutes = Integer.valueOf(args.get(1));
+							} catch (Exception e) {
+								systemMessage("Invalid value for argument: minutes", cmd, client);
+								return true;
+							}
+							int hours = 0;
+							try {
+								if (args.size() >= 3)
+									hours = Integer.valueOf(args.get(2));
+							} catch (Exception e) {
+								systemMessage("Invalid value for argument: hours", cmd, client);
+								return true;
+							}
+							int days = 0;
+							try {
+								if (args.size() >= 4)
+									days = Integer.valueOf(args.get(3));
+							} catch (Exception e) {
+								systemMessage("Invalid value for argument: days", cmd, client);
+								return true;
+							}
+
+							String reason = null;
+							if (args.size() >= 5)
+								reason = args.get(4);
+
+							// Find player
+							String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// Check rank
+							if (acc.getSaveSharedInventory().containsItem("permissions")) {
+								if ((GameServer
+										.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+												.get("permissionLevel").getAsString(), "developer")
+										&& !GameServer.hasPerm(permLevel, "developer"))
+										|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+												.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
+												&& !GameServer.hasPerm(permLevel, "admin")) {
+									systemMessage("Unable to mute higher-ranking users.", cmd, client);
+									return true;
 								}
 							}
-						}
 
-						// Add suspicious clients
-						if (suspiciousClients.size() != 0) {
-							String susClientsStr = "";
-							susClientsStr += "\n";
-							susClientsStr += "\nSuspicious clients:";
-							for (CenturiaAccount acc : suspiciousClients.keySet()) {
-								// Add
-								susClientsStr += "\n - " + acc.getDisplayName() + " [" + suspiciousClients.get(acc)
-										+ "]";
+							// Check if banned
+							if (acc.getSaveSharedInventory().containsItem("penalty") && acc.getSaveSharedInventory()
+									.getItem("penalty").getAsJsonObject().get("type").getAsString().equals("ban")) {
+								// Check ban
+								systemMessage("Specified account is banned.", cmd, client);
+								return true;
 							}
-							response += susClientsStr;
-						}
 
-						// Send response
-						systemMessage(response, cmd, client);
-						return true;
-					}
-					case "mute": {
-						// Mute
-						if (args.size() < 1) {
-							systemMessage("Missing argument: player", cmd, client);
-							return true;
-						} else if (args.size() < 2) {
-							systemMessage("Missing argument: minutes", cmd, client);
+							// Mute
+							acc.mute(days, hours, minutes, client.getPlayer().getAccountID(), reason);
+							systemMessage("Muted " + acc.getDisplayName() + ".", cmd, client);
 							return true;
 						}
+						case "tempban": {
+							// Temporary ban
+							if (args.size() < 1) {
+								systemMessage("Missing argument: player", cmd, client);
+								return true;
+							} else if (args.size() < 2) {
+								systemMessage("Missing argument: days", cmd, client);
+								return true;
+							}
+							int days;
+							try {
+								days = Integer.valueOf(args.get(1));
+							} catch (Exception e) {
+								systemMessage("Invalid value for argument: days", cmd, client);
+								return true;
+							}
 
-						int minutes;
-						try {
-							minutes = Integer.valueOf(args.get(1));
-						} catch (Exception e) {
-							systemMessage("Invalid value for argument: minutes", cmd, client);
-							return true;
-						}
-						int hours = 0;
-						try {
+							String reason = null;
 							if (args.size() >= 3)
-								hours = Integer.valueOf(args.get(2));
-						} catch (Exception e) {
-							systemMessage("Invalid value for argument: hours", cmd, client);
-							return true;
-						}
-						int days = 0;
-						try {
-							if (args.size() >= 4)
-								days = Integer.valueOf(args.get(3));
-						} catch (Exception e) {
-							systemMessage("Invalid value for argument: days", cmd, client);
-							return true;
-						}
+								reason = args.get(2);
 
-						String reason = null;
-						if (args.size() >= 5)
-							reason = args.get(4);
-
-						// Find player
-						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-						// Check rank
-						if (acc.getSaveSharedInventory().containsItem("permissions")) {
-							if ((GameServer
-									.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-											.get("permissionLevel").getAsString(), "developer")
-									&& !GameServer.hasPerm(permLevel, "developer"))
-									|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
-											.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
-											&& !GameServer.hasPerm(permLevel, "admin")) {
-								systemMessage("Unable to mute higher-ranking users.", cmd, client);
+							// Find player
+							String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
 								return true;
 							}
-						}
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
-						// Check if banned
-						if (acc.getSaveSharedInventory().containsItem("penalty") && acc.getSaveSharedInventory()
-								.getItem("penalty").getAsJsonObject().get("type").getAsString().equals("ban")) {
-							// Check ban
-							systemMessage("Specified account is banned.", cmd, client);
-							return true;
-						}
-
-						// Mute
-						acc.mute(days, hours, minutes, client.getPlayer().getAccountID(), reason);
-						systemMessage("Muted " + acc.getDisplayName() + ".", cmd, client);
-						return true;
-					}
-					case "tempban": {
-						// Temporary ban
-						if (args.size() < 1) {
-							systemMessage("Missing argument: player", cmd, client);
-							return true;
-						} else if (args.size() < 2) {
-							systemMessage("Missing argument: days", cmd, client);
-							return true;
-						}
-						int days;
-						try {
-							days = Integer.valueOf(args.get(1));
-						} catch (Exception e) {
-							systemMessage("Invalid value for argument: days", cmd, client);
-							return true;
-						}
-
-						String reason = null;
-						if (args.size() >= 3)
-							reason = args.get(2);
-
-						// Find player
-						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-						// Check rank
-						if (acc.getSaveSharedInventory().containsItem("permissions")) {
-							if ((GameServer
-									.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-											.get("permissionLevel").getAsString(), "developer")
-									&& !GameServer.hasPerm(permLevel, "developer"))
-									|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
-											.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
-											&& !GameServer.hasPerm(permLevel, "admin")) {
-								systemMessage("Unable to ban higher-ranking users.", cmd, client);
-								return true;
-							}
-						}
-
-						// Ban temporarily
-						acc.tempban(days, client.getPlayer().getAccountID(), reason);
-						systemMessage("Temporarily banned " + acc.getDisplayName() + ".", cmd, client);
-						return true;
-					}
-					case "permban": {
-						// Temporary ban
-						if (args.size() < 1) {
-							systemMessage("Missing argument: player", cmd, client);
-							return true;
-						}
-
-						// Find player
-						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-						String reason = null;
-						if (args.size() >= 2)
-							reason = args.get(1);
-
-						// Check rank
-						if (acc.getSaveSharedInventory().containsItem("permissions")) {
-							if ((GameServer
-									.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-											.get("permissionLevel").getAsString(), "developer")
-									&& !GameServer.hasPerm(permLevel, "developer"))
-									|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
-											.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
-											&& !GameServer.hasPerm(permLevel, "admin")) {
-								systemMessage("Unable to ban higher-ranking users.", cmd, client);
-								return true;
-							}
-						}
-
-						// Ban permanently
-						acc.ban(client.getPlayer().getAccountID(), reason);
-						systemMessage("Permanently banned " + acc.getDisplayName() + ".", cmd, client);
-						return true;
-					}
-					case "ipban": {
-						// IP-ban command
-						if (args.size() < 1) {
-							systemMessage("Missing argument: player or address", cmd, client);
-							return true;
-						}
-
-						String reason = null;
-						if (args.size() >= 2)
-							reason = args.get(1);
-
-						// Check clearance
-						if (!GameServer.hasPerm(permLevel, "admin")) {
-							// Check arguments
-							if (args.size() < 3) {
-								systemMessage(
-										"Error: clearance code required, please add a admin-issued clearance code to the command AFTER the reason for the IP ban.",
-										cmd, client);
-								return true;
-							}
-
-							// Check code
-							synchronized (clearanceCodes) {
-								if (clearanceCodes.contains(args.get(2))) {
-									clearanceCodes.remove(args.get(2));
-								} else {
-									systemMessage("Error: invalid clearance code.", cmd, client);
+							// Check rank
+							if (acc.getSaveSharedInventory().containsItem("permissions")) {
+								if ((GameServer
+										.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+												.get("permissionLevel").getAsString(), "developer")
+										&& !GameServer.hasPerm(permLevel, "developer"))
+										|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+												.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
+												&& !GameServer.hasPerm(permLevel, "admin")) {
+									systemMessage("Unable to ban higher-ranking users.", cmd, client);
 									return true;
 								}
 							}
-						}
 
-						// Find player
-						for (Player plr : Centuria.gameServer.getPlayers()) {
-							if (plr.account.getDisplayName().equals(args.get(0))) {
-								// Check rank
-								if (plr.account.getSaveSharedInventory().containsItem("permissions")) {
-									if ((GameServer.hasPerm(
-											plr.account.getSaveSharedInventory().getItem("permissions")
-													.getAsJsonObject().get("permissionLevel").getAsString(),
-											"developer") && !GameServer.hasPerm(permLevel, "developer"))
-											|| GameServer.hasPerm(
-													plr.account.getSaveSharedInventory().getItem("permissions")
-															.getAsJsonObject().get("permissionLevel").getAsString(),
-													"admin") && !GameServer.hasPerm(permLevel, "admin")) {
-										systemMessage("Unable to ban higher-ranking users.", cmd, client);
-										return true;
-									}
-								}
-
-								// Ban IP
-								plr.account.ipban(client.getPlayer().getAccountID(), reason);
-								systemMessage("IP-banned " + plr.account.getDisplayName() + ".", cmd, client);
-								return true;
-							}
-						}
-
-						// Check if the inputted address is a IP addres
-						try {
-							InetAddress.getByName(args.get(0));
-
-							// Ban the IP
-							IpBanManager.getInstance().banIP(args.get(0));
-
-							// Disconnect all with the given IP address (or attempt to)
-							for (Player plr : Centuria.gameServer.getPlayers()) {
-								// Get IP of player
-								if (plr.client.getAddress().equals(args.get(0))) {
-									// Ban player
-									plr.account.ban(client.getPlayer().getAccountID(), reason);
-								}
-							}
-
-							// Log completion
-							systemMessage("Banned IP: " + args.get(0), cmd, client);
-
-							return true;
-						} catch (Exception e) {
-						}
-
-						// Player not found
-						systemMessage("Player is not online.", cmd, client);
-						return true;
-					}
-					case "staffroom": {
-						// Teleport to staff room
-
-						// Find online player
-						for (Player plr : Centuria.gameServer.getPlayers()) {
-							if (plr.account.getAccountID().equals(client.getPlayer().getAccountID())) {
-								// Load the requested room
-								RoomJoinPacket join = new RoomJoinPacket();
-								join.levelType = 0; // World
-								join.levelID = 1718;
-
-								// Sync
-								GameServer srv = (GameServer) plr.client.getServer();
-								for (Player player : srv.getPlayers()) {
-									if (plr.room != null && player.room != null && player.room.equals(plr.room)
-											&& player != plr) {
-										plr.destroyAt(player);
-									}
-								}
-
-								// Assign room
-								GameRoom room = ((GameServer) plr.client.getServer()).getRoomManager()
-										.getOrCreateRoom(plr.pendingLevelID, "STAFFROOM");
-								plr.roomReady = false;
-								plr.pendingLevelID = 1718;
-								plr.pendingRoom = room.getID();
-								join.roomIdentifier = plr.pendingRoom;
-
-								// Send response
-								plr.client.sendPacket(join);
-
-								// Log
-								Centuria.logger.info("Player " + plr.account.getDisplayName() + " is joining room "
-										+ "STAFFROOM" + " of level 1718");
-
-								break;
-							}
-						}
-
-						return true;
-					}
-					case "pardonip": {
-						// Remove IP ban
-						if (args.size() < 1) {
-							systemMessage("Missing argument: ip", cmd, client);
+							// Ban temporarily
+							acc.tempban(days, client.getPlayer().getAccountID(), reason);
+							systemMessage("Temporarily banned " + acc.getDisplayName() + ".", cmd, client);
 							return true;
 						}
-
-						// Check clearance
-						if (!GameServer.hasPerm(permLevel, "admin")) {
-							// Check arguments
-							if (args.size() < 2) {
-								systemMessage(
-										"Error: clearance code required, please add a admin-issued clearance code to the command.",
-										cmd, client);
+						case "permban": {
+							// Temporary ban
+							if (args.size() < 1) {
+								systemMessage("Missing argument: player", cmd, client);
 								return true;
 							}
 
-							// Check code
-							synchronized (clearanceCodes) {
-								if (clearanceCodes.contains(args.get(1))) {
-									clearanceCodes.remove(args.get(1));
-								} else {
-									systemMessage("Error: invalid clearance code.", cmd, client);
+							// Find player
+							String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							String reason = null;
+							if (args.size() >= 2)
+								reason = args.get(1);
+
+							// Check rank
+							if (acc.getSaveSharedInventory().containsItem("permissions")) {
+								if ((GameServer
+										.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+												.get("permissionLevel").getAsString(), "developer")
+										&& !GameServer.hasPerm(permLevel, "developer"))
+										|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+												.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
+												&& !GameServer.hasPerm(permLevel, "admin")) {
+									systemMessage("Unable to ban higher-ranking users.", cmd, client);
 									return true;
 								}
 							}
-						}
 
-						// Check ip ban
-						IpBanManager manager = IpBanManager.getInstance();
-						if (manager.isIPBanned(args.get(0)))
-							manager.unbanIP(args.get(0));
-
-						systemMessage("Removed IP ban: " + args.get(0) + ".", cmd, client);
-						return true;
-					}
-					case "pardon": {
-						// Remove all penalties
-						if (args.size() < 1) {
-							systemMessage("Missing argument: player", cmd, client);
+							// Ban permanently
+							acc.ban(client.getPlayer().getAccountID(), reason);
+							systemMessage("Permanently banned " + acc.getDisplayName() + ".", cmd, client);
 							return true;
 						}
-
-						// Find player
-						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-						// Reason
-						String reason = null;
-						if (args.size() >= 2) {
-							reason = args.get(1);
-						}
-
-						// Check rank
-						if (acc.getSaveSharedInventory().containsItem("permissions")) {
-							if ((GameServer
-									.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-											.get("permissionLevel").getAsString(), "developer")
-									&& !GameServer.hasPerm(permLevel, "developer"))
-									|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
-											.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
-											&& !GameServer.hasPerm(permLevel, "admin")) {
-								systemMessage("Unable to pardon higher-ranking users.", cmd, client);
-								return true;
-							}
-						}
-
-						// Pardon player
-						acc.pardon(client.getPlayer().getAccountID(), reason);
-						systemMessage("Penalties removed from " + acc.getDisplayName() + ".", cmd, client);
-						return true;
-					}
-					case "forcenamechange": {
-						// Force name change command
-						if (args.size() < 1) {
-							systemMessage("Missing argument: player", cmd, client);
-							return true;
-						}
-
-						// Find player
-						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-						acc.forceNameChange();
-
-						// Player found
-						systemMessage(
-								"Applied a name change requirement to the next login of " + acc.getDisplayName() + ".",
-								cmd, client);
-						return true;
-					}
-					case "changeothername": {
-						// Name change command
-						if (args.size() < 1) {
-							systemMessage("Missing argument: player", cmd, client);
-							return true;
-						} else if (args.size() < 1) {
-							systemMessage("Missing argument: new-name", cmd, client);
-							return true;
-						}
-
-						// Find player
-						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-
-						// Load info
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-						String oldName = acc.getDisplayName();
-
-						// Check rank
-						if (acc.getSaveSharedInventory().containsItem("permissions")) {
-							if ((GameServer
-									.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-											.get("permissionLevel").getAsString(), "developer")
-									&& !GameServer.hasPerm(permLevel, "developer"))
-									|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
-											.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
-											&& !GameServer.hasPerm(permLevel, "admin")) {
-								systemMessage("Unable to rename higher-ranking users.", cmd, client);
-								return true;
-							}
-						}
-
-						// Check name lock
-						if (AccountManager.getInstance().isDisplayNameInUse(args.get(1))) {
-							// Failure
-							systemMessage("Invalid value for argument: new-name: display name is in use", cmd, client);
-							return true;
-						}
-
-						// Change name
-						if (!acc.updateDisplayName(args.get(1))) {
-							// Failure
-							systemMessage("Invalid value for argument: new-name: invalid characters", cmd, client);
-							return true;
-						}
-
-						// Prevent old name from being used
-						AccountManager.getInstance().releaseDisplayName(oldName);
-						AccountManager.getInstance().lockDisplayName(oldName, "-1");
-
-						// Lock new name
-						AccountManager.getInstance().lockDisplayName(args.get(1), acc.getAccountID());
-
-						// Kick online player
-						acc.kickDirect("SYSTEM", "Display name changed");
-						systemMessage("Renamed " + oldName + " " + args.get(1) + ".", cmd, client);
-						return true;
-					}
-					case "kick": {
-						// Kick command
-						if (args.size() < 1) {
-							systemMessage("Missing argument: player", cmd, client);
-							return true;
-						}
-
-						String reason = null;
-						if (args.size() >= 2)
-							reason = args.get(1);
-
-						// Find player
-						for (Player plr : Centuria.gameServer.getPlayers()) {
-							if (plr.account.getDisplayName().equals(args.get(0))) {
-								// Check rank
-								if (plr.account.getSaveSharedInventory().containsItem("permissions")) {
-									if ((GameServer.hasPerm(
-											plr.account.getSaveSharedInventory().getItem("permissions")
-													.getAsJsonObject().get("permissionLevel").getAsString(),
-											"developer") && !GameServer.hasPerm(permLevel, "developer"))
-											|| GameServer.hasPerm(
-													plr.account.getSaveSharedInventory().getItem("permissions")
-															.getAsJsonObject().get("permissionLevel").getAsString(),
-													"admin") && !GameServer.hasPerm(permLevel, "admin")) {
-										systemMessage("Unable to kick higher-ranking users.", cmd, client);
-										return true;
-									}
-								}
-
-								// Kick the player
-								systemMessage("Kicked " + plr.account.getDisplayName() + ".", cmd, client);
-								plr.account.kick(client.getPlayer().getAccountID(), reason);
-								return true;
-							}
-						}
-
-						// Find chat-only connection
-						for (ChatClient cl : client.getServer().getClients())
-							if (cl.getPlayer().getDisplayName().equals(args.get(0))) {
-								// Check rank
-								if (cl.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
-									if ((GameServer.hasPerm(
-											cl.getPlayer().getSaveSharedInventory().getItem("permissions")
-													.getAsJsonObject().get("permissionLevel").getAsString(),
-											"developer") && !GameServer.hasPerm(permLevel, "developer"))
-											|| GameServer.hasPerm(
-													cl.getPlayer().getSaveSharedInventory().getItem("permissions")
-															.getAsJsonObject().get("permissionLevel").getAsString(),
-													"admin") && !GameServer.hasPerm(permLevel, "admin")) {
-										systemMessage("Unable to kick higher-ranking users.", cmd, client);
-										return true;
-									}
-								}
-
-								// Disconnect
-								cl.disconnect();
-								systemMessage("Kicked " + cl.getPlayer().getDisplayName() + " from the chat server.",
-										cmd, client);
+						case "ipban": {
+							// IP-ban command
+							if (args.size() < 1) {
+								systemMessage("Missing argument: player or address", cmd, client);
 								return true;
 							}
 
-						// Player not found
-						systemMessage("Player is not online.", cmd, client);
-						return true;
-					}
-					case "toggletpoverride": {
-						// Override tp locks
-						Player plr = client.getPlayer().getOnlinePlayerInstance();
-						if (plr == null) {
-							systemMessage("Teleport overrides cannot be toggled unless you are ingame.", cmd, client);
-							return true;
-						}
-						if (plr.overrideTpLocks) {
-							plr.overrideTpLocks = false;
-							systemMessage(
-									"Teleport override disabled. The system will no longer ignore follower settings.",
-									cmd, client);
-							EventBus.getInstance().dispatchEvent(new MiscModerationEvent("tpoverride.disabled",
-									"Teleport Override Disabled", Map.of("Teleport override status", "Disabled"),
-									plr.account.getAccountID(), null));
-						} else {
+							String reason = null;
+							if (args.size() >= 2)
+								reason = args.get(1);
+
 							// Check clearance
 							if (!GameServer.hasPerm(permLevel, "admin")) {
 								// Check arguments
-								if (args.size() < 1) {
+								if (args.size() < 3) {
+									systemMessage(
+											"Error: clearance code required, please add a admin-issued clearance code to the command AFTER the reason for the IP ban.",
+											cmd, client);
+									return true;
+								}
+
+								// Check code
+								synchronized (clearanceCodes) {
+									if (clearanceCodes.contains(args.get(2))) {
+										clearanceCodes.remove(args.get(2));
+									} else {
+										systemMessage("Error: invalid clearance code.", cmd, client);
+										return true;
+									}
+								}
+							}
+
+							// Find player
+							for (Player plr : Centuria.gameServer.getPlayers()) {
+								if (plr.account.getDisplayName().equals(args.get(0))) {
+									// Check rank
+									if (plr.account.getSaveSharedInventory().containsItem("permissions")) {
+										if ((GameServer.hasPerm(
+												plr.account.getSaveSharedInventory().getItem("permissions")
+														.getAsJsonObject().get("permissionLevel").getAsString(),
+												"developer") && !GameServer.hasPerm(permLevel, "developer"))
+												|| GameServer.hasPerm(
+														plr.account.getSaveSharedInventory().getItem("permissions")
+																.getAsJsonObject().get("permissionLevel").getAsString(),
+														"admin") && !GameServer.hasPerm(permLevel, "admin")) {
+											systemMessage("Unable to ban higher-ranking users.", cmd, client);
+											return true;
+										}
+									}
+
+									// Ban IP
+									plr.account.ipban(client.getPlayer().getAccountID(), reason);
+									systemMessage("IP-banned " + plr.account.getDisplayName() + ".", cmd, client);
+									return true;
+								}
+							}
+
+							// Check if the inputted address is a IP addres
+							try {
+								InetAddress.getByName(args.get(0));
+
+								// Ban the IP
+								IpBanManager.getInstance().banIP(args.get(0));
+
+								// Disconnect all with the given IP address (or attempt to)
+								for (Player plr : Centuria.gameServer.getPlayers()) {
+									// Get IP of player
+									if (plr.client.getAddress().equals(args.get(0))) {
+										// Ban player
+										plr.account.ban(client.getPlayer().getAccountID(), reason);
+									}
+								}
+
+								// Log completion
+								systemMessage("Banned IP: " + args.get(0), cmd, client);
+
+								return true;
+							} catch (Exception e) {
+							}
+
+							// Player not found
+							systemMessage("Player is not online.", cmd, client);
+							return true;
+						}
+						case "staffroom": {
+							// Teleport to staff room
+
+							// Find online player
+							for (Player plr : Centuria.gameServer.getPlayers()) {
+								if (plr.account.getAccountID().equals(client.getPlayer().getAccountID())) {
+									// Load the requested room
+									RoomJoinPacket join = new RoomJoinPacket();
+									join.levelType = 0; // World
+									join.levelID = 1718;
+
+									// Sync
+									GameServer srv = (GameServer) plr.client.getServer();
+									for (Player player : srv.getPlayers()) {
+										if (plr.room != null && player.room != null && player.room.equals(plr.room)
+												&& player != plr) {
+											plr.destroyAt(player);
+										}
+									}
+
+									// Assign room
+									GameRoom room = ((GameServer) plr.client.getServer()).getRoomManager()
+											.getOrCreateRoom(plr.pendingLevelID, "STAFFROOM");
+									plr.roomReady = false;
+									plr.pendingLevelID = 1718;
+									plr.pendingRoom = room.getID();
+									join.roomIdentifier = plr.pendingRoom;
+
+									// Send response
+									plr.client.sendPacket(join);
+
+									// Log
+									Centuria.logger.info("Player " + plr.account.getDisplayName() + " is joining room "
+											+ "STAFFROOM" + " of level 1718");
+
+									break;
+								}
+							}
+
+							return true;
+						}
+						case "pardonip": {
+							// Remove IP ban
+							if (args.size() < 1) {
+								systemMessage("Missing argument: ip", cmd, client);
+								return true;
+							}
+
+							// Check clearance
+							if (!GameServer.hasPerm(permLevel, "admin")) {
+								// Check arguments
+								if (args.size() < 2) {
 									systemMessage(
 											"Error: clearance code required, please add a admin-issued clearance code to the command.",
 											cmd, client);
@@ -2383,8 +2276,8 @@ public class SendMessage extends AbstractChatPacket {
 
 								// Check code
 								synchronized (clearanceCodes) {
-									if (clearanceCodes.contains(args.get(0))) {
-										clearanceCodes.remove(args.get(0));
+									if (clearanceCodes.contains(args.get(1))) {
+										clearanceCodes.remove(args.get(1));
 									} else {
 										systemMessage("Error: invalid clearance code.", cmd, client);
 										return true;
@@ -2392,123 +2285,16 @@ public class SendMessage extends AbstractChatPacket {
 								}
 							}
 
-							plr.overrideTpLocks = true;
-							systemMessage("Teleport override enabled. The system will ignore follower settings.", cmd,
-									client);
-							EventBus.getInstance()
-									.dispatchEvent(new MiscModerationEvent("tpoverride.enabled",
-											"Teleport Override Enabled", Map.of("Teleport override status", "Enabled"),
-											plr.account.getAccountID(), null));
-						}
-						return true;
-					}
-					case "toggleghostmode": {
-						// Ghost mode
-						Player plr = client.getPlayer().getOnlinePlayerInstance();
-						if (plr == null) {
-							systemMessage("Ghost mode cannot be toggled unless you are ingame.", cmd, client);
+							// Check ip ban
+							IpBanManager manager = IpBanManager.getInstance();
+							if (manager.isIPBanned(args.get(0)))
+								manager.unbanIP(args.get(0));
+
+							systemMessage("Removed IP ban: " + args.get(0) + ".", cmd, client);
 							return true;
 						}
-						if (plr.ghostMode) {
-							plr.ghostMode = false;
-
-							// Spawn for everyone in room
-							GameServer server = (GameServer) plr.client.getServer();
-							for (Player player : server.getPlayers()) {
-								if (plr.room != null && player.room != null && player.room.equals(plr.room)
-										&& player != plr) {
-									plr.syncTo(player, WorldObjectMoverNodeType.InitPosition);
-									Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"), "Syncing player "
-											+ player.account.getDisplayName() + " to " + plr.account.getDisplayName());
-								}
-							}
-
-							systemMessage("Ghost mode disabled. You are visible to everyone.", cmd, client);
-							EventBus.getInstance()
-									.dispatchEvent(new MiscModerationEvent("ghostmode.disabled", "Ghost Mode Disabled",
-											Map.of("Ghost mode status", "Disabled"), plr.account.getAccountID(), null));
-
-							// Delete ghost mode file
-							plr.account.getSaveSharedInventory().deleteItem("ghostmode");
-						} else {
-							// Enable ghost mode
-							plr.ghostMode = true;
-
-							// Despawn for everyone in room
-							GameServer server = (GameServer) plr.client.getServer();
-							for (Player player : server.getPlayers()) {
-								if (plr.room != null && player.room != null && player.room.equals(plr.room)
-										&& player != plr && !player.hasModPerms) {
-									plr.destroyAt(player);
-									Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
-											"Removing player " + player.account.getDisplayName() + " from "
-													+ plr.account.getDisplayName());
-								}
-							}
-
-							systemMessage("Ghost mode enabled. You are now invisible to non-moderators.", cmd, client);
-							EventBus.getInstance()
-									.dispatchEvent(new MiscModerationEvent("ghostmode.enabled", "Ghost Mode Enabled",
-											Map.of("Ghost mode status", "Enabled"), plr.account.getAccountID(), null));
-
-							// Keep enabled even after logout
-							plr.account.getSaveSharedInventory().setItem("ghostmode", new JsonObject());
-						}
-
-						return true;
-					}
-
-					//
-					// Admin commands below
-					case "generateclearancecode": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							long codeLong = rnd.nextLong();
-							String code = "";
-							while (true) {
-								while (codeLong < 10000)
-									codeLong = rnd.nextLong();
-								code = Long.toString(codeLong, 16);
-								synchronized (clearanceCodes) {
-									if (!clearanceCodes.contains(code))
-										break;
-								}
-								code = Long.toString(rnd.nextLong(), 16);
-							}
-							synchronized (clearanceCodes) {
-								clearanceCodes.add(code);
-							}
-							EventBus.getInstance()
-									.dispatchEvent(new MiscModerationEvent("clearancecode.generated",
-											"Admin Clearance Code Generated", Map.of(),
-											client.getPlayer().getAccountID(), null));
-							systemMessage("Clearance code generated: " + code + "\nIt will expire in 2 minutes.", cmd,
-									client);
-							final String cFinal = code;
-							Thread th = new Thread(() -> {
-								for (int i = 0; i < 12000; i++) {
-									synchronized (clearanceCodes) {
-										if (!clearanceCodes.contains(cFinal))
-											return;
-									}
-									try {
-										Thread.sleep(10);
-									} catch (InterruptedException e) {
-									}
-								}
-								synchronized (clearanceCodes) {
-									clearanceCodes.remove(cFinal);
-								}
-							}, "Clearance code expiry");
-							th.setDaemon(true);
-							th.start();
-							return true;
-						}
-					}
-					case "makeadmin": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							// Permanent ban
+						case "pardon": {
+							// Remove all penalties
 							if (args.size() < 1) {
 								systemMessage("Missing argument: player", cmd, client);
 								return true;
@@ -2523,63 +2309,33 @@ public class SendMessage extends AbstractChatPacket {
 							}
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
-							// Get permissions
-							String permLevel2 = "member";
-							if (acc.getSaveSharedInventory().containsItem("permissions")) {
-								permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-										.get("permissionLevel").getAsString();
+							// Reason
+							String reason = null;
+							if (args.size() >= 2) {
+								reason = args.get(1);
 							}
 
-							// Check
+							// Check rank
 							if (acc.getSaveSharedInventory().containsItem("permissions")) {
-								if (GameServer
+								if ((GameServer
 										.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 												.get("permissionLevel").getAsString(), "developer")
-										&& !GameServer.hasPerm(permLevel, "developer")) {
-									systemMessage("Unable to demote higher-ranking users.", cmd, client);
+										&& !GameServer.hasPerm(permLevel, "developer"))
+										|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+												.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
+												&& !GameServer.hasPerm(permLevel, "admin")) {
+									systemMessage("Unable to pardon higher-ranking users.", cmd, client);
 									return true;
 								}
 							}
 
-							// Make admin
-							if (!acc.getSaveSharedInventory().containsItem("permissions"))
-								acc.getSaveSharedInventory().setItem("permissions", new JsonObject());
-							if (!acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-									.has("permissionLevel"))
-								acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-										.remove("permissionLevel");
-							acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-									.addProperty("permissionLevel", "admin");
-							acc.getSaveSharedInventory().setItem("permissions",
-									acc.getSaveSharedInventory().getItem("permissions"));
-
-							// Find online player
-							for (ChatClient plr : client.getServer().getClients()) {
-								if (plr.getPlayer().getDisplayName().equals(args.get(0))) {
-									// Update inventory
-									plr.getPlayer().getSaveSharedInventory().setItem("permissions",
-											acc.getSaveSharedInventory().getItem("permissions"));
-									break;
-								}
-							}
-
-							// Log
-							EventBus.getInstance().dispatchEvent(new MiscModerationEvent("permissions.update",
-									"Made " + client.getPlayer().getDisplayName() + " administrator!",
-									Map.of("Former permission level", permLevel2, "New permission level", "admin"),
-									client.getPlayer().getAccountID(), acc));
-
-							// Completed
-							systemMessage("Made " + acc.getDisplayName() + " administrator.", cmd, client);
+							// Pardon player
+							acc.pardon(client.getPlayer().getAccountID(), reason);
+							systemMessage("Penalties removed from " + acc.getDisplayName() + ".", cmd, client);
 							return true;
-						} else {
-							break;
 						}
-					}
-					case "makemoderator": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							// Permanent ban
+						case "forcenamechange": {
+							// Force name change command
 							if (args.size() < 1) {
 								systemMessage("Missing argument: player", cmd, client);
 								return true;
@@ -2593,66 +2349,22 @@ public class SendMessage extends AbstractChatPacket {
 								return true;
 							}
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+							acc.forceNameChange();
 
-							// Check
-							if (acc.getSaveSharedInventory().containsItem("permissions")) {
-								if (GameServer
-										.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-												.get("permissionLevel").getAsString(), "developer")
-										&& !GameServer.hasPerm(permLevel, "developer")) {
-									systemMessage("Unable to demote higher-ranking users.", cmd, client);
-									return true;
-								}
-							}
-
-							// Get permissions
-							String permLevel2 = "member";
-							if (acc.getSaveSharedInventory().containsItem("permissions")) {
-								permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-										.get("permissionLevel").getAsString();
-							}
-
-							// Make moderator
-							if (!acc.getSaveSharedInventory().containsItem("permissions"))
-								acc.getSaveSharedInventory().setItem("permissions", new JsonObject());
-							if (!acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-									.has("permissionLevel"))
-								acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-										.remove("permissionLevel");
-							acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-									.addProperty("permissionLevel", "moderator");
-							acc.getSaveSharedInventory().setItem("permissions",
-									acc.getSaveSharedInventory().getItem("permissions"));
-
-							// Find online player
-							for (ChatClient plr : client.getServer().getClients()) {
-								if (plr.getPlayer().getDisplayName().equals(args.get(0))) {
-									// Update inventory
-									plr.getPlayer().getSaveSharedInventory().setItem("permissions",
-											acc.getSaveSharedInventory().getItem("permissions"));
-									break;
-								}
-							}
-
-							// Log
-							EventBus.getInstance().dispatchEvent(new MiscModerationEvent("permissions.update",
-									"Made " + client.getPlayer().getDisplayName() + " moderator!",
-									Map.of("Former permission level", permLevel2, "New permission level", "moderator"),
-									client.getPlayer().getAccountID(), acc));
-
-							// Completed
-							systemMessage("Made " + acc.getDisplayName() + " moderator.", cmd, client);
+							// Player found
+							systemMessage(
+									"Applied a name change requirement to the next login of " + acc.getDisplayName()
+											+ ".",
+									cmd, client);
 							return true;
-						} else {
-							break;
 						}
-					}
-					case "removeperms": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							// Permanent ban
+						case "changeothername": {
+							// Name change command
 							if (args.size() < 1) {
 								systemMessage("Missing argument: player", cmd, client);
+								return true;
+							} else if (args.size() < 1) {
+								systemMessage("Missing argument: new-name", cmd, client);
 								return true;
 							}
 
@@ -2663,460 +2375,820 @@ public class SendMessage extends AbstractChatPacket {
 								systemMessage("Specified account could not be located.", cmd, client);
 								return true;
 							}
+
+							// Load info
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+							String oldName = acc.getDisplayName();
 
-							// Get permissions
-							String permLevel2 = "member";
+							// Check rank
 							if (acc.getSaveSharedInventory().containsItem("permissions")) {
-								permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-										.get("permissionLevel").getAsString();
-							}
-
-							// Take permissions away
-							if (acc.getSaveSharedInventory().containsItem("permissions")) {
-								if (GameServer
+								if ((GameServer
 										.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
 												.get("permissionLevel").getAsString(), "developer")
-										&& !GameServer.hasPerm(permLevel, "developer")) {
-									systemMessage("Unable to remove permissions from higher-ranking users.", cmd,
-											client);
+										&& !GameServer.hasPerm(permLevel, "developer"))
+										|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+												.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
+												&& !GameServer.hasPerm(permLevel, "admin")) {
+									systemMessage("Unable to rename higher-ranking users.", cmd, client);
 									return true;
 								}
-								acc.getSaveSharedInventory().deleteItem("permissions");
 							}
 
-							// Find online player
-							for (ChatClient plr : client.getServer().getClients()) {
-								if (plr.getPlayer().getDisplayName().equals(args.get(0))) {
-									// Update inventory
-									plr.getPlayer().getSaveSharedInventory().deleteItem("permissions");
-									break;
-								}
+							// Check name lock
+							if (AccountManager.getInstance().isDisplayNameInUse(args.get(1))) {
+								// Failure
+								systemMessage("Invalid value for argument: new-name: display name is in use", cmd,
+										client);
+								return true;
 							}
 
-							// Find online player
+							// Change name
+							if (!acc.updateDisplayName(args.get(1))) {
+								// Failure
+								systemMessage("Invalid value for argument: new-name: invalid characters", cmd, client);
+								return true;
+							}
+
+							// Prevent old name from being used
+							AccountManager.getInstance().releaseDisplayName(oldName);
+							AccountManager.getInstance().lockDisplayName(oldName, "-1");
+
+							// Lock new name
+							AccountManager.getInstance().lockDisplayName(args.get(1), acc.getAccountID());
+
+							// Kick online player
+							acc.kickDirect("SYSTEM", "Display name changed");
+							systemMessage("Renamed " + oldName + " " + args.get(1) + ".", cmd, client);
+							return true;
+						}
+						case "kick": {
+							// Kick command
+							if (args.size() < 1) {
+								systemMessage("Missing argument: player", cmd, client);
+								return true;
+							}
+
+							String reason = null;
+							if (args.size() >= 2)
+								reason = args.get(1);
+
+							// Find player
 							for (Player plr : Centuria.gameServer.getPlayers()) {
 								if (plr.account.getDisplayName().equals(args.get(0))) {
-									// Update inventory
-									plr.account.getSaveSharedInventory().deleteItem("permissions");
-									plr.hasModPerms = false;
-									break;
+									// Check rank
+									if (plr.account.getSaveSharedInventory().containsItem("permissions")) {
+										if ((GameServer.hasPerm(
+												plr.account.getSaveSharedInventory().getItem("permissions")
+														.getAsJsonObject().get("permissionLevel").getAsString(),
+												"developer") && !GameServer.hasPerm(permLevel, "developer"))
+												|| GameServer.hasPerm(
+														plr.account.getSaveSharedInventory().getItem("permissions")
+																.getAsJsonObject().get("permissionLevel").getAsString(),
+														"admin") && !GameServer.hasPerm(permLevel, "admin")) {
+											systemMessage("Unable to kick higher-ranking users.", cmd, client);
+											return true;
+										}
+									}
+
+									// Kick the player
+									systemMessage("Kicked " + plr.account.getDisplayName() + ".", cmd, client);
+									plr.account.kick(client.getPlayer().getAccountID(), reason);
+									return true;
 								}
 							}
 
-							// Log
-							EventBus.getInstance().dispatchEvent(new MiscModerationEvent("permissions.update",
-									"Removed all permissions from " + client.getPlayer().getDisplayName() + "!",
-									Map.of("Former permission level", permLevel2, "New permission level", "member"),
-									client.getPlayer().getAccountID(), acc));
+							// Find chat-only connection
+							for (ChatClient cl : client.getServer().getClients())
+								if (cl.getPlayer().getDisplayName().equals(args.get(0))) {
+									// Check rank
+									if (cl.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+										if ((GameServer.hasPerm(
+												cl.getPlayer().getSaveSharedInventory().getItem("permissions")
+														.getAsJsonObject().get("permissionLevel").getAsString(),
+												"developer") && !GameServer.hasPerm(permLevel, "developer"))
+												|| GameServer.hasPerm(
+														cl.getPlayer().getSaveSharedInventory().getItem("permissions")
+																.getAsJsonObject().get("permissionLevel").getAsString(),
+														"admin") && !GameServer.hasPerm(permLevel, "admin")) {
+											systemMessage("Unable to kick higher-ranking users.", cmd, client);
+											return true;
+										}
+									}
 
-							// Completed
-							systemMessage("Removed all permissions from " + acc.getDisplayName() + ".", cmd, client);
+									// Disconnect
+									cl.disconnect();
+									systemMessage(
+											"Kicked " + cl.getPlayer().getDisplayName() + " from the chat server.",
+											cmd, client);
+									return true;
+								}
+
+							// Player not found
+							systemMessage("Player is not online.", cmd, client);
 							return true;
-						} else {
-							break;
 						}
-					}
-					case "updatewarning": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							if (args.size() < 1) {
-								systemMessage("Missing argument: minutes-remaining", cmd, client);
+						case "toggletpoverride": {
+							// Override tp locks
+							Player plr = client.getPlayer().getOnlinePlayerInstance();
+							if (plr == null) {
+								systemMessage("Teleport overrides cannot be toggled unless you are ingame.", cmd,
+										client);
 								return true;
 							}
-
-							// Parse arguments
-							int mins = 0;
-							try {
-								mins = Integer.valueOf(args.get(0));
-							} catch (Exception e) {
-								systemMessage("Invalid value for argument: minutes-remaining", cmd, client);
-								return true;
-							}
-
-							// Warn everyone
-							for (Player plr : Centuria.gameServer.getPlayers()) {
-								if (mins == 1)
-									plr.client.sendPacket("%xt%ua%-1%7390|1%");
-								else
-									plr.client.sendPacket("%xt%ua%-1%7391|" + mins + "%");
-							}
-
-							return true;
-						} else {
-							break;
-						}
-					}
-					case "update": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							if (args.size() < 1) {
-								systemMessage("Missing argument: minutes", cmd, client);
-								return true;
-							}
-
-							// Parse arguments
-							int mins = 0;
-							switch (args.get(0)) {
-							case "60":
-								mins = 60;
-								break;
-							case "30":
-								mins = 30;
-								break;
-							case "15":
-								mins = 15;
-								break;
-							case "10":
-								mins = 10;
-								break;
-							case "5":
-								mins = 5;
-								break;
-							case "3":
-								mins = 3;
-								break;
-							case "1":
-								mins = 1;
-								break;
-							default:
-								systemMessage("Invalid value for argument: minutes-remaining", cmd, client);
-								return true;
-							}
-
-							// Run timer
-							if (Centuria.runUpdater(mins)) {
-								systemMessage("Update timer has been started.", cmd, client);
+							if (plr.overrideTpLocks) {
+								plr.overrideTpLocks = false;
+								systemMessage(
+										"Teleport override disabled. The system will no longer ignore follower settings.",
+										cmd, client);
+								EventBus.getInstance().dispatchEvent(new MiscModerationEvent("tpoverride.disabled",
+										"Teleport Override Disabled", Map.of("Teleport override status", "Disabled"),
+										plr.account.getAccountID(), null));
 							} else {
-								systemMessage("Update timer is already running.", cmd, client);
-							}
+								// Check clearance
+								if (!GameServer.hasPerm(permLevel, "admin")) {
+									// Check arguments
+									if (args.size() < 1) {
+										systemMessage(
+												"Error: clearance code required, please add a admin-issued clearance code to the command.",
+												cmd, client);
+										return true;
+									}
 
-							return true;
-						} else {
-							break;
-						}
-					}
-					case "cancelupdate": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							// Cancel update
-							if (Centuria.cancelUpdate())
-								systemMessage("Update restart cancelled.", cmd, client);
-							else
-								systemMessage("Update timer is not running.", cmd, client);
-							return true;
-						} else {
-							break;
-						}
-					}
-					case "updateshutdown": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							// Shut down the server
-							for (Player plr : Centuria.gameServer.getPlayers()) {
-								// Dispatch event
-								EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
-										args.size() >= 1 ? args.get(0) : null, DisconnectType.SERVER_SHUTDOWN));
-							}
-							Centuria.updateShutdown();
-							return true;
-						} else {
-							break;
-						}
-					}
-					case "shutdownserver": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							// Shut down the server
-							for (Player plr : Centuria.gameServer.getPlayers()) {
-								// Dispatch event
-								EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
-										args.size() >= 1 ? args.get(0) : null, DisconnectType.SERVER_SHUTDOWN));
-							}
-							Centuria.disconnectPlayersForShutdown();
-							System.exit(0);
-							return true;
-						} else {
-							break;
-						}
-					}
-					case "stopserver": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							// Shut down the server
-							for (Player plr : Centuria.gameServer.getPlayers()) {
-								// Dispatch event
-								EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
-										"Server has been shut down.", DisconnectType.SERVER_SHUTDOWN));
-							}
-							Centuria.disconnectPlayersForShutdown();
-							System.exit(0);
-							return true;
-						} else {
-							break;
-						}
-					}
-					case "startmaintenance": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							// Enable maintenance mode
-							Centuria.gameServer.maintenance = true;
-
-							// Dispatch maintenance event
-							EventBus.getInstance().dispatchEvent(new MaintenanceStartEvent());
-							// Cancel if maintenance is disabled
-							if (!Centuria.gameServer.maintenance)
-								return true;
-
-							// Disconnect everyone but the staff
-							for (Player plr : Centuria.gameServer.getPlayers()) {
-								if (!plr.account.getSaveSharedInventory().containsItem("permissions")
-										|| !GameServer.hasPerm(
-												plr.account.getSaveSharedInventory().getItem("permissions")
-														.getAsJsonObject().get("permissionLevel").getAsString(),
-												"admin")) {
-									// Dispatch event
-									EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
-											args.size() >= 1 ? args.get(0) : null, DisconnectType.MAINTENANCE));
-
-									plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
-								}
-							}
-
-							// Wait a bit
-							int i = 0;
-							while (Stream.of(Centuria.gameServer.getPlayers())
-									.filter(plr -> !plr.account.getSaveSharedInventory().containsItem("permissions")
-											|| !GameServer.hasPerm(
-													plr.account.getSaveSharedInventory().getItem("permissions")
-															.getAsJsonObject().get("permissionLevel").getAsString(),
-													"admin"))
-									.findFirst().isPresent()) {
-								i++;
-								if (i == 30)
-									break;
-
-								try {
-									Thread.sleep(1000);
-								} catch (InterruptedException e) {
-								}
-							}
-							for (Player plr : Centuria.gameServer.getPlayers()) {
-								if (!plr.account.getSaveSharedInventory().containsItem("permissions")
-										|| !GameServer.hasPerm(
-												plr.account.getSaveSharedInventory().getItem("permissions")
-														.getAsJsonObject().get("permissionLevel").getAsString(),
-												"admin")) {
-									// Disconnect from the game server
-									plr.client.disconnect();
-
-									// Disconnect it from the chat server
-									for (ChatClient cl : client.getServer().getClients()) {
-										if (cl.getPlayer().getAccountID().equals(plr.account.getAccountID())) {
-											cl.disconnect();
+									// Check code
+									synchronized (clearanceCodes) {
+										if (clearanceCodes.contains(args.get(0))) {
+											clearanceCodes.remove(args.get(0));
+										} else {
+											systemMessage("Error: invalid clearance code.", cmd, client);
+											return true;
 										}
 									}
 								}
-							}
 
-							// Send message
-							systemMessage("Maintenance mode enabled.", cmd, client);
+								plr.overrideTpLocks = true;
+								systemMessage("Teleport override enabled. The system will ignore follower settings.",
+										cmd,
+										client);
+								EventBus.getInstance()
+										.dispatchEvent(new MiscModerationEvent("tpoverride.enabled",
+												"Teleport Override Enabled",
+												Map.of("Teleport override status", "Enabled"),
+												plr.account.getAccountID(), null));
+							}
 							return true;
-						} else {
-							break;
 						}
-					}
-					case "endmaintenance": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							// Disable maintenance mode
-							Centuria.gameServer.maintenance = false;
-
-							// Dispatch maintenance end event
-							EventBus.getInstance().dispatchEvent(new MaintenanceEndEvent());
-
-							// Cancel if maintenance is enabled
-							if (Centuria.gameServer.maintenance)
-								return true;
-
-							systemMessage("Maintenance mode disabled.", cmd, client);
-							return true;
-						} else {
-							break;
-						}
-					}
-
-					//
-					// Developer commands below..
-					case "makedeveloper": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "developer")) {
-							// Permanent ban
-							if (args.size() < 1) {
-								systemMessage("Missing argument: player", cmd, client);
+						case "toggleghostmode": {
+							// Ghost mode
+							Player plr = client.getPlayer().getOnlinePlayerInstance();
+							if (plr == null) {
+								systemMessage("Ghost mode cannot be toggled unless you are ingame.", cmd, client);
 								return true;
 							}
+							if (plr.ghostMode) {
+								plr.ghostMode = false;
 
-							// Find player
-							String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
-							if (uuid == null) {
-								// Player not found
-								systemMessage("Specified account could not be located.", cmd, client);
-								return true;
-							}
-							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-							// Get permissions
-							String permLevel2 = "member";
-							if (acc.getSaveSharedInventory().containsItem("permissions")) {
-								permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-										.get("permissionLevel").getAsString();
-							}
-
-							// Make developer
-							if (!acc.getSaveSharedInventory().containsItem("permissions"))
-								acc.getSaveSharedInventory().setItem("permissions", new JsonObject());
-							if (!acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-									.has("permissionLevel"))
-								acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-										.remove("permissionLevel");
-							acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-									.addProperty("permissionLevel", "developer");
-							acc.getSaveSharedInventory().setItem("permissions",
-									acc.getSaveSharedInventory().getItem("permissions"));
-
-							// Find online player
-							for (ChatClient plr : client.getServer().getClients()) {
-								if (plr.getPlayer().getDisplayName().equals(args.get(0))) {
-									// Update inventory
-									plr.getPlayer().getSaveSharedInventory().setItem("permissions",
-											acc.getSaveSharedInventory().getItem("permissions"));
-									break;
+								// Spawn for everyone in room
+								GameServer server = (GameServer) plr.client.getServer();
+								for (Player player : server.getPlayers()) {
+									if (plr.room != null && player.room != null && player.room.equals(plr.room)
+											&& player != plr) {
+										plr.syncTo(player, WorldObjectMoverNodeType.InitPosition);
+										Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
+												"Syncing player "
+														+ player.account.getDisplayName() + " to "
+														+ plr.account.getDisplayName());
+									}
 								}
+
+								systemMessage("Ghost mode disabled. You are visible to everyone.", cmd, client);
+								EventBus.getInstance()
+										.dispatchEvent(
+												new MiscModerationEvent("ghostmode.disabled", "Ghost Mode Disabled",
+														Map.of("Ghost mode status", "Disabled"),
+														plr.account.getAccountID(), null));
+
+								// Delete ghost mode file
+								plr.account.getSaveSharedInventory().deleteItem("ghostmode");
+							} else {
+								// Enable ghost mode
+								plr.ghostMode = true;
+
+								// Despawn for everyone in room
+								GameServer server = (GameServer) plr.client.getServer();
+								for (Player player : server.getPlayers()) {
+									if (plr.room != null && player.room != null && player.room.equals(plr.room)
+											&& player != plr && !player.hasModPerms) {
+										plr.destroyAt(player);
+										Centuria.logger.debug(MarkerManager.getMarker("WorldReadyPacket"),
+												"Removing player " + player.account.getDisplayName() + " from "
+														+ plr.account.getDisplayName());
+									}
+								}
+
+								systemMessage("Ghost mode enabled. You are now invisible to non-moderators.", cmd,
+										client);
+								EventBus.getInstance()
+										.dispatchEvent(
+												new MiscModerationEvent("ghostmode.enabled", "Ghost Mode Enabled",
+														Map.of("Ghost mode status", "Enabled"),
+														plr.account.getAccountID(), null));
+
+								// Keep enabled even after logout
+								plr.account.getSaveSharedInventory().setItem("ghostmode", new JsonObject());
 							}
 
-							// Log
-							EventBus.getInstance().dispatchEvent(new MiscModerationEvent("permissions.update",
-									"Made " + client.getPlayer().getDisplayName() + " developer!",
-									Map.of("Former permission level", permLevel2, "New permission level", "developer"),
-									client.getPlayer().getAccountID(), acc));
-
-							// Completed
-							systemMessage("Made " + acc.getDisplayName() + " developer.", cmd, client);
-							return true;
-						} else {
-							break;
-						}
-					}
-					case "setplayertag": {
-						// Tag management
-						String id = "";
-						if (args.size() < 1) {
-							systemMessage("Missing argument: tag ID", cmd, client);
 							return true;
 						}
 
-						// Parse arguments
-						id = args.get(0);
-						if (!id.matches("^[A-Za-z0-9_\\-.]+")) {
-							// Invalid ID
-							systemMessage("Invalid argument: ID: invalid tag ID", cmd, client);
-							return true;
-						}
-
-						// Tag value
-						JsonObject value = new JsonObject();
-						if (args.size() >= 3) {
-							try {
-								value = JsonParser.parseString(args.get(2)).getAsJsonObject();
-							} catch (Exception e) {
-								// Invalid value
-								systemMessage("Invalid argument: value: invalid JSON data", cmd, client);
+						//
+						// Admin commands below
+						case "generateclearancecode": {
+							// Check perms
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								long codeLong = rnd.nextLong();
+								String code = "";
+								while (true) {
+									while (codeLong < 10000)
+										codeLong = rnd.nextLong();
+									code = Long.toString(codeLong, 16);
+									synchronized (clearanceCodes) {
+										if (!clearanceCodes.contains(code))
+											break;
+									}
+									code = Long.toString(rnd.nextLong(), 16);
+								}
+								synchronized (clearanceCodes) {
+									clearanceCodes.add(code);
+								}
+								EventBus.getInstance()
+										.dispatchEvent(new MiscModerationEvent("clearancecode.generated",
+												"Admin Clearance Code Generated", Map.of(),
+												client.getPlayer().getAccountID(), null));
+								systemMessage("Clearance code generated: " + code + "\nIt will expire in 2 minutes.",
+										cmd,
+										client);
+								final String cFinal = code;
+								Thread th = new Thread(() -> {
+									for (int i = 0; i < 12000; i++) {
+										synchronized (clearanceCodes) {
+											if (!clearanceCodes.contains(cFinal))
+												return;
+										}
+										try {
+											Thread.sleep(10);
+										} catch (InterruptedException e) {
+										}
+									}
+									synchronized (clearanceCodes) {
+										clearanceCodes.remove(cFinal);
+									}
+								}, "Clearance code expiry");
+								th.setDaemon(true);
+								th.start();
 								return true;
 							}
 						}
+						case "makeadmin": {
+							// Check perms
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								// Permanent ban
+								if (args.size() < 1) {
+									systemMessage("Missing argument: player", cmd, client);
+									return true;
+								}
 
-						// Find player
-						String player = client.getPlayer().getDisplayName();
-						if (args.size() >= 2)
-							player = args.get(1);
-						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+								// Find player
+								String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+								if (uuid == null) {
+									// Player not found
+									systemMessage("Specified account could not be located.", cmd, client);
+									return true;
+								}
+								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
-						// Update
-						acc.setAccountTag(id, value);
-						systemMessage("Tag updated successfully.", cmd, client);
-						return true;
-					}
-					case "removeplayertag": {
-						// Tag management
-						String id = "";
-						if (args.size() < 1) {
-							systemMessage("Missing argument: tag ID", cmd, client);
-							return true;
+								// Get permissions
+								String permLevel2 = "member";
+								if (acc.getSaveSharedInventory().containsItem("permissions")) {
+									permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString();
+								}
+
+								// Check
+								if (acc.getSaveSharedInventory().containsItem("permissions")) {
+									if (GameServer
+											.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+													.getAsJsonObject()
+													.get("permissionLevel").getAsString(), "developer")
+											&& !GameServer.hasPerm(permLevel, "developer")) {
+										systemMessage("Unable to demote higher-ranking users.", cmd, client);
+										return true;
+									}
+								}
+
+								// Make admin
+								if (!acc.getSaveSharedInventory().containsItem("permissions"))
+									acc.getSaveSharedInventory().setItem("permissions", new JsonObject());
+								if (!acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+										.has("permissionLevel"))
+									acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+											.remove("permissionLevel");
+								acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+										.addProperty("permissionLevel", "admin");
+								acc.getSaveSharedInventory().setItem("permissions",
+										acc.getSaveSharedInventory().getItem("permissions"));
+
+								// Find online player
+								for (ChatClient plr : client.getServer().getClients()) {
+									if (plr.getPlayer().getDisplayName().equals(args.get(0))) {
+										// Update inventory
+										plr.getPlayer().getSaveSharedInventory().setItem("permissions",
+												acc.getSaveSharedInventory().getItem("permissions"));
+										break;
+									}
+								}
+
+								// Log
+								EventBus.getInstance().dispatchEvent(new MiscModerationEvent("permissions.update",
+										"Made " + client.getPlayer().getDisplayName() + " administrator!",
+										Map.of("Former permission level", permLevel2, "New permission level", "admin"),
+										client.getPlayer().getAccountID(), acc));
+
+								// Completed
+								systemMessage("Made " + acc.getDisplayName() + " administrator.", cmd, client);
+								return true;
+							} else {
+								break;
+							}
+						}
+						case "makemoderator": {
+							// Check perms
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								// Permanent ban
+								if (args.size() < 1) {
+									systemMessage("Missing argument: player", cmd, client);
+									return true;
+								}
+
+								// Find player
+								String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+								if (uuid == null) {
+									// Player not found
+									systemMessage("Specified account could not be located.", cmd, client);
+									return true;
+								}
+								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+								// Check
+								if (acc.getSaveSharedInventory().containsItem("permissions")) {
+									if (GameServer
+											.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+													.getAsJsonObject()
+													.get("permissionLevel").getAsString(), "developer")
+											&& !GameServer.hasPerm(permLevel, "developer")) {
+										systemMessage("Unable to demote higher-ranking users.", cmd, client);
+										return true;
+									}
+								}
+
+								// Get permissions
+								String permLevel2 = "member";
+								if (acc.getSaveSharedInventory().containsItem("permissions")) {
+									permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString();
+								}
+
+								// Make moderator
+								if (!acc.getSaveSharedInventory().containsItem("permissions"))
+									acc.getSaveSharedInventory().setItem("permissions", new JsonObject());
+								if (!acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+										.has("permissionLevel"))
+									acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+											.remove("permissionLevel");
+								acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+										.addProperty("permissionLevel", "moderator");
+								acc.getSaveSharedInventory().setItem("permissions",
+										acc.getSaveSharedInventory().getItem("permissions"));
+
+								// Find online player
+								for (ChatClient plr : client.getServer().getClients()) {
+									if (plr.getPlayer().getDisplayName().equals(args.get(0))) {
+										// Update inventory
+										plr.getPlayer().getSaveSharedInventory().setItem("permissions",
+												acc.getSaveSharedInventory().getItem("permissions"));
+										break;
+									}
+								}
+
+								// Log
+								EventBus.getInstance().dispatchEvent(new MiscModerationEvent("permissions.update",
+										"Made " + client.getPlayer().getDisplayName() + " moderator!",
+										Map.of("Former permission level", permLevel2, "New permission level",
+												"moderator"),
+										client.getPlayer().getAccountID(), acc));
+
+								// Completed
+								systemMessage("Made " + acc.getDisplayName() + " moderator.", cmd, client);
+								return true;
+							} else {
+								break;
+							}
+						}
+						case "removeperms": {
+							// Check perms
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								// Permanent ban
+								if (args.size() < 1) {
+									systemMessage("Missing argument: player", cmd, client);
+									return true;
+								}
+
+								// Find player
+								String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+								if (uuid == null) {
+									// Player not found
+									systemMessage("Specified account could not be located.", cmd, client);
+									return true;
+								}
+								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+								// Get permissions
+								String permLevel2 = "member";
+								if (acc.getSaveSharedInventory().containsItem("permissions")) {
+									permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString();
+								}
+
+								// Take permissions away
+								if (acc.getSaveSharedInventory().containsItem("permissions")) {
+									if (GameServer
+											.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+													.getAsJsonObject()
+													.get("permissionLevel").getAsString(), "developer")
+											&& !GameServer.hasPerm(permLevel, "developer")) {
+										systemMessage("Unable to remove permissions from higher-ranking users.", cmd,
+												client);
+										return true;
+									}
+									acc.getSaveSharedInventory().deleteItem("permissions");
+								}
+
+								// Find online player
+								for (ChatClient plr : client.getServer().getClients()) {
+									if (plr.getPlayer().getDisplayName().equals(args.get(0))) {
+										// Update inventory
+										plr.getPlayer().getSaveSharedInventory().deleteItem("permissions");
+										break;
+									}
+								}
+
+								// Find online player
+								for (Player plr : Centuria.gameServer.getPlayers()) {
+									if (plr.account.getDisplayName().equals(args.get(0))) {
+										// Update inventory
+										plr.account.getSaveSharedInventory().deleteItem("permissions");
+										plr.hasModPerms = false;
+										break;
+									}
+								}
+
+								// Log
+								EventBus.getInstance().dispatchEvent(new MiscModerationEvent("permissions.update",
+										"Removed all permissions from " + client.getPlayer().getDisplayName() + "!",
+										Map.of("Former permission level", permLevel2, "New permission level", "member"),
+										client.getPlayer().getAccountID(), acc));
+
+								// Completed
+								systemMessage("Removed all permissions from " + acc.getDisplayName() + ".", cmd,
+										client);
+								return true;
+							} else {
+								break;
+							}
+						}
+						case "updatewarning": {
+							// Check perms
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								if (args.size() < 1) {
+									systemMessage("Missing argument: minutes-remaining", cmd, client);
+									return true;
+								}
+
+								// Parse arguments
+								int mins = 0;
+								try {
+									mins = Integer.valueOf(args.get(0));
+								} catch (Exception e) {
+									systemMessage("Invalid value for argument: minutes-remaining", cmd, client);
+									return true;
+								}
+
+								// Warn everyone
+								for (Player plr : Centuria.gameServer.getPlayers()) {
+									if (mins == 1)
+										plr.client.sendPacket("%xt%ua%-1%7390|1%");
+									else
+										plr.client.sendPacket("%xt%ua%-1%7391|" + mins + "%");
+								}
+
+								return true;
+							} else {
+								break;
+							}
+						}
+						case "update": {
+							// Check perms
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								if (args.size() < 1) {
+									systemMessage("Missing argument: minutes", cmd, client);
+									return true;
+								}
+
+								// Parse arguments
+								int mins = 0;
+								switch (args.get(0)) {
+									case "60":
+										mins = 60;
+										break;
+									case "30":
+										mins = 30;
+										break;
+									case "15":
+										mins = 15;
+										break;
+									case "10":
+										mins = 10;
+										break;
+									case "5":
+										mins = 5;
+										break;
+									case "3":
+										mins = 3;
+										break;
+									case "1":
+										mins = 1;
+										break;
+									default:
+										systemMessage("Invalid value for argument: minutes-remaining", cmd, client);
+										return true;
+								}
+
+								// Run timer
+								if (Centuria.runUpdater(mins)) {
+									systemMessage("Update timer has been started.", cmd, client);
+								} else {
+									systemMessage("Update timer is already running.", cmd, client);
+								}
+
+								return true;
+							} else {
+								break;
+							}
+						}
+						case "cancelupdate": {
+							// Check perms
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								// Cancel update
+								if (Centuria.cancelUpdate())
+									systemMessage("Update restart cancelled.", cmd, client);
+								else
+									systemMessage("Update timer is not running.", cmd, client);
+								return true;
+							} else {
+								break;
+							}
+						}
+						case "updateshutdown": {
+							// Check perms
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								// Shut down the server
+								for (Player plr : Centuria.gameServer.getPlayers()) {
+									// Dispatch event
+									EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
+											args.size() >= 1 ? args.get(0) : null, DisconnectType.SERVER_SHUTDOWN));
+								}
+								Centuria.updateShutdown();
+								return true;
+							} else {
+								break;
+							}
+						}
+						case "shutdownserver": {
+							// Check perms
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								// Shut down the server
+								for (Player plr : Centuria.gameServer.getPlayers()) {
+									// Dispatch event
+									EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
+											args.size() >= 1 ? args.get(0) : null, DisconnectType.SERVER_SHUTDOWN));
+								}
+								Centuria.disconnectPlayersForShutdown();
+								System.exit(0);
+								return true;
+							} else {
+								break;
+							}
+						}
+						case "stopserver": {
+							// Check perms
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								// Shut down the server
+								for (Player plr : Centuria.gameServer.getPlayers()) {
+									// Dispatch event
+									EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
+											"Server has been shut down.", DisconnectType.SERVER_SHUTDOWN));
+								}
+								Centuria.disconnectPlayersForShutdown();
+								System.exit(0);
+								return true;
+							} else {
+								break;
+							}
+						}
+						case "startmaintenance": {
+							// Check perms
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								// Enable maintenance mode
+								Centuria.gameServer.maintenance = true;
+
+								// Dispatch maintenance event
+								EventBus.getInstance().dispatchEvent(new MaintenanceStartEvent());
+								// Cancel if maintenance is disabled
+								if (!Centuria.gameServer.maintenance)
+									return true;
+
+								// Disconnect everyone but the staff
+								for (Player plr : Centuria.gameServer.getPlayers()) {
+									if (!plr.account.getSaveSharedInventory().containsItem("permissions")
+											|| !GameServer.hasPerm(
+													plr.account.getSaveSharedInventory().getItem("permissions")
+															.getAsJsonObject().get("permissionLevel").getAsString(),
+													"admin")) {
+										// Dispatch event
+										EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
+												args.size() >= 1 ? args.get(0) : null, DisconnectType.MAINTENANCE));
+
+										plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
+									}
+								}
+
+								// Wait a bit
+								int i = 0;
+								while (Stream.of(Centuria.gameServer.getPlayers())
+										.filter(plr -> !plr.account.getSaveSharedInventory().containsItem("permissions")
+												|| !GameServer.hasPerm(
+														plr.account.getSaveSharedInventory().getItem("permissions")
+																.getAsJsonObject().get("permissionLevel").getAsString(),
+														"admin"))
+										.findFirst().isPresent()) {
+									i++;
+									if (i == 30)
+										break;
+
+									try {
+										Thread.sleep(1000);
+									} catch (InterruptedException e) {
+									}
+								}
+								for (Player plr : Centuria.gameServer.getPlayers()) {
+									if (!plr.account.getSaveSharedInventory().containsItem("permissions")
+											|| !GameServer.hasPerm(
+													plr.account.getSaveSharedInventory().getItem("permissions")
+															.getAsJsonObject().get("permissionLevel").getAsString(),
+													"admin")) {
+										// Disconnect from the game server
+										plr.client.disconnect();
+
+										// Disconnect it from the chat server
+										for (ChatClient cl : client.getServer().getClients()) {
+											if (cl.getPlayer().getAccountID().equals(plr.account.getAccountID())) {
+												cl.disconnect();
+											}
+										}
+									}
+								}
+
+								// Send message
+								systemMessage("Maintenance mode enabled.", cmd, client);
+								return true;
+							} else {
+								break;
+							}
+						}
+						case "endmaintenance": {
+							// Check perms
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								// Disable maintenance mode
+								Centuria.gameServer.maintenance = false;
+
+								// Dispatch maintenance end event
+								EventBus.getInstance().dispatchEvent(new MaintenanceEndEvent());
+
+								// Cancel if maintenance is enabled
+								if (Centuria.gameServer.maintenance)
+									return true;
+
+								systemMessage("Maintenance mode disabled.", cmd, client);
+								return true;
+							} else {
+								break;
+							}
 						}
 
-						// Parse arguments
-						id = args.get(0);
-						if (!id.matches("^[A-Za-z0-9_\\-.]+")) {
-							// Invalid ID
-							systemMessage("Invalid argument: ID: invalid tag ID", cmd, client);
-							return true;
-						}
+						//
+						// Developer commands below..
+						case "makedeveloper": {
+							// Check perms
+							if (GameServer.hasPerm(permLevel, "developer")) {
+								// Permanent ban
+								if (args.size() < 1) {
+									systemMessage("Missing argument: player", cmd, client);
+									return true;
+								}
 
-						// Find player
-						String player = client.getPlayer().getDisplayName();
-						if (args.size() >= 2)
-							player = args.get(1);
-						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+								// Find player
+								String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+								if (uuid == null) {
+									// Player not found
+									systemMessage("Specified account could not be located.", cmd, client);
+									return true;
+								}
+								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
-						// Update
-						if (acc.getAccountTag(id) == null) {
-							// Tag not found
-							systemMessage("Specified tag could not be found for this player.", cmd, client);
-							return true;
+								// Get permissions
+								String permLevel2 = "member";
+								if (acc.getSaveSharedInventory().containsItem("permissions")) {
+									permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString();
+								}
+
+								// Make developer
+								if (!acc.getSaveSharedInventory().containsItem("permissions"))
+									acc.getSaveSharedInventory().setItem("permissions", new JsonObject());
+								if (!acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+										.has("permissionLevel"))
+									acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+											.remove("permissionLevel");
+								acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+										.addProperty("permissionLevel", "developer");
+								acc.getSaveSharedInventory().setItem("permissions",
+										acc.getSaveSharedInventory().getItem("permissions"));
+
+								// Find online player
+								for (ChatClient plr : client.getServer().getClients()) {
+									if (plr.getPlayer().getDisplayName().equals(args.get(0))) {
+										// Update inventory
+										plr.getPlayer().getSaveSharedInventory().setItem("permissions",
+												acc.getSaveSharedInventory().getItem("permissions"));
+										break;
+									}
+								}
+
+								// Log
+								EventBus.getInstance().dispatchEvent(new MiscModerationEvent("permissions.update",
+										"Made " + client.getPlayer().getDisplayName() + " developer!",
+										Map.of("Former permission level", permLevel2, "New permission level",
+												"developer"),
+										client.getPlayer().getAccountID(), acc));
+
+								// Completed
+								systemMessage("Made " + acc.getDisplayName() + " developer.", cmd, client);
+								return true;
+							} else {
+								break;
+							}
 						}
-						acc.deleteAccountTag(id);
-						systemMessage("Tag removed successfully.", cmd, client);
-						return true;
-					}
-					case "tpm": {
-						try {
-							// Teleports a player to a map.
-							String defID = "";
+						case "setplayertag": {
+							// Tag management
+							String id = "";
 							if (args.size() < 1) {
-								systemMessage("Missing argument: map ID", cmd, client);
+								systemMessage("Missing argument: tag ID", cmd, client);
 								return true;
 							}
 
 							// Parse arguments
-							defID = args.get(0);
+							id = args.get(0);
+							if (!id.matches("^[A-Za-z0-9_\\-. ]+")) {
+								// Invalid ID
+								systemMessage("Invalid argument: ID: invalid tag ID", cmd, client);
+								return true;
+							}
 
-							// Check room
-							String room = null;
-							if (args.size() >= 2)
-								room = args.get(1);
-
-							// Check type
-							String type = "0";
-							if (args.size() >= 3)
-								type = args.get(2);
+							// Tag value
+							JsonObject value = new JsonObject();
+							if (args.size() >= 3) {
+								try {
+									value = JsonParser.parseString(args.get(2)).getAsJsonObject();
+								} catch (Exception e) {
+									// Invalid value
+									systemMessage("Invalid argument: value: invalid JSON data", cmd, client);
+									return true;
+								}
+							}
 
 							// Find player
 							String player = client.getPlayer().getDisplayName();
-							if (args.size() >= 4)
-								player = args.get(3);
+							if (args.size() >= 2)
+								player = args.get(1);
 							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
 							if (uuid == null) {
 								// Player not found
@@ -3125,158 +3197,138 @@ public class SendMessage extends AbstractChatPacket {
 							}
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
-							// Teleport
-							Player plr = acc.getOnlinePlayerInstance();
-							if (plr != null) {
-								// Find room
-								String roomID;
-								if (room == null)
-									roomID = ((GameServer) plr.client.getServer()).getRoomManager()
-											.findBestRoom(Integer.valueOf(defID), plr).getID();
-								else
-									roomID = ((GameServer) plr.client.getServer()).getRoomManager()
-											.getOrCreateRoom(Integer.valueOf(defID), room).getID();
+							// Update
+							acc.setAccountTag(id, value);
+							systemMessage("Tag updated successfully.", cmd, client);
+							return true;
+						}
+						case "removeplayertag": {
+							// Tag management
+							String id = "";
+							if (args.size() < 1) {
+								systemMessage("Missing argument: tag ID", cmd, client);
+								return true;
+							}
+
+							// Parse arguments
+							id = args.get(0);
+							if (!id.matches("^[A-Za-z0-9_\\-. ]+")) {
+								// Invalid ID
+								systemMessage("Invalid argument: ID: invalid tag ID", cmd, client);
+								return true;
+							}
+
+							// Find player
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() >= 2)
+								player = args.get(1);
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// Update
+							if (acc.getAccountTag(id) == null) {
+								// Tag not found
+								systemMessage("Specified tag could not be found for this player.", cmd, client);
+								return true;
+							}
+							acc.deleteAccountTag(id);
+							systemMessage("Tag removed successfully.", cmd, client);
+							return true;
+						}
+						case "tpm": {
+							try {
+								// Teleports a player to a map.
+								String defID = "";
+								if (args.size() < 1) {
+									systemMessage("Missing argument: map ID", cmd, client);
+									return true;
+								}
+
+								// Parse arguments
+								defID = args.get(0);
+
+								// Check room
+								String room = null;
+								if (args.size() >= 2)
+									room = args.get(1);
+
+								// Check type
+								String type = "0";
+								if (args.size() >= 3)
+									type = args.get(2);
+
+								// Find player
+								String player = client.getPlayer().getDisplayName();
+								if (args.size() >= 4)
+									player = args.get(3);
+								String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+								if (uuid == null) {
+									// Player not found
+									systemMessage("Specified account could not be located.", cmd, client);
+									return true;
+								}
+								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
 								// Teleport
-								plr.teleportToRoom(Integer.valueOf(defID), Integer.valueOf(type), -1, roomID, "");
-							} else {
+								Player plr = acc.getOnlinePlayerInstance();
+								if (plr != null) {
+									// Find room
+									String roomID;
+									if (room == null)
+										roomID = ((GameServer) plr.client.getServer()).getRoomManager()
+												.findBestRoom(Integer.valueOf(defID), plr).getID();
+									else
+										roomID = ((GameServer) plr.client.getServer()).getRoomManager()
+												.getOrCreateRoom(Integer.valueOf(defID), room).getID();
+
+									// Teleport
+									plr.teleportToRoom(Integer.valueOf(defID), Integer.valueOf(type), -1, roomID, "");
+								} else {
+									// Player not found
+									systemMessage("Specified player is not online.", cmd, client);
+									return true;
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+								systemMessage("Error: " + e, cmd, client);
+							}
+
+							return true;
+						}
+						case "xpinfo": {
+							// XP info
+							// Parse arguments
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() > 0) {
+								player = args.get(0);
+							}
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
 								// Player not found
-								systemMessage("Specified player is not online.", cmd, client);
+								systemMessage("Specified account could not be located.", cmd, client);
 								return true;
 							}
-						} catch (Exception e) {
-							e.printStackTrace();
-							systemMessage("Error: " + e, cmd, client);
-						}
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
-						return true;
-					}
-					case "xpinfo": {
-						// XP info
-						// Parse arguments
-						String player = client.getPlayer().getDisplayName();
-						if (args.size() > 0) {
-							player = args.get(0);
-						}
-						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-						// Display info
-						try {
-							systemMessage("XP details:\n" + "Level: " + acc.getLevel().getLevel() + "\nXP: "
-									+ acc.getLevel().getCurrentXP() + " / " + acc.getLevel().getLevelupXPCount()
-									+ "\nTotal XP: " + acc.getLevel().getTotalXP(), cmd, client);
-						} catch (Exception e) {
-							systemMessage("Error: " + e, cmd, client);
-						}
-
-						return true;
-					}
-					case "takexp": {
-						// Take XP
-						// Parse arguments
-						String player = client.getPlayer().getDisplayName();
-						if (args.size() < 1) {
-							systemMessage("Missing argument: xp amount", cmd, client);
-							return true;
-						}
-						if (args.size() > 1) {
-							player = args.get(1);
-						}
-						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-						// Take xp
-						try {
-							int xp = Integer.parseInt(args.get(0));
-							if (xp < 0) {
-								systemMessage("Invalid XP amount: " + xp, cmd, client);
-								return true;
+							// Display info
+							try {
+								systemMessage("XP details:\n" + "Level: " + acc.getLevel().getLevel() + "\nXP: "
+										+ acc.getLevel().getCurrentXP() + " / " + acc.getLevel().getLevelupXPCount()
+										+ "\nTotal XP: " + acc.getLevel().getTotalXP(), cmd, client);
+							} catch (Exception e) {
+								systemMessage("Error: " + e, cmd, client);
 							}
-							acc.getLevel().removeXP(xp);
-							systemMessage("Removed " + xp + " XP from " + acc.getDisplayName() + ".", cmd, client);
-						} catch (Exception e) {
-							systemMessage("Error: " + e, cmd, client);
-						}
 
-						return true;
-					}
-					case "resetxp": {
-						// Reset XP
-						// Parse arguments
-						String player = client.getPlayer().getDisplayName();
-						if (args.size() > 0) {
-							player = args.get(0);
-						}
-						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
 							return true;
 						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-						// Take xp
-						try {
-							acc.getLevel().resetLevelXP();
-							systemMessage("Resetted level XP of " + acc.getDisplayName() + ".", cmd, client);
-						} catch (Exception e) {
-							systemMessage("Error: " + e, cmd, client);
-						}
-
-						return true;
-					}
-					case "takelevels": {
-						// Take levels
-						// Parse arguments
-						String player = client.getPlayer().getDisplayName();
-						if (args.size() < 1) {
-							systemMessage("Missing argument: levels to remove", cmd, client);
-							return true;
-						}
-						if (args.size() > 1) {
-							player = args.get(1);
-						}
-						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-						// Take xp
-						try {
-							int levels = Integer.parseInt(args.get(0));
-							if (acc.getLevel().getLevel() <= levels) {
-								systemMessage("Invalid amount of levels to remove: " + levels + " (user is at "
-										+ acc.getLevel().getLevel() + ")", cmd, client);
-								return true;
-							}
-							acc.getLevel().setLevel(acc.getLevel().getLevel() - levels);
-							systemMessage("Removed " + levels + " levels from " + acc.getDisplayName() + ".", cmd,
-									client);
-							acc.kickDirect(uuid, "Levels were changed, relog required.");
-						} catch (Exception e) {
-							systemMessage("Error: " + e, cmd, client);
-						}
-
-						return true;
-					}
-					case "addxp": {
-						// Add XP
-						// Parse arguments
-						if (GameServer.hasPerm(permLevel, "admin")) {
+						case "takexp": {
+							// Take XP
+							// Parse arguments
 							String player = client.getPlayer().getDisplayName();
 							if (args.size() < 1) {
 								systemMessage("Missing argument: xp amount", cmd, client);
@@ -3285,64 +3337,248 @@ public class SendMessage extends AbstractChatPacket {
 							if (args.size() > 1) {
 								player = args.get(1);
 							}
-							if (!player.equals("*")) {
-								String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-								if (uuid == null) {
-									// Player not found
-									systemMessage("Specified account could not be located.", cmd, client);
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// Take xp
+							try {
+								int xp = Integer.parseInt(args.get(0));
+								if (xp < 0) {
+									systemMessage("Invalid XP amount: " + xp, cmd, client);
 									return true;
 								}
-								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-								// Add xp
-								try {
-									int xp = Integer.parseInt(args.get(0));
-									if (xp < 0) {
-										systemMessage("Invalid XP amount: " + xp, cmd, client);
-										return true;
-									}
-									acc.getLevel().addXP(xp);
-									systemMessage("Given " + xp + " XP to " + acc.getDisplayName() + ".", cmd, client);
-								} catch (Exception e) {
-									systemMessage("Error: " + e, cmd, client);
-									e.printStackTrace();
-								}
-							} else {
-								final String cmdF = cmd;
-								AccountManager.getInstance().runForAllAccounts(acc -> {
-									// Add xp
-									try {
-										int xp = Integer.parseInt(args.get(0));
-										if (xp < 0) {
-											systemMessage("Invalid XP amount: " + xp, cmdF, client);
-										}
-										acc.getLevel().addXP(xp);
-										systemMessage("Given " + xp + " XP to " + acc.getDisplayName() + ".", cmdF,
-												client);
-									} catch (Exception e) {
-										systemMessage("Error: " + e, cmdF, client);
-										e.printStackTrace();
-									}
-								});
-								return true;
+								acc.getLevel().removeXP(xp);
+								systemMessage("Removed " + xp + " XP from " + acc.getDisplayName() + ".", cmd, client);
+							} catch (Exception e) {
+								systemMessage("Error: " + e, cmd, client);
 							}
 
 							return true;
 						}
-					}
-					case "addlevels": {
-						// Add levels
-						// Parse arguments
-						if (GameServer.hasPerm(permLevel, "admin")) {
+						case "resetxp": {
+							// Reset XP
+							// Parse arguments
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() > 0) {
+								player = args.get(0);
+							}
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// Take xp
+							try {
+								acc.getLevel().resetLevelXP();
+								systemMessage("Resetted level XP of " + acc.getDisplayName() + ".", cmd, client);
+							} catch (Exception e) {
+								systemMessage("Error: " + e, cmd, client);
+							}
+
+							return true;
+						}
+						case "takelevels": {
+							// Take levels
+							// Parse arguments
 							String player = client.getPlayer().getDisplayName();
 							if (args.size() < 1) {
-								systemMessage("Missing argument: levels to add", cmd, client);
+								systemMessage("Missing argument: levels to remove", cmd, client);
 								return true;
 							}
 							if (args.size() > 1) {
 								player = args.get(1);
 							}
-							if (!player.equals("*")) {
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// Take xp
+							try {
+								int levels = Integer.parseInt(args.get(0));
+								if (acc.getLevel().getLevel() <= levels) {
+									systemMessage("Invalid amount of levels to remove: " + levels + " (user is at "
+											+ acc.getLevel().getLevel() + ")", cmd, client);
+									return true;
+								}
+								acc.getLevel().setLevel(acc.getLevel().getLevel() - levels);
+								systemMessage("Removed " + levels + " levels from " + acc.getDisplayName() + ".", cmd,
+										client);
+								acc.kickDirect(uuid, "Levels were changed, relog required.");
+							} catch (Exception e) {
+								systemMessage("Error: " + e, cmd, client);
+							}
+
+							return true;
+						}
+						case "addxp": {
+							// Add XP
+							// Parse arguments
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								String player = client.getPlayer().getDisplayName();
+								if (args.size() < 1) {
+									systemMessage("Missing argument: xp amount", cmd, client);
+									return true;
+								}
+								if (args.size() > 1) {
+									player = args.get(1);
+								}
+								if (!player.equals("*")) {
+									String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+									if (uuid == null) {
+										// Player not found
+										systemMessage("Specified account could not be located.", cmd, client);
+										return true;
+									}
+									CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+									// Add xp
+									try {
+										int xp = Integer.parseInt(args.get(0));
+										if (xp < 0) {
+											systemMessage("Invalid XP amount: " + xp, cmd, client);
+											return true;
+										}
+										acc.getLevel().addXP(xp);
+										systemMessage("Given " + xp + " XP to " + acc.getDisplayName() + ".", cmd,
+												client);
+									} catch (Exception e) {
+										systemMessage("Error: " + e, cmd, client);
+										e.printStackTrace();
+									}
+								} else {
+									final String cmdF = cmd;
+									AccountManager.getInstance().runForAllAccounts(acc -> {
+										// Add xp
+										try {
+											int xp = Integer.parseInt(args.get(0));
+											if (xp < 0) {
+												systemMessage("Invalid XP amount: " + xp, cmdF, client);
+											}
+											acc.getLevel().addXP(xp);
+											systemMessage("Given " + xp + " XP to " + acc.getDisplayName() + ".", cmdF,
+													client);
+										} catch (Exception e) {
+											systemMessage("Error: " + e, cmdF, client);
+											e.printStackTrace();
+										}
+									});
+									return true;
+								}
+
+								return true;
+							}
+						}
+						case "addlevels": {
+							// Add levels
+							// Parse arguments
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								String player = client.getPlayer().getDisplayName();
+								if (args.size() < 1) {
+									systemMessage("Missing argument: levels to add", cmd, client);
+									return true;
+								}
+								if (args.size() > 1) {
+									player = args.get(1);
+								}
+								if (!player.equals("*")) {
+									String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+									if (uuid == null) {
+										// Player not found
+										systemMessage("Specified account could not be located.", cmd, client);
+										return true;
+									}
+									CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+									// Add levels
+									try {
+										int levels = Integer.parseInt(args.get(0));
+										if (levels < 0) {
+											systemMessage("Invalid XP amount: " + levels, cmd, client);
+											return true;
+										}
+										acc.getLevel().addLevel(levels);
+										systemMessage("Given " + levels + " levels to " + acc.getDisplayName() + ".",
+												cmd,
+												client);
+									} catch (Exception e) {
+										systemMessage("Error: " + e, cmd, client);
+									}
+								} else {
+									final String cmdF = cmd;
+									AccountManager.getInstance().runForAllAccounts(acc -> {
+										// Add levels
+										try {
+											int levels = Integer.parseInt(args.get(0));
+											if (levels < 0) {
+												systemMessage("Invalid XP amount: " + levels, cmdF, client);
+											}
+											acc.getLevel().addLevel(levels);
+											systemMessage(
+													"Given " + levels + " levels to " + acc.getDisplayName() + ".",
+													cmdF, client);
+										} catch (Exception e) {
+											systemMessage("Error: " + e, cmdF, client);
+										}
+									});
+									return true;
+								}
+
+								return true;
+							}
+						}
+						case "resetalllevels": {
+							// Reset all levels
+							// Parse arguments
+							if (GameServer.hasPerm(permLevel, "admin")) {
+								if (args.size() < 1 || !args.get(0).equals("confirm")) {
+									systemMessage(
+											"This command will wipe all xp of all players, are you sure you want to continue?\nAdd 'confirm' to the command to confirm your action.",
+											cmd, client);
+									return true;
+								}
+
+								final String cmdF = cmd;
+								AccountManager.getInstance().runForAllAccounts(acc -> {
+									// Reset level
+									try {
+										acc.getLevel().resetLevelXP();
+										systemMessage("Resetted level XP of " + acc.getDisplayName() + ".", cmdF,
+												client);
+									} catch (Exception e) {
+										systemMessage("Error: " + e, cmdF, client);
+									}
+								});
+
+								return true;
+							}
+						}
+						case "srp": {
+							// Sends a raw packet
+							if (GameServer.hasPerm(permLevel, "developer")) {
+								String packet = "";
+								if (args.size() < 1) {
+									systemMessage("Missing argument: raw-packet", cmd, client);
+									return true;
+								}
+
+								// Parse arguments
+								packet = args.get(0);
+								String player = client.getPlayer().getDisplayName();
+								if (args.size() > 1) {
+									player = args.get(1);
+								}
 								String uuid = AccountManager.getInstance().getUserByDisplayName(player);
 								if (uuid == null) {
 									// Player not found
@@ -3351,77 +3587,32 @@ public class SendMessage extends AbstractChatPacket {
 								}
 								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
-								// Add levels
+								// Send packet
 								try {
-									int levels = Integer.parseInt(args.get(0));
-									if (levels < 0) {
-										systemMessage("Invalid XP amount: " + levels, cmd, client);
+									if (acc.getOnlinePlayerInstance() == null) {
+										systemMessage("Error: player not online", cmd, client);
 										return true;
 									}
-									acc.getLevel().addLevel(levels);
-									systemMessage("Given " + levels + " levels to " + acc.getDisplayName() + ".", cmd,
-											client);
+									acc.getOnlinePlayerInstance().client.sendPacket(packet);
+									systemMessage("Packet has been sent.", cmd, client);
 								} catch (Exception e) {
 									systemMessage("Error: " + e, cmd, client);
 								}
-							} else {
-								final String cmdF = cmd;
-								AccountManager.getInstance().runForAllAccounts(acc -> {
-									// Add levels
-									try {
-										int levels = Integer.parseInt(args.get(0));
-										if (levels < 0) {
-											systemMessage("Invalid XP amount: " + levels, cmdF, client);
-										}
-										acc.getLevel().addLevel(levels);
-										systemMessage("Given " + levels + " levels to " + acc.getDisplayName() + ".",
-												cmdF, client);
-									} catch (Exception e) {
-										systemMessage("Error: " + e, cmdF, client);
-									}
-								});
+
 								return true;
 							}
-
-							return true;
 						}
-					}
-					case "resetalllevels": {
-						// Reset all levels
-						// Parse arguments
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							if (args.size() < 1 || !args.get(0).equals("confirm")) {
-								systemMessage(
-										"This command will wipe all xp of all players, are you sure you want to continue?\nAdd 'confirm' to the command to confirm your action.",
-										cmd, client);
-								return true;
-							}
-
-							final String cmdF = cmd;
-							AccountManager.getInstance().runForAllAccounts(acc -> {
-								// Reset level
+						case "questskip": {
+							// Skips quests
+							int count = 1;
+							if (args.size() > 0)
 								try {
-									acc.getLevel().resetLevelXP();
-									systemMessage("Resetted level XP of " + acc.getDisplayName() + ".", cmdF, client);
+									count = Integer.parseInt(args.get(0));
 								} catch (Exception e) {
-									systemMessage("Error: " + e, cmdF, client);
+									return true;
 								}
-							});
-
-							return true;
-						}
-					}
-					case "srp": {
-						// Sends a raw packet
-						if (GameServer.hasPerm(permLevel, "developer")) {
-							String packet = "";
-							if (args.size() < 1) {
-								systemMessage("Missing argument: raw-packet", cmd, client);
-								return true;
-							}
 
 							// Parse arguments
-							packet = args.get(0);
 							String player = client.getPlayer().getDisplayName();
 							if (args.size() > 1) {
 								player = args.get(1);
@@ -3440,128 +3631,29 @@ public class SendMessage extends AbstractChatPacket {
 									systemMessage("Error: player not online", cmd, client);
 									return true;
 								}
-								acc.getOnlinePlayerInstance().client.sendPacket(packet);
-								systemMessage("Packet has been sent.", cmd, client);
+								if (QuestManager.getActiveQuest(acc) == null) {
+									systemMessage("Error: no further quests", cmd, client);
+									return true;
+								}
+								int c = 0;
+								for (int i = 0; i < count; i++) {
+									c++;
+									if (!QuestManager.finishQuest(acc.getOnlinePlayerInstance(),
+											Integer.parseInt(QuestManager.getActiveQuest(acc))))
+										break;
+								}
+								systemMessage(
+										"Skipped " + c + " quests, now at: "
+												+ QuestManager
+														.getQuest(QuestManager.getActiveQuest(client.getPlayer())).name,
+										cmd, client);
 							} catch (Exception e) {
 								systemMessage("Error: " + e, cmd, client);
 							}
 
 							return true;
 						}
-					}
-					case "questskip": {
-						// Skips quests
-						int count = 1;
-						if (args.size() > 0)
-							try {
-								count = Integer.parseInt(args.get(0));
-							} catch (Exception e) {
-								return true;
-							}
-
-						// Parse arguments
-						String player = client.getPlayer().getDisplayName();
-						if (args.size() > 1) {
-							player = args.get(1);
-						}
-						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-						// Send packet
-						try {
-							if (acc.getOnlinePlayerInstance() == null) {
-								systemMessage("Error: player not online", cmd, client);
-								return true;
-							}
-							if (QuestManager.getActiveQuest(acc) == null) {
-								systemMessage("Error: no further quests", cmd, client);
-								return true;
-							}
-							int c = 0;
-							for (int i = 0; i < count; i++) {
-								c++;
-								if (!QuestManager.finishQuest(acc.getOnlinePlayerInstance(),
-										Integer.parseInt(QuestManager.getActiveQuest(acc))))
-									break;
-							}
-							systemMessage(
-									"Skipped " + c + " quests, now at: "
-											+ QuestManager
-													.getQuest(QuestManager.getActiveQuest(client.getPlayer())).name,
-									cmd, client);
-						} catch (Exception e) {
-							systemMessage("Error: " + e, cmd, client);
-						}
-
-						return true;
-					}
-					case "takeitem": {
-						try {
-							int defID = 0;
-							int quantity = 1;
-							String player = "";
-							String uuid = client.getPlayer().getAccountID();
-
-							if (args.size() < 1) {
-								systemMessage("Missing argument: itemDefId", cmd, client);
-								return true;
-							}
-
-							defID = Integer.valueOf(args.get(0));
-							if (args.size() >= 2) {
-								quantity = Integer.valueOf(args.get(1));
-							}
-
-							if (args.size() >= 3) {
-								player = args.get(2);
-
-								// check existence of player
-
-								uuid = AccountManager.getInstance().getUserByDisplayName(player);
-								if (uuid == null) {
-									// Player not found
-									systemMessage("Specified account could not be located.", cmd, client);
-									return true;
-								}
-							}
-
-							// funny stuff check
-							if (quantity <= 0 || defID <= 0) {
-								systemMessage("You cannot remove 0 or less quantity of/or an item ID of 0 or below.",
-										cmd, client);
-								return true;
-							}
-
-							// find account
-							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-							// give item to the command sender..
-							var onlinePlayer = acc.getOnlinePlayerInstance();
-							var result = acc.getSaveSpecificInventory().getItemAccessor(onlinePlayer).remove(defID,
-									quantity);
-
-							if (result)
-								systemMessage(
-										"Removed " + acc.getDisplayName() + " " + quantity + " of item " + defID
-												+ ", remaining: " + acc.getSaveSpecificInventory()
-														.getItemAccessor(onlinePlayer).getCountOfItem(defID),
-										cmd, client);
-							else
-								systemMessage("Failed to remove item.", cmd, client);
-							return true;
-						} catch (Exception e) {
-							systemMessage("Error: " + e, cmd, client);
-							return true;
-						}
-					}
-					case "giveitem":
-						if (GameServer.hasPerm(permLevel, "admin")
-								|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources) {
+						case "takeitem": {
 							try {
 								int defID = 0;
 								int quantity = 1;
@@ -3593,7 +3685,8 @@ public class SendMessage extends AbstractChatPacket {
 
 								// funny stuff check
 								if (quantity <= 0 || defID <= 0) {
-									systemMessage("You cannot give 0 or less quantity of/or an item ID of 0 or below.",
+									systemMessage(
+											"You cannot remove 0 or less quantity of/or an item ID of 0 or below.",
 											cmd, client);
 									return true;
 								}
@@ -3603,22 +3696,86 @@ public class SendMessage extends AbstractChatPacket {
 
 								// give item to the command sender..
 								var onlinePlayer = acc.getOnlinePlayerInstance();
-								var result = acc.getSaveSpecificInventory().getItemAccessor(onlinePlayer).add(defID,
+								var result = acc.getSaveSpecificInventory().getItemAccessor(onlinePlayer).remove(defID,
 										quantity);
 
-								if (result.length > 0)
+								if (result)
 									systemMessage(
-											"Gave " + acc.getDisplayName() + " " + quantity + " of item " + defID + ".",
+											"Removed " + acc.getDisplayName() + " " + quantity + " of item " + defID
+													+ ", remaining: " + acc.getSaveSpecificInventory()
+															.getItemAccessor(onlinePlayer).getCountOfItem(defID),
 											cmd, client);
 								else
-									systemMessage("Failed to add item.", cmd, client);
+									systemMessage("Failed to remove item.", cmd, client);
 								return true;
 							} catch (Exception e) {
 								systemMessage("Error: " + e, cmd, client);
 								return true;
 							}
 						}
-						break;
+						case "giveitem":
+							if (GameServer.hasPerm(permLevel, "admin")
+									|| client.getPlayer().getSaveSpecificInventory()
+											.getSaveSettings().giveAllResources) {
+								try {
+									int defID = 0;
+									int quantity = 1;
+									String player = "";
+									String uuid = client.getPlayer().getAccountID();
+
+									if (args.size() < 1) {
+										systemMessage("Missing argument: itemDefId", cmd, client);
+										return true;
+									}
+
+									defID = Integer.valueOf(args.get(0));
+									if (args.size() >= 2) {
+										quantity = Integer.valueOf(args.get(1));
+									}
+
+									if (args.size() >= 3) {
+										player = args.get(2);
+
+										// check existence of player
+
+										uuid = AccountManager.getInstance().getUserByDisplayName(player);
+										if (uuid == null) {
+											// Player not found
+											systemMessage("Specified account could not be located.", cmd, client);
+											return true;
+										}
+									}
+
+									// funny stuff check
+									if (quantity <= 0 || defID <= 0) {
+										systemMessage(
+												"You cannot give 0 or less quantity of/or an item ID of 0 or below.",
+												cmd, client);
+										return true;
+									}
+
+									// find account
+									CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+									// give item to the command sender..
+									var onlinePlayer = acc.getOnlinePlayerInstance();
+									var result = acc.getSaveSpecificInventory().getItemAccessor(onlinePlayer).add(defID,
+											quantity);
+
+									if (result.length > 0)
+										systemMessage(
+												"Gave " + acc.getDisplayName() + " " + quantity + " of item " + defID
+														+ ".",
+												cmd, client);
+									else
+										systemMessage("Failed to add item.", cmd, client);
+									return true;
+								} catch (Exception e) {
+									systemMessage("Error: " + e, cmd, client);
+									return true;
+								}
+							}
+							break;
 					}
 				}
 

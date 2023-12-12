@@ -131,6 +131,11 @@ public class OcProxyInfo {
      * @return OcProxyInfo instance
      */
     public static OcProxyInfo saveOc(CenturiaAccount user, OcProxyInfo oc) {
+        if (!oc.displayName.matches("^[A-Za-z0-9_\\-. ]+")) {
+            // Invalid name
+            throw new IllegalArgumentException("OC name contains invalid characters");
+        }
+
         // Get save
         PlayerInventory data = user.getSaveSpecificInventory();
 
