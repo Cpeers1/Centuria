@@ -160,6 +160,12 @@ public class SendMessage extends AbstractChatPacket {
 		// Clean message
 		message = replaceCaseInsensitive(message, "<noparse>", "");
 		message = replaceCaseInsensitive(message, "</noparse>", "");
+		message = replaceCaseInsensitive(message, "\\<noparse\\>", "");
+		message = replaceCaseInsensitive(message, "\\</noparse\\>", "");
+		message = replaceCaseInsensitive(message, "\\<noparse>", "");
+		message = replaceCaseInsensitive(message, "\\</noparse>", "");
+		message = replaceCaseInsensitive(message, "<noparse\\>", "");
+		message = replaceCaseInsensitive(message, "</noparse\\>", "");
 		message = message.trim();
 
 		// Check content
