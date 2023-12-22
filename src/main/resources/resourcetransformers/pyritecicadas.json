@@ -1,0 +1,23 @@
+{
+    "Resources": {},
+    "HarvestTables": {
+        "7673": {
+            "objectName": "BT/BTHP009/PyriteCicada",
+            "rewards": [
+                {
+                    "itemId": "7594",
+                    "minCount": 1,
+                    "maxCount": 1,
+                    "weight": 12
+                },
+                {
+                    "itemId": "7593",
+                    "minCount": 1,
+                    "maxCount": 1,
+                    "weight": 88
+                }
+            ]
+        }
+    },
+    "LootTables": {}
+}

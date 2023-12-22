@@ -6,20 +6,20 @@
       "rewards": [
         {
           "itemId": "28488",
-          "minCount": 3,
-          "maxCount": 10,
+          "minCount": 10,
+          "maxCount": 15,
           "weight": 65
         },
         {
           "itemId": "28489",
-          "minCount": 2,
-          "maxCount": 8,
+          "minCount": 8,
+          "maxCount": 12,
           "weight": 20
         },
         {
           "itemId": "28490",
-          "minCount": 1,
-          "maxCount": 5,
+          "minCount": 5,
+          "maxCount": 10,
           "weight": 15
         }
       ]
@@ -29,20 +29,20 @@
       "rewards": [
         {
           "itemId": "28488",
-          "minCount": 3,
-          "maxCount": 10,
+          "minCount": 10,
+          "maxCount": 15,
           "weight": 65
         },
         {
           "itemId": "28489",
-          "minCount": 2,
-          "maxCount": 8,
+          "minCount": 8,
+          "maxCount": 12,
           "weight": 20
         },
         {
           "itemId": "28490",
-          "minCount": 1,
-          "maxCount": 5,
+          "minCount": 5,
+          "maxCount": 10,
           "weight": 15
         }
       ]
