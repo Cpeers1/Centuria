@@ -707,7 +707,7 @@ public class ItemAccessor {
 					} else {
 						// Remove existing
 						removedItemUUIDs = container.inventoryInteraction.removeMultiple(inventory,
-								object.get("defId").getAsInt(), q);
+								object.get("defId").getAsInt(), 1);
 						if (removedItemUUIDs == null) {
 							return false;
 						}
