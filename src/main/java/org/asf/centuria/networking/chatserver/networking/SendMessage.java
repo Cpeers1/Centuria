@@ -674,21 +674,33 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("gatherallplayers");
 			commandMessages.add("endgathering");
 		}
-		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
-				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllCurrency
-				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllFurnitureItems
-				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllClothes
-				|| (GameServer.hasPerm(permLevel, "admin")
-						|| (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
-								&& GameServer.hasPerm(permLevel, "moderator"))))
+		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemFurnitureItems
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemMods
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemResources
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemSanctuaryTypes
+				|| (GameServer.hasPerm(permLevel, "admin") || ((client.getPlayer().getSaveSpecificInventory()
+						.getSaveSettings().allowGiveItemAvatars
+						|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes
+						|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
+						|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemFurnitureItems
+						|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemMods
+						|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemResources
+						|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemSanctuaryTypes)
+						&& GameServer.hasPerm(permLevel, "moderator"))))
 			if (GameServer.hasPerm(permLevel, "moderator"))
 				commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
 			else
 				commandMessages.add("giveitem <itemDefId> [<quantity>]");
-		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
-				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllCurrency
-				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllFurnitureItems
-				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllClothes
+		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemFurnitureItems
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemMods
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemResources
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemSanctuaryTypes
 				|| GameServer.hasPerm(permLevel, "moderator"))
 			if (GameServer.hasPerm(permLevel, "moderator"))
 				commandMessages.add("removeallfiltereditems [<player>]");
@@ -4055,7 +4067,16 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "giveitem":
 						if (GameServer.hasPerm(permLevel, "admin")
-								|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources) {
+								|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars
+								|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes
+								|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
+								|| client.getPlayer().getSaveSpecificInventory()
+										.getSaveSettings().allowGiveItemFurnitureItems
+								|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemMods
+								|| client.getPlayer().getSaveSpecificInventory()
+										.getSaveSettings().allowGiveItemResources
+								|| client.getPlayer().getSaveSpecificInventory()
+										.getSaveSettings().allowGiveItemSanctuaryTypes) {
 							try {
 								int defID = 0;
 								int quantity = 1;
@@ -4076,7 +4097,6 @@ public class SendMessage extends AbstractChatPacket {
 									player = args.get(2);
 
 									// check existence of player
-
 									uuid = AccountManager.getInstance().getUserByDisplayName(player);
 									if (uuid == null) {
 										// Player not found
@@ -4120,10 +4140,15 @@ public class SendMessage extends AbstractChatPacket {
 				// Remove filtered items command
 				if (cmd.equals("removeallfiltereditems")) {
 					// Check mode and permissions
-					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
-							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllCurrency
-							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllFurnitureItems
-							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllClothes
+					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
+							|| client.getPlayer().getSaveSpecificInventory()
+									.getSaveSettings().allowGiveItemFurnitureItems
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemMods
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemResources
+							|| client.getPlayer().getSaveSpecificInventory()
+									.getSaveSettings().allowGiveItemSanctuaryTypes
 							|| GameServer.hasPerm(permLevel, "moderator")) {
 						// Run command
 						try {
@@ -4225,23 +4250,32 @@ public class SendMessage extends AbstractChatPacket {
 										&& !ItemAccessor.getInventoryTypeOf(defID).equals("104")
 										&& !ItemAccessor.getInventoryTypeOf(defID).equals("111")
 										&& !ItemAccessor.getInventoryTypeOf(defID).equals("103")
-										&& !ItemAccessor.getInventoryTypeOf(defID).equals("102"))) {
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("102")
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("10")
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("2")
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("1"))) {
 							systemMessage("Invalid item defID. Please make sure you can actually obtain this item.",
 									cmd, client);
 							return true;
 						}
 
 						// check perms and item type
-						if ((ItemAccessor.getInventoryTypeOf(defID).equals("100")
-								&& !client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllClothes)
+						if ((ItemAccessor.getInventoryTypeOf(defID).equals("100") && !client.getPlayer()
+								.getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes)
 								|| (ItemAccessor.getInventoryTypeOf(defID).equals("104") && !client.getPlayer()
-										.getSaveSpecificInventory().getSaveSettings().giveAllCurrency)
+										.getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency)
 								|| (ItemAccessor.getInventoryTypeOf(defID).equals("111") && !client.getPlayer()
-										.getSaveSpecificInventory().getSaveSettings().giveAllClothes)
+										.getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes)
 								|| (ItemAccessor.getInventoryTypeOf(defID).equals("103") && !client.getPlayer()
-										.getSaveSpecificInventory().getSaveSettings().giveAllResources)
+										.getSaveSpecificInventory().getSaveSettings().allowGiveItemResources)
 								|| (ItemAccessor.getInventoryTypeOf(defID).equals("102") && !client.getPlayer()
-										.getSaveSpecificInventory().getSaveSettings().giveAllFurnitureItems)) {
+										.getSaveSpecificInventory().getSaveSettings().allowGiveItemFurnitureItems)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("10") && !client.getPlayer()
+										.getSaveSpecificInventory().getSaveSettings().allowGiveItemSanctuaryTypes)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("2") && !client.getPlayer()
+										.getSaveSpecificInventory().getSaveSettings().allowGiveItemMods)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("1") && !client.getPlayer()
+										.getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars)) {
 							systemMessage("Invalid item defID. Please make sure you can actually obtain this item.",
 									cmd, client);
 							return true;

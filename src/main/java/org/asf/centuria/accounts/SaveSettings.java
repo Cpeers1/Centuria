@@ -23,6 +23,13 @@ public class SaveSettings {
 	public boolean giveAllSanctuaryTypes = true;
 	public boolean giveAllCurrency = true;
 	public boolean giveAllResources = true;
+	public boolean allowGiveItemAvatars = true;
+	public boolean allowGiveItemMods = true;
+	public boolean allowGiveItemSanctuaryTypes = true;
+	public boolean allowGiveItemClothes = true;
+	public boolean allowGiveItemFurnitureItems = true;
+	public boolean allowGiveItemResources = true;
+	public boolean allowGiveItemCurrency = true;
 	public JsonObject saveColors = null;
 	public JsonObject saveNamePrefixes = null;
 	public String tradeLockID = "default";
@@ -36,6 +43,13 @@ public class SaveSettings {
 		this.giveAllSanctuaryTypes = Centuria.defaultGiveAllSanctuaryTypes;
 		this.giveAllCurrency = Centuria.defaultGiveAllCurrency;
 		this.giveAllResources = Centuria.defaultGiveAllResources;
+		this.allowGiveItemAvatars = Centuria.defaultAllowGiveItemAvatars;
+		this.allowGiveItemClothes = Centuria.defaultAllowGiveItemClothes;
+		this.allowGiveItemMods = Centuria.defaultAllowGiveItemMods;
+		this.allowGiveItemFurnitureItems = Centuria.defaultAllowGiveItemFurnitureItems;
+		this.allowGiveItemSanctuaryTypes = Centuria.defaultAllowGiveItemSanctuaryTypes;
+		this.allowGiveItemCurrency = Centuria.defaultAllowGiveItemCurrency;
+		this.allowGiveItemResources = Centuria.defaultAllowGiveItemResources;
 	}
 
 	/**
@@ -54,6 +68,34 @@ public class SaveSettings {
 		this.giveAllCurrency = data.get("giveAllCurrency").getAsBoolean();
 		this.giveAllResources = data.get("giveAllResources").getAsBoolean();
 		this.tradeLockID = data.get("tradeLockID").getAsString();
+		if (data.has("allowGiveItemAvatars"))
+			this.allowGiveItemAvatars = data.get("allowGiveItemAvatars").getAsBoolean();
+		else
+			this.allowGiveItemAvatars = giveAllAvatars;
+		if (data.has("allowGiveItemlothes"))
+			this.allowGiveItemClothes = data.get("allowGiveItemClothes").getAsBoolean();
+		else
+			this.allowGiveItemClothes = giveAllClothes;
+		if (data.has("allowGiveItemMods"))
+			this.allowGiveItemMods = data.get("allowGiveItemMods").getAsBoolean();
+		else
+			this.allowGiveItemMods = giveAllMods;
+		if (data.has("allowGiveItemFurnitureItems"))
+			this.allowGiveItemFurnitureItems = data.get("allowGiveItemFurnitureItems").getAsBoolean();
+		else
+			this.allowGiveItemFurnitureItems = giveAllFurnitureItems;
+		if (data.has("allowGiveItemSanctuaryTypes"))
+			this.allowGiveItemSanctuaryTypes = data.get("allowGiveItemSanctuaryTypes").getAsBoolean();
+		else
+			this.allowGiveItemSanctuaryTypes = giveAllSanctuaryTypes;
+		if (data.has("allowGiveItemCurrency"))
+			this.allowGiveItemSanctuaryTypes = data.get("allowGiveItemCurrency").getAsBoolean();
+		else
+			this.allowGiveItemCurrency = giveAllCurrency;
+		if (data.has("allowGiveItemResources"))
+			this.allowGiveItemResources = data.get("allowGiveResources").getAsBoolean();
+		else
+			this.allowGiveItemResources = giveAllResources;
 		if (data.has("saveColors") && !data.get("saveColors").isJsonNull())
 			this.saveColors = data.get("saveColors").getAsJsonObject();
 		if (data.has("saveNamePrefixes") && !data.get("saveNamePrefixes").isJsonNull())
@@ -76,6 +118,13 @@ public class SaveSettings {
 		obj.addProperty("giveAllSanctuaryTypes", giveAllSanctuaryTypes);
 		obj.addProperty("giveAllCurrency", giveAllCurrency);
 		obj.addProperty("giveAllResources", giveAllResources);
+		obj.addProperty("allowGiveItemAvatars", allowGiveItemAvatars);
+		obj.addProperty("allowGiveItemMods", allowGiveItemMods);
+		obj.addProperty("allowGiveItemSanctuaryTypes", allowGiveItemSanctuaryTypes);
+		obj.addProperty("allowGiveItemClothes", allowGiveItemClothes);
+		obj.addProperty("allowGiveItemFurnitureItems", allowGiveItemFurnitureItems);
+		obj.addProperty("allowGiveItemResources", allowGiveItemResources);
+		obj.addProperty("allowGiveItemCurrency", allowGiveItemCurrency);
 		obj.addProperty("tradeLockID", tradeLockID);
 		if (saveColors != null)
 			obj.add("saveColors", saveColors);

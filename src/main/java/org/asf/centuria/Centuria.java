@@ -107,6 +107,13 @@ public class Centuria {
 	public static boolean defaultGiveAllSanctuaryTypes = true;
 	public static boolean defaultGiveAllCurrency = true;
 	public static boolean defaultGiveAllResources = true;
+	public static boolean defaultAllowGiveItemSanctuaryTypes = true;
+	public static boolean defaultAllowGiveItemAvatars = true;
+	public static boolean defaultAllowGiveItemMods = true;
+	public static boolean defaultAllowGiveItemClothes = true;
+	public static boolean defaultAllowGiveItemFurnitureItems = true;
+	public static boolean defaultAllowGiveItemResources = true;
+	public static boolean defaultAllowGiveItemCurrency = true;
 	public static boolean encryptChat = false;
 	public static boolean encryptVoiceChat = false;
 	public static boolean encryptGame = false;
@@ -435,6 +442,13 @@ public class Centuria {
 					+ "give-all-furniture=false\n" //
 					+ "give-all-currency=false\n" //
 					+ "give-all-resources=false\n" //
+					+ "allow-giveitem-resources=false\n" //
+					+ "allow-giveitem-currency=false\n" //
+					+ "allow-giveitem-furniture=false\n" //
+					+ "allow-giveitem-sanctuary-types=false\n" //
+					+ "allow-giveitem-clothes=false\n" //
+					+ "allow-giveitem-avatars=false\n" //
+					+ "allow-giveitem-mods=false\n" //
 					+ "\n" //
 					+ "server-spawn-behaviour=random\n" //
 					+ "default-save-behaviour=single\n" //
@@ -499,6 +513,16 @@ public class Centuria {
 		defaultGiveAllFurnitureItems = serverProperties.getOrDefault("give-all-furniture", "true").equals("true");
 		defaultGiveAllResources = serverProperties.getOrDefault("give-all-resources", "true").equals("true");
 		defaultGiveAllCurrency = serverProperties.getOrDefault("give-all-currency", "true").equals("true");
+		defaultAllowGiveItemAvatars = serverProperties.getOrDefault("allow-giveitem-avatars", "true").equals("true");
+		defaultAllowGiveItemMods = serverProperties.getOrDefault("allow-giveitem-mods", "true").equals("true");
+		defaultAllowGiveItemClothes = serverProperties.getOrDefault("allow-giveitem-clothes", "true").equals("true");
+		defaultAllowGiveItemSanctuaryTypes = serverProperties.getOrDefault("allow-giveitem-sanctuary-types", "true")
+				.equals("true");
+		defaultAllowGiveItemFurnitureItems = serverProperties.getOrDefault("allow-giveitem-furniture", "true")
+				.equals("true");
+		defaultAllowGiveItemResources = serverProperties.getOrDefault("allow-giveitem-resources", "true")
+				.equals("true");
+		defaultAllowGiveItemCurrency = serverProperties.getOrDefault("allow-giveitem-currency", "true").equals("true");
 		encryptChat = serverProperties.getOrDefault("encrypt-chat", "false").equals("true")
 				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
 		encryptVoiceChat = serverProperties.getOrDefault("encrypt-voice-chat", "true").equals("true")
@@ -521,7 +545,9 @@ public class Centuria {
 
 			// Create settings and deduct from server config
 			String defaultSaveName = "default";
-			if (defaultGiveAllAvatars && defaultGiveAllMods && defaultGiveAllWings && defaultGiveAllSanctuaryTypes) {
+			if ((defaultGiveAllAvatars && defaultGiveAllMods && defaultGiveAllWings && defaultGiveAllSanctuaryTypes)
+					|| (defaultAllowGiveItemAvatars && defaultAllowGiveItemMods
+							&& defaultAllowGiveItemSanctuaryTypes)) {
 				defaultSaveName = "creative";
 			} else if (!defaultGiveAllAvatars && !defaultGiveAllMods && !defaultGiveAllClothes && !defaultGiveAllWings
 					&& !defaultGiveAllSanctuaryTypes && !defaultGiveAllFurnitureItems && !defaultGiveAllResources
@@ -551,6 +577,13 @@ public class Centuria {
 			save.addProperty("giveAllSanctuaryTypes", defaultGiveAllSanctuaryTypes);
 			save.addProperty("giveAllCurrency", defaultGiveAllCurrency);
 			save.addProperty("giveAllResources", defaultGiveAllResources);
+			save.addProperty("allowGiveItemAvatars", defaultAllowGiveItemAvatars);
+			save.addProperty("allowGiveItemClothes", defaultAllowGiveItemClothes);
+			save.addProperty("allowGiveItemMods", defaultAllowGiveItemMods);
+			save.addProperty("allowGiveItemFurnitureItems", defaultAllowGiveItemFurnitureItems);
+			save.addProperty("allowGiveItemSanctuaryTypes", defaultAllowGiveItemSanctuaryTypes);
+			save.addProperty("allowGiveItemCurrency", defaultAllowGiveItemCurrency);
+			save.addProperty("allowGiveItemResources", defaultAllowGiveItemResources);
 			save.add("saveColors", colors);
 			save.add("saveNamePrefixes", prefixes);
 			saves.add(defaultSaveName, save);

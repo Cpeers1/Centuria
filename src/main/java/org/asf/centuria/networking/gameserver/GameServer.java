@@ -874,8 +874,10 @@ public class GameServer extends BaseSmartfoxServer {
 
 			// Check color
 			if (color.equals("default") && account.getSaveMode() == SaveMode.MANAGED) {
-				if (saveSettings.giveAllAvatars && saveSettings.giveAllMods && saveSettings.giveAllWings
-						&& saveSettings.giveAllSanctuaryTypes) {
+				if ((saveSettings.giveAllAvatars && saveSettings.giveAllMods && saveSettings.giveAllWings
+						&& saveSettings.giveAllSanctuaryTypes)
+						|| (saveSettings.allowGiveItemAvatars && saveSettings.allowGiveItemMods
+								&& saveSettings.allowGiveItemSanctuaryTypes)) {
 					// Creative
 					color = "yellow";
 				} else if (!saveSettings.giveAllAvatars && !saveSettings.giveAllMods && !saveSettings.giveAllClothes
@@ -1024,8 +1026,10 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Check color
 		if (color.equals("default") && account.getSaveMode() == SaveMode.MANAGED) {
-			if (saveSettings.giveAllAvatars && saveSettings.giveAllMods && saveSettings.giveAllWings
-					&& saveSettings.giveAllSanctuaryTypes) {
+			if ((saveSettings.giveAllAvatars && saveSettings.giveAllMods && saveSettings.giveAllWings
+					&& saveSettings.giveAllSanctuaryTypes)
+					|| (saveSettings.allowGiveItemAvatars && saveSettings.allowGiveItemMods
+							&& saveSettings.allowGiveItemSanctuaryTypes)) {
 				// Creative
 				color = "yellow";
 			} else if (!saveSettings.giveAllAvatars && !saveSettings.giveAllMods && !saveSettings.giveAllClothes

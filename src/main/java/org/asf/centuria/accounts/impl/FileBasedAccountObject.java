@@ -88,7 +88,6 @@ public class FileBasedAccountObject extends CenturiaAccount {
 				mode = SaveMode.SINGLE;
 				sharedInv.deleteItem("savemanifest");
 			}
-
 		} else {
 			// Use the existing inventory
 			sharedInv = (FileBasedPlayerInventory) oldA.getSaveSharedInventory();
@@ -105,6 +104,41 @@ public class FileBasedAccountObject extends CenturiaAccount {
 		if (manager == null && getSaveMode() == SaveMode.MANAGED) {
 			manager = new FileBasedSaveManager(sharedInv, this);
 			mainInv = new FileBasedPlayerInventory(userUUID, manager.getCurrentActiveSave());
+		}
+
+		// Load saves
+		if (getSaveMode() == SaveMode.MANAGED) {
+			// Find default save settings
+			JsonObject defaultSaveSettings;
+			try {
+				defaultSaveSettings = JsonParser.parseString(Files.readString(Path.of("savemanager.json")))
+						.getAsJsonObject();
+			} catch (JsonSyntaxException | IOException e) {
+				manager = null;
+				throw new RuntimeException(e);
+			}
+
+			// Go through saves
+			for (String saveName : defaultSaveSettings.get("saves").getAsJsonObject().keySet()) {
+				// Skip existing
+				if (manager.saveExists(saveName))
+					continue;
+
+				// Create if needed
+				JsonObject saveSettings = defaultSaveSettings.get("saves").getAsJsonObject().get(saveName)
+						.getAsJsonObject();
+				if (!manager.createSave(saveName)) {
+					// Failure
+					continue;
+				}
+
+				// Write settings
+				PlayerInventory inv = new FileBasedPlayerInventory(userUUID, saveName);
+				SaveSettings settings = inv.getSaveSettings();
+				saveSettings.addProperty("tradeLockID", saveName);
+				settings.load(saveSettings);
+				inv.writeSaveSettings();
+			}
 		}
 
 		// Load login timestamp
