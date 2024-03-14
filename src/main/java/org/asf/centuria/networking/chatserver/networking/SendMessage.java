@@ -612,10 +612,10 @@ public class SendMessage extends AbstractChatPacket {
 		// Generate the command list
 		ArrayList<String> commandMessages = new ArrayList<String>();
 
-		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
+		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemResources
 				|| GameServer.hasPerm(permLevel, "admin"))
 			commandMessages.add("giveBasicMaterials");
-		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllCurrency
+		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
 				|| GameServer.hasPerm(permLevel, "admin"))
 			commandMessages.add("giveBasicCurrency");
 
@@ -795,7 +795,7 @@ public class SendMessage extends AbstractChatPacket {
 					return true;
 
 				if (cmdId.equals("givebasicmaterials")) {
-					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllResources
+					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemResources
 							|| GameServer.hasPerm(permLevel, "admin")) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
 						var accessor = client.getPlayer().getSaveSpecificInventory().getItemAccessor(onlinePlayer);
@@ -837,7 +837,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					return true;
 				} else if (cmdId.equals("givebasiccurrency")) {
-					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().giveAllCurrency
+					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
 							|| GameServer.hasPerm(permLevel, "admin")) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
 						var accessor = client.getPlayer().getSaveSpecificInventory().getCurrencyAccessor();
