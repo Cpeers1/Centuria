@@ -450,7 +450,9 @@ public class Centuria {
 					+ "\n" //
 					+ "vpn-user-whitelist=vpn-whitelist\n" //
 					+ "vpn-ipv4-banlist=\n" //
-					+ "vpn-ipv6-banlist=");
+					+ "vpn-ipv6-banlist=\n" //
+					+ "\n" //
+					+ "allowed-proxies=");
 		}
 
 		// Parse properties
@@ -630,6 +632,10 @@ public class Centuria {
 			props.put("keystore-password", Files.readString(Path.of("keystore.jks.password")));
 			directorServer = ConnectiveHttpServer.createNetworked("HTTPS/1.1", props);
 			directorServer.setContentSource(new CorsWildcardContentSource());
+			if (serverProperties.containsKey("allowed-proxies")) {
+				for (String addr : serverProperties.get("allowed-proxies").replace(" ", "").split(","))
+					directorServer.addAllowedProxySources(addr);
+			}
 
 			// Register handlers
 			directorServer.registerProcessor(new GameServerRequestHandler());
@@ -643,6 +649,10 @@ public class Centuria {
 			// Start HTTP
 			directorServer = ConnectiveHttpServer.createNetworked("HTTP/1.1", props);
 			directorServer.setContentSource(new CorsWildcardContentSource());
+			if (serverProperties.containsKey("allowed-proxies")) {
+				for (String addr : serverProperties.get("allowed-proxies").replace(" ", "").split(","))
+					directorServer.addAllowedProxySources(addr);
+			}
 
 			// Register handlers
 			directorServer.registerProcessor(new GameServerRequestHandler());
@@ -779,6 +789,12 @@ public class Centuria {
 	}
 
 	private static void setupAPI(ConnectiveHttpServer apiServer) {
+		// Proxies
+		if (serverProperties.containsKey("allowed-proxies")) {
+			for (String addr : serverProperties.get("allowed-proxies").replace(" ", "").split(","))
+				apiServer.addAllowedProxySources(addr);
+		}
+
 		// Allow modules to register handlers
 		EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
 

@@ -12,9 +12,7 @@ import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.accounts.highlevel.ItemAccessor;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
-import org.asf.centuria.entities.inventoryitems.InventoryItemManager;
 import org.asf.centuria.entities.players.Player;
-import org.asf.centuria.enums.inventory.InventoryType;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 
@@ -136,17 +134,12 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 				for (String change : inv.getAccessor().getItemsToSave())
 					inv.setItem(change, inv.getItem(change));
 				inv.getAccessor().completedSave();
-			}
-			else
-			{
+			} else {
 				// Give other defaults
-				for (String species : inv.getAvatarAccessor().getAllAvatarSpeciesTypes())
-				{
-					if (inv.getAvatarAccessor().isAvatarSpeciesUnlocked(species))
-					{
+				for (String species : inv.getAvatarAccessor().getAllAvatarSpeciesTypes()) {
+					if (inv.getAvatarAccessor().isAvatarSpeciesUnlocked(species)) {
 						// Unlock default body mods
-						for (String mod : inv.getAvatarAccessor().getDefaultBodyPartTypes(species))
-						{
+						for (String mod : inv.getAvatarAccessor().getDefaultBodyPartTypes(species)) {
 							// Check
 							if (!inv.getAvatarAccessor().isAvatarPartUnlocked(mod))
 								inv.getAvatarAccessor().unlockAvatarPart(mod); // Unlock

@@ -1,5 +1,6 @@
 package org.asf.centuria.rooms;
 
+import java.util.ArrayList;
 import java.util.stream.Stream;
 
 import org.asf.centuria.entities.players.Player;
@@ -18,6 +19,8 @@ public class GameRoom {
 	private String instID;
 	private int levelID;
 	private GameServer server;
+
+	private ArrayList<Object> objects = new ArrayList<Object>();
 
 	/**
 	 * Controls if this room should be allowed to be selected by the game room
@@ -67,6 +70,32 @@ public class GameRoom {
 	public Player[] getPlayers() {
 		return Stream.of(server.getPlayers()).filter(t -> t.room != null && t.room.equalsIgnoreCase(id))
 				.toArray(t -> new Player[t]);
+	}
+
+	/**
+	 * Retrieves objects from the room container, used to store information in
+	 * rooms.
+	 * 
+	 * @param type Object type
+	 * @return Object instance or null
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T getObject(Class<T> type) {
+		for (Object obj : objects) {
+			if (type.isAssignableFrom(obj.getClass()))
+				return (T) obj;
+		}
+		return null;
+	}
+
+	/**
+	 * Adds objects to the room container, used to store information in rooms.
+	 * 
+	 * @param obj Object to add
+	 */
+	public void addObject(Object obj) {
+		if (getObject(obj.getClass()) == null)
+			objects.add(obj);
 	}
 
 }

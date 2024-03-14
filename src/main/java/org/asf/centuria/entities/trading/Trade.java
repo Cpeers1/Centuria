@@ -210,7 +210,24 @@ public class Trade {
 	 * @throws IOException
 	 */
 	public void addItemToTrade(Player player, String itemId, JsonObject item, int quantity) throws IOException {
-		// TODO: IMPLEMENT / FIXES FOR QUANTITY
+		// Check validity
+		if (quantity < 0)
+			return;
+
+		// Verify quantity
+		int ownedQuant = 0;
+		if (item.has("defId"))
+		{
+			// Get quantity
+			ownedQuant = player.account.getSaveSpecificInventory().getItemAccessor(player)
+					.getCountOfItem(item.get("defId").getAsInt());
+		}
+
+		// Reset to max if needed
+		if (quantity > ownedQuant)
+			quantity = ownedQuant;
+
+		// Add
 		TradeAddRemoveItemPacket tradeAddRemovePacket = new TradeAddRemoveItemPacket();
 		tradeAddRemovePacket.isAdding = 1;
 		tradeAddRemovePacket.success = true;
@@ -218,6 +235,10 @@ public class Trade {
 		tradeAddRemovePacket.quantity = quantity;
 		tradeAddRemovePacket.userId = player.account.getAccountID();
 
+		// Send to sender
+		player.client.sendPacket(tradeAddRemovePacket);
+
+		// Send to receiver
 		if (player.account.getAccountID().equals(sourcePlayer.account.getAccountID())) {
 			var itemToGive = itemsToGive.get(itemId);
 
@@ -235,7 +256,6 @@ public class Trade {
 			Centuria.logger.debug(MarkerManager.getMarker("TRADE"),
 					"[TradeAddRemoveItem] [Add]  Server to client of player " + targetPlayer.account.getDisplayName()
 							+ ": " + tradeAddRemovePacket.build());
-
 		} else {
 			var itemToReceive = itemsToReceive.get(itemId);
 
@@ -266,12 +286,29 @@ public class Trade {
 	 * @throws IOException
 	 */
 	public void removeItemFromTrade(Player player, String itemId, int quantity) throws IOException {
+		// Check validity
+		if (quantity < 0 || !itemsToGive.containsKey(itemId))
+			return;
+
+		// Verify quantity
+		int currentQuant = itemsToGive.get(itemId).quantity;
+
+		// Reset to max if needed
+		if (quantity > currentQuant)
+			quantity = currentQuant;
+
+		// Create packet
 		TradeAddRemoveItemPacket tradeAddRemovePacket = new TradeAddRemoveItemPacket();
 		tradeAddRemovePacket.isAdding = 0;
 		tradeAddRemovePacket.success = true;
 		tradeAddRemovePacket.inboundQuantity = quantity;
+		tradeAddRemovePacket.quantity = quantity;
 		tradeAddRemovePacket.userId = player.account.getAccountID();
 
+		// Send to sender
+		player.client.sendPacket(tradeAddRemovePacket);
+
+		// Send to receiver
 		if (player.account.getAccountID().equals(sourcePlayer.account.getAccountID())) {
 			var item = itemsToGive.get(itemId);
 			item.quantity -= quantity;

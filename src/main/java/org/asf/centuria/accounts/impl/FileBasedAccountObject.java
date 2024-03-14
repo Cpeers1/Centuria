@@ -23,6 +23,7 @@ import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.AccountDeletionEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.voicechatserver.VoiceChatClient;
+import org.asf.centuria.rooms.privateinstances.PrivateInstance;
 import org.asf.centuria.social.SocialEntry;
 import org.asf.centuria.social.SocialManager;
 import org.asf.centuria.textfilter.TextFilterService;
@@ -491,6 +492,13 @@ public class FileBasedAccountObject extends CenturiaAccount {
 				manager.deleteDM(dmID);
 			}
 			getSaveSharedInventory().setItem("dms", dms);
+		}
+
+		// Remove from all private instances
+		for (PrivateInstance privateInstance : Centuria.gameServer.getPrivateInstanceManager()
+				.getJoinedInstancesOf(getAccountID())) {
+			// Leave
+			privateInstance.removeParticipant(getAccountID());
 		}
 
 		// Log

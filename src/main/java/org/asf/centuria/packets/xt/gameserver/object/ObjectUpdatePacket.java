@@ -175,10 +175,21 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 			// Send message if joining since the DM system update
 			if (!plr.account.getSaveSharedInventory().containsItem("dmsystemupdated")) {
 				// Send message
-				Centuria.systemMessage(plr, "Welcome back to Fer.al! There have been huge changes to private chat since the time you last logged on.\n\nFirstly, private chat history size is now unlimited! While the public chats still do not record their history, private chats do and are no longer capped at 20 messages.\n\nWhat is important to remember is that as of this update, if a private chat goes inactive for over 60 days, it will get deleted. This is to conserve server storage, you will get a reminder about the limit should the conversation be inactive for 30 days or more.\n\nEnjoy!\n\n- Centuria Development Team", true);
+				Centuria.systemMessage(plr,
+						"Welcome back to Fer.al! There have been huge changes to private chat since the time you last logged on.\n\nFirstly, private chat history size is now unlimited! While the public chats still do not record their history, private chats do and are no longer capped at 20 messages.\n\nWhat is important to remember is that as of this update, if a private chat goes inactive for over 60 days, it will get deleted. This is to conserve server storage, you will get a reminder about the limit should the conversation be inactive for 30 days or more.\n\nEnjoy!\n\n- Centuria Development Team",
+						true);
 
 				// Mark up to date
 				plr.account.getSaveSharedInventory().setItem("dmsystemupdated", new JsonObject());
+			}
+
+			// Messages
+			if (plr.pendingPrivateMessage != null) {
+				// Send message
+				Centuria.systemMessage(plr, plr.pendingPrivateMessage, true);
+
+				// Mark up to date
+				plr.pendingPrivateMessage = null;
 			}
 		}
 
@@ -217,6 +228,8 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 		plr.lastRot = rotation;
 		if (mode == 4)
 			plr.lastAction = action;
+		else
+			action = plr.lastAction;
 
 		// Broadcast sync
 		GameServer srv = (GameServer) client.getServer();

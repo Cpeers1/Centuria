@@ -16,7 +16,7 @@ import com.google.gson.JsonObject;
 public class ItemUncraftPacket implements IXtPacket<ItemUncraftPacket> {
 
 	private static final String PACKET_ID = "iu";
-	
+
 	public boolean success = true;
 	public String itemId;
 	public int count;

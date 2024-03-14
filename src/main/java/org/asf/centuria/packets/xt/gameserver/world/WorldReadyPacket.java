@@ -153,7 +153,8 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 		// If there is a chat server connection, switch the chat to the new room to get
 		// around the chat room leave bug which causes players to see chat from other
-		// worlds
+		// worlds, this also prevents chat desync if the pending room is changed while
+		// loading by eg. private instances, modules, etc
 		ChatClient chClient = Centuria.chatServer.getClient(plr.account.getAccountID());
 		if (chClient != null) {
 			// Leave old public rooms

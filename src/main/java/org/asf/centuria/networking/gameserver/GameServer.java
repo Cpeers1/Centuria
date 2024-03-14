@@ -61,6 +61,8 @@ import org.asf.centuria.packets.xt.gameserver.trade.*;
 import org.asf.centuria.packets.xt.gameserver.user.*;
 import org.asf.centuria.packets.xt.gameserver.world.*;
 import org.asf.centuria.rooms.GameRoomManager;
+import org.asf.centuria.rooms.privateinstances.PrivateInstanceManager;
+import org.asf.centuria.rooms.privateinstances.impl.FileBasedPrivateInstanceManagerImpl;
 import org.asf.centuria.security.AddressChecker;
 import org.asf.centuria.security.IpAddressMatcher;
 import org.asf.centuria.social.SocialEntry;
@@ -84,7 +86,9 @@ public class GameServer extends BaseSmartfoxServer {
 	private Random rnd = new Random();
 	private XmlMapper mapper = new XmlMapper();
 	private HashMap<String, Player> players = new HashMap<String, Player>();
-	private GameRoomManager roomManager = new GameRoomManager(this);
+
+	protected GameRoomManager roomManager = new GameRoomManager(this);
+	protected PrivateInstanceManager privateInstanceManager = new FileBasedPrivateInstanceManagerImpl(this);
 
 	public ArrayList<String> vpnIpsV4 = new ArrayList<String>();
 	public ArrayList<String> vpnIpsV6 = new ArrayList<String>();
@@ -334,7 +338,7 @@ public class GameServer extends BaseSmartfoxServer {
 
 		// Disconnect an already connected instance
 		Player ePlr = getPlayer(acc.getAccountID());
-		if (ePlr != null) {
+		while (ePlr != null) {
 			EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(ePlr.account,
 					"Logged in from another location.", DisconnectType.DUPLICATE_LOGIN));
 			try {
@@ -342,6 +346,7 @@ public class GameServer extends BaseSmartfoxServer {
 			} catch (InterruptedException e) {
 			}
 			ePlr.client.disconnect();
+			ePlr = getPlayer(acc.getAccountID());
 		}
 
 		// Log the login attempt
@@ -531,6 +536,15 @@ public class GameServer extends BaseSmartfoxServer {
 		if (plr.currentGame != null) {
 			plr.currentGame.onExit(plr);
 			plr.currentGame = null;
+		}
+
+		// End trade
+		if (plr.tradeEngagedIn != null) {
+			// Leave trade
+			try {
+				plr.tradeEngagedIn.tradeExit(plr);
+			} catch (IOException e) {
+			}
 		}
 
 		// Remove player character from all clients
@@ -807,30 +821,30 @@ public class GameServer extends BaseSmartfoxServer {
 		// perm = permission to verify
 		switch (level) {
 
+		case "moderator":
+			return perm.equals("moderator");
+
+		case "admin":
+			switch (perm) {
 			case "moderator":
-				return perm.equals("moderator");
-
+				return true;
 			case "admin":
-				switch (perm) {
-					case "moderator":
-						return true;
-					case "admin":
-						return true;
-					default:
-						return false;
-				}
+				return true;
+			default:
+				return false;
+			}
 
+		case "developer":
+			switch (perm) {
+			case "moderator":
+				return true;
+			case "admin":
+				return true;
 			case "developer":
-				switch (perm) {
-					case "moderator":
-						return true;
-					case "admin":
-						return true;
-					case "developer":
-						return true;
-					default:
-						return false;
-				}
+				return true;
+			default:
+				return false;
+			}
 
 		}
 
@@ -1155,6 +1169,15 @@ public class GameServer extends BaseSmartfoxServer {
 	 */
 	public GameRoomManager getRoomManager() {
 		return roomManager;
+	}
+
+	/**
+	 * Retrieves the private instance manager of this server
+	 * 
+	 * @return PrivateInstanceManager instance
+	 */
+	public PrivateInstanceManager getPrivateInstanceManager() {
+		return privateInstanceManager;
 	}
 
 	@Override

@@ -197,13 +197,10 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 			} else if (protocolSwitchPossible()) {
 				// Byte-by-byte mode so that a switch can still be performed
 				String buffer = "";
-				int l = 0;
 				int b = input.read();
 				while (b != 0 && b != -1) {
-					// FIXME: implement a length limit once the chat server handshake size is known
 					buffer += (char) b;
 					b = input.read();
-					l++;
 				}
 				if (b == -1)
 					throw new IOException("Stream closed unexpectedly");

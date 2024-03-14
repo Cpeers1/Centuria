@@ -30,6 +30,9 @@ import org.asf.centuria.packets.xt.gameserver.object.ObjectUpdatePacket;
 import org.asf.centuria.packets.xt.gameserver.relationship.RelationshipJumpToPlayerPacket;
 import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
 import org.asf.centuria.rooms.GameRoom;
+import org.asf.centuria.rooms.privateinstances.PrivateInstance;
+import org.asf.centuria.rooms.privateinstances.containervars.PrivateInstanceContainer;
+import org.asf.centuria.rooms.privateinstances.containervars.PrivateInstanceTeleportVars;
 import org.asf.centuria.social.SocialManager;
 
 import com.google.gson.JsonArray;
@@ -61,6 +64,9 @@ public class Player {
 	public void addObject(Object obj) {
 		client.addObject(obj);
 	}
+
+	// Pending messages
+	public String pendingPrivateMessage;
 
 	//
 	// Moderation (SYNC ONLY)
@@ -131,7 +137,7 @@ public class Player {
 
 	public SmartfoxClient client;
 	public CenturiaAccount account;
-	
+
 	public boolean awaitingPlayerSync;
 
 	public String activeLook;
@@ -236,8 +242,22 @@ public class Player {
 					.getAsJsonObject();
 			packet.displayName = GameServer.getPlayerNameWithPrefix(account);
 			packet.unknownValue = 0; // TODO: What is this??
-
 			player.client.sendPacket(packet);
+
+			// If initial position, update action
+			if (nodeType == WorldObjectMoverNodeType.InitPosition)
+			{
+				// Send object update
+				ObjectUpdatePacket update = new ObjectUpdatePacket();
+				update.mode = 4;
+				update.id = account.getAccountID();
+				update.time = System.currentTimeMillis() / 1000;
+				update.position = lastPos;
+				update.rotation = lastRot;
+				update.action = lastAction;
+				update.speed = 20;
+				player.client.sendPacket(update);
+			}
 		}
 	}
 
@@ -404,6 +424,36 @@ public class Player {
 			// Send response
 			client.sendPacket(join);
 
+			// Get or create instance teleport variables
+			PrivateInstanceTeleportVars vars = getObject(PrivateInstanceTeleportVars.class);
+			if (vars == null) {
+				// Create
+				vars = new PrivateInstanceTeleportVars();
+				addObject(vars);
+			}
+
+			// Disable joining of private instances until intentionally joining one
+			vars.disableInstanceTeleport = true;
+			vars.selectedInstance = null;
+
+			// Private instances
+			if (room != null) {
+				// Check if private
+				PrivateInstanceContainer privCont = room.getObject(PrivateInstanceContainer.class);
+				if (privCont != null && privCont.instance != null) {
+					// Its a private room
+
+					// Enable joining of instances
+					vars.disableInstanceTeleport = false;
+
+					// Make active if not the instance already
+					PrivateInstance activeInstance = srv.getPrivateInstanceManager()
+							.getSelectedInstanceOf(account.getAccountID());
+					if (activeInstance != null && !activeInstance.getID().equals(privCont.instance.getID()))
+						vars.selectedInstance = privCont.instance;
+				}
+			}
+
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -484,6 +534,36 @@ public class Player {
 			// Send response
 			client.sendPacket(join);
 
+			// Get or create instance teleport variables
+			PrivateInstanceTeleportVars vars = getObject(PrivateInstanceTeleportVars.class);
+			if (vars == null) {
+				// Create
+				vars = new PrivateInstanceTeleportVars();
+				addObject(vars);
+			}
+
+			// Disable joining of private instances until intentionally joining one
+			vars.disableInstanceTeleport = true;
+			vars.selectedInstance = null;
+
+			// Private instances
+			if (room != null) {
+				// Check if private
+				PrivateInstanceContainer privCont = room.getObject(PrivateInstanceContainer.class);
+				if (privCont != null && privCont.instance != null) {
+					// Its a private room
+
+					// Enable joining of instances
+					vars.disableInstanceTeleport = false;
+
+					// Make active if not the instance already
+					PrivateInstance activeInstance = srv.getPrivateInstanceManager()
+							.getSelectedInstanceOf(account.getAccountID());
+					if (activeInstance != null && !activeInstance.getID().equals(privCont.instance.getID()))
+						vars.selectedInstance = privCont.instance;
+				}
+			}
+
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -524,6 +604,36 @@ public class Player {
 			GameRoom room = ((GameServer) client.getServer()).getRoomManager().getRoom(plr.pendingRoom);
 			Centuria.logger.info("Player " + plr.account.getDisplayName() + " is joining room "
 					+ (room != null ? room.getInstanceID() : plr.pendingRoom) + " of level " + plr.pendingLevelID);
+
+			// Get or create instance teleport variables
+			PrivateInstanceTeleportVars vars = getObject(PrivateInstanceTeleportVars.class);
+			if (vars == null) {
+				// Create
+				vars = new PrivateInstanceTeleportVars();
+				addObject(vars);
+			}
+
+			// Disable joining of private instances until intentionally joining one
+			vars.disableInstanceTeleport = true;
+			vars.selectedInstance = null;
+
+			// Private instances
+			if (room != null) {
+				// Check if private
+				PrivateInstanceContainer privCont = room.getObject(PrivateInstanceContainer.class);
+				if (privCont != null && privCont.instance != null) {
+					// Its a private room
+
+					// Enable joining of instances
+					vars.disableInstanceTeleport = false;
+
+					// Make active if not the instance already
+					PrivateInstance activeInstance = ((GameServer) client.getServer()).getPrivateInstanceManager()
+							.getSelectedInstanceOf(account.getAccountID());
+					if (activeInstance != null && !activeInstance.getID().equals(privCont.instance.getID()))
+						vars.selectedInstance = privCont.instance;
+				}
+			}
 
 			return true;
 		} catch (Exception e) {
@@ -570,6 +680,28 @@ public class Player {
 							break;
 					}
 
+					// Verify room security
+					GameRoom room = plr.getRoom();
+					if (room != null && !room.allowSelection && !player.hasModPerms) {
+						// Verify private instance
+						PrivateInstanceContainer privInfo = room.getObject(PrivateInstanceContainer.class);
+						if (privInfo != null) {
+							// Check instance
+							PrivateInstance inst = privInfo.instance;
+							if (!inst.isParticipant(player.account.getAccountID())) {
+								// Deny
+								break;
+							}
+
+							// Our target is in a private instance we are also part of
+							// So lets allow it!
+						} else if (!room.getInstanceID().equals("GATHERING")) {
+							// Deny
+							break;
+						}
+					}
+
+					// Check if the target is in the same room
 					if (!plr.room.equals(player.room)) {
 						// Check sanc
 						if (plr.levelType == 2 && plr.room.startsWith("sanctuary_")) {
@@ -644,6 +776,36 @@ public class Player {
 
 						// Send packet
 						client.sendPacket(join);
+
+						// Get or create instance teleport variables
+						PrivateInstanceTeleportVars vars = getObject(PrivateInstanceTeleportVars.class);
+						if (vars == null) {
+							// Create
+							vars = new PrivateInstanceTeleportVars();
+							addObject(vars);
+						}
+
+						// Disable joining of private instances until intentionally joining one
+						vars.disableInstanceTeleport = true;
+						vars.selectedInstance = null;
+
+						// Private instances
+						if (room != null) {
+							// Check if private
+							PrivateInstanceContainer privCont = room.getObject(PrivateInstanceContainer.class);
+							if (privCont != null && privCont.instance != null) {
+								// Its a private room
+
+								// Enable joining of instances
+								vars.disableInstanceTeleport = false;
+
+								// Make active if not the instance already
+								PrivateInstance activeInstance = srv.getPrivateInstanceManager()
+										.getSelectedInstanceOf(account.getAccountID());
+								if (activeInstance != null && !activeInstance.getID().equals(privCont.instance.getID()))
+									vars.selectedInstance = privCont.instance;
+							}
+						}
 					} else {
 						// Build response
 						XtWriter writer = new XtWriter();
@@ -657,7 +819,8 @@ public class Player {
 						// Same room, sync player
 						ObjectUpdatePacket pkt = new ObjectUpdatePacket();
 						pkt.action = 0;
-						pkt.mode = 0; // InitPosition triggers teleport amims for FT clients, for vanilla it just moves
+						pkt.mode = 0; // InitPosition triggers teleport amims for FT clients, for vanilla it just
+										// moves
 						pkt.id = player.account.getAccountID();
 						pkt.position = plr.lastPos;
 						pkt.rotation = plr.lastRot;

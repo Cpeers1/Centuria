@@ -126,8 +126,11 @@ public class FileBasedDMManager extends DMManager {
 							break;
 						}
 					activeIDs.add(dmID);
-					Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
-					activeIDs.remove(dmID);
+					try {
+						Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
+					} finally {
+						activeIDs.remove(dmID);
+					}
 				}
 			}
 
@@ -266,13 +269,14 @@ public class FileBasedDMManager extends DMManager {
 					break;
 				}
 			activeIDs.add(dmID);
-			dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
-			dm.addProperty("warnedExpiry", false);
-			Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
-			activeIDs.remove(dmID);
-		} catch (IOException e) {
-			if (activeIDs.contains(dmID))
+			try {
+				dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
+				dm.addProperty("warnedExpiry", false);
+				Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
+			} finally {
 				activeIDs.remove(dmID);
+			}
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -329,10 +333,13 @@ public class FileBasedDMManager extends DMManager {
 					break;
 				}
 			activeIDs.add(dmID);
-			dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
-			dm.addProperty("warnedExpiry", false);
-			Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
-			activeIDs.remove(dmID);
+			try {
+				dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
+				dm.addProperty("warnedExpiry", false);
+				Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
+			} finally {
+				activeIDs.remove(dmID);
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -366,10 +373,13 @@ public class FileBasedDMManager extends DMManager {
 					break;
 				}
 			activeIDs.add(dmID);
-			dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
-			dm.addProperty("warnedExpiry", false);
-			Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
-			activeIDs.remove(dmID);
+			try {
+				dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
+				dm.addProperty("warnedExpiry", false);
+				Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
+			} finally {
+				activeIDs.remove(dmID);
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -399,11 +409,14 @@ public class FileBasedDMManager extends DMManager {
 				} catch (InterruptedException e) {
 					break;
 				}
-			activeIDs.add(dmID);
-			dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
-			dm.addProperty("warnedExpiry", false);
-			Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
-			activeIDs.remove(dmID);
+			try {
+				activeIDs.add(dmID);
+				dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
+				dm.addProperty("warnedExpiry", false);
+				Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
+			} finally {
+				activeIDs.remove(dmID);
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

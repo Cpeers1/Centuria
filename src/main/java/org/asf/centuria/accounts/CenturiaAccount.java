@@ -237,7 +237,7 @@ public abstract class CenturiaAccount {
 	/**
 	 * Assigns tags by ID
 	 * 
-	 * @param id Tag ID
+	 * @param id    Tag ID
 	 * @param value Tag value
 	 * @return AccountTag instance
 	 */
@@ -248,13 +248,12 @@ public abstract class CenturiaAccount {
 	 * 
 	 * @param id Tag ID to delete
 	 */
-	public void deleteAccountTag(String id)
-	{
+	public void deleteAccountTag(String id) {
 		AccountTag tag = getAccountTag(id);
 		if (tag != null)
-			tag.deleteTag();		
+			tag.deleteTag();
 	}
-	
+
 	/**
 	 * Deletes the account from disk and kicks all connected instances
 	 */

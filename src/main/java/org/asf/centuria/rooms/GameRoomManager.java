@@ -6,13 +6,13 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-import org.asf.centuria.Centuria;
-import org.asf.centuria.accounts.AccountManager;
-import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.gameserver.GameServer;
-import org.asf.centuria.social.SocialEntry;
-import org.asf.centuria.social.SocialManager;
+import org.asf.centuria.rooms.impl.DefaultRoomProvider;
+import org.asf.centuria.rooms.impl.GatheringRoomProvider;
+import org.asf.centuria.rooms.impl.ModerationRoomProvider;
+import org.asf.centuria.rooms.impl.PrivateInstanceRoomProvider;
+import org.asf.centuria.rooms.impl.SocialSystemRoomProvider;
 
 /**
  * 
@@ -27,9 +27,28 @@ public class GameRoomManager {
 	private static Random rnd = new Random();
 	private HashMap<String, GameRoom> rooms = new HashMap<String, GameRoom>();
 	private HashMap<Integer, ArrayList<GameRoom>> roomsByLevel = new HashMap<Integer, ArrayList<GameRoom>>();
+	private ArrayList<IRoomProvider> roomProviders = new ArrayList<IRoomProvider>();
 
 	public GameRoomManager(GameServer server) {
 		this.server = server;
+
+		// Register providers
+		// Private instances first, then gatherings, then moderation, then social, then
+		// default room providers
+		roomProviders.add(new PrivateInstanceRoomProvider(server));
+		roomProviders.add(new GatheringRoomProvider());
+		roomProviders.add(new ModerationRoomProvider());
+		roomProviders.add(new SocialSystemRoomProvider());
+		roomProviders.add(new DefaultRoomProvider());
+	}
+
+	/**
+	 * Registers room providers
+	 * 
+	 * @param provider Provider to register
+	 */
+	public void registerRoomProvider(IRoomProvider provider) {
+		roomProviders.add(2, provider);
 	}
 
 	/**
@@ -95,6 +114,18 @@ public class GameRoomManager {
 	 * @return GameRoom instance
 	 */
 	public GameRoom createRoom(int levelID) {
+		return createRoom(levelID, "", "");
+	}
+
+	/**
+	 * Allocates empty game rooms
+	 * 
+	 * @param levelID  Level ID
+	 * @param idPrefix ID prefix
+	 * @param idSuffix ID suffix
+	 * @return GameRoom instance
+	 */
+	public GameRoom createRoom(int levelID, String idPrefix, String idSuffix) {
 		synchronized (roomsByLevel) {
 			if (roomsByLevel.containsKey(levelID)) {
 				if (roomsByLevel.get(levelID).size() == Integer.MAX_VALUE)
@@ -104,9 +135,9 @@ public class GameRoomManager {
 
 		synchronized (rooms) {
 			// Generate instance ID
-			String id = Integer.toString(rnd.nextInt(0, Integer.MAX_VALUE), 16);
+			String id = idPrefix + Integer.toString(rnd.nextInt(0, Integer.MAX_VALUE), 16) + idSuffix;
 			while (getRoom(levelID, id) != null)
-				id = Integer.toString(rnd.nextInt(0, Integer.MAX_VALUE), 16);
+				id = idPrefix + Integer.toString(rnd.nextInt(0, Integer.MAX_VALUE), 16) + idSuffix;
 			return createRoomInt(levelID, id);
 		}
 	}
@@ -139,84 +170,20 @@ public class GameRoomManager {
 	 * @return GameRoom instance
 	 */
 	public GameRoom findBestRoom(int levelID, Player requester) {
-		// Load settings
-		int preferredMin = 15;
-		int preferredMax = 50;
-		int preferredUpperLimit = 75;
-		try {
-			preferredMin = Integer.parseInt(Centuria.serverProperties.getOrDefault("room-preferred-min-players", "15"));
-		} catch (Exception e) {
-		}
-		try {
-			preferredMax = Integer.parseInt(Centuria.serverProperties.getOrDefault("room-preferred-max-players", "50"));
-		} catch (Exception e) {
-		}
-		try {
-			preferredUpperLimit = Integer
-					.parseInt(Centuria.serverProperties.getOrDefault("room-preferred-upper-player-limit", "75"));
-		} catch (Exception e) {
-		}
-
-		// Check social list
+		// Gather rooms
 		HashMap<GameRoom, Integer> rooms = new HashMap<GameRoom, Integer>();
 		for (GameRoom room : getAllRooms(levelID)) {
 			if (!room.allowSelection)
 				continue;
 			rooms.put(room, room.getPlayers().length);
 		}
-		if (requester != null) {
-			// Load permission level
-			String permLevel = "member";
-			if (requester.account.getSaveSharedInventory().containsItem("permissions")) {
-				permLevel = requester.account.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-						.get("permissionLevel").getAsString();
-			}
 
-			// Check moderator
-			if (GameServer.hasPerm(permLevel, "moderator") && !GameServer.hasPerm(permLevel, "developer")) {
-				// Select room with most players
-				Optional<GameRoom> room = rooms.keySet().stream()
-						.sorted((t1, t2) -> -Integer.compare(rooms.get(t1), rooms.get(t2))).findFirst();
-				if (room.isPresent())
-					return room.get(); // Found one
-			}
-
-			// Get players that we are following
-			SocialEntry[] players = SocialManager.getInstance().getFollowingPlayers(requester.account.getAccountID());
-			for (SocialEntry entry : players) {
-				CenturiaAccount account = AccountManager.getInstance().getAccount(entry.playerID);
-				if (account != null) {
-					Player plr = account.getOnlinePlayerInstance();
-					if (plr != null) {
-						// Check room
-						if (plr.levelID == levelID) {
-							// Get room if possible
-							GameRoom room = getRoom(plr.room);
-							if (room != null) {
-								// Check amount
-								if (room.getPlayers().length < preferredUpperLimit)
-									return room; // Found a room
-							}
-						}
-					}
-				}
-			}
-		}
-
-		// Find rooms that match, first those below minimum
-		for (GameRoom room : rooms.keySet().stream().sorted((t1, t2) -> -Integer.compare(rooms.get(t1), rooms.get(t2)))
-				.toArray(t -> new GameRoom[t])) {
-			int playerCount = rooms.get(room);
-			if (playerCount < preferredMin)
-				return room; // Found one
-		}
-
-		// Find rooms that match, first those below maximum
-		for (GameRoom room : rooms.keySet().stream().sorted((t1, t2) -> -Integer.compare(rooms.get(t1), rooms.get(t2)))
-				.toArray(t -> new GameRoom[t])) {
-			int playerCount = rooms.get(room);
-			if (playerCount < preferredMax)
-				return room; // Found one
+		// Go through providers
+		for (IRoomProvider prov : roomProviders) {
+			// Try to find best room
+			GameRoom room = prov.findBestRoom(levelID, requester, this, rooms);
+			if (room != null)
+				return room;
 		}
 
 		// Create new room
