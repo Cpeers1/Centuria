@@ -135,7 +135,8 @@ public class FileBasedAccountObject extends CenturiaAccount {
 				// Write settings
 				PlayerInventory inv = new FileBasedPlayerInventory(userUUID, saveName);
 				SaveSettings settings = inv.getSaveSettings();
-				saveSettings.addProperty("tradeLockID", saveName);
+				if (!saveSettings.has("tradeLockID"))
+					saveSettings.addProperty("tradeLockID", saveName);
 				settings.load(saveSettings);
 				inv.writeSaveSettings();
 			}
@@ -633,7 +634,8 @@ public class FileBasedAccountObject extends CenturiaAccount {
 			// Write settings
 			PlayerInventory inv = new FileBasedPlayerInventory(userUUID, saveName);
 			SaveSettings settings = inv.getSaveSettings();
-			saveSettings.addProperty("tradeLockID", saveName);
+			if (!saveSettings.has("tradeLockID"))
+				saveSettings.addProperty("tradeLockID", saveName);
 			settings.load(saveSettings);
 			inv.writeSaveSettings();
 		}

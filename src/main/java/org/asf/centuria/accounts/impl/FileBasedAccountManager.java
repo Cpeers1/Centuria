@@ -279,7 +279,8 @@ public class FileBasedAccountManager extends AccountManager {
 					// Write settings
 					PlayerInventory inv = new FileBasedPlayerInventory(id, saveName);
 					SaveSettings settings = inv.getSaveSettings();
-					saveSettings.addProperty("tradeLockID", saveName);
+					if (!saveSettings.has("tradeLockID"))
+						saveSettings.addProperty("tradeLockID", saveName);
 					settings.load(saveSettings);
 					inv.writeSaveSettings();
 				}
