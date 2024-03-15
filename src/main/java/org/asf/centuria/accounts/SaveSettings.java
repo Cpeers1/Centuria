@@ -93,7 +93,7 @@ public class SaveSettings {
 		else
 			this.allowGiveItemCurrency = giveAllCurrency;
 		if (data.has("allowGiveItemResources"))
-			this.allowGiveItemResources = data.get("allowGiveResources").getAsBoolean();
+			this.allowGiveItemResources = data.get("allowGiveItemResources").getAsBoolean();
 		else
 			this.allowGiveItemResources = giveAllResources;
 		if (data.has("saveColors") && !data.get("saveColors").isJsonNull())

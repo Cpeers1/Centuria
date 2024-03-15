@@ -125,7 +125,7 @@ public class FileBasedSaveManager extends SaveManager {
 				saves.add(dir.getName());
 		}
 
-		return saves.toArray(t -> new String[t]);
+		return saves.stream().sorted().toArray(t -> new String[t]);
 	}
 
 	@Override
