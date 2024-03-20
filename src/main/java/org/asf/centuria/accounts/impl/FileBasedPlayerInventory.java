@@ -9,7 +9,6 @@ import java.util.HashMap;
 import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.accounts.SaveSettings;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -69,40 +68,6 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 		setItem("104", getItem("104"));
 
 		new File("inventories/" + id + "/" + save + "/fixed").delete();
-
-		// Update proxies to latest
-		if (containsItem("original-characters-list")) {
-			// Port old list to new
-			setItem("proxies-list", getItem("original-characters-list"));
-			deleteItem("original-characters-list");
-
-			// Go through list
-			JsonArray arr = getItem("proxies-list").getAsJsonArray();
-			for (JsonElement ele : arr) {
-				// Migrate
-				String name = ele.getAsString();
-				JsonElement charac = getItem("original-character-" + name.toLowerCase());
-				if (charac != null) {
-					// Migrate
-					JsonObject oc = charac.getAsJsonObject();
-					JsonObject proxy = new JsonObject();
-					if (oc.has("displayName"))
-						proxy.addProperty("displayName", oc.get("displayName").getAsString());
-					if (oc.has("triggerPrefix"))
-						proxy.addProperty("triggerPrefix", oc.get("triggerPrefix").getAsString());
-					if (oc.has("triggerSuffix"))
-						proxy.addProperty("triggerSuffix", oc.get("triggerSuffix").getAsString());
-					if (oc.has("characterPronouns"))
-						proxy.addProperty("proxyPronouns", oc.get("characterPronouns").getAsString());
-					if (oc.has("characterBio"))
-						proxy.addProperty("proxyBio", oc.get("characterBio").getAsString());
-					if (oc.has("publiclyVisible"))
-						proxy.addProperty("publiclyVisible", oc.get("publiclyVisible").getAsBoolean());
-					setItem("proxy-" + name.toLowerCase(), proxy);
-					deleteItem("original-character-" + name.toLowerCase());
-				}
-			}
-		}
 	}
 
 	@Override

@@ -28,6 +28,44 @@ public class ChatProxyInfo {
 
 	public boolean publiclyVisible = true;
 
+	private static void loadAccount(CenturiaAccount user) {
+		PlayerInventory inv = user.getSaveSpecificInventory();
+
+		// Update proxies to latest
+		if (inv.containsItem("original-characters-list")) {
+			// Port old list to new
+			inv.setItem("proxies-list", inv.getItem("original-characters-list"));
+			inv.deleteItem("original-characters-list");
+
+			// Go through list
+			JsonArray arr = inv.getItem("proxies-list").getAsJsonArray();
+			for (JsonElement ele : arr) {
+				// Migrate
+				String name = ele.getAsString();
+				JsonElement charac = inv.getItem("original-character-" + name.toLowerCase());
+				if (charac != null) {
+					// Migrate
+					JsonObject oc = charac.getAsJsonObject();
+					JsonObject proxy = new JsonObject();
+					if (oc.has("displayName"))
+						proxy.addProperty("displayName", oc.get("displayName").getAsString());
+					if (oc.has("triggerPrefix"))
+						proxy.addProperty("triggerPrefix", oc.get("triggerPrefix").getAsString());
+					if (oc.has("triggerSuffix"))
+						proxy.addProperty("triggerSuffix", oc.get("triggerSuffix").getAsString());
+					if (oc.has("characterPronouns"))
+						proxy.addProperty("proxyPronouns", oc.get("characterPronouns").getAsString());
+					if (oc.has("characterBio"))
+						proxy.addProperty("proxyBio", oc.get("characterBio").getAsString());
+					if (oc.has("publiclyVisible"))
+						proxy.addProperty("publiclyVisible", oc.get("publiclyVisible").getAsBoolean());
+					inv.setItem("proxy-" + name.toLowerCase(), proxy);
+					inv.deleteItem("original-character-" + name.toLowerCase());
+				}
+			}
+		}
+	}
+
 	/**
 	 * Finds proxies of users by name
 	 * 
@@ -36,6 +74,8 @@ public class ChatProxyInfo {
 	 * @return ChatProxyInfo instance or null
 	 */
 	public static ChatProxyInfo ofUser(CenturiaAccount user, String proxyName) {
+		loadAccount(user);
+
 		// Get save
 		PlayerInventory data = user.getSaveSpecificInventory();
 		if (data.containsItem("proxy-" + proxyName.toLowerCase())) {
@@ -55,6 +95,8 @@ public class ChatProxyInfo {
 	 * @return True if the proxy exists, false otherwise
 	 */
 	public static boolean proxyExists(CenturiaAccount user, String proxyName) {
+		loadAccount(user);
+
 		// Get save
 		PlayerInventory data = user.getSaveSpecificInventory();
 		return data.containsItem("proxy-" + proxyName.toLowerCase());
@@ -67,6 +109,8 @@ public class ChatProxyInfo {
 	 * @return Array of ChatProxyInfo instances
 	 */
 	public static String[] allProxyNamesOfUser(CenturiaAccount user) {
+		loadAccount(user);
+
 		// Get save
 		PlayerInventory data = user.getSaveSpecificInventory();
 		if (data.containsItem("proxies-list")) {
@@ -89,6 +133,8 @@ public class ChatProxyInfo {
 	 * @return Array of ChatProxyInfo instances
 	 */
 	public static ChatProxyInfo[] allOfUser(CenturiaAccount user) {
+		loadAccount(user);
+
 		// Get save
 		PlayerInventory data = user.getSaveSpecificInventory();
 		if (data.containsItem("proxies-list")) {
@@ -114,6 +160,8 @@ public class ChatProxyInfo {
 	 */
 	public static ChatProxyInfo saveProxy(CenturiaAccount user, String name, String triggerPrefix,
 			String triggerSuffix) {
+		loadAccount(user);
+
 		ChatProxyInfo info = new ChatProxyInfo();
 		info.displayName = name;
 		info.triggerPrefix = triggerPrefix;
@@ -131,6 +179,8 @@ public class ChatProxyInfo {
 	 * @return ChatProxyInfo instance
 	 */
 	public static ChatProxyInfo saveProxy(CenturiaAccount user, ChatProxyInfo proxy) {
+		loadAccount(user);
+
 		if (!proxy.displayName.matches("^[A-Za-z0-9_\\-. ]+")) {
 			// Invalid name
 			throw new IllegalArgumentException("Proxy name contains invalid characters");
@@ -164,6 +214,8 @@ public class ChatProxyInfo {
 	 * @return True if the proxy was deleted, false otherwise
 	 */
 	public static boolean deleteProxy(CenturiaAccount user, String proxyName) {
+		loadAccount(user);
+
 		// Get save
 		PlayerInventory data = user.getSaveSpecificInventory();
 
