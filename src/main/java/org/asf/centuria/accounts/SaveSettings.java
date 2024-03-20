@@ -72,7 +72,7 @@ public class SaveSettings {
 			this.allowGiveItemAvatars = data.get("allowGiveItemAvatars").getAsBoolean();
 		else
 			this.allowGiveItemAvatars = giveAllAvatars;
-		if (data.has("allowGiveItemlothes"))
+		if (data.has("allowGiveItemClothes"))
 			this.allowGiveItemClothes = data.get("allowGiveItemClothes").getAsBoolean();
 		else
 			this.allowGiveItemClothes = giveAllClothes;

@@ -639,6 +639,13 @@ public abstract class CenturiaAccount {
 	 * @param reason Pardon reason
 	 */
 	public void pardon(String issuer, String reason) {
+		// Sync online player
+		Player plr = getOnlinePlayerInstance();
+		if (plr != null && plr.account != this) {
+			plr.account.pardon(issuer, reason);
+			return;
+		}
+
 		// Check penalty
 		boolean wasPardoned = false;
 		if (!isBanned() && !isMuted())
@@ -647,13 +654,6 @@ public abstract class CenturiaAccount {
 		// Remove penalties
 		if (getSaveSharedInventory().containsItem("penalty"))
 			getSaveSharedInventory().deleteItem("penalty");
-
-		// Sync online player
-		Player plr = getOnlinePlayerInstance();
-		if (plr != null && plr.account != this) {
-			plr.account.pardon(issuer, reason);
-			return;
-		}
 
 		// Ignore if already pardoned
 		if (wasPardoned)

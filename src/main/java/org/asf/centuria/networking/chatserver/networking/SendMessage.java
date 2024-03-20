@@ -43,9 +43,9 @@ import org.asf.centuria.modules.events.chatcommands.ModuleCommandSyntaxListEvent
 import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
 import org.asf.centuria.modules.events.maintenance.MaintenanceStartEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
-import org.asf.centuria.networking.chatserver.ChatClient.OcProxyMetadata;
+import org.asf.centuria.networking.chatserver.ChatClient.ChatProxyMetadata;
 import org.asf.centuria.networking.chatserver.networking.moderator.ModeratorClient;
-import org.asf.centuria.networking.chatserver.proxies.OcProxyInfo;
+import org.asf.centuria.networking.chatserver.proxies.ChatProxyInfo;
 import org.asf.centuria.networking.chatserver.proxies.ProxySession;
 import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.networking.gameserver.GameServer;
@@ -353,8 +353,8 @@ public class SendMessage extends AbstractChatPacket {
 		if (evt2.isCancelled())
 			return true; // Cancelled
 
-		// OC proxying
-		String ocProxyName = null;
+		// Chat proxying
+		String chatProxyName = null;
 
 		// Get proxy session
 		ProxySession session = client.getObject(ProxySession.class);
@@ -370,17 +370,17 @@ public class SendMessage extends AbstractChatPacket {
 			// Check sticky
 			roomSes = session.roomSessions.get(room);
 			if (roomSes.sticky) {
-				// Update oc proxy thats being used
-				ocProxyName = roomSes.lastUsedOcName;
+				// Update proxy thats being used
+				chatProxyName = roomSes.lastUsedProxyName;
 			}
 		}
 
 		// Find proxy
-		for (OcProxyMetadata md : client.getOcProxyMetadata()) {
+		for (ChatProxyMetadata md : client.getChatProxyMetadata()) {
 			// Check message
 			if (message.startsWith(md.prefix) && message.endsWith(md.suffix)) {
-				// Found OC
-				ocProxyName = md.name;
+				// Found proxy
+				chatProxyName = md.name;
 
 				// Update message
 				message = message.substring(md.prefix.length());
@@ -399,23 +399,23 @@ public class SendMessage extends AbstractChatPacket {
 		}
 
 		// Check result
-		if (ocProxyName != null) {
+		if (chatProxyName != null) {
 			// Get proxy
-			OcProxyInfo proxy = OcProxyInfo.ofUser(client.getPlayer(), ocProxyName);
+			ChatProxyInfo proxy = ChatProxyInfo.ofUser(client.getPlayer(), chatProxyName);
 			if (proxy != null) {
 				// Update name string for it to be used in the chat itself
-				ocProxyName = "<color=#00f7ff><noparse>" + proxy.displayName + "</noparse>"
-						+ (proxy.characterPronouns.toLowerCase().equals("n/a")
-								|| proxy.characterPronouns.toLowerCase().isEmpty() ? ""
-										: " [<noparse>" + proxy.characterPronouns + "</noparse>]")
+				chatProxyName = "<color=#00f7ff><noparse>" + proxy.displayName + "</noparse>"
+						+ (proxy.proxyPronouns.toLowerCase().equals("n/a")
+								|| proxy.proxyPronouns.toLowerCase().isEmpty() ? ""
+										: " [<noparse>" + proxy.proxyPronouns + "</noparse>]")
 						+ "</color> <color=#daa520>[" + client.getPlayer().getDisplayName() + "]</color>";
 
 				// Update sticky proxying
 				if (roomSes != null)
-					roomSes.lastUsedOcName = proxy.displayName;
+					roomSes.lastUsedProxyName = proxy.displayName;
 			} else {
 				// Refresh
-				ocProxyName = null;
+				chatProxyName = null;
 				client.reloadProxies();
 			}
 		}
@@ -435,8 +435,8 @@ public class SendMessage extends AbstractChatPacket {
 				msg.content = message;
 				msg.sentAt = System.currentTimeMillis();
 				msg.source = client.getPlayer().getAccountID();
-				if (ocProxyName != null)
-					msg.source = "plaintext:" + ocProxyName;
+				if (chatProxyName != null)
+					msg.source = "plaintext:" + chatProxyName;
 				manager.saveDMMessge(room, msg);
 			}
 
@@ -507,8 +507,8 @@ public class SendMessage extends AbstractChatPacket {
 						res.addProperty("sentAt", fmt.format(new Date()));
 						res.addProperty("eventId", "chat.postMessage");
 						res.addProperty("success", true);
-						if (ocProxyName != null) {
-							res.addProperty("source", "plaintext:" + ocProxyName);
+						if (chatProxyName != null) {
+							res.addProperty("source", "plaintext:" + chatProxyName);
 							res.addProperty("author", client.getPlayer().getAccountID());
 						}
 
@@ -545,8 +545,8 @@ public class SendMessage extends AbstractChatPacket {
 								res.addProperty("source", client.getPlayer().getAccountID());
 								res.addProperty("sentAt", fmt.format(new Date()));
 								res.addProperty("success", true);
-								if (ocProxyName != null) {
-									res.addProperty("source", "plaintext:" + ocProxyName);
+								if (chatProxyName != null) {
+									res.addProperty("source", "plaintext:" + chatProxyName);
 									res.addProperty("author", client.getPlayer().getAccountID());
 								}
 
@@ -708,38 +708,42 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("removeallfiltereditems");
 		commandMessages.add("questrewind <amount-of-quests-to-rewind>");
 
-		// OC proxying
+		// Dice
+		commandMessages.add(
+				"roll [<amount of rolls>][d<size>] (eg. roll d20 (1 roll of a d20 dice), roll 2d42 (2 rolls of a d42 dice), roll d20 (rolls a single d20 dice), roll 10 (rolls 10 d20 dices))");
+
+		// Chat proxying
 		commandMessages.add("");
-		commandMessages.add("Character proxies:");
-		commandMessages.add("oc show \"<name>\" [\"<player>\"]");
-		commandMessages.add("oc list [\"<player>\"]");
+		commandMessages.add("Chat proxies: (for plurality and roleplay)");
+		commandMessages.add("proxy show \"<name>\" [\"<player>\"]");
+		commandMessages.add("proxy list [\"<player>\"]");
 		commandMessages.add("");
 		commandMessages.add("Proxy management:");
 		commandMessages.add(
-				"oc register \"<name>\" \"[<trigger prefix>]message[<trigger suffix>]\" (eg. oc register \"Alice\" \"alice: message\")");
+				"proxy register \"<name>\" \"[<trigger prefix>]message[<trigger suffix>]\" (eg. proxy register \"Alice\" \"alice: message\")");
 		commandMessages.add(
-				"oc settrigger \"<name>\" \"[<trigger prefix>]message[<trigger suffix>]\" (eg. oc settrigger \"Alice\" \"alice: message\")");
+				"proxy settrigger \"<name>\" \"[<trigger prefix>]message[<trigger suffix>]\" (eg. proxy settrigger \"Alice\" \"alice: message\")");
 		if (!GameServer.hasPerm(permLevel, "moderator"))
-			commandMessages.add("oc rename \"<name>\" \"<new name>\"");
+			commandMessages.add("proxy rename \"<name>\" \"<new name>\"");
 		else
-			commandMessages.add("oc rename \"<name>\" \"<new name>\" [\"<player>\"]");
+			commandMessages.add("proxy rename \"<name>\" \"<new name>\" [\"<player>\"]");
 		if (!GameServer.hasPerm(permLevel, "moderator"))
-			commandMessages.add("oc delete \"<name>\"");
+			commandMessages.add("proxy delete \"<name>\"");
 		else
-			commandMessages.add("oc delete \"<name>\" [\"<player>\"]");
+			commandMessages.add("proxy delete \"<name>\" [\"<player>\"]");
 		if (!GameServer.hasPerm(permLevel, "moderator"))
-			commandMessages.add("oc bio \"<name>\" \"<new bio>\"");
+			commandMessages.add("proxy bio \"<name>\" \"<new bio>\"");
 		else
-			commandMessages.add("oc bio \"<name>\" \"<new bio>\" [\"<player>\"]");
+			commandMessages.add("proxy bio \"<name>\" \"<new bio>\" [\"<player>\"]");
 		if (!GameServer.hasPerm(permLevel, "moderator"))
-			commandMessages.add("oc pronouns \"<name>\" \"<new pronouns>\"");
+			commandMessages.add("proxy pronouns \"<name>\" \"<new pronouns>\"");
 		else
-			commandMessages.add("oc pronouns \"<name>\" \"<new pronouns>\" [\"<player>\"]");
-		commandMessages.add("oc toggleprivate \"<name>\"");
+			commandMessages.add("proxy pronouns \"<name>\" \"<new pronouns>\" [\"<player>\"]");
+		commandMessages.add("proxy toggleprivate \"<name>\"");
 		commandMessages.add("");
 		commandMessages.add("Sticky proxy:");
-		commandMessages.add("oc stickyproxy \"<name>\"");
-		commandMessages.add("oc stickyoff");
+		commandMessages.add("proxy stickyproxy \"<name>\"");
+		commandMessages.add("proxy stickyoff");
 
 		// Private instances
 		commandMessages.add("");
@@ -901,7 +905,84 @@ public class SendMessage extends AbstractChatPacket {
 							cmd, client);
 
 					return true;
-				} else if (cmdId.equals("oc") && args.size() >= 1) {
+				} else if (cmdId.equals("roll")) {
+					// Check size
+					int amount = 1;
+					int size = 20;
+					if (args.size() >= 1) {
+						String sizeStr = args.get(0);
+						if (sizeStr.toLowerCase().contains("d")) {
+							String amountStr = sizeStr.substring(0, sizeStr.toLowerCase().indexOf("d"));
+							String maxStr = sizeStr.substring(sizeStr.toLowerCase().indexOf("d") + 1);
+							if (!maxStr.matches("^-?[0-9]+$")) {
+								// Invalid argument
+								systemMessage("Invalid argument: size: not a valid number", cmd, client);
+								return true;
+							}
+							if (!amountStr.isEmpty() && !amountStr.matches("^-?[0-9]+$")) {
+								// Invalid argument
+								systemMessage("Invalid argument: amount: not a valid number", cmd, client);
+								return true;
+							}
+							if (!amountStr.isEmpty()) {
+								try {
+									amount = Integer.parseInt(amountStr);
+								} catch (Exception e) {
+									// Invalid argument
+									systemMessage("Invalid argument: amount: not a valid number", cmd, client);
+									return true;
+								}
+							}
+							try {
+								size = Integer.parseInt(maxStr);
+							} catch (Exception e) {
+								// Invalid argument
+								systemMessage("Invalid argument: size: not a valid number", cmd, client);
+								return true;
+							}
+
+						} else {
+							try {
+								amount = Integer.parseInt(sizeStr);
+							} catch (Exception e) {
+								// Invalid argument
+								systemMessage("Invalid argument: amount: not a valid number", cmd, client);
+								return true;
+							}
+						}
+						if (size < 1) {
+							// Invalid argument
+							systemMessage("Invalid argument: size: cannot be less than one", cmd, client);
+							return true;
+						}
+						if (amount < 1) {
+							// Invalid argument
+							systemMessage("Invalid argument: amount: cannot roll less than one dice", cmd, client);
+							return true;
+						}
+						if (amount > 10) {
+							// Invalid argument
+							systemMessage("Invalid argument: amount: cannot roll more than 10 dices at once", cmd,
+									client);
+							return true;
+						}
+					}
+
+					// Roll
+					String result = "";
+					if (amount != 1) {
+						for (int i = 0; i < amount; i++) {
+							if (!result.isEmpty())
+								result += "\n";
+							result += "Dice roll #" + (i + 1) + ": rolled " + rnd.nextInt(1, size + 1);
+						}
+					} else
+						result = "Rolled " + rnd.nextInt(1, size + 1);
+
+					// Send result
+					systemMessage(result, cmd, client);
+					return true;
+				} else if (cmdId.equals("proxy") && args.size() >= 1) {
 					String task = args.get(0).toLowerCase();
 					switch (task) {
 
@@ -913,7 +994,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to register a OC",
+							systemMessage("Missing argument: name: requiring a proxy name to register a proxy",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -923,7 +1004,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to register a OC",
+							systemMessage("Missing argument: name: requiring a proxy name to register a proxy",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -946,12 +1027,12 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 2) {
 							// Missing argument
-							systemMessage("Missing argument: trigger: the game needs to know when to use this OC.\n"
+							systemMessage("Missing argument: trigger: the game needs to know when to use this proxy.\n"
 									+ "\n"
 									+ "For a trigger, you need to create a template message, with the word 'message' to describe what the game must use as message content.\n"
 									+ "\n"
 									+ "Example: \"Alice: message\", usage example: \"alice: hi\", the chat would say hi as alice\n"
-									+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the OC tied to the trigger",
+									+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the proxy tied to the trigger",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -963,12 +1044,12 @@ public class SendMessage extends AbstractChatPacket {
 						if (!trigger.contains("message")) {
 							// Invalid argument
 							systemMessage(
-									"Invalid argument: trigger: missing the word 'message', the game needs to know when to use this OC.\n"
+									"Invalid argument: trigger: missing the word 'message', the game needs to know when to use this proxy.\n"
 											+ "\n"
 											+ "For a trigger, you need to create a template message, with the word 'message' to describe what the game must use as message content.\n"
 											+ "\n"
 											+ "Example: \"Alice: message\", usage example: \"alice: hi\", the chat would say hi as alice\n"
-											+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the OC tied to the trigger",
+											+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the proxy tied to the trigger",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -991,22 +1072,22 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify OC existence
-						if (OcProxyInfo.ocExists(client.getPlayer(), name)) {
+						// Verify proxy existence
+						if (ChatProxyInfo.proxyExists(client.getPlayer(), name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: you already have a OC named " + name
-									+ ", use `oc show` to look it up", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: you already have a proxy named " + name
+									+ ", use `proxy show` to look it up", cmd + " " + task, client);
 							return true;
 						}
 
-						// Create OC
-						OcProxyInfo.saveOc(client.getPlayer(), name, prefix, suffix);
+						// Create proxy
+						ChatProxyInfo.saveProxy(client.getPlayer(), name, prefix, suffix);
 
 						// Reload
 						client.reloadProxies();
 
 						// Success!
-						systemMessage("Successfully created the OC " + name + "!", cmd + " " + task, client);
+						systemMessage("Successfully created the proxy " + name + "!", cmd + " " + task, client);
 
 						// Return
 						return true;
@@ -1020,7 +1101,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to update a OC",
+							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1030,7 +1111,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to update a OC",
+							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1045,12 +1126,12 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 2) {
 							// Missing argument
-							systemMessage("Missing argument: trigger: the game needs to know when to use this OC.\n"
+							systemMessage("Missing argument: trigger: the game needs to know when to use this proxy.\n"
 									+ "\n"
 									+ "For a trigger, you need to create a template message, with the word 'message' to describe what the game must use as message content.\n"
 									+ "\n"
 									+ "Example: \"Alice: message\", usage example: \"alice: hi\", the chat would say hi as alice\n"
-									+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the OC tied to the trigger",
+									+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the proxy tied to the trigger",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1062,12 +1143,12 @@ public class SendMessage extends AbstractChatPacket {
 						if (!trigger.contains("message")) {
 							// Invalid argument
 							systemMessage(
-									"Invalid argument: trigger: missing the word 'message', the game needs to know when to use this OC.\n"
+									"Invalid argument: trigger: missing the word 'message', the game needs to know when to use this proxy.\n"
 											+ "\n"
 											+ "For a trigger, you need to create a template message, with the word 'message' to describe what the game must use as message content.\n"
 											+ "\n"
 											+ "Example: \"Alice: message\", usage example: \"alice: hi\", the chat would say hi as alice\n"
-											+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the OC tied to the trigger",
+											+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the proxy tied to the trigger",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1090,24 +1171,24 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify OC existence
-						if (!OcProxyInfo.ocExists(client.getPlayer(), name)) {
+						// Verify Proxy existence
+						if (!ChatProxyInfo.proxyExists(client.getPlayer(), name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
 							return true;
 						}
 
-						// Update OC
-						OcProxyInfo oc = OcProxyInfo.ofUser(client.getPlayer(), name);
-						oc.triggerPrefix = prefix;
-						oc.triggerSuffix = suffix;
-						OcProxyInfo.saveOc(client.getPlayer(), oc);
+						// Update proxy
+						ChatProxyInfo proxy = ChatProxyInfo.ofUser(client.getPlayer(), name);
+						proxy.triggerPrefix = prefix;
+						proxy.triggerSuffix = suffix;
+						ChatProxyInfo.saveProxy(client.getPlayer(), proxy);
 
 						// Reload
 						client.reloadProxies();
 
 						// Success!
-						systemMessage("Successfully updated trigger of OC " + name + "!", cmd + " " + task, client);
+						systemMessage("Successfully updated trigger of proxy " + name + "!", cmd + " " + task, client);
 
 						// Return
 						return true;
@@ -1121,7 +1202,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to update a OC",
+							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1131,7 +1212,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to update a OC",
+							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1194,30 +1275,30 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify OC existence
-						if (!OcProxyInfo.ocExists(acc, name)) {
+						// Verify proxy existence
+						if (!ChatProxyInfo.proxyExists(acc, name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
 							return true;
 						}
-						if (OcProxyInfo.ocExists(acc, newName)) {
+						if (ChatProxyInfo.proxyExists(acc, newName)) {
 							// Already exists
-							systemMessage("Invalid argument: new name: name already in use by another OC",
+							systemMessage("Invalid argument: new name: name already in use by another proxy",
 									cmd + " " + task, client);
 							return true;
 						}
 
-						// Update OC
-						OcProxyInfo oc = OcProxyInfo.ofUser(acc, name);
-						OcProxyInfo.deleteOc(acc, name);
-						oc.displayName = newName;
-						OcProxyInfo.saveOc(acc, oc);
+						// Update proxy
+						ChatProxyInfo proxy = ChatProxyInfo.ofUser(acc, name);
+						ChatProxyInfo.deleteProxy(acc, name);
+						proxy.displayName = newName;
+						ChatProxyInfo.saveProxy(acc, proxy);
 
 						// Reload
 						client.reloadProxies();
 
 						// Success!
-						systemMessage("Successfully updated the name of OC " + name + "!", cmd + " " + task, client);
+						systemMessage("Successfully updated the name of proxy " + name + "!", cmd + " " + task, client);
 
 						// Return
 						return true;
@@ -1231,7 +1312,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to delete a OC",
+							systemMessage("Missing argument: name: requiring a proxy name to delete a proxy",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1241,7 +1322,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to delete a OC",
+							systemMessage("Missing argument: name: requiring a proxy name to delete a proxy",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1272,30 +1353,30 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify OC existence
-						if (!OcProxyInfo.ocExists(acc, name)) {
+						// Verify proxy existence
+						if (!ChatProxyInfo.proxyExists(acc, name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
 							return true;
 						}
 
 						// Confirm
 						if (!GameServer.hasPerm(permLevel, "moderator")
 								&& (args.size() < 2 || !args.get(1).equals("confirm"))) {
-							systemMessage("This command will delete the character " + name
+							systemMessage("This command will delete the proxy " + name
 									+ "!\nAre you sure you want to continue?\nAdd 'confirm' to the command to confirm your action.",
 									cmd, client);
 							return true;
 						}
 
-						// Delete OC
-						OcProxyInfo.deleteOc(acc, name);
+						// Delete proxy
+						ChatProxyInfo.deleteProxy(acc, name);
 
 						// Reload
 						client.reloadProxies();
 
 						// Success!
-						systemMessage("Successfully deleted the OC " + name + "!", cmd + " " + task, client);
+						systemMessage("Successfully deleted the proxy " + name + "!", cmd + " " + task, client);
 
 						// Return
 						return true;
@@ -1309,7 +1390,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to update a OC",
+							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1319,7 +1400,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to update a OC",
+							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1370,17 +1451,17 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify OC existence
-						if (!OcProxyInfo.ocExists(acc, name)) {
+						// Verify proxy existence
+						if (!ChatProxyInfo.proxyExists(acc, name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
 							return true;
 						}
 
-						// Update OC
-						OcProxyInfo oc = OcProxyInfo.ofUser(acc, name);
-						oc.characterBio = bio;
-						OcProxyInfo.saveOc(acc, oc);
+						// Update proxy
+						ChatProxyInfo proxy = ChatProxyInfo.ofUser(acc, name);
+						proxy.proxyBio = bio;
+						ChatProxyInfo.saveProxy(acc, proxy);
 
 						// Reload
 						client.reloadProxies();
@@ -1400,7 +1481,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to update a OC",
+							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1410,7 +1491,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to update a OC",
+							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1462,17 +1543,17 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify OC existence
-						if (!OcProxyInfo.ocExists(acc, name)) {
+						// Verify proxy existence
+						if (!ChatProxyInfo.proxyExists(acc, name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
 							return true;
 						}
 
-						// Update OC
-						OcProxyInfo oc = OcProxyInfo.ofUser(acc, name);
-						oc.characterPronouns = pronouns;
-						OcProxyInfo.saveOc(acc, oc);
+						// Update proxy
+						ChatProxyInfo proxy = ChatProxyInfo.ofUser(acc, name);
+						proxy.proxyPronouns = pronouns;
+						ChatProxyInfo.saveProxy(acc, proxy);
 
 						// Reload
 						client.reloadProxies();
@@ -1492,7 +1573,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to enable sticky proxy mode",
+							systemMessage("Missing argument: name: requiring a proxy name to enable sticky proxy mode",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1502,7 +1583,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name toenable sticky proxy mode",
+							systemMessage("Missing argument: name: requiring a proxy name to enable sticky proxy mode",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1514,10 +1595,10 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify OC existence
-						if (!OcProxyInfo.ocExists(client.getPlayer(), name)) {
+						// Verify proxy existence
+						if (!ChatProxyInfo.proxyExists(client.getPlayer(), name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
 							return true;
 						}
 
@@ -1535,7 +1616,7 @@ public class SendMessage extends AbstractChatPacket {
 							session.roomSessions.put(room, roomSes);
 						}
 						roomSes.sticky = true;
-						roomSes.lastUsedOcName = name;
+						roomSes.lastUsedProxyName = name;
 
 						// Reload
 						client.reloadProxies();
@@ -1585,7 +1666,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to update a OC",
+							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1595,7 +1676,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to update a OC",
+							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1607,25 +1688,25 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify OC existence
-						if (!OcProxyInfo.ocExists(client.getPlayer(), name)) {
+						// Verify proxy existence
+						if (!ChatProxyInfo.proxyExists(client.getPlayer(), name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
 							return true;
 						}
 
 						// Toggle
-						OcProxyInfo oc = OcProxyInfo.ofUser(client.getPlayer(), name);
-						oc.publiclyVisible = !oc.publiclyVisible;
-						OcProxyInfo.saveOc(client.getPlayer(), oc);
+						ChatProxyInfo proxy = ChatProxyInfo.ofUser(client.getPlayer(), name);
+						proxy.publiclyVisible = !proxy.publiclyVisible;
+						ChatProxyInfo.saveProxy(client.getPlayer(), proxy);
 
 						// Reload
 						client.reloadProxies();
 
 						// Success!
 						systemMessage(
-								"Privacy status of OC " + oc.displayName + ": "
-										+ (oc.publiclyVisible ? "publicly visible" : "private"),
+								"Privacy status of proxy " + proxy.displayName + ": "
+										+ (proxy.publiclyVisible ? "publicly visible" : "private"),
 								cmd + " " + task, client);
 
 						// Return
@@ -1640,7 +1721,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to display OCs",
+							systemMessage("Missing argument: name: requiring a proxy name to display proxies",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1650,7 +1731,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a OC name to display OCs",
+							systemMessage("Missing argument: name: requiring a proxy name to display proxies",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1681,16 +1762,16 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify OC existence
-						if (!OcProxyInfo.ocExists(acc, name) || (!OcProxyInfo.ofUser(acc, name).publiclyVisible
+						// Verify proxy existence
+						if (!ChatProxyInfo.proxyExists(acc, name) || (!ChatProxyInfo.ofUser(acc, name).publiclyVisible
 								&& !GameServer.hasPerm(permLevel, "moderator"))) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
 							return true;
 						}
 
-						// Get OC
-						OcProxyInfo oc = OcProxyInfo.ofUser(acc, name);
+						// Get proxy
+						ChatProxyInfo proxy = ChatProxyInfo.ofUser(acc, name);
 
 						// Get filter settings
 						int filterSetting = 0;
@@ -1701,14 +1782,14 @@ public class SendMessage extends AbstractChatPacket {
 						boolean isStrict = filterSetting != 0;
 
 						// Filter
-						String filteredBio = TextFilterService.getInstance().filterString(oc.characterBio, isStrict);
+						String filteredBio = TextFilterService.getInstance().filterString(proxy.proxyBio, isStrict);
 
 						// Display
-						systemMessage("Overview of " + name + ":\n" + "\nName: " + oc.displayName + "\nPronouns: "
-								+ oc.characterPronouns
+						systemMessage("Overview of " + name + ":\n" + "\nName: " + proxy.displayName + "\nPronouns: "
+								+ proxy.proxyPronouns
 								+ (uuid.equals(client.getPlayer().getAccountID())
-										? "\nTrigger: </noparse><mark><noparse>" + oc.triggerPrefix + "message"
-												+ oc.triggerSuffix + "</noparse></mark><noparse>"
+										? "\nTrigger: </noparse><mark><noparse>" + proxy.triggerPrefix + "message"
+												+ proxy.triggerSuffix + "</noparse></mark><noparse>"
 										: "")
 								+ "\n" + "\nBio:" + "\n" + filteredBio, cmd + " " + task, client);
 
@@ -1741,11 +1822,11 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						// List ocs
-						String msg = "List of OCs:";
-						for (OcProxyInfo oc : OcProxyInfo.allOfUser(acc)) {
+						String msg = "List of proxies:";
+						for (ChatProxyInfo proxy : ChatProxyInfo.allOfUser(acc)) {
 							// Check privacy
-							if (oc.publiclyVisible || GameServer.hasPerm(permLevel, "moderator"))
-								msg += "\n - " + oc.displayName;
+							if (proxy.publiclyVisible || GameServer.hasPerm(permLevel, "moderator"))
+								msg += "\n - " + proxy.displayName;
 						}
 						systemMessage(msg, cmd, client);
 

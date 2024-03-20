@@ -336,19 +336,6 @@ public class GameServer extends BaseSmartfoxServer {
 			return;
 		}
 
-		// Disconnect an already connected instance
-		Player ePlr = getPlayer(acc.getAccountID());
-		while (ePlr != null) {
-			EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(ePlr.account,
-					"Logged in from another location.", DisconnectType.DUPLICATE_LOGIN));
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-			}
-			ePlr.client.disconnect();
-			ePlr = getPlayer(acc.getAccountID());
-		}
-
 		// Log the login attempt
 		Centuria.logger.info("Login from IP: " + client.getAddress() + ": " + acc.getLoginName());
 
@@ -498,6 +485,19 @@ public class GameServer extends BaseSmartfoxServer {
 			}
 		}
 
+		// Disconnect an already connected instance
+		Player ePlr = getPlayer(acc.getAccountID());
+		while (ePlr != null) {
+			EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(ePlr.account,
+					"Logged in from another location.", DisconnectType.DUPLICATE_LOGIN));
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+			}
+			ePlr.client.disconnect();
+			ePlr = getPlayer(acc.getAccountID());
+		}
+
 		// Add player
 		synchronized (players) {
 			players.put(plr.account.getAccountID(), plr);
@@ -510,7 +510,7 @@ public class GameServer extends BaseSmartfoxServer {
 
 	/**
 	 * Called to remove a player from the server after they logged out, not intended
-	 * for kicking
+	 * for kicking, doesnt disconnect the client
 	 * 
 	 * @param plr Player instance
 	 */

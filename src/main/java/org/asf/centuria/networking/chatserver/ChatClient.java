@@ -16,7 +16,7 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.chat.ChatLoginEvent;
 import org.asf.centuria.networking.chatserver.networking.moderator.ModeratorClient;
-import org.asf.centuria.networking.chatserver.proxies.OcProxyInfo;
+import org.asf.centuria.networking.chatserver.proxies.ChatProxyInfo;
 import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
 import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.networking.gameserver.GameServer;
@@ -36,27 +36,27 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 	// Room lock
 	public boolean isReady = false;
 
-	private ArrayList<OcProxyMetadata> proxies = new ArrayList<OcProxyMetadata>();
+	private ArrayList<ChatProxyMetadata> proxies = new ArrayList<ChatProxyMetadata>();
 
-	public static class OcProxyMetadata {
+	public static class ChatProxyMetadata {
 		public String name;
 		public String prefix;
 		public String suffix;
 	}
 
 	/**
-	 * Retrieves all OC proxy metadata
+	 * Retrieves all proxy metadata
 	 * 
-	 * @return Array of OcProxyMetadata instances
+	 * @return Array of ChatProxyMetadata instances
 	 */
-	public OcProxyMetadata[] getOcProxyMetadata() {
+	public ChatProxyMetadata[] getChatProxyMetadata() {
 		synchronized (proxies) {
-			return proxies.toArray(t -> new OcProxyMetadata[t]);
+			return proxies.toArray(t -> new ChatProxyMetadata[t]);
 		}
 	}
 
 	/**
-	 * Reloads all OC proxies
+	 * Reloads all proxies
 	 */
 	public void reloadProxies() {
 		// Reload
@@ -65,8 +65,8 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 			proxies.clear();
 
 			// Retrieve all
-			for (OcProxyInfo proxy : OcProxyInfo.allOfUser(getPlayer())) {
-				OcProxyMetadata d = new OcProxyMetadata();
+			for (ChatProxyInfo proxy : ChatProxyInfo.allOfUser(getPlayer())) {
+				ChatProxyMetadata d = new ChatProxyMetadata();
 				d.name = proxy.displayName;
 				d.prefix = proxy.triggerPrefix;
 				d.suffix = proxy.triggerSuffix;

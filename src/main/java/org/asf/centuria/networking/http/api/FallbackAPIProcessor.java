@@ -298,7 +298,6 @@ public class FallbackAPIProcessor extends HttpPushProcessor {
 						continue; // Skip since the source blocks the target player
 					if (SocialManager.getInstance().getPlayerIsBlocked(entry.playerID, sourcePlayerID))
 						continue; // Skip since the target blocks the source player
-
 					if (i >= page * limit)
 						break;
 

@@ -4,13 +4,13 @@ import java.util.HashMap;
 
 public class ProxySession {
 
-    public static class RoomProxySession {
+	public static class RoomProxySession {
 
-        public boolean sticky;
-        public String lastUsedOcName;
+		public boolean sticky;
+		public String lastUsedProxyName;
 
-    }
+	}
 
-    public HashMap<String, RoomProxySession> roomSessions = new HashMap<String, RoomProxySession>();
+	public HashMap<String, RoomProxySession> roomSessions = new HashMap<String, RoomProxySession>();
 
 }
