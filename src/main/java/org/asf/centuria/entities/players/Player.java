@@ -196,7 +196,6 @@ public class Player {
 		// Delete character
 		ObjectDeletePacket packet = new ObjectDeletePacket(account.getAccountID());
 		player.client.sendPacket(packet);
-		lastAction = 0;
 	}
 
 	public void syncTo(Player player, WorldObjectMoverNodeType nodeType) {
@@ -243,21 +242,6 @@ public class Player {
 			packet.displayName = GameServer.getPlayerNameWithPrefix(account);
 			packet.unknownValue = 0; // TODO: What is this??
 			player.client.sendPacket(packet);
-
-			// If initial position, update action
-			if (nodeType == WorldObjectMoverNodeType.InitPosition)
-			{
-				// Send object update
-				ObjectUpdatePacket update = new ObjectUpdatePacket();
-				update.mode = 4;
-				update.id = account.getAccountID();
-				update.time = System.currentTimeMillis() / 1000;
-				update.position = lastPos;
-				update.rotation = lastRot;
-				update.action = lastAction;
-				update.speed = 20;
-				player.client.sendPacket(update);
-			}
 		}
 	}
 
@@ -268,6 +252,17 @@ public class Player {
 	 * @return If the join was a success or not.
 	 */
 	public boolean teleportToSanctuary(String sanctuaryOwner) {
+		return teleportToSanctuary(sanctuaryOwner, false);
+	}
+
+	/**
+	 * Attempts to teleport the player to another player's sanctuary.
+	 * 
+	 * @param sanctuaryOwner The owner of the sanctuary.
+	 * @param overrideLocks  True to override TP locks, false otherwise
+	 * @return If the join was a success or not.
+	 */
+	public boolean teleportToSanctuary(String sanctuaryOwner, boolean overrideLocks) {
 		try {
 			boolean isAllowed = true;
 
@@ -285,7 +280,7 @@ public class Player {
 			// Check owner
 			boolean isOwner = player.account.getAccountID().equals(sanctuaryOwner);
 
-			if (!isOwner) {
+			if (!isOwner && !overrideLocks) {
 				// Load privacy settings
 				int privSetting = 0;
 				UserVarValue val = sancOwner.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
@@ -319,13 +314,13 @@ public class Player {
 
 			// Build room join
 			RoomJoinPacket join = new RoomJoinPacket();
-			join.success = isAllowed;
+			join.success = isAllowed || overrideLocks;
 			join.levelType = 2;
 			join.levelID = 1689;
 			join.roomIdentifier = "sanctuary_" + sanctuaryOwner;
 			join.teleport = sanctuaryOwner;
 
-			if (isAllowed) {
+			if (isAllowed || overrideLocks) {
 				// Sync
 				GameServer srv = (GameServer) client.getServer();
 				for (Player plr2 : srv.getPlayers()) {
@@ -703,6 +698,8 @@ public class Player {
 
 					// Check if the target is in the same room
 					if (!plr.room.equals(player.room)) {
+						String teleport = plr.account.getAccountID();
+
 						// Check sanc
 						if (plr.levelType == 2 && plr.room.startsWith("sanctuary_")) {
 							String sanctuaryOwner = plr.room.substring("sanctuary_".length());
@@ -713,6 +710,7 @@ public class Player {
 								if (plr2 != null)
 									plr2.activeSanctuaryLook = sancOwner.getActiveSanctuaryLook();
 							}
+							teleport = sancOwner.getAccountID();
 
 							// Check owner
 							boolean isOwner = player.account.getAccountID().equals(sanctuaryOwner);
@@ -749,7 +747,7 @@ public class Player {
 						join.levelType = plr.levelType;
 						join.levelID = plr.levelID;
 						join.roomIdentifier = plr.room;
-						join.teleport = plr.account.getAccountID();
+						join.teleport = teleport;
 						player.teleportDestination = plr.account.getAccountID();
 						player.targetPos = new Vector3(plr.lastPos.x, plr.lastPos.y, plr.lastPos.z);
 						player.targetRot = new Quaternion(plr.lastRot.x, plr.lastRot.y, plr.lastRot.z, plr.lastRot.w);

@@ -671,6 +671,7 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("tpall \"<target player>\"");
 			commandMessages.add("tpall <x> <y> <z>");
 			commandMessages.add("tpserverto \"<target player>\"");
+			commandMessages.add("tptosanctuary \"<sanctuary owner player name>\" [\"<target player>\"]");
 			commandMessages.add("gatherallplayers");
 			commandMessages.add("endgathering");
 		}
@@ -3385,7 +3386,9 @@ public class SendMessage extends AbstractChatPacket {
 								plr.targetPos = new Vector3(Double.parseDouble(args.get(0)),
 										Double.parseDouble(args.get(1)), Double.parseDouble(args.get(2)));
 								plr.targetRot = plr.lastRot;
-								plr.teleportToRoom(plr.levelID, plr.levelType, 0, plr.room, "");
+								plr.teleportToRoom(plr.levelID, plr.levelType, 0, plr.room,
+										plr.room.startsWith("sanctuary_") ? plr.room.substring("sanctuary_".length())
+												: "");
 								systemMessage("Teleported " + plr.account.getDisplayName() + " to " + plr.targetPos.x
 										+ " " + plr.targetPos.y + " " + plr.targetPos.z, cmd, client);
 							} catch (Exception e) {
@@ -3418,7 +3421,10 @@ public class SendMessage extends AbstractChatPacket {
 							plr.teleportDestination = plrTarget.account.getAccountID();
 							plr.targetPos = plrTarget.lastPos;
 							plr.targetRot = plrTarget.lastRot;
-							plr.teleportToRoom(plrTarget.levelID, plrTarget.levelType, 0, plrTarget.room, "");
+							plr.teleportToRoom(plrTarget.levelID, plrTarget.levelType, 0, plrTarget.room,
+									plrTarget.room.startsWith("sanctuary_")
+											? plrTarget.room.substring("sanctuary_".length())
+											: "");
 							systemMessage("Teleported " + plr.account.getDisplayName() + " to "
 									+ plrTarget.account.getDisplayName(), cmd, client);
 						}
@@ -3459,13 +3465,65 @@ public class SendMessage extends AbstractChatPacket {
 							plr.teleportDestination = plrTarget.account.getAccountID();
 							plr.targetPos = plrTarget.lastPos;
 							plr.targetRot = plrTarget.lastRot;
-							plr.teleportToRoom(plrTarget.levelID, plrTarget.levelType, 0, plrTarget.room, "");
+							plr.teleportToRoom(plrTarget.levelID, plrTarget.levelType, 0, plrTarget.room,
+									plrTarget.room.startsWith("sanctuary_")
+											? plrTarget.room.substring("sanctuary_".length())
+											: "");
 							systemMessage("Teleported " + plr.account.getDisplayName() + " to "
 									+ plrTarget.account.getDisplayName(), cmd, client);
 						}
 
 						// Done
 						systemMessage("Bulk-teleport completed!", cmd, client);
+						return true;
+					}
+
+					case "tptosanctuary": {
+						// Sanctuary teleport
+
+						// Player
+						if (args.size() < 1) {
+							systemMessage("Missing argument: owner player name", cmd, client);
+							return true;
+						}
+						String player = args.get(0);
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Get current
+						Player plrS = client.getPlayer().getOnlinePlayerInstance();
+
+						// Check
+						if (args.size() >= 2) {
+							String target = args.get(1);
+							uuid = AccountManager.getInstance().getUserByDisplayName(target);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified target account could not be located.", cmd, client);
+								return true;
+							}
+							CenturiaAccount acc2 = AccountManager.getInstance().getAccount(uuid);
+							plrS = acc2.getOnlinePlayerInstance();
+						}
+
+						// Check
+						if (plrS == null || !plrS.roomReady) {
+							// Player not found
+							systemMessage("Player to teleport is not online or not fully in world yet.", cmd, client);
+							return true;
+						}
+
+						// Teleport
+						plrS.teleportToSanctuary(acc.getAccountID(), true);
+
+						// Done
+						systemMessage("Successfully teleported " + plrS.account.getDisplayName() + " to "
+								+ acc.getDisplayName() + "'s sanctuary", cmd, client);
 						return true;
 					}
 
@@ -3511,7 +3569,10 @@ public class SendMessage extends AbstractChatPacket {
 									plr.targetPos = new Vector3(Double.parseDouble(args.get(0)),
 											Double.parseDouble(args.get(1)), Double.parseDouble(args.get(2)));
 									plr.targetRot = plr.lastRot;
-									plr.teleportToRoom(plr.levelID, plr.levelType, 0, plr.room, "");
+									plr.teleportToRoom(plr.levelID, plr.levelType, 0, plr.room,
+											plr.room.startsWith("sanctuary_")
+													? plr.room.substring("sanctuary_".length())
+													: "");
 									systemMessage("Teleported " + plr.account.getDisplayName() + " to "
 											+ plr.targetPos.x + " " + plr.targetPos.y + " " + plr.targetPos.z, cmd,
 											client);
@@ -3550,7 +3611,10 @@ public class SendMessage extends AbstractChatPacket {
 								plr.teleportDestination = plrTarget.account.getAccountID();
 								plr.targetPos = plrTarget.lastPos;
 								plr.targetRot = plrTarget.lastRot;
-								plr.teleportToRoom(plrTarget.levelID, plrTarget.levelType, 0, plrTarget.room, "");
+								plr.teleportToRoom(plrTarget.levelID, plrTarget.levelType, 0, plrTarget.room,
+										plrTarget.room.startsWith("sanctuary_")
+												? plrTarget.room.substring("sanctuary_".length())
+												: "");
 								systemMessage("Teleported " + plr.account.getDisplayName() + " to "
 										+ plrTarget.account.getDisplayName(), cmd, client);
 							}
@@ -3591,7 +3655,9 @@ public class SendMessage extends AbstractChatPacket {
 								plr.targetPos = new Vector3(plr.lastPos.x, plr.lastPos.y, plr.lastPos.z);
 								plr.targetRot = new Quaternion(plr.lastRot.x, plr.lastRot.y, plr.lastRot.z,
 										plr.lastRot.w);
-								plr.teleportToRoom(plr.levelID, plr.levelType, 0, roomID, "");
+								plr.teleportToRoom(plr.levelID, plr.levelType, 0, roomID,
+										plr.room.startsWith("sanctuary_") ? plr.room.substring("sanctuary_".length())
+												: "");
 							} else if (plr.room == null || (plr.room != null && plr.pendingRoom != null
 									&& !plr.pendingRoom.equals(plr.room))) {
 								// Update pending room
@@ -3650,7 +3716,9 @@ public class SendMessage extends AbstractChatPacket {
 								plr.targetPos = new Vector3(plr.lastPos.x, plr.lastPos.y, plr.lastPos.z);
 								plr.targetRot = new Quaternion(plr.lastRot.x, plr.lastRot.y, plr.lastRot.z,
 										plr.lastRot.w);
-								plr.teleportToRoom(plr.levelID, plr.levelType, 0, roomID, "");
+								plr.teleportToRoom(plr.levelID, plr.levelType, 0, roomID,
+										plr.room.startsWith("sanctuary_") ? plr.room.substring("sanctuary_".length())
+												: "");
 							} else if (plr.room == null || (plr.room != null && plr.pendingRoom != null
 									&& !plr.pendingRoom.equals(plr.room))) {
 								// Update pending room
