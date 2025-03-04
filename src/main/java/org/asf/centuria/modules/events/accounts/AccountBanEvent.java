@@ -2,6 +2,7 @@ package org.asf.centuria.modules.events.accounts;
 
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.modules.eventbus.EventObject;
+import org.asf.centuria.modules.eventbus.EventPath;
 
 /**
  * 
@@ -10,6 +11,7 @@ import org.asf.centuria.modules.eventbus.EventObject;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
+@EventPath("accounts.ban")
 public class AccountBanEvent extends EventObject {
 
 	private String reason;
@@ -22,6 +24,11 @@ public class AccountBanEvent extends EventObject {
 		this.days = days;
 		this.reason = reason;
 		this.issuerID = issuerID;
+	}
+
+	@Override
+	public String eventPath() {
+		return "accounts.ban";
 	}
 
 	/**

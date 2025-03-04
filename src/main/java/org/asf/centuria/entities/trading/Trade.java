@@ -204,7 +204,7 @@ public class Trade {
 	 * Add this item to the trade.
 	 * 
 	 * @param player   The player who is giving them
-	 * @param itemId   The item id of the item/
+	 * @param itemId   The item id of the item.
 	 * @param item     The item's json.
 	 * @param quantity The quantity of the item.
 	 * @throws IOException

@@ -78,6 +78,7 @@ public class UltimateRefreshmentPlugin extends AbstractQuestPlugin {
 				int wonVarState = getState(player, UltimateRefreshmentConstants.QUEST_WON_VARIABLE_OBJECT_ID);
 				if (wonVarState < 1) {
 					// Restart timer call
+
 					UltimateRefreshmentPlayerVars vars = player.getObject(UltimateRefreshmentPlayerVars.class);
 
 					// Check if the quest won state is present, if not, even if vars is not null,
@@ -102,6 +103,9 @@ public class UltimateRefreshmentPlugin extends AbstractQuestPlugin {
 					// Command 3 in this case runs dialogue after 5 minutes unless the WON variable
 					// changes to true while the timer is running
 					runState(player, objectID, 1);
+					
+					// Set the counter back to 5 as otherwise the quest wont progress
+					setState(player, UltimateRefreshmentConstants.QUEST_VENTVAPOR_COUNTER_OBJECT_ID, 5);
 				}
 			}
 		} else if (objectID.equals(UltimateRefreshmentConstants.QUEST_WON_VARIABLE_OBJECT_ID)) {
@@ -112,7 +116,7 @@ public class UltimateRefreshmentPlugin extends AbstractQuestPlugin {
 				// Check old variable state, if its already 1, someone is attempting to exploit
 				if (oldState != 1) {
 					// Successfully finished in time
-
+					
 					// End timer call
 					UltimateRefreshmentPlayerVars vars = player.getObject(UltimateRefreshmentPlayerVars.class);
 					if (vars == null || !player.states.containsKey(objectID) || !vars.timerStarted)

@@ -16,19 +16,17 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.chat.ChatLoginEvent;
 import org.asf.centuria.networking.chatserver.networking.moderator.ModeratorClient;
-import org.asf.centuria.networking.chatserver.proxies.ChatProxyInfo;
-import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
-import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
+import org.asf.centuria.networking.chatserver.proxies.OcProxyInfo;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.persistentservice.BasePersistentServiceClient;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServer> {
 
 	private CenturiaAccount player;
-	private HashMap<String, ChatRoom> rooms = new HashMap<String, ChatRoom>();
+	private ArrayList<String> rooms = new ArrayList<String>();
+	private HashMap<String, Boolean> privateChat = new HashMap<String, Boolean>();
 
 	// Anti-hack
 	public int banCounter = 0;
@@ -36,27 +34,27 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 	// Room lock
 	public boolean isReady = false;
 
-	private ArrayList<ChatProxyMetadata> proxies = new ArrayList<ChatProxyMetadata>();
+	private ArrayList<OcProxyMetadata> proxies = new ArrayList<OcProxyMetadata>();
 
-	public static class ChatProxyMetadata {
+	public static class OcProxyMetadata {
 		public String name;
 		public String prefix;
 		public String suffix;
 	}
 
 	/**
-	 * Retrieves all proxy metadata
+	 * Retrieves all OC proxy metadata
 	 * 
-	 * @return Array of ChatProxyMetadata instances
+	 * @return Array of OcProxyMetadata instances
 	 */
-	public ChatProxyMetadata[] getChatProxyMetadata() {
+	public OcProxyMetadata[] getOcProxyMetadata() {
 		synchronized (proxies) {
-			return proxies.toArray(t -> new ChatProxyMetadata[t]);
+			return proxies.toArray(t -> new OcProxyMetadata[t]);
 		}
 	}
 
 	/**
-	 * Reloads all proxies
+	 * Reloads all OC proxies
 	 */
 	public void reloadProxies() {
 		// Reload
@@ -65,8 +63,8 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 			proxies.clear();
 
 			// Retrieve all
-			for (ChatProxyInfo proxy : ChatProxyInfo.allOfUser(getPlayer())) {
-				ChatProxyMetadata d = new ChatProxyMetadata();
+			for (OcProxyInfo proxy : OcProxyInfo.allOfUser(getPlayer())) {
+				OcProxyMetadata d = new OcProxyMetadata();
 				d.name = proxy.displayName;
 				d.prefix = proxy.triggerPrefix;
 				d.suffix = proxy.triggerSuffix;
@@ -95,6 +93,7 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 	protected void stop() {
 		synchronized (rooms) {
 			rooms.clear();
+			privateChat.clear();
 		}
 
 		// Send to moderator clients
@@ -206,7 +205,7 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 				}
 
 				// Join room
-				joinRoom(dms.get(user).getAsString(), ChatRoomTypes.PRIVATE_CHAT);
+				joinRoom(dms.get(user).getAsString(), true);
 			}
 
 			// Remove nonexistent and invalid dms
@@ -273,7 +272,7 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 		if (plr != null) {
 			// Check if the player was in chat
 			if (plr.wasInChat && plr.room != null)
-				joinRoom(plr.room, ChatRoomTypes.ROOM_CHAT);
+				joinRoom(plr.room, false);
 		} else {
 			// Security checks
 			// Check moderator perms
@@ -299,6 +298,28 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 
 		// Reload proxies
 		reloadProxies();
+
+		// Send to moderator clients
+		for (ChatClient client : getServer().getClients()) {
+			if (client.getObject(ModeratorClient.class) == null)
+				continue;
+
+			// Check moderator perms
+			String permLevel2 = "member";
+			if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+				permLevel2 = client.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+						.get("permissionLevel").getAsString();
+			}
+			if (!GameServer.hasPerm(permLevel2, "moderator"))
+				continue;
+
+			// Send packet
+			JsonObject response = new JsonObject();
+			response.addProperty("eventId", "centuria.moderatorclient.playerconnected");
+			response.addProperty("success", true);
+			response.addProperty("uuid", getPlayer().getAccountID());
+			client.sendPacket(response);
+		}
 	}
 
 	/**
@@ -318,9 +339,21 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 	 */
 	public boolean isInRoom(String room) {
 		synchronized (rooms) {
-			if (rooms.containsKey(room))
+			if (rooms.contains(room))
 				return true; // Player is part of this chat room
 			return false; // Player is not part of this chat room
+		}
+	}
+
+	/**
+	 * Checks if a room is private or not
+	 * 
+	 * @param room Room ID
+	 * @return True if private, false otherwise
+	 */
+	public boolean isRoomPrivate(String room) {
+		synchronized (privateChat) {
+			return privateChat.getOrDefault(room, false);
 		}
 	}
 
@@ -331,15 +364,15 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 	 */
 	public void leaveRoom(String room) {
 		boolean left = false;
-		String oldType = null;
+		boolean wasPrivate = isRoomPrivate(room);
 		synchronized (rooms) {
-			if (rooms.containsKey(room)) {
-				oldType = rooms.get(room).getType();
-				rooms.remove(room);
+			rooms.remove(room);
+			synchronized (privateChat) {
+				privateChat.remove(room);
 				left = true;
 			}
 		}
-		if (left && !oldType.equals(ChatRoomTypes.PRIVATE_CHAT)) {
+		if (left && !wasPrivate) {
 			// Send to moderator clients
 			for (ChatClient client : getServer().getClients()) {
 				if (client.getObject(ModeratorClient.class) == null)
@@ -359,7 +392,7 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 				response.addProperty("eventId", "centuria.moderatorclient.playerleftroom");
 				response.addProperty("success", true);
 				response.addProperty("conversationId", room);
-				response.addProperty("conversationType", oldType);
+				response.addProperty("conversationType", "room");
 				response.addProperty("uuid", getPlayer().getAccountID());
 				client.sendPacket(response);
 			}
@@ -369,18 +402,21 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 	/**
 	 * Joins a chat room
 	 * 
-	 * @param roomID Room ID to join
-	 * @param type   Room type
+	 * @param room      Room to join
+	 * @param isPrivate True if the room is a private room, false otherwise
 	 */
-	public void joinRoom(String roomID, String type) {
+	public void joinRoom(String room, boolean isPrivate) {
 		boolean joined = false;
 		synchronized (rooms) {
-			if (!rooms.containsKey(roomID)) {
-				rooms.put(roomID, new ChatRoom(roomID, type));
-				joined = true;
+			if (!rooms.contains(room)) {
+				rooms.add(room);
+				synchronized (privateChat) {
+					privateChat.put(room, isPrivate);
+					joined = true;
+				}
 			}
 		}
-		if (joined && !type.equals(ChatRoomTypes.PRIVATE_CHAT)) {
+		if (joined && !isPrivate) {
 			// Send to moderator clients
 			for (ChatClient client : getServer().getClients()) {
 				if (client.getObject(ModeratorClient.class) == null)
@@ -399,8 +435,8 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 				JsonObject response = new JsonObject();
 				response.addProperty("eventId", "centuria.moderatorclient.playerjoinedroom");
 				response.addProperty("success", true);
-				response.addProperty("conversationId", roomID);
-				response.addProperty("conversationType", type);
+				response.addProperty("conversationId", room);
+				response.addProperty("conversationType", "room");
 				response.addProperty("uuid", getPlayer().getAccountID());
 				client.sendPacket(response);
 			}
@@ -414,19 +450,7 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 	 */
 	public String[] getRooms() {
 		synchronized (rooms) {
-			return rooms.keySet().toArray(t -> new String[t]);
-		}
-	}
-
-	/**
-	 * Retrieves chat rooms by ID
-	 * 
-	 * @param id Room ID
-	 * @return ChatRoom instance or null
-	 */
-	public ChatRoom getRoom(String id) {
-		synchronized (rooms) {
-			return rooms.get(id);
+			return rooms.toArray(t -> new String[t]);
 		}
 	}
 

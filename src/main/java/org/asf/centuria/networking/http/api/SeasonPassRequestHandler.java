@@ -52,7 +52,7 @@ public class SeasonPassRequestHandler extends HttpPushProcessor {
 				path = path.substring(0, path.length() - 2);
 
 			// Time format
-			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+			SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 			// Get season

@@ -1,6 +1,7 @@
 package org.asf.centuria.modules.events.chat;
 
 import org.asf.centuria.modules.eventbus.EventObject;
+import org.asf.centuria.modules.eventbus.EventPath;
 
 /**
  * 
@@ -10,12 +11,18 @@ import org.asf.centuria.modules.eventbus.EventObject;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
+@EventPath("chat.convodeletewarning")
 public class ChatConversationDeletionWarningEvent extends EventObject {
 
 	private String conversation;
 
 	public ChatConversationDeletionWarningEvent(String conversation) {
 		this.conversation = conversation;
+	}
+
+	@Override
+	public String eventPath() {
+		return "chat.convodeletewarning";
 	}
 
 	/**

@@ -21,4 +21,8 @@ public class QuestObjectiveCompletedEvent extends AbstractQuestObjectiveEvent {
 		super(server, player, account, client, questID, quest, objective);
 	}
 
+	@Override
+	public String eventPath() {
+		return "18compat.quest.objectivecomplete";
+	}
 }

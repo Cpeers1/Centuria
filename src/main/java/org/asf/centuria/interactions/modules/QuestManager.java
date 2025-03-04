@@ -43,7 +43,7 @@ public class QuestManager extends InteractionModule {
 	// The quest to refuse running
 	// This will be the quest after the 3rd released each week
 	// Ignored in debug mode
-	public int questLock = 15322; // Silent but Deadly, locked to prevent broken quests breaking the server
+	public int questLock = 15867; // Up the River, locked to prevent broken quests breaking the server
 
 	private static String firstQuest = "7537";
 	private static LinkedHashMap<String, String> questMap = new LinkedHashMap<String, String>();
@@ -64,7 +64,7 @@ public class QuestManager extends InteractionModule {
 		try {
 			// Load the quest map
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("content/quests/questline.json");
+					.getResourceAsStream("questline.json");
 			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
 			JsonObject quests = helper.get("QuestMap").getAsJsonObject();
 			for (String key : quests.keySet()) {
@@ -73,7 +73,7 @@ public class QuestManager extends InteractionModule {
 			strm.close();
 
 			// Load quest definitions
-			strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("content/quests/quests.json");
+			strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("quests.json");
 			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
 			quests = helper.get("Quests").getAsJsonObject();
 			for (String key : quests.keySet()) {

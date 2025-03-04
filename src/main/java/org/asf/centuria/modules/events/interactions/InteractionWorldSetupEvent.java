@@ -53,4 +53,8 @@ public class InteractionWorldSetupEvent extends EventObject {
 		objectIDs.add(objectID);
 	}
 
+	@Override
+	public String eventPath() {
+		return "18compat.interaction.worldsetup";
+	}
 }

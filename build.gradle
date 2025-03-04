@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = "b1.8"
+version = "b1.7.3"
 group = "org.asf.centuria"
 
 sourceCompatibility = '1.17'
@@ -22,6 +22,7 @@ repositories {
 }
 
 jar {
+	baseName "Centuria"
 	manifest {
 		attributes([
 			"Main-Class": "org.asf.centuria.launcher.LauncherMain",
@@ -37,25 +38,26 @@ jar {
 	includeEmptyDirs = false
 }
 
-task javaDocs(type: Javadoc) {
-	classpath = sourceSets.main.runtimeClasspath
-	source = sourceSets.main.allJava
-}
+// task javaDocs(type: Javadoc) {
+// 	classpath = sourceSets.main.runtimeClasspath
+// 	source = sourceSets.main.allJava
+// }
 
-task javadocJar(type: Jar, dependsOn: 'javaDocs') {
-	from javadoc
-	classifier = 'javadoc'
-	exclude "**/extra/**"
-}
+// task javadocJar(type: Jar, dependsOn: 'javaDocs') {
+// 	from javadoc
+// 	classifier = 'javadoc'
+// 	exclude "**/extra/**"
+// }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
+	baseName "Centuria"
 	classifier = 'sources'
 	from sourceSets.main.allSource
 	exclude "**/extra/**"
 }
 
 artifacts {
-	archives javadocJar
+	// archives javadocJar
 	archives sourcesJar
 }
 
@@ -150,7 +152,7 @@ task updateData () {
 					from task.getArchiveFile().get()
 					rename task.getArchiveFile().get().getAsFile().getName(), task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()
 					into "build/update"
-					data += task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get() + "\n"
+					data += (task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()).replace(" ", "%20") + "\n"
 				}
 			}
 		}

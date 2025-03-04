@@ -47,10 +47,10 @@ public class RelationshipPlayerOnlineStatusPacket implements IXtPacket<Relations
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-		if (playerID.equals(NIL_UUID) || playerID.startsWith("plaintext:")) {
+		if (playerID.equals(NIL_UUID)) {
 			// Server, so lets be online
-			playerOnlineStatus = OnlineStatus.LoggedInToRoom;
 			client.sendPacket(this);
+			playerOnlineStatus = OnlineStatus.LoggedInToRoom;
 			return true;
 		}
 

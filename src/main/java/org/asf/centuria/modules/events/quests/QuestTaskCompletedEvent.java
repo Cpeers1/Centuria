@@ -22,4 +22,8 @@ public class QuestTaskCompletedEvent extends AbstractQuestTaskEvent {
 		super(server, player, account, client, questID, quest, objective, task);
 	}
 
+	@Override
+	public String eventPath() {
+		return "18compat.quest.taskcomplete";
+	}
 }

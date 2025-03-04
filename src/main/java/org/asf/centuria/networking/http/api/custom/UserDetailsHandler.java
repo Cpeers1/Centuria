@@ -112,7 +112,7 @@ public class UserDetailsHandler extends HttpPushProcessor {
 							// Load avatar helper
 							try {
 								InputStream strm2 = InventoryItemDownloadPacket.class.getClassLoader()
-										.getResourceAsStream("content/avatars/avatars.json");
+										.getResourceAsStream("defaultitems/avatarhelper.json");
 								JsonObject helper = JsonParser.parseString(new String(strm2.readAllBytes(), "UTF-8"))
 										.getAsJsonObject().get("Avatars").getAsJsonObject();
 								strm2.close();

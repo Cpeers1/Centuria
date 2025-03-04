@@ -2,7 +2,6 @@ package org.asf.centuria.networking.chatserver.networking;
 
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.networking.chatserver.ChatClient;
-import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.social.SocialManager;
 
 import com.google.gson.JsonObject;
@@ -32,23 +31,17 @@ public class OpenDMPacket extends AbstractChatPacket {
 
 	@Override
 	public boolean handle(ChatClient client) {
-		// Get permissions
-		String permLevel = "member";
-		if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
-			permLevel = client.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-					.get("permissionLevel").getAsString();
-		}
-
 		// Block check
 		if (SocialManager.getInstance().socialListExists(participant)
-				&& SocialManager.getInstance().getPlayerIsBlocked(participant, client.getPlayer().getAccountID())
-				&& !GameServer.hasPerm(permLevel, "moderator")) {
+				&& SocialManager.getInstance().getPlayerIsBlocked(participant, client.getPlayer().getAccountID())) {
+
 			// Send response
 			JsonObject res = new JsonObject();
 			res.addProperty("eventId", "conversations.openPrivate");
 			res.addProperty("error", "blocked");
 			res.addProperty("success", false);
 			client.sendPacket(res);
+
 			return true;
 		}
 

@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.asf.centuria.interactions.dataobjects.ObjectCollection;
 import org.asf.centuria.modules.eventbus.EventObject;
+import org.asf.centuria.modules.eventbus.EventPath;
 
 /**
  * 
@@ -14,6 +15,7 @@ import org.asf.centuria.modules.eventbus.EventObject;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
+@EventPath("objects.init")
 public class ObjectDefinitionInitEvent extends EventObject {
 
 	private HashMap<String, ObjectCollection> objects;
@@ -28,6 +30,11 @@ public class ObjectDefinitionInitEvent extends EventObject {
 		this.levelOverrideMap = levelOverrideMap;
 		this.overrideMap = overrideMap;
 		this.objectIdMap = objectIdMap;
+	}
+
+	@Override
+	public String eventPath() {
+		return "objects.init";
 	}
 
 	/**

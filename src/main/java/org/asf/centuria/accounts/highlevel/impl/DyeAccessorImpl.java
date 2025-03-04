@@ -19,7 +19,7 @@ public class DyeAccessorImpl extends DyeAccessor {
 		try {
 			// Load helper
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("content/items/dyes.json");
+					.getResourceAsStream("defaultitems/dyehelper.json");
 			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("Dyes")
 					.getAsJsonObject();
 			strm.close();

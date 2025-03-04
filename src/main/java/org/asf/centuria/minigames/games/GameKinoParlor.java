@@ -871,15 +871,16 @@ public class GameKinoParlor extends AbstractMinigame {
 
 	private class LunarPhases {
 
-		private List<LunarPhasesTile> playersHand;
-		private List<LunarPhasesTile> kinosHand;
-		private List<LunarPhasesTile> playersPlayedCards;
-		private List<LunarPhasesTile> kinosPlayedCards;
-		private List<LunarPhasesTile> removeDeck;
-		private List<LunarPhasesTile> deck;
+		List<LunarPhasesTile> playersHand; // array of indices from the card deck
+		List<LunarPhasesTile> kinosHand;
+		List<LunarPhasesTile> playersPlayedCards;
+		List<LunarPhasesTile> kinosPlayedCards;
+		List<LunarPhasesTile> removeDeck; // cards that are withdrawn from the deck are temporarily placed here
+		List<LunarPhasesTile> deck;
 
 		static final int[] suitOfCards = { 4, 4, 4, 4, 4, 4, 4, 4 };
 		static final int numCardsPerPlayer = 5;
+		static int totalNumCards;
 
 		class LunarPhasesTile {
 			final private LunarPhasesTileType tileType;
@@ -932,13 +933,14 @@ public class GameKinoParlor extends AbstractMinigame {
 		}
 
 		public LunarPhases() {
-			// Initialize the minigame
 			playersHand = new ArrayList<>();
 			kinosHand = new ArrayList<>();
 			playersPlayedCards = new ArrayList<>();
 			kinosPlayedCards = new ArrayList<>();
 			removeDeck = new ArrayList<>();
 			deck = new ArrayList<>();
+
+			totalNumCards = 0;
 		}
 
 		private void removeCardsFromDeck() {
@@ -1260,10 +1262,6 @@ public class GameKinoParlor extends AbstractMinigame {
 
 				// Check cards
 				if (playedCardPlayer == -1 || playedCardKino == -1) {
-					// FIXME: poor solution, but i dont know the codebase enough, bobby tables, when
-					// you can, can you try improving? the old code resulted in a infinite while
-					// loop due to there being no cards in the deck it could pick from
-
 					// Re-generate the deck and try again to break the tie
 					deck.clear();
 					removeDeck.clear();

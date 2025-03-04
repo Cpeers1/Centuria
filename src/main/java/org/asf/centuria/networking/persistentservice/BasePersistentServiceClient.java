@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.networking.persistentservice.networking.AbstractPersistentServicePacket;
-import org.asf.centuria.util.io.DataReader;
-import org.asf.centuria.util.io.DataWriter;
 import org.asf.connective.tasks.AsyncTaskManager;
 
 import com.google.gson.JsonElement;
@@ -31,68 +29,10 @@ public abstract class BasePersistentServiceClient<T extends BasePersistentServic
 	private int ppsCurrent;
 	private int ppsLast;
 
-	private boolean protocolSwitchPossible;
-	private boolean useEfglProtocol;
-	private boolean protocolLocked;
-
-	private DataReader dReader;
-	private DataWriter dWriter;
-
 	private boolean ioThreadInited;
 
 	private boolean disconnecting = false;
 
-	/**
-	 * Locks the protocol, should be called on first packet read
-	 */
-	protected void lockProtocol() {
-		protocolLocked = true;
-	}
-
-	/**
-	 * Prepares the client for EFGL protocol switching
-	 */
-	protected void allowProtocolSwitch() {
-		if (protocolLocked)
-			throw new UnsupportedOperationException(
-					"Protocol is locked, this cannot be called after the first packet is read");
-		protocolSwitchPossible = true;
-	}
-
-	/**
-	 * Checks if the EFGL protocol is enabled
-	 * 
-	 * @return True if enabled, false otherwise
-	 */
-	protected boolean shouldUseEfgl() {
-		return useEfglProtocol;
-	}
-
-	/**
-	 * Checks if a protocol switch is still possible, if this is true, packets will
-	 * be read byte-by-byte until protocols are switched.
-	 * 
-	 * @return True if a protocol switch is possible, false otherwise
-	 */
-	protected boolean protocolSwitchPossible() {
-		return protocolSwitchPossible;
-	}
-
-	/**
-	 * Switches to the EFGL protocol
-	 */
-	protected void switchToEfgl() {
-		useEfglProtocol = true;
-		disableProtocolSwitch();
-	}
-
-	/**
-	 * Disables protocol switching, client will either use EFGL or the
-	 * regular-performance smartfox protocol reading methods
-	 */
-	public void disableProtocolSwitch() {
-		protocolSwitchPossible = false;
-	}
 
 	/**
 	 * Retrieves the amount of packets received in the last second

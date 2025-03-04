@@ -3,7 +3,6 @@ package org.asf.centuria.networking.chatserver.networking;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.proxies.ProxySession;
-import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 
 import com.google.gson.JsonObject;
 
@@ -52,8 +51,7 @@ public class JoinRoomPacket extends AbstractChatPacket {
 
 		// Get proxy session
 		ProxySession session = cCl.getObject(ProxySession.class);
-		if (session == null)
-		{
+		if (session == null) {
 			// Create if missing
 			session = new ProxySession();
 			cCl.addObject(session);
@@ -61,7 +59,7 @@ public class JoinRoomPacket extends AbstractChatPacket {
 
 		// Leave old public room
 		for (String room : client.getRooms()) {
-			if (client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT)) {
+			if (!client.isRoomPrivate(room)) {
 				// Leave
 				client.leaveRoom(room);
 
@@ -84,7 +82,8 @@ public class JoinRoomPacket extends AbstractChatPacket {
 
 		// Join room
 		if (!client.isInRoom(room))
-			client.joinRoom(room, ChatRoomTypes.ROOM_CHAT);
+			client.joinRoom(room, false);
+
 		return true;
 	}
 

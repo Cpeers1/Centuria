@@ -6,7 +6,6 @@ import java.io.InputStream;
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
-import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
@@ -58,8 +57,7 @@ public class RoomJoinPacket implements IXtPacket<RoomJoinPacket> {
 	public boolean handle(SmartfoxClient client) throws IOException {
 		// Check room
 		// Load helper
-		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-				.getResourceAsStream("content/world/spawns.json");
+		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("spawns.json");
 		JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 				.get("Maps").getAsJsonObject();
 		strm.close();
@@ -69,7 +67,7 @@ public class RoomJoinPacket implements IXtPacket<RoomJoinPacket> {
 			client.sendPacket(this);
 		} else {
 			Player plr = (Player) client.container;
-			roomIdentifier = ((GameServer) client.getServer()).getRoomManager().findBestRoom(levelID, plr).getID();
+			roomIdentifier = "room_" + levelID;
 			plr.teleportToRoom(levelID, levelType, issRoomID, roomIdentifier, teleport);
 		}
 		return true;

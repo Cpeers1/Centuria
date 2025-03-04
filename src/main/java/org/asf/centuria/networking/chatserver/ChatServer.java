@@ -2,9 +2,6 @@ package org.asf.centuria.networking.chatserver;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 import java.util.stream.Stream;
 
 import org.asf.centuria.Centuria;
@@ -21,14 +18,14 @@ import org.asf.centuria.networking.chatserver.networking.OpenDMPacket;
 import org.asf.centuria.networking.chatserver.networking.PingPacket;
 import org.asf.centuria.networking.chatserver.networking.SendMessage;
 import org.asf.centuria.networking.chatserver.networking.UserConversations;
-import org.asf.centuria.networking.chatserver.networking.moderator.InitModeratorClient;
 import org.asf.centuria.networking.chatserver.networking.moderator.GetChatRoomList;
 import org.asf.centuria.networking.chatserver.networking.moderator.GetPlayerList;
-import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
-import org.asf.centuria.networking.persistentservice.BasePersistentServiceServer;
+import org.asf.centuria.networking.chatserver.networking.moderator.InitModeratorClient;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
+import org.asf.centuria.networking.persistentservice.BasePersistentServiceServer;
 
 public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServer> {
 
@@ -60,11 +57,11 @@ public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServ
 	 * Generates a room info object
 	 * 
 	 * @param room      Room ID
-	 * @param type      Room type
+	 * @param isPrivate True if the room is private, false otherwise
 	 * @param requester Player making the request
 	 * @return JsonObject instance
 	 */
-	public JsonObject roomObject(String room, String type, String requester) {
+	public JsonObject roomObject(String room, boolean isPrivate, String requester) {
 		// Build object
 		JsonObject roomData = new JsonObject();
 		roomData.addProperty("conversation_id", room);
@@ -74,7 +71,7 @@ public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServ
 		DMManager manager = DMManager.getInstance();
 
 		// Check type and validity
-		if (type.equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT) || !manager.dmExists(room)) {
+		if (!isPrivate || !manager.dmExists(room)) {
 			// Build participants object
 			JsonArray members = new JsonArray();
 			for (ChatClient cl : getClients()) {
@@ -94,10 +91,6 @@ public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServ
 					members.add(participant);
 			}
 
-			// Time format
-			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
-			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-
 			// if its only one, the client will bug, bc if its only one its likely only the
 			// person thats requesting the dm
 			if (members.size() <= 1)
@@ -111,16 +104,13 @@ public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServ
 				PrivateChatMessage recent = msgs[msgs.length - 1];
 				JsonObject msg = new JsonObject();
 				msg.addProperty("body", recent.content);
-				msg.addProperty("sent_at", fmt.format(new Date(recent.sentAt)));
+				msg.addProperty("sent_at", recent.sentAt);
 				msg.addProperty("source", recent.source);
 				roomData.add("recent_message", msg);
 			}
 		}
 
-		// Add type
-		roomData.addProperty("conversationType", type);
-
-		// Return
+		roomData.addProperty("conversationType", isPrivate ? "private" : "room");
 		return roomData;
 	}
 
@@ -135,6 +125,38 @@ public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServ
 			if (cl.getPlayer().getAccountID().equals(accountID))
 				return cl;
 		return null;
+	}
+
+	/**
+	 * Backported variant of start() for old server modules
+	 */
+	public void start() {
+		super.start();
+	}
+
+	/**
+	 * Backported variant of stop() for old server modules
+	 */
+	public void stop() {
+		super.stop();
+	}
+
+	/**
+	 * Backported variant of getServerSocket() for old server modules
+	 * 
+	 * @return ServerSocket instance
+	 */
+	public ServerSocket getServerSocket() {
+		return super.getServerSocket();
+	}
+
+	/**
+	 * Backported variant of getClients() for old server modules
+	 * 
+	 * @return Array of ChatClient instances
+	 */
+	public ChatClient[] getClients() {
+		return super.getClients();
 	}
 
 	@Override

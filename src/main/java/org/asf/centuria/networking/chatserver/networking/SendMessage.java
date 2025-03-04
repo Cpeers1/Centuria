@@ -1,14 +1,16 @@
 package org.asf.centuria.networking.chatserver.networking;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +27,6 @@ import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.highlevel.ItemAccessor;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
-import org.asf.centuria.entities.generic.Quaternion;
 import org.asf.centuria.entities.generic.Vector3;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.uservars.UserVarValue;
@@ -43,24 +44,16 @@ import org.asf.centuria.modules.events.chatcommands.ModuleCommandSyntaxListEvent
 import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
 import org.asf.centuria.modules.events.maintenance.MaintenanceStartEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
-import org.asf.centuria.networking.chatserver.ChatClient.ChatProxyMetadata;
+import org.asf.centuria.networking.chatserver.ChatClient.OcProxyMetadata;
 import org.asf.centuria.networking.chatserver.networking.moderator.ModeratorClient;
-import org.asf.centuria.networking.chatserver.proxies.ChatProxyInfo;
+import org.asf.centuria.networking.chatserver.proxies.OcProxyInfo;
 import org.asf.centuria.networking.chatserver.proxies.ProxySession;
-import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.voicechatserver.VoiceChatClient;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.centuria.rooms.GameRoom;
-import org.asf.centuria.rooms.impl.GatheringRoomProvider;
-import org.asf.centuria.rooms.privateinstances.PrivateInstance;
-import org.asf.centuria.rooms.privateinstances.containervars.PrivateInstanceContainer;
+import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
 import org.asf.centuria.social.SocialManager;
-import org.asf.centuria.textfilter.FilterSeverity;
-import org.asf.centuria.textfilter.TextFilterService;
-import org.asf.centuria.textfilter.result.FilterResult;
-import org.asf.centuria.textfilter.result.WordMatch;
-import org.asf.centuria.util.io.DataWriter;
+import org.asf.connective.tasks.AsyncTaskManager;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -68,28 +61,181 @@ import com.google.gson.JsonParser;
 
 public class SendMessage extends AbstractChatPacket {
 
+	private static String[] nameBlacklist = new String[] { "kit", "kitsendragn", "kitsendragon", "fera", "fero",
+			"wwadmin", "ayli", "komodorihero", "wwsam", "blinky", "fer.ocity" };
+
 	private static String NIL_UUID = new UUID(0, 0).toString();
+	private static ArrayList<String> muteWords = new ArrayList<String>();
+	private static ArrayList<String> filterWords = new ArrayList<String>();
+	private static ArrayList<String> alwaysfilterWords = new ArrayList<String>();
 
 	public static ArrayList<String> clearanceCodes = new ArrayList<String>();
 	private static Random rnd = new Random();
 
-	private String message;
-	private String room;
-
-	private static OutputStream chatLogBinary;
+	public static String[] getInvalidWords() {
+		ArrayList<String> fullList = new ArrayList<String>();
+		fullList.addAll(muteWords);
+		fullList.addAll(filterWords);
+		fullList.addAll(alwaysfilterWords);
+		return fullList.toArray(t -> new String[t]);
+	}
 
 	static {
+		reloadFilter();
+	}
+
+	private static void reloadFilter() {
+		muteWords.clear();
+		filterWords.clear();
+		alwaysfilterWords.clear();
+
+		// Load filter
 		try {
-			// Open chat log binary file
-			File chatLogFile = new File("logs/chatlog.bin");
-			chatLogFile.getParentFile().mkdirs();
-			chatLogBinary = new FileOutputStream(chatLogFile);
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("textfilter/filter.txt");
+			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+			for (String line : lines.split("\n")) {
+				if (line.isEmpty() || line.startsWith("#"))
+					continue;
+
+				String data = line.trim();
+				while (data.contains("  "))
+					data = data.replace("  ", "");
+
+				for (String word : data.split(";"))
+					filterWords.add(word.toLowerCase());
+			}
+			strm.close();
 		} catch (IOException e) {
-			// Log
-			Centuria.logger.warn(
-					"Could not open the chat log binary! Chat logging will not be available for this session!", e);
+			e.printStackTrace();
+		}
+
+		// Load ban words
+		try {
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("textfilter/instamute.txt");
+			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+			for (String line : lines.split("\n")) {
+				if (line.isEmpty() || line.startsWith("#"))
+					continue;
+
+				String data = line.trim();
+				while (data.contains("  "))
+					data = data.replace("  ", "");
+
+				for (String word : data.split(";"))
+					muteWords.add(word.toLowerCase());
+			}
+			strm.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Load always filtered words
+		try {
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("textfilter/alwaysfilter.txt");
+			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+			for (String line : lines.split("\n")) {
+				if (line.isEmpty() || line.startsWith("#"))
+					continue;
+
+				String data = line.trim();
+				while (data.contains("  "))
+					data = data.replace("  ", "");
+
+				for (String word : data.split(";"))
+					alwaysfilterWords.add(word.toLowerCase());
+			}
+			strm.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Load local filters
+		if (!new File("textfilter").exists()) {
+			new File("textfilter").mkdirs();
+			try {
+				Files.writeString(Path.of("textfilter/filter.txt"), "");
+				Files.writeString(Path.of("textfilter/alwaysfilter.txt"), "");
+				Files.writeString(Path.of("textfilter/instamute.txt"), "");
+			} catch (IOException e) {
+			}
+		}
+		try {
+			filterLastChange = Files.getLastModifiedTime(Path.of("textfilter/filter.txt")).toMillis();
+			alwaysFilterLastChange = Files.getLastModifiedTime(Path.of("textfilter/alwaysfilter.txt")).toMillis();
+			instaMuteLastChange = Files.getLastModifiedTime(Path.of("textfilter/instamute.txt")).toMillis();
+
+			// Load filter
+			try {
+				InputStream strm = new FileInputStream("textfilter/filter.txt");
+				String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+				for (String line : lines.split("\n")) {
+					if (line.isEmpty() || line.startsWith("#"))
+						continue;
+
+					String data = line.trim();
+					while (data.contains("  "))
+						data = data.replace("  ", "");
+
+					for (String word : data.split(";"))
+						filterWords.add(word.toLowerCase());
+				}
+				strm.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			// Load ban words
+			try {
+				InputStream strm = new FileInputStream("textfilter/instamute.txt");
+				String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+				for (String line : lines.split("\n")) {
+					if (line.isEmpty() || line.startsWith("#"))
+						continue;
+
+					String data = line.trim();
+					while (data.contains("  "))
+						data = data.replace("  ", "");
+
+					for (String word : data.split(";"))
+						muteWords.add(word.toLowerCase());
+				}
+				strm.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			// Load always filtered words
+			try {
+				InputStream strm = new FileInputStream("textfilter/alwaysfilter.txt");
+				String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
+				for (String line : lines.split("\n")) {
+					if (line.isEmpty() || line.startsWith("#"))
+						continue;
+
+					String data = line.trim();
+					while (data.contains("  "))
+						data = data.replace("  ", "");
+
+					for (String word : data.split(";"))
+						alwaysfilterWords.add(word.toLowerCase());
+				}
+				strm.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
 		}
 	}
+
+	private static long filterLastChange;
+	private static long alwaysFilterLastChange;
+	private static long instaMuteLastChange;
+
+	private String message;
+	private String room;
 
 	@Override
 	public String id() {
@@ -141,9 +287,7 @@ public class SendMessage extends AbstractChatPacket {
 			//
 			// If its not a mod and its a room the player isnt in, they shouldnt receive the
 			// messages
-			if ((!client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)
-					|| !manager.dmExists(room))
-					&& !client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.TRANSIENT_CHAT)) {
+			if (!client.isRoomPrivate(room) || !manager.dmExists(room)) {
 				// Check if sanctuary
 				if (room.startsWith("sanctuary_")) {
 					if (!gameClient.room.equals(room)) {
@@ -151,9 +295,8 @@ public class SendMessage extends AbstractChatPacket {
 						return true;
 					}
 				} else {
-					// Check game room
-					GameRoom gameRoom = Centuria.gameServer.getRoomManager().getRoom(room);
-					if (gameRoom != null && gameRoom.getLevelID() != gameClient.levelID) {
+					// Check level
+					if (!room.equalsIgnoreCase("room_" + gameClient.levelID)) {
 						// Invalid
 						return true;
 					}
@@ -185,88 +328,29 @@ public class SendMessage extends AbstractChatPacket {
 			return true; // Cancelled
 
 		// Chat commands
-		if (message.startsWith(">") || message.startsWith("/")) {
+		if (message.startsWith(">")) {
 			String cmd = message.substring(1).trim();
 			if (handleCommand(cmd, client))
 				return true;
 		}
 
-		// Find type
-		String type = "";
-
-		// Find other player in this room first
-		boolean found = false;
-		for (ChatClient cl : client.getServer().getClients()) {
-			if (cl.isInRoom(room)) {
-				found = true;
-				type = cl.getRoom(room).getType();
-				break;
-			}
-		}
-
-		// Find by room
-		if (!found) {
-			// Check sanctuary
-			if (room.startsWith("sanctuary_")) {
-				// Sanctuary
-				type = ChatRoomTypes.ROOM_CHAT;
-				found = true;
-			} else {
-				// Find room in room manager
-				Player plr = client.getPlayer().getOnlinePlayerInstance();
-				if (plr != null) {
-					GameServer server = (GameServer) plr.client.getServer();
-					if (server.getRoomManager().getRoom(room) != null) {
-						// Found room chat
-						room = ChatRoomTypes.ROOM_CHAT;
-						found = true;
-					}
-				}
-
-				// Check
-				if (!found) {
-					// DMs
-					if (DMManager.getInstance().dmExists(room)) {
-						// Found DM chat
-						room = ChatRoomTypes.PRIVATE_CHAT;
-						found = true;
-					} else {
-						// Transient
-						room = ChatRoomTypes.TRANSIENT_CHAT;
-						found = true;
-					}
-				}
-			}
-		}
-
 		// Log
-		if (!client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
-			// Log to server log
+		if (!client.isRoomPrivate(room))
 			Centuria.logger.info("Chat: " + client.getPlayer().getDisplayName() + ": " + message);
 
-			// Log to chat log
-			if (chatLogBinary != null) {
-				try {
-					// Create entry
-					// Room: string
-					// Type: string
-					// User ID: string
-					// Message: string
-					// Timestamp: long
-					ByteArrayOutputStream bO = new ByteArrayOutputStream();
-					DataWriter writer = new DataWriter(bO);
-					writer.writeString(room);
-					writer.writeString(client.getPlayer().getAccountID());
-					writer.writeString(message);
-					writer.writeLong(System.currentTimeMillis());
-					synchronized (chatLogBinary) {
-						writer = new DataWriter(chatLogBinary);
-						writer.writeBytes(bO.toByteArray());
-						chatLogBinary.flush();
-					}
-				} catch (IOException e) {
-				}
+		// Check times of the filter update
+		try {
+			long filterLastChange = Files.getLastModifiedTime(Path.of("textfilter/filter.txt")).toMillis();
+			long alwaysFilterLastChange = Files.getLastModifiedTime(Path.of("textfilter/alwaysfilter.txt")).toMillis();
+			long instaMuteLastChange = Files.getLastModifiedTime(Path.of("textfilter/instamute.txt")).toMillis();
+			if (SendMessage.filterLastChange != filterLastChange
+					|| SendMessage.alwaysFilterLastChange != alwaysFilterLastChange
+					|| SendMessage.instaMuteLastChange != instaMuteLastChange) {
+				// Reload
+				Centuria.logger.info("Updating chat filter...");
+				reloadFilter();
 			}
+		} catch (IOException e) {
 		}
 
 		// Increase ban counter
@@ -281,21 +365,114 @@ public class SendMessage extends AbstractChatPacket {
 
 		// Check mute
 		CenturiaAccount acc = client.getPlayer();
-		if (client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT)
-				&& acc.getSaveSharedInventory().containsItem("penalty") && acc.getSaveSharedInventory()
-						.getItem("penalty").getAsJsonObject().get("type").getAsString().equals("mute")) {
-			JsonObject muteInfo = acc.getSaveSharedInventory().getItem("penalty").getAsJsonObject();
-			if (muteInfo.get("unmuteTimestamp").getAsLong() == -1
-					|| muteInfo.get("unmuteTimestamp").getAsLong() > System.currentTimeMillis()) {
+		if (acc.getSaveSharedInventory().containsItem("penalty") && acc.getSaveSharedInventory().getItem("penalty")
+				.getAsJsonObject().get("type").getAsString().equals("mute")) {
+			JsonObject banInfo = acc.getSaveSharedInventory().getItem("penalty").getAsJsonObject();
+			if (banInfo.get("unmuteTimestamp").getAsLong() == -1
+					|| banInfo.get("unmuteTimestamp").getAsLong() > System.currentTimeMillis()) {
 				// Time format
-				SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+				SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");
 				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-				// System message
+				// Get reason
+				String reason = null;
+				if (banInfo.has("reason"))
+					reason = banInfo.get("reason").getAsString();
+
+				// Send failure
 				JsonObject res = new JsonObject();
-				res.addProperty("conversationType", "room");
+				res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
 				res.addProperty("conversationId", room);
-				res.addProperty("message", "You are muted and cannot speak in public chats.");
+				res.addProperty("message",
+						"</noparse><color=red>[!] <noparse>" + message + "</noparse></color><noparse>");
+				res.addProperty("messagePlain", "[!] " + message);
+//				res.addProperty("originalMessage", message); // Only for mods
+//				res.add("messageParts, new JsonArray())); // Not present, so not sent
+				res.addProperty("alertingMessage", true); // This is a moderator alerting message
+				res.addProperty("criticalAlertingMessage", true); // Critical, should be red
+				res.addProperty("blockedMessage", true); // The message was blocked, should be red highlighting
+				res.addProperty("source", client.getPlayer().getAccountID());
+				res.addProperty("sentAt", fmt.format(new Date()));
+				res.addProperty("eventId", "chat.postMessage");
+				res.addProperty("success", true);
+				client.sendPacket(res);
+
+				// Broadcast to moderators unless its a private chat
+				if (!client.isRoomPrivate(room)) {
+					for (ChatClient receiver : client.getServer().getClients()) {
+						// Fetch receiver moderator perms
+						String permLevel2 = "member";
+						if (receiver.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+							permLevel2 = receiver.getPlayer().getSaveSharedInventory().getItem("permissions")
+									.getAsJsonObject().get("permissionLevel").getAsString();
+						}
+
+						// Check if in room
+						if (receiver.isInRoom(room) && GameServer.hasPerm(permLevel2, "moderator")
+								&& !receiver.getPlayer().getAccountID().equals(client.getPlayer().getAccountID())) {
+							// Check limbo player
+							Player gameClient = receiver.getPlayer().getOnlinePlayerInstance();
+							if (gameClient != null && (!gameClient.roomReady || gameClient.room == null))
+								continue;
+
+							// Send to mod
+							res = new JsonObject();
+							res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
+							res.addProperty("conversationId", room);
+							res.addProperty("message",
+									"</noparse><color=red>[!] <noparse>" + message + "</noparse></color><noparse>");
+							res.addProperty("messagePlain", "[!] " + message);
+							res.addProperty("originalMessage", message);
+//							res.add("messageParts, new JsonArray())); // Not present, so not sent
+							res.addProperty("alertingMessage", true); // This is a moderator alerting message
+							res.addProperty("criticalAlertingMessage", true); // Critical, should be red
+							res.addProperty("blockedMessage", true); // The message was blocked, should be red
+																		// highlighting
+							res.addProperty("source", client.getPlayer().getAccountID());
+							res.addProperty("sentAt", fmt.format(new Date()));
+							res.addProperty("eventId", "chat.postMessage");
+							res.addProperty("success", true);
+							receiver.sendPacket(res);
+						} else {
+							// Not in room
+
+							// Check moderator client
+							if (receiver.getObject(ModeratorClient.class) != null) {
+								// Send through centuria moderator protocol
+								res = new JsonObject();
+								res.addProperty("eventId", "centuria.moderatorclient.postedMessageInOtherRoom");
+								res.addProperty("conversationType", "room");
+								res.addProperty("conversationId", room);
+								res.addProperty("message",
+										"</noparse><color=red>[!] <noparse>" + message + "</noparse></color><noparse>");
+								res.addProperty("messagePlain", "[!] " + message);
+								res.addProperty("originalMessage", message);
+//								res.add("messageParts, new JsonArray())); // Not present, so not sent
+								res.addProperty("alertingMessage", true); // This is a moderator alerting
+																			// message
+								res.addProperty("criticalAlertingMessage", true); // Critical, should be red
+																					// exclamation
+																					// mark
+								res.addProperty("blockedMessage", true); // The message was blocked, should be
+																			// red
+																			// highlighting
+								res.addProperty("source", client.getPlayer().getAccountID());
+								res.addProperty("sentAt", fmt.format(new Date()));
+								res.addProperty("success", true);
+
+								// Send message
+								receiver.sendPacket(res);
+							}
+						}
+					}
+				}
+
+				// System message
+				res = new JsonObject();
+				res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
+				res.addProperty("conversationId", room);
+				res.addProperty("message",
+						"You are muted and cannot speak in chats." + (reason != null ? "\nReason: " + reason : ""));
 				res.addProperty("source", NIL_UUID);
 				res.addProperty("sentAt", fmt.format(new Date()));
 				res.addProperty("eventId", "chat.postMessage");
@@ -309,52 +486,82 @@ public class SendMessage extends AbstractChatPacket {
 		}
 
 		// Check filter
-		if (TextFilterService.getInstance().shouldFilterMute(message)) {
-			// Mod log
-			FilterResult fres = TextFilterService.getInstance().filter(message, false);
-			String matchedWords = "";
-			for (WordMatch match : fres.getMatches()) {
-				if (match.getSeverity().ordinal() >= FilterSeverity.INSTAMUTE.ordinal()) {
-					if (matchedWords.isEmpty())
-						matchedWords = match.getMatchedPhrase();
-					else
-						matchedWords += ", " + match.getMatchedPhrase();
+		String newMessage = "";
+		for (String word : message.split(" ")) {
+			if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+				// Mod log
+				String matchedWords = "";
+				ArrayList<String> matchList = new ArrayList<String>();
+				for (String mword : message.split(" ")) {
+					if (muteWords.contains(mword.replaceAll("[^A-Za-z0-9]", "").toLowerCase())
+							&& !matchList.contains(mword.toLowerCase())) {
+						if (matchedWords.isEmpty())
+							matchedWords = mword;
+						else
+							matchedWords += ", " + mword;
+						matchList.add(mword.toLowerCase());
+					}
 				}
+
+				// Check if private
+				if (client.isRoomPrivate(room)) {
+					// Private chat, need more details
+					// And strip away the message
+					EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
+							"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+							Map.of("Private chat room", getDmNameForModlog(client, room), "Matched word(s)",
+									matchedWords, "Primary reason for filtering",
+									"Filtered for extremely bad language, slurs and similar insults are not allowed.",
+									"Room", room, "Resulting action", "muted"),
+							"SYSTEM", client.getPlayer()));
+				} else {
+					EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
+							"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+							Map.of("Chat message", message, "Matched word(s)", matchedWords,
+									"Primary reason for filtering",
+									"Filtered for extremely bad language, slurs and similar insults are not allowed.",
+									"Room", room, "Resulting action", "muted"),
+							"SYSTEM", client.getPlayer()));
+				}
+
+				// FIXME: report to moderators ingame
+
+				// Mute
+				client.getPlayer().mute(0, 0, 30, "SYSTEM",
+						"Filtered for extremely bad language, slurs and similar insults are not allowed.");
+
+				// Send system message
+				JsonObject res = new JsonObject();
+				res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
+				res.addProperty("conversationId", room);
+				res.addProperty("message",
+						"You have been automatically muted in public chat for violating the server rules, mute will last 30 minutes.\nReason: Filtered for extremely bad language, slurs and similar insults are not allowed.\nWe request you to keep your chat respectful, safe and clean!");
+				res.addProperty("source", NIL_UUID);// Time format
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+				res.addProperty("sentAt", fmt.format(new Date()));
+				res.addProperty("eventId", "chat.postMessage");
+				res.addProperty("success", true);
+				client.sendPacket(res);
+				return true;
 			}
-			EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
-					"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
-					Map.of("Chat message", message, "Matched word(s)", matchedWords, "Resulting action", "muted"),
-					"SYSTEM", client.getPlayer()));
 
-			// Mute
-			client.getPlayer().mute(0, 0, 30, "SYSTEM",
-					"Muted due to an illegal word said in the chat, we request you to keep your chat respectful, safe and clean!");
-
-			// Send system message
-			JsonObject res = new JsonObject();
-			res.addProperty("conversationType", client.getRoom(room).getType());
-			res.addProperty("conversationId", room);
-			res.addProperty("message",
-					"You have been automatically muted in public chat for violating the server rules, mute will last 30 minutes.\nReason: Muted due to an illegal word said in the chat, we request you to keep your chat respectful, safe and clean!");
-			res.addProperty("source", NIL_UUID);// Time format
-			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
-			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-			res.addProperty("sentAt", fmt.format(new Date()));
-			res.addProperty("eventId", "chat.postMessage");
-			res.addProperty("success", true);
-			client.sendPacket(res);
-			return true;
+			if (!newMessage.isEmpty())
+				newMessage += " " + word;
+			else
+				newMessage = word;
 		}
+		message = newMessage;
 
 		// Fire event
 		ChatMessageBroadcastEvent evt2 = new ChatMessageBroadcastEvent(client.getServer(), client.getPlayer(), client,
-				message, room, type);
+				message, room);
 		EventBus.getInstance().dispatchEvent(evt2);
 		if (evt2.isCancelled())
 			return true; // Cancelled
 
-		// Chat proxying
-		String chatProxyName = null;
+		// OC proxying
+		String ocProxyName = null;
 
 		// Get proxy session
 		ProxySession session = client.getObject(ProxySession.class);
@@ -370,17 +577,17 @@ public class SendMessage extends AbstractChatPacket {
 			// Check sticky
 			roomSes = session.roomSessions.get(room);
 			if (roomSes.sticky) {
-				// Update proxy thats being used
-				chatProxyName = roomSes.lastUsedProxyName;
+				// Update oc proxy thats being used
+				ocProxyName = roomSes.lastUsedOcName;
 			}
 		}
 
 		// Find proxy
-		for (ChatProxyMetadata md : client.getChatProxyMetadata()) {
+		for (OcProxyMetadata md : client.getOcProxyMetadata()) {
 			// Check message
 			if (message.startsWith(md.prefix) && message.endsWith(md.suffix)) {
-				// Found proxy
-				chatProxyName = md.name;
+				// Found OC
+				ocProxyName = md.name;
 
 				// Update message
 				message = message.substring(md.prefix.length());
@@ -399,48 +606,141 @@ public class SendMessage extends AbstractChatPacket {
 		}
 
 		// Check result
-		if (chatProxyName != null) {
+		if (ocProxyName != null) {
 			// Get proxy
-			ChatProxyInfo proxy = ChatProxyInfo.ofUser(client.getPlayer(), chatProxyName);
+			OcProxyInfo proxy = OcProxyInfo.ofUser(client.getPlayer(), ocProxyName);
 			if (proxy != null) {
 				// Update name string for it to be used in the chat itself
-				chatProxyName = "<color=#00f7ff><noparse>" + proxy.displayName + "</noparse>"
-						+ (proxy.proxyPronouns.toLowerCase().equals("n/a")
-								|| proxy.proxyPronouns.toLowerCase().isEmpty() ? ""
-										: " [<noparse>" + proxy.proxyPronouns + "</noparse>]")
+				ocProxyName = "<color=#00f7ff><noparse>" + proxy.displayName + "</noparse>"
+						+ (proxy.characterPronouns.toLowerCase().equals("n/a")
+								|| proxy.characterPronouns.toLowerCase().isEmpty() ? ""
+										: " [<noparse>" + proxy.characterPronouns + "</noparse>]")
 						+ "</color> <color=#daa520>[" + client.getPlayer().getDisplayName() + "]</color>";
 
 				// Update sticky proxying
 				if (roomSes != null)
-					roomSes.lastUsedProxyName = proxy.displayName;
+					roomSes.lastUsedOcName = proxy.displayName;
 			} else {
 				// Refresh
-				chatProxyName = null;
+				ocProxyName = null;
 				client.reloadProxies();
 			}
 		}
 
 		// Check room
-		SocialManager socialManager = SocialManager.getInstance();
-		if (client.isInRoom(room) || GameServer.hasPerm(permLevel, "moderator")) {
+		if (client.isInRoom(room)) {
+			// Verify filters
+			boolean filteredUserStrictMode = false;
+			boolean filteredDefaultSeverity = false;
+			ArrayList<String> matchedDefaultSeverity = new ArrayList<String>();
+			int filterSettingSelf = 0;
+			UserVarValue valS = client.getPlayer().getSaveSpecificInventory().getUserVarAccesor()
+					.getPlayerVarValue(9362, 0);
+			if (valS != null)
+				filterSettingSelf = valS.value;
+			for (String word : message.split(" ")) {
+				// check user filter
+				if (filterSettingSelf != 0) {
+					if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+						// Filter it
+						for (String filter : filterWords) {
+							if (word.toLowerCase().contains(filter.toLowerCase())) {
+								filteredUserStrictMode = true;
+								break;
+							}
+						}
+					}
+				}
+
+				// check always filtered
+				if (alwaysfilterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+					// Filter it
+					for (String filter : alwaysfilterWords) {
+						if (word.toLowerCase().contains(filter.toLowerCase())) {
+							filteredDefaultSeverity = true;
+							if (!matchedDefaultSeverity.contains(word))
+								matchedDefaultSeverity.add(word);
+						}
+					}
+				}
+			}
+
+			// Check severity and if we need to mute
+			if (filteredDefaultSeverity) {
+				// Get/create memory
+				ChatFilterMemory mem = client.getObject(ChatFilterMemory.class);
+				if (mem == null) {
+					mem = new ChatFilterMemory();
+					client.addObject(mem);
+				}
+
+				// Update
+				if (System.currentTimeMillis() - mem.lastFlag > (3 * 60 * 60 * 1000)) {
+					mem.lastFlag = 0;
+					mem.flagCount = 0;
+				}
+				mem.lastFlag = System.currentTimeMillis();
+				mem.flagCount++;
+
+				// Check count
+				if (mem.flagCount >= 4) {
+					// Mod log
+					String matchedWords = "";
+					for (String matched : matchedDefaultSeverity) {
+						if (matchedWords.isEmpty())
+							matchedWords = matched;
+						else
+							matchedWords += ", " + matched;
+					}
+					EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
+							"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+							Map.of("Chat message", message, "Matched word(s)", matchedWords,
+									"Primary reason for filtering",
+									"With our software being for a target audience that includes minors, the chat may never be used for NSFW.",
+									"Room", room, "Resulting action", "muted", "Reason for mute",
+									"Continued breaches of chat rules after 2 warnings."),
+							"SYSTEM", client.getPlayer()));
+
+					// Mute
+					client.getPlayer().mute(0, 0, 30, "SYSTEM",
+							"Due to your continued breaches of the chat rules, you have been muted for 30 minutes.");
+
+					// Send system message
+					JsonObject res = new JsonObject();
+					res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
+					res.addProperty("conversationId", room);
+					res.addProperty("message",
+							"Your message was blocked because it may not be appropriate.\nReason: With our software being for a target audience that includes minors, the chat may never be used for NSFW.\n\nDue to your continued breaches of the chat rules, you have been muted for 30 minutes.\nWe ask you to keep chat respectful, safe and clean!");
+					res.addProperty("source", NIL_UUID);// Time format
+					SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+					fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+					res.addProperty("sentAt", fmt.format(new Date()));
+					res.addProperty("eventId", "chat.postMessage");
+					res.addProperty("success", true);
+					client.sendPacket(res);
+					mem.lastFlag = 0;
+					mem.flagCount = 0;
+					return true;
+				}
+			}
+
 			// Time format
-			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+			SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");
 			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 			// If it is a DM, save message
-			if (client.isInRoom(room) && client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)
-					&& manager.dmExists(room)) {
-				// Save message
+			if (client.isRoomPrivate(room) && manager.dmExists(room)) {
 				PrivateChatMessage msg = new PrivateChatMessage();
 				msg.content = message;
-				msg.sentAt = System.currentTimeMillis();
+				msg.sentAt = fmt.format(new Date());
 				msg.source = client.getPlayer().getAccountID();
-				if (chatProxyName != null)
-					msg.source = "plaintext:" + chatProxyName;
+				if (ocProxyName != null)
+					msg.source = "plaintext:" + ocProxyName;
 				manager.saveDMMessge(room, msg);
 			}
 
 			// Send to all in room
+			SocialManager socialManager = SocialManager.getInstance();
 			Player cPlayer = client.getPlayer().getOnlinePlayerInstance();
 			for (ChatClient receiver : client.getServer().getClients()) {
 				// Fetch receiver moderator perms
@@ -466,7 +766,7 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Check ghost mode
 						if (cPlayer != null && cPlayer.ghostMode && !GameServer.hasPerm(permLevel2, "moderator")
-								&& client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT))
+								&& !client.isRoomPrivate(room))
 							continue;
 
 						// Check if the sender has blocked this receiver, if so, prevent the receiver
@@ -476,13 +776,15 @@ public class SendMessage extends AbstractChatPacket {
 								receiver.getPlayer().getAccountID())) {
 							// Check mod perms and room type
 							if (GameServer.hasPerm(permLevel, "moderator")) {
-								if (client.isInRoom(room)
-										&& client.getRoom(room).getType().equals(ChatRoomTypes.ROOM_CHAT)) {
+								if (client.isInRoom(room) && !client.isRoomPrivate(room)) {
 									continue; // Blocked
 								}
 							} else
 								continue; // Blocked
 						}
+
+						// Filter
+						String filteredMessage = "";
 
 						// Load filter settings
 						int filterSetting = 0;
@@ -490,76 +792,184 @@ public class SendMessage extends AbstractChatPacket {
 								.getPlayerVarValue(9362, 0);
 						if (val != null)
 							filterSetting = val.value;
-						boolean isStrict = filterSetting != 0;
 
-						// Filter
-						String filteredMessage = TextFilterService.getInstance().filterString(message, isStrict);
+						// Check filter
+						for (String word : message.split(" ")) {
+							if (filterSetting != 0 || filterSettingSelf != 0) {
+								if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+									// Filter it
+									for (String filter : filterWords) {
+										while (word.toLowerCase().contains(filter.toLowerCase())) {
+											String start = word.substring(0,
+													word.toLowerCase().indexOf(filter.toLowerCase()));
+											String rest = word.substring(
+													word.toLowerCase().indexOf(filter.toLowerCase()) + filter.length());
+											String tag = "";
+											for (int i = 0; i < filter.length(); i++) {
+												tag += "#";
+											}
+											word = start + tag + rest;
+										}
+									}
+								}
+							}
+
+							// check always filtered
+							if (alwaysfilterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+								// Filter it
+								for (String filter : alwaysfilterWords) {
+									while (word.toLowerCase().contains(filter.toLowerCase())) {
+										String start = word.substring(0,
+												word.toLowerCase().indexOf(filter.toLowerCase()));
+										String rest = word.substring(
+												word.toLowerCase().indexOf(filter.toLowerCase()) + filter.length());
+										String tag = "";
+										for (int i = 0; i < filter.length(); i++) {
+											tag += "#";
+										}
+										word = start + tag + rest;
+									}
+								}
+							}
+
+							if (!filteredMessage.isEmpty())
+								filteredMessage += " " + word;
+							else
+								filteredMessage = word;
+						}
 
 						// Send response
 						JsonObject res = new JsonObject();
-						res.addProperty("conversationType", type);
+						res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
 						res.addProperty("conversationId", room);
 						res.addProperty("message", filteredMessage);
-						if (GameServer.hasPerm(permLevel2, "moderator")
-								&& receiver.getObject(ModeratorClient.class) != null)
-							res.addProperty("unfilteredMessage", message);
 						res.addProperty("source", client.getPlayer().getAccountID());
 						res.addProperty("sentAt", fmt.format(new Date()));
 						res.addProperty("eventId", "chat.postMessage");
 						res.addProperty("success", true);
-						if (chatProxyName != null) {
-							res.addProperty("source", "plaintext:" + chatProxyName);
+						if (ocProxyName != null) {
+							res.addProperty("source", "plaintext:" + ocProxyName);
 							res.addProperty("author", client.getPlayer().getAccountID());
 						}
 
 						// Send message
 						receiver.sendPacket(res);
 					}
-				} else {
-					// Not in room
-
-					// Check moderator client
-					if (receiver.getObject(ModeratorClient.class) != null) {
-						if (GameServer.hasPerm(permLevel2, "moderator")) {
-							// Send through centuria moderator protocol if needed
-							if (!type.equals(ChatRoomTypes.PRIVATE_CHAT)) {
-								// Load filter settings
-								int filterSetting = 0;
-								UserVarValue val = receiver.getPlayer().getSaveSpecificInventory().getUserVarAccesor()
-										.getPlayerVarValue(9362, 0);
-								if (val != null)
-									filterSetting = val.value;
-								boolean isStrict = filterSetting != 0;
-
-								// Filter
-								String filteredMessage = TextFilterService.getInstance().filterString(message,
-										isStrict);
-
-								// Send
-								JsonObject res = new JsonObject();
-								res.addProperty("eventId", "centuria.moderatorclient.postedMessageInOtherRoom");
-								res.addProperty("conversationType", type);
-								res.addProperty("conversationId", room);
-								res.addProperty("message", filteredMessage);
-								res.addProperty("unfilteredMessage", message);
-								res.addProperty("source", client.getPlayer().getAccountID());
-								res.addProperty("sentAt", fmt.format(new Date()));
-								res.addProperty("success", true);
-								if (chatProxyName != null) {
-									res.addProperty("source", "plaintext:" + chatProxyName);
-									res.addProperty("author", client.getPlayer().getAccountID());
-								}
-
-								// Send message
-								receiver.sendPacket(res);
-							}
-						}
-					}
 				}
+			}
+
+			// Check censor
+			if (filteredDefaultSeverity) {
+				// Get/create memory
+				ChatFilterMemory mem = client.getObject(ChatFilterMemory.class);
+
+				// Check count
+				if (mem.flagCount == 1) {
+					// Send message
+					JsonObject res = new JsonObject();
+					res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
+					res.addProperty("conversationId", room);
+					res.addProperty("message",
+							"Your message was censored because it may not be appropriate.\nReason: The chat may not be used to go into NSFW topics.\nWe ask you to keep chat respectful, safe and clean.");
+					res.addProperty("source", NIL_UUID);
+					res.addProperty("sentAt", fmt.format(new Date()));
+					res.addProperty("eventId", "chat.postMessage");
+					res.addProperty("success", true);
+					client.sendPacket(res);
+
+					// Mod log
+					String matchedWords = "";
+					for (String matched : matchedDefaultSeverity) {
+						if (matchedWords.isEmpty())
+							matchedWords = matched;
+						else
+							matchedWords += ", " + matched;
+					}
+					EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.censored",
+							"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+							Map.of("Chat message", message, "Matched word(s)", matchedWords,
+									"Primary reason for filtering",
+									"With our software being for a target audience that includes minors, the chat may never be used for NSFW.",
+									"Room", room, "Resulting action", "censored"),
+							"SYSTEM", client.getPlayer()));
+				} else if (mem.flagCount == 2) {
+					// Send message
+					JsonObject res = new JsonObject();
+					res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
+					res.addProperty("conversationId", room);
+					res.addProperty("message",
+							"Your message was censored because it may not be appropriate.\nReason: With our software being for a target audience that includes minors, the chat may never be used for NSFW.\n\nThis is your first warning, if you continue to breach the chat rules, your account will be muted.\nWe ask you to keep chat respectful, safe and clean.");
+					res.addProperty("source", NIL_UUID);
+					res.addProperty("sentAt", fmt.format(new Date()));
+					res.addProperty("eventId", "chat.postMessage");
+					res.addProperty("success", true);
+					client.sendPacket(res);
+
+					// Mod log
+					String matchedWords = "";
+					for (String matched : matchedDefaultSeverity) {
+						if (matchedWords.isEmpty())
+							matchedWords = matched;
+						else
+							matchedWords += ", " + matched;
+					}
+					EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.censored",
+							"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+							Map.of("Chat message", message, "Matched word(s)", matchedWords,
+									"Primary reason for filtering",
+									"With our software being for a target audience that includes minors, the chat may never be used for NSFW.",
+									"Room", room, "Resulting action", "first warning"),
+							"SYSTEM", client.getPlayer()));
+				} else if (mem.flagCount == 3) {
+					// Send message
+					JsonObject res = new JsonObject();
+					res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
+					res.addProperty("conversationId", room);
+					res.addProperty("message",
+							"Your message was censored because it may not be appropriate.\nReason: With our software being for a target audience that includes minors, the chat may never be used for NSFW.\n\nThis is your LAST warning, the next breach of chat rules will result in a mute.\nWe ask you to keep chat respectful, safe and clean.");
+					res.addProperty("source", NIL_UUID);
+					res.addProperty("sentAt", fmt.format(new Date()));
+					res.addProperty("eventId", "chat.postMessage");
+					res.addProperty("success", true);
+					client.sendPacket(res);
+
+					// Mod log
+					String matchedWords = "";
+					for (String matched : matchedDefaultSeverity) {
+						if (matchedWords.isEmpty())
+							matchedWords = matched;
+						else
+							matchedWords += ", " + matched;
+					}
+					EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.censored",
+							"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+							Map.of("Chat message", message, "Matched word(s)", matchedWords,
+									"Primary reason for filtering",
+									"With our software being for a target audience that includes minors, the chat may never be used for NSFW.",
+									"Room", room, "Resulting action", "final warning"),
+							"SYSTEM", client.getPlayer()));
+				}
+			} else if (filteredUserStrictMode) {
+				// Send message
+				JsonObject res = new JsonObject();
+				res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
+				res.addProperty("conversationId", room);
+				res.addProperty("message",
+						"Your message was censored because of your current settings.\nIf you wish to not have this message flagged, please change your game's chat settings.");
+				res.addProperty("source", NIL_UUID);
+				res.addProperty("sentAt", fmt.format(new Date()));
+				res.addProperty("eventId", "chat.postMessage");
+				res.addProperty("success", true);
+				client.sendPacket(res);
 			}
 		}
 
 		return true;
+	}
+
+	private static class ChatFilterMemory {
+		public long lastFlag = 0;
+		public int flagCount = 0;
 	}
 
 	private String replaceCaseInsensitive(String msg, String target, String replacement) {
@@ -618,6 +1028,14 @@ public class SendMessage extends AbstractChatPacket {
 		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
 				|| GameServer.hasPerm(permLevel, "admin"))
 			commandMessages.add("giveBasicCurrency");
+		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemFurnitureItems
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemMods
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemResources
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemSanctuaryTypes)
+			commandMessages.add("restockInventory");
 
 		commandMessages.add("togglenameprefix");
 		if (GameServer.hasPerm(permLevel, "moderator")) {
@@ -638,7 +1056,6 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("takelevels <amount> [\"<player>\"]");
 			commandMessages.add("takeitem <itemDefId> [<quantity>] [<player>]");
 			commandMessages.add("questskip [<amount>] [<player>]");
-			commandMessages.add("tpm <levelDefID> [<room id>] [<level type>] [\\\"<player>\\\"]");
 			commandMessages.add("setplayertag \"<tag id>\" [\"<player>\"] [\"<escaped  tag json data>\"]");
 			commandMessages.add("removeplayertag \"<tag id>\" [\"<player>\"]");
 			if (GameServer.hasPerm(permLevel, "admin")) {
@@ -646,15 +1063,15 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("addxp <amount> [\"<player>\"]");
 				commandMessages.add("addlevels <amount> [\"<player>\"]");
 				commandMessages.add("resetalllevels [confirm]");
+				commandMessages.add("tpm <levelDefID> [<levelType>] [<player>]");
 				commandMessages.add("makeadmin \"<player>\"");
 				commandMessages.add("makemoderator \"<player>\"");
 				commandMessages.add("removeperms \"<player>\"");
-				commandMessages.add("startmaintenance [\"<reason>\"]");
+				commandMessages.add("startmaintenance");
 				commandMessages.add("endmaintenance");
-				commandMessages.add("stopserver");
+				commandMessages.add("shutdownserver [\"<reason>\"]");
 				commandMessages.add("updatewarning <minutes-remaining>");
 				commandMessages.add("updateshutdown [\"<reason>\"]");
-				commandMessages.add("shutdownserver [\"<reason>\"]");
 				commandMessages.add("update <60|30|15|10|5|3|1>");
 				commandMessages.add("cancelupdate");
 			}
@@ -672,8 +1089,6 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("tpall <x> <y> <z>");
 			commandMessages.add("tpserverto \"<target player>\"");
 			commandMessages.add("tptosanctuary \"<sanctuary owner player name>\" [\"<target player>\"]");
-			commandMessages.add("gatherallplayers");
-			commandMessages.add("endgathering");
 		}
 		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars
 				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes
@@ -713,64 +1128,35 @@ public class SendMessage extends AbstractChatPacket {
 		commandMessages.add(
 				"roll [<amount of rolls>][d<size>] (eg. roll d20 (1 roll of a d20 dice), roll 2d42 (2 rolls of a d42 dice), roll d20 (rolls a single d20 dice), roll 10 (rolls 10 d20 dices))");
 
-		// Chat proxying
-		commandMessages.add("");
-		commandMessages.add("Chat proxies: (for plurality and roleplay)");
-		commandMessages.add("proxy show \"<name>\" [\"<player>\"]");
-		commandMessages.add("proxy list [\"<player>\"]");
-		commandMessages.add("");
-		commandMessages.add("Proxy management:");
+		// OC proxying
 		commandMessages.add(
-				"proxy register \"<name>\" \"[<trigger prefix>]message[<trigger suffix>]\" (eg. proxy register \"Alice\" \"alice: message\")");
+				"oc register \"<name>\" \"[<trigger prefix>]message[<trigger suffix>]\" (eg. oc register \"Alice\" \"alice: message\")");
 		commandMessages.add(
-				"proxy settrigger \"<name>\" \"[<trigger prefix>]message[<trigger suffix>]\" (eg. proxy settrigger \"Alice\" \"alice: message\")");
+				"oc settrigger \"<name>\" \"[<trigger prefix>]message[<trigger suffix>]\" (eg. oc settrigger \"Alice\" \"alice: message\")");
 		if (!GameServer.hasPerm(permLevel, "moderator"))
-			commandMessages.add("proxy rename \"<name>\" \"<new name>\"");
+			commandMessages.add("oc rename \"<name>\" \"<new name>\"");
 		else
-			commandMessages.add("proxy rename \"<name>\" \"<new name>\" [\"<player>\"]");
+			commandMessages.add("oc rename \"<name>\" \"<new name>\" [\"<player>\"]");
 		if (!GameServer.hasPerm(permLevel, "moderator"))
-			commandMessages.add("proxy delete \"<name>\"");
+			commandMessages.add("oc delete \"<name>\"");
 		else
-			commandMessages.add("proxy delete \"<name>\" [\"<player>\"]");
+			commandMessages.add("oc delete \"<name>\" [\"<player>\"]");
 		if (!GameServer.hasPerm(permLevel, "moderator"))
-			commandMessages.add("proxy bio \"<name>\" \"<new bio>\"");
+			commandMessages.add("oc bio \"<name>\" \"<new bio>\"");
 		else
-			commandMessages.add("proxy bio \"<name>\" \"<new bio>\" [\"<player>\"]");
+			commandMessages.add("oc bio \"<name>\" \"<new bio>\" [\"<player>\"]");
 		if (!GameServer.hasPerm(permLevel, "moderator"))
-			commandMessages.add("proxy pronouns \"<name>\" \"<new pronouns>\"");
+			commandMessages.add("oc pronouns \"<name>\" \"<new pronouns>\"");
 		else
-			commandMessages.add("proxy pronouns \"<name>\" \"<new pronouns>\" [\"<player>\"]");
-		commandMessages.add("proxy toggleprivate \"<name>\"");
-		commandMessages.add("");
-		commandMessages.add("Sticky proxy:");
-		commandMessages.add("proxy stickyproxy \"<name>\"");
-		commandMessages.add("proxy stickyoff");
-
-		// Private instances
-		commandMessages.add("");
-		commandMessages.add("Private instances:");
-		commandMessages.add("privinst list");
-		commandMessages.add("privinst show #<number> (eg. privinst show #1)"); // TODO
-		commandMessages.add("privinst leave #<number> (eg. privinst leave #1)"); // TODO
-		commandMessages.add("privinst connect #<number> (eg. privinst connect #1)"); // TODO
-		commandMessages.add("privinst disconnect"); // TODO
-		commandMessages.add("");
-		commandMessages.add("Private instance management:");
-		commandMessages.add("privinst create \"<name>\" \"<description>\""); // TODO
-		commandMessages.add("privinst rename #<number> \"<new name>\""); // TODO
-		commandMessages.add("privinst setdescription #<number> \"<new description>\""); // TODO
-		commandMessages.add("privinst allowinvites #<number> true/false"); // TODO
-		commandMessages.add("privinst listmembers #<number>"); // TODO
-		commandMessages.add("privinst kick #<number> \"<username to kick>\""); // TODO
-		commandMessages.add("privinst makeowner #<number> \"<username of new owner>\""); // TODO
-		commandMessages.add("privinst delete #<number>"); // TODO
-		commandMessages.add("");
-		commandMessages.add("Private instance invites:");
-		commandMessages.add("privinst invite #<number> \"<username to invite>\""); // TODO
-		commandMessages.add("privinst accept <invite-id>"); // TODO
-		commandMessages.add("privinst decline <invite-id>"); // TODO
-		commandMessages.add("privinst show <invite-id>"); // TODO
-		commandMessages.add("privinst invites"); // TODO
+			commandMessages.add("oc pronouns \"<name>\" \"<new pronouns>\" [\"<player>\"]");
+		commandMessages.add("oc toggleprivate \"<name>\"");
+		commandMessages.add("oc stickyproxy \"<name>\"");
+		commandMessages.add("oc stickyoff");
+		commandMessages.add("oc show \"<name>\" [\"<player>\"]");
+		commandMessages.add("oc list [\"<player>\"]");
+		if (!GameServer.hasPerm(permLevel, "moderator")) {
+			commandMessages.add("listplayers");
+		}
 
 		// Add module commands
 		ModuleCommandSyntaxListEvent evMCSL = new ModuleCommandSyntaxListEvent(commandMessages, client,
@@ -803,26 +1189,29 @@ public class SendMessage extends AbstractChatPacket {
 					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemResources
 							|| GameServer.hasPerm(permLevel, "admin")) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
-						var accessor = client.getPlayer().getSaveSpecificInventory().getItemAccessor(onlinePlayer);
 
-						accessor.add(6691, 1000);
-						accessor.add(6692, 1000);
-						accessor.add(6693, 1000);
-						accessor.add(6694, 1000);
-						accessor.add(6695, 1000);
-						accessor.add(6696, 1000);
-						accessor.add(6697, 1000);
-						accessor.add(6698, 1000);
-						accessor.add(6699, 1000);
-						accessor.add(6700, 1000);
-						accessor.add(6701, 1000);
-						accessor.add(6702, 1000);
-						accessor.add(6703, 1000);
-						accessor.add(6704, 1000);
-						accessor.add(6705, 1000);
+						if (onlinePlayer != null) {
+							var accessor = client.getPlayer().getSaveSpecificInventory().getItemAccessor(onlinePlayer);
 
-						// TODO: Check result
-						systemMessage("You have been given 1000 of every basic material. Have fun!", cmd, client);
+							accessor.add(6691, 1000);
+							accessor.add(6692, 1000);
+							accessor.add(6693, 1000);
+							accessor.add(6694, 1000);
+							accessor.add(6695, 1000);
+							accessor.add(6696, 1000);
+							accessor.add(6697, 1000);
+							accessor.add(6698, 1000);
+							accessor.add(6699, 1000);
+							accessor.add(6700, 1000);
+							accessor.add(6701, 1000);
+							accessor.add(6702, 1000);
+							accessor.add(6703, 1000);
+							accessor.add(6704, 1000);
+							accessor.add(6705, 1000);
+
+							// TODO: Check result
+							systemMessage("You have been given 1000 of every basic material. Have fun!", cmd, client);
+						}
 						return true;
 					}
 				} else if (cmdId.equals("togglenameprefix")) {
@@ -845,13 +1234,37 @@ public class SendMessage extends AbstractChatPacket {
 					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
 							|| GameServer.hasPerm(permLevel, "admin")) {
 						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
-						var accessor = client.getPlayer().getSaveSpecificInventory().getCurrencyAccessor();
 
-						accessor.addLikes(onlinePlayer == null ? null : onlinePlayer.client, 1000);
-						accessor.addStarFragments(onlinePlayer == null ? null : onlinePlayer.client, 1000);
+						if (onlinePlayer != null) {
+							var accessor = client.getPlayer().getSaveSpecificInventory().getCurrencyAccessor();
 
-						// TODO: Check result
-						systemMessage("You have been given 1000 star fragments and likes. Have fun!", cmd, client);
+							accessor.addLikes(onlinePlayer.client, 1000);
+							accessor.addStarFragments(onlinePlayer.client, 1000);
+
+							// TODO: Check result
+							systemMessage("You have been given 1000 star fragments and likes. Have fun!", cmd, client);
+						}
+						return true;
+					}
+				} else if (cmdId.equals("restockinventory")) {
+					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
+							|| client.getPlayer().getSaveSpecificInventory()
+									.getSaveSettings().allowGiveItemFurnitureItems
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemMods
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemResources
+							|| client.getPlayer().getSaveSpecificInventory()
+									.getSaveSettings().allowGiveItemSanctuaryTypes) {
+						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
+						String cmdF = cmd;
+						AsyncTaskManager.runAsync(() -> {
+							systemMessage("Restocking inventory... Please be patient, your game may lag for a bit...",
+									cmdF, client);
+							Centuria.gameServer.stockInventory(onlinePlayer, client.getPlayer(),
+									client.getPlayer().getSaveSpecificInventory(), true);
+							systemMessage("Your inventory has been restocked! Have fun!", cmdF, client);
+						});
 						return true;
 					}
 				} else if (cmdId.equals("questrewind")) {
@@ -879,6 +1292,7 @@ public class SendMessage extends AbstractChatPacket {
 					// Get current quest position
 					String quest = QuestManager.getActiveQuest(client.getPlayer());
 					int pos = QuestManager.getQuestPosition(quest);
+					// FIXME: patch issue where this will break after completing all quests
 					if (pos < questsToRewind) {
 						// Missing argument
 						systemMessage(
@@ -983,7 +1397,7 @@ public class SendMessage extends AbstractChatPacket {
 					// Send result
 					systemMessage(result, cmd, client);
 					return true;
-				} else if (cmdId.equals("proxy") && args.size() >= 1) {
+				} else if (cmdId.equals("oc") && args.size() >= 1) {
 					String task = args.get(0).toLowerCase();
 					switch (task) {
 
@@ -995,7 +1409,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to register a proxy",
+							systemMessage("Missing argument: name: requiring a OC name to register a OC",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1005,7 +1419,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to register a proxy",
+							systemMessage("Missing argument: name: requiring a OC name to register a OC",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1017,23 +1431,53 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
+						// Verify name with blacklist
+						for (String nameB : nameBlacklist) {
+							if (name.equalsIgnoreCase(nameB)) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: name: this name was blocked as it may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
+						}
+
 						// Verify name with filters
-						if (TextFilterService.getInstance().isFiltered(name, true, "USERNAMEFILTER")) {
-							// Reply with error
-							systemMessage("Invalid argument: name: this name was blocked as it may be inappropriate",
-									cmd + " " + task, client);
-							return true;
+						for (String word : name.split(" ")) {
+							if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: name: this name was blocked as it may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: name: this name was blocked as it may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							if (alwaysfilterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: name: this name was blocked as it may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
 						}
 
 						// Check arguments
 						if (args.size() < 2) {
 							// Missing argument
-							systemMessage("Missing argument: trigger: the game needs to know when to use this proxy.\n"
+							systemMessage("Missing argument: trigger: the game needs to know when to use this OC.\n"
 									+ "\n"
 									+ "For a trigger, you need to create a template message, with the word 'message' to describe what the game must use as message content.\n"
 									+ "\n"
 									+ "Example: \"Alice: message\", usage example: \"alice: hi\", the chat would say hi as alice\n"
-									+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the proxy tied to the trigger",
+									+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the OC tied to the trigger",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1045,12 +1489,12 @@ public class SendMessage extends AbstractChatPacket {
 						if (!trigger.contains("message")) {
 							// Invalid argument
 							systemMessage(
-									"Invalid argument: trigger: missing the word 'message', the game needs to know when to use this proxy.\n"
+									"Invalid argument: trigger: missing the word 'message', the game needs to know when to use this OC.\n"
 											+ "\n"
 											+ "For a trigger, you need to create a template message, with the word 'message' to describe what the game must use as message content.\n"
 											+ "\n"
 											+ "Example: \"Alice: message\", usage example: \"alice: hi\", the chat would say hi as alice\n"
-											+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the proxy tied to the trigger",
+											+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the OC tied to the trigger",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1073,22 +1517,22 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify proxy existence
-						if (ChatProxyInfo.proxyExists(client.getPlayer(), name)) {
+						// Verify OC existence
+						if (OcProxyInfo.ocExists(client.getPlayer(), name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: you already have a proxy named " + name
-									+ ", use `proxy show` to look it up", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: you already have a OC named " + name
+									+ ", use `oc show` to look it up", cmd + " " + task, client);
 							return true;
 						}
 
-						// Create proxy
-						ChatProxyInfo.saveProxy(client.getPlayer(), name, prefix, suffix);
+						// Create OC
+						OcProxyInfo.saveOc(client.getPlayer(), name, prefix, suffix);
 
 						// Reload
 						client.reloadProxies();
 
 						// Success!
-						systemMessage("Successfully created the proxy " + name + "!", cmd + " " + task, client);
+						systemMessage("Successfully created the OC " + name + "!", cmd + " " + task, client);
 
 						// Return
 						return true;
@@ -1102,7 +1546,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
+							systemMessage("Missing argument: name: requiring a OC name to update a OC",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1112,7 +1556,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
+							systemMessage("Missing argument: name: requiring a OC name to update a OC",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1127,12 +1571,12 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 2) {
 							// Missing argument
-							systemMessage("Missing argument: trigger: the game needs to know when to use this proxy.\n"
+							systemMessage("Missing argument: trigger: the game needs to know when to use this OC.\n"
 									+ "\n"
 									+ "For a trigger, you need to create a template message, with the word 'message' to describe what the game must use as message content.\n"
 									+ "\n"
 									+ "Example: \"Alice: message\", usage example: \"alice: hi\", the chat would say hi as alice\n"
-									+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the proxy tied to the trigger",
+									+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the OC tied to the trigger",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1144,12 +1588,12 @@ public class SendMessage extends AbstractChatPacket {
 						if (!trigger.contains("message")) {
 							// Invalid argument
 							systemMessage(
-									"Invalid argument: trigger: missing the word 'message', the game needs to know when to use this proxy.\n"
+									"Invalid argument: trigger: missing the word 'message', the game needs to know when to use this OC.\n"
 											+ "\n"
 											+ "For a trigger, you need to create a template message, with the word 'message' to describe what the game must use as message content.\n"
 											+ "\n"
 											+ "Example: \"Alice: message\", usage example: \"alice: hi\", the chat would say hi as alice\n"
-											+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the proxy tied to the trigger",
+											+ "Another example: \"[[message]]\", usage example: \"[[some message]]\", the chat say \"some message\" as the OC tied to the trigger",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1172,24 +1616,24 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify Proxy existence
-						if (!ChatProxyInfo.proxyExists(client.getPlayer(), name)) {
+						// Verify OC existence
+						if (!OcProxyInfo.ocExists(client.getPlayer(), name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
 							return true;
 						}
 
-						// Update proxy
-						ChatProxyInfo proxy = ChatProxyInfo.ofUser(client.getPlayer(), name);
-						proxy.triggerPrefix = prefix;
-						proxy.triggerSuffix = suffix;
-						ChatProxyInfo.saveProxy(client.getPlayer(), proxy);
+						// Update OC
+						OcProxyInfo oc = OcProxyInfo.ofUser(client.getPlayer(), name);
+						oc.triggerPrefix = prefix;
+						oc.triggerSuffix = suffix;
+						OcProxyInfo.saveOc(client.getPlayer(), oc);
 
 						// Reload
 						client.reloadProxies();
 
 						// Success!
-						systemMessage("Successfully updated trigger of proxy " + name + "!", cmd + " " + task, client);
+						systemMessage("Successfully updated trigger of OC " + name + "!", cmd + " " + task, client);
 
 						// Return
 						return true;
@@ -1203,7 +1647,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
+							systemMessage("Missing argument: name: requiring a OC name to update a OC",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1213,7 +1657,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
+							systemMessage("Missing argument: name: requiring a OC name to update a OC",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1248,13 +1692,42 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
+						// Verify name with blacklist
+						for (String nameB : nameBlacklist) {
+							if (newName.equalsIgnoreCase(nameB)) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: new name: this name was blocked as it may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
+						}
+
 						// Verify name with filters
-						if (TextFilterService.getInstance().isFiltered(newName, true, "USERNAMEFILTER")) {
-							// Reply with error
-							systemMessage(
-									"Invalid argument: new name: this name was blocked as it may be inappropriate",
-									cmd + " " + task, client);
-							return true;
+						for (String word : newName.split(" ")) {
+							if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: new name: this name was blocked as it may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: new name: this name was blocked as it may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							if (alwaysfilterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: new name: this name was blocked as it may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
 						}
 
 						// Find ID
@@ -1276,30 +1749,30 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify proxy existence
-						if (!ChatProxyInfo.proxyExists(acc, name)) {
+						// Verify OC existence
+						if (!OcProxyInfo.ocExists(acc, name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
 							return true;
 						}
-						if (ChatProxyInfo.proxyExists(acc, newName)) {
+						if (OcProxyInfo.ocExists(acc, newName)) {
 							// Already exists
-							systemMessage("Invalid argument: new name: name already in use by another proxy",
+							systemMessage("Invalid argument: new name: name already in use by another OC",
 									cmd + " " + task, client);
 							return true;
 						}
 
-						// Update proxy
-						ChatProxyInfo proxy = ChatProxyInfo.ofUser(acc, name);
-						ChatProxyInfo.deleteProxy(acc, name);
-						proxy.displayName = newName;
-						ChatProxyInfo.saveProxy(acc, proxy);
+						// Update OC
+						OcProxyInfo oc = OcProxyInfo.ofUser(acc, name);
+						OcProxyInfo.deleteOc(acc, name);
+						oc.displayName = newName;
+						OcProxyInfo.saveOc(acc, oc);
 
 						// Reload
 						client.reloadProxies();
 
 						// Success!
-						systemMessage("Successfully updated the name of proxy " + name + "!", cmd + " " + task, client);
+						systemMessage("Successfully updated the name of OC " + name + "!", cmd + " " + task, client);
 
 						// Return
 						return true;
@@ -1313,7 +1786,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to delete a proxy",
+							systemMessage("Missing argument: name: requiring a OC name to delete a OC",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1323,7 +1796,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to delete a proxy",
+							systemMessage("Missing argument: name: requiring a OC name to delete a OC",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1354,30 +1827,30 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify proxy existence
-						if (!ChatProxyInfo.proxyExists(acc, name)) {
+						// Verify OC existence
+						if (!OcProxyInfo.ocExists(acc, name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
 							return true;
 						}
 
 						// Confirm
 						if (!GameServer.hasPerm(permLevel, "moderator")
 								&& (args.size() < 2 || !args.get(1).equals("confirm"))) {
-							systemMessage("This command will delete the proxy " + name
+							systemMessage("This command will delete the character " + name
 									+ "!\nAre you sure you want to continue?\nAdd 'confirm' to the command to confirm your action.",
 									cmd, client);
 							return true;
 						}
 
-						// Delete proxy
-						ChatProxyInfo.deleteProxy(acc, name);
+						// Delete OC
+						OcProxyInfo.deleteOc(acc, name);
 
 						// Reload
 						client.reloadProxies();
 
 						// Success!
-						systemMessage("Successfully deleted the proxy " + name + "!", cmd + " " + task, client);
+						systemMessage("Successfully deleted the OC " + name + "!", cmd + " " + task, client);
 
 						// Return
 						return true;
@@ -1391,7 +1864,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
+							systemMessage("Missing argument: name: requiring a OC name to update a OC",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1401,7 +1874,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
+							systemMessage("Missing argument: name: requiring a OC name to update a OC",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1426,11 +1899,20 @@ public class SendMessage extends AbstractChatPacket {
 						bio = bio.trim();
 
 						// Verify bio with filters
-						if (TextFilterService.getInstance().isFiltered(bio, false)) {
-							// Reply with error
-							systemMessage("Invalid argument: bio: this bio was blocked as it may be inappropriate",
-									cmd + " " + task, client);
-							return true;
+						for (String word : name.split(" ")) {
+							if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+								// Reply with error
+								systemMessage("Invalid argument: bio: this bio was blocked as it may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							if (alwaysfilterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+								// Reply with error
+								systemMessage("Invalid argument: bio: this bio was blocked as it may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
 						}
 
 						// Find ID
@@ -1452,17 +1934,17 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify proxy existence
-						if (!ChatProxyInfo.proxyExists(acc, name)) {
+						// Verify OC existence
+						if (!OcProxyInfo.ocExists(acc, name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
 							return true;
 						}
 
-						// Update proxy
-						ChatProxyInfo proxy = ChatProxyInfo.ofUser(acc, name);
-						proxy.proxyBio = bio;
-						ChatProxyInfo.saveProxy(acc, proxy);
+						// Update OC
+						OcProxyInfo oc = OcProxyInfo.ofUser(acc, name);
+						oc.characterBio = bio;
+						OcProxyInfo.saveOc(acc, oc);
 
 						// Reload
 						client.reloadProxies();
@@ -1482,7 +1964,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
+							systemMessage("Missing argument: name: requiring a OC name to update a OC",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1492,7 +1974,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
+							systemMessage("Missing argument: name: requiring a OC name to update a OC",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1517,12 +1999,30 @@ public class SendMessage extends AbstractChatPacket {
 						pronouns = pronouns.trim();
 
 						// Verify pronouns with filters
-						if (TextFilterService.getInstance().isFiltered(pronouns, true)) {
-							// Reply with error
-							systemMessage(
-									"Invalid argument: pronouns: these pronouns were blocked as they may be inappropriate",
-									cmd + " " + task, client);
-							return true;
+						for (String word : name.split(" ")) {
+							if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: pronouns: these pronouns were blocked as they may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: pronouns: these pronouns were blocked as they may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
+
+							if (alwaysfilterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+								// Reply with error
+								systemMessage(
+										"Invalid argument: pronouns: these pronouns were blocked as they may be inappropriate",
+										cmd + " " + task, client);
+								return true;
+							}
 						}
 
 						// Find ID
@@ -1544,17 +2044,17 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify proxy existence
-						if (!ChatProxyInfo.proxyExists(acc, name)) {
+						// Verify OC existence
+						if (!OcProxyInfo.ocExists(acc, name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
 							return true;
 						}
 
-						// Update proxy
-						ChatProxyInfo proxy = ChatProxyInfo.ofUser(acc, name);
-						proxy.proxyPronouns = pronouns;
-						ChatProxyInfo.saveProxy(acc, proxy);
+						// Update OC
+						OcProxyInfo oc = OcProxyInfo.ofUser(acc, name);
+						oc.characterPronouns = pronouns;
+						OcProxyInfo.saveOc(acc, oc);
 
 						// Reload
 						client.reloadProxies();
@@ -1574,7 +2074,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to enable sticky proxy mode",
+							systemMessage("Missing argument: name: requiring a OC name to enable sticky proxy mode",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1584,7 +2084,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to enable sticky proxy mode",
+							systemMessage("Missing argument: name: requiring a OC name toenable sticky proxy mode",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1596,10 +2096,10 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify proxy existence
-						if (!ChatProxyInfo.proxyExists(client.getPlayer(), name)) {
+						// Verify OC existence
+						if (!OcProxyInfo.ocExists(client.getPlayer(), name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
 							return true;
 						}
 
@@ -1617,7 +2117,7 @@ public class SendMessage extends AbstractChatPacket {
 							session.roomSessions.put(room, roomSes);
 						}
 						roomSes.sticky = true;
-						roomSes.lastUsedProxyName = name;
+						roomSes.lastUsedOcName = name;
 
 						// Reload
 						client.reloadProxies();
@@ -1667,7 +2167,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
+							systemMessage("Missing argument: name: requiring a OC name to update a OC",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1677,7 +2177,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to update a proxy",
+							systemMessage("Missing argument: name: requiring a OC name to update a OC",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1689,25 +2189,25 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify proxy existence
-						if (!ChatProxyInfo.proxyExists(client.getPlayer(), name)) {
+						// Verify OC existence
+						if (!OcProxyInfo.ocExists(client.getPlayer(), name)) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
 							return true;
 						}
 
 						// Toggle
-						ChatProxyInfo proxy = ChatProxyInfo.ofUser(client.getPlayer(), name);
-						proxy.publiclyVisible = !proxy.publiclyVisible;
-						ChatProxyInfo.saveProxy(client.getPlayer(), proxy);
+						OcProxyInfo oc = OcProxyInfo.ofUser(client.getPlayer(), name);
+						oc.publiclyVisible = !oc.publiclyVisible;
+						OcProxyInfo.saveOc(client.getPlayer(), oc);
 
 						// Reload
 						client.reloadProxies();
 
 						// Success!
 						systemMessage(
-								"Privacy status of proxy " + proxy.displayName + ": "
-										+ (proxy.publiclyVisible ? "publicly visible" : "private"),
+								"Privacy status of OC " + oc.displayName + ": "
+										+ (oc.publiclyVisible ? "publicly visible" : "private"),
 								cmd + " " + task, client);
 
 						// Return
@@ -1722,7 +2222,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Check arguments
 						if (args.size() < 1) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to display proxies",
+							systemMessage("Missing argument: name: requiring a OC name to display OCs",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1732,7 +2232,7 @@ public class SendMessage extends AbstractChatPacket {
 						name = name.trim();
 						if (name.isEmpty()) {
 							// Missing argument
-							systemMessage("Missing argument: name: requiring a proxy name to display proxies",
+							systemMessage("Missing argument: name: requiring a OC name to display OCs",
 									cmd + " " + task, client);
 							return true;
 						}
@@ -1763,36 +2263,80 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						// Verify proxy existence
-						if (!ChatProxyInfo.proxyExists(acc, name) || (!ChatProxyInfo.ofUser(acc, name).publiclyVisible
+						// Verify OC existence
+						if (!OcProxyInfo.ocExists(acc, name) || (!OcProxyInfo.ofUser(acc, name).publiclyVisible
 								&& !GameServer.hasPerm(permLevel, "moderator"))) {
 							// Already exists
-							systemMessage("Invalid argument: name: could not find the proxy", cmd + " " + task, client);
+							systemMessage("Invalid argument: name: could not find the OC", cmd + " " + task, client);
 							return true;
 						}
 
-						// Get proxy
-						ChatProxyInfo proxy = ChatProxyInfo.ofUser(acc, name);
+						// Filter bio
+						String bioFiltered = "";
 
-						// Get filter settings
+						// Get OC
+						OcProxyInfo oc = OcProxyInfo.ofUser(acc, name);
+
+						// Load filter settings
 						int filterSetting = 0;
 						UserVarValue val = client.getPlayer().getSaveSpecificInventory().getUserVarAccesor()
 								.getPlayerVarValue(9362, 0);
 						if (val != null)
 							filterSetting = val.value;
-						boolean isStrict = filterSetting != 0;
 
-						// Filter
-						String filteredBio = TextFilterService.getInstance().filterString(proxy.proxyBio, isStrict);
+						// Check filter
+						for (String word : oc.characterBio.split(" ")) {
+							if (filterSetting != 0) {
+								if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+									// Filter it
+									for (String filter : filterWords) {
+										while (word.toLowerCase().contains(filter.toLowerCase())) {
+											String start = word.substring(0,
+													word.toLowerCase().indexOf(filter.toLowerCase()));
+											String rest = word.substring(
+													word.toLowerCase().indexOf(filter.toLowerCase()) + filter.length());
+											String tag = "";
+											for (int i = 0; i < filter.length(); i++) {
+												tag += "#";
+											}
+											word = start + tag + rest;
+										}
+									}
+								}
+							}
 
-						// Display
-						systemMessage("Overview of " + name + ":\n" + "\nName: " + proxy.displayName + "\nPronouns: "
-								+ proxy.proxyPronouns
+							// check always filtered
+							if (alwaysfilterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+								// Filter it
+								for (String filter : alwaysfilterWords) {
+									while (word.toLowerCase().contains(filter.toLowerCase())) {
+										String start = word.substring(0,
+												word.toLowerCase().indexOf(filter.toLowerCase()));
+										String rest = word.substring(
+												word.toLowerCase().indexOf(filter.toLowerCase()) + filter.length());
+										String tag = "";
+										for (int i = 0; i < filter.length(); i++) {
+											tag += "#";
+										}
+										word = start + tag + rest;
+									}
+								}
+							}
+
+							if (!bioFiltered.isEmpty())
+								bioFiltered += " " + word;
+							else
+								bioFiltered = word;
+						}
+
+						// Show overview
+						systemMessage("Overview of " + name + ":\n" + "\nName: " + oc.displayName + "\nPronouns: "
+								+ oc.characterPronouns
 								+ (uuid.equals(client.getPlayer().getAccountID())
-										? "\nTrigger: </noparse><mark><noparse>" + proxy.triggerPrefix + "message"
-												+ proxy.triggerSuffix + "</noparse></mark><noparse>"
+										? "\nTrigger: </noparse><mark><noparse>" + oc.triggerPrefix + "message"
+												+ oc.triggerSuffix + "</noparse></mark><noparse>"
 										: "")
-								+ "\n" + "\nBio:" + "\n" + filteredBio, cmd + " " + task, client);
+								+ "\n" + "\nBio:" + "\n" + bioFiltered, cmd + " " + task, client);
 
 						// Return
 						return true;
@@ -1823,44 +2367,11 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						// List ocs
-						String msg = "List of proxies:";
-						for (ChatProxyInfo proxy : ChatProxyInfo.allOfUser(acc)) {
+						String msg = "List of OCs:";
+						for (OcProxyInfo oc : OcProxyInfo.allOfUser(acc)) {
 							// Check privacy
-							if (proxy.publiclyVisible || GameServer.hasPerm(permLevel, "moderator"))
-								msg += "\n - " + proxy.displayName;
-						}
-						systemMessage(msg, cmd, client);
-
-						// Return
-						return true;
-					}
-
-					default: {
-						cmd = cmd + " " + task;
-						break;
-					}
-
-					}
-				} else if (cmdId.equals("privinst") && args.size() >= 1) {
-					String task = args.get(0).toLowerCase();
-					switch (task) {
-
-					// List
-					case "list": {
-						// Remove task argument
-						args.remove(0);
-
-						// List private instances
-						int i = 1;
-						String msg = "List of private instances:";
-						for (PrivateInstance inst : Centuria.gameServer.getPrivateInstanceManager()
-								.getJoinedInstancesOf(client.getPlayer().getAccountID())) {
-							// Find owner
-							String owner = inst.getOwnerID();
-							CenturiaAccount ownerAcc = AccountManager.getInstance().getAccount(owner);
-							if (ownerAcc != null)
-								owner = ownerAcc.getDisplayName();
-							msg += " - #" + i++ + " - " + inst.getName() + " (owned by " + owner + ")";
+							if (oc.publiclyVisible || GameServer.hasPerm(permLevel, "moderator"))
+								msg += "\n - " + oc.displayName;
 						}
 						systemMessage(msg, cmd, client);
 
@@ -1908,14 +2419,329 @@ public class SendMessage extends AbstractChatPacket {
 						systemMessage(response, cmd, client);
 						return true;
 					}
+
+					case "coords":
+					case "coordsof": {
+						// Coordinate tool
+
+						// Find player
+						String player = client.getPlayer().getDisplayName();
+						if (args.size() >= 1)
+							player = args.get(0);
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+						Player plr = acc.getOnlinePlayerInstance();
+						if (plr == null || !plr.roomReady) {
+							// Player not found
+							systemMessage("Specified player is not online or not fully in world yet.", cmd, client);
+							return true;
+						}
+
+						// Show
+						systemMessage("Coordinates of " + acc.getDisplayName() + ":" //
+								+ "\n - Room ID: " + plr.room //
+								+ "\n - Level ID: " + plr.levelID //
+								+ "\n - Level type: " + plr.levelType //
+								+ "\n - Position XYZ: " + plr.lastPos.x + " " + plr.lastPos.y + " " + plr.lastPos.z //
+								+ "\n - Rotation XYZW: " + plr.lastRot.x + " " + plr.lastRot.y + " " + plr.lastRot.z
+								+ " " + plr.lastRot.w + " " //
+								, cmd, client);
+						return true;
+					}
+
+					case "tp": {
+						// Teleport tool
+
+						// Find player
+						String player = client.getPlayer().getDisplayName();
+						if (args.size() == 2 || args.size() >= 4) {
+							player = args.get(0);
+							args.remove(0);
+						}
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+						Player plr = acc.getOnlinePlayerInstance();
+						if (plr == null || !plr.roomReady) {
+							// Player not found
+							systemMessage("Specified player is not online or not fully in world yet.", cmd, client);
+							return true;
+						}
+
+						// Determine mode
+						if (args.size() >= 3) {
+							try {
+								// Coordinates
+								if (!args.get(0).matches("^[\\-0-9\\.]+$")) {
+									systemMessage("Invalid argument: X: invalid value", cmd, client);
+									return true;
+								}
+								if (!args.get(1).matches("^[\\-0-9\\.]+$")) {
+									systemMessage("Invalid argument: Y: invalid value", cmd, client);
+									return true;
+								}
+								if (!args.get(2).matches("^[\\-0-9\\.]+$")) {
+									systemMessage("Invalid argument: Z: invalid value", cmd, client);
+									return true;
+								}
+								plr.teleportDestination = null;
+								plr.targetPos = new Vector3(Double.parseDouble(args.get(0)),
+										Double.parseDouble(args.get(1)), Double.parseDouble(args.get(2)));
+								plr.targetRot = plr.lastRot;
+								plr.teleportToRoom(plr.levelID, plr.levelType, 0, plr.room,
+										plr.room.startsWith("sanctuary_") ? plr.room.substring("sanctuary_".length())
+												: "");
+								systemMessage("Teleported " + plr.account.getDisplayName() + " to " + plr.targetPos.x
+										+ " " + plr.targetPos.y + " " + plr.targetPos.z, cmd, client);
+							} catch (Exception e) {
+								e.printStackTrace();
+								systemMessage("Error: " + e, cmd, client);
+							}
+						} else {
+							// Player
+							if (args.size() < 1) {
+								systemMessage("Missing argument: target player or XYZ coordinates", cmd, client);
+								return true;
+							}
+							String target = args.get(0);
+							uuid = AccountManager.getInstance().getUserByDisplayName(target);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified target account could not be located.", cmd, client);
+								return true;
+							}
+							acc = AccountManager.getInstance().getAccount(uuid);
+							Player plrTarget = acc.getOnlinePlayerInstance();
+							if (plrTarget == null || !plrTarget.roomReady) {
+								// Player not found
+								systemMessage("Specified target player is not online or not fully in world yet.", cmd,
+										client);
+								return true;
+							}
+
+							// Handle teleport
+							plr.teleportDestination = plrTarget.account.getAccountID();
+							plr.targetPos = plrTarget.lastPos;
+							plr.targetRot = plrTarget.lastRot;
+							plr.teleportToRoom(plrTarget.levelID, plrTarget.levelType, 0, plrTarget.room,
+									plrTarget.room.startsWith("sanctuary_")
+											? plrTarget.room.substring("sanctuary_".length())
+											: "");
+							systemMessage("Teleported " + plr.account.getDisplayName() + " to "
+									+ plrTarget.account.getDisplayName(), cmd, client);
+						}
+						return true;
+					}
+
+					case "tpserverto": {
+						// Teleport tool
+
+						// Player
+						if (args.size() < 1) {
+							systemMessage("Missing argument: target player", cmd, client);
+							return true;
+						}
+						String target = args.get(0);
+						String uuid = AccountManager.getInstance().getUserByDisplayName(target);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified target account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+						Player plrTarget = acc.getOnlinePlayerInstance();
+						if (plrTarget == null || !plrTarget.roomReady) {
+							// Player not found
+							systemMessage("Specified target player is not online or not fully in world yet.", cmd,
+									client);
+							return true;
+						}
+
+						// Find players in room
+						for (Player plr : Centuria.gameServer.getPlayers()) {
+							// Check ready
+							if (!plr.roomReady || plr.account.getAccountID().equals(plrTarget.account.getAccountID()))
+								continue;
+
+							// Handle teleport
+							plr.teleportDestination = plrTarget.account.getAccountID();
+							plr.targetPos = plrTarget.lastPos;
+							plr.targetRot = plrTarget.lastRot;
+							plr.teleportToRoom(plrTarget.levelID, plrTarget.levelType, 0, plrTarget.room,
+									plrTarget.room.startsWith("sanctuary_")
+											? plrTarget.room.substring("sanctuary_".length())
+											: "");
+							systemMessage("Teleported " + plr.account.getDisplayName() + " to "
+									+ plrTarget.account.getDisplayName(), cmd, client);
+						}
+
+						// Done
+						systemMessage("Bulk-teleport completed!", cmd, client);
+						return true;
+					}
+
+					case "tptosanctuary": {
+						// Sanctuary teleport
+
+						// Player
+						if (args.size() < 1) {
+							systemMessage("Missing argument: owner player name", cmd, client);
+							return true;
+						}
+						String player = args.get(0);
+						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Get current
+						Player plrS = client.getPlayer().getOnlinePlayerInstance();
+
+						// Check
+						if (args.size() >= 2) {
+							String target = args.get(1);
+							uuid = AccountManager.getInstance().getUserByDisplayName(target);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified target account could not be located.", cmd, client);
+								return true;
+							}
+							CenturiaAccount acc2 = AccountManager.getInstance().getAccount(uuid);
+							plrS = acc2.getOnlinePlayerInstance();
+						}
+
+						// Check
+						if (plrS == null || !plrS.roomReady) {
+							// Player not found
+							systemMessage("Player to teleport is not online or not fully in world yet.", cmd, client);
+							return true;
+						}
+
+						// Teleport
+						plrS.teleportToSanctuary(acc.getAccountID(), true);
+
+						// Done
+						systemMessage("Successfully teleported " + plrS.account.getDisplayName() + " to "
+								+ acc.getDisplayName() + "'s sanctuary", cmd, client);
+						return true;
+					}
+
+					case "tpall": {
+						// Teleport tool
+
+						// Get current
+						Player plrS = client.getPlayer().getOnlinePlayerInstance();
+						if (plrS == null || !plrS.roomReady) {
+							// Player not found
+							systemMessage("Your player is not online or not fully in world yet.", cmd, client);
+							return true;
+						}
+
+						// Find players in room
+						for (Player plr : Centuria.gameServer.getPlayers()) {
+							// Check ready
+							if (!plr.roomReady)
+								continue;
+
+							// Determine mode
+							if (args.size() >= 3) {
+								try {
+									// Verify room
+									if (!plr.room.equals(plrS.room))
+										continue;
+
+									// Coordinates
+									if (!args.get(0).matches("^[\\-0-9\\.]+$")) {
+										systemMessage("Invalid argument: X: invalid value", cmd, client);
+										return true;
+									}
+									if (!args.get(1).matches("^[\\-0-9\\.]+$")) {
+										systemMessage("Invalid argument: Y: invalid value", cmd, client);
+										return true;
+									}
+									if (!args.get(2).matches("^[\\-0-9\\.]+$")) {
+										systemMessage("Invalid argument: Z: invalid value", cmd, client);
+										return true;
+									}
+									plr.teleportDestination = null;
+									plr.targetPos = new Vector3(Double.parseDouble(args.get(0)),
+											Double.parseDouble(args.get(1)), Double.parseDouble(args.get(2)));
+									plr.targetRot = plr.lastRot;
+									plr.teleportToRoom(plr.levelID, plr.levelType, 0, plr.room,
+											plr.room.startsWith("sanctuary_")
+													? plr.room.substring("sanctuary_".length())
+													: "");
+									systemMessage("Teleported " + plr.account.getDisplayName() + " to "
+											+ plr.targetPos.x + " " + plr.targetPos.y + " " + plr.targetPos.z, cmd,
+											client);
+								} catch (Exception e) {
+									e.printStackTrace();
+									systemMessage("Error: " + e, cmd, client);
+								}
+							} else {
+								// Player
+								if (args.size() < 1) {
+									systemMessage("Missing argument: target player or XYZ coordinates", cmd, client);
+									return true;
+								}
+								String target = args.get(0);
+								String uuid = AccountManager.getInstance().getUserByDisplayName(target);
+								if (uuid == null) {
+									// Player not found
+									systemMessage("Specified target account could not be located.", cmd, client);
+									return true;
+								}
+								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+								Player plrTarget = acc.getOnlinePlayerInstance();
+								if (plrTarget == null || !plrTarget.roomReady) {
+									// Player not found
+									systemMessage("Specified target player is not online or not fully in world yet.",
+											cmd, client);
+									return true;
+								}
+
+								// Verify room
+								if (plr.account.getAccountID().equals(plrTarget.account.getAccountID())
+										|| !plr.room.equals(plrS.room))
+									continue;
+
+								// Handle teleport
+								plr.teleportDestination = plrTarget.account.getAccountID();
+								plr.targetPos = plrTarget.lastPos;
+								plr.targetRot = plrTarget.lastRot;
+								plr.teleportToRoom(plrTarget.levelID, plrTarget.levelType, 0, plrTarget.room,
+										plrTarget.room.startsWith("sanctuary_")
+												? plrTarget.room.substring("sanctuary_".length())
+												: "");
+								systemMessage("Teleported " + plr.account.getDisplayName() + " to "
+										+ plrTarget.account.getDisplayName(), cmd, client);
+							}
+						}
+
+						// Done
+						systemMessage("Bulk-teleport completed!", cmd, client);
+						return true;
+					}
+
 					case "listplayers": {
-						// Create list
 						// Load spawn helper
 						JsonObject helper = null;
 						try {
 							// Load helper
 							InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-									.getResourceAsStream("content/world/spawns.json");
+									.getResourceAsStream("spawns.json");
 							helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 									.get("Maps").getAsJsonObject();
 							strm.close();
@@ -1962,37 +2788,22 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Find level IDs
 						int ingame = 0;
-						ArrayList<String> playerIDs = new ArrayList<String>();
 						ArrayList<Integer> levelIDs = new ArrayList<Integer>();
-						HashMap<Integer, ArrayList<String>> rooms = new HashMap<Integer, ArrayList<String>>();
 						HashMap<Player, String> playersInRooms = new HashMap<Player, String>();
 						for (Player plr : Centuria.gameServer.getPlayers()) {
-							if (!playerIDs.contains(plr.account.getAccountID())
-									&& !mapLessClients.contains(plr.account.getAccountID())
+							if (!mapLessClients.contains(plr.account.getAccountID())
 									&& (plr.roomReady || plr.levelID == 25280)) {
 								// Increase count
-								playerIDs.add(plr.account.getAccountID());
 								ingame++;
 
 								// Add level if missing
 								if (!levelIDs.contains(plr.levelID)) {
 									levelIDs.add(plr.levelID);
-									rooms.put(plr.levelID, new ArrayList<String>());
 								}
 
 								// Add to room map
 								if (plr.room != null)
 									playersInRooms.put(plr, plr.room);
-
-								// Get room list
-								ArrayList<String> rLst = rooms.get(plr.levelID);
-
-								// Find room instances
-								GameRoom room = plr.getRoom();
-								if (room != null && room.getLevelID() == plr.levelID
-										&& !rLst.contains(room.getInstanceID())) {
-									rLst.add(room.getInstanceID());
-								}
 							}
 						}
 
@@ -2001,53 +2812,21 @@ public class SendMessage extends AbstractChatPacket {
 								+ " player(s) in world:";
 
 						// Add each level
-						playerIDs = new ArrayList<String>();
+						ArrayList<String> playerIDs = new ArrayList<String>();
 						for (int levelID : levelIDs) {
 							// Determine map name
-							String map = "UNKOWN: " + levelID;
+							String map = "UNKNOWN: " + levelID;
 							if (levelID == 25280)
 								map = "Tutorial [" + levelID + "]";
 							else if (helper.has(Integer.toString(levelID)))
 								map = helper.get(Integer.toString(levelID)).getAsString() + " [" + levelID + "]";
 
-							// Find rooms
-							for (String roomID : rooms.get(levelID)) {
-								// Find players in rooms
-								for (Player plr : playersInRooms.keySet()) {
-									if (!playerIDs.contains(plr.account.getAccountID())) {
-										// Make sure it doesnt get added more than once
-										playerIDs.add(plr.account.getAccountID());
-
-										// Check
-										GameRoom room = plr.getRoom();
-										if (room != null && room.getLevelID() == levelID
-												&& room.getInstanceID().equals(roomID)) {
-											// Add to response
-											response += "\n- " + plr.account.getDisplayName() + " - " + map + " - room "
-													+ room.getInstanceID() + (plr.ghostMode ? " [GHOSTING]" : "");
-
-											// Check suspicious
-											Optional<CenturiaAccount> susAcc = suspiciousClients.keySet().stream()
-													.filter(t -> t.getAccountID().equals(plr.account.getAccountID()))
-													.findFirst();
-											if (susAcc.isPresent()) {
-												// Note it
-												response += " [ WARNING: " + suspiciousClients.get(susAcc.get()) + " ]";
-											}
-										}
-									}
-								}
-							}
-
-							// Players in other rooms
+							// Players
 							for (Player plr : playersInRooms.keySet()) {
-								String plrRoom = playersInRooms.get(plr);
 								if (!mapLessClients.contains(plr.account.getAccountID())
 										&& !playerIDs.contains(plr.account.getAccountID())) {
 									// Check
-									GameRoom room = ((GameServer) plr.client.getServer()).getRoomManager()
-											.getRoom(plrRoom);
-									if (room == null && plr.levelID == levelID) {
+									if (plr.levelID == levelID) {
 										// Add to response
 										response += "\n - " + plr.account.getDisplayName() + " - " + map
 												+ (plr.ghostMode ? " [GHOSTING]" : "");
@@ -2266,12 +3045,16 @@ public class SendMessage extends AbstractChatPacket {
 							}
 
 							// Check code
-							synchronized (clearanceCodes) {
-								if (clearanceCodes.contains(args.get(2))) {
-									clearanceCodes.remove(args.get(2));
-								} else {
-									systemMessage("Error: invalid clearance code.", cmd, client);
-									return true;
+							while (true) {
+								try {
+									if (clearanceCodes.contains(args.get(2))) {
+										clearanceCodes.remove(args.get(2));
+									} else {
+										systemMessage("Error: invalid clearance code.", cmd, client);
+										return true;
+									}
+									break;
+								} catch (ConcurrentModificationException e) {
 								}
 							}
 						}
@@ -2332,17 +3115,35 @@ public class SendMessage extends AbstractChatPacket {
 						// Teleport to staff room
 
 						// Find online player
-						Player plr = client.getPlayer().getOnlinePlayerInstance();
-						if (plr != null) {
-							// Teleport
-							GameRoom room = ((GameServer) plr.client.getServer()).getRoomManager()
-									.getOrCreateRoom(plr.pendingLevelID, "STAFFROOM");
-							plr.teleportToRoom(1718, 0, 0, room.getID(), "");
-							return true;
+						for (Player plr : Centuria.gameServer.getPlayers()) {
+							if (plr.account.getAccountID().equals(client.getPlayer().getAccountID())) {
+								// Load the requested room
+								RoomJoinPacket join = new RoomJoinPacket();
+								join.levelType = 0; // World
+								join.levelID = 1718;
+
+								// Sync
+								GameServer srv = (GameServer) plr.client.getServer();
+								for (Player player : srv.getPlayers()) {
+									if (plr.room != null && player.room != null && player.room.equals(plr.room)
+											&& player != plr) {
+										plr.destroyAt(player);
+									}
+								}
+
+								// Assign room
+								plr.roomReady = false;
+								plr.pendingLevelID = 1718;
+								plr.pendingRoom = "room_STAFFROOM";
+								join.roomIdentifier = "room_STAFFROOM";
+
+								// Send response
+								plr.client.sendPacket(join);
+
+								break;
+							}
 						}
 
-						// Player not found
-						systemMessage("Player is not online.", cmd, client);
 						return true;
 					}
 					case "pardonip": {
@@ -2363,12 +3164,16 @@ public class SendMessage extends AbstractChatPacket {
 							}
 
 							// Check code
-							synchronized (clearanceCodes) {
-								if (clearanceCodes.contains(args.get(1))) {
-									clearanceCodes.remove(args.get(1));
-								} else {
-									systemMessage("Error: invalid clearance code.", cmd, client);
-									return true;
+							while (true) {
+								try {
+									if (clearanceCodes.contains(args.get(1))) {
+										clearanceCodes.remove(args.get(1));
+									} else {
+										systemMessage("Error: invalid clearance code.", cmd, client);
+										return true;
+									}
+									break;
+								} catch (ConcurrentModificationException e) {
 								}
 							}
 						}
@@ -2575,10 +3380,6 @@ public class SendMessage extends AbstractChatPacket {
 					case "toggletpoverride": {
 						// Override tp locks
 						Player plr = client.getPlayer().getOnlinePlayerInstance();
-						if (plr == null) {
-							systemMessage("Teleport overrides cannot be toggled unless you are ingame.", cmd, client);
-							return true;
-						}
 						if (plr.overrideTpLocks) {
 							plr.overrideTpLocks = false;
 							systemMessage(
@@ -2599,12 +3400,16 @@ public class SendMessage extends AbstractChatPacket {
 								}
 
 								// Check code
-								synchronized (clearanceCodes) {
-									if (clearanceCodes.contains(args.get(0))) {
-										clearanceCodes.remove(args.get(0));
-									} else {
-										systemMessage("Error: invalid clearance code.", cmd, client);
-										return true;
+								while (true) {
+									try {
+										if (clearanceCodes.contains(args.get(0))) {
+											clearanceCodes.remove(args.get(0));
+										} else {
+											systemMessage("Error: invalid clearance code.", cmd, client);
+											return true;
+										}
+										break;
+									} catch (ConcurrentModificationException e) {
 									}
 								}
 							}
@@ -2622,10 +3427,6 @@ public class SendMessage extends AbstractChatPacket {
 					case "toggleghostmode": {
 						// Ghost mode
 						Player plr = client.getPlayer().getOnlinePlayerInstance();
-						if (plr == null) {
-							systemMessage("Ghost mode cannot be toggled unless you are ingame.", cmd, client);
-							return true;
-						}
 						if (plr.ghostMode) {
 							plr.ghostMode = false;
 
@@ -2644,9 +3445,6 @@ public class SendMessage extends AbstractChatPacket {
 							EventBus.getInstance()
 									.dispatchEvent(new MiscModerationEvent("ghostmode.disabled", "Ghost Mode Disabled",
 											Map.of("Ghost mode status", "Disabled"), plr.account.getAccountID(), null));
-
-							// Delete ghost mode file
-							plr.account.getSaveSharedInventory().deleteItem("ghostmode");
 						} else {
 							// Enable ghost mode
 							plr.ghostMode = true;
@@ -2667,9 +3465,6 @@ public class SendMessage extends AbstractChatPacket {
 							EventBus.getInstance()
 									.dispatchEvent(new MiscModerationEvent("ghostmode.enabled", "Ghost Mode Enabled",
 											Map.of("Ghost mode status", "Enabled"), plr.account.getAccountID(), null));
-
-							// Keep enabled even after logout
-							plr.account.getSaveSharedInventory().setItem("ghostmode", new JsonObject());
 						}
 
 						return true;
@@ -2686,15 +3481,14 @@ public class SendMessage extends AbstractChatPacket {
 								while (codeLong < 10000)
 									codeLong = rnd.nextLong();
 								code = Long.toString(codeLong, 16);
-								synchronized (clearanceCodes) {
+								try {
 									if (!clearanceCodes.contains(code))
 										break;
+								} catch (ConcurrentModificationException e) {
 								}
 								code = Long.toString(rnd.nextLong(), 16);
 							}
-							synchronized (clearanceCodes) {
-								clearanceCodes.add(code);
-							}
+							clearanceCodes.add(code);
 							EventBus.getInstance()
 									.dispatchEvent(new MiscModerationEvent("clearancecode.generated",
 											"Admin Clearance Code Generated", Map.of(),
@@ -2704,18 +3498,17 @@ public class SendMessage extends AbstractChatPacket {
 							final String cFinal = code;
 							Thread th = new Thread(() -> {
 								for (int i = 0; i < 12000; i++) {
-									synchronized (clearanceCodes) {
+									try {
 										if (!clearanceCodes.contains(cFinal))
 											return;
+									} catch (ConcurrentModificationException e) {
 									}
 									try {
 										Thread.sleep(10);
 									} catch (InterruptedException e) {
 									}
 								}
-								synchronized (clearanceCodes) {
-									clearanceCodes.remove(cFinal);
-								}
+								clearanceCodes.remove(cFinal);
 							}, "Clearance code expiry");
 							th.setDaemon(true);
 							th.start();
@@ -2811,6 +3604,13 @@ public class SendMessage extends AbstractChatPacket {
 							}
 							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 
+							// Get permissions
+							String permLevel2 = "member";
+							if (acc.getSaveSharedInventory().containsItem("permissions")) {
+								permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+										.get("permissionLevel").getAsString();
+							}
+
 							// Check
 							if (acc.getSaveSharedInventory().containsItem("permissions")) {
 								if (GameServer
@@ -2820,13 +3620,6 @@ public class SendMessage extends AbstractChatPacket {
 									systemMessage("Unable to demote higher-ranking users.", cmd, client);
 									return true;
 								}
-							}
-
-							// Get permissions
-							String permLevel2 = "member";
-							if (acc.getSaveSharedInventory().containsItem("permissions")) {
-								permLevel2 = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-										.get("permissionLevel").getAsString();
 							}
 
 							// Make moderator
@@ -3057,22 +3850,6 @@ public class SendMessage extends AbstractChatPacket {
 							break;
 						}
 					}
-					case "stopserver": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							// Shut down the server
-							for (Player plr : Centuria.gameServer.getPlayers()) {
-								// Dispatch event
-								EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
-										"Server has been shut down.", DisconnectType.SERVER_SHUTDOWN));
-							}
-							Centuria.disconnectPlayersForShutdown();
-							System.exit(0);
-							return true;
-						} else {
-							break;
-						}
-					}
 					case "startmaintenance": {
 						// Check perms
 						if (GameServer.hasPerm(permLevel, "admin")) {
@@ -3093,8 +3870,8 @@ public class SendMessage extends AbstractChatPacket {
 														.getAsJsonObject().get("permissionLevel").getAsString(),
 												"admin")) {
 									// Dispatch event
-									EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
-											args.size() >= 1 ? args.get(0) : null, DisconnectType.MAINTENANCE));
+									EventBus.getInstance().dispatchEvent(
+											new AccountDisconnectEvent(plr.account, null, DisconnectType.MAINTENANCE));
 
 									plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
 								}
@@ -3235,7 +4012,7 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Parse arguments
 						id = args.get(0);
-						if (!id.matches("^[A-Za-z0-9_\\-. ]+")) {
+						if (!id.matches("^[A-Za-z0-9_\\-. ]+$")) {
 							// Invalid ID
 							systemMessage("Invalid argument: ID: invalid tag ID", cmd, client);
 							return true;
@@ -3280,7 +4057,7 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Parse arguments
 						id = args.get(0);
-						if (!id.matches("^[A-Za-z0-9_\\-. ]+")) {
+						if (!id.matches("^[A-Za-z0-9_\\-. ]+$")) {
 							// Invalid ID
 							systemMessage("Invalid argument: ID: invalid tag ID", cmd, client);
 							return true;
@@ -3308,500 +4085,51 @@ public class SendMessage extends AbstractChatPacket {
 						systemMessage("Tag removed successfully.", cmd, client);
 						return true;
 					}
-
-					case "coords":
-					case "coordsof": {
-						// Coordinate tool
-
-						// Find player
-						String player = client.getPlayer().getDisplayName();
-						if (args.size() >= 1)
-							player = args.get(0);
-						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-						Player plr = acc.getOnlinePlayerInstance();
-						if (plr == null || !plr.roomReady) {
-							// Player not found
-							systemMessage("Specified player is not online or not fully in world yet.", cmd, client);
-							return true;
-						}
-
-						// Show
-						systemMessage("Coordinates of " + acc.getDisplayName() + ":" //
-								+ "\n - Room ID: " + plr.room //
-								+ "\n - Level ID: " + plr.levelID //
-								+ "\n - Level type: " + plr.levelType //
-								+ "\n - Position XYZ: " + plr.lastPos.x + " " + plr.lastPos.y + " " + plr.lastPos.z //
-								+ "\n - Rotation XYZW: " + plr.lastRot.x + " " + plr.lastRot.y + " " + plr.lastRot.z
-								+ " " + plr.lastRot.w + " " //
-								, cmd, client);
-						return true;
-					}
-
-					case "tp": {
-						// Teleport tool
-
-						// Find player
-						String player = client.getPlayer().getDisplayName();
-						if (args.size() == 2 || args.size() >= 4) {
-							player = args.get(0);
-							args.remove(0);
-						}
-						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-						Player plr = acc.getOnlinePlayerInstance();
-						if (plr == null || !plr.roomReady) {
-							// Player not found
-							systemMessage("Specified player is not online or not fully in world yet.", cmd, client);
-							return true;
-						}
-
-						// Determine mode
-						if (args.size() >= 3) {
+					case "tpm": {
+						// Check perms
+						if (GameServer.hasPerm(permLevel, "admin")) {
 							try {
-								// Coordinates
-								if (!args.get(0).matches("^[\\-0-9\\.]+$")) {
-									systemMessage("Invalid argument: X: invalid value", cmd, client);
+								// Teleports a player to a map.
+								String defID = "";
+								if (args.size() < 1) {
+									systemMessage("Missing argument: teleport defID", cmd, client);
 									return true;
 								}
-								if (!args.get(1).matches("^[\\-0-9\\.]+$")) {
-									systemMessage("Invalid argument: Y: invalid value", cmd, client);
+
+								// Parse arguments
+								defID = args.get(0);
+								String type = "0";
+								if (args.size() > 1) {
+									type = args.get(1);
+								}
+
+								// Teleport
+
+								// Find player
+								String player = client.getPlayer().getDisplayName();
+								if (args.size() >= 3) {
+									player = args.get(2);
+								}
+								String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+								if (uuid == null) {
+									// Player not found
+									systemMessage("Specified account could not be located.", cmd, client);
 									return true;
 								}
-								if (!args.get(2).matches("^[\\-0-9\\.]+$")) {
-									systemMessage("Invalid argument: Z: invalid value", cmd, client);
+								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+								Player plr = acc.getOnlinePlayerInstance();
+								if (plr != null)
+									plr.teleportToRoom(Integer.valueOf(defID), Integer.valueOf(type), -1,
+											"room_" + defID, "");
+								else {
+									// Player not found
+									systemMessage("Specified player is not online.", cmd, client);
 									return true;
 								}
-								plr.teleportDestination = null;
-								plr.targetPos = new Vector3(Double.parseDouble(args.get(0)),
-										Double.parseDouble(args.get(1)), Double.parseDouble(args.get(2)));
-								plr.targetRot = plr.lastRot;
-								plr.teleportToRoom(plr.levelID, plr.levelType, 0, plr.room,
-										plr.room.startsWith("sanctuary_") ? plr.room.substring("sanctuary_".length())
-												: "");
-								systemMessage("Teleported " + plr.account.getDisplayName() + " to " + plr.targetPos.x
-										+ " " + plr.targetPos.y + " " + plr.targetPos.z, cmd, client);
 							} catch (Exception e) {
 								e.printStackTrace();
 								systemMessage("Error: " + e, cmd, client);
 							}
-						} else {
-							// Player
-							if (args.size() < 1) {
-								systemMessage("Missing argument: target player or XYZ coordinates", cmd, client);
-								return true;
-							}
-							String target = args.get(0);
-							uuid = AccountManager.getInstance().getUserByDisplayName(target);
-							if (uuid == null) {
-								// Player not found
-								systemMessage("Specified target account could not be located.", cmd, client);
-								return true;
-							}
-							acc = AccountManager.getInstance().getAccount(uuid);
-							Player plrTarget = acc.getOnlinePlayerInstance();
-							if (plrTarget == null || !plrTarget.roomReady) {
-								// Player not found
-								systemMessage("Specified target player is not online or not fully in world yet.", cmd,
-										client);
-								return true;
-							}
-
-							// Handle teleport
-							plr.teleportDestination = plrTarget.account.getAccountID();
-							plr.targetPos = plrTarget.lastPos;
-							plr.targetRot = plrTarget.lastRot;
-							plr.teleportToRoom(plrTarget.levelID, plrTarget.levelType, 0, plrTarget.room,
-									plrTarget.room.startsWith("sanctuary_")
-											? plrTarget.room.substring("sanctuary_".length())
-											: "");
-							systemMessage("Teleported " + plr.account.getDisplayName() + " to "
-									+ plrTarget.account.getDisplayName(), cmd, client);
-						}
-						return true;
-					}
-
-					case "tpserverto": {
-						// Teleport tool
-
-						// Player
-						if (args.size() < 1) {
-							systemMessage("Missing argument: target player", cmd, client);
-							return true;
-						}
-						String target = args.get(0);
-						String uuid = AccountManager.getInstance().getUserByDisplayName(target);
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified target account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-						Player plrTarget = acc.getOnlinePlayerInstance();
-						if (plrTarget == null || !plrTarget.roomReady) {
-							// Player not found
-							systemMessage("Specified target player is not online or not fully in world yet.", cmd,
-									client);
-							return true;
-						}
-
-						// Find players in room
-						for (Player plr : Centuria.gameServer.getPlayers()) {
-							// Check ready
-							if (!plr.roomReady || plr.account.getAccountID().equals(plrTarget.account.getAccountID()))
-								continue;
-
-							// Handle teleport
-							plr.teleportDestination = plrTarget.account.getAccountID();
-							plr.targetPos = plrTarget.lastPos;
-							plr.targetRot = plrTarget.lastRot;
-							plr.teleportToRoom(plrTarget.levelID, plrTarget.levelType, 0, plrTarget.room,
-									plrTarget.room.startsWith("sanctuary_")
-											? plrTarget.room.substring("sanctuary_".length())
-											: "");
-							systemMessage("Teleported " + plr.account.getDisplayName() + " to "
-									+ plrTarget.account.getDisplayName(), cmd, client);
-						}
-
-						// Done
-						systemMessage("Bulk-teleport completed!", cmd, client);
-						return true;
-					}
-
-					case "tptosanctuary": {
-						// Sanctuary teleport
-
-						// Player
-						if (args.size() < 1) {
-							systemMessage("Missing argument: owner player name", cmd, client);
-							return true;
-						}
-						String player = args.get(0);
-						String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-						if (uuid == null) {
-							// Player not found
-							systemMessage("Specified account could not be located.", cmd, client);
-							return true;
-						}
-						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-						// Get current
-						Player plrS = client.getPlayer().getOnlinePlayerInstance();
-
-						// Check
-						if (args.size() >= 2) {
-							String target = args.get(1);
-							uuid = AccountManager.getInstance().getUserByDisplayName(target);
-							if (uuid == null) {
-								// Player not found
-								systemMessage("Specified target account could not be located.", cmd, client);
-								return true;
-							}
-							CenturiaAccount acc2 = AccountManager.getInstance().getAccount(uuid);
-							plrS = acc2.getOnlinePlayerInstance();
-						}
-
-						// Check
-						if (plrS == null || !plrS.roomReady) {
-							// Player not found
-							systemMessage("Player to teleport is not online or not fully in world yet.", cmd, client);
-							return true;
-						}
-
-						// Teleport
-						plrS.teleportToSanctuary(acc.getAccountID(), true);
-
-						// Done
-						systemMessage("Successfully teleported " + plrS.account.getDisplayName() + " to "
-								+ acc.getDisplayName() + "'s sanctuary", cmd, client);
-						return true;
-					}
-
-					case "tpall": {
-						// Teleport tool
-
-						// Find players in room
-						for (Player plr : Centuria.gameServer.getPlayers()) {
-							// Check ready
-							if (!plr.roomReady)
-								continue;
-
-							// Determine mode
-							if (args.size() >= 3) {
-								try {
-									// Get current
-									Player plrS = client.getPlayer().getOnlinePlayerInstance();
-									if (plrS == null || !plrS.roomReady) {
-										// Player not found
-										systemMessage("Your player is not online or not fully in world yet.", cmd,
-												client);
-										return true;
-									}
-
-									// Verify room
-									if (!plr.room.equals(plrS.room))
-										continue;
-
-									// Coordinates
-									if (!args.get(0).matches("^[\\-0-9\\.]+$")) {
-										systemMessage("Invalid argument: X: invalid value", cmd, client);
-										return true;
-									}
-									if (!args.get(1).matches("^[\\-0-9\\.]+$")) {
-										systemMessage("Invalid argument: Y: invalid value", cmd, client);
-										return true;
-									}
-									if (!args.get(2).matches("^[\\-0-9\\.]+$")) {
-										systemMessage("Invalid argument: Z: invalid value", cmd, client);
-										return true;
-									}
-									plr.teleportDestination = null;
-									plr.targetPos = new Vector3(Double.parseDouble(args.get(0)),
-											Double.parseDouble(args.get(1)), Double.parseDouble(args.get(2)));
-									plr.targetRot = plr.lastRot;
-									plr.teleportToRoom(plr.levelID, plr.levelType, 0, plr.room,
-											plr.room.startsWith("sanctuary_")
-													? plr.room.substring("sanctuary_".length())
-													: "");
-									systemMessage("Teleported " + plr.account.getDisplayName() + " to "
-											+ plr.targetPos.x + " " + plr.targetPos.y + " " + plr.targetPos.z, cmd,
-											client);
-								} catch (Exception e) {
-									e.printStackTrace();
-									systemMessage("Error: " + e, cmd, client);
-								}
-							} else {
-								// Player
-								if (args.size() < 1) {
-									systemMessage("Missing argument: target player or XYZ coordinates", cmd, client);
-									return true;
-								}
-								String target = args.get(0);
-								String uuid = AccountManager.getInstance().getUserByDisplayName(target);
-								if (uuid == null) {
-									// Player not found
-									systemMessage("Specified target account could not be located.", cmd, client);
-									return true;
-								}
-								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-								Player plrTarget = acc.getOnlinePlayerInstance();
-								if (plrTarget == null || !plrTarget.roomReady) {
-									// Player not found
-									systemMessage("Specified target player is not online or not fully in world yet.",
-											cmd, client);
-									return true;
-								}
-
-								// Verify room
-								if (plr.account.getAccountID().equals(plrTarget.account.getAccountID())
-										|| !plr.room.equals(plrTarget.room))
-									continue;
-
-								// Handle teleport
-								plr.teleportDestination = plrTarget.account.getAccountID();
-								plr.targetPos = plrTarget.lastPos;
-								plr.targetRot = plrTarget.lastRot;
-								plr.teleportToRoom(plrTarget.levelID, plrTarget.levelType, 0, plrTarget.room,
-										plrTarget.room.startsWith("sanctuary_")
-												? plrTarget.room.substring("sanctuary_".length())
-												: "");
-								systemMessage("Teleported " + plr.account.getDisplayName() + " to "
-										+ plrTarget.account.getDisplayName(), cmd, client);
-							}
-						}
-
-						// Done
-						systemMessage("Bulk-teleport completed!", cmd, client);
-						return true;
-					}
-
-					case "gatherallplayers": {
-						// Skip if enabled
-						if (GatheringRoomProvider.enabled) {
-							systemMessage(
-									"The gathering has already been started, you can disable it with 'endgathering'",
-									cmd, client);
-							return true;
-						}
-
-						// Enable
-						GatheringRoomProvider.enabled = true;
-
-						// Teleport all players
-						for (Player plr : Centuria.gameServer.getPlayers()) {
-							// Skip rooms that arent compatible
-							if (plr.getRoom() == null && plr.room != null)
-								continue;
-
-							// Teleport if ready
-							if (plr.roomReady || (plr.room != null && plr.pendingRoom != null
-									&& plr.pendingRoom.equals(plr.room))) {
-								// Teleport to room
-								GameRoom room = ((GameServer) plr.client.getServer()).getRoomManager()
-										.findBestRoom(Integer.valueOf(plr.levelID), plr);
-								if (room.getObject(PrivateInstanceContainer.class) == null)
-									plr.pendingPrivateMessage = "A server-wide gathering was started!\n\nAll players have been placed in a gathering room which overrides all other rooms, we apologize for the inconvenience if progress was lost!";
-								String roomID = room.getID();
-								plr.targetPos = new Vector3(plr.lastPos.x, plr.lastPos.y, plr.lastPos.z);
-								plr.targetRot = new Quaternion(plr.lastRot.x, plr.lastRot.y, plr.lastRot.z,
-										plr.lastRot.w);
-								plr.teleportToRoom(plr.levelID, plr.levelType, 0, roomID,
-										plr.room.startsWith("sanctuary_") ? plr.room.substring("sanctuary_".length())
-												: "");
-							} else if (plr.room == null || (plr.room != null && plr.pendingRoom != null
-									&& !plr.pendingRoom.equals(plr.room))) {
-								// Update pending room
-								String pending = plr.pendingRoom;
-								String newRoom = ((GameServer) plr.client.getServer()).getRoomManager()
-										.findBestRoom(Integer.valueOf(plr.levelID), plr).getID();
-								plr.pendingRoom = newRoom;
-
-								// Update chat client just in case
-								ChatClient chClient = Centuria.chatServer.getClient(plr.account.getAccountID());
-								if (chClient != null) {
-									// Leave old room
-									if (chClient.isInRoom(pending))
-										chClient.leaveRoom(pending);
-
-									// Join room
-									if (!chClient.isInRoom(newRoom))
-										chClient.joinRoom(newRoom, ChatRoomTypes.ROOM_CHAT);
-								}
-							}
-						}
-
-						// Done
-						systemMessage("Bulk-teleport completed!", cmd, client);
-						return true;
-					}
-
-					case "endgathering": {
-						// Skip if enabled
-						if (!GatheringRoomProvider.enabled) {
-							systemMessage("There is no gathering at present time", cmd, client);
-							return true;
-						}
-
-						// Disable
-						GatheringRoomProvider.enabled = false;
-
-						// Teleport all players
-						for (Player plr : Centuria.gameServer.getPlayers()) {
-							// Skip rooms that arent compatible
-							if (plr.getRoom() == null && plr.room != null)
-								continue;
-
-							// Get current room
-							GameRoom cRoom = plr.getRoom();
-							if (cRoom != null && cRoom.getObject(PrivateInstanceContainer.class) != null)
-								continue; // Skip those in private instances
-
-							// Teleport if ready
-							if (plr.roomReady || (plr.room != null && plr.pendingRoom != null
-									&& plr.pendingRoom.equals(plr.room))) {
-								// Teleport to room
-								plr.pendingPrivateMessage = "Apologies for the interruption, the server gathering has ended and the server needed to teleport everyone back to rooms to function correctly.\n\nWe apologize for the inconvenience!";
-								String roomID = ((GameServer) plr.client.getServer()).getRoomManager()
-										.findBestRoom(Integer.valueOf(plr.levelID), plr).getID();
-								plr.targetPos = new Vector3(plr.lastPos.x, plr.lastPos.y, plr.lastPos.z);
-								plr.targetRot = new Quaternion(plr.lastRot.x, plr.lastRot.y, plr.lastRot.z,
-										plr.lastRot.w);
-								plr.teleportToRoom(plr.levelID, plr.levelType, 0, roomID,
-										plr.room.startsWith("sanctuary_") ? plr.room.substring("sanctuary_".length())
-												: "");
-							} else if (plr.room == null || (plr.room != null && plr.pendingRoom != null
-									&& !plr.pendingRoom.equals(plr.room))) {
-								// Update pending room
-								String pending = plr.pendingRoom;
-								String newRoom = ((GameServer) plr.client.getServer()).getRoomManager()
-										.findBestRoom(Integer.valueOf(plr.levelID), plr).getID();
-								plr.pendingRoom = newRoom;
-
-								// Update chat client just in case
-								ChatClient chClient = Centuria.chatServer.getClient(plr.account.getAccountID());
-								if (chClient != null) {
-									// Leave old room
-									if (chClient.isInRoom(pending))
-										chClient.leaveRoom(pending);
-
-									// Join room
-									if (!chClient.isInRoom(newRoom))
-										chClient.joinRoom(newRoom, ChatRoomTypes.ROOM_CHAT);
-								}
-							}
-						}
-
-						// Done
-						systemMessage("Bulk-teleport completed!", cmd, client);
-						return true;
-					}
-
-					case "tpm": {
-						try {
-							// Teleports a player to a map.
-							String defID = "";
-							if (args.size() < 1) {
-								systemMessage("Missing argument: map ID", cmd, client);
-								return true;
-							}
-
-							// Parse arguments
-							defID = args.get(0);
-
-							// Check room
-							String room = null;
-							if (args.size() >= 2)
-								room = args.get(1);
-
-							// Check type
-							String type = "0";
-							if (args.size() >= 3)
-								type = args.get(2);
-
-							// Find player
-							String player = client.getPlayer().getDisplayName();
-							if (args.size() >= 4)
-								player = args.get(3);
-							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-							if (uuid == null) {
-								// Player not found
-								systemMessage("Specified account could not be located.", cmd, client);
-								return true;
-							}
-							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-							// Teleport
-							Player plr = acc.getOnlinePlayerInstance();
-							if (plr != null) {
-								// Find room
-								String roomID;
-								if (room == null)
-									roomID = ((GameServer) plr.client.getServer()).getRoomManager()
-											.findBestRoom(Integer.valueOf(defID), plr).getID();
-								else
-									roomID = ((GameServer) plr.client.getServer()).getRoomManager()
-											.getOrCreateRoom(Integer.valueOf(defID), room).getID();
-
-								// Teleport
-								plr.teleportToRoom(Integer.valueOf(defID), Integer.valueOf(type), -1, roomID, "");
-							} else {
-								// Player not found
-								systemMessage("Specified player is not online.", cmd, client);
-								return true;
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-							systemMessage("Error: " + e, cmd, client);
 						}
 
 						return true;
@@ -4091,10 +4419,8 @@ public class SendMessage extends AbstractChatPacket {
 
 							// Send packet
 							try {
-								if (acc.getOnlinePlayerInstance() == null) {
+								if (acc.getOnlinePlayerInstance() == null)
 									systemMessage("Error: player not online", cmd, client);
-									return true;
-								}
 								acc.getOnlinePlayerInstance().client.sendPacket(packet);
 								systemMessage("Packet has been sent.", cmd, client);
 							} catch (Exception e) {
@@ -4146,8 +4472,7 @@ public class SendMessage extends AbstractChatPacket {
 							}
 							systemMessage(
 									"Skipped " + c + " quests, now at: "
-											+ QuestManager
-													.getQuest(QuestManager.getActiveQuest(client.getPlayer())).name,
+											+ QuestManager.getQuest(QuestManager.getActiveQuest(acc)).name,
 									cmd, client);
 						} catch (Exception e) {
 							systemMessage("Error: " + e, cmd, client);
@@ -4246,6 +4571,7 @@ public class SendMessage extends AbstractChatPacket {
 									player = args.get(2);
 
 									// check existence of player
+
 									uuid = AccountManager.getInstance().getUserByDisplayName(player);
 									if (uuid == null) {
 										// Player not found
@@ -4450,6 +4776,55 @@ public class SendMessage extends AbstractChatPacket {
 				}
 
 				//
+				// User listplayers command
+				if (cmd.equals("listplayers")) {
+					// Load spawn helper
+					JsonObject helper = null;
+					try {
+						// Load helper
+						InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+								.getResourceAsStream("spawns.json");
+						helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+								.get("Maps").getAsJsonObject();
+						strm.close();
+					} catch (Exception e) {
+					}
+
+					// Find level IDs
+					int ingame = 0;
+					HashMap<Integer, Integer> levelIDs = new HashMap<Integer, Integer>();
+					for (Player plr : Centuria.gameServer.getPlayers()) {
+						if (plr.roomReady || plr.levelID == 25280) {
+							// Increase count
+							ingame++;
+
+							// Add
+							levelIDs.put(plr.levelID, levelIDs.getOrDefault(plr.levelID, 0) + 1);
+						}
+					}
+
+					// Build message
+					String message = "There are " + Centuria.gameServer.getPlayers().length
+							+ " player(s) connected and " + ingame + " player(s) in world.";
+					if (levelIDs.size() != 0) {
+						message += "\n";
+						message += "\n";
+						for (int levelID : levelIDs.keySet()) {
+							// Determine map name
+							String map = "UNKNOWN: " + levelID;
+							if (levelID == 25280)
+								map = "Tutorial";
+							else if (helper.has(Integer.toString(levelID)))
+								map = helper.get(Integer.toString(levelID)).getAsString();
+							message += map + ": " + levelIDs.get(levelID) + " players.";
+							message += "\n";
+						}
+					}
+					systemMessage(message, cmdId, client);
+					return true;
+				}
+
+				//
 				// Help command
 				if (cmd.equals("help")) {
 					String message = "List of commands:";
@@ -4459,7 +4834,7 @@ public class SendMessage extends AbstractChatPacket {
 					message += "\n\nSymbol guide:";
 					message += "\n[] = optional arguement";
 					message += "\n<> = replace with arguement";
-					message += "\nYou do not need the symbols on the command itself, its only for informational purposes. Secondly, if there are quotes (\"\") around an argument, make sure to actually include them in the command.";
+					message += "\nYou do not need the symbols on the command itself, its only for informational purposes.";
 					systemMessage(message, cmdId, client);
 					return true;
 				}
@@ -4472,16 +4847,34 @@ public class SendMessage extends AbstractChatPacket {
 		return false;
 	}
 
+	private static String getDmNameForModlog(ChatClient client, String room) {
+		// Find recipient
+		String recipient = client.getPlayer().getDisplayName();
+		String[] participants = DMManager.getInstance().getDMParticipants(room);
+		for (String p : participants) {
+			if (!p.equals(client.getPlayer().getAccountID())) {
+				// Check type
+				if (p.startsWith("plaintext:")) {
+					recipient = p.substring("plaintext:".length());
+					break;
+				} else {
+					CenturiaAccount a = AccountManager.getInstance().getAccount(p);
+					if (a != null)
+						recipient = "PM to " + a.getDisplayName();
+				}
+			}
+		}
+		return recipient;
+	}
+
 	private void systemMessage(String message, String cmd, ChatClient client) {
 		// Send response
 		JsonObject res = new JsonObject();
-		res.addProperty("conversationType", client.getRoom(room).getType());
+		res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
 		res.addProperty("conversationId", room);
 		res.addProperty("message", "Issued chat command: " + cmd + ":\n[system] " + message);
-		res.addProperty("source", client.getPlayer().getAccountID());// Time format
-		SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
-		fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-		res.addProperty("sentAt", fmt.format(new Date()));
+		res.addProperty("source", client.getPlayer().getAccountID());
+		res.addProperty("sentAt", LocalDateTime.now().toString());
 		res.addProperty("eventId", "chat.postMessage");
 		res.addProperty("success", true);
 		client.sendPacket(res);
@@ -4489,5 +4882,4 @@ public class SendMessage extends AbstractChatPacket {
 		// Log
 		Centuria.logger.info(client.getPlayer().getDisplayName() + " executed chat command: " + cmd + ": " + message);
 	}
-
 }

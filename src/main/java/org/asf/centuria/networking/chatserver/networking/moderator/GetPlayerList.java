@@ -11,7 +11,6 @@ import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.networking.AbstractChatPacket;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.centuria.rooms.GameRoom;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -56,8 +55,7 @@ public class GetPlayerList extends AbstractChatPacket {
 		JsonObject helper = null;
 		try {
 			// Load helper
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("content/world/spawns.json");
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("spawns.json");
 			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("Maps")
 					.getAsJsonObject();
 			strm.close();
@@ -128,11 +126,9 @@ public class GetPlayerList extends AbstractChatPacket {
 				// Get room list
 				ArrayList<String> rLst = rooms.get(plr.levelID);
 
-				// Find room instances
-				GameRoom room = plr.getRoom();
-				if (room != null && room.getLevelID() == plr.levelID && !rLst.contains(room.getInstanceID())) {
-					rLst.add(room.getInstanceID());
-				}
+				// Add if not present
+				if (!rLst.contains(plr.room))
+					rLst.add(plr.room);
 			}
 		}
 
@@ -149,7 +145,6 @@ public class GetPlayerList extends AbstractChatPacket {
 		response.add("suspiciousClients", susClients);
 
 		// Add each level
-		playerIDs = new ArrayList<String>();
 		for (int levelID : levelIDs) {
 			// Determine map name
 			String map = "UNKOWN: " + levelID;
@@ -171,27 +166,36 @@ public class GetPlayerList extends AbstractChatPacket {
 				// Create room
 				JsonObject roomObj = new JsonObject();
 				roomsL.add(roomID, roomObj);
+				JsonObject playerLstRoom = new JsonObject();
+				roomObj.addProperty("roomID", roomID);
+				roomObj.addProperty("roomInstancePresent", false);
+				roomObj.add("players", playerLstRoom);
 
 				// Find players in rooms
 				for (Player plr : playersInRooms.keySet()) {
 					String plrRoom = playersInRooms.get(plr);
-					if (!playerIDs.contains(plr.account.getAccountID())) {
-						// Make sure it doesnt get added more than once
-						playerIDs.add(plr.account.getAccountID());
 
+					// Check
+					if (plrRoom.equals(roomID)) {
 						// Add to response
-						if (!clientsR.has(plrRoom))
-							clientsR.add(plrRoom, new JsonObject());
-						JsonObject rObj = clientsR.get(plrRoom).getAsJsonObject();
-						rObj.addProperty(plr.account.getAccountID(), plr.account.getDisplayName());
-
-						// Check
-						GameRoom room = plr.getRoom();
-						if (room != null && room.getLevelID() == levelID && room.getInstanceID().equals(roomID)) {
-							// Add to response
-							roomObj.addProperty(plr.account.getAccountID(), plr.account.getDisplayName());
-						}
+						playerLstRoom.addProperty(plr.account.getAccountID(), plr.account.getDisplayName());
 					}
+				}
+			}
+
+			// Find players in rooms
+			playerIDs = new ArrayList<String>();
+			for (Player plr : playersInRooms.keySet()) {
+				String plrRoom = playersInRooms.get(plr);
+				if (!playerIDs.contains(plr.account.getAccountID())) {
+					// Make sure it doesnt get added more than once
+					playerIDs.add(plr.account.getAccountID());
+
+					// Add to response
+					if (!clientsR.has(plrRoom))
+						clientsR.add(plrRoom, new JsonObject());
+					JsonObject rObj = clientsR.get(plrRoom).getAsJsonObject();
+					rObj.addProperty(plr.account.getAccountID(), plr.account.getDisplayName());
 				}
 			}
 
@@ -200,15 +204,12 @@ public class GetPlayerList extends AbstractChatPacket {
 				String plrRoom = playersInRooms.get(plr);
 				if (!mapLessClients.contains(plr.account.getAccountID())
 						&& !playerIDs.contains(plr.account.getAccountID())) {
-					// Check
-					GameRoom room = ((GameServer) plr.client.getServer()).getRoomManager().getRoom(plrRoom);
-					if (room == null && plr.levelID == levelID) {
-						// Add to response
-						if (!clientsR.has(plrRoom))
-							clientsR.add(plrRoom, new JsonObject());
-						JsonObject rObj = clientsR.get(plrRoom).getAsJsonObject();
-						rObj.addProperty(plr.account.getAccountID(), plr.account.getDisplayName());
-					}
+					// Add to response
+					if (!clientsR.has(plrRoom))
+						clientsR.add(plrRoom, new JsonObject());
+					JsonObject rObj = clientsR.get(plrRoom).getAsJsonObject();
+					rObj.addProperty(plr.account.getAccountID(), plr.account.getDisplayName());
+
 				}
 			}
 		}

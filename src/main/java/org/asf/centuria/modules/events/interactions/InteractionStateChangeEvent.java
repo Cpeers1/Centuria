@@ -76,4 +76,8 @@ public class InteractionStateChangeEvent extends EventObject {
 		return oldState;
 	}
 
+	@Override
+	public String eventPath() {
+		return "18compat.interaction.statechange";
+	}
 }

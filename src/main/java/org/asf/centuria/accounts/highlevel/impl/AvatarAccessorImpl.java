@@ -22,15 +22,15 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 	static {
 		try {
 			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("content/avatars/avatars.json");
+					.getResourceAsStream("defaultitems/avatarhelper.json");
 			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("Avatars")
 					.getAsJsonObject();
 			strm.close();
 
 			strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("content/avatars/defaultavatarparts.json");
+					.getResourceAsStream("defaultitems/avatardefaultshelper.json");
 			defaultsHelper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
-					.get("DefaultAvatarParts").getAsJsonObject();
+					.get("AvatarDefaults").getAsJsonObject();
 			strm.close();
 		} catch (JsonSyntaxException | IOException e) {
 			throw new RuntimeException(e);
@@ -39,33 +39,6 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 
 	public AvatarAccessorImpl(PlayerInventory inventory) {
 		super(inventory);
-	}
-
-	@Override
-	public String[] getAllAvatarSpeciesTypes() {
-		ArrayList<String> avis = new ArrayList<String>();
-		for (String species : helper.keySet()) {
-			avis.add(species);
-		}
-		return avis.toArray(t -> new String[t]);
-	}
-
-	@Override
-	public String[] getDefaultBodyPartTypes(String type) {
-		// Translate defID
-		JsonObject speciesData = helper.get(type).getAsJsonObject();
-		String actorDefID = speciesData.get("info").getAsJsonObject().get("actorClassDefID").getAsString();
-
-		// Get all default mods for this species
-		ArrayList<String> ids = new ArrayList<String>();
-		if (defaultsHelper.has(actorDefID)) {
-			defaultsHelper.get(actorDefID).getAsJsonArray().forEach(item -> {
-				ids.add(item.getAsString());
-			});
-		}
-
-		// Return
-		return ids.toArray(t -> new String[t]);
 	}
 
 	@Override
@@ -84,6 +57,7 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 			// Make sure to only do this for a primary look
 			if (avatar.get("components").getAsJsonObject().has("PrimaryLook")) {
 				// Create the slot
+
 				String type = avatar.get("defId").getAsString();
 
 				// Translate defID to a type
@@ -109,7 +83,7 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 
 				// Add the look slot
 				inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsInt(),
-						new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm)); // FIXME
+						new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
 			}
 		}
 
@@ -136,7 +110,7 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 
 		// Add the species looks
 		JsonObject speciesData = helper.get(type).getAsJsonObject();
-		String actorDefID = speciesData.get("info").getAsJsonObject().get("actorClassDefID").getAsString();
+		int actorDefID = speciesData.get("info").getAsJsonObject().get("actorClassDefID").getAsInt();
 		if (helper.has(type)) {
 			if (!inventory.containsItem("avatars")) {
 				inventory.setItem("avatars", new JsonArray());
@@ -204,7 +178,7 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 					// Add the look slot
 					inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsInt(),
 							new ItemComponent("PrimaryLook", new JsonObject()), new ItemComponent("AvatarLook", al),
-							new ItemComponent("Name", nm)); // FIXME
+							new ItemComponent("Name", nm));
 				}
 
 				// Add slots
@@ -220,23 +194,23 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 
 					// Add the look slot
 					inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsInt(),
-							new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm)); // FIXME
+							new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
 				}
 			}
 
 			// Unlock all mods for this species
-			if (defaultsHelper.has(actorDefID)) {
-				defaultsHelper.get(actorDefID).getAsJsonArray().forEach(item -> {
-					String id = item.getAsString();
+			if (defaultsHelper.has(Integer.toString(actorDefID))) {
+				defaultsHelper.get(Integer.toString(actorDefID)).getAsJsonArray().forEach(item -> {
+					int id = item.getAsInt();
 					if (!isAvatarPartUnlocked(id))
 						unlockAvatarPart(id);
 				});
 			}
 
 			// Update the species list
-			if (!inventory.getAccessor().hasInventoryObject("1", Integer.parseInt(actorDefID))) { // FIXME
+			if (!inventory.getAccessor().hasInventoryObject("1", actorDefID)) {
 				// Add species
-				inventory.getAccessor().createInventoryObject("1", Integer.parseInt(actorDefID)); // FIXME
+				inventory.getAccessor().createInventoryObject("1", actorDefID);
 			}
 		}
 	}
@@ -245,6 +219,7 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 	public boolean isAvatarSpeciesUnlocked(String type) {
 		if (!inventory.containsItem("1"))
 			return false;
+
 		String defID = type;
 
 		// Translate type to a defID
@@ -254,27 +229,27 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 
 		// Find species
 		if (defID.matches("^[0-9]+$"))
-			return inventory.getAccessor().hasInventoryObject("avatars", Integer.parseInt(defID)); // FIXME
+			return inventory.getAccessor().hasInventoryObject("avatars", Integer.parseInt(defID));
 		return false;
 	}
 
 	@Override
-	public boolean isAvatarPartUnlocked(String defID) {
-		return inventory.getAccessor().hasInventoryObject("2", Integer.parseInt(defID)); // FIXME
+	public boolean isAvatarPartUnlocked(int defID) {
+		return inventory.getAccessor().hasInventoryObject("2", defID);
 	}
 
 	@Override
-	public void unlockAvatarPart(String defID) {
+	public void unlockAvatarPart(int defID) {
 		if (isAvatarPartUnlocked(defID))
 			return;
 
 		// Unlock part
-		inventory.getAccessor().createInventoryObject("2", Integer.parseInt(defID)); // FIXME
+		inventory.getAccessor().createInventoryObject("2", defID);
 	}
 
 	@Override
-	public void lockAvatarPart(String defID) {
+	public void lockAvatarPart(int defID) {
 		// Lock part
-		inventory.getAccessor().removeInventoryObject("2",Integer.parseInt(defID)); // FIXME
+		inventory.getAccessor().removeInventoryObject("2", defID);
 	}
 }

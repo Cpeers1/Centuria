@@ -5,7 +5,6 @@ import java.net.Socket;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.modules.eventbus.EventBus;
-import org.asf.centuria.modules.events.servers.VoiceChatServerStartupEvent;
 import org.asf.centuria.networking.persistentservice.BasePersistentServiceServer;
 import org.asf.centuria.networking.voicechatserver.networking.*;
 
@@ -16,10 +15,6 @@ public class VoiceChatServer extends BasePersistentServiceServer<VoiceChatClient
 	}
 
 	protected void registerPackets() {
-		// Allow modules to register packets and to override existing packets
-		VoiceChatServerStartupEvent ev = new VoiceChatServerStartupEvent(this, t -> registerPacket(t));
-		EventBus.getInstance().dispatchEvent(ev);
-
 		// Packet registry
 		registerPacket(new PingPacket());
 		registerPacket(new AddParticipantToCallPacket());

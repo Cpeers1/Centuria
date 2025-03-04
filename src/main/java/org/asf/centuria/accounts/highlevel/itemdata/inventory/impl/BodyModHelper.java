@@ -12,7 +12,7 @@ public class BodyModHelper extends AbstractInventoryInteractionHelper {
 	
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, int defID) {
-		inventory.getAvatarAccessor().unlockAvatarPart(Integer.toString(defID)); // FIXME
+		inventory.getAvatarAccessor().unlockAvatarPart(defID);
 		return inventory.getAccessor().findInventoryObject(INV_TYPE, defID);
 	}
 
@@ -23,9 +23,9 @@ public class BodyModHelper extends AbstractInventoryInteractionHelper {
 
 	@Override
 	public String removeOne(PlayerInventory inventory, int defID) {
-		if (inventory.getAvatarAccessor().isAvatarPartUnlocked(Integer.toString(defID))) { // FIXME
+		if (inventory.getAvatarAccessor().isAvatarPartUnlocked(defID)) {
 			String uuid = inventory.getAccessor().findInventoryObject(INV_TYPE, defID).get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
-			inventory.getAvatarAccessor().lockAvatarPart(Integer.toString(defID)); // FIXME
+			inventory.getAvatarAccessor().lockAvatarPart(defID);
 			return uuid;
 		}
 		return null;

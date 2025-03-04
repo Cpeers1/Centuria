@@ -10,7 +10,6 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.modules.eventbus.EventBus;
-import org.asf.centuria.modules.events.voicechat.VoiceChatLoginEvent;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.persistentservice.BasePersistentServiceClient;
 
@@ -98,18 +97,13 @@ public class VoiceChatClient extends BasePersistentServiceClient<VoiceChatClient
 		}
 
 		// Rename thread
-		Thread.currentThread().setName("Voice Chat Client Thread: " + acc.getDisplayName() + " [ID "
-				+ acc.getAccountID() + ", Address "
-				+ ((InetSocketAddress) getSocket().getRemoteSocketAddress()).getAddress().getHostAddress() + "]");
+		Thread.currentThread()
+				.setName("Voice Chat Client Thread: " + acc.getDisplayName() + " [ID " + acc.getAccountID() + ", Address "
+						+ ((InetSocketAddress) getSocket().getRemoteSocketAddress()).getAddress().getHostAddress()
+						+ "]");
 
 		// Remove sensitive info and fire event
 		handshakeStart.remove("auth_token");
-		VoiceChatLoginEvent evt = new VoiceChatLoginEvent(getServer(), acc, this, handshakeStart);
-		EventBus.getInstance().dispatchEvent(evt);
-		if (evt.isCancelled()) {
-			disconnect(); // Cancelled
-			return;
-		}
 
 		// Check maintenance mode
 		if (Centuria.gameServer.maintenance) {

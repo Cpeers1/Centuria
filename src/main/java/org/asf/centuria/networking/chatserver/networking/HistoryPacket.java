@@ -2,14 +2,12 @@ package org.asf.centuria.networking.chatserver.networking;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
 
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.networking.chatserver.ChatClient;
-import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -58,8 +56,7 @@ public class HistoryPacket extends AbstractChatPacket {
 		int messageOffset = cursorCurrent * pageSize;
 		int dmHistorySize = 0;
 		DMManager manager = DMManager.getInstance();
-		if (client.isInRoom(convo) && client.getRoom(convo).getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)
-				&& manager.dmExists(convo)) {
+		if (client.isInRoom(convo) && client.isRoomPrivate(convo) && manager.dmExists(convo)) {
 			if (includeMessages) {
 				JsonArray msgs = new JsonArray();
 				int indexInPage = 0;
@@ -76,11 +73,11 @@ public class HistoryPacket extends AbstractChatPacket {
 					obj.add("mask", null);
 					try {
 						obj.addProperty("message_id",
-								UUID.nameUUIDFromBytes((fmt.format(new Date(msg.sentAt)) + convo + msg.content).getBytes("UTF-8")).toString());
+								UUID.nameUUIDFromBytes((msg.sentAt + convo + msg.content).getBytes("UTF-8")).toString());
 					} catch (UnsupportedEncodingException e) {
 						e.printStackTrace();
 					}
-					obj.addProperty("sent_at", fmt.format(new Date(msg.sentAt)));
+					obj.addProperty("sent_at", msg.sentAt);
 					obj.addProperty("source", msg.source);
 					msgs.add(obj);
 

@@ -29,10 +29,6 @@ import org.asf.centuria.packets.xt.gameserver.object.ObjectDeletePacket;
 import org.asf.centuria.packets.xt.gameserver.object.ObjectUpdatePacket;
 import org.asf.centuria.packets.xt.gameserver.relationship.RelationshipJumpToPlayerPacket;
 import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
-import org.asf.centuria.rooms.GameRoom;
-import org.asf.centuria.rooms.privateinstances.PrivateInstance;
-import org.asf.centuria.rooms.privateinstances.containervars.PrivateInstanceContainer;
-import org.asf.centuria.rooms.privateinstances.containervars.PrivateInstanceTeleportVars;
 import org.asf.centuria.social.SocialManager;
 
 import com.google.gson.JsonArray;
@@ -64,9 +60,6 @@ public class Player {
 	public void addObject(Object obj) {
 		client.addObject(obj);
 	}
-
-	// Pending messages
-	public String pendingPrivateMessage;
 
 	//
 	// Moderation (SYNC ONLY)
@@ -137,7 +130,7 @@ public class Player {
 
 	public SmartfoxClient client;
 	public CenturiaAccount account;
-
+	
 	public boolean awaitingPlayerSync;
 
 	public String activeLook;
@@ -335,6 +328,27 @@ public class Player {
 				player.pendingLevelID = 1689;
 				player.pendingRoom = "sanctuary_" + sanctuaryOwner;
 				player.levelType = join.levelType;
+
+				// Reset quest data
+				taskProgress.clear();
+				questProgress = 0;
+				questStarted = false;
+				questObjective = 0;
+
+				// End current game
+				if (currentGame != null) {
+					currentGame.onExit(this);
+					currentGame = null;
+				}
+
+				// Reset states
+				states.clear();
+				stateObjects.clear();
+				interactions.clear();
+				groupOjects.clear();
+
+				// Clear respawn items
+				respawnItems.clear();
 			} else {
 				client.sendPacket(join);
 				return false;
@@ -412,42 +426,11 @@ public class Player {
 			plr.respawnItems.clear();
 
 			// Log
-			GameRoom room = srv.getRoomManager().getRoom(plr.pendingRoom);
-			Centuria.logger.info("Player " + plr.account.getDisplayName() + " is joining room "
-					+ (room != null ? room.getInstanceID() : plr.pendingRoom) + " of level " + plr.pendingLevelID);
+			Centuria.logger.debug(MarkerManager.getMarker("JOINROOM"),
+					"Client to server (room: " + plr.pendingRoom + ", level: " + plr.pendingLevelID + ")");
 
 			// Send response
 			client.sendPacket(join);
-
-			// Get or create instance teleport variables
-			PrivateInstanceTeleportVars vars = getObject(PrivateInstanceTeleportVars.class);
-			if (vars == null) {
-				// Create
-				vars = new PrivateInstanceTeleportVars();
-				addObject(vars);
-			}
-
-			// Disable joining of private instances until intentionally joining one
-			vars.disableInstanceTeleport = true;
-			vars.selectedInstance = null;
-
-			// Private instances
-			if (room != null) {
-				// Check if private
-				PrivateInstanceContainer privCont = room.getObject(PrivateInstanceContainer.class);
-				if (privCont != null && privCont.instance != null) {
-					// Its a private room
-
-					// Enable joining of instances
-					vars.disableInstanceTeleport = false;
-
-					// Make active if not the instance already
-					PrivateInstance activeInstance = srv.getPrivateInstanceManager()
-							.getSelectedInstanceOf(account.getAccountID());
-					if (activeInstance != null && !activeInstance.getID().equals(privCont.instance.getID()))
-						vars.selectedInstance = privCont.instance;
-				}
-			}
 
 			return true;
 		} catch (Exception e) {
@@ -522,42 +505,11 @@ public class Player {
 			groupOjects.clear();
 
 			// Log
-			GameRoom room = srv.getRoomManager().getRoom(plr.pendingRoom);
-			Centuria.logger.info("Player " + plr.account.getDisplayName() + " is joining room "
-					+ (room != null ? room.getInstanceID() : plr.pendingRoom) + " of level " + plr.pendingLevelID);
+			Centuria.logger.debug(MarkerManager.getMarker("JOINROOM"),
+					" Client to server (room: " + plr.pendingRoom + ", level: " + plr.pendingLevelID + ")");
 
 			// Send response
 			client.sendPacket(join);
-
-			// Get or create instance teleport variables
-			PrivateInstanceTeleportVars vars = getObject(PrivateInstanceTeleportVars.class);
-			if (vars == null) {
-				// Create
-				vars = new PrivateInstanceTeleportVars();
-				addObject(vars);
-			}
-
-			// Disable joining of private instances until intentionally joining one
-			vars.disableInstanceTeleport = true;
-			vars.selectedInstance = null;
-
-			// Private instances
-			if (room != null) {
-				// Check if private
-				PrivateInstanceContainer privCont = room.getObject(PrivateInstanceContainer.class);
-				if (privCont != null && privCont.instance != null) {
-					// Its a private room
-
-					// Enable joining of instances
-					vars.disableInstanceTeleport = false;
-
-					// Make active if not the instance already
-					PrivateInstance activeInstance = srv.getPrivateInstanceManager()
-							.getSelectedInstanceOf(account.getAccountID());
-					if (activeInstance != null && !activeInstance.getID().equals(privCont.instance.getID()))
-						vars.selectedInstance = privCont.instance;
-				}
-			}
 
 			return true;
 		} catch (Exception e) {
@@ -596,39 +548,8 @@ public class Player {
 			client.sendPacket(join);
 
 			// Log
-			GameRoom room = ((GameServer) client.getServer()).getRoomManager().getRoom(plr.pendingRoom);
-			Centuria.logger.info("Player " + plr.account.getDisplayName() + " is joining room "
-					+ (room != null ? room.getInstanceID() : plr.pendingRoom) + " of level " + plr.pendingLevelID);
-
-			// Get or create instance teleport variables
-			PrivateInstanceTeleportVars vars = getObject(PrivateInstanceTeleportVars.class);
-			if (vars == null) {
-				// Create
-				vars = new PrivateInstanceTeleportVars();
-				addObject(vars);
-			}
-
-			// Disable joining of private instances until intentionally joining one
-			vars.disableInstanceTeleport = true;
-			vars.selectedInstance = null;
-
-			// Private instances
-			if (room != null) {
-				// Check if private
-				PrivateInstanceContainer privCont = room.getObject(PrivateInstanceContainer.class);
-				if (privCont != null && privCont.instance != null) {
-					// Its a private room
-
-					// Enable joining of instances
-					vars.disableInstanceTeleport = false;
-
-					// Make active if not the instance already
-					PrivateInstance activeInstance = ((GameServer) client.getServer()).getPrivateInstanceManager()
-							.getSelectedInstanceOf(account.getAccountID());
-					if (activeInstance != null && !activeInstance.getID().equals(privCont.instance.getID()))
-						vars.selectedInstance = privCont.instance;
-				}
-			}
+			Centuria.logger.debug(MarkerManager.getMarker("JOINROOM"),
+					"Client to server (room: " + plr.pendingRoom + ", level: " + plr.pendingLevelID + ")");
 
 			return true;
 		} catch (Exception e) {
@@ -651,7 +572,7 @@ public class Player {
 			// Find player
 			for (Player plr : ((GameServer) client.getServer()).getPlayers()) {
 				if ((plr.account.getAccountID().equals(accountID) && plr.roomReady && plr.levelType != 1)
-						&& ((!plr.room.startsWith("room_STAFFROOM_")
+						&& ((!plr.room.equals("room_STAFFROOM")
 								&& (!SocialManager.getInstance().socialListExists(accountID) || !SocialManager
 										.getInstance().getPlayerIsBlocked(accountID, player.account.getAccountID())))
 								|| (player.overrideTpLocks && player.hasModPerms))) {
@@ -675,31 +596,9 @@ public class Player {
 							break;
 					}
 
-					// Verify room security
-					GameRoom room = plr.getRoom();
-					if (room != null && !room.allowSelection && !player.hasModPerms) {
-						// Verify private instance
-						PrivateInstanceContainer privInfo = room.getObject(PrivateInstanceContainer.class);
-						if (privInfo != null) {
-							// Check instance
-							PrivateInstance inst = privInfo.instance;
-							if (!inst.isParticipant(player.account.getAccountID())) {
-								// Deny
-								break;
-							}
-
-							// Our target is in a private instance we are also part of
-							// So lets allow it!
-						} else if (!room.getInstanceID().equals("GATHERING")) {
-							// Deny
-							break;
-						}
-					}
-
-					// Check if the target is in the same room
 					if (!plr.room.equals(player.room)) {
 						String teleport = plr.account.getAccountID();
-
+						
 						// Check sanc
 						if (plr.levelType == 2 && plr.room.startsWith("sanctuary_")) {
 							String sanctuaryOwner = plr.room.substring("sanctuary_".length());
@@ -733,11 +632,10 @@ public class Player {
 							}
 						}
 
-						// Build response
 						XtWriter writer = new XtWriter();
 						writer.writeString("rfjtr");
 						writer.writeInt(-1); // data prefix
-						writer.writeInt(1); // success
+						writer.writeInt(1); // other world
 						writer.writeString("");
 						writer.writeString(""); // data suffix
 						client.sendPacket(writer.encode());
@@ -767,49 +665,13 @@ public class Player {
 						player.pendingRoom = plr.room;
 						player.levelType = plr.levelType;
 
-						// Log
-						Centuria.logger.info("Player " + player.account.getDisplayName() + " is joining room "
-								+ (plr.getRoom() != null ? plr.getRoom().getInstanceID() : plr.getRoom()) + " of level "
-								+ plr.levelID);
-
 						// Send packet
 						client.sendPacket(join);
-
-						// Get or create instance teleport variables
-						PrivateInstanceTeleportVars vars = getObject(PrivateInstanceTeleportVars.class);
-						if (vars == null) {
-							// Create
-							vars = new PrivateInstanceTeleportVars();
-							addObject(vars);
-						}
-
-						// Disable joining of private instances until intentionally joining one
-						vars.disableInstanceTeleport = true;
-						vars.selectedInstance = null;
-
-						// Private instances
-						if (room != null) {
-							// Check if private
-							PrivateInstanceContainer privCont = room.getObject(PrivateInstanceContainer.class);
-							if (privCont != null && privCont.instance != null) {
-								// Its a private room
-
-								// Enable joining of instances
-								vars.disableInstanceTeleport = false;
-
-								// Make active if not the instance already
-								PrivateInstance activeInstance = srv.getPrivateInstanceManager()
-										.getSelectedInstanceOf(account.getAccountID());
-								if (activeInstance != null && !activeInstance.getID().equals(privCont.instance.getID()))
-									vars.selectedInstance = privCont.instance;
-							}
-						}
 					} else {
-						// Build response
 						XtWriter writer = new XtWriter();
 						writer.writeString("rfjtr");
 						writer.writeInt(-1); // data prefix
-						writer.writeInt(1); // success
+						writer.writeInt(1); // other world
 						writer.writeString("");
 						writer.writeString(""); // data suffix
 						client.sendPacket(writer.encode());
@@ -817,17 +679,12 @@ public class Player {
 						// Same room, sync player
 						ObjectUpdatePacket pkt = new ObjectUpdatePacket();
 						pkt.action = 0;
-						pkt.mode = 0; // InitPosition triggers teleport amims for FT clients, for vanilla it just
-										// moves
+						pkt.mode = 0;
 						pkt.id = player.account.getAccountID();
 						pkt.position = plr.lastPos;
 						pkt.rotation = plr.lastRot;
 						pkt.heading = plr.lastHeading;
 						pkt.time = System.currentTimeMillis() / 1000;
-
-						// Log
-						Centuria.logger.info("Player teleport: " + player.account.getDisplayName() + ": "
-								+ plr.account.getDisplayName());
 
 						// Broadcast sync
 						GameServer srv = (GameServer) client.getServer();
@@ -874,17 +731,6 @@ public class Player {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	/**
-	 * Retrieves the current MMO sync room
-	 * 
-	 * @return GameRoom instance or null
-	 */
-	public GameRoom getRoom() {
-		if (room == null)
-			return null;
-		return ((GameServer) client.getServer()).getRoomManager().getRoom(room);
 	}
 
 }

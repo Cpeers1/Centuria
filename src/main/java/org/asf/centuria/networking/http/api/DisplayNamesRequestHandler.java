@@ -2,6 +2,7 @@ package org.asf.centuria.networking.http.api;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.UUID;
 
 import org.asf.centuria.Centuria;

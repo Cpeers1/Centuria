@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.modules.eventbus.EventObject;
+import org.asf.centuria.modules.eventbus.EventPath;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.ChatServer;
 import org.asf.centuria.networking.gameserver.GameServer;
@@ -16,6 +17,7 @@ import org.asf.centuria.networking.gameserver.GameServer;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
+@EventPath("chatcommands.run")
 public class ChatCommandEvent extends EventObject {
 
 	private Consumer<String> messageCallback;
@@ -36,6 +38,11 @@ public class ChatCommandEvent extends EventObject {
 		this.server = client.getServer();
 		this.account = account;
 		this.permLevel = permLevel;
+	}
+
+	@Override
+	public String eventPath() {
+		return "chatcommands.run";
 	}
 
 	/**

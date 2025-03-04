@@ -60,4 +60,8 @@ public class InteractionCancelEvent extends EventObject {
 		return objectId;
 	}
 
+	@Override
+	public String eventPath() {
+		return "18compat.interaction.cancel";
+	}
 }

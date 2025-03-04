@@ -10,10 +10,12 @@ import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.modules.InteractionModule;
 import org.asf.centuria.packets.xt.gameserver.quests.QuestCommandPacket;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LinearObjectHandler extends InteractionModule {
 
+	// TODO: rotation spawning (og game spawning mechanics)
 	// TODO: new rewards for chests etc
 
 	@Override
@@ -98,12 +100,7 @@ public class LinearObjectHandler extends InteractionModule {
 				if (obj.stateInfo.containsKey(Integer.toString(stateId))
 						|| obj.stateInfo.containsKey(Integer.toString(stateId - 1))) {
 					// Update
-					int oState = player.states.getOrDefault(st.params[0], 0);
 					player.states.put(st.params[1], stateId);
-					for (InteractionModule mod : InteractionManager.getModules()) {
-						mod.onStateChange(player, st.params[1], NetworkedObjects.getObject(st.params[1]), oState,
-								stateId);
-					}
 
 					// Send state info
 					QuestCommandPacket qcmd = new QuestCommandPacket();
@@ -136,35 +133,34 @@ public class LinearObjectHandler extends InteractionModule {
 		// reworking
 		//
 
-//
-//		// Yeah ik it might sound like its better
-//		// to use a shared state processor but... i dont
-//		// want to risk hackers duplicating linear interaction
-//		// rewards. This way there is no way for it to happen.
-//
-//		// Find state
-//		int nState = player.states.getOrDefault(id, state);
-//		if (object.stateInfo.containsKey(Integer.toString(nState)) || nState == -1)
-//			state = nState;
-//
-//		// Find states to run
-//		ArrayList<StateInfo> states = object.stateInfo.get(Integer.toString(state));
-//		if (states == null)
-//			return false;
-//		player.stateObjects.put(id, states);
-//		for (StateInfo st : states) {
-//			// Log commands
-//			String args = "";
-//			for (String arg : st.params) {
-//				args += ", " + arg;
-//			}
-//			if (!args.isEmpty())
-//				args = args.substring(2);
-//			Centuria.logger.debug("Group object interaction command: " + id + ", state: " + state + ", command: "
-//					+ st.command + ", args: " + args);
-//			handleCommand(player, id, object, st, null);
-//		}
-//
+		// // Yeah ik it might sound like its better
+		// // to use a shared state processor but... i dont
+		// // want to risk hackers duplicating linear interaction
+		// // rewards. This way there is no way for it to happen.
+
+		// // Find state
+		// int nState = player.states.getOrDefault(id, state);
+		// if (object.stateInfo.containsKey(Integer.toString(nState)) || nState == -1)
+		// 	state = nState;
+
+		// // Find states to run
+		// ArrayList<StateInfo> states = object.stateInfo.get(Integer.toString(state));
+		// if (states == null)
+		// 	return false;
+		// player.stateObjects.put(id, states);
+		// for (StateInfo st : states) {
+		// 	// Log commands
+		// 	String args = "";
+		// 	for (String arg : st.params) {
+		// 		args += ", " + arg;
+		// 	}
+		// 	if (!args.isEmpty())
+		// 		args = args.substring(2);
+		// 	Centuria.logger.debug("Group object interaction command: " + id + ", state: " + state + ", command: "
+		// 			+ st.command + ", args: " + args);
+		// 	handleCommand(player, id, object, st, null);
+		// }
+
 		return false;
 	}
 

@@ -29,7 +29,7 @@ public class InventoryManager {
 		item.add(obj);
 	}
 
-	public static void buildInventory(Player plr, PlayerInventory inv) {
+	public static void buildInventory(PlayerInventory inv) {
 		// Check if wings, mods and clothing is disabled
 		if (!inv.getSaveSettings().giveAllMods && !inv.getSaveSettings().giveAllWings) {
 			// Save item 2 as empty item
@@ -46,21 +46,32 @@ public class InventoryManager {
 		// Build avatars
 		if (inv.getSaveSettings().giveAllAvatars) {
 			// Unlock all avatars
-			for (String species : inv.getAvatarAccessor().getAllAvatarSpeciesTypes())
-			{
-				// Check
-				if (!inv.getAvatarAccessor().isAvatarSpeciesUnlocked(species))
-				{
-					// Unlock
-					inv.getAvatarAccessor().unlockAvatarSpecies(species);
-				}
-			}
+			inv.getAvatarAccessor().unlockAvatarSpecies("Kitsune");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Senri");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Phoenix");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Dragon");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Kirin");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Fae");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Shinigami");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Werewolf");
+			inv.getAvatarAccessor().unlockAvatarSpecies("Jackalope");
 		} else {
 			// Unlock Kitsune, Senri and Phoenix
 			inv.getAvatarAccessor().unlockAvatarSpecies("Kitsune");
 			inv.getAvatarAccessor().unlockAvatarSpecies("Senri");
 			inv.getAvatarAccessor().unlockAvatarSpecies("Phoenix");
 		}
+
+		// Create new object for interaction memory
+		inv.setItem("304", new JsonArray());
+
+		// Add levels
+		inv.getInteractionMemory().prepareLevel(820); // City Fera
+		inv.getInteractionMemory().prepareLevel(2364); // Blood Tundra
+		inv.getInteractionMemory().prepareLevel(9687); // Lakeroot
+		inv.getInteractionMemory().prepareLevel(3273); // Sunken Thicket
+		inv.getInteractionMemory().prepareLevel(2147); // Mugmyre
+		inv.getInteractionMemory().prepareLevel(1825); // Shattered Bay
 
 		// Save changes
 		for (String change : inv.getAccessor().getItemsToSave())
@@ -89,30 +100,6 @@ public class InventoryManager {
 			// Fix it
 			if (!hasPrimary)
 				ava.get("components").getAsJsonObject().add("PrimaryLook", new JsonObject());
-			changed = true;
-		}
-
-		// Fix look slots
-		for (JsonElement ele : item.deepCopy()) {
-			JsonObject ava = ele.getAsJsonObject();
-			if (ava.get("components").getAsJsonObject().has("PrimaryLook"))
-				continue;
-
-			int defID = ava.get("defId").getAsInt();
-			int lookCount = 0;
-
-			for (JsonElement ele2 : item) {
-				JsonObject ava2 = ele2.getAsJsonObject();
-				int defID2 = ava2.get("defId").getAsInt();
-				if (defID == defID2 && !ava2.get("components").getAsJsonObject().has("PrimaryLook")) {
-					lookCount++;
-					break;
-				}
-			}
-
-			// Fix it
-			if (lookCount > 12)
-				item.remove(ava);
 			changed = true;
 		}
 
@@ -147,7 +134,7 @@ public class InventoryManager {
 		if (plr != null)
 			Centuria.logger.info("Generating avatar file for " + plr.account.getDisplayName());
 		InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-				.getResourceAsStream("content/avatars/avatars.json");
+				.getResourceAsStream("defaultitems/avatarhelper.json");
 		JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 				.get("Avatars").getAsJsonObject();
 		strm.close();

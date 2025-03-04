@@ -83,4 +83,8 @@ public class InteractionSuccessEvent extends EventObject {
 		this.destroyResource = destroyResource;
 	}
 
+	@Override
+	public String eventPath() {
+		return "18compat.interaction.success";
+	}
 }

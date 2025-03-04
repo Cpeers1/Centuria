@@ -18,7 +18,7 @@ public abstract class BaseSmartfoxServer {
 		server = socket;
 
 		// Register packets
-		registerServerPackets();
+		registerPackets();
 
 		// Lock the registry
 		setupComplete = true;
@@ -35,7 +35,7 @@ public abstract class BaseSmartfoxServer {
 	/**
 	 * Registers the server packets (internal)
 	 */
-	protected abstract void registerServerPackets();
+	protected abstract void registerPackets();
 
 	/**
 	 * Client start event (internal)
@@ -235,7 +235,7 @@ public abstract class BaseSmartfoxServer {
 			if (Centuria.debugMode) {
 				packets.clear();
 				setupComplete = false;
-				registerServerPackets();
+				registerPackets();
 				setupComplete = true;
 			}
 			Centuria.logger.error("Unhandled packet: client " + client.getAddress() + " sent: " + data);
@@ -294,14 +294,21 @@ public abstract class BaseSmartfoxServer {
 	/**
 	 * Reads a single packet from a client
 	 *
-	 * @param <T>        Packet return type
-	 * @param client     Player to read from
-	 * @param packetType Expected packet class
+	 * @param <T>                    Packet return type
+	 * @param AbstractSmartfoxClient Player to read from
+	 * @param packetType             Expected packet class
 	 * @return ISmartfoxPacket instance or null
 	 * @throws IOException If reading fails
 	 */
-	public <T extends ISmartfoxPacket> T readPacket(SmartfoxClient client, Class<T> packetType) throws IOException {
-		return client.readPacket(packetType);
+	public <T extends ISmartfoxPacket> T readPacket(SmartfoxClient AbstractSmartfoxClient, Class<T> packetType)
+			throws IOException {
+		// Read data
+		String data = readRawPacket(AbstractSmartfoxClient);
+		if (Centuria.debugMode)
+			Centuria.logger.debug("C->S: " + data);
+
+		// Parse packet
+		return parsePacketPayload(data, packetType);
 	}
 
 	/**

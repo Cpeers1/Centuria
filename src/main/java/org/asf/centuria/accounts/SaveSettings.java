@@ -30,6 +30,7 @@ public class SaveSettings {
 	public boolean allowGiveItemFurnitureItems = true;
 	public boolean allowGiveItemResources = true;
 	public boolean allowGiveItemCurrency = true;
+	public boolean enableCreativeRestock = false;
 	public JsonObject saveColors = null;
 	public JsonObject saveNamePrefixes = null;
 	public String tradeLockID = "default";
@@ -49,7 +50,8 @@ public class SaveSettings {
 		this.allowGiveItemFurnitureItems = Centuria.defaultAllowGiveItemFurnitureItems;
 		this.allowGiveItemSanctuaryTypes = Centuria.defaultAllowGiveItemSanctuaryTypes;
 		this.allowGiveItemCurrency = Centuria.defaultAllowGiveItemCurrency;
-		this.allowGiveItemResources = Centuria.defaultAllowGiveItemResources;
+		this.allowGiveItemResources = Centuria.defaultEnableCreativeRestock;
+		this.enableCreativeRestock = Centuria.defaultEnableCreativeRestock;
 	}
 
 	/**
@@ -96,6 +98,8 @@ public class SaveSettings {
 			this.allowGiveItemResources = data.get("allowGiveItemResources").getAsBoolean();
 		else
 			this.allowGiveItemResources = giveAllResources;
+		if (data.has("enableCreativeRestock"))
+			this.enableCreativeRestock = data.get("enableCreativeRestock").getAsBoolean();
 		if (data.has("saveColors") && !data.get("saveColors").isJsonNull())
 			this.saveColors = data.get("saveColors").getAsJsonObject();
 		if (data.has("saveNamePrefixes") && !data.get("saveNamePrefixes").isJsonNull())
@@ -125,6 +129,7 @@ public class SaveSettings {
 		obj.addProperty("allowGiveItemFurnitureItems", allowGiveItemFurnitureItems);
 		obj.addProperty("allowGiveItemResources", allowGiveItemResources);
 		obj.addProperty("allowGiveItemCurrency", allowGiveItemCurrency);
+		obj.addProperty("enableCreativeRestock", enableCreativeRestock);
 		obj.addProperty("tradeLockID", tradeLockID);
 		if (saveColors != null)
 			obj.add("saveColors", saveColors);

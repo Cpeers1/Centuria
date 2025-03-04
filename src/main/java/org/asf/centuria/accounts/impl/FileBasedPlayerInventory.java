@@ -72,18 +72,17 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 
 	@Override
 	public boolean containsItem(String itemID) {
-		if (!itemID.matches("^[A-Za-z0-9_\\-. ]+"))
+		if (!itemID.matches("^[A-Za-z0-9_\\-. ]+$"))
 			return false;
 
 		if (cache.containsKey(itemID))
 			return true;
-
 		return new File("inventories/" + id + prefix + "/" + itemID + ".json").exists();
 	}
 
 	@Override
 	public JsonElement getItem(String itemID) {
-		if (!itemID.matches("^[A-Za-z0-9_\\-. ]+"))
+		if (!itemID.matches("^[A-Za-z0-9_\\-. ]+$"))
 			return null;
 
 		if (cache.containsKey(itemID))
@@ -115,7 +114,7 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 
 	@Override
 	public void setItem(String itemID, JsonElement itemData) {
-		if (!itemID.matches("^[A-Za-z0-9_\\-. ]+"))
+		if (!itemID.matches("^[A-Za-z0-9_\\-. ]+$"))
 			return;
 
 		cache.put(itemID, itemData);
@@ -139,7 +138,7 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 
 	@Override
 	public void deleteItem(String itemID) {
-		if (!itemID.matches("^[A-Za-z0-9_\\-. ]+"))
+		if (!itemID.matches("^[A-Za-z0-9_\\-. ]+$"))
 			return;
 
 		if (cache.containsKey(itemID)) {
@@ -171,11 +170,6 @@ public class FileBasedPlayerInventory extends PlayerInventory {
 	private void deleteDir(File dir) {
 		if (!dir.exists())
 			return;
-		if (Files.isSymbolicLink(dir.toPath())) {
-			// DO NOT RECURSE
-			dir.delete();
-			return;
-		}
 		for (File subDir : dir.listFiles(t -> t.isDirectory())) {
 			deleteDir(subDir);
 		}

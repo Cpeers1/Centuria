@@ -2,6 +2,7 @@ package org.asf.centuria.modules.events.chat;
 
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.modules.eventbus.EventObject;
+import org.asf.centuria.modules.eventbus.EventPath;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.ChatServer;
 
@@ -16,6 +17,7 @@ import com.google.gson.JsonObject;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
+@EventPath("chat.login")
 public class ChatLoginEvent extends EventObject {
 
 	private ChatServer server;
@@ -29,6 +31,11 @@ public class ChatLoginEvent extends EventObject {
 		this.account = account;
 		this.server = server;
 		this.params = params;
+	}
+
+	@Override
+	public String eventPath() {
+		return "chat.login";
 	}
 
 	/**

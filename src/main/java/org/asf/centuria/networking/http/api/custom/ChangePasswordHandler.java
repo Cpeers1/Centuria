@@ -74,12 +74,21 @@ public class ChangePasswordHandler extends HttpPushProcessor {
 
 			// Find account
 			String id = payload.get("uuid").getAsString();
+			char[] password = request.get("password").getAsString().toCharArray();
 
 			// Check existence
 			if (id == null) {
 				// Invalid details
 				this.setResponseContent("text/json", "{\"error\":\"invalid_credential\"}");
 				this.setResponseStatus(401, "Unauthorized");
+				return;
+			}
+
+			// Check password length
+			if (password.length < 1) {
+				// Reply with error
+				this.setResponseContent("text/json", "{\"error\":\"empty_password\"}");
+				this.setResponseStatus(400, "Bad request");
 				return;
 			}
 

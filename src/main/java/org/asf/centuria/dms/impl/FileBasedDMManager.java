@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -110,9 +109,9 @@ public class FileBasedDMManager extends DMManager {
 
 					// Add message
 					JsonObject msg = new JsonObject();
-					msg.addProperty("c", msgT);
-					msg.addProperty("s", new UUID(0, 0).toString());
-					msg.addProperty("a", System.currentTimeMillis());
+					msg.addProperty("content", msgT);
+					msg.addProperty("source", new UUID(0, 0).toString());
+					msg.addProperty("sentAt", fmt.format(new Date()));
 					data.add(msg);
 
 					// Mark warned
@@ -125,8 +124,8 @@ public class FileBasedDMManager extends DMManager {
 						} catch (InterruptedException e) {
 							break;
 						}
-					activeIDs.add(dmID);
 					try {
+						activeIDs.add(dmID);
 						Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
 					} finally {
 						activeIDs.remove(dmID);
@@ -210,30 +209,16 @@ public class FileBasedDMManager extends DMManager {
 			ArrayList<PrivateChatMessage> messages = new ArrayList<PrivateChatMessage>();
 			for (JsonElement ele : data) {
 				JsonObject msg = ele.getAsJsonObject();
-				String source;
-				if (msg.has("source"))
-					source = msg.get("source").getAsString();
-				else
-					source = msg.get("s").getAsString();
+				String source = msg.get("source").getAsString();
 
 				if (SocialManager.getInstance().socialListExists(requester)
 						&& SocialManager.getInstance().getPlayerIsBlocked(requester, source))
 					continue;
 
 				PrivateChatMessage message = new PrivateChatMessage();
-				message.content = msg.has("content") ? msg.get("content").getAsString() : msg.get("c").getAsString();
+				message.content = msg.get("content").getAsString();
 				message.source = source;
-				if (msg.has("sentAt")) {
-					// Parse old format
-					SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
-					fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-					message.sentAt = 0;
-					try {
-						message.sentAt = fmt.parse(msg.get("sentAt").getAsString()).getTime();
-					} catch (ParseException e) {
-					}
-				} else
-					message.sentAt = msg.get("a").getAsLong();
+				message.sentAt = msg.get("sentAt").getAsString();
 				messages.add(message);
 			}
 			return messages.toArray(t -> new PrivateChatMessage[t]);
@@ -256,9 +241,9 @@ public class FileBasedDMManager extends DMManager {
 
 			// Add message
 			JsonObject msg = new JsonObject();
-			msg.addProperty("c", message.content);
-			msg.addProperty("s", message.source);
-			msg.addProperty("a", message.sentAt);
+			msg.addProperty("content", message.content);
+			msg.addProperty("source", message.source);
+			msg.addProperty("sentAt", message.sentAt);
 			data.add(msg);
 
 			// Save to disk
@@ -374,43 +359,6 @@ public class FileBasedDMManager extends DMManager {
 				}
 			activeIDs.add(dmID);
 			try {
-				dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
-				dm.addProperty("warnedExpiry", false);
-				Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
-			} finally {
-				activeIDs.remove(dmID);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public void updateDMParticipants(String dmID, String[] participants) {
-		if (!dmExists(dmID))
-			throw new IllegalArgumentException("DM not found");
-
-		try {
-			// Parse DM
-			FileReader reader = new FileReader("dms/" + UUID.fromString(dmID) + ".json");
-			JsonObject dm = JsonParser.parseReader(reader).getAsJsonObject();
-			reader.close();
-
-			// Update participants
-			JsonArray participantObjects = new JsonArray();
-			for (String p : participants)
-				participantObjects.add(p);
-			dm.add("participants", participantObjects);
-
-			// Save to disk
-			while (activeIDs.contains(dmID))
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					break;
-				}
-			try {
-				activeIDs.add(dmID);
 				dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
 				dm.addProperty("warnedExpiry", false);
 				Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());

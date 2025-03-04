@@ -14,8 +14,6 @@ import java.util.zip.GZIPInputStream;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.packets.smartfox.ISmartfoxPacket;
-import org.asf.centuria.util.io.DataReader;
-import org.asf.centuria.util.io.DataWriter;
 import org.asf.connective.tasks.AsyncTaskManager;
 
 public class SocketSmartfoxClient extends SmartfoxClient {
@@ -27,12 +25,10 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 	private Object sendLock = new Object();
 	private Object readLock = new Object();
 
-	private DataReader reader;
-	private DataWriter writer;
-
 	private ArrayList<String> sendQueue = new ArrayList<String>();
 
 	private boolean ioThreadInited;
+
 	private boolean disconnecting = false;
 
 	InputStream input;
@@ -60,8 +56,6 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 	@Override
 	protected void stop() {
 		client = null;
-		reader = null;
-		writer = null;
 		disconnecting = false;
 		sendQueue.clear();
 	}
@@ -116,48 +110,24 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 					if (Centuria.debugMode)
 						Centuria.logger.debug("S->C: " + packet);
 
-					// Check protocol mode
-					if (shouldUseEfgl()) {
-						// EFGL
-						try {
-							// Prepare writer if missing
-							if (writer == null)
-								writer = new DataWriter(output);
+					try {
+						// Send packet
+						byte[] payload = packet.getBytes("UTF-8");
+						if (client == null)
+							return;
+						output.write(payload);
+						output.write(0);
+						output.flush();
 
-							// Write
-							writer.writeString(packet);
-
-							// Remove from queue
-							synchronized (sendLock) {
-								sendQueue.remove(0);
-							}
-						} catch (Exception e) {
-							// Failed to send
-							// Assume disconnect
-							sendQueue.clear();
-							break;
+						// Remove from queue
+						synchronized (sendLock) {
+							sendQueue.remove(0);
 						}
-					} else {
-						// SFS1X
-						try {
-							// Send packet
-							byte[] payload = packet.getBytes("UTF-8");
-							if (client == null)
-								return;
-							output.write(payload);
-							output.write(0);
-							output.flush();
-
-							// Remove from queue
-							synchronized (sendLock) {
-								sendQueue.remove(0);
-							}
-						} catch (Exception e) {
-							// Failed to send
-							// Assume disconnect
-							sendQueue.clear();
-							break;
-						}
+					} catch (Exception e) {
+						// Failed to send
+						// Assume disconnect
+						sendQueue.clear();
+						break;
 					}
 				}
 
@@ -182,31 +152,7 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 
 	@Override
 	public String readRawPacket() throws IOException {
-		lockProtocol();
 		synchronized (readLock) {
-			// Check protocol mode
-			if (shouldUseEfgl()) {
-				// EFGL-mode
-				// Prepare data reader if missing
-				if (reader == null)
-					reader = new DataReader(input);
-
-				// Read message
-				String packet = reader.readString();
-				return packet;
-			} else if (protocolSwitchPossible()) {
-				// Byte-by-byte mode so that a switch can still be performed
-				String buffer = "";
-				int b = input.read();
-				while (b != 0 && b != -1) {
-					buffer += (char) b;
-					b = input.read();
-				}
-				if (b == -1)
-					throw new IOException("Stream closed unexpectedly");
-				return buffer;
-			}
-
 			// Read in regular-performance mode
 			// Go over received messages
 			String res = findFirstPacket(messageBuffer);
@@ -317,7 +263,7 @@ public class SocketSmartfoxClient extends SmartfoxClient {
 			}
 		}
 
-		// Close
+		// Disconnect
 		try {
 			client.close();
 		} catch (Exception e2) {

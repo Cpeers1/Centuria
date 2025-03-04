@@ -3,6 +3,7 @@ package org.asf.centuria.modules.events.servers;
 import java.util.function.Consumer;
 
 import org.asf.centuria.modules.eventbus.EventObject;
+import org.asf.centuria.modules.eventbus.EventPath;
 import org.asf.centuria.networking.chatserver.ChatServer;
 import org.asf.centuria.networking.chatserver.networking.AbstractChatPacket;
 
@@ -14,6 +15,7 @@ import org.asf.centuria.networking.chatserver.networking.AbstractChatPacket;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
+@EventPath("chatserver.startup")
 public class ChatServerStartupEvent extends EventObject {
 
 	private ChatServer server;
@@ -22,6 +24,11 @@ public class ChatServerStartupEvent extends EventObject {
 	public ChatServerStartupEvent(ChatServer server, Consumer<AbstractChatPacket> registrationCommand) {
 		this.server = server;
 		this.registrationCommand = registrationCommand;
+	}
+
+	@Override
+	public String eventPath() {
+		return "chatserver.startup";
 	}
 
 	/**
