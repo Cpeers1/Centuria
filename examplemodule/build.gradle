@@ -1,15 +1,3 @@
-buildscript {
-	repositories {
-		mavenCentral()
-		maven {
-			name = "AerialWorks"; url = "https://aerialworks.ddns.net/maven"
-		}
-	}
-	dependencies {
-		classpath 'org.asf.cyan.cornflower:Cornflower:1.0.0.A30'
-	}
-}
-
 plugins {
 	id 'java'
 	id 'maven-publish'
@@ -26,7 +14,6 @@ ext.authorname = "AerialWorks Software Foundation"
 
 // Internal
 apply plugin: 'eclipse'
-apply plugin: 'org.asf.cyan.cornflower'
 
 Calendar cal = new GregorianCalendar();
 cal.setTime(new Date());
@@ -61,49 +48,51 @@ dependencies {
 	implementation name: "connective-http"
 }
 
-createEclipseLaunches {
-	name "Launch Centuria Server (${project.name})"
+project.configurations.implementation.canBeResolved = true
 
-	// Main server
-	mainClass "org.asf.centuria.Centuria"
-	workingDir "server"
+// createEclipseLaunches {
+// 	name "Launch Centuria Server (${project.name})"
 
-	// Enable debug mode
-	jvm "-DdebugMode=true"
+// 	// Main server
+// 	mainClass "org.asf.centuria.Centuria"
+// 	workingDir "server"
 
-	// Make sure the module is loaded into the server
-	jvm "-DaddCpModules=${modulePackage}.${moduleClass}"
+// 	// Enable debug mode
+// 	jvm "-DdebugMode=true"
 
-	// Server dependencies
-	classpath project // current project
-	classpath {
-		// libraries
-		for (File file : new File("libraries").listFiles()) {
-			archive file
-		}
+// 	// Make sure the module is loaded into the server
+// 	jvm "-DaddCpModules=${modulePackage}.${moduleClass}"
 
-		// server libraries
-		for (File file : new File("server/libs").listFiles()) {
-			archive file
-		}
-		archive new File("server/Centuria.jar") // server jars
-	}
+// 	// Server dependencies
+// 	classpath project // current project
+// 	classpath {
+// 		// libraries
+// 		for (File file : new File("libraries").listFiles()) {
+// 			archive file
+// 		}
 
-	// Server source lookup
-	sourceLookup {
-		// libraries
-		for (File file : new File("libraries").listFiles()) {
-			archive file
-		}
+// 		// server libraries
+// 		for (File file : new File("server/libs").listFiles()) {
+// 			archive file
+// 		}
+// 		archive new File("server/Centuria.jar") // server jars
+// 	}
 
-		// server libraries
-		for (File file : new File("server/libs").listFiles()) {
-			archive file
-		}
-		archive new File("server/Centuria.jar") // server jars
-	}
-}
-createEclipseLaunches.dependsOn 'eclipse'
+// 	// Server source lookup
+// 	sourceLookup {
+// 		// libraries
+// 		for (File file : new File("libraries").listFiles()) {
+// 			archive file
+// 		}
+
+// 		// server libraries
+// 		for (File file : new File("server/libs").listFiles()) {
+// 			archive file
+// 		}
+// 		archive new File("server/Centuria.jar") // server jars
+// 	}
+// }
+// createEclipseLaunches.dependsOn 'eclipse'
 
 task moduledata () {
 	doLast {
