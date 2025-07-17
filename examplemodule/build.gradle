@@ -48,6 +48,8 @@ dependencies {
 	implementation name: "connective-http"
 }
 
+project.configurations.implementation.canBeResolved = true
+
 // createEclipseLaunches {
 // 	name "Launch Centuria Server (${project.name})"
 
