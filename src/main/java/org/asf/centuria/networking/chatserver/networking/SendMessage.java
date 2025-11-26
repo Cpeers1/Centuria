@@ -367,17 +367,17 @@ public class SendMessage extends AbstractChatPacket {
 		CenturiaAccount acc = client.getPlayer();
 		if (acc.getSaveSharedInventory().containsItem("penalty") && acc.getSaveSharedInventory().getItem("penalty")
 				.getAsJsonObject().get("type").getAsString().equals("mute")) {
-			JsonObject banInfo = acc.getSaveSharedInventory().getItem("penalty").getAsJsonObject();
-			if (banInfo.get("unmuteTimestamp").getAsLong() == -1
-					|| banInfo.get("unmuteTimestamp").getAsLong() > System.currentTimeMillis()) {
+			JsonObject muteInfo = acc.getSaveSharedInventory().getItem("penalty").getAsJsonObject();
+			if (muteInfo.get("unmuteTimestamp").getAsLong() == -1
+					|| muteInfo.get("unmuteTimestamp").getAsLong() > System.currentTimeMillis()) {
 				// Time format
-				SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 				// Get reason
 				String reason = null;
-				if (banInfo.has("reason"))
-					reason = banInfo.get("reason").getAsString();
+				if (muteInfo.has("reason"))
+					reason = muteInfo.get("reason").getAsString();
 
 				// Send failure
 				JsonObject res = new JsonObject();
@@ -725,7 +725,7 @@ public class SendMessage extends AbstractChatPacket {
 			}
 
 			// Time format
-			SimpleDateFormat fmt = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss");
+			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 			// If it is a DM, save message
@@ -4728,7 +4728,8 @@ public class SendMessage extends AbstractChatPacket {
 										&& !ItemAccessor.getInventoryTypeOf(defID).equals("102")
 										&& !ItemAccessor.getInventoryTypeOf(defID).equals("10")
 										&& !ItemAccessor.getInventoryTypeOf(defID).equals("2")
-										&& !ItemAccessor.getInventoryTypeOf(defID).equals("1"))) {
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("1")
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("7"))) {
 							systemMessage("Invalid item defID. Please make sure you can actually obtain this item.",
 									cmd, client);
 							return true;
@@ -4750,7 +4751,9 @@ public class SendMessage extends AbstractChatPacket {
 								|| (ItemAccessor.getInventoryTypeOf(defID).equals("2") && !client.getPlayer()
 										.getSaveSpecificInventory().getSaveSettings().allowGiveItemMods)
 								|| (ItemAccessor.getInventoryTypeOf(defID).equals("1") && !client.getPlayer()
-										.getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars)) {
+										.getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("7") && !client.getPlayer()
+										.getSaveSpecificInventory().getSaveSettings().allowGiveItemEnigmas)) {
 							systemMessage("Invalid item defID. Please make sure you can actually obtain this item.",
 									cmd, client);
 							return true;

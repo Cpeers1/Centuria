@@ -31,6 +31,7 @@ import org.asf.centuria.accounts.SaveSettings;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.AccountRegistrationEvent;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.centuria.social.SocialManager;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -375,6 +376,9 @@ public class FileBasedAccountManager extends AccountManager {
 					throw new RuntimeException("Save creation failure");
 				}
 			}
+
+			// Save social list
+			SocialManager.getInstance().openSocialList(id);
 
 			// Dispatch event
 			getAccount(id).getSaveSharedInventory().setItem("dmsystemupdated", new JsonObject());

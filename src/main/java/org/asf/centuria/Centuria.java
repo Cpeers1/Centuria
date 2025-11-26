@@ -108,6 +108,7 @@ public class Centuria {
 	public static boolean defaultAllowGiveItemClothes = true;
 	public static boolean defaultAllowGiveItemFurnitureItems = true;
 	public static boolean defaultAllowGiveItemResources = true;
+	public static boolean defaultAllowGiveItemEnigmas = true;
 	public static boolean defaultAllowGiveItemCurrency = true;
 	public static boolean defaultEnableCreativeRestock = false;
 	public static boolean encryptChat = false;
@@ -405,21 +406,49 @@ public class Centuria {
 		// Server configuration
 		File serverConf = new File("server.conf");
 		if (!serverConf.exists()) {
-			Files.writeString(serverConf.toPath(), "api-port=6\n" + "director-port=6969\n" + "game-port=6968\n"
-					+ "chat-port=6972\n" + "voice-chat-port=6973\n" + "allow-registration=true\n"
-					+ "give-all-avatars=false\n" + "give-all-mods=false\n" + "give-all-clothes=false\n"
-					+ "give-all-wings=false\n" + "give-all-sanctuary-types=false\n" + "give-all-furniture=false\n"
-					+ "give-all-currency=false\n" + "give-all-resources=false\n" + "allow-giveitem-resources=false\n" //
+			Files.writeString(serverConf.toPath(), "" //
+					+ "api-port=6970\n" //
+					+ "director-port=6969\n" //
+					+ "game-port=6968\n" //
+					+ "chat-port=6972\n"//
+					+ "voice-chat-port=6973\n" //
+					+ "\n" //
+					+ "allow-registration=true\n" //
+					+ "\n" //
+					+ "give-all-avatars=false\n" //
+					+ "give-all-mods=false\n" //
+					+ "give-all-clothes=false\n" //
+					+ "give-all-wings=false\n" //
+					+ "give-all-sanctuary-types=false\n" //
+					+ "give-all-furniture=false\n" //
+					+ "give-all-currency=false\n" //
+					+ "give-all-resources=false\n" //
+					+ "allow-giveitem-resources=false\n" //
+					+ "allow-giveitem-enigmas=false\n" //
 					+ "allow-giveitem-currency=false\n" //
 					+ "allow-giveitem-furniture=false\n" //
 					+ "allow-giveitem-sanctuary-types=false\n" //
 					+ "allow-giveitem-clothes=false\n" //
 					+ "allow-giveitem-avatars=false\n" //
 					+ "allow-giveitem-mods=false\n" //
-					+ "server-spawn-behaviour=random\ndefault-save-behaviour=single\n"
-					+ "discovery-server-address=localhost\n" + "encrypt-api=false\n" + "encrypt-chat=true\n"
-					+ "encrypt-game=false\nencrypt-director=false\n" + "debug-mode=false\n"
-					+ "\nvpn-user-whitelist=vpn-whitelist\n" + "vpn-ipv4-banlist=\n" + "vpn-ipv6-banlist=");
+					+ "\n" //
+					+ "server-spawn-behaviour=random\n" //
+					+ "default-save-behaviour=single\n" //
+					+ "\n" //
+					+ "discovery-server-address=localhost\n" //
+					+ "\n" //
+					+ "encrypt-api=false\n" //
+					+ "encrypt-chat=true\n" //
+					+ "encrypt-voice-chat=true\n" //
+					+ "encrypt-game=false\n" //
+					+ "encrypt-director=false\n" //
+					+ "debug-mode=false\n" //
+					+ "\n" //
+					+ "vpn-user-whitelist=vpn-whitelist\n" //
+					+ "vpn-ipv4-banlist=\n" //
+					+ "vpn-ipv6-banlist=\n" //
+					+ "\n" //
+					+ "allowed-proxies=");
 		}
 
 		// Parse properties
@@ -475,6 +504,7 @@ public class Centuria {
 				.equals("true");
 		defaultAllowGiveItemResources = serverProperties.getOrDefault("allow-giveitem-resources", "true")
 				.equals("true");
+		defaultAllowGiveItemEnigmas = serverProperties.getOrDefault("allow-giveitem-enigmas", "true").equals("true");
 		defaultAllowGiveItemCurrency = serverProperties.getOrDefault("allow-giveitem-currency", "true").equals("true");
 		encryptChat = serverProperties.getOrDefault("encrypt-chat", "false").equals("true")
 				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
@@ -537,6 +567,7 @@ public class Centuria {
 			save.addProperty("allowGiveItemSanctuaryTypes", defaultAllowGiveItemSanctuaryTypes);
 			save.addProperty("allowGiveItemCurrency", defaultAllowGiveItemCurrency);
 			save.addProperty("allowGiveItemResources", defaultAllowGiveItemResources);
+			save.addProperty("allowGiveItemEnigmas", defaultAllowGiveItemEnigmas);
 			save.add("saveColors", colors);
 			save.add("saveNamePrefixes", prefixes);
 			saves.add(defaultSaveName, save);

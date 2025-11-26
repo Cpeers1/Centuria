@@ -81,7 +81,7 @@ public class FileBasedDMManager extends DMManager {
 					SimpleDateFormat fmt = new SimpleDateFormat("HH:mm:ss MM/dd/yyyy");
 					fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 					String msgT = "WARNING! This private chat has been inactive for over 30 days, should it remain inactive for 30 more days, it will be deleted! Please send a message if you wish this chat to remain to exist. (this was sent on "
-							+ fmt.format(new Date()) + " UTC";
+							+ fmt.format(new Date()) + " UTC)";
 
 					// Send notification to all participants that are connected
 					fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");

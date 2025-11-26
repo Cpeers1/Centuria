@@ -31,7 +31,7 @@ public class SeasonPassManager {
 			passDir.mkdirs();
 
 		// Time format
-		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 		fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 		// Read all passes from the folder

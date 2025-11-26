@@ -30,6 +30,7 @@ public class SaveSettings {
 	public boolean allowGiveItemFurnitureItems = true;
 	public boolean allowGiveItemResources = true;
 	public boolean allowGiveItemCurrency = true;
+	public boolean allowGiveItemEnigmas = true;
 	public boolean enableCreativeRestock = false;
 	public JsonObject saveColors = null;
 	public JsonObject saveNamePrefixes = null;
@@ -50,7 +51,8 @@ public class SaveSettings {
 		this.allowGiveItemFurnitureItems = Centuria.defaultAllowGiveItemFurnitureItems;
 		this.allowGiveItemSanctuaryTypes = Centuria.defaultAllowGiveItemSanctuaryTypes;
 		this.allowGiveItemCurrency = Centuria.defaultAllowGiveItemCurrency;
-		this.allowGiveItemResources = Centuria.defaultEnableCreativeRestock;
+		this.allowGiveItemResources = Centuria.defaultAllowGiveItemResources;
+		this.allowGiveItemEnigmas = Centuria.defaultAllowGiveItemEnigmas;
 		this.enableCreativeRestock = Centuria.defaultEnableCreativeRestock;
 	}
 
@@ -91,13 +93,19 @@ public class SaveSettings {
 		else
 			this.allowGiveItemSanctuaryTypes = giveAllSanctuaryTypes;
 		if (data.has("allowGiveItemCurrency"))
-			this.allowGiveItemSanctuaryTypes = data.get("allowGiveItemCurrency").getAsBoolean();
+			this.allowGiveItemCurrency = data.get("allowGiveItemCurrency").getAsBoolean();
 		else
 			this.allowGiveItemCurrency = giveAllCurrency;
 		if (data.has("allowGiveItemResources"))
 			this.allowGiveItemResources = data.get("allowGiveItemResources").getAsBoolean();
 		else
 			this.allowGiveItemResources = giveAllResources;
+		if (data.has("allowGiveItemEnigmas") && !data.get("allowGiveItemEnigmas").isJsonNull())
+			this.allowGiveItemEnigmas = data.get("allowGiveItemEnigmas").getAsBoolean();
+		else
+			this.allowGiveItemEnigmas = allowGiveItemAvatars && allowGiveItemClothes && allowGiveItemMods
+					&& allowGiveItemFurnitureItems && allowGiveItemSanctuaryTypes && allowGiveItemCurrency
+					&& allowGiveItemResources;
 		if (data.has("enableCreativeRestock"))
 			this.enableCreativeRestock = data.get("enableCreativeRestock").getAsBoolean();
 		if (data.has("saveColors") && !data.get("saveColors").isJsonNull())
@@ -129,6 +137,7 @@ public class SaveSettings {
 		obj.addProperty("allowGiveItemFurnitureItems", allowGiveItemFurnitureItems);
 		obj.addProperty("allowGiveItemResources", allowGiveItemResources);
 		obj.addProperty("allowGiveItemCurrency", allowGiveItemCurrency);
+		obj.addProperty("allowGiveItemEnigmas", allowGiveItemEnigmas);
 		obj.addProperty("enableCreativeRestock", enableCreativeRestock);
 		obj.addProperty("tradeLockID", tradeLockID);
 		if (saveColors != null)
