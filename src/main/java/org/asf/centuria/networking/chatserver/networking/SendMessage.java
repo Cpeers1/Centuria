@@ -89,6 +89,7 @@ public class SendMessage extends AbstractChatPacket {
 		muteWords.clear();
 		filterWords.clear();
 		alwaysfilterWords.clear();
+		flagWords.clear();
 
 		// Load filter
 		try {
@@ -193,7 +194,8 @@ public class SendMessage extends AbstractChatPacket {
 			filterLastChange = Files.getLastModifiedTime(Path.of("textfilter/filter.txt")).toMillis();
 			alwaysFilterLastChange = Files.getLastModifiedTime(Path.of("textfilter/alwaysfilter.txt")).toMillis();
 			instaMuteLastChange = Files.getLastModifiedTime(Path.of("textfilter/instamute.txt")).toMillis();
-			flagWordsLastChange = Files.getLastModifiedTime(Path.of("textfilter/flagwords.txt")).toMillis();
+			if (new File("textfilter/flagwords.txt").exists())
+				flagWordsLastChange = Files.getLastModifiedTime(Path.of("textfilter/flagwords.txt")).toMillis();
 
 			// Load filter
 			try {
@@ -399,7 +401,9 @@ public class SendMessage extends AbstractChatPacket {
 			long filterLastChange = Files.getLastModifiedTime(Path.of("textfilter/filter.txt")).toMillis();
 			long alwaysFilterLastChange = Files.getLastModifiedTime(Path.of("textfilter/alwaysfilter.txt")).toMillis();
 			long instaMuteLastChange = Files.getLastModifiedTime(Path.of("textfilter/instamute.txt")).toMillis();
-			long flagWordsLastChange = Files.getLastModifiedTime(Path.of("textfilter/flagwords.txt")).toMillis();
+			long flagWordsLastChange = (new File("textfilter/flagwords.txt").exists()
+					? Files.getLastModifiedTime(Path.of("textfilter/flagwords.txt")).toMillis()
+					: 0);
 			if (SendMessage.filterLastChange != filterLastChange
 					|| SendMessage.alwaysFilterLastChange != alwaysFilterLastChange
 					|| SendMessage.instaMuteLastChange != instaMuteLastChange
@@ -550,7 +554,7 @@ public class SendMessage extends AbstractChatPacket {
 				// Mod log
 
 				// Apply filter and get result
-				FilterResult filter = runFilter(true, true, message, muteWords);
+				FilterResult filter = runFilter(true, true, message, muteWords, "red");
 
 				// Check if private
 				if (client.isRoomPrivate(room)) {
@@ -773,14 +777,14 @@ public class SendMessage extends AbstractChatPacket {
 			filterStrictModeList.addAll(filterDefaultList);
 			filterStrictModeList.addAll(filterWords);
 			ArrayList<String> filterFlagList = new ArrayList<String>();
-			filterStrictModeList.addAll(filterWords);
-			filterStrictModeList.addAll(flagWords);
+			filterFlagList.addAll(filterWords);
+			filterFlagList.addAll(flagWords);
 
 			// Run filters
-			FilterResult filterDefault = runFilter(true, true, message, filterDefaultList); // Default
-			FilterResult filterStrictMode = runFilter(true, true, message, filterStrictModeList); // Strict-mode
-			FilterResult filterFlagged = runFilter(true, true, message, filterFlagList); // Words to flag to the team
-			FilterResult filterFlaggedRaw = runFilter(true, true, message, flagWords); // Words to flag to the team
+			FilterResult filterDefault = runFilter(true, true, message, filterDefaultList, "red"); // Default
+			FilterResult filterStrictMode = runFilter(true, true, message, filterStrictModeList, "red"); // Strict-mode
+			FilterResult filterFlagged = runFilter(true, true, message, filterFlagList, "orange"); // Words to flag to the team
+			FilterResult filterFlaggedRaw = runFilter(true, true, message, flagWords, "orange"); // Words to flag to the team
 
 			// Gather result
 			boolean filteredUserStrictMode = filterStrictMode.wasFiltered;
@@ -823,7 +827,7 @@ public class SendMessage extends AbstractChatPacket {
 								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
 								Map.of("Private chat room", formatRoomName(client, room), "Matched word(s)",
 										filterDefault.matchedWordsString, "Primary reason for filtering",
-										"With our software being for a target audience that includes minors, we do not permit the use of NSFW terms in chat.",
+										"With our software being for a target audience that includes minors, we do not permit NSFW terms in chat.",
 										"Room", formatRoomName(client, room), "Resulting action", "muted",
 										"Reason for mute", "Continued breaches of chat rules after 2 warnings."),
 								"SYSTEM", client.getPlayer()));
@@ -832,7 +836,7 @@ public class SendMessage extends AbstractChatPacket {
 								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
 								Map.of("Chat message", message, "Matched word(s)", filterDefault.matchedWordsString,
 										"Primary reason for filtering",
-										"With our software being for a target audience that includes minors, we do not permit the use of NSFW terms in chat.",
+										"With our software being for a target audience that includes minors, we do not permit NSFW terms in chat.",
 										"Room", formatRoomName(client, room), "Resulting action", "muted",
 										"Reason for mute", "Continued breaches of chat rules after 2 warnings."),
 								"SYSTEM", client.getPlayer()));
@@ -945,7 +949,7 @@ public class SendMessage extends AbstractChatPacket {
 					res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
 					res.addProperty("conversationId", room);
 					res.addProperty("message",
-							"Your message was blocked because it may not be appropriate.\nReason: With our software being for a target audience that includes minors, we do not permit the use of NSFW terms in chat.\n\nDue to your continued breaches of the chat rules, you have been muted for 30 minutes.\nWe ask you to keep chat respectful, safe and clean!");
+							"Your message was blocked because it may not be appropriate.\nReason: With our software being for a target audience that includes minors, we do not permit NSFW terms in chat.\n\nDue to your continued breaches of the chat rules, you have been muted for 30 minutes.\nWe ask you to keep chat respectful, safe and clean!");
 					res.addProperty("source", NIL_UUID);
 					res.addProperty("sentAt", fmt.format(new Date()));
 					res.addProperty("eventId", "chat.postMessage");
@@ -1243,7 +1247,7 @@ public class SendMessage extends AbstractChatPacket {
 					res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
 					res.addProperty("conversationId", room);
 					res.addProperty("message",
-							"Your message was censored because it may not be appropriate.\nReason: With our software being for a target audience that includes minors, we do not permit the use of NSFW terms in chat.\nWe ask you to keep chat respectful, safe and clean.");
+							"Your message was censored because it may not be appropriate.\nReason: With our software being for a target audience that includes minors, we do not permit NSFW terms in chat.\nWe ask you to keep chat respectful, safe and clean.");
 					res.addProperty("source", NIL_UUID);
 					res.addProperty("sentAt", fmt.format(new Date()));
 					res.addProperty("eventId", "chat.postMessage");
@@ -1258,7 +1262,7 @@ public class SendMessage extends AbstractChatPacket {
 								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
 								Map.of("Private chat room", formatRoomName(client, room), "Matched word(s)",
 										filterDefault.matchedWordsString, "Primary reason for filtering",
-										"With our software being for a target audience that includes minors, we do not permit the use of NSFW terms in chat.",
+										"With our software being for a target audience that includes minors, we do not permit NSFW terms in chat.",
 										"Room", formatRoomName(client, room), "Resulting action", "censored"),
 								"SYSTEM", client.getPlayer()));
 					} else {
@@ -1266,7 +1270,7 @@ public class SendMessage extends AbstractChatPacket {
 								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
 								Map.of("Chat message", message, "Matched word(s)", filterDefault.matchedWordsString,
 										"Primary reason for filtering",
-										"With our software being for a target audience that includes minors, we do not permit the use of NSFW terms in chat.",
+										"With our software being for a target audience that includes minors, we do not permit NSFW terms in chat.",
 										"Room", formatRoomName(client, room), "Resulting action", "censored"),
 								"SYSTEM", client.getPlayer()));
 					}
@@ -1276,7 +1280,7 @@ public class SendMessage extends AbstractChatPacket {
 					res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
 					res.addProperty("conversationId", room);
 					res.addProperty("message",
-							"Your message was censored because it may not be appropriate.\nReason: With our software being for a target audience that includes minors, we do not permit the use of NSFW terms in chat.\n\nThis is your first warning, if you continue to breach the chat rules, your account will be muted.\nWe ask you to keep chat respectful, safe and clean.");
+							"Your message was censored because it may not be appropriate.\nReason: With our software being for a target audience that includes minors, we do not permit NSFW terms in chat.\n\nThis is your first warning, if you continue to breach the chat rules, your account will be muted.\nWe ask you to keep chat respectful, safe and clean.");
 					res.addProperty("source", NIL_UUID);
 					res.addProperty("sentAt", fmt.format(new Date()));
 					res.addProperty("eventId", "chat.postMessage");
@@ -1291,7 +1295,7 @@ public class SendMessage extends AbstractChatPacket {
 								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
 								Map.of("Private chat room", formatRoomName(client, room), "Matched word(s)",
 										filterDefault.matchedWordsString, "Primary reason for filtering",
-										"With our software being for a target audience that includes minors, we do not permit the use of NSFW terms in chat.",
+										"With our software being for a target audience that includes minors, we do not permit NSFW terms in chat.",
 										"Room", formatRoomName(client, room), "Resulting action", "first warning"),
 								"SYSTEM", client.getPlayer()));
 					} else {
@@ -1299,7 +1303,7 @@ public class SendMessage extends AbstractChatPacket {
 								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
 								Map.of("Chat message", message, "Matched word(s)", filterDefault.matchedWordsString,
 										"Primary reason for filtering",
-										"With our software being for a target audience that includes minors, we do not permit the use of NSFW terms in chat.",
+										"With our software being for a target audience that includes minors, we do not permit NSFW terms in chat.",
 										"Room", formatRoomName(client, room), "Resulting action", "first warning"),
 								"SYSTEM", client.getPlayer()));
 					}
@@ -1309,7 +1313,7 @@ public class SendMessage extends AbstractChatPacket {
 					res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
 					res.addProperty("conversationId", room);
 					res.addProperty("message",
-							"Your message was censored because it may not be appropriate.\nReason: With our software being for a target audience that includes minors, we do not permit the use of NSFW terms in chat.\n\nThis is your LAST warning, the next breach of chat rules will result in a mute.\nWe ask you to keep chat respectful, safe and clean.");
+							"Your message was censored because it may not be appropriate.\nReason: With our software being for a target audience that includes minors, we do not permit NSFW terms in chat.\n\nThis is your LAST warning, the next breach of chat rules will result in a mute.\nWe ask you to keep chat respectful, safe and clean.");
 					res.addProperty("source", NIL_UUID);
 					res.addProperty("sentAt", fmt.format(new Date()));
 					res.addProperty("eventId", "chat.postMessage");
@@ -1324,7 +1328,7 @@ public class SendMessage extends AbstractChatPacket {
 								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
 								Map.of("Private chat room", formatRoomName(client, room), "Matched word(s)",
 										filterDefault.matchedWordsString, "Primary reason for filtering",
-										"With our software being for a target audience that includes minors, we do not permit the use of NSFW terms in chat.",
+										"With our software being for a target audience that includes minors, we do not permit NSFW terms in chat.",
 										"Room", formatRoomName(client, room), "Resulting action", "final warning"),
 								"SYSTEM", client.getPlayer()));
 					} else {
@@ -1332,7 +1336,7 @@ public class SendMessage extends AbstractChatPacket {
 								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
 								Map.of("Chat message", message, "Matched word(s)", filterDefault.matchedWordsString,
 										"Primary reason for filtering",
-										"With our software being for a target audience that includes minors, we do not permit the use of NSFW terms in chat.",
+										"With our software being for a target audience that includes minors, we do not permit NSFW terms in chat.",
 										"Room", formatRoomName(client, room), "Resulting action", "final warning"),
 								"SYSTEM", client.getPlayer()));
 					}
@@ -1409,7 +1413,7 @@ public class SendMessage extends AbstractChatPacket {
 	}
 
 	private static FilterResult runFilter(boolean moderationHighlight, boolean includePartJson, String message,
-			ArrayList<String> filter) {
+			ArrayList<String> filter, String highlightColor) {
 		FilterResult result = new FilterResult();
 		result.originalMessage = message;
 
@@ -1421,7 +1425,7 @@ public class SendMessage extends AbstractChatPacket {
 		ArrayList<String> matchList = new ArrayList<String>();
 		MessagePart currentPart = null;
 		for (String mword : message.split(" ")) {
-			if (muteWords.contains(mword.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
+			if (filter.contains(mword.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
 				// Add match
 				if (!matchList.contains(mword.toLowerCase())) {
 					// Add matched word
@@ -1448,7 +1452,7 @@ public class SendMessage extends AbstractChatPacket {
 				// Check if highlight is enabled
 				if (moderationHighlight) {
 					// Create highlight
-					String highlight = "</noparse><color=red><noparse>" + mword + "</noparse></color><noparse>";
+					String highlight = "</noparse><color="+highlightColor+"><noparse>" + mword + "</noparse></color><noparse>";
 
 					// Add message part
 					if (highlightedMessage.isEmpty()) {
