@@ -68,10 +68,11 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 				String data = line.trim();
 				while (data.contains("  "))
-					data = data.replace("  ", "");
+					data = data.replace("  ", " ");
 
 				for (String word : data.split(" "))
-					filterWords.add(word.toLowerCase());
+					if (!word.isEmpty())
+						filterWords.add(word.toLowerCase());
 			}
 			strm.close();
 		} catch (IOException e) {
@@ -86,10 +87,11 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 				String data = line.trim();
 				while (data.contains("  "))
-					data = data.replace("  ", "");
+					data = data.replace("  ", " ");
 
 				for (String word : data.split(" "))
-					filterWords.add(word.toLowerCase());
+					if (!word.isEmpty())
+						filterWords.add(word.toLowerCase());
 			}
 			strm.close();
 		} catch (IOException e) {
@@ -106,10 +108,11 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 				String data = line.trim();
 				while (data.contains("  "))
-					data = data.replace("  ", "");
+					data = data.replace("  ", " ");
 
 				for (String word : data.split(" "))
-					muteWords.add(word.toLowerCase());
+					if (!word.isEmpty())
+						muteWords.add(word.toLowerCase());
 			}
 			strm.close();
 		} catch (IOException e) {
@@ -151,7 +154,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 			manager = new FileBasedSaveManager(sharedInv, this);
 			mainInv = new FileBasedPlayerInventory(userUUID, manager.getCurrentActiveSave());
 		}
-		 
+
 		// Load saves
 		if (getSaveMode() == SaveMode.MANAGED) {
 			// Find default save settings

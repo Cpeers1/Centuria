@@ -21,7 +21,18 @@ public class MiscModerationEvent extends EventObject {
 	private CenturiaAccount target;
 	private String eventName;
 	private String friendlyName;
+	private boolean urgent;
 	private Map<String, String> details;
+
+	public MiscModerationEvent(String eventName, String friendlyName, Map<String, String> details, String issuerID,
+			CenturiaAccount target, boolean urgent) {
+		this.eventName = eventName;
+		this.friendlyName = friendlyName;
+		this.issuerID = issuerID;
+		this.target = target;
+		this.details = details;
+		this.urgent = urgent;
+	}
 
 	public MiscModerationEvent(String eventName, String friendlyName, Map<String, String> details, String issuerID,
 			CenturiaAccount target) {
@@ -30,6 +41,7 @@ public class MiscModerationEvent extends EventObject {
 		this.issuerID = issuerID;
 		this.target = target;
 		this.details = details;
+		this.urgent = true;
 	}
 
 	@Override
@@ -81,6 +93,15 @@ public class MiscModerationEvent extends EventObject {
 	 */
 	public String getIssuer() {
 		return issuerID;
+	}
+
+	/**
+	 * Checks if the moderation event is urgent
+	 * 
+	 * @return True if urgent, false otherwise
+	 */
+	public boolean isUrgent() {
+		return urgent;
 	}
 
 }

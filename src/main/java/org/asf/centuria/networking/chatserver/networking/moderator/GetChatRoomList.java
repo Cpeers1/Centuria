@@ -1,13 +1,17 @@
 package org.asf.centuria.networking.chatserver.networking.moderator;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.networking.AbstractChatPacket;
 import org.asf.centuria.networking.gameserver.GameServer;
+import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class GetChatRoomList extends AbstractChatPacket {
 
@@ -54,6 +58,17 @@ public class GetChatRoomList extends AbstractChatPacket {
 		response.add("active", activeRooms);
 		ArrayList<String> activeRoomList = new ArrayList<String>();
 
+		// Load spawn helper
+		JsonObject helper = null;
+		try {
+			// Load helper
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("spawns.json");
+			helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject().get("Maps")
+					.getAsJsonObject();
+			strm.close();
+		} catch (Exception e) {
+		}
+
 		// Get rooms of all players
 		for (ChatClient cl : client.getServer().getClients()) {
 			for (String room : cl.getRooms()) {
@@ -70,10 +85,21 @@ public class GetChatRoomList extends AbstractChatPacket {
 							roomObj.addProperty("roomInstancePresent", false);
 							roomObj.addProperty("sanctuaryOwner", room.substring("sanctuary_".length()));
 							rooms.add(room, roomObj);
-						} else {
+						} else if (room.startsWith("room_")) {
 							// Add regular room
 							JsonObject roomObj = new JsonObject();
 							roomObj.addProperty("roomType", cl.isRoomPrivate(room) ? "private" : "room");
+
+							// Find map
+							String levelId = room.substring("room_".length());
+							String map = "UNKNOWN: " + levelId;
+							if (levelId.equals("25280"))
+								map = "Tutorial";
+							else if (helper.has(levelId))
+								map = helper.get(levelId).getAsString();
+							roomObj.addProperty("roomLevelID", levelId);
+							roomObj.addProperty("roomLevelName", map);
+							roomObj.addProperty("roomInstancePresent", true);
 							rooms.add(room, roomObj);
 						}
 
