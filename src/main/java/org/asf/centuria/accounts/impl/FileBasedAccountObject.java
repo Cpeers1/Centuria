@@ -23,6 +23,7 @@ import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.AccountDeletionEvent;
+import org.asf.centuria.modules.events.accounts.AccountDisplayNameChangedEvent;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.social.SocialEntry;
 import org.asf.centuria.social.SocialManager;
@@ -315,7 +316,9 @@ public class FileBasedAccountObject extends CenturiaAccount {
 					"Display name changed of " + loginName + ": " + displayName + " -> " + name);
 
 			// Store the name
+			String oName = displayName;
 			displayName = name;
+			EventBus.getInstance().dispatchEvent(new AccountDisplayNameChangedEvent(this, oName, name));
 
 			// Save to disk
 			Files.writeString(new File("accounts/" + userUUID).toPath(),
