@@ -577,6 +577,44 @@ public class GameServer extends BaseSmartfoxServer {
 			plr.sanctuaryPreloadCompleted = true;
 		}
 
+		// Avatar look failsafe, check if the active look is actually a primary look
+		// If not, switch to the first primary look of the same species
+		//
+		// This is to resolve those currently being affected by the avatar look
+		// overwrite bug thats been plaguing EmuFeral online
+		if (acc.getSaveSpecificInventory().containsItem("avatars")) {
+			JsonArray avatars = acc.getSaveSpecificInventory().getItem("avatars").getAsJsonArray();
+			for (JsonElement ele : avatars) {
+				// Read avatar
+				JsonObject ava = ele.getAsJsonObject();
+				String dID = ava.get("defId").getAsString();
+				String lID = ava.get("id").getAsString();
+
+				// Check if active look
+				if (lID.equals(plr.activeLook)) {
+					// Check if its a primary look
+					if (!ava.get("components").getAsJsonObject().has("PrimaryLook")) {
+						// Find first primary look
+						for (JsonElement ele2 : avatars) {
+							JsonObject ava2 = ele2.getAsJsonObject();
+							String dID2 = ava2.get("defId").getAsString();
+							String lID2 = ava2.get("id").getAsString();
+							if (ava2.get("components").getAsJsonObject().has("PrimaryLook") && dID.equals(dID2)) {
+								// Found the primary look
+								// Set as active look
+								plr.activeLook = lID2;
+								plr.account.setActiveLook(lID2);
+								break;
+							}
+						}
+					}
+
+					// Found the active look so we can end the loop
+					break;
+				}
+			}
+		}
+
 		// Assign permissions
 		if (acc.getSaveSharedInventory().containsItem("permissions")) {
 			String permLevel = acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()

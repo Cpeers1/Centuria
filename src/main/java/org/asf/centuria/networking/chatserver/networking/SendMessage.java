@@ -314,6 +314,16 @@ public class SendMessage extends AbstractChatPacket {
 	public void build(JsonObject data) {
 	}
 
+	private class ChatRateLimit {
+		public int chatMessageCount = 0;
+		public long rateLimitStart = 0;
+		public long rateLimitEnableTime = -1;
+
+		public boolean isRateLimited() {
+			return rateLimitEnableTime != -1 && (System.currentTimeMillis() - rateLimitEnableTime) < 15000;
+		}
+	}
+
 	@Override
 	public boolean handle(ChatClient client) {
 		DMManager manager = DMManager.getInstance();
@@ -415,13 +425,167 @@ public class SendMessage extends AbstractChatPacket {
 		} catch (IOException e) {
 		}
 
-		// Increase ban counter
-		client.banCounter++;
+		// Load rate limit
+		ChatRateLimit rateLimit = client.getObject(ChatRateLimit.class);
+		if (rateLimit == null) {
+			rateLimit = new ChatRateLimit();
+			client.addObject(rateLimit);
+		}
+
+		// Check expiry of rate limit message counter
+		if (System.currentTimeMillis() - rateLimit.rateLimitStart >= 3000) {
+			// Reset rate limit
+			rateLimit.chatMessageCount = 0;
+		}
+
+		// Check if we need to start the timer
+		if (rateLimit.chatMessageCount == 0) {
+			// Start timer, first message
+			rateLimit.rateLimitStart = System.currentTimeMillis();
+		}
+
+		// Increase counter
+		rateLimit.chatMessageCount++;
 
 		// Check it
-		if (client.banCounter >= 7) {
-			// Ban the hacker
-			client.getPlayer().ban("Spam hack");
+		if (rateLimit.chatMessageCount >= 7 && !rateLimit.isRateLimited()) {
+			// Player sent 7 messages within the last 3 seconds, engage rate limit
+			rateLimit.rateLimitEnableTime = System.currentTimeMillis();
+
+			// Check if private
+			if (client.isRoomPrivate(room)) {
+				// Private chat, need more details
+				// And strip away the message
+				EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
+						"Chat anti-spam limit was triggered for " + client.getPlayer().getDisplayName() + "!",
+						Map.of("Private chat room", formatRoomName(client, room), "Room", formatRoomName(client, room),
+								"Resulting action", "messages are being blocked for 15 seconds"),
+						"SYSTEM", client.getPlayer()));
+			} else {
+				EventBus.getInstance()
+						.dispatchEvent(new MiscModerationEvent("chatfilter.mute",
+								"Chat anti-spam limit was triggered for " + client.getPlayer().getDisplayName() + "!",
+								Map.of("Chat message", message, "Room", formatRoomName(client, room),
+										"Resulting action", "messages are being blocked for 15 seconds"),
+								"SYSTEM", client.getPlayer()));
+			}
+		}
+
+		// Check rate limit
+		if (rateLimit.isRateLimited()) {
+			// Cancel message
+
+			// Set timer
+			rateLimit.rateLimitEnableTime = System.currentTimeMillis();
+
+			// Time format
+			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+			// Send failure
+			JsonObject res = new JsonObject();
+			res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
+			res.addProperty("conversationId", room);
+			res.addProperty("message", "</noparse><color=red>[!] </color><color=orange><noparse>" + message
+					+ "</noparse></color><noparse>");
+			res.addProperty("messagePlain", "[!] " + message);
+			if (GameServer.hasPerm(permLevel, "moderator"))
+				res.addProperty("originalMessage", message); // Only for mods
+//			res.add("messageParts, new JsonArray())); // Not present, so not sent
+			res.addProperty("alertingMessage", true); // This is a moderator alerting message
+			res.addProperty("criticalAlertingMessage", true); // Critical, should be red
+			res.addProperty("blockedMessage", true); // The message was blocked, should be red highlighting
+			res.addProperty("source", client.getPlayer().getAccountID());
+			res.addProperty("sentAt", fmt.format(new Date()));
+			res.addProperty("eventId", "chat.postMessage");
+			res.addProperty("success", true);
+			client.sendPacket(res);
+
+			// Broadcast to moderators unless its a private chat
+			if (!client.isRoomPrivate(room)) {
+				for (ChatClient receiver : client.getServer().getClients()) {
+					// Fetch receiver moderator perms
+					String permLevel2 = "member";
+					if (receiver.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+						permLevel2 = receiver.getPlayer().getSaveSharedInventory().getItem("permissions")
+								.getAsJsonObject().get("permissionLevel").getAsString();
+					}
+
+					// Check if in room
+					if (receiver.isInRoom(room) && GameServer.hasPerm(permLevel2, "moderator")
+							&& !receiver.getPlayer().getAccountID().equals(client.getPlayer().getAccountID())) {
+						// Check limbo player
+						Player gameClient = receiver.getPlayer().getOnlinePlayerInstance();
+						if (gameClient != null && (!gameClient.roomReady || gameClient.room == null))
+							continue;
+
+						// Send to mod
+						res = new JsonObject();
+						res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
+						res.addProperty("conversationId", room);
+						res.addProperty("message", "</noparse><color=red>[!] </color><color=orange><noparse>" + message
+								+ "</noparse></color><noparse>");
+						res.addProperty("messagePlain", "[!] " + message);
+						res.addProperty("originalMessage", message);
+//						res.add("messageParts, new JsonArray())); // Not present, so not sent
+						res.addProperty("alertingMessage", true); // This is a moderator alerting message
+						res.addProperty("criticalAlertingMessage", true); // Critical, should be red
+						res.addProperty("blockedMessage", true); // The message was blocked, should be red
+																	// highlighting
+						res.addProperty("source", client.getPlayer().getAccountID());
+						res.addProperty("sentAt", fmt.format(new Date()));
+						res.addProperty("eventId", "chat.postMessage");
+						res.addProperty("success", true);
+						receiver.sendPacket(res);
+					} else if (!receiver.isInRoom(room)
+							&& !receiver.getPlayer().getAccountID().equals(client.getPlayer().getAccountID())) {
+						// Not in room
+
+						// Check moderator client
+						if (receiver.getObject(ModeratorClient.class) != null) {
+							// Send through centuria moderator protocol
+							res = new JsonObject();
+							res.addProperty("eventId", "centuria.moderatorclient.postedMessageInOtherRoom");
+							res.addProperty("conversationType", "room");
+							res.addProperty("message", "</noparse><color=red>[!] </color><color=orange><noparse>"
+									+ message + "</noparse></color><noparse>");
+							res.addProperty("messagePlain", "[!] " + message);
+							res.addProperty("originalMessage", message);
+//							res.add("messageParts, new JsonArray())); // Not present, so not sent
+							res.addProperty("alertingMessage", true); // This is a moderator alerting
+																		// message
+							res.addProperty("criticalAlertingMessage", true); // Critical, should be red
+																				// exclamation
+																				// mark
+							res.addProperty("blockedMessage", true); // The message was blocked, should be
+																		// red
+																		// highlighting
+							res.addProperty("source", client.getPlayer().getAccountID());
+							res.addProperty("sentAt", fmt.format(new Date()));
+							res.addProperty("success", true);
+
+							// Send message
+							receiver.sendPacket(res);
+						}
+					}
+				}
+			}
+
+			// System message
+			res = new JsonObject();
+			res.addProperty("conversationType", client.isRoomPrivate(room) ? "private" : "room");
+			res.addProperty("conversationId", room);
+			res.addProperty("message",
+					"Whoah there! You are sending too many messages in a short period, please slow down! Please wait 15 seconds before sending another message.");
+			res.addProperty("source", NIL_UUID);
+			res.addProperty("sentAt", fmt.format(new Date()));
+			res.addProperty("eventId", "chat.postMessage");
+			res.addProperty("success", true);
+
+			// Send message
+			client.sendPacket(res);
+
+			// Exit
 			return true;
 		}
 
@@ -783,8 +947,10 @@ public class SendMessage extends AbstractChatPacket {
 			// Run filters
 			FilterResult filterDefault = runFilter(true, true, message, filterDefaultList, "red"); // Default
 			FilterResult filterStrictMode = runFilter(true, true, message, filterStrictModeList, "red"); // Strict-mode
-			FilterResult filterFlagged = runFilter(true, true, message, filterFlagList, "orange"); // Words to flag to the team
-			FilterResult filterFlaggedRaw = runFilter(true, true, message, flagWords, "orange"); // Words to flag to the team
+			FilterResult filterFlagged = runFilter(true, true, message, filterFlagList, "orange"); // Words to flag to
+																									// the team
+			FilterResult filterFlaggedRaw = runFilter(true, true, message, flagWords, "orange"); // Words to flag to the
+																									// team
 
 			// Gather result
 			boolean filteredUserStrictMode = filterStrictMode.wasFiltered;
@@ -1452,7 +1618,8 @@ public class SendMessage extends AbstractChatPacket {
 				// Check if highlight is enabled
 				if (moderationHighlight) {
 					// Create highlight
-					String highlight = "</noparse><color="+highlightColor+"><noparse>" + mword + "</noparse></color><noparse>";
+					String highlight = "</noparse><color=" + highlightColor + "><noparse>" + mword
+							+ "</noparse></color><noparse>";
 
 					// Add message part
 					if (highlightedMessage.isEmpty()) {

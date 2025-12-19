@@ -28,9 +28,6 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 	private ArrayList<String> rooms = new ArrayList<String>();
 	private HashMap<String, Boolean> privateChat = new HashMap<String, Boolean>();
 
-	// Anti-hack
-	public int banCounter = 0;
-
 	// Room lock
 	public boolean isReady = false;
 
@@ -75,18 +72,6 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 
 	public ChatClient(Socket client, ChatServer server) {
 		super(client, server);
-
-		Thread th = new Thread(() -> {
-			while (isConnected()) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-				}
-				banCounter = 0;
-			}
-		}, "Anti-hack thread: " + client);
-		th.setDaemon(true);
-		th.start();
 	}
 
 	@Override
