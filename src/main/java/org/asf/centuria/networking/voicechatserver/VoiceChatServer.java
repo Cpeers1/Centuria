@@ -4,7 +4,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import org.asf.centuria.Centuria;
-import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.networking.persistentservice.BasePersistentServiceServer;
 import org.asf.centuria.networking.voicechatserver.networking.*;
 

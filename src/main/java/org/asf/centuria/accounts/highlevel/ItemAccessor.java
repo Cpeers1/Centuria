@@ -60,7 +60,6 @@ public class ItemAccessor {
 		return new ItemComponent("Enigma", e);
 	}
 
-	@SuppressWarnings("serial")
 	private static final Map<String, InventoryDefinitionContainer> inventoryTypeMap = new HashMap<String, InventoryDefinitionContainer>() {
 		{
 			// Avatar species

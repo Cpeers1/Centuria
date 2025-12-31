@@ -80,6 +80,7 @@ import org.asf.centuria.networking.http.api.custom.UserDetailsHandler;
 import org.asf.centuria.networking.http.director.GameServerRequestHandler;
 import org.asf.centuria.networking.voicechatserver.VoiceChatServer;
 import org.asf.centuria.seasonpasses.SeasonPassManager;
+import org.asf.centuria.textfilter.TextFilterService;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -240,6 +241,7 @@ public class Centuria {
 
 		// Managers
 		DMManager.getInstance();
+		TextFilterService.getInstance().initService();
 		ComponentManager.registerAllComponents();
 		InventoryItemManager.registerAllItems();
 

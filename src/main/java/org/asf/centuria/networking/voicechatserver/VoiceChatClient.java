@@ -9,7 +9,6 @@ import java.util.Base64;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
-import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.persistentservice.BasePersistentServiceClient;
 

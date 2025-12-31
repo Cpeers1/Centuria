@@ -1563,7 +1563,7 @@ public class SendMessage extends AbstractChatPacket {
 		public JsonObject partJson;
 	}
 
-	private static class FilterResult {
+	public static class FilterResult {
 		public boolean wasFiltered;
 
 		public String originalMessage;
