@@ -331,7 +331,9 @@ public class DefaultFilterDefParser implements IFilterDefParser {
 					for (PhraseFilter parentFilter : filter.getFilteredPhrases()) {
 						// Add filters
 						set.addPhraseFilter(parentFilter.getSeverity(), parentFilter.getModes(),
-								parentFilter.getReason(), parentFilter.getPhrase(), parentFilter.getVariants());
+								filter.getFilteringReason().equals(parentFilter.getReason()) ? reason
+										: parentFilter.getReason(),
+								parentFilter.getPhrase(), parentFilter.getVariants());
 					}
 				} catch (IOException e) {
 					if (strm != null)
