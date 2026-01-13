@@ -15,19 +15,19 @@ Severity USER_STRICT_MODE
 # Phrase bodies look like this:
 #    # Define example
 #    Phrase example
-#		 # Note: text filters, while processing, ignore any non-alphanumeric characters, keep that in mind while writing down variants
+#        # Note: text filters, while processing, ignore any non-alphanumeric characters, keep that in mind while writing down variants
 #
 #        # Set filtering mode, they can be:
 #        #   WHOLE_PHRASE : filters only if the whole phrase is a match, this does not tag unless all words are on their own, unless its a single word, then it checks if the word is present in the sentence, doesnt work if attached to another word, eg. `exam` and `example` arent a match to the system
 #        #   PHRASE_COMBINED : similar to WHOLE_PHRASE but also filters if the phrase without spaces is present in the text
-#        #   WORD_CONTAINS : most recommended in most cases, filters only if a word contains the phrase or variant, unlike WHOLE_PHRASE this DOES tag if the filter words are present attached to other words
+#        #   WORD_CONTAINS : most recommended in most cases, filters only if a worad contains the phrase or variant, unlike WHOLE_PHRASE this DOES tag if the filter words are present attached to other words
 #        #   WORD_COMBINED : similar to WORD_CONTAINS but also filters if the phrase without spaces is present in the text
 #        Mode WHOLE_PHRASE
-#        
+#
 #        # Define variants
 #        # Same rules as initial definition
 #        Variant ex4mple
-# 
+#
 #        # Filtering reason (optional)
 #        Reason Example filter
 #    # Endphrase marks the end of the phrase
@@ -44,6 +44,7 @@ Phrase fuck
     Variant fuk
     Variant fck
     Variant feck
+    Variant f u c k
 Endphrase
 
 Phrase fuck
@@ -90,14 +91,6 @@ Phrase bollock
     Variant bollok
 Endphrase
 
-Phrase bum
-    Mode WHOLE_PHRASE
-Endphrase
-
-Phrase butt
-    Mode WHOLE_PHRASE
-Endphrase
-
 Phrase coon
     Mode WHOLE_PHRASE
 Endphrase
@@ -110,15 +103,15 @@ Phrase damn
     Mode WHOLE_PHRASE
 Endphrase
 
-Phrase damnit 
+Phrase damnit
     Mode WHOLE_PHRASE
 Endphrase
 
-Phrase damn it 
+Phrase damn it
     Mode WHOLE_PHRASE
 Endphrase
 
-Phrase dyke 
+Phrase dyke
     Mode WHOLE_PHRASE
 Endphrase
 
@@ -137,19 +130,15 @@ Phrase goddamn
     Variant goddam
 Endphrase
 
-Phrase hell 
+Phrase hell
     Mode WHOLE_PHRASE
 Endphrase
 
-Phrase knobend 
+Phrase knobend
     Mode WHOLE_PHRASE
 Endphrase
 
-Phrase labia
-    Mode WHOLE_PHRASE
-Endphrase
-
-Phrase lmao 
+Phrase lmao
     Mode WHOLE_PHRASE
     Variant lmfao
 Endphrase
@@ -178,10 +167,6 @@ Phrase pube
     Mode WHOLE_PHRASE
 Endphrase
 
-Phrase scrotum
-    Mode WHOLE_PHRASE
-Endphrase
-
 Phrase shit
     Mode WORD_CONTAINS
 Endphrase
@@ -205,7 +190,7 @@ Phrase wtf
     Variant w t f
 Endphrase
 
-Phrase wtat
+Phrase twat
     Mode WHOLE_PHRASE
 Endphrase
 

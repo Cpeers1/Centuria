@@ -21,7 +21,9 @@ public class TextFilterTest {
 		boolean strict = mode.equalsIgnoreCase("true");
 		System.out.print("Tags: ");
 		String[] tags = sc.nextLine().replace(" ", "").split(",");
+		System.out.println("Initializing...");
 		TextFilterService.getInstance().initService();
+		System.out.println("Running filter!");
 		System.out.println(TextFilterService.getInstance().filterString(input, strict, tags));
 		sc.close();
 	}

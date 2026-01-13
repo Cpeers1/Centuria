@@ -4,7 +4,7 @@
 # Assign properties
 Name Default instamute text filter
 Description This filter contains slurs and other words that result in a mute
-Reason Filtered for extremely bad language, slurs and similar insults are not allowed.
+Reason Filtered for offensive behaviour, slurs and similar insults are not allowed.
 
 # Severity can be ALWAYS_FILTERED, USER_STRICT_MODE and INSTAMUTE
 Severity INSTAMUTE
@@ -15,7 +15,7 @@ Severity INSTAMUTE
 # Phrase bodies look like this:
 #    # Define example
 #    Phrase example
-#		 # Note: text filters, while processing, ignore any non-alphanumeric characters, keep that in mind while writing down variants
+#        # Note: text filters, while processing, ignore any non-alphanumeric characters, keep that in mind while writing down variants
 #
 #        # Set filtering mode, they can be:
 #        #   WHOLE_PHRASE : filters only if the whole phrase is a match, this does not tag unless all words are on their own, unless its a single word, then it checks if the word is present in the sentence, doesnt work if attached to another word, eg. `exam` and `example` arent a match to the system
@@ -23,11 +23,11 @@ Severity INSTAMUTE
 #        #   WORD_CONTAINS : most recommended in most cases, filters only if a word contains the phrase or variant, unlike WHOLE_PHRASE this DOES tag if the filter words are present attached to other words
 #        #   WORD_COMBINED : similar to WORD_CONTAINS but also filters if the phrase without spaces is present in the text
 #        Mode WHOLE_PHRASE
-#        
+#
 #        # Define variants
 #        # Same rules as initial definition
 #        Variant ex4mple
-# 
+#
 #        # Filtering reason (optional)
 #        Reason Example filter
 #    # Endphrase marks the end of the phrase
@@ -97,4 +97,33 @@ Endphrase
 Phrase tranny
     Mode WORD_CONTAINS
     Variant tr4nny
+Endphrase
+
+Phrase cripple
+    Mode WHOLE_PHRASE
+    Variant cripple
+    Variant cr1pple
+    Variant cr1ppled
+Endphrase
+
+Phrase crippled
+    Mode WHOLE_PHRASE
+    Severity ALWAYS_FILTERED
+    Variant crippled
+    Reason "While there are innocent uses, the phrase crippled has been used offensively, which is why we ask you to avoid the phrase."
+Endphrase
+
+Phrase ching chong
+    Mode WHOLE_PHRASE
+    Variant chingchong
+Endphrase
+
+Phrase dyke
+    Mode WHOLE_PHRASE
+    Variant dyk3
+Endphrase
+
+Phrase beaner
+    Mode WHOLE_PHRASE
+    Variant bean3r
 Endphrase

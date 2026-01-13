@@ -86,7 +86,7 @@ public class DefaultFilterDefParser implements IFilterDefParser {
 
 						// Update buffer
 						String newData = new String(content, "UTF-8");
-						buffer.value = buffer.value + newData.replace("\r", "");
+						buffer.value = buffer.value + newData;
 
 						// Update line
 						line = findLineIn(buffer.value, (res) -> buffer.value = res);
@@ -106,6 +106,7 @@ public class DefaultFilterDefParser implements IFilterDefParser {
 						break;
 				}
 			}
+			line = line.replace("\r", "").replace("\t", "    ");
 
 			// Increase line count
 			ln++;
@@ -121,6 +122,8 @@ public class DefaultFilterDefParser implements IFilterDefParser {
 			// Parse command
 			String command = line.trim();
 			String args = command;
+			while (args.endsWith(" "))
+				args = args.substring(0, args.length() - 1);
 
 			// Check syntax
 			if (!command.equals("Endphrase") && !command.contains(" ")) {

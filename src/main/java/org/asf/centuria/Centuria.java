@@ -240,9 +240,17 @@ public class Centuria {
 		}
 
 		// Managers
+		logger.info("Initializing services...");
+		logger.info("Initializing DM manager...");
 		DMManager.getInstance();
+
+		logger.info("Initializing textfilter service...");
 		TextFilterService.getInstance().initService();
+
+		logger.info("Initializing item component manager...");
 		ComponentManager.registerAllComponents();
+
+		logger.info("Initializing item types...");
 		InventoryItemManager.registerAllItems();
 
 		// Start the servers

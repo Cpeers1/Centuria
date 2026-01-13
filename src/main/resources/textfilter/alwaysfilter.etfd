@@ -3,8 +3,8 @@
 
 # Assign properties
 Name Default text filter
-Description This filter contains NSFW words and other terms that must always be filtered 
-Reason With our software being for a target audience that includes minors, the chat may never be used for NSFW.
+Description This filter contains NSFW words and other terms that must always be filtered
+Reason With our software being for a target audience that includes minors, we do not permit NSFW terms in chat.
 
 # Severity can be ALWAYS_FILTERED, USER_STRICT_MODE and INSTAMUTE
 Severity ALWAYS_FILTERED
@@ -15,7 +15,7 @@ Severity ALWAYS_FILTERED
 # Phrase bodies look like this:
 #    # Define example
 #    Phrase example
-#		 # Note: text filters, while processing, ignore any non-alphanumeric characters, keep that in mind while writing down variants
+#        # Note: text filters, while processing, ignore any non-alphanumeric characters, keep that in mind while writing down variants
 #
 #        # Set filtering mode, they can be:
 #        #   WHOLE_PHRASE : filters only if the whole phrase is a match, this does not tag unless all words are on their own, unless its a single word, then it checks if the word is present in the sentence, doesnt work if attached to another word, eg. `exam` and `example` arent a match to the system
@@ -23,11 +23,11 @@ Severity ALWAYS_FILTERED
 #        #   WORD_CONTAINS : most recommended in most cases, filters only if a word contains the phrase or variant, unlike WHOLE_PHRASE this DOES tag if the filter words are present attached to other words
 #        #   WORD_COMBINED : similar to WORD_CONTAINS but also filters if the phrase without spaces is present in the text
 #        Mode WHOLE_PHRASE
-#        
+#
 #        # Define variants
 #        # Same rules as initial definition
 #        Variant ex4mple
-# 
+#
 #        # Filtering reason (optional)
 #        Reason Example filter
 #    # Endphrase marks the end of the phrase
@@ -38,21 +38,30 @@ Severity ALWAYS_FILTERED
 
 
 Phrase anal
-	Mode WHOLE_PHRASE
-	Variant an4l
-	Variant 4nal
-	Variant 4n4l
+    Mode WHOLE_PHRASE
+    Variant an4l
+    Variant 4nal
+    Variant 4n4l
+    Variant ana1
+    Variant anal
+    Variant anu5
+    Variant anus
 Endphrase
 
 Phrase mating
-	Mode WHOLE_PHRASE
-	Variant m4ting
-	Variant m4t1ng
-	Variant mat1ng
+    Mode WHOLE_PHRASE
+    Variant m4ting
+    Variant m4t1ng
+    Variant mat1ng
 Endphrase
 
 Phrase boner
-	Mode WHOLE_PHRASE
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase bong
+    Mode WHOLE_PHRASE
+    Variant b0ng
 Endphrase
 
 Phrase blowjob
@@ -60,226 +69,553 @@ Phrase blowjob
     Variant blow job
 Endphrase
 
+Phrase b10wj0b
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant b10wjob
+    Variant b1owjob
+Endphrase
+
 Phrase boob
-	Mode WORD_CONTAINS
-	Variant b00b
-	Variant bo0b
-	Variant b0ob
-	Variant boobs
-	Variant b00bs
-	Variant bo0bs
-	Variant b0obs
-	Severity INSTAMUTE
+    Mode WORD_CONTAINS
+    Variant b00b
+    Variant bo0b
+    Variant b0ob
+    Variant boobs
+    Variant b00bs
+    Variant bo0bs
+    Variant b0obs
+    Variant bewb
+    Variant bewbs
+    Variant b3wbs
+    Severity INSTAMUTE
 Endphrase
 
 Phrase vagina
-	Mode WORD_CONTAINS    
-	Variant v4gina
-	Variant vag1na
-	Variant vagin4
-	Variant vag1n4
-	Variant v4g1na
-	Variant v4g1n4
-	Severity INSTAMUTE
+    Mode WORD_CONTAINS
+    Variant v4gina
+    Variant vag1na
+    Variant vagin4
+    Variant vag1n4
+    Variant v4g1na
+    Variant v4g1n4
+    Variant vag!na
+    Severity INSTAMUTE
 Endphrase
 
 Phrase wank
-	Mode WHOLE_PHRASE  
-	Variant w4nk
+    Mode WHOLE_PHRASE
+    Variant w4nk
 Endphrase
 
 Phrase porn
-	Mode WHOLE_PHRASE  
-	Variant p0rn
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Variant p0rn
+    Severity INSTAMUTE
 Endphrase
 
 Phrase whore
-	Mode WORD_CONTAINS  
-	Variant wh0re  
-	Variant wh0r3  
-	Variant whor3
-	Severity INSTAMUTE
+    Mode WORD_CONTAINS
+    Variant wh0re
+    Variant wh0r3
+    Variant whor3
+    Severity INSTAMUTE
 Endphrase
 
 Phrase dick
-	Mode WHOLE_PHRASE
+    Mode WORD_CONTAINS
     Variant d1ck
     Variant cock
     Variant c0ck
     Variant penis
-	Severity INSTAMUTE
+    Variant dicks
+    Variant dick5
+    Variant d!ck5
+    Variant d!ck
+    Variant p3n!5
+    Variant p3n!s
+    Variant pen1s
+    Variant penar
+    Severity INSTAMUTE
 Endphrase
 
 Phrase dildo
-	Mode WHOLE_PHRASE
-	Variant d1ldo
-	Variant d1ld0
-	Variant dild0
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Variant d1ldo
+    Variant d1ld0
+    Variant dild0
+    Variant d!ld0
+    Variant d!ldo
+    Severity INSTAMUTE
 Endphrase
 
 Phrase tit
-	Mode WHOLE_PHRASE
-	Variant t1t
-	Variant t1ts
-	Variant tits
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Variant t1t
+    Variant t1ts
+    Variant tits
+    Variant t!t
+    Variant t!t5
+    Variant titts
+    Variant t1tts
+    Variant titties
+    Variant tiddies
+    Variant tibbies
+    Variant tities
+    Variant t1tties
+    Variant t1ties
+    Variant t1tti3s
+    Variant t1ti3s
+    Variant t!tt!3s
+    Variant t!tt!35
+    Variant t!tt!es
+    Variant t!tties
+    Variant tit
+    Variant tits
+    Variant titty
+    Variant valentiddies
+    Severity INSTAMUTE
 Endphrase
 
 Phrase jizz
-	Mode WHOLE_PHRASE
-	Variant j1zz
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Variant j1zz
+    Variant j!zz
+    Severity INSTAMUTE
 Endphrase
 
 Phrase pussy
-	Mode WHOLE_PHRASE
+    Mode WHOLE_PHRASE
+Endphrase
+
+Phrase pu5sy
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant pu55y
 Endphrase
 
 Phrase slut
-	Mode WORD_CONTAINS
-	Severity INSTAMUTE
-Endphrase
-
-Phrase fellate
-	Mode WHOLE_PHRASE
-	Severity INSTAMUTE
-Endphrase
-
-Phrase fellatio
-	Mode WHOLE_PHRASE
-	Severity INSTAMUTE
+    Mode WORD_CONTAINS
+    Severity INSTAMUTE
+    Variant 51ut
+    Variant 5lut
 Endphrase
 
 Phrase felching
-	Mode WHOLE_PHRASE
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
 Endphrase
 
 Phrase sex
-	Mode WORD_CONTAINS
-	Variant s3x
+    Mode WHOLE_PHRASE
+    Variant s e x
+    Variant s ex
+    Variant se x
 Endphrase
 
 Phrase sex
-	Mode WHOLE_PHRASE
-	Variant s3x
-	Variant s e x
-	Variant s ex
-	Variant se x
+    Mode WHOLE_PHRASE
+    Variant s3x
+    Variant 53x
+    Variant 5ex
+    Severity INSTAMUTE
 Endphrase
 
 Phrase buttplug
-	Mode WHOLE_PHRASE
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant buttp1ug
 Endphrase
 
 Phrase clitoris
-	Mode WHOLE_PHRASE
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant c1!t0r!s
+    Variant c1!t0ris
+    Variant c1!toris
+    Variant c1!toris
 Endphrase
 
 Phrase smegma
-	Mode WHOLE_PHRASE
-	Severity INSTAMUTE
-Endphrase
-
-Phrase spunk
-	Mode WHOLE_PHRASE
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant 5m3gma
+    Variant sm3gma
+    Variant 5mega
 Endphrase
 
 Phrase cunt
-	Mode WORD_CONTAINS
-	Severity INSTAMUTE
+    Mode WORD_CONTAINS
+    Severity INSTAMUTE
 Endphrase
 
 Phrase bussay
-	Mode WHOLE_PHRASE
-	Variant bssy
-	Variant bssay
+    Mode WHOLE_PHRASE
+    Variant bssy
+    Variant bssay
 Endphrase
 
 Phrase titty
-	Mode WHOLE_PHRASE
-	Variant t1tty
-	Variant t1tt7
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Variant t1tty
+    Variant t1tt7
+    Severity INSTAMUTE
 Endphrase
 
 Phrase titt
-	Mode WHOLE_PHRASE
-	Variant t1tt
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Variant t1tt
+    Severity INSTAMUTE
 Endphrase
 
 Phrase clit
-	Mode WHOLE_PHRASE
-	Variant cl1t
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Variant cl1t
+    Variant c1it
+    Severity INSTAMUTE
 Endphrase
 
 Phrase nude
-	Mode WHOLE_PHRASE
-	Variant nudes
-	Variant nud3s
-	Variant nud3
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Variant nudes
+    Variant nud3s
+    Variant nud3
+    Severity INSTAMUTE
 Endphrase
 
 Phrase ballsack
-	Mode WORD_CONTAINS
-	Variant b4llsack
-	Variant b4lls4ck
-	Variant ballsack
-	Variant b4llsacks
-	Variant b4lls4cks
-	Variant ballsacks
-	Severity INSTAMUTE
+    Mode WORD_CONTAINS
+    Variant b4llsack
+    Variant b4lls4ck
+    Variant ballsack
+    Variant b4llsacks
+    Variant b4lls4cks
+    Variant ballsacks
+    Variant ba11sack
+    Severity INSTAMUTE
 Endphrase
 
 Phrase huniepop
-	Mode WORD_CONTAINS
-	Severity INSTAMUTE
+    Mode WORD_CONTAINS
+    Severity INSTAMUTE
 Endphrase
 
 Phrase huniepop
-	Mode WHOLE_PHRASE
-	Variant hunie pop
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Variant hunie pop
+    Severity INSTAMUTE
 Endphrase
 
 Phrase schlong
-	Mode WORD_CONTAINS
-	Severity INSTAMUTE
+    Mode WORD_CONTAINS
+    Severity INSTAMUTE
 Endphrase
 
 Phrase cum
-	Mode WORD_CONTAINS
-	Severity INSTAMUTE
+    Mode WORD_CONTAINS
+    Severity INSTAMUTE
 Endphrase
 
 Phrase c u m
-	Mode WHOLE_PHRASE
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
 Endphrase
 
 Phrase semen
-	Mode WORD_CONTAINS
-	Severity INSTAMUTE
+    Mode WORD_CONTAINS
+    Severity INSTAMUTE
 Endphrase
 
 Phrase semen
-	Mode WHOLE_PHRASE
-	Variant sem en
-	Variant se men
-	Variant s emen
-	Variant seme n
-	Severity INSTAMUTE
+    Mode WHOLE_PHRASE
+    Variant sem en
+    Variant se men
+    Variant s emen
+    Variant seme n
+    Severity INSTAMUTE
 Endphrase
 
 Phrase sperm
-	Mode WORD_CONTAINS
-	Severity INSTAMUTE
+    Mode WORD_CONTAINS
+    Severity INSTAMUTE
+Endphrase
+
+Phrase boobily
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+Endphrase
+
+Phrase orgasm
+    Mode WHOLE_PHRASE
+    Variant 0rgasm
+    Variant 0rga5m
+    Severity INSTAMUTE
+Endphrase
+
+Phrase spunk
+    Mode WHOLE_PHRASE
+    Severity STAFF_HIGHLIGHT
+Endphrase
+
+Phrase 5punk
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant 5punk
+Endphrase
+
+Phrase erect
+    Mode WHOLE_PHRASE
+    Severity ALWAYS_FILTERED
+    Variant erected
+    Reason "While this phrase has innocent uses, a common use is in NSFW context, which is why we have decided to add this phrase to the filters."
+Endphrase
+
+Phrase 3rect
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant 3r3ct
+    Variant er3ct
+    Variant 3r3ct!0n
+    Variant 3r3ct!on
+    Variant 3r3ction
+    Variant 3rection
+    Variant er3cted
+    Variant er3ct3d
+    Variant 3r3ct3d
+    Variant erect3d
+Endphrase
+
+Phrase shitballs
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant shitball
+    Variant 5h!tba115
+    Variant 5h!tba11s
+    Variant 5h!tba1ls
+    Variant 5h!tballs
+    Variant 5hitballs
+Endphrase
+
+Phrase stripper
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant str1pper
+    Variant str!pper
+    Variant 5tr!pc1ub
+    Variant 5tr!pclub
+    Variant 5tr!pp3r
+    Variant 5tr!pper
+    Variant 5tripclub
+    Variant 5tripper
+    Variant stripclub
+    Variant strip club
+Endphrase
+
+Phrase asshat
+    Mode WHOLE_PHRASE
+    Severity ALWAYS_FILTERED
+    Variant asswipe
+    Variant asswhipe
+    Variant asswipe
+Endphrase
+
+Phrase a55w1p3
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant a55w1pe
+    Variant a55wh!pe
+    Variant a55wh1p3
+    Variant a55wipe
+    Variant a5shat
+    Variant a5swhipe
+    Variant a5swipe
+Endphrase
+
+Phrase arousal
+    Mode WHOLE_PHRASE
+    Severity ALWAYS_FILTERED
+Endphrase
+
+Phrase ar0u53
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant ar0u5a1
+    Variant ar0u5a
+    Variant ar0u5e
+    Variant ar0usal
+    Variant ar0use
+    Variant arou5a1
+    Variant arouse
+Endphrase
+
+Phrase aynal
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+Endphrase
+
+Phrase cocaine
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant c0caine
+    Variant c0ca!n3
+    Variant c0ca!ne
+Endphrase
+
+Phrase cocksucker
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant c0cksuck3r
+    Variant c0cksucker
+Endphrase
+
+Phrase condom
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant c0nd0m
+    Variant c0ndom
+Endphrase
+
+Phrase douchebag
+    Mode WHOLE_PHRASE
+    Severity ALWAYS_FILTERED
+    Variant d0uch3bag
+    Variant d0uchebag
+Endphrase
+
+Phrase d0uchb4g
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant d0uch3bag
+    Variant d0uchebag
+    Variant d0ucheb4g
+Endphrase
+
+Phrase ejaculate
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant ejacu1ate
+    Variant ejacu1at3
+Endphrase
+
+Phrase fellatio
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+Endphrase
+
+Phrase fallate
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant fellate
+    Variant f311at!0
+    Variant f311at!o
+    Variant f311ate
+    Variant f311atio
+    Variant f31ch!ng
+    Variant f31ching
+    Variant f31late
+    Variant f31latio
+    Variant f3lching
+    Variant f3llate
+    Variant f3llatio
+    Variant fe11at3
+Endphrase
+
+Phrase fudgepacker
+    Mode WHOLE_PHRASE
+    Severity ALWAYS_FILTERED
+    Variant fudg3pack3r
+    Variant fudg3packer
+    Variant fudgepacker
+Endphrase
+
+Phrase genitals
+    Mode WHOLE_PHRASE
+    Severity ALWAYS_FILTERED
+    Variant g3n!ta1!a
+    Variant g3n!ta15
+    Variant g3n!ta1ia
+    Variant g3n!ta1s
+    Variant g3n!talia
+    Variant g3n!tals
+    Variant g3nitalia
+    Variant g3nitals
+    Variant genitalia
+    Variant genitals
+Endphrase
+
+Phrase labia
+    Mode WHOLE_PHRASE
+    Severity ALWAYS_FILTERED
+    Variant labia
+    Variant lab!a
+Endphrase
+
+Phrase masturbate
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+Endphrase
+
+Phrase marijuana
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant mar!juana
+Endphrase
+
+Phrase muff
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+Endphrase
+
+Phrase rape
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant rap!5t
+    Variant rap!ing
+    Variant rap3
+    Variant r4p3
+    Variant rap!st
+    Variant rapist
+    Variant raping
+Endphrase
+
+Phrase scrotum
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant scr0tum
+Endphrase
+
+Phrase smegma
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant sm3ga
+Endphrase
+
+Phrase smegma
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant sm3ga
+Endphrase
+
+Phrase virgin
+    Mode WHOLE_PHRASE
+    Variant v!r!g!n
+    Variant v!r!gin
+    Variant v!rigin
+Endphrase
+
+Phrase gooning
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant gooner
+Endphrase
+
+Phrase horny
+    Mode WHOLE_PHRASE
+    Variant h0rny
+Endphrase
+
+Phrase coochie
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant kewchie
 Endphrase
