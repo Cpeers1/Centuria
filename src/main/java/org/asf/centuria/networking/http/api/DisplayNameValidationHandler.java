@@ -38,7 +38,7 @@ public class DisplayNameValidationHandler extends HttpPushProcessor {
 			// Prevent banned and filtered words as well as blacklisted names
 			// Check display name
 			FilterResult res = TextFilterService.getInstance().filter(name, true, "USERNAMEFILTER");
-			if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
+			if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal()) {
 				response.addProperty("error", "display_name_sift_rejected");
 				setResponseContent("text/json", response.toString());
 				return;

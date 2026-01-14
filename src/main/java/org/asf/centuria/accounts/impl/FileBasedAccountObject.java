@@ -181,7 +181,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 		// Prevent banned and filtered words as well as blacklisted names
 		FilterResult res = TextFilterService.getInstance().filter(username, true, "USERNAMEFILTER");
-		if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
+		if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal()) {
 			return false;
 		}
 
@@ -211,7 +211,7 @@ public class FileBasedAccountObject extends CenturiaAccount {
 
 		// Prevent banned and filtered words as well as blacklisted names
 		FilterResult res = TextFilterService.getInstance().filter(name, true, "USERNAMEFILTER");
-		if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
+		if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal()) {
 			return false;
 		}
 

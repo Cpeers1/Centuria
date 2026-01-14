@@ -124,7 +124,7 @@ public class ChangeLoginNameHandler extends HttpPushProcessor {
 				// Prevent banned and filtered words as well as blacklisted names
 				// Check display name
 				FilterResult res = TextFilterService.getInstance().filter(newName, true, "USERNAMEFILTER");
-				if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
+				if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal()) {
 					response.addProperty("status", "failure");
 					response.addProperty("error", "invalid_login_name");
 					response.addProperty("error_message",

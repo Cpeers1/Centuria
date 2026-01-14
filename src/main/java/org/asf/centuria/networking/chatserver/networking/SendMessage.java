@@ -576,9 +576,9 @@ public class SendMessage extends AbstractChatPacket {
 			boolean filteredUserStrictModeState = filterResultStrict.isMatch();
 			boolean filteredDefaultSeverityState = filterResultDefault.isMatch();
 			boolean filteredUserStrictModeCensor = filterResultStrict.getSeverity()
-					.ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal();
+					.ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal();
 			boolean filteredDefaultSeverityCensor = filterResultDefault.getSeverity()
-					.ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal();
+					.ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal();
 			boolean filteredFlaggedState = filterResultStaffHighlightStrict.isMatch();
 			boolean filteredFlaggedWithoutStrictmodeState = filterResultStaffHighlight.isMatch();
 
@@ -1899,7 +1899,7 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Verify name with blacklist
 						FilterResult res = TextFilterService.getInstance().filter(name, false, "USERNAMEFILTER");
-						if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
+						if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal()) {
 							// Reply with error
 							systemMessage("Invalid argument: name: this name was blocked as it may be inappropriate",
 									cmd + " " + task, client);
@@ -2131,7 +2131,7 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Verify name with blacklist
 						FilterResult res = TextFilterService.getInstance().filter(newName, false, "USERNAMEFILTER");
-						if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
+						if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal()) {
 							// Reply with error
 							systemMessage(
 									"Invalid argument: new name: this name was blocked as it may be inappropriate",
@@ -2309,7 +2309,7 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Verify bio with filters
 						FilterResult res = TextFilterService.getInstance().filter(bio, false);
-						if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
+						if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal()) {
 							// Reply with error
 							systemMessage("Invalid argument: bio: this bio was blocked as it may be inappropriate",
 									cmd + " " + task, client);
@@ -2401,7 +2401,7 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Verify pronouns with filters
 						FilterResult res = TextFilterService.getInstance().filter(pronouns, false);
-						if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
+						if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal()) {
 							// Reply with error
 							systemMessage(
 									"Invalid argument: pronouns: these pronouns were blocked as they may be inappropriate",

@@ -46,7 +46,7 @@ public abstract class TextFilterService {
 	 * @return True if filtered, false otherwise
 	 */
 	public boolean isFiltered(TextFilterContextMemory memory, String text, boolean strictMode, String... tags) {
-		return isFiltered(memory, FilterSeverity.ALWAYS_FILTERED, text, strictMode, tags);
+		return isFiltered(memory, FilterSeverity.USER_STRICT_MODE, text, strictMode, tags);
 	}
 
 	/**
@@ -58,7 +58,7 @@ public abstract class TextFilterService {
 	 * @return True if severely filtered, false otherwise
 	 */
 	public boolean shouldFilterMute(TextFilterContextMemory memory, String text, String... tags) {
-		return shouldFilterMute(memory, FilterSeverity.ALWAYS_FILTERED, text, tags);
+		return shouldFilterMute(memory, FilterSeverity.USER_STRICT_MODE, text, tags);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public abstract class TextFilterService {
 	 * @return Result string
 	 */
 	public String filterString(TextFilterContextMemory memory, String text, boolean strictMode, String... tags) {
-		return filter(memory, FilterSeverity.ALWAYS_FILTERED, text, strictMode, tags).getFilterResult();
+		return filter(memory, FilterSeverity.USER_STRICT_MODE, text, strictMode, tags).getFilterResult();
 	}
 
 	/**
@@ -110,7 +110,7 @@ public abstract class TextFilterService {
 	 */
 	public String filterString(TextFilterContextMemory memory, String text, boolean strictMode,
 			IResultStringBuilder stringBuilder, String... tags) {
-		return filter(memory, FilterSeverity.ALWAYS_FILTERED, text, strictMode, stringBuilder, tags).getFilterResult();
+		return filter(memory, FilterSeverity.USER_STRICT_MODE, text, strictMode, stringBuilder, tags).getFilterResult();
 	}
 
 	/**
@@ -154,7 +154,7 @@ public abstract class TextFilterService {
 	 * @return FilterResult value
 	 */
 	public FilterResult filter(TextFilterContextMemory memory, String text, boolean strictMode, String... tags) {
-		return filter(memory, FilterSeverity.ALWAYS_FILTERED, text, strictMode, defaultStringBuilder(), tags);
+		return filter(memory, FilterSeverity.USER_STRICT_MODE, text, strictMode, defaultStringBuilder(), tags);
 	}
 
 	/**
@@ -184,7 +184,7 @@ public abstract class TextFilterService {
 	 */
 	public FilterResult filter(TextFilterContextMemory memory, String text, boolean strictMode,
 			IResultStringBuilder stringBuilder, String... tags) {
-		return filter(memory, FilterSeverity.ALWAYS_FILTERED, text, strictMode, stringBuilder, tags);
+		return filter(memory, FilterSeverity.USER_STRICT_MODE, text, strictMode, stringBuilder, tags);
 	}
 
 	/**
@@ -210,7 +210,7 @@ public abstract class TextFilterService {
 	 * @return True if filtered, false otherwise
 	 */
 	public boolean isFiltered(String text, boolean strictMode, String... tags) {
-		return isFiltered(null, FilterSeverity.ALWAYS_FILTERED, text, strictMode, tags);
+		return isFiltered(null, FilterSeverity.USER_STRICT_MODE, text, strictMode, tags);
 	}
 
 	/**
@@ -234,7 +234,7 @@ public abstract class TextFilterService {
 	 * @return True if severely filtered, false otherwise
 	 */
 	public boolean shouldFilterMute(String text, String... tags) {
-		return shouldFilterMute(null, FilterSeverity.ALWAYS_FILTERED, text, tags);
+		return shouldFilterMute(null, FilterSeverity.USER_STRICT_MODE, text, tags);
 	}
 
 	/**
@@ -284,7 +284,7 @@ public abstract class TextFilterService {
 	 * @return Result string
 	 */
 	public String filterString(String text, boolean strictMode, IResultStringBuilder stringBuilder, String... tags) {
-		return filter(FilterSeverity.ALWAYS_FILTERED, text, strictMode, stringBuilder, tags).getFilterResult();
+		return filter(FilterSeverity.USER_STRICT_MODE, text, strictMode, stringBuilder, tags).getFilterResult();
 	}
 
 	/**
@@ -310,7 +310,7 @@ public abstract class TextFilterService {
 	 * @return FilterResult value
 	 */
 	public FilterResult filter(String text, boolean strictMode, String... tags) {
-		return filter(FilterSeverity.ALWAYS_FILTERED, text, strictMode, defaultStringBuilder(), tags);
+		return filter(FilterSeverity.USER_STRICT_MODE, text, strictMode, defaultStringBuilder(), tags);
 	}
 
 	/**
@@ -336,7 +336,7 @@ public abstract class TextFilterService {
 	 * @return FilterResult value
 	 */
 	public FilterResult filter(String text, boolean strictMode, IResultStringBuilder stringBuilder, String... tags) {
-		return filter(null, FilterSeverity.ALWAYS_FILTERED, text, strictMode, stringBuilder, tags);
+		return filter(null, FilterSeverity.USER_STRICT_MODE, text, strictMode, stringBuilder, tags);
 	}
 
 	/**

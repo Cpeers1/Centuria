@@ -1,7 +1,6 @@
 package org.asf.centuria.textfilter.impl.filterrunners;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -703,7 +702,7 @@ public class DefaultFilterRunner implements IFilterRunner {
 							}
 
 							// Apply
-							matchedPhraseParts = Arrays.copyOfRange(words, i, matchRes.newIndex + 1);
+							matchedPhraseParts = words;
 							i = matchRes.newIndex;
 							hasMatch = true;
 							break;

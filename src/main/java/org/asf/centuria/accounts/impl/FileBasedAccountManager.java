@@ -222,7 +222,7 @@ public class FileBasedAccountManager extends AccountManager {
 
 		// Prevent banned and filtered words as well as blacklisted names
 		FilterResult res = TextFilterService.getInstance().filter(username, true, "USERNAMEFILTER");
-		if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
+		if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal()) {
 			return null;
 		}
 
@@ -418,7 +418,7 @@ public class FileBasedAccountManager extends AccountManager {
 
 		// Prevent banned and filtered words as well as blacklisted names
 		FilterResult res = TextFilterService.getInstance().filter(displayName, true, "USERNAMEFILTER");
-		if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
+		if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal()) {
 			return true;
 		}
 

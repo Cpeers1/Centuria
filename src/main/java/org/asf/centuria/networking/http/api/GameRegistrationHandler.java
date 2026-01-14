@@ -59,7 +59,7 @@ public class GameRegistrationHandler extends HttpPushProcessor {
 			// Prevent banned and filtered words as well as blacklisted names
 			// Check username
 			FilterResult res = TextFilterService.getInstance().filter(accountName, true, "USERNAMEFILTER");
-			if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
+			if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal()) {
 				// Reply with error
 				response.addProperty("error", "invalid_username");
 				setResponseContent("text/json", response.toString());
@@ -70,7 +70,7 @@ public class GameRegistrationHandler extends HttpPushProcessor {
 			// Prevent banned and filtered words as well as blacklisted names
 			// Check display name
 			res = TextFilterService.getInstance().filter(displayName, true, "USERNAMEFILTER");
-			if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
+			if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal()) {
 				// Reply with error
 				response.addProperty("error", "display_name_sift_rejected");
 				setResponseContent("text/json", response.toString());
