@@ -497,7 +497,7 @@ public class Centuria {
 					+ "heightened-sensitivity-trigger-threshold=15\n" //
 					+ "\n" //
 					+ "# The maximum age of filter triggers in milliseconds for heightened sensitivity mode, set to -1 to disable\n" //
-					+ "heightened-sensitivity-trigger-max-age=900000\n"
+					+ "heightened-sensitivity-trigger-max-age=900000\n" //
 					+ "\n" //
 					+ "# The maximum amount of filter triggers during heightened sensitivity mode before chat is disabled, set to -1 to disable\n" //
 					+ "heightened-sensitivity-chatdisable-threshold-primary=5\n" //
