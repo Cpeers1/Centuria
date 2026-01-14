@@ -3294,8 +3294,8 @@ public class SendMessage extends AbstractChatPacket {
 								"Overview of " + name + ":\n" + "\nName: " + oc.displayName + "\nPronouns: "
 										+ oc.characterPronouns
 										+ (uuid.equals(client.getPlayer().getAccountID())
-												? "\nTrigger: </noparse><mark><noparse>" + oc.triggerPrefix + "message"
-														+ oc.triggerSuffix + "</noparse></mark><noparse>"
+												? "\nTrigger: </noparse><noparse>" + oc.triggerPrefix + "message"
+														+ oc.triggerSuffix + "</noparse><noparse>"
 												: "")
 										+ "\n" + "\nBio:" + "\n" + res.getFilterResult(),
 								cmd + " " + task, client);
