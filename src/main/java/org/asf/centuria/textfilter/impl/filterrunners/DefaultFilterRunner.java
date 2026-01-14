@@ -314,7 +314,7 @@ public class DefaultFilterRunner implements IFilterRunner {
 
 		public TextPart toPart() {
 			return new TextPart(text, flagged, severity, filter, primaryReason,
-					matchInstances != null ? matchInstances.toArray(t -> new WordMatch[t]) : null);
+					matchInstances != null ? matchInstances.toArray(t -> new WordMatch[t]) : new WordMatch[0]);
 		}
 	}
 
@@ -685,7 +685,8 @@ public class DefaultFilterRunner implements IFilterRunner {
 		if (currentPart != null) {
 			messageParts.add(new TextPart(currentPart.text, currentPart.flagged, currentPart.severity,
 					currentPart.filter, currentPart.primaryReason,
-					currentPart.flagged ? currentPart.matchInstances.toArray(t -> new WordMatch[t]) : null));
+					currentPart.flagged ? currentPart.matchInstances.toArray(t -> new WordMatch[t])
+							: new WordMatch[0]));
 		}
 
 		// Return

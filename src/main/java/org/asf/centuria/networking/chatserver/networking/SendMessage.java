@@ -1,9 +1,12 @@
 package org.asf.centuria.networking.chatserver.networking;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -53,6 +56,7 @@ import org.asf.centuria.networking.voicechatserver.VoiceChatClient;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
 import org.asf.centuria.social.SocialManager;
+import org.asf.centuria.util.io.DataWriter;
 import org.asf.connective.tasks.AsyncTaskManager;
 
 import com.google.gson.JsonArray;
@@ -83,6 +87,21 @@ public class SendMessage extends AbstractChatPacket {
 
 	static {
 		reloadFilter();
+	}
+
+	private static OutputStream chatLogBinary;
+
+	static {
+		try {
+			// Open chat log binary file
+			File chatLogFile = new File("logs/chatlog.bin");
+			chatLogFile.getParentFile().mkdirs();
+			chatLogBinary = new FileOutputStream(chatLogFile);
+		} catch (IOException e) {
+			// Log
+			Centuria.logger.warn(
+					"Could not open the chat log binary! Chat logging will not be available for this session!", e);
+		}
 	}
 
 	private static void reloadFilter() {
@@ -402,9 +421,34 @@ public class SendMessage extends AbstractChatPacket {
 		}
 
 		// Log
-		if (!client.isRoomPrivate(room))
+		if (!client.isRoomPrivate(room)) {
 			Centuria.logger.info("Chat: " + client.getPlayer().getDisplayName() + ": " + message + " ["
 					+ formatRoomName(client, room) + "]");
+
+			// Log to chat log
+			if (chatLogBinary != null) {
+				try {
+					// Create entry
+					// Room: string
+					// Type: string
+					// User ID: string
+					// Message: string
+					// Timestamp: long
+					ByteArrayOutputStream bO = new ByteArrayOutputStream();
+					DataWriter writer = new DataWriter(bO);
+					writer.writeString(room);
+					writer.writeString(client.getPlayer().getAccountID());
+					writer.writeString(message);
+					writer.writeLong(System.currentTimeMillis());
+					synchronized (chatLogBinary) {
+						writer = new DataWriter(chatLogBinary);
+						writer.writeBytes(bO.toByteArray());
+						chatLogBinary.flush();
+					}
+				} catch (IOException e) {
+				}
+			}
+		}
 
 		// Check times of the filter update
 		try {

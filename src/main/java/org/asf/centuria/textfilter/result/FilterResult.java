@@ -19,6 +19,8 @@ public class FilterResult {
 	private TextPart[] textParts;
 	private String primaryReason = null;
 
+	private long time;
+
 	public FilterResult(WordMatch[] matches, TextPart[] textParts, String filteredResult) {
 		this.matchedFilters = matches;
 		this.textParts = textParts;
@@ -31,6 +33,8 @@ public class FilterResult {
 				primaryReason = match.getReason();
 			}
 		}
+
+		time = System.currentTimeMillis();
 	}
 
 	public FilterResult(WordMatch[] matches, TextPart[] textParts, String filteredResult,
@@ -39,6 +43,17 @@ public class FilterResult {
 		this.textParts = textParts;
 		this.filteredResult = filteredResult;
 		this.resultSeverity = resultSeverity;
+
+		time = System.currentTimeMillis();
+	}
+
+	/**
+	 * Retrieves the timestamp the result object was created
+	 * 
+	 * @return Result object creation timestamp in milliseconds
+	 */
+	public long getResultTime() {
+		return time;
 	}
 
 	/**
