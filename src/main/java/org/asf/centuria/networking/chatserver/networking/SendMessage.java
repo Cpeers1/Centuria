@@ -3943,31 +3943,40 @@ public class SendMessage extends AbstractChatPacket {
 						}
 
 						int minutes;
+						int days = 0;
+						int hours = 0;
 						try {
 							minutes = Integer.valueOf(args.get(1));
 						} catch (Exception e) {
 							systemMessage("Invalid value for argument: minutes", cmd, client);
 							return true;
 						}
-						int hours = 0;
 						try {
-							if (args.size() >= 3)
-								hours = Integer.valueOf(args.get(2));
+							if (args.size() >= 3 && args.get(2).matches("[0-9]+")) {
+								hours = Integer.valueOf(args.get(1));
+								minutes = Integer.valueOf(args.get(2));
+							}
 						} catch (Exception e) {
 							systemMessage("Invalid value for argument: hours", cmd, client);
 							return true;
 						}
-						int days = 0;
 						try {
-							if (args.size() >= 4)
-								days = Integer.valueOf(args.get(3));
+							if (args.size() >= 4 && args.get(2).matches("[0-9]+") && args.get(3).matches("[0-9]+")) {
+								days = Integer.valueOf(args.get(1));
+								hours = Integer.valueOf(args.get(2));
+								minutes = Integer.valueOf(args.get(3));
+							}
 						} catch (Exception e) {
 							systemMessage("Invalid value for argument: days", cmd, client);
 							return true;
 						}
 
 						String reason = null;
-						if (args.size() >= 5)
+						if (args.size() >= 3 && !args.get(2).matches("[0-9]+"))
+							reason = args.get(2);
+						else if (args.size() >= 4 && !args.get(3).matches("[0-9]+"))
+							reason = args.get(3);
+						else if (args.size() >= 5)
 							reason = args.get(4);
 
 						// Find player

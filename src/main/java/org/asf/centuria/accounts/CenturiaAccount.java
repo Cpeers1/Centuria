@@ -237,7 +237,7 @@ public abstract class CenturiaAccount {
 	/**
 	 * Assigns tags by ID
 	 * 
-	 * @param id Tag ID
+	 * @param id    Tag ID
 	 * @param value Tag value
 	 * @return AccountTag instance
 	 */
@@ -248,13 +248,12 @@ public abstract class CenturiaAccount {
 	 * 
 	 * @param id Tag ID to delete
 	 */
-	public void deleteAccountTag(String id)
-	{
+	public void deleteAccountTag(String id) {
 		AccountTag tag = getAccountTag(id);
 		if (tag != null)
-			tag.deleteTag();		
+			tag.deleteTag();
 	}
-	
+
 	/**
 	 * Deletes the account from disk and kicks all connected instances
 	 */
@@ -549,6 +548,62 @@ public abstract class CenturiaAccount {
 	}
 
 	/**
+	 * Mutes the player permanently
+	 */
+	public void permmute() {
+		permmute(null);
+	}
+
+	/**
+	 * Mutes the player permanently
+	 * 
+	 * @param reason Mute reason
+	 */
+	public void permmute(String reason) {
+		permmute("SYSTEM", reason);
+	}
+
+	/**
+	 * Mutes the player
+	 *
+	 * @param issuer Mute issuer
+	 * @param reason Mute reason
+	 */
+	public void permmute(String issuer, String reason) {
+		// Check ban
+		if (isBanned())
+			return;
+
+		// Apply mute
+		JsonObject muteInfo = new JsonObject();
+		if (reason != null)
+			muteInfo.addProperty("reason", reason);
+		muteInfo.addProperty("type", "mute");
+		muteInfo.addProperty("unmuteTimestamp", -1);
+		getSaveSharedInventory().setItem("penalty", muteInfo);
+
+		// Sync online player
+		Player plr = getOnlinePlayerInstance();
+		if (plr != null && plr.account != this) {
+			plr.account.permmute(reason);
+			return;
+		}
+
+		// Dispatch event
+		EventBus.getInstance().dispatchEvent(new AccountMuteEvent(this, -1, issuer, reason));
+
+		// Log
+		String issuerNm = issuer;
+		if (!issuerNm.equals("SYSTEM")) {
+			CenturiaAccount acc = AccountManager.getInstance().getAccount(issuer);
+			if (acc != null)
+				issuerNm = acc.getDisplayName();
+		}
+		Centuria.logger.info("Muted " + getDisplayName() + ": " + (reason == null ? "Unspecified reason" : reason)
+				+ " (issued by " + issuerNm + ", no unmute timestamp)");
+	}
+
+	/**
 	 * Mutes the player
 	 *
 	 * @param days    Amount of days to mute for
@@ -707,6 +762,22 @@ public abstract class CenturiaAccount {
 				return true;
 			} else
 				getSaveSharedInventory().deleteItem("penalty");
+		}
+
+		return false;
+	}
+
+	/**
+	 * Checks if the current mute is permanent
+	 * 
+	 * @return True if permanent, false otherwise
+	 */
+	public boolean isMutePermanent() {
+		if (getSaveSharedInventory().containsItem("penalty") && getSaveSharedInventory().getItem("penalty")
+				.getAsJsonObject().get("type").getAsString().equals("mute")) {
+			JsonObject muteInfo = getSaveSharedInventory().getItem("penalty").getAsJsonObject();
+			if (muteInfo.get("unmuteTimestamp").getAsLong() == -1)
+				return true;
 		}
 
 		return false;

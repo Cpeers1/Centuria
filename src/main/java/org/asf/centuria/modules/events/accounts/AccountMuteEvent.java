@@ -59,6 +59,15 @@ public class AccountMuteEvent extends EventObject {
 	}
 
 	/**
+	 * Checks if the mute is indefinite
+	 * 
+	 * @return True if indefinite, false otherwise
+	 */
+	public boolean isPermanent() {
+		return unmuteTimestamp == -1;
+	}
+
+	/**
 	 * Retrieves the UNIX timestamp on which the account will be unmuted (UNIX
 	 * timestamp in miliseconds)
 	 * 
