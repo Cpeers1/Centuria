@@ -67,6 +67,7 @@ public class TextFilterTester {
 
 	public static class ResultJson {
 
+		public String originalText;
 		public String filteredResult;
 		public FilterSeverity resultSeverity;
 		public String primaryReason = null;
@@ -80,6 +81,7 @@ public class TextFilterTester {
 
 	private static ResultJson mapResult(FilterResult result) {
 		ResultJson res = new ResultJson();
+		res.originalText = result.getOriginalText();
 		res.filteredResult = result.getFilterResult();
 		res.primaryReason = result.getPrimaryFilterReason();
 		res.resultSeverity = result.getSeverity();
@@ -163,7 +165,7 @@ public class TextFilterTester {
 		while (true) {
 			System.out.print("> ");
 			String input = sc.nextLine();
-			FilterResult res = TextFilterService.getInstance().filter(input, strict, tags);
+			FilterResult res = TextFilterService.getInstance().filter(mem, input, strict, tags);
 			System.out.println(res.getFilterResult());
 			mem.pushToContext(res);
 			System.out.println("Result: " + mapper.writer().writeValueAsString(mapResult(res)));

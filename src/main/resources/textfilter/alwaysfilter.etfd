@@ -37,6 +37,48 @@ Severity ALWAYS_FILTERED
 #
 
 
+Phrase fuck
+	Mode WHOLE_PHRASE
+    Variant fucking
+    Variant fuck1ng
+    Variant fuk
+    Variant fck
+    Variant feck
+    Variant f u c k
+    
+    Context-Include Global *
+    
+    Reason Due to recent filter triggers, this phrase is being temporarily censored to prevent the use of it in NSFW context.
+Endphrase
+
+Phrase fuck
+	Mode WHOLE_PHRASE
+    Variant f u c k
+    
+    Context-Include Global *
+    
+    Reason Due to recent filter triggers, this phrase is being temporarily censored to prevent the use of it in NSFW context.
+Endphrase
+
+Phrase fuck
+	Mode WHOLE_PHRASE
+    Variant fucking
+    Variant fuck1ng
+    Variant fuk
+    Variant fck
+    Variant feck
+    Variant f u c k
+    
+    Context-Include Local *
+Endphrase
+
+Phrase fuck
+	Mode WHOLE_PHRASE
+    Variant f u c k
+    
+    Context-Include Local *
+Endphrase
+
 Phrase anal
     Mode WHOLE_PHRASE
     Variant an4l

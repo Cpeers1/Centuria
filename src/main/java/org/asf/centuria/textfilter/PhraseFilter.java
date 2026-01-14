@@ -2,6 +2,8 @@ package org.asf.centuria.textfilter;
 
 import java.util.stream.Stream;
 
+import org.asf.centuria.textfilter.context.IContextExpression;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -22,7 +24,14 @@ public class PhraseFilter {
 	private FilterSeverity severity;
 	private FilterMode[] modes;
 
-	public PhraseFilter(PhraseFilterSet set, FilterMode[] modes, String phrase, String[] variants, String reason,
+	private IContextExpression[] contextInclude;
+	private IContextExpression[] contextExclude;
+	private IContextExpression[] contextIncludeGlobal;
+	private IContextExpression[] contextExcludeGlobal;
+
+	public PhraseFilter(PhraseFilterSet set, FilterMode[] modes, IContextExpression[] contextInclude,
+			IContextExpression[] contextExclude, IContextExpression[] contextIncludeGlobal,
+			IContextExpression[] contextExcludeGlobal, String phrase, String[] variants, String reason,
 			FilterSeverity severity) {
 		this.set = set;
 		this.phrase = phrase;
@@ -30,6 +39,54 @@ public class PhraseFilter {
 		this.reason = reason;
 		this.severity = severity;
 		this.modes = modes;
+		this.contextInclude = contextInclude;
+		this.contextExclude = contextExclude;
+		this.contextIncludeGlobal = contextIncludeGlobal;
+		this.contextExcludeGlobal = contextExcludeGlobal;
+	}
+
+	public void updateContexts(IContextExpression[] contextInclude, IContextExpression[] contextExclude,
+			IContextExpression[] contextIncludeGlobal, IContextExpression[] contextExcludeGlobal) {
+		this.contextInclude = contextInclude;
+		this.contextExclude = contextExclude;
+		this.contextIncludeGlobal = contextIncludeGlobal;
+		this.contextExcludeGlobal = contextExcludeGlobal;
+	}
+
+	/**
+	 * Retrieves the context-include expressions
+	 * 
+	 * @return Array of IContextExpression instances
+	 */
+	public IContextExpression[] getGlobalContextIncludeExpressions() {
+		return contextIncludeGlobal.clone();
+	}
+
+	/**
+	 * Retrieves the context-include expressions
+	 * 
+	 * @return Array of IContextExpression instances
+	 */
+	public IContextExpression[] getGlobalContextExcludeExpressions() {
+		return contextExcludeGlobal.clone();
+	}
+
+	/**
+	 * Retrieves the context-include expressions
+	 * 
+	 * @return Array of IContextExpression instances
+	 */
+	public IContextExpression[] getContextIncludeExpressions() {
+		return contextInclude.clone();
+	}
+
+	/**
+	 * Retrieves the context-include expressions
+	 * 
+	 * @return Array of IContextExpression instances
+	 */
+	public IContextExpression[] getContextExcludeExpressions() {
+		return contextExclude.clone();
 	}
 
 	/**

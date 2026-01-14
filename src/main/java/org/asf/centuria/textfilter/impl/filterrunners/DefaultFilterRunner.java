@@ -11,6 +11,8 @@ import org.asf.centuria.textfilter.IFilterRunner;
 import org.asf.centuria.textfilter.IResultStringBuilder;
 import org.asf.centuria.textfilter.PhraseFilter;
 import org.asf.centuria.textfilter.PhraseFilterSet;
+import org.asf.centuria.textfilter.context.IContextExpression;
+import org.asf.centuria.textfilter.context.TextFilterContextMemory;
 import org.asf.centuria.textfilter.result.FilterResult;
 import org.asf.centuria.textfilter.result.TextPart;
 import org.asf.centuria.textfilter.result.WordMatch;
@@ -36,24 +38,24 @@ public class DefaultFilterRunner implements IFilterRunner {
 				if (mode == FilterMode.WHOLE_PHRASE || mode == FilterMode.PHRASE_COMBINED) {
 					// Check phrase by comparing entire phrase
 					if (replaceDoubleSpaces(filterWord).equalsIgnoreCase(replaceDoubleSpaces(filterVariant))
-							|| replaceDoubleSpaces(filterWord).replaceAll("[^A-Za-z0-9 ]", "").equalsIgnoreCase(
-									replaceDoubleSpaces(filterVariant).replaceAll("[^A-Za-z0-9 ]", "")))
+							|| replaceDoubleSpaces(filterWord).replaceAll("[^A-Za-z0-9 ]", "")
+									.equalsIgnoreCase(replaceDoubleSpaces(filterVariant)))
 						return true;
 				}
 				if (mode == FilterMode.PHRASE_COMBINED) {
 					// Check phrase by comparing entire phrase
 					// Strip spaces from the input variant
 					if (replaceDoubleSpaces(filterWord).equalsIgnoreCase(filterVariant.replace(" ", "").toLowerCase())
-							|| replaceDoubleSpaces(filterWord).replaceAll("[^A-Za-z0-9 ]", "").equalsIgnoreCase(
-									filterVariant.replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "").toLowerCase()))
+							|| replaceDoubleSpaces(filterWord).replaceAll("[^A-Za-z0-9 ]", "")
+									.equalsIgnoreCase(filterVariant.replace(" ", "").toLowerCase()))
 						return true;
 				}
 				if (mode == FilterMode.WORD_CONTAINS || mode == FilterMode.WORD_COMBINED) {
 					// Check if the word given as input contains the matcher
 					if (replaceDoubleSpaces(filterWord).toLowerCase()
 							.contains(replaceDoubleSpaces(filterVariant).toLowerCase())
-							|| replaceDoubleSpaces(filterWord).replaceAll("[^A-Za-z0-9 ]", "").toLowerCase().contains(
-									replaceDoubleSpaces(filterVariant).replaceAll("[^A-Za-z0-9 ]", "").toLowerCase()))
+							|| replaceDoubleSpaces(filterWord).replaceAll("[^A-Za-z0-9 ]", "").toLowerCase()
+									.contains(replaceDoubleSpaces(filterVariant).toLowerCase()))
 						return true;
 				}
 				if (mode == FilterMode.WORD_COMBINED) {
@@ -61,8 +63,8 @@ public class DefaultFilterRunner implements IFilterRunner {
 					// Strip spaces from the input variant
 					if (replaceDoubleSpaces(filterWord).toLowerCase()
 							.contains(filterVariant.replace(" ", "").toLowerCase())
-							|| replaceDoubleSpaces(filterWord).replaceAll("[^A-Za-z0-9 ]", "").toLowerCase().contains(
-									filterVariant.replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "").toLowerCase()))
+							|| replaceDoubleSpaces(filterWord).replaceAll("[^A-Za-z0-9 ]", "").toLowerCase()
+									.contains(filterVariant.replace(" ", "").toLowerCase()))
 						return true;
 				}
 			}
@@ -79,8 +81,8 @@ public class DefaultFilterRunner implements IFilterRunner {
 			// Check if the full phrase is present in the input string
 			if (replaceDoubleSpaces(textFullOrig).toLowerCase()
 					.contains(" " + replaceDoubleSpaces(filterVariant.toLowerCase()) + " ")
-					|| replaceDoubleSpaces(textFull).toLowerCase().contains(" "
-							+ replaceDoubleSpaces(filterVariant.toLowerCase()).replaceAll("[^A-Za-z0-9 ]", "") + " "))
+					|| replaceDoubleSpaces(textFull).toLowerCase()
+							.contains(" " + replaceDoubleSpaces(filterVariant.toLowerCase()) + " "))
 				return true;
 		}
 		if (mode == FilterMode.PHRASE_COMBINED) {
@@ -88,8 +90,8 @@ public class DefaultFilterRunner implements IFilterRunner {
 			// Strip spaces from input variant
 			if (replaceDoubleSpaces(textFullOrig).toLowerCase()
 					.contains(" " + filterVariant.replace(" ", "").toLowerCase())
-					|| replaceDoubleSpaces(textFull).toLowerCase().contains(
-							" " + filterVariant.replace(" ", "").toLowerCase().replaceAll("[^A-Za-z0-9 ]", "") + " "))
+					|| replaceDoubleSpaces(textFull).toLowerCase()
+							.contains(" " + filterVariant.replace(" ", "").toLowerCase() + " "))
 				return true;
 		}
 		if (mode == FilterMode.WORD_CONTAINS || mode == FilterMode.WORD_COMBINED) {
@@ -108,7 +110,7 @@ public class DefaultFilterRunner implements IFilterRunner {
 			if (variantWords.length != 0) {
 				// Select first variant
 				String firstVariant = variantWords[0];
-				String firstVariantStripped = firstVariant.replaceAll("[^A-Za-z0-9 ]", "");
+				String firstVariantStripped = firstVariant;
 
 				// Go through input
 				for (String word : contents) {
@@ -137,9 +139,8 @@ public class DefaultFilterRunner implements IFilterRunner {
 
 						// Check next word
 						String variant = variantWords[i++];
-						String variantStripped = variant.replaceAll("[^A-Za-z0-9 ]", "");
 						if (!word.toLowerCase().contains(variant.toLowerCase())
-								&& !wordStripped.toLowerCase().contains(variantStripped.toLowerCase())) {
+								&& !wordStripped.toLowerCase().contains(variant.toLowerCase())) {
 							// No match, reset
 							match = false;
 							foundStart = false;
@@ -165,7 +166,8 @@ public class DefaultFilterRunner implements IFilterRunner {
 	}
 
 	@Override
-	public boolean isFiltered(String text, boolean strictMode, Map<String, PhraseFilterSet> filters, String[] tags) {
+	public boolean isFiltered(TextFilterContextMemory memory, String text, boolean strictMode,
+			Map<String, PhraseFilterSet> filters, String[] tags) {
 		// Check phrase-based filters first, they are most intensive, single-word
 		// filters are done using a less intensive strategy
 		if (filters.values().stream().filter(set -> {
@@ -180,12 +182,14 @@ public class DefaultFilterRunner implements IFilterRunner {
 			if (strictMode || (filter.getSeverity() != FilterSeverity.USER_STRICT_MODE)) {
 				for (FilterMode mode : filter.getModes()) {
 					// Check default
-					if (filter.getPhrase().contains(" ") && match(mode, text, null, filter.getPhrase()))
+					if (filter.getPhrase().contains(" ") && match(mode, text, null, filter.getPhrase())
+							&& contextCompare(filter, text, memory))
 						return true;
 
 					// Check variants
 					for (String variant : filter.getVariants())
-						if (variant.contains(" ") && match(mode, text, null, variant))
+						if (variant.contains(" ") && match(mode, text, null, variant)
+								&& contextCompare(filter, text, memory))
 							return true;
 				}
 			}
@@ -193,13 +197,14 @@ public class DefaultFilterRunner implements IFilterRunner {
 			// Unfiltered
 			return false;
 		}))) {
-			// Filtered, return
+			// Filtered
 			return true;
 		}
 
 		// Check word-by-word, using a less intensive strategy
-		for (String word : text.replaceAll("[^A-Za-z0-9 ]", "").split(" ")) {
+		for (String word : text.split(" ")) {
 			// Check filters
+			String wordStripped = word.replaceAll("[^A-Za-z0-9 ]", "");
 			if (filters.values().stream().filter(set -> {
 				// Check set tags
 				String[] setTags = set.getSetTags();
@@ -212,10 +217,13 @@ public class DefaultFilterRunner implements IFilterRunner {
 				if (strictMode || (filter.getSeverity() != FilterSeverity.USER_STRICT_MODE)) {
 					for (FilterMode mode : filter.getModes()) {
 						// Check phrase
-						if (match(mode, null, word, filter.getPhrase()))
+						if ((match(mode, null, word, filter.getPhrase())
+								|| match(mode, null, wordStripped, filter.getPhrase()))
+								&& contextCompare(filter, text, memory))
 							return true;
 						for (String variant : filter.getVariants())
-							if (match(mode, null, word, variant))
+							if ((match(mode, null, word, variant) || match(mode, null, wordStripped, variant))
+									&& contextCompare(filter, text, memory))
 								return true;
 					}
 				}
@@ -232,7 +240,8 @@ public class DefaultFilterRunner implements IFilterRunner {
 	}
 
 	@Override
-	public boolean shouldFilterMute(String text, Map<String, PhraseFilterSet> filters, String[] tags) {
+	public boolean shouldFilterMute(TextFilterContextMemory memory, String text, Map<String, PhraseFilterSet> filters,
+			String[] tags) {
 		// Check phrase-based filters first, they are most intensive, single-word
 		// filters are done using a less intensive strategy
 		if (filters.values().stream().filter(set -> {
@@ -247,12 +256,14 @@ public class DefaultFilterRunner implements IFilterRunner {
 			if (filter.getSeverity() == FilterSeverity.INSTAMUTE) {
 				for (FilterMode mode : filter.getModes()) {
 					// Check default
-					if (filter.getPhrase().contains(" ") && match(mode, text, null, filter.getPhrase()))
+					if (filter.getPhrase().contains(" ") && match(mode, text, null, filter.getPhrase())
+							&& contextCompare(filter, text, memory))
 						return true;
 
 					// Check variants
 					for (String variant : filter.getVariants())
-						if (variant.contains(" ") && match(mode, text, null, variant))
+						if (variant.contains(" ") && match(mode, text, null, variant)
+								&& contextCompare(filter, text, memory))
 							return true;
 				}
 			}
@@ -265,8 +276,9 @@ public class DefaultFilterRunner implements IFilterRunner {
 		}
 
 		// Check word-by-word, using a less intensive strategy
-		for (String word : text.replaceAll("[^A-Za-z0-9 ]", "").split(" ")) {
+		for (String word : text.split(" ")) {
 			// Check filters
+			String wordStripped = word.replaceAll("[^A-Za-z0-9 ]", "");
 			if (filters.values().stream().filter(set -> {
 				// Check set tags
 				String[] setTags = set.getSetTags();
@@ -279,10 +291,13 @@ public class DefaultFilterRunner implements IFilterRunner {
 				if (filter.getSeverity() == FilterSeverity.INSTAMUTE) {
 					for (FilterMode mode : filter.getModes()) {
 						// Check phrase
-						if (match(mode, null, word, filter.getPhrase()))
+						if ((match(mode, null, word, filter.getPhrase())
+								|| match(mode, null, wordStripped, filter.getPhrase()))
+								&& contextCompare(filter, text, memory))
 							return true;
 						for (String variant : filter.getVariants())
-							if (match(mode, null, word, variant))
+							if ((match(mode, null, word, variant) || match(mode, null, wordStripped, variant))
+									&& contextCompare(filter, text, memory))
 								return true;
 					}
 				}
@@ -296,6 +311,122 @@ public class DefaultFilterRunner implements IFilterRunner {
 		}
 
 		return false;
+	}
+
+	private boolean contextCompare(PhraseFilter filter, String text, TextFilterContextMemory memory) {
+		// Check context exclude
+		for (IContextExpression expression : filter.getContextExcludeExpressions()) {
+			if (matchExpression(expression, filter, text, false, memory)) {
+				// Expression matches
+				return false; // Excluded by context
+			}
+		}
+		for (IContextExpression expression : filter.getGlobalContextExcludeExpressions()) {
+			if (matchExpression(expression, filter, text, true, memory)) {
+				// Expression matches
+				return false; // Excluded by context
+			}
+		}
+
+		// Check context include
+		boolean found = false;
+		boolean hadExpression = false;
+		for (IContextExpression expression : filter.getContextIncludeExpressions()) {
+			hadExpression = true;
+			if (matchExpression(expression, filter, text, false, memory)) {
+				// Expression matches
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			for (IContextExpression expression : filter.getGlobalContextIncludeExpressions()) {
+				hadExpression = true;
+				if (matchExpression(expression, filter, text, true, memory)) {
+					// Expression matches
+					found = true;
+					break;
+				}
+			}
+		}
+		if (hadExpression && !found) {
+			// Missing include
+			return false;
+		}
+
+		// Success
+		return true;
+	}
+
+	private boolean matchExpression(IContextExpression expression, PhraseFilter filter, String text, boolean useGlobal,
+			TextFilterContextMemory memory) {
+		return expression.compare((phrase) -> {
+			// Match phrase
+
+			// First, check local
+
+			// Check phrase-based filters first, they are most intensive, single-word
+			// filters are done using a less intensive strategy
+
+			// Check filter strict mode
+			for (String variant : phrase.getAllPhrases()) {
+				for (FilterMode mode : phrase.getModesFor(variant)) {
+					// Check variants
+					if (variant.contains(" ") && match(mode, text, null, variant))
+						return true;
+				}
+			}
+
+			// Check word-by-word, using a less intensive strategy
+			for (String word : text.split(" ")) {
+				// Check filter
+				String wordStripped = word.replaceAll("[^A-Za-z0-9 ]", "");
+				for (String variant : phrase.getAllPhrases()) {
+					for (FilterMode mode : phrase.getModesFor(variant)) {
+						// Check phrase
+						if (match(mode, null, word, variant) || match(mode, null, wordStripped, variant))
+							return true;
+					}
+				}
+			}
+
+			// If enabled, check global
+			if (useGlobal && memory != null) {
+				// Run through messages
+				FilterResult[] messages = memory.getMessagesInContext();
+				for (int i = messages.length - 1; i >= 0; i--) {
+					FilterResult message = messages[i];
+
+					// Check phrase-based filters first, they are most intensive, single-word
+					// filters are done using a less intensive strategy
+
+					// Check filter strict mode
+					for (String variant : phrase.getAllPhrases()) {
+						for (FilterMode mode : phrase.getModesFor(variant)) {
+							// Check variants
+							if (variant.contains(" ") && match(mode, message.getOriginalText(), null, variant))
+								return true;
+						}
+					}
+
+					// Check word-by-word, using a less intensive strategy
+					for (String word : message.getOriginalText().split(" ")) {
+						// Check filter
+						String wordStripped = word.replaceAll("[^A-Za-z0-9 ]", "");
+						for (String variant : phrase.getAllPhrases()) {
+							for (FilterMode mode : phrase.getModesFor(variant)) {
+								// Check phrase
+								if (match(mode, null, word, variant) || match(mode, null, wordStripped, variant))
+									return true;
+							}
+						}
+					}
+				}
+			}
+
+			// No match
+			return false; // No match
+		});
 	}
 
 	private class CurrentTextPart {
@@ -343,8 +474,7 @@ public class DefaultFilterRunner implements IFilterRunner {
 				// Check if the starting word matches
 				String[] variantWords = replaceDoubleSpaces(variant).split(" ");
 				if (variantWords.length >= 1 && word.equalsIgnoreCase(variantWords[0])
-						|| word.replaceAll("[^A-Za-z0-9 ]", "")
-								.equalsIgnoreCase(variantWords[0].replaceAll("[^A-Za-z0-9 ]", ""))) {
+						|| word.replaceAll("[^A-Za-z0-9 ]", "").equalsIgnoreCase(variantWords[0])) {
 					// Match
 					int start = i;
 					boolean match = true;
@@ -360,9 +490,8 @@ public class DefaultFilterRunner implements IFilterRunner {
 						}
 
 						// Verify word
-						if (!wordMatcher.equalsIgnoreCase(variantWords[indexInVariant])
-								&& !wordMatcher.replaceAll("[^A-Za-z0-9 ]", "").equalsIgnoreCase(
-										variantWords[indexInVariant].replaceAll("[^A-Za-z0-9 ]", ""))) {
+						if (!wordMatcher.equalsIgnoreCase(variantWords[indexInVariant]) && !wordMatcher
+								.replaceAll("[^A-Za-z0-9 ]", "").equalsIgnoreCase(variantWords[indexInVariant])) {
 							// Invalid
 							match = false;
 							break;
@@ -382,8 +511,7 @@ public class DefaultFilterRunner implements IFilterRunner {
 				}
 			} else {
 				// Variant doesnt contains a space, simple compare
-				if (word.equalsIgnoreCase(variant) || word.replaceAll("[^A-Za-z0-9 ]", "")
-						.equalsIgnoreCase(variant.replaceAll("[^A-Za-z0-9 ]", ""))) {
+				if (word.equalsIgnoreCase(variant) || word.replaceAll("[^A-Za-z0-9 ]", "").equalsIgnoreCase(variant)) {
 					// Match
 					return new MatchOutput(true, i);
 				}
@@ -409,8 +537,7 @@ public class DefaultFilterRunner implements IFilterRunner {
 				// Check if the starting word matches
 				String[] variantWords = replaceDoubleSpaces(variant).split(" ");
 				if (variantWords.length >= 1 && word.toLowerCase().contains(variantWords[0].toLowerCase())
-						|| word.toLowerCase().replaceAll("[^A-Za-z0-9 ]", "")
-								.contains(variantWords[0].toLowerCase().replaceAll("[^A-Za-z0-9 ]", ""))) {
+						|| word.toLowerCase().replaceAll("[^A-Za-z0-9 ]", "").contains(variantWords[0].toLowerCase())) {
 					int start = i;
 					boolean match = true;
 					int indexInVariant = 0;
@@ -431,8 +558,8 @@ public class DefaultFilterRunner implements IFilterRunner {
 							break;
 						}
 						if (!wordMatcher.toLowerCase().contains(variantWords[indexInVariant].toLowerCase())
-								&& !wordMatcher.toLowerCase().replaceAll("[^A-Za-z0-9 ]", "").contains(
-										variantWords[indexInVariant].toLowerCase().replaceAll("[^A-Za-z0-9 ]", ""))) {
+								&& !wordMatcher.toLowerCase().replaceAll("[^A-Za-z0-9 ]", "")
+										.contains(variantWords[indexInVariant].toLowerCase())) {
 							// Invalid
 							match = false;
 							break;
@@ -448,8 +575,7 @@ public class DefaultFilterRunner implements IFilterRunner {
 			} else {
 				// Variant doesnt contains a space, simple compare
 				if (word.toLowerCase().contains(variant.toLowerCase())
-						|| word.toLowerCase().replaceAll("[^A-Za-z0-9 ]", "")
-								.contains(variant.toLowerCase().replaceAll("[^A-Za-z0-9 ]", ""))) {
+						|| word.toLowerCase().replaceAll("[^A-Za-z0-9 ]", "").contains(variant.toLowerCase())) {
 					// Match
 					return new MatchOutput(true, i);
 				}
@@ -470,8 +596,8 @@ public class DefaultFilterRunner implements IFilterRunner {
 	}
 
 	@Override
-	public FilterResult filter(String text, boolean strictMode, Map<String, PhraseFilterSet> filters, String[] tags,
-			IResultStringBuilder stringBuilder) {
+	public FilterResult filter(TextFilterContextMemory memory, String text, boolean strictMode,
+			Map<String, PhraseFilterSet> filters, String[] tags, IResultStringBuilder stringBuilder) {
 		ArrayList<TextPart> messageParts = new ArrayList<TextPart>();
 		ArrayList<String> matchedPhrases = new ArrayList<String>();
 		ArrayList<WordMatch> matchedWords = new ArrayList<WordMatch>();
@@ -539,7 +665,7 @@ public class DefaultFilterRunner implements IFilterRunner {
 					// Check mode
 					for (FilterMode mode : filter.getModes()) {
 						MatchOutput matchRes = matchCheck(mode, variant, word, text, i, words);
-						if (matchRes.match) {
+						if (matchRes.match && contextCompare(filter, text, memory)) {
 							// Update index and collect match data
 							matchedFilter = filter;
 
@@ -552,7 +678,7 @@ public class DefaultFilterRunner implements IFilterRunner {
 									for (FilterMode mode2 : filter2.getModes()) {
 										MatchOutput matchRes2 = matchCheck(mode2, variant2, word, text, i, words);
 										if (matchRes2.match && filter2.getSeverity().ordinal() > matchedFilter
-												.getSeverity().ordinal()) {
+												.getSeverity().ordinal() && contextCompare(filter2, text, memory)) {
 											// Higher match
 											match2 = true;
 											matchRes = matchRes2;
@@ -690,7 +816,8 @@ public class DefaultFilterRunner implements IFilterRunner {
 		}
 
 		// Return
-		return new FilterResult(matchedWords.toArray(t -> new WordMatch[t]), messageParts.toArray(t -> new TextPart[t]),
+		return new FilterResult(text, matchedWords.toArray(t -> new WordMatch[t]),
+				messageParts.toArray(t -> new TextPart[t]),
 				stringBuilder.buildOutputString(messageParts.toArray(t -> new TextPart[t])));
 	}
 

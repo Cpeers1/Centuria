@@ -1780,12 +1780,10 @@ public class SendMessage extends AbstractChatPacket {
 		int i = 0;
 		for (char c : args.toCharArray()) {
 			if (c == '"' && (i == 0 || argarray[i - 1] != '\\')) {
-				if (ignorespaces)
-					ignorespaces = false;
-				else
-					ignorespaces = true;
-			} else if (c == ' ' && !ignorespaces && (i == 0 || argarray[i - 1] != '\\')) {
-				args3.add(last);
+				ignorespaces = !ignorespaces;
+			} else if (c == ' ' && !ignorespaces && (argarray[i - 1] != '\\')) {
+				if (!last.isEmpty())
+					args3.add(last);
 				last = "";
 			} else if (c != '\\' || (i + 1 < argarray.length && argarray[i + 1] != '"'
 					&& (argarray[i + 1] != ' ' || ignorespaces))) {
@@ -1795,7 +1793,7 @@ public class SendMessage extends AbstractChatPacket {
 			i++;
 		}
 
-		if (last == "" == false)
+		if (!last.isEmpty())
 			args3.add(last);
 
 		return args3;
@@ -1888,15 +1886,7 @@ public class SendMessage extends AbstractChatPacket {
 				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemMods
 				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemResources
 				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemSanctuaryTypes
-				|| (GameServer.hasPerm(permLevel, "admin") || ((client.getPlayer().getSaveSpecificInventory()
-						.getSaveSettings().allowGiveItemAvatars
-						|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes
-						|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
-						|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemFurnitureItems
-						|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemMods
-						|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemResources
-						|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemSanctuaryTypes)
-						&& GameServer.hasPerm(permLevel, "moderator"))))
+				|| GameServer.hasPerm(permLevel, "moderator"))
 			if (GameServer.hasPerm(permLevel, "moderator"))
 				commandMessages.add("giveitem <itemDefId> [<quantity>] [<player>]");
 			else
@@ -5331,74 +5321,61 @@ public class SendMessage extends AbstractChatPacket {
 						}
 					}
 					case "giveitem":
-						if (GameServer.hasPerm(permLevel, "admin")
-								|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars
-								|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes
-								|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
-								|| client.getPlayer().getSaveSpecificInventory()
-										.getSaveSettings().allowGiveItemFurnitureItems
-								|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemMods
-								|| client.getPlayer().getSaveSpecificInventory()
-										.getSaveSettings().allowGiveItemResources
-								|| client.getPlayer().getSaveSpecificInventory()
-										.getSaveSettings().allowGiveItemSanctuaryTypes) {
-							try {
-								int defID = 0;
-								int quantity = 1;
-								String player = "";
-								String uuid = client.getPlayer().getAccountID();
+						try {
+							int defID = 0;
+							int quantity = 1;
+							String player = "";
+							String uuid = client.getPlayer().getAccountID();
 
-								if (args.size() < 1) {
-									systemMessage("Missing argument: itemDefId", cmd, client);
-									return true;
-								}
-
-								defID = Integer.valueOf(args.get(0));
-								if (args.size() >= 2) {
-									quantity = Integer.valueOf(args.get(1));
-								}
-
-								if (args.size() >= 3) {
-									player = args.get(2);
-
-									// check existence of player
-
-									uuid = AccountManager.getInstance().getUserByDisplayName(player);
-									if (uuid == null) {
-										// Player not found
-										systemMessage("Specified account could not be located.", cmd, client);
-										return true;
-									}
-								}
-
-								// funny stuff check
-								if (quantity <= 0 || defID <= 0) {
-									systemMessage("You cannot give 0 or less quantity of/or an item ID of 0 or below.",
-											cmd, client);
-									return true;
-								}
-
-								// find account
-								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-
-								// give item to the command sender..
-								var onlinePlayer = acc.getOnlinePlayerInstance();
-								var result = acc.getSaveSpecificInventory().getItemAccessor(onlinePlayer).add(defID,
-										quantity);
-
-								if (result.length > 0)
-									systemMessage(
-											"Gave " + acc.getDisplayName() + " " + quantity + " of item " + defID + ".",
-											cmd, client);
-								else
-									systemMessage("Failed to add item.", cmd, client);
-								return true;
-							} catch (Exception e) {
-								systemMessage("Error: " + e, cmd, client);
+							if (args.size() < 1) {
+								systemMessage("Missing argument: itemDefId", cmd, client);
 								return true;
 							}
+
+							defID = Integer.valueOf(args.get(0));
+							if (args.size() >= 2) {
+								quantity = Integer.valueOf(args.get(1));
+							}
+
+							if (args.size() >= 3) {
+								player = args.get(2);
+
+								// check existence of player
+
+								uuid = AccountManager.getInstance().getUserByDisplayName(player);
+								if (uuid == null) {
+									// Player not found
+									systemMessage("Specified account could not be located.", cmd, client);
+									return true;
+								}
+							}
+
+							// funny stuff check
+							if (quantity <= 0 || defID <= 0) {
+								systemMessage("You cannot give 0 or less quantity of/or an item ID of 0 or below.", cmd,
+										client);
+								return true;
+							}
+
+							// find account
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+							// give item to the command sender..
+							var onlinePlayer = acc.getOnlinePlayerInstance();
+							var result = acc.getSaveSpecificInventory().getItemAccessor(onlinePlayer).add(defID,
+									quantity);
+
+							if (result.length > 0)
+								systemMessage(
+										"Gave " + acc.getDisplayName() + " " + quantity + " of item " + defID + ".",
+										cmd, client);
+							else
+								systemMessage("Failed to add item.", cmd, client);
+							return true;
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
+							return true;
 						}
-						break;
 					}
 				}
 

@@ -11,6 +11,7 @@ import org.asf.centuria.textfilter.IFilterRunner;
 import org.asf.centuria.textfilter.IResultStringBuilder;
 import org.asf.centuria.textfilter.PhraseFilterSet;
 import org.asf.centuria.textfilter.TextFilterService;
+import org.asf.centuria.textfilter.context.TextFilterContextMemory;
 import org.asf.centuria.textfilter.impl.defparsers.DefaultFilterDefParser;
 import org.asf.centuria.textfilter.impl.filterrunners.DefaultFilterRunner;
 import org.asf.centuria.textfilter.impl.stringbuilders.DefaultStringBuilder;
@@ -90,18 +91,19 @@ public abstract class BaseTextFilterServiceImpl extends TextFilterService {
 	}
 
 	@Override
-	public boolean isFiltered(String text, boolean strictMode, String... tags) {
-		return runnerImplementation.isFiltered(text, strictMode, filters, tags);
+	public boolean isFiltered(TextFilterContextMemory memory, String text, boolean strictMode, String... tags) {
+		return runnerImplementation.isFiltered(memory, text, strictMode, filters, tags);
 	}
 
 	@Override
-	public boolean shouldFilterMute(String text, String... tags) {
-		return runnerImplementation.shouldFilterMute(text, filters, tags);
+	public boolean shouldFilterMute(TextFilterContextMemory memory, String text, String... tags) {
+		return runnerImplementation.shouldFilterMute(memory, text, filters, tags);
 	}
 
 	@Override
-	public FilterResult filter(String text, boolean strictMode, IResultStringBuilder stringBuilder, String... tags) {
-		return runnerImplementation.filter(text, strictMode, filters, tags, stringBuilder);
+	public FilterResult filter(TextFilterContextMemory memory, String text, boolean strictMode,
+			IResultStringBuilder stringBuilder, String... tags) {
+		return runnerImplementation.filter(memory, text, strictMode, filters, tags, stringBuilder);
 	}
 
 }

@@ -15,13 +15,15 @@ public class FilterResult {
 	private FilterSeverity resultSeverity;
 	private WordMatch[] matchedFilters;
 
+	private String originalText;
 	private String filteredResult;
 	private TextPart[] textParts;
 	private String primaryReason = null;
 
 	private long time;
 
-	public FilterResult(WordMatch[] matches, TextPart[] textParts, String filteredResult) {
+	public FilterResult(String originalText, WordMatch[] matches, TextPart[] textParts, String filteredResult) {
+		this.originalText = originalText;
 		this.matchedFilters = matches;
 		this.textParts = textParts;
 		this.filteredResult = filteredResult;
@@ -37,14 +39,24 @@ public class FilterResult {
 		time = System.currentTimeMillis();
 	}
 
-	public FilterResult(WordMatch[] matches, TextPart[] textParts, String filteredResult,
+	public FilterResult(String originalText, WordMatch[] matches, TextPart[] textParts, String filteredResult,
 			FilterSeverity resultSeverity) {
+		this.originalText = originalText;
 		this.matchedFilters = matches;
 		this.textParts = textParts;
 		this.filteredResult = filteredResult;
 		this.resultSeverity = resultSeverity;
 
 		time = System.currentTimeMillis();
+	}
+
+	/**
+	 * Retrieves the original text string of the message
+	 * 
+	 * @return Original text prior to filtering
+	 */
+	public String getOriginalText() {
+		return originalText;
 	}
 
 	/**
