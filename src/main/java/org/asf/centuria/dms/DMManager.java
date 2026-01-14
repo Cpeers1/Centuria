@@ -16,6 +16,14 @@ public abstract class DMManager {
 	}
 
 	/**
+	 * Updates the participants of a DM
+	 * 
+	 * @param dmID         Conversation ID
+	 * @param participants New participant list
+	 */
+	public abstract void updateDMParticipants(String dmID, String[] participants);
+
+	/**
 	 * Creates a new DM on disk
 	 * 
 	 * @param dmID         Conversation ID

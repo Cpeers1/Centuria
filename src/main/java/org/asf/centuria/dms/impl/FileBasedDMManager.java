@@ -370,4 +370,41 @@ public class FileBasedDMManager extends DMManager {
 		}
 	}
 
+	@Override
+	public void updateDMParticipants(String dmID, String[] participants) {
+		if (!dmExists(dmID))
+			throw new IllegalArgumentException("DM not found");
+
+		try {
+			// Parse DM
+			FileReader reader = new FileReader("dms/" + UUID.fromString(dmID) + ".json");
+			JsonObject dm = JsonParser.parseReader(reader).getAsJsonObject();
+			reader.close();
+
+			// Update participants
+			JsonArray participantObjects = new JsonArray();
+			for (String p : participants)
+				participantObjects.add(p);
+			dm.add("participants", participantObjects);
+
+			// Save to disk
+			while (activeIDs.contains(dmID))
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					break;
+				}
+			try {
+				activeIDs.add(dmID);
+				dm.addProperty("lastUpdate", System.currentTimeMillis()); // Update
+				dm.addProperty("warnedExpiry", false);
+				Files.writeString(Path.of("dms/" + UUID.fromString(dmID) + ".json"), dm.toString());
+			} finally {
+				activeIDs.remove(dmID);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }

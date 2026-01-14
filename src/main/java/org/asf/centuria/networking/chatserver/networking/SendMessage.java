@@ -218,6 +218,9 @@ public class SendMessage extends AbstractChatPacket {
 		public boolean chatDisabled = false;
 		public long renableChatAter = -1;
 
+		public ArrayList<String> involvedPlayers = new ArrayList<String>();
+		public ArrayList<String> involvedPlayersSecondary = new ArrayList<String>();
+
 		public long lastFlagChatdisable = 0;
 		public int flagCountChatdisable = 0;
 
@@ -229,6 +232,8 @@ public class SendMessage extends AbstractChatPacket {
 				return;
 			chatDisabled = false;
 			renableChatAter = -1;
+			involvedPlayers.clear();
+			involvedPlayersSecondary.clear();
 			flagCountChatdisable = 0;
 			flagCountChatdisableSecondary = 0;
 			lastFlagChatdisable = System.currentTimeMillis();
@@ -263,6 +268,8 @@ public class SendMessage extends AbstractChatPacket {
 			if (chatDisabled)
 				return;
 			chatDisabled = true;
+			involvedPlayers.clear();
+			involvedPlayersSecondary.clear();
 			flagCountChatdisable = 0;
 			flagCountChatdisableSecondary = 0;
 			lastFlagChatdisable = System.currentTimeMillis();
@@ -905,11 +912,13 @@ public class SendMessage extends AbstractChatPacket {
 						- flags.lastFlagChatdisable > heightenedSensitivityChatDisableMaxAge1)) {
 					flags.flagCountChatdisable = 0;
 					flags.lastFlagChatdisable = System.currentTimeMillis();
+					flags.involvedPlayers.clear();
 				}
 				if (roomHasStaff || (heightenedSensitivityChatDisableMaxAge2 != -1 && System.currentTimeMillis()
 						- flags.lastFlagChatdisableSecondary > heightenedSensitivityChatDisableMaxAge2)) {
 					flags.flagCountChatdisableSecondary = 0;
 					flags.lastFlagChatdisableSecondary = System.currentTimeMillis();
+					flags.involvedPlayersSecondary.clear();
 				}
 			}
 
@@ -983,14 +992,12 @@ public class SendMessage extends AbstractChatPacket {
 				// Increase flag counter for chat disable
 				flags.flagCountChatdisable++;
 				flags.flagCountChatdisableSecondary++;
+				if (!flags.involvedPlayers.contains(client.getPlayer().getAccountID()))
+					flags.involvedPlayers.add(client.getPlayer().getAccountID());
+				if (!flags.involvedPlayersSecondary.contains(client.getPlayer().getAccountID()))
+					flags.involvedPlayersSecondary.add(client.getPlayer().getAccountID());
 				if (flags.flagCountChatdisable >= heightenedSensitivityChatDisableThreshold1
 						|| flags.flagCountChatdisableSecondary >= heightenedSensitivityChatDisableThreshold2) {
-					// Disable chat
-					flags.renableChatAter = heightenedSensitivityChatReactivateTimer == -1
-							? heightenedSensitivityChatReactivateTimer
-							: System.currentTimeMillis() + heightenedSensitivityChatReactivateTimer;
-					flags.disableChat(client.getServer());
-
 					// Format
 					SimpleDateFormat fmt2 = new SimpleDateFormat("dd'-'MM'-'yyyy HH':'mm':'ss");
 					fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -1000,6 +1007,62 @@ public class SendMessage extends AbstractChatPacket {
 
 					// Get reason
 					String filterReason = filterResultDefaultOrig.getPrimaryFilterReason();
+
+					// Mute players
+					ArrayList<String> playersToMute = new ArrayList<String>();
+					for (String player : flags.involvedPlayers)
+						if (!playersToMute.contains(player))
+							playersToMute.add(player);
+					for (String player : flags.involvedPlayersSecondary)
+						if (!playersToMute.contains(player))
+							playersToMute.add(player);
+					for (String player : playersToMute) {
+						ChatClient cl = client.getServer().getClient(player);
+						if (cl != null && cl.isInRoom(room)) {
+							// Mute
+							// Check if private
+							if (client.isRoomPrivate(room)) {
+								// Private chat, need more details
+								// And strip away the message
+								EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
+										"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+										Map.of("Private chat room", formatRoomName(client, room), "Matched word(s)",
+												matchedWordsString, "Primary reason for filtering", filterReason,
+												"Room", room, "Resulting action", "muted"),
+										"SYSTEM", client.getPlayer()));
+							} else {
+								EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
+										"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+										Map.of("Chat message", message, "Matched word(s)", matchedWordsString,
+												"Primary reason for filtering", filterReason, "Room",
+												formatRoomName(client, room), "Resulting action", "muted"),
+										"SYSTEM", client.getPlayer()));
+							}
+
+							// Mute
+							client.getPlayer().mute(0, 0, 30, "SYSTEM", filterReason);
+
+							// Time format
+							SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+							fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+							// Send system message
+							SendMessage res = new SendMessage();
+							res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+							res.room = room;
+							res.message = "You have been automatically muted in public chat for violating server rules, mute will last 30 minutes.\nReason: "
+									+ filterReason + "\nWe request you to keep your chat respectful, safe and clean!";
+							res.sourceWriter = NIL_UUID;
+							res.sentAtWriter = fmt.format(new Date());
+							client.sendPacket(res);
+						}
+					}
+
+					// Disable chat
+					flags.renableChatAter = heightenedSensitivityChatReactivateTimer == -1
+							? heightenedSensitivityChatReactivateTimer
+							: System.currentTimeMillis() + heightenedSensitivityChatReactivateTimer;
+					flags.disableChat(client.getServer());
 
 					// Check if private
 					if (!client.isRoomPrivate(room)) {
