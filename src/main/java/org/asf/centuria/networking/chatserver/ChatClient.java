@@ -15,6 +15,7 @@ import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.chat.ChatLoginEvent;
+import org.asf.centuria.networking.chatserver.networking.SendMessage;
 import org.asf.centuria.networking.chatserver.networking.moderator.ModeratorClient;
 import org.asf.centuria.networking.chatserver.proxies.OcProxyInfo;
 import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
@@ -164,51 +165,6 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 						+ ((InetSocketAddress) getSocket().getRemoteSocketAddress()).getAddress().getHostAddress()
 						+ "]");
 
-		// Load DMs into memory
-		if (acc.getSaveSharedInventory().containsItem("dms")) {
-			// Load and sanitize dms
-			JsonObject dms = acc.getSaveSharedInventory().getItem("dms").getAsJsonObject();
-			ArrayList<String> toRemove = new ArrayList<String>();
-			for (String user : dms.keySet()) {
-				// Clean DM participants
-				String dmID = dms.get(user).getAsString();
-				int participantC = 0;
-				if (DMManager.getInstance().dmExists(dmID)) {
-					String[] participants = DMManager.getInstance().getDMParticipants(dmID);
-					participantC = participants.length;
-					for (String participant : participants) {
-						if (!participant.startsWith("plaintext:")) {
-							// Check account
-							if (AccountManager.getInstance().getAccount(participant) == null) {
-								participantC--;
-								DMManager.getInstance().removeParticipant(dmID, participant);
-							}
-						}
-					}
-				}
-
-				// Check validity
-				if (AccountManager.getInstance().getAccount(user) == null || participantC <= 1) {
-					toRemove.add(user);
-					continue;
-				}
-
-				// Join room
-				joinRoom(dms.get(user).getAsString(), true);
-			}
-
-			// Remove nonexistent and invalid dms
-			for (String user : toRemove) {
-				if (DMManager.getInstance().dmExists(dms.get(user).getAsString()))
-					DMManager.getInstance().deleteDM(dms.get(user).getAsString());
-				dms.remove(user);
-			}
-
-			// Save if needed
-			if (toRemove.size() != 0)
-				acc.getSaveSharedInventory().setItem("dms", dms);
-		}
-
 		// Remove sensitive info and fire event
 		handshakeStart.remove("auth_token");
 		ChatLoginEvent evt = new ChatLoginEvent(getServer(), acc, this, handshakeStart);
@@ -279,6 +235,50 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 		player = acc;
 		Centuria.logger.info("Player " + getPlayer().getDisplayName() + " connected to the chat server.");
 
+		// Load DMs into memory
+		if (acc.getSaveSharedInventory().containsItem("dms")) {
+			// Load and sanitize dms
+			JsonObject dms = acc.getSaveSharedInventory().getItem("dms").getAsJsonObject();
+			ArrayList<String> toRemove = new ArrayList<String>();
+			for (String user : dms.keySet()) {
+				// Clean DM participants
+				String dmID = dms.get(user).getAsString();
+				int participantC = 0;
+				if (DMManager.getInstance().dmExists(dmID)) {
+					String[] participants = DMManager.getInstance().getDMParticipants(dmID);
+					participantC = participants.length;
+					for (String participant : participants) {
+						if (!participant.startsWith("plaintext:")) {
+							// Check account
+							if (AccountManager.getInstance().getAccount(participant) == null) {
+								participantC--;
+								DMManager.getInstance().removeParticipant(dmID, participant);
+							}
+						}
+					}
+				}
+
+				// Check validity
+				if (AccountManager.getInstance().getAccount(user) == null || participantC <= 1) {
+					toRemove.add(user);
+					continue;
+				}
+
+				// Join room
+				joinRoom(dms.get(user).getAsString(), true);
+			}
+
+			// Remove nonexistent and invalid dms
+			for (String user : toRemove) {
+				if (DMManager.getInstance().dmExists(dms.get(user).getAsString()))
+					DMManager.getInstance().deleteDM(dms.get(user).getAsString());
+				dms.remove(user);
+			}
+
+			// Save if needed
+			if (toRemove.size() != 0)
+				acc.getSaveSharedInventory().setItem("dms", dms);
+		}
 		// Send success
 		JsonObject res = new JsonObject();
 		res.addProperty("eventId", "sessions.start");
@@ -399,11 +399,13 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 		boolean joined = false;
 		synchronized (rooms) {
 			if (!rooms.containsKey(room)) {
-				rooms.put(room, getServer().joinRoom(isPrivate ? "private" : "room", room));
+				ChatRoom roomInstance = getServer().joinRoom(isPrivate ? "private" : "room", room);
+				rooms.put(room, roomInstance);
 				synchronized (privateChat) {
 					privateChat.put(room, isPrivate);
 					joined = true;
 				}
+				SendMessage.joinedRoom(this, roomInstance);
 			}
 		}
 		if (joined && !isPrivate) {

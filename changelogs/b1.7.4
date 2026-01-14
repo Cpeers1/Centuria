@@ -21,6 +21,9 @@ Moderation-related changes:
 - Implemented "alert flagging" in the chat filters, we can now add specific words to the filters that alert staff without censoring, so that when certain topics are discussed ingame, we can be alerted by the server as it happens without censoring conversations, this also highlights flagged messages ingame
 - Fixed some chat filter bugs that caused messages to be saved uncensored into message logs
 - Improved the chat filter reason strings and added highlighting of censored content for moderators to allow staff to be able to see what was censored
+- Implemented advanced rewritten text filters, capable of limited context-sensitive filtering
+- Implemented heightened strictness mode, a text filter mode enabled when there are too many filter triggers, designed to help moderate with large activity when not enough team members are ingame, the filter will alert the staff when this mode activates and filter more aggressively until staff disables the mode
+- Implemented the ability to let the server disable the chat if too many filter triggers happen until staff logs on
 - Added a room identifier to server logs so staff can see which room (eg. map) a message is sent in, previously it just dumped all chats into one log with no way to see which world it was
 - Implemented better anti-spam logic, acting more like a chat rate limit that alerts staff, instead of banning
 

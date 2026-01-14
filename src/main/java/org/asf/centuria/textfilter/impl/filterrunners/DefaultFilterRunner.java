@@ -1,6 +1,7 @@
 package org.asf.centuria.textfilter.impl.filterrunners;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -702,7 +703,10 @@ public class DefaultFilterRunner implements IFilterRunner {
 							}
 
 							// Apply
-							matchedPhraseParts = words;
+							matchedPhraseParts = Arrays.copyOfRange(words, i,
+									matchRes.newIndex == i ? matchRes.newIndex + 1 : matchRes.newIndex);
+							if (matchRes.newIndex != i)
+								matchRes.newIndex = matchRes.newIndex - 1;
 							i = matchRes.newIndex;
 							hasMatch = true;
 							break;
@@ -760,6 +764,7 @@ public class DefaultFilterRunner implements IFilterRunner {
 					currentPart = new CurrentTextPart();
 					currentPart.initialized = true;
 				}
+				boolean wasUninitialzied = !currentPart.initialized;
 				currentPart.initialized = true;
 				currentPart.flagged = true;
 
@@ -780,7 +785,7 @@ public class DefaultFilterRunner implements IFilterRunner {
 				currentPart.filter = matchedFilter;
 				currentPart.primaryReason = matchedFilter.getReason();
 				currentPart.severity = matchedFilter.getSeverity();
-				if (currentPart.text.isEmpty())
+				if (currentPart.text.isEmpty() && !wasUninitialzied)
 					currentPart.text = textParts;
 				else
 					currentPart.text += " " + textParts;
@@ -804,11 +809,12 @@ public class DefaultFilterRunner implements IFilterRunner {
 					currentPart = new CurrentTextPart();
 					currentPart.initialized = true;
 				}
+				boolean wasUninitialzied = !currentPart.initialized;
 				currentPart.initialized = true;
 				currentPart.flagged = false;
 
 				// Add text
-				if (currentPart.text.isEmpty())
+				if (currentPart.text.isEmpty() && !wasUninitialzied)
 					currentPart.text = word;
 				else
 					currentPart.text += " " + word;

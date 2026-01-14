@@ -45,6 +45,7 @@ import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
 import org.asf.centuria.modules.events.maintenance.MaintenanceStartEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.ChatClient.OcProxyMetadata;
+import org.asf.centuria.networking.chatserver.ChatServer;
 import org.asf.centuria.networking.chatserver.networking.moderator.ModeratorClient;
 import org.asf.centuria.networking.chatserver.proxies.OcProxyInfo;
 import org.asf.centuria.networking.chatserver.proxies.ProxySession;
@@ -85,6 +86,16 @@ public class SendMessage extends AbstractChatPacket {
 	private static ModeratorStringBuilder moderatorMessageStringBuilderRed = new ModeratorStringBuilder("red");
 	private static ModeratorStringBuilder moderatorMessageStringBuilderOrange = new ModeratorStringBuilder("orange");
 	private static ModeratorPlainStringBuilder moderatorMessageStringBuilderPlain = new ModeratorPlainStringBuilder();
+
+	private static boolean heightenedSensitivityConfigInited = false;
+	private static long heightenedSensitivityDeactivateTimer;
+	private static long heightenedSensitivityChatReactivateTimer;
+	private static int heightenedSensitivityTriggerThreshold;
+	private static long heightenedSensitivityTriggerMaxAge;
+	private static int heightenedSensitivityChatDisableThreshold1;
+	private static int heightenedSensitivityChatDisableThreshold2;
+	private static long heightenedSensitivityChatDisableMaxAge1;
+	private static long heightenedSensitivityChatDisableMaxAge2;
 
 	private static OutputStream chatLogBinary;
 
@@ -190,6 +201,190 @@ public class SendMessage extends AbstractChatPacket {
 	private static class ChatFilterMemory {
 		public long lastFlag = 0;
 		public int flagCount = 0;
+	}
+
+	private static class HeightenedSensitivityFlags {
+		public String room;
+
+		public boolean active = false;
+		public long disableAfter = -1;
+		public boolean wasAutoactivate;
+
+		public String activationReason;
+
+		public long lastFlagAutoactivate = 0;
+		public int flagCountAutoactivate = 0;
+
+		public boolean chatDisabled = false;
+		public long renableChatAter = -1;
+
+		public long lastFlagChatdisable = 0;
+		public int flagCountChatdisable = 0;
+
+		public long lastFlagChatdisableSecondary = 0;
+		public int flagCountChatdisableSecondary = 0;
+
+		public void enableChat(ChatServer server) {
+			if (!chatDisabled)
+				return;
+			chatDisabled = false;
+			renableChatAter = -1;
+			flagCountChatdisable = 0;
+			flagCountChatdisableSecondary = 0;
+			lastFlagChatdisable = System.currentTimeMillis();
+			lastFlagChatdisableSecondary = System.currentTimeMillis();
+
+			// Moderation log
+			EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
+					"Chat has been re-enabled in room " + formatRoomName(null, room),
+					Map.of("Room", formatRoomName(null, room), "Resulting action", "chat re-enabled"), "SYSTEM", null));
+
+			// Time format
+			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+			// Announce chat reopen
+			for (ChatClient client : server.getClients()) {
+				if (client != null && client.isInRoom(room)) {
+					SendMessage res = new SendMessage();
+					SimpleDateFormat fmt2 = new SimpleDateFormat("dd'-'MM'-'yyyy HH':'mm':'ss");
+					fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
+					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.room = room;
+					res.message = "The chat has been re-enabled, we apologize about the inconvenience!";
+					res.sourceWriter = NIL_UUID;
+					res.sentAtWriter = fmt.format(new Date());
+					client.sendPacket(res);
+				}
+			}
+		}
+
+		public void disableChat(ChatServer server) {
+			if (chatDisabled)
+				return;
+			chatDisabled = true;
+			flagCountChatdisable = 0;
+			flagCountChatdisableSecondary = 0;
+			lastFlagChatdisable = System.currentTimeMillis();
+			lastFlagChatdisableSecondary = System.currentTimeMillis();
+
+			// Time format
+			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+			String reason = activationReason;
+
+			// Announce chat disable
+			for (ChatClient client : server.getClients()) {
+				if (client != null && client.isInRoom(room)) {
+					SendMessage res = new SendMessage();
+					SimpleDateFormat fmt2 = new SimpleDateFormat("dd'-'MM'-'yyyy HH':'mm':'ss");
+					fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
+					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.room = room;
+					res.message = "Due to the large amount of filter triggers within this chat room, the chat has been temporarily disabled until a staff member can get online. We apologize about the inconvenience! The team has already been alerted about the chat being disabled!"
+							+ (renableChatAter != -1
+									? "\n\nChat re-enables at " + fmt2.format(new Date(renableChatAter)) + " UTC ("
+											+ formatTimeRelative(renableChatAter - System.currentTimeMillis())
+											+ " from now)" + " or whenever a staff member gets online."
+									: "")
+							+ (reason != null ? "\nReason of activation of heightened sensitivity mode: " + reason
+									: "");
+					res.sourceWriter = NIL_UUID;
+					res.sentAtWriter = fmt.format(new Date());
+					client.sendPacket(res);
+				}
+			}
+		}
+
+		public void activateHeightenedSensitivity(ChatServer server) {
+			if (active)
+				return;
+			active = true;
+			lastFlagAutoactivate = 0;
+			flagCountAutoactivate = 0;
+
+			// Reason
+			String reason = activationReason;
+
+			// Time format
+			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+			// Announce heightened sensitivity
+			for (ChatClient client : server.getClients()) {
+				if (client != null && client.isInRoom(room)) {
+					SendMessage res = new SendMessage();
+					SimpleDateFormat fmt2 = new SimpleDateFormat("dd'-'MM'-'yyyy HH':'mm':'ss");
+					fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
+					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.room = room;
+					res.message = "Due to the large amount of filter triggers within this chat room, the chat has been placed in heightened sensitivity mode."
+							+ (reason != null ? "\nReason of activation of heightened sensitivity mode: " + reason
+									: "");
+					res.sourceWriter = NIL_UUID;
+					res.sentAtWriter = fmt.format(new Date());
+					client.sendPacket(res);
+				}
+			}
+		}
+
+		public void deactivateHeightenedSensitivity(ChatServer server, boolean reenabledChat) {
+			if (!active)
+				return;
+			active = false;
+			disableAfter = -1;
+			activationReason = null;
+			wasAutoactivate = false;
+			lastFlagAutoactivate = 0;
+			flagCountAutoactivate = 0;
+
+			if (!reenabledChat) { // Time format
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+				// Announce heightened sensitivity
+				for (ChatClient client : server.getClients()) {
+					if (client != null && client.isInRoom(room)) {
+						SendMessage res = new SendMessage();
+						SimpleDateFormat fmt2 = new SimpleDateFormat("dd'-'MM'-'yyyy HH':'mm':'ss");
+						fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
+						res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+						res.room = room;
+						res.message = "The chat no longer is in heightened sensitivity mode, filters are relaxed again, we apologize about the inconvenience.";
+						res.sourceWriter = NIL_UUID;
+						res.sentAtWriter = fmt.format(new Date());
+						client.sendPacket(res);
+					}
+				}
+			}
+		}
+	}
+
+	public static void joinedRoom(ChatClient client, ChatRoom roomInstance) {
+		HeightenedSensitivityFlags flags = roomInstance.getObject(HeightenedSensitivityFlags.class);
+		if (flags == null) {
+			flags = new HeightenedSensitivityFlags();
+			flags.room = roomInstance.getRoomID();
+			roomInstance.addObject(flags);
+		}
+
+		// Check moderator perms
+		String permLevel = "member";
+		if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+			permLevel = client.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+					.get("permissionLevel").getAsString();
+		}
+		if (GameServer.hasPerm(permLevel, "moderator")) {
+			// Staff
+			// Cap at zero
+			flags.flagCountAutoactivate = 0;
+			flags.lastFlagAutoactivate = System.currentTimeMillis();
+
+			// Reactivate chat if needed
+			if (flags.chatDisabled) {
+				flags.enableChat(client.getServer());
+			}
+		}
 	}
 
 	private JsonArray messagePartsAsJson(TextPart[] textParts) {
@@ -582,6 +777,242 @@ public class SendMessage extends AbstractChatPacket {
 			boolean filteredFlaggedState = filterResultStaffHighlightStrict.isMatch();
 			boolean filteredFlaggedWithoutStrictmodeState = filterResultStaffHighlight.isMatch();
 
+			// Heightened sensitivity config
+			if (!heightenedSensitivityConfigInited) {
+				try {
+					heightenedSensitivityDeactivateTimer = Long.parseLong(Centuria.textFilterProperties
+							.getOrDefault("heightened-sensitivity-deactivate-timer", "900000"));
+					heightenedSensitivityChatReactivateTimer = Long.parseLong(Centuria.textFilterProperties
+							.getOrDefault("heightened-sensitivity-chat-reactivate-timer", "900000"));
+					heightenedSensitivityTriggerThreshold = Integer.parseInt(Centuria.textFilterProperties
+							.getOrDefault("heightened-sensitivity-trigger-threshold", "15"));
+					heightenedSensitivityTriggerMaxAge = Long.parseLong(Centuria.textFilterProperties
+							.getOrDefault("heightened-sensitivity-trigger-max-age", "900000"));
+					heightenedSensitivityChatDisableThreshold1 = Integer.parseInt(Centuria.textFilterProperties
+							.getOrDefault("heightened-sensitivity-chatdisable-threshold-primary", "5"));
+					heightenedSensitivityChatDisableThreshold2 = Integer.parseInt(Centuria.textFilterProperties
+							.getOrDefault("heightened-sensitivity-chatdisable-threshold-secondary", "30"));
+					heightenedSensitivityChatDisableMaxAge1 = Long.parseLong(Centuria.textFilterProperties
+							.getOrDefault("heightened-sensitivity-chatdisable-max-age-primary", "900000"));
+					heightenedSensitivityChatDisableMaxAge2 = Long.parseLong(Centuria.textFilterProperties
+							.getOrDefault("heightened-sensitivity-chatdisable-max-age-secondary", "900000"));
+					heightenedSensitivityConfigInited = true;
+				} catch (Exception e) {
+					heightenedSensitivityDeactivateTimer = 90000;
+					heightenedSensitivityChatReactivateTimer = 90000;
+					heightenedSensitivityTriggerThreshold = 15;
+					heightenedSensitivityTriggerMaxAge = 90000;
+					heightenedSensitivityChatDisableThreshold1 = 5;
+					heightenedSensitivityChatDisableThreshold2 = 30;
+					heightenedSensitivityChatDisableMaxAge1 = 300000;
+					heightenedSensitivityChatDisableMaxAge2 = 1800000;
+					heightenedSensitivityConfigInited = true;
+					Centuria.logger.error("Failed to load textfilter.conf! Please make sure the syntax is correct.", e);
+				}
+			}
+
+			// Heightened sensitivity
+			HeightenedSensitivityFlags flags = roomInstance.getObject(HeightenedSensitivityFlags.class);
+			if (flags == null) {
+				flags = new HeightenedSensitivityFlags();
+				flags.room = roomInstance.getRoomID();
+				roomInstance.addObject(flags);
+			}
+			boolean roomHasStaff = false;
+			for (ChatClient cl2 : client.getServer().getClients()) {
+				if (cl2 != null) {
+					// Check moderator perms
+					String permLevel2 = "member";
+					if (cl2.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+						permLevel2 = cl2.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+								.get("permissionLevel").getAsString();
+					}
+					if (GameServer.hasPerm(permLevel2, "moderator")) {
+						// Staff
+						// Cap at zero
+						roomHasStaff = true;
+						flags.flagCountAutoactivate = 0;
+						flags.lastFlagAutoactivate = System.currentTimeMillis();
+
+						// Reactivate chat if needed
+						if (flags.chatDisabled) {
+							flags.enableChat(client.getServer());
+						}
+
+						// Break
+						break;
+					}
+				}
+			}
+
+			// Reset autoactivate if needed, by checking if the last flag is too old
+			if (!flags.active && heightenedSensitivityTriggerMaxAge != -1
+					&& System.currentTimeMillis() - flags.lastFlagAutoactivate > heightenedSensitivityTriggerMaxAge) {
+				// Reset
+				flags.flagCountAutoactivate = 0;
+				flags.lastFlagAutoactivate = System.currentTimeMillis();
+			}
+
+			// Reset chat disable counters if needed
+			if (!flags.active
+					&& ((heightenedSensitivityChatDisableMaxAge1 != -1 || heightenedSensitivityChatDisableMaxAge2 != -1)
+							|| roomHasStaff)) {
+				// Reset if needed
+				if (roomHasStaff || (heightenedSensitivityChatDisableMaxAge1 != -1 && System.currentTimeMillis()
+						- flags.lastFlagChatdisable > heightenedSensitivityChatDisableMaxAge1)) {
+					flags.flagCountChatdisable = 0;
+					flags.lastFlagChatdisable = System.currentTimeMillis();
+				}
+				if (roomHasStaff || (heightenedSensitivityChatDisableMaxAge2 != -1 && System.currentTimeMillis()
+						- flags.lastFlagChatdisableSecondary > heightenedSensitivityChatDisableMaxAge2)) {
+					flags.flagCountChatdisableSecondary = 0;
+					flags.lastFlagChatdisableSecondary = System.currentTimeMillis();
+				}
+			}
+
+			// Reenable chat if needed
+			boolean reenabledChat = false;
+			if (flags.chatDisabled && flags.renableChatAter != -1
+					&& System.currentTimeMillis() >= flags.renableChatAter) {
+				// Re-enable
+				flags.enableChat(client.getServer());
+				reenabledChat = true;
+			}
+
+			// Deactivate if needed
+			if (flags.active && !flags.chatDisabled && flags.wasAutoactivate
+					&& heightenedSensitivityDeactivateTimer != -1 && System.currentTimeMillis() >= flags.disableAfter) {
+				// Disable
+				flags.deactivateHeightenedSensitivity(client.getServer(), reenabledChat);
+
+				// Check if private
+				if (!client.isRoomPrivate(room)) {
+					EventBus.getInstance()
+							.dispatchEvent(new MiscModerationEvent("chatfilter.heightenedstrictness.deactivate",
+									"Heightened sensitivity mode deactivated",
+									Map.of("Room", formatRoomName(client, room), "Action",
+											"deactivated heightened sensitivity mode"),
+									"SYSTEM", null));
+				}
+			}
+
+			// Disable chat if needed
+			if (flags.active && !flags.chatDisabled && !roomHasStaff && filterResultDefault.isMatch()
+					&& filteredDefaultSeverityCensor) {
+				// Increase flag counter for chat disable
+				flags.flagCountChatdisable++;
+				flags.flagCountChatdisableSecondary++;
+				if (flags.flagCountChatdisable >= heightenedSensitivityChatDisableThreshold1
+						|| flags.flagCountChatdisableSecondary >= heightenedSensitivityChatDisableThreshold2) {
+					// Disable chat
+					flags.renableChatAter = heightenedSensitivityChatReactivateTimer == -1
+							? heightenedSensitivityChatReactivateTimer
+							: System.currentTimeMillis() + heightenedSensitivityChatReactivateTimer;
+					flags.disableChat(client.getServer());
+
+					// Format
+					SimpleDateFormat fmt2 = new SimpleDateFormat("dd'-'MM'-'yyyy HH':'mm':'ss");
+					fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+					// Get matched words
+					String matchedWordsString = matchedWordsAsString(filterResultDefault.getMatches());
+
+					// Get reason
+					String filterReason = filterResultDefault.getPrimaryFilterReason();
+
+					// Check if private
+					if (!client.isRoomPrivate(room)) {
+						if (flags.renableChatAter != -1) {
+							EventBus.getInstance().dispatchEvent(new MiscModerationEvent(
+									"chatfilter.heightenedstrictness.chatdisable",
+									"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+									Map.of("Notice",
+											"Chat has been disabled due to having passed the chat deactivation threshold, chat will re-enable when staff logs on or if the chat reactivation timer is met",
+											"Chat message", message, "Matched word(s)", matchedWordsString,
+											"Primary reason for filtering", filterReason, "Room",
+											formatRoomName(client, room), "Resulting action", "chat disabled",
+											"Chat re-enables at",
+											fmt2.format(new Date(flags.renableChatAter)) + " UTC ("
+													+ formatTimeRelative(
+															flags.renableChatAter - System.currentTimeMillis())
+													+ " from now)" + " or whenever a staff member gets online."),
+									"SYSTEM", client.getPlayer()));
+						} else {
+							EventBus.getInstance().dispatchEvent(new MiscModerationEvent(
+									"chatfilter.heightenedstrictness.chatdisable",
+									"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+									Map.of("Notice",
+											"Chat has been disabled due to having passed the chat deactivation threshold, chat will re-enable when staff logs on",
+											"Chat message", message, "Matched word(s)", matchedWordsString,
+											"Primary reason for filtering", filterReason, "Room",
+											formatRoomName(client, room), "Resulting action", "chat disabled"),
+									"SYSTEM", client.getPlayer()));
+						}
+					}
+				}
+			}
+
+			// Check disabled
+			if (flags.chatDisabled) {
+				// Time format
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+				// Get reason
+				String reason = flags.activationReason;
+
+				// Send failure
+				SendMessage res = new SendMessage();
+				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.room = room;
+				res.message = "</noparse><color=red>[!] </color><color=orange><noparse>" + message
+						+ "</noparse></color><noparse>";
+				res.messagePlain = "[!] " + message;
+				res.originalMessage = message;
+				res.moderatorMessage = GameServer.hasPerm(permLevel, "moderator");
+				res.alertingMessage = true;
+				res.criticalAlertingMessage = true;
+				res.blockedMessage = true;
+				res.sourceWriter = client.getPlayer().getAccountID();
+				res.sentAtWriter = fmt.format(new Date());
+				client.sendPacket(res);
+
+				// Broadcast to moderators unless its a private chat
+				res = new SendMessage();
+				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.room = room;
+				res.message = "</noparse><color=red>[!] </color><color=orange><noparse>" + message
+						+ "</noparse></color><noparse>";
+				res.messagePlain = "[!] " + message;
+				res.originalMessage = message;
+				res.moderatorMessage = true;
+				res.alertingMessage = true;
+				res.criticalAlertingMessage = true;
+				res.blockedMessage = true;
+				res.sourceWriter = client.getPlayer().getAccountID();
+				res.sentAtWriter = fmt.format(new Date());
+				broadcastToModerators(client, res);
+
+				// System message
+				res = new SendMessage();
+				SimpleDateFormat fmt2 = new SimpleDateFormat("dd'-'MM'-'yyyy HH':'mm':'ss");
+				fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
+				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.room = room;
+				res.message = "Due to a large amount of filter triggers, the chat has currently been disabled for this world until a staff member can get on. We apologize about the inconvenience! The team has already been alerted about the chat being disabled."
+						+ (flags.renableChatAter != -1
+								? "\n\nChat re-enables at " + fmt2.format(new Date(flags.renableChatAter)) + " UTC ("
+										+ formatTimeRelative(flags.renableChatAter - System.currentTimeMillis())
+										+ " from now)" + " or whenever a staff member gets online."
+								: "")
+						+ (reason != null ? "\nReason of activation of heightened sensitivity mode: " + reason : "");
+				res.sourceWriter = NIL_UUID;
+				res.sentAtWriter = fmt.format(new Date());
+				client.sendPacket(res);
+
+				return true; // ignore chat
+			}
+
 			// Load user settings
 			int filterSettingSelf = 0;
 			UserVarValue valS = client.getPlayer().getSaveSpecificInventory().getUserVarAccesor()
@@ -589,6 +1020,41 @@ public class SendMessage extends AbstractChatPacket {
 													// stricter filter enabled.
 			if (valS != null)
 				filterSettingSelf = valS.value;
+
+			// Check trigger
+			// Enable heightened sensitivity if needed
+			if (!flags.active && filterResultDefault.isMatch() && filteredDefaultSeverityCensor && !roomHasStaff) {
+				// Increase counter
+				flags.flagCountAutoactivate++;
+				if (flags.flagCountAutoactivate >= heightenedSensitivityTriggerThreshold) {
+					// Enable heightened sensitivity mode
+					flags.activationReason = null;
+					flags.disableAfter = heightenedSensitivityDeactivateTimer == -1 ? -1
+							: System.currentTimeMillis() + heightenedSensitivityDeactivateTimer;
+					flags.wasAutoactivate = true;
+					flags.activateHeightenedSensitivity(client.getServer());
+
+					// Get matched words
+					String matchedWordsString = matchedWordsAsString(filterResultDefault.getMatches());
+
+					// Get reason
+					String filterReason = filterResultDefault.getPrimaryFilterReason();
+
+					// Check if private
+					if (!client.isRoomPrivate(room)) {
+						EventBus.getInstance().dispatchEvent(new MiscModerationEvent(
+								"chatfilter.heightenedstrictness.activate",
+								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+								Map.of("Notice",
+										"Due to having pased the threshold of filter triggers, and no staff being online, the chat room has been set to heightened sensitivity mode",
+										"Chat message", message, "Matched word(s)", matchedWordsString,
+										"Primary reason for filtering", filterReason, "Room",
+										formatRoomName(client, room), "Resulting action",
+										"activated heightened sensitivity mode"),
+								"SYSTEM", client.getPlayer()));
+					}
+				}
+			}
 
 			// Check mute
 			if (filterResultDefault.getSeverity().ordinal() >= FilterSeverity.INSTAMUTE.ordinal()) {
@@ -1361,7 +1827,30 @@ public class SendMessage extends AbstractChatPacket {
 		}
 
 		return true;
+	}
 
+	private static String formatTimeRelative(long time) {
+		String out = "";
+		if (time > 60 * 60 * 1000) {
+			long hours = time / (60 * 60 * 1000);
+			time = time - hours * 60 * 60 * 1000;
+			out += hours + " hours";
+		}
+		if (time > 60 * 1000) {
+			long mins = time / (60 * 1000);
+			time = time - mins * 60 * 1000;
+			if (!out.isEmpty())
+				out += ", ";
+			out += mins + " minutes";
+		}
+		if (time > 1000) {
+			long secs = time / (1000);
+			time = time - secs * 1000;
+			if (!out.isEmpty())
+				out += ", ";
+			out += secs + " seconds";
+		}
+		return out;
 	}
 
 	private static void broadcastToModerators(ChatClient client, SendMessage message) {
@@ -5179,7 +5668,7 @@ public class SendMessage extends AbstractChatPacket {
 	}
 
 	private static String formatRoomName(ChatClient client, String room) {
-		if (client.isRoomPrivate(room)) {
+		if (client != null && client.isRoomPrivate(room)) {
 			// Find recipient
 			String recipient = client.getPlayer().getDisplayName();
 			String[] participants = DMManager.getInstance().getDMParticipants(room);

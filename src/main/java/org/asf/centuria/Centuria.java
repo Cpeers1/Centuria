@@ -493,6 +493,12 @@ public class Centuria {
 					+ "chat-message-trigger-age-timems-limit=1200000\n" //
 					+ "\n" //
 					+ "\n" //
+					+ "# The amount of time before heightened sensitivity disables in milliseconds, set to -1 to disable\n" //
+					+ "heightened-sensitivity-deactivate-timer=900000\n" //
+					+ "\n" //
+					+ "# The amount of time before chat reenables after being disabled automatically in milliseconds, set to -1 to disable\n" //
+					+ "heightened-sensitivity-chat-reactivate-timer=900000\n" //
+					+ "\n" //
 					+ "# The amount of filter triggers needed for heightened sensitivity mode to engage, set to -1 to disable\n" //
 					+ "heightened-sensitivity-trigger-threshold=15\n" //
 					+ "\n" //
@@ -506,10 +512,10 @@ public class Centuria {
 					+ "heightened-sensitivity-chatdisable-max-age-primary=300000\n" //
 					+ "\n" //
 					+ "# The maximum amount of filter triggers during heightened sensitivity mode before chat is disabled (secondary threshold), set to -1 to disable\n" //
-					+ "heightened-sensitivity-chatdisable-threshold-primary=15\n" //
+					+ "heightened-sensitivity-chatdisable-threshold-secondary=30\n" //
 					+ "\n" //
 					+ "# The maximum age of filter triggers in milliseconds for heightened sensitivity mode (secondary threshold), set to -1 to disable\n" //
-					+ "heightened-sensitivity-chatdisable-max-age-primary=1800000\n" //
+					+ "heightened-sensitivity-chatdisable-max-age-secondary=1800000\n" //
 			);
 		}
 		textFilterProperties = new HashMap<String, String>();
