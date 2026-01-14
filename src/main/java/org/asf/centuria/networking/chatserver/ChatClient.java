@@ -28,6 +28,7 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 
 	private CenturiaAccount player;
 	private HashMap<String, ChatRoom> rooms = new HashMap<String, ChatRoom>();
+	private HashMap<String, ChatRoom> localRooms = new HashMap<String, ChatRoom>();
 	private HashMap<String, Boolean> privateChat = new HashMap<String, Boolean>();
 
 	// Room lock
@@ -81,6 +82,7 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 		synchronized (rooms) {
 			String[] leftRooms = getRooms();
 			rooms.clear();
+			localRooms.clear();
 			privateChat.clear();
 			for (String room : leftRooms)
 				getServer().leaveRoom(room);
@@ -356,6 +358,7 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 		boolean wasPrivate = isRoomPrivate(room);
 		synchronized (rooms) {
 			rooms.remove(room);
+			localRooms.remove(room);
 			synchronized (privateChat) {
 				privateChat.remove(room);
 				left = true;
@@ -400,6 +403,8 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 		synchronized (rooms) {
 			if (!rooms.containsKey(room)) {
 				ChatRoom roomInstance = getServer().joinRoom(isPrivate ? "private" : "room", room);
+				ChatRoom localRoom = new ChatRoom(isPrivate ? "private" : "room", room, getServer());
+				localRooms.put(room, localRoom);
 				rooms.put(room, roomInstance);
 				synchronized (privateChat) {
 					privateChat.put(room, isPrivate);
@@ -458,6 +463,17 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 	}
 
 	/**
+	 * Retrieves an array of all chat rooms
+	 * 
+	 * @return Array of chat room instances
+	 */
+	public ChatRoom[] getLocalRoomInstances() {
+		synchronized (rooms) {
+			return localRooms.values().toArray(t -> new ChatRoom[t]);
+		}
+	}
+
+	/**
 	 * Retrieves chat rooms by ID
 	 * 
 	 * @param id Room ID
@@ -466,6 +482,18 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 	public ChatRoom getRoom(String id) {
 		synchronized (rooms) {
 			return rooms.get(id);
+		}
+	}
+
+	/**
+	 * Retrieves chat rooms by ID
+	 * 
+	 * @param id Room ID
+	 * @return ChatRoom instance or null
+	 */
+	public ChatRoom getLocalRoom(String id) {
+		synchronized (rooms) {
+			return localRooms.get(id);
 		}
 	}
 

@@ -318,7 +318,9 @@ public class SendMessage extends AbstractChatPacket {
 					fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
 					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
 					res.room = room;
-					res.message = "Due to the large amount of filter triggers within this chat room, the chat has been placed in heightened sensitivity mode."
+					res.message = (wasAutoactivate
+							? "Due to the large amount of filter triggers within this chat room without staff being present, the chat has been placed in heightened sensitivity mode, filters are temporarily more aggressive until staff disables this mode. Please avoid using swears and/or sensitive language until staff disables this mode."
+							: "This chat room has been placed in heightened sensitivity mode by the server staff, filters are temporarily more aggressive. Please avoid using swears and/or sensitive language until staff disables this mode.")
 							+ (reason != null ? "\nReason of activation of heightened sensitivity mode: " + reason
 									: "");
 					res.sourceWriter = NIL_UUID;
@@ -360,6 +362,14 @@ public class SendMessage extends AbstractChatPacket {
 		}
 	}
 
+	public static void playerJoinedWorld(ChatClient client, String room) {
+		ChatRoom roomInstance = client.getRoom(room);
+		if (roomInstance != null) {
+			// Call setup
+			playerRoomSetup(client, roomInstance);
+		}
+	}
+
 	public static void joinedRoom(ChatClient client, ChatRoom roomInstance) {
 		HeightenedSensitivityFlags flags = roomInstance.getObject(HeightenedSensitivityFlags.class);
 		if (flags == null) {
@@ -383,6 +393,58 @@ public class SendMessage extends AbstractChatPacket {
 			// Reactivate chat if needed
 			if (flags.chatDisabled) {
 				flags.enableChat(client.getServer());
+			}
+		}
+
+		// Call function if needed
+		if (!client.isRoomPrivate(roomInstance.getRoomID())) {
+			// Check if in word
+			Player online = client.getPlayer().getOnlinePlayerInstance();
+			if (online != null && online.roomReady && online.room.equals(roomInstance.getRoomID())) {
+				playerRoomSetup(client, roomInstance);
+			}
+		}
+	}
+
+	private static class RoomJoinMessageState {
+		public boolean messagesSent = false;
+	}
+
+	private static void playerRoomSetup(ChatClient client, ChatRoom roomInstance) {
+		ChatRoom localRoom = client.getLocalRoom(roomInstance.getRoomID());
+		RoomJoinMessageState state = localRoom.getObject(RoomJoinMessageState.class);
+		if (state == null) {
+			state = new RoomJoinMessageState();
+			localRoom.addObject(state);
+		}
+		if (!state.messagesSent) {
+			state.messagesSent = true;
+
+			// Send messages
+			// Check if the room is set to heightened sensitivity
+			HeightenedSensitivityFlags flags = roomInstance.getObject(HeightenedSensitivityFlags.class);
+			if (flags == null) {
+				flags = new HeightenedSensitivityFlags();
+				flags.room = roomInstance.getRoomID();
+				roomInstance.addObject(flags);
+			}
+			if (flags.active) {
+				// Enabled
+
+				// Time format
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+				// Send message
+				SendMessage res = new SendMessage();
+				SimpleDateFormat fmt2 = new SimpleDateFormat("dd'-'MM'-'yyyy HH':'mm':'ss");
+				fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
+				res.roomType = roomInstance.getType();
+				res.room = roomInstance.getRoomID();
+				res.message = "Due to the large amount of filter triggers within this chat room without staff being present, the chat has been placed in heightened sensitivity mode, filters are temporarily more aggressive until staff disables this mode. Please avoid using swears and/or sensitive language until staff disables this mode.";
+				res.sourceWriter = NIL_UUID;
+				res.sentAtWriter = fmt.format(new Date());
+				client.sendPacket(res);
 			}
 		}
 	}
@@ -758,25 +820,6 @@ public class SendMessage extends AbstractChatPacket {
 					return true; // ignore chat
 				}
 			}
-
-			// Run filters
-			FilterResult filterResultDefault = TextFilterService.getInstance().filter(chatMemory, message, false);
-			FilterResult filterResultStrict = TextFilterService.getInstance().filter(chatMemory, message, true);
-			FilterResult filterResultStaffHighlight = TextFilterService.getInstance().filter(chatMemory,
-					FilterSeverity.STAFF_HIGHLIGHT, message, false, "POTENTIALRISK");
-			FilterResult filterResultStaffHighlightStrict = TextFilterService.getInstance().filter(chatMemory,
-					FilterSeverity.STAFF_HIGHLIGHT, message, true, "POTENTIALRISK");
-
-			// Load filter result fields
-			boolean filteredUserStrictModeState = filterResultStrict.isMatch();
-			boolean filteredDefaultSeverityState = filterResultDefault.isMatch();
-			boolean filteredUserStrictModeCensor = filterResultStrict.getSeverity()
-					.ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal();
-			boolean filteredDefaultSeverityCensor = filterResultDefault.getSeverity()
-					.ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal();
-			boolean filteredFlaggedState = filterResultStaffHighlightStrict.isMatch();
-			boolean filteredFlaggedWithoutStrictmodeState = filterResultStaffHighlight.isMatch();
-
 			// Heightened sensitivity config
 			if (!heightenedSensitivityConfigInited) {
 				try {
@@ -896,9 +939,47 @@ public class SendMessage extends AbstractChatPacket {
 				}
 			}
 
+			// Check heightened sensitivity state
+			String[] tags = new String[0];
+			String[] tagsHighlight = new String[] { "POTENTIALRISK" };
+			if (flags.active) {
+				tags = new String[] { "HEIGHTENEDSENSITIVITY" };
+				tagsHighlight = new String[] { "HEIGHTENEDSENSITIVITY", "POTENTIALRISK" };
+			}
+
+			// Run filters
+			FilterResult filterResultDefaultMod = TextFilterService.getInstance().filter(chatMemory, message,
+					flags.active, tags);
+			FilterResult filterResultDefaultOrig = TextFilterService.getInstance().filter(chatMemory, message, false,
+					tags);
+			FilterResult filterResultStrict = TextFilterService.getInstance().filter(chatMemory, message, true, tags);
+			FilterResult filterResultStaffHighlight = TextFilterService.getInstance().filter(chatMemory,
+					FilterSeverity.STAFF_HIGHLIGHT, message, false, tagsHighlight);
+			FilterResult filterResultStaffHighlightStrict = TextFilterService.getInstance().filter(chatMemory,
+					FilterSeverity.STAFF_HIGHLIGHT, message, true, tagsHighlight);
+			String reasonResultDefault = filterResultDefaultMod.getPrimaryFilterReason();
+			if (filterResultDefaultOrig.isMatch() && filterResultDefaultMod.isMatch())
+				reasonResultDefault = filterResultDefaultOrig.getFilterResult();
+			else if (filterResultDefaultMod.getSeverity().ordinal() == FilterSeverity.USER_STRICT_MODE.ordinal()
+					&& filterResultDefaultMod.isMatch() && !filterResultDefaultOrig.isMatch())
+				reasonResultDefault = "Filtered due to heightened sensitivity mode";
+
+			// Load filter result fields
+			boolean filteredUserStrictModeState = filterResultStrict.isMatch();
+			boolean filteredDefaultState = filterResultDefaultMod.isMatch();
+			boolean filteredDefaultOrigState = filterResultDefaultOrig.isMatch();
+			boolean filteredUserStrictModeCensor = filterResultStrict.getSeverity()
+					.ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal();
+			boolean filteredDefaultCensor = filterResultDefaultMod.getSeverity()
+					.ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal();
+			boolean filteredDefaultOrigCensor = filterResultDefaultOrig.getSeverity()
+					.ordinal() >= FilterSeverity.USER_STRICT_MODE.ordinal();
+			boolean filteredFlaggedState = filterResultStaffHighlightStrict.isMatch();
+			boolean filteredFlaggedWithoutStrictmodeState = filterResultStaffHighlight.isMatch();
+
 			// Disable chat if needed
-			if (flags.active && !flags.chatDisabled && !roomHasStaff && filterResultDefault.isMatch()
-					&& filteredDefaultSeverityCensor) {
+			if (flags.active && !flags.chatDisabled && !roomHasStaff && filterResultDefaultOrig.isMatch()
+					&& filteredDefaultOrigCensor && !client.isRoomPrivate(room)) {
 				// Increase flag counter for chat disable
 				flags.flagCountChatdisable++;
 				flags.flagCountChatdisableSecondary++;
@@ -915,10 +996,10 @@ public class SendMessage extends AbstractChatPacket {
 					fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 					// Get matched words
-					String matchedWordsString = matchedWordsAsString(filterResultDefault.getMatches());
+					String matchedWordsString = matchedWordsAsString(filterResultDefaultOrig.getMatches());
 
 					// Get reason
-					String filterReason = filterResultDefault.getPrimaryFilterReason();
+					String filterReason = filterResultDefaultOrig.getPrimaryFilterReason();
 
 					// Check if private
 					if (!client.isRoomPrivate(room)) {
@@ -1023,7 +1104,7 @@ public class SendMessage extends AbstractChatPacket {
 
 			// Check trigger
 			// Enable heightened sensitivity if needed
-			if (!flags.active && filterResultDefault.isMatch() && filteredDefaultSeverityCensor && !roomHasStaff) {
+			if (!flags.active && filterResultDefaultOrig.isMatch() && filteredDefaultOrigCensor && !roomHasStaff) {
 				// Increase counter
 				flags.flagCountAutoactivate++;
 				if (flags.flagCountAutoactivate >= heightenedSensitivityTriggerThreshold) {
@@ -1035,10 +1116,10 @@ public class SendMessage extends AbstractChatPacket {
 					flags.activateHeightenedSensitivity(client.getServer());
 
 					// Get matched words
-					String matchedWordsString = matchedWordsAsString(filterResultDefault.getMatches());
+					String matchedWordsString = matchedWordsAsString(filterResultDefaultOrig.getMatches());
 
 					// Get reason
-					String filterReason = filterResultDefault.getPrimaryFilterReason();
+					String filterReason = filterResultDefaultOrig.getPrimaryFilterReason();
 
 					// Check if private
 					if (!client.isRoomPrivate(room)) {
@@ -1057,14 +1138,14 @@ public class SendMessage extends AbstractChatPacket {
 			}
 
 			// Check mute
-			if (filterResultDefault.getSeverity().ordinal() >= FilterSeverity.INSTAMUTE.ordinal()) {
+			if (filterResultDefaultOrig.getSeverity().ordinal() >= FilterSeverity.INSTAMUTE.ordinal()) {
 				// Should mute
 
 				// Push to context for client
-				chatMemoryClient.pushToContext(filterResultDefault);
+				chatMemoryClient.pushToContext(filterResultDefaultOrig);
 
 				// Select filter
-				FilterResult selectedFilterResult = filterResultDefault;
+				FilterResult selectedFilterResult = filterResultDefaultOrig;
 				if (filterSettingSelf != 0) {
 					// Load strict mode
 					selectedFilterResult = filterResultStrict;
@@ -1233,16 +1314,16 @@ public class SendMessage extends AbstractChatPacket {
 
 			// Gather result
 			// Check severity and if we need to mute
-			if (filteredDefaultSeverityState && filteredDefaultSeverityCensor) {
+			if (filteredDefaultOrigState && filteredDefaultOrigCensor) {
 				// Format
 				String highlightedMessage = moderatorMessageStringBuilderRed
-						.buildOutputString(filterResultDefault.getTextParts());
+						.buildOutputString(filterResultDefaultOrig.getTextParts());
 				String highlightedMessagePlain = moderatorMessageStringBuilderPlain
-						.buildOutputString(filterResultDefault.getTextParts());
-				String matchedWordsString = matchedWordsAsString(filterResultDefault.getMatches());
+						.buildOutputString(filterResultDefaultOrig.getTextParts());
+				String matchedWordsString = matchedWordsAsString(filterResultDefaultOrig.getMatches());
 
 				// Get reason
-				String filterReason = filterResultDefault.getPrimaryFilterReason();
+				String filterReason = filterResultDefaultOrig.getPrimaryFilterReason();
 
 				// Get/create memory
 				ChatFilterMemory mem = client.getObject(ChatFilterMemory.class);
@@ -1252,7 +1333,8 @@ public class SendMessage extends AbstractChatPacket {
 				}
 
 				// Update
-				if (System.currentTimeMillis() - mem.lastFlag > (3 * 60 * 60 * 1000)) {
+				if (System.currentTimeMillis()
+						- mem.lastFlag > (flags.active ? (12 * 60 * 60 * 1000) : (3 * 60 * 60 * 1000))) {
 					mem.lastFlag = 0;
 					mem.flagCount = 0;
 				}
@@ -1264,7 +1346,7 @@ public class SendMessage extends AbstractChatPacket {
 					// Mod log
 
 					// Push to context
-					chatMemory.pushToContext(filterResultDefault);
+					chatMemory.pushToContext(filterResultDefaultOrig);
 
 					// Check if private
 					if (client.isRoomPrivate(room)) {
@@ -1294,13 +1376,13 @@ public class SendMessage extends AbstractChatPacket {
 					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
 					res.room = room;
 					res.message = "</noparse><color=red>[!] </color><color=orange><noparse>"
-							+ filterResultDefault.getFilterResult() + "</noparse></color><noparse>";
-					res.messagePlain = "[!] " + filterResultDefault.getFilterResult();
+							+ filterResultDefaultOrig.getFilterResult() + "</noparse></color><noparse>";
+					res.messagePlain = "[!] " + filterResultDefaultOrig.getFilterResult();
 					res.messageHighlighted = "</noparse><color=red>[!] </color><color=orange><noparse>"
 							+ highlightedMessage + "</noparse></color><noparse>";
 					res.messageHighlightedPlain = "[!] " + highlightedMessagePlain;
-					res.messagePartsWriter = filterResultDefault.getTextParts();
-					res.filterResultWriter = filterResultDefault;
+					res.messagePartsWriter = filterResultDefaultOrig.getTextParts();
+					res.filterResultWriter = filterResultDefaultOrig;
 					res.originalMessage = message;
 					res.moderatorMessage = GameServer.hasPerm(permLevel, "moderator");
 					res.alertingMessage = true;
@@ -1315,11 +1397,11 @@ public class SendMessage extends AbstractChatPacket {
 					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
 					res.room = room;
 					res.message = "</noparse><color=red>[!] </color><color=orange><noparse>"
-							+ filterResultDefault.getFilterResult() + "</noparse></color><noparse>";
+							+ filterResultDefaultOrig.getFilterResult() + "</noparse></color><noparse>";
 					res.messageHighlighted = "</noparse><color=red>[!] </color><color=orange><noparse>"
 							+ highlightedMessage + "</noparse></color><noparse>";
-					res.messagePartsWriter = filterResultDefault.getTextParts();
-					res.filterResultWriter = filterResultDefault;
+					res.messagePartsWriter = filterResultDefaultOrig.getTextParts();
+					res.filterResultWriter = filterResultDefaultOrig;
 					res.originalMessage = message;
 					res.moderatorMessage = true;
 					res.alertingMessage = true;
@@ -1349,7 +1431,7 @@ public class SendMessage extends AbstractChatPacket {
 			}
 
 			// Push to context
-			chatMemory.pushToContext(filterResultDefault);
+			chatMemory.pushToContext(filterResultDefaultMod);
 
 			// Time format
 			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
@@ -1358,7 +1440,7 @@ public class SendMessage extends AbstractChatPacket {
 			// If it is a DM, save message
 			if (client.isRoomPrivate(room) && manager.dmExists(room)) {
 				PrivateChatMessage msg = new PrivateChatMessage();
-				String messageToUse = filterResultDefault.getFilterResult();
+				String messageToUse = filterResultDefaultMod.getFilterResult();
 				if (filterSettingSelf != 0) {
 					// Use strict mode
 					messageToUse = filterResultStrict.getFilterResult();
@@ -1372,7 +1454,7 @@ public class SendMessage extends AbstractChatPacket {
 			}
 
 			// Select message
-			String messageIn = filterResultDefault.getFilterResult();
+			String messageIn = filterResultDefaultMod.getFilterResult();
 			if (filteredUserStrictModeState && filteredUserStrictModeCensor && filterSettingSelf != 0)
 				messageIn = filterResultStrict.getFilterResult(); // Strict mode, source had strict enabled
 
@@ -1428,7 +1510,7 @@ public class SendMessage extends AbstractChatPacket {
 							filterSetting = val.value;
 
 						// Get filter result
-						boolean filteredToRecipient = (filteredDefaultSeverityState && filteredDefaultSeverityCensor)
+						boolean filteredToRecipient = (filteredDefaultState && filteredDefaultCensor)
 								|| ((filteredUserStrictModeState && filteredUserStrictModeCensor)
 										&& filterSetting != 0);
 						boolean filterUseStrictModeForRecipient = (filteredUserStrictModeState
@@ -1449,7 +1531,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Add properties based on staff rank
 						if ((GameServer.hasPerm(permLevel2, "moderator")
 								|| receiver.getPlayer().getAccountID().equals(client.getPlayer().getAccountID()))
-								&& ((filteredDefaultSeverityState && filteredDefaultSeverityCensor)
+								&& ((filteredDefaultState && filteredDefaultCensor)
 										|| (filteredUserStrictModeState && filteredUserStrictModeCensor)
 										|| filteredFlaggedState)) {
 							// Is a moderator (or source) and a filter did trigger
@@ -1463,7 +1545,9 @@ public class SendMessage extends AbstractChatPacket {
 							// mark is orange
 							//
 							// The message will be orange in both cases
-							boolean isCriticalFlagged = filteredDefaultSeverityState && filteredDefaultSeverityCensor;
+							boolean isCriticalFlagged = filteredDefaultOrigState && filteredDefaultOrigCensor;
+							boolean flaggedDueToHeightenedSensitivity = !isCriticalFlagged && filteredDefaultState
+									&& filteredDefaultCensor;
 
 							// If this is true, the exclamation is green as its uncensored, but still
 							// highlighted, the box around the exclamation mark is orange
@@ -1473,9 +1557,13 @@ public class SendMessage extends AbstractChatPacket {
 
 							// Format
 							String highlightedMessageDefault = moderatorMessageStringBuilderRed
-									.buildOutputString(filterResultDefault.getTextParts());
+									.buildOutputString(filterResultDefaultOrig.getTextParts());
 							String highlightedMessageDefaultPlain = moderatorMessageStringBuilderPlain
-									.buildOutputString(filterResultDefault.getTextParts());
+									.buildOutputString(filterResultDefaultOrig.getTextParts());
+							String highlightedMessageMod = moderatorMessageStringBuilderRed
+									.buildOutputString(filterResultDefaultMod.getTextParts());
+							String highlightedMessageModPlain = moderatorMessageStringBuilderPlain
+									.buildOutputString(filterResultDefaultMod.getTextParts());
 							String highlightedMessageStrict = moderatorMessageStringBuilderRed
 									.buildOutputString(filterResultStrict.getTextParts());
 							String highlightedMessageStrictPlain = moderatorMessageStringBuilderPlain
@@ -1512,11 +1600,17 @@ public class SendMessage extends AbstractChatPacket {
 								// Is staff
 
 								// Check flag
-								if ((filteredDefaultSeverityState && filteredDefaultSeverityCensor)
+								if ((filteredDefaultState && filteredDefaultCensor)
 										|| (filteredUserStrictModeState && filteredUserStrictModeCensor)
-										|| filteredFlaggedState) {
+										|| flaggedDueToHeightenedSensitivity || filteredFlaggedState) {
 									// Check filter trigger type
-									if (isCriticalFlagged) {
+									if (flaggedDueToHeightenedSensitivity) {
+										// Strict mode filter is used here as it includes non-strict during filtering,
+										// it may catch more than the non-strict version
+										res.message = "</noparse><color=orange>[<color=red>!</color>] </color><color=orange><noparse>"
+												+ highlightedMessageMod + "</noparse></color><noparse>";
+										res.messagePlain = "[!] " + highlightedMessageModPlain;
+									} else if (isCriticalFlagged) {
 										// Strict mode filter is used here as it includes non-strict during filtering,
 										// it may catch more than the non-strict version
 										res.message = "</noparse><color=orange>[<color=red>!</color>] </color><color=orange><noparse>"
@@ -1548,11 +1642,17 @@ public class SendMessage extends AbstractChatPacket {
 
 									// Add remaining fields
 									res.originalMessage = message;
-									res.filterResultWriter = (filteredUserStrictModeState
-											&& filteredUserStrictModeCensor) ? filterResultStrict : filterResultDefault;
-									res.messagePartsWriter = (filteredUserStrictModeState
-											&& filteredUserStrictModeCensor) ? filterResultStrict.getTextParts()
-													: filterResultDefault.getTextParts();
+									if (flaggedDueToHeightenedSensitivity) {
+										res.filterResultWriter = filterResultDefaultMod;
+										res.messagePartsWriter = filterResultDefaultMod.getTextParts();
+									} else {
+										res.filterResultWriter = (filteredUserStrictModeState
+												&& filteredUserStrictModeCensor) ? filterResultStrict
+														: filterResultDefaultOrig;
+										res.messagePartsWriter = (filteredUserStrictModeState
+												&& filteredUserStrictModeCensor) ? filterResultStrict.getTextParts()
+														: filterResultDefaultOrig.getTextParts();
+									}
 									res.alertingMessage = true;
 									res.criticalAlertingMessage = isCriticalFlagged;
 									res.blockedMessage = false;
@@ -1594,7 +1694,9 @@ public class SendMessage extends AbstractChatPacket {
 						// mark is orange
 						//
 						// The message will be orange in both cases
-						boolean isCriticalFlagged = filteredDefaultSeverityState && filteredDefaultSeverityCensor;
+						boolean isCriticalFlagged = filteredDefaultOrigState && filteredDefaultOrigCensor;
+						boolean flaggedDueToHeightenedSensitivity = !isCriticalFlagged && filteredDefaultState
+								&& filteredDefaultCensor;
 
 						// If this is true, the exclamation is green as its uncensored, but still
 						// highlighted, the box around the exclamation mark is orange
@@ -1604,9 +1706,13 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Format
 						String highlightedMessageDefault = moderatorMessageStringBuilderRed
-								.buildOutputString(filterResultDefault.getTextParts());
+								.buildOutputString(filterResultDefaultOrig.getTextParts());
 						String highlightedMessageDefaultPlain = moderatorMessageStringBuilderPlain
-								.buildOutputString(filterResultDefault.getTextParts());
+								.buildOutputString(filterResultDefaultOrig.getTextParts());
+						String highlightedMessageMod = moderatorMessageStringBuilderRed
+								.buildOutputString(filterResultDefaultMod.getTextParts());
+						String highlightedMessageModPlain = moderatorMessageStringBuilderPlain
+								.buildOutputString(filterResultDefaultMod.getTextParts());
 						String highlightedMessageStrict = moderatorMessageStringBuilderRed
 								.buildOutputString(filterResultStrict.getTextParts());
 						String highlightedMessageStrictPlain = moderatorMessageStringBuilderPlain
@@ -1617,11 +1723,17 @@ public class SendMessage extends AbstractChatPacket {
 								.buildOutputString(filterResultStaffHighlightStrict.getTextParts());
 
 						// Check flag
-						if ((filteredDefaultSeverityState && filteredDefaultSeverityCensor)
+						if ((filteredDefaultState && filteredDefaultCensor)
 								|| (filteredUserStrictModeState && filteredUserStrictModeCensor)
-								|| filteredFlaggedState) {
+								|| flaggedDueToHeightenedSensitivity || filteredFlaggedState) {
 							// Check filter trigger type
-							if (isCriticalFlagged) {
+							if (flaggedDueToHeightenedSensitivity) {
+								// Strict mode filter is used here as it includes non-strict during filtering,
+								// it may catch more than the non-strict version
+								res.message = "</noparse><color=orange>[<color=red>!</color>] </color><color=orange><noparse>"
+										+ highlightedMessageMod + "</noparse></color><noparse>";
+								res.messagePlain = "[!] " + highlightedMessageModPlain;
+							} else if (isCriticalFlagged) {
 								// Strict mode filter is used here as it includes non-strict during filtering,
 								// it may catch more than the non-strict version
 								res.message = "</noparse><color=orange>[<color=red>!</color>] </color><color=orange><noparse>"
@@ -1653,18 +1765,23 @@ public class SendMessage extends AbstractChatPacket {
 
 							// Add remaining fields
 							res.originalMessage = message;
-							res.filterResultWriter = (filteredUserStrictModeState && filteredUserStrictModeCensor)
-									? filterResultStrict
-									: filterResultDefault;
-							res.messagePartsWriter = (filteredUserStrictModeState && filteredUserStrictModeCensor)
-									? filterResultStrict.getTextParts()
-									: filterResultDefault.getTextParts();
+							if (flaggedDueToHeightenedSensitivity) {
+								res.filterResultWriter = filterResultDefaultMod;
+								res.messagePartsWriter = filterResultDefaultMod.getTextParts();
+							} else {
+								res.filterResultWriter = (filteredUserStrictModeState && filteredUserStrictModeCensor)
+										? filterResultStrict
+										: filterResultDefaultOrig;
+								res.messagePartsWriter = (filteredUserStrictModeState && filteredUserStrictModeCensor)
+										? filterResultStrict.getTextParts()
+										: filterResultDefaultOrig.getTextParts();
+							}
 							res.alertingMessage = true;
 							res.criticalAlertingMessage = isCriticalFlagged;
 							res.blockedMessage = false;
 						} else {
 							// Default uncensored
-							res.message = filterResultDefault.getFilterResult();
+							res.message = filterResultDefaultMod.getFilterResult();
 						}
 
 						// Add source and such
@@ -1682,11 +1799,11 @@ public class SendMessage extends AbstractChatPacket {
 			}
 
 			// Check censor
-			if (filteredDefaultSeverityState && filteredDefaultSeverityCensor) {
+			if (filteredDefaultOrigState && filteredDefaultOrigCensor) {
 				// Get/create memory
 				ChatFilterMemory mem = client.getObject(ChatFilterMemory.class);
-				String filterReason = filterResultDefault.getPrimaryFilterReason();
-				String matchedWordsString = matchedWordsAsString(filterResultDefault.getMatches());
+				String filterReason = filterResultDefaultOrig.getPrimaryFilterReason();
+				String matchedWordsString = matchedWordsAsString(filterResultDefaultOrig.getMatches());
 
 				// Check count
 				if (mem.flagCount == 1) {
@@ -1783,6 +1900,16 @@ public class SendMessage extends AbstractChatPacket {
 										"SYSTEM", client.getPlayer()));
 					}
 				}
+			} else if (filteredDefaultState && filteredDefaultCensor) {
+				// Send message
+				SendMessage res = new SendMessage();
+				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.room = room;
+				res.message = "The text filter is in heightened sensitivity mode, your message was censored as a result.\nReason: "
+						+ reasonResultDefault;
+				res.sourceWriter = NIL_UUID;
+				res.sentAtWriter = fmt.format(new Date());
+				client.sendPacket(res);
 			} else if ((filteredUserStrictModeState && filteredUserStrictModeCensor) && filterSettingSelf != 0) {
 				// Send message
 				SendMessage res = new SendMessage();
@@ -2011,7 +2138,12 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("tempban \"<player>\" <days>\" [\"<reason>\"]");
 			commandMessages.add("forcenamechange \"<player>\"");
 			commandMessages.add("changeothername \"<player>\" \"<new-name>\"");
-			commandMessages.add("mute \"<player>\" <minutes> [hours] [days] [\"<reason>\"]");
+			commandMessages.add("mute \"<player>\" [\"<reason>\"]");
+			commandMessages.add("mute \"<player>\" <minutes> [\"<reason>\"]");
+			commandMessages.add("mute \"<player>\" <hour> <minutes> [\"<reason>\"]");
+			commandMessages.add("mute \"<player>\" <days> <hour> <minutes> [\"<reason>\"]");
+			commandMessages.add("heightenedsensitivity enable [\"<reason>\"] [\"<room>\"]");
+			commandMessages.add("heightenedsensitivity disable [\"<room>\"]");
 			commandMessages.add("pardon \"<player>\" [\"<reason>\"]");
 			commandMessages.add("xpinfo [\"<player>\"]");
 			commandMessages.add("takexp <amount> [\"<player>\"]");
@@ -3690,6 +3822,115 @@ public class SendMessage extends AbstractChatPacket {
 						// Send response
 						systemMessage(response, cmd, client);
 						return true;
+					}
+					case "heightenedsensitivity": {
+						// Mute
+						if (args.size() < 1) {
+							systemMessage("Missing argument: enable/disable", cmd, client);
+							return true;
+						}
+
+						switch (args.get(0).toLowerCase()) {
+
+						case "enable": {
+							String roomToAdjust = room;
+							String reason = null;
+							if (args.size() >= 2)
+								reason = args.get(1);
+							if (args.size() >= 3)
+								roomToAdjust = args.get(2);
+							ChatRoom roomInstance = client.getServer().getRoom(roomToAdjust);
+
+							// Check room
+							if (roomInstance == null) {
+								systemMessage("Invalid argument: " + roomToAdjust
+										+ ": room not recognized, make sure the room actually has players in it", cmd,
+										client);
+								return true;
+							}
+
+							// Check
+							HeightenedSensitivityFlags flags = roomInstance.getObject(HeightenedSensitivityFlags.class);
+							if (flags == null) {
+								flags = new HeightenedSensitivityFlags();
+								flags.room = roomInstance.getRoomID();
+								roomInstance.addObject(flags);
+							}
+							if (flags.active) {
+								systemMessage("Heightened sensitivity is already enabled for that room", cmd, client);
+								return true;
+							}
+
+							// Activate
+							flags.activationReason = reason;
+							flags.disableAfter = -1;
+							flags.wasAutoactivate = false;
+							flags.activateHeightenedSensitivity(client.getServer());
+
+							// Check if private
+							if (!client.isRoomPrivate(room)) {
+								EventBus.getInstance().dispatchEvent(
+										new MiscModerationEvent("chatfilter.heightenedstrictness.activate",
+												"Heightened sensitivity mode activated",
+												Map.of("Room", formatRoomName(client, room), "Action",
+														"activated heightened sensitivity mode"),
+												"SYSTEM", client.getPlayer()));
+							}
+							systemMessage("Heightened sensitivity enabled for room " + roomInstance.getRoomID(), cmd,
+									client);
+							return true;
+						}
+
+						case "disable": {
+							String roomToAdjust = room;
+							if (args.size() >= 2)
+								roomToAdjust = args.get(1);
+							ChatRoom roomInstance = client.getServer().getRoom(roomToAdjust);
+
+							// Check room
+							if (roomInstance == null) {
+								systemMessage("Invalid argument: " + roomToAdjust
+										+ ": room not recognized, make sure the room actually has players in it", cmd,
+										client);
+								return true;
+							}
+
+							// Check
+							HeightenedSensitivityFlags flags = roomInstance.getObject(HeightenedSensitivityFlags.class);
+							if (flags == null) {
+								flags = new HeightenedSensitivityFlags();
+								flags.room = roomInstance.getRoomID();
+								roomInstance.addObject(flags);
+							}
+							if (!flags.active) {
+								systemMessage("Heightened sensitivity is already disabled for that room", cmd, client);
+								return true;
+							}
+
+							// Deactivate
+							flags.deactivateHeightenedSensitivity(client.getServer(), false);
+
+							// Check if private
+							if (!client.isRoomPrivate(room)) {
+								EventBus.getInstance()
+										.dispatchEvent(
+												new MiscModerationEvent("chatfilter.heightenedstrictness.deactivate",
+														"Heightened sensitivity mode deactivated",
+														Map.of("Room", formatRoomName(client, room), "Action",
+																"deactivated heightened sensitivity mode"),
+														"SYSTEM", null));
+							}
+							systemMessage("Heightened sensitivity disabled for room " + roomInstance.getRoomID(), cmd,
+									client);
+							return true;
+						}
+
+						default: {
+							systemMessage("Invalid argument: " + args.get(0) + ": expected enable or disable", cmd,
+									client);
+							return true;
+						}
+						}
 					}
 					case "mute": {
 						// Mute
