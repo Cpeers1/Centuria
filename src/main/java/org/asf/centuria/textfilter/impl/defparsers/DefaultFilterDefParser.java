@@ -570,7 +570,8 @@ public class DefaultFilterDefParser implements IFilterDefParser {
 						&& !filtersToPopulateContextIncludeAllGlobal.contains(f)
 						&& !filtersToPopulateContextIncludeAllLocal.contains(f)
 						&& !filtersToPopulateContextExcludeAllGlobal.contains(f)
-						&& !filtersToPopulateContextExcludeAllLocal.contains(f)) {
+						&& !filtersToPopulateContextExcludeAllLocal.contains(f)
+						&& f.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
 					exprs.add(new ContextWrappedPhrase(
 							new ContextPhrase(f.getModes(), f.getPhrase(), f.getVariants(), false)));
 				}
@@ -587,7 +588,8 @@ public class DefaultFilterDefParser implements IFilterDefParser {
 						&& !filtersToPopulateContextIncludeAllGlobal.contains(f)
 						&& !filtersToPopulateContextIncludeAllLocal.contains(f)
 						&& !filtersToPopulateContextExcludeAllGlobal.contains(f)
-						&& !filtersToPopulateContextExcludeAllLocal.contains(f)) {
+						&& !filtersToPopulateContextExcludeAllLocal.contains(f)
+						&& f.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
 					exprs.add(new ContextWrappedPhrase(
 							new ContextPhrase(f.getModes(), f.getPhrase(), f.getVariants(), false)));
 				}
@@ -604,7 +606,8 @@ public class DefaultFilterDefParser implements IFilterDefParser {
 						&& !filtersToPopulateContextIncludeAllGlobal.contains(f)
 						&& !filtersToPopulateContextIncludeAllLocal.contains(f)
 						&& !filtersToPopulateContextExcludeAllGlobal.contains(f)
-						&& !filtersToPopulateContextExcludeAllLocal.contains(f)) {
+						&& !filtersToPopulateContextExcludeAllLocal.contains(f)
+						&& f.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
 					exprs.add(new ContextWrappedPhrase(
 							new ContextPhrase(f.getModes(), f.getPhrase(), f.getVariants(), false)));
 				}
@@ -621,7 +624,8 @@ public class DefaultFilterDefParser implements IFilterDefParser {
 						&& !filtersToPopulateContextIncludeAllGlobal.contains(f)
 						&& !filtersToPopulateContextIncludeAllLocal.contains(f)
 						&& !filtersToPopulateContextExcludeAllGlobal.contains(f)
-						&& !filtersToPopulateContextExcludeAllLocal.contains(f)) {
+						&& !filtersToPopulateContextExcludeAllLocal.contains(f)
+						&& f.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
 					exprs.add(new ContextWrappedPhrase(
 							new ContextPhrase(f.getModes(), f.getPhrase(), f.getVariants(), false)));
 				}

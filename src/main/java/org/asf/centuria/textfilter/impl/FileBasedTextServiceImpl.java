@@ -8,7 +8,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.asf.centuria.textfilter.result.FilterResult;
+import org.asf.centuria.textfilter.FilterSeverity;
+import org.asf.centuria.textfilter.IResultStringBuilder;
 import org.asf.centuria.textfilter.PhraseFilterSet;
+import org.asf.centuria.textfilter.context.TextFilterContextMemory;
 
 public class FileBasedTextServiceImpl extends BaseTextFilterServiceImpl {
 
@@ -39,7 +42,7 @@ public class FileBasedTextServiceImpl extends BaseTextFilterServiceImpl {
 				}
 
 				// Check
-				if (fileDates.get(path) != currentFileDates.get(path)) {
+				if (fileDates.get(path).longValue() != currentFileDates.get(path).longValue()) {
 					// Updated
 					updated = true;
 					break;
@@ -56,8 +59,10 @@ public class FileBasedTextServiceImpl extends BaseTextFilterServiceImpl {
 			}
 		}
 
-		if (updated)
+		if (updated) {
+			LogManager.getLogger().info("Updating chat filters...");
 			loadFilters();
+		}
 	}
 
 	@Override
@@ -151,6 +156,7 @@ public class FileBasedTextServiceImpl extends BaseTextFilterServiceImpl {
 
 				// Load set from file
 				fSrc = new FileInputStream(f);
+				LogManager.getLogger().debug("Loading filter: " + f.getPath());
 				PhraseFilterSet set = loadFilter(fSrc, f.getPath());
 				fSrc.close();
 				fSrc = null;
@@ -171,21 +177,24 @@ public class FileBasedTextServiceImpl extends BaseTextFilterServiceImpl {
 	}
 
 	@Override
-	public boolean isFiltered(String text, boolean strictMode, String... tags) {
+	public boolean isFiltered(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			boolean strictMode, String... tags) {
 		checkFilterUpdate();
-		return super.isFiltered(text, strictMode, tags);
+		return super.isFiltered(memory, minimalSeverity, text, strictMode, tags);
 	}
 
 	@Override
-	public boolean shouldFilterMute(String text, String... tags) {
+	public boolean shouldFilterMute(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			String... tags) {
 		checkFilterUpdate();
-		return super.shouldFilterMute(text, tags);
+		return super.shouldFilterMute(memory, minimalSeverity, text, tags);
 	}
 
 	@Override
-	public FilterResult filter(String text, boolean strictMode, String... tags) {
+	public FilterResult filter(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			boolean strictMode, IResultStringBuilder stringBuilder, String... tags) {
 		checkFilterUpdate();
-		return super.filter(text, strictMode, tags);
+		return super.filter(memory, minimalSeverity, text, strictMode, stringBuilder, tags);
 	}
 
 }

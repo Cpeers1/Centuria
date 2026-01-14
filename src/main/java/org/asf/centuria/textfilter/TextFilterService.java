@@ -45,7 +45,9 @@ public abstract class TextFilterService {
 	 * @param tags       Tags to use for selecting filter sets
 	 * @return True if filtered, false otherwise
 	 */
-	public abstract boolean isFiltered(TextFilterContextMemory memory, String text, boolean strictMode, String... tags);
+	public boolean isFiltered(TextFilterContextMemory memory, String text, boolean strictMode, String... tags) {
+		return isFiltered(memory, FilterSeverity.ALWAYS_FILTERED, text, strictMode, tags);
+	}
 
 	/**
 	 * Checks if a string results in a mute
@@ -55,7 +57,33 @@ public abstract class TextFilterService {
 	 * @param tags   Tags to use for selecting filter sets
 	 * @return True if severely filtered, false otherwise
 	 */
-	public abstract boolean shouldFilterMute(TextFilterContextMemory memory, String text, String... tags);
+	public boolean shouldFilterMute(TextFilterContextMemory memory, String text, String... tags) {
+		return shouldFilterMute(memory, FilterSeverity.ALWAYS_FILTERED, text, tags);
+	}
+
+	/**
+	 * Checks if a string is filtered
+	 * 
+	 * @param memory          Text filter memory object to use
+	 * @param minimalSeverity Minimal filter severity
+	 * @param text            String to check
+	 * @param strictMode      True for strict-mode filtering, false otherwise
+	 * @param tags            Tags to use for selecting filter sets
+	 * @return True if filtered, false otherwise
+	 */
+	public abstract boolean isFiltered(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			boolean strictMode, String... tags);
+
+	/**
+	 * Checks if a string results in a mute
+	 * 
+	 * @param memory Text filter memory object to use
+	 * @param text   String to check
+	 * @param tags   Tags to use for selecting filter sets
+	 * @return True if severely filtered, false otherwise
+	 */
+	public abstract boolean shouldFilterMute(TextFilterContextMemory memory, FilterSeverity minimalSeverity,
+			String text, String... tags);
 
 	/**
 	 * Filters strings
@@ -67,20 +95,7 @@ public abstract class TextFilterService {
 	 * @return Result string
 	 */
 	public String filterString(TextFilterContextMemory memory, String text, boolean strictMode, String... tags) {
-		return filter(memory, text, strictMode, tags).getFilterResult();
-	}
-
-	/**
-	 * Filters strings
-	 * 
-	 * @param memory     Text filter memory object to use
-	 * @param text       String to filter
-	 * @param strictMode True for strict-mode filtering, false otherwise
-	 * @param tags       Tags to use for selecting filter sets
-	 * @return FilterResult value
-	 */
-	public FilterResult filter(TextFilterContextMemory memory, String text, boolean strictMode, String... tags) {
-		return filter(memory, text, strictMode, defaultStringBuilder(), tags);
+		return filter(memory, FilterSeverity.ALWAYS_FILTERED, text, strictMode, tags).getFilterResult();
 	}
 
 	/**
@@ -95,7 +110,66 @@ public abstract class TextFilterService {
 	 */
 	public String filterString(TextFilterContextMemory memory, String text, boolean strictMode,
 			IResultStringBuilder stringBuilder, String... tags) {
-		return filter(memory, text, strictMode, stringBuilder, tags).getFilterResult();
+		return filter(memory, FilterSeverity.ALWAYS_FILTERED, text, strictMode, stringBuilder, tags).getFilterResult();
+	}
+
+	/**
+	 * Filters strings
+	 * 
+	 * @param memory          Text filter memory object to use
+	 * @param minimalSeverity Minimal filter severity
+	 * @param text            String to filter
+	 * @param strictMode      True for strict-mode filtering, false otherwise
+	 * @param tags            Tags to use for selecting filter sets
+	 * @return Result string
+	 */
+	public String filterString(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			boolean strictMode, String... tags) {
+		return filter(memory, minimalSeverity, text, strictMode, tags).getFilterResult();
+	}
+
+	/**
+	 * Filters strings
+	 * 
+	 * @param memory          Text filter memory object to use
+	 * @param minimalSeverity Minimal filter severity
+	 * @param text            String to filter
+	 * @param strictMode      True for strict-mode filtering, false otherwise
+	 * @param stringBuilder   Filter string builder to user
+	 * @param tags            Tags to use for selecting filter sets
+	 * @return Result string
+	 */
+	public String filterString(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			boolean strictMode, IResultStringBuilder stringBuilder, String... tags) {
+		return filter(memory, minimalSeverity, text, strictMode, stringBuilder, tags).getFilterResult();
+	}
+
+	/**
+	 * Filters strings
+	 * 
+	 * @param memory     Text filter memory object to use
+	 * @param text       String to filter
+	 * @param strictMode True for strict-mode filtering, false otherwise
+	 * @param tags       Tags to use for selecting filter sets
+	 * @return FilterResult value
+	 */
+	public FilterResult filter(TextFilterContextMemory memory, String text, boolean strictMode, String... tags) {
+		return filter(memory, FilterSeverity.ALWAYS_FILTERED, text, strictMode, defaultStringBuilder(), tags);
+	}
+
+	/**
+	 * Filters strings
+	 * 
+	 * @param memory          Text filter memory object to use
+	 * @param minimalSeverity Minimal filter severity
+	 * @param text            String to filter
+	 * @param strictMode      True for strict-mode filtering, false otherwise
+	 * @param tags            Tags to use for selecting filter sets
+	 * @return FilterResult value
+	 */
+	public FilterResult filter(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			boolean strictMode, String... tags) {
+		return filter(memory, minimalSeverity, text, strictMode, defaultStringBuilder(), tags);
 	}
 
 	/**
@@ -108,8 +182,24 @@ public abstract class TextFilterService {
 	 * @param tags          Tags to use for selecting filter sets
 	 * @return FilterResult value
 	 */
-	public abstract FilterResult filter(TextFilterContextMemory memory, String text, boolean strictMode,
-			IResultStringBuilder stringBuilder, String... tags);
+	public FilterResult filter(TextFilterContextMemory memory, String text, boolean strictMode,
+			IResultStringBuilder stringBuilder, String... tags) {
+		return filter(memory, FilterSeverity.ALWAYS_FILTERED, text, strictMode, stringBuilder, tags);
+	}
+
+	/**
+	 * Filters strings
+	 * 
+	 * @param memory          Text filter memory object to use
+	 * @param minimalSeverity Minimal filter severity
+	 * @param text            String to filter
+	 * @param strictMode      True for strict-mode filtering, false otherwise
+	 * @param stringBuilder   Filter string builder to user
+	 * @param tags            Tags to use for selecting filter sets
+	 * @return FilterResult value
+	 */
+	public abstract FilterResult filter(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			boolean strictMode, IResultStringBuilder stringBuilder, String... tags);
 
 	/**
 	 * Checks if a string is filtered
@@ -120,7 +210,20 @@ public abstract class TextFilterService {
 	 * @return True if filtered, false otherwise
 	 */
 	public boolean isFiltered(String text, boolean strictMode, String... tags) {
-		return isFiltered(null, text, strictMode, tags);
+		return isFiltered(null, FilterSeverity.ALWAYS_FILTERED, text, strictMode, tags);
+	}
+
+	/**
+	 * Checks if a string is filtered
+	 * 
+	 * @param minimalSeverity Minimal filter severity
+	 * @param text            String to check
+	 * @param strictMode      True for strict-mode filtering, false otherwise
+	 * @param tags            Tags to use for selecting filter sets
+	 * @return True if filtered, false otherwise
+	 */
+	public boolean isFiltered(FilterSeverity minimalSeverity, String text, boolean strictMode, String... tags) {
+		return isFiltered(null, minimalSeverity, text, strictMode, tags);
 	}
 
 	/**
@@ -131,7 +234,19 @@ public abstract class TextFilterService {
 	 * @return True if severely filtered, false otherwise
 	 */
 	public boolean shouldFilterMute(String text, String... tags) {
-		return shouldFilterMute(null, text, tags);
+		return shouldFilterMute(null, FilterSeverity.ALWAYS_FILTERED, text, tags);
+	}
+
+	/**
+	 * Checks if a string results in a mute
+	 * 
+	 * @param minimalSeverity Minimal filter severity
+	 * @param text            String to check
+	 * @param tags            Tags to use for selecting filter sets
+	 * @return True if severely filtered, false otherwise
+	 */
+	public boolean shouldFilterMute(FilterSeverity minimalSeverity, String text, String... tags) {
+		return shouldFilterMute(null, minimalSeverity, text, tags);
 	}
 
 	/**
@@ -149,13 +264,14 @@ public abstract class TextFilterService {
 	/**
 	 * Filters strings
 	 * 
-	 * @param text       String to filter
-	 * @param strictMode True for strict-mode filtering, false otherwise
-	 * @param tags       Tags to use for selecting filter sets
-	 * @return FilterResult value
+	 * @param minimalSeverity Minimal filter severity
+	 * @param text            String to filter
+	 * @param strictMode      True for strict-mode filtering, false otherwise
+	 * @param tags            Tags to use for selecting filter sets
+	 * @return Result string
 	 */
-	public FilterResult filter(String text, boolean strictMode, String... tags) {
-		return filter(text, strictMode, defaultStringBuilder(), tags);
+	public String filterString(FilterSeverity minimalSeverity, String text, boolean strictMode, String... tags) {
+		return filter(minimalSeverity, text, strictMode, tags).getFilterResult();
 	}
 
 	/**
@@ -168,7 +284,46 @@ public abstract class TextFilterService {
 	 * @return Result string
 	 */
 	public String filterString(String text, boolean strictMode, IResultStringBuilder stringBuilder, String... tags) {
-		return filter(text, strictMode, stringBuilder, tags).getFilterResult();
+		return filter(FilterSeverity.ALWAYS_FILTERED, text, strictMode, stringBuilder, tags).getFilterResult();
+	}
+
+	/**
+	 * Filters strings
+	 * 
+	 * @param text          String to filter
+	 * @param strictMode    True for strict-mode filtering, false otherwise
+	 * @param stringBuilder Filter string builder to user
+	 * @param tags          Tags to use for selecting filter sets
+	 * @return Result string
+	 */
+	public String filterString(FilterSeverity minimalSeverity, String text, boolean strictMode,
+			IResultStringBuilder stringBuilder, String... tags) {
+		return filter(minimalSeverity, text, strictMode, stringBuilder, tags).getFilterResult();
+	}
+
+	/**
+	 * Filters strings
+	 * 
+	 * @param text       String to filter
+	 * @param strictMode True for strict-mode filtering, false otherwise
+	 * @param tags       Tags to use for selecting filter sets
+	 * @return FilterResult value
+	 */
+	public FilterResult filter(String text, boolean strictMode, String... tags) {
+		return filter(FilterSeverity.ALWAYS_FILTERED, text, strictMode, defaultStringBuilder(), tags);
+	}
+
+	/**
+	 * Filters strings
+	 * 
+	 * @param minimalSeverity Minimal filter severity
+	 * @param text            String to filter
+	 * @param strictMode      True for strict-mode filtering, false otherwise
+	 * @param tags            Tags to use for selecting filter sets
+	 * @return FilterResult value
+	 */
+	public FilterResult filter(FilterSeverity minimalSeverity, String text, boolean strictMode, String... tags) {
+		return filter(minimalSeverity, text, strictMode, defaultStringBuilder(), tags);
 	}
 
 	/**
@@ -181,7 +336,22 @@ public abstract class TextFilterService {
 	 * @return FilterResult value
 	 */
 	public FilterResult filter(String text, boolean strictMode, IResultStringBuilder stringBuilder, String... tags) {
-		return filter(null, text, strictMode, stringBuilder, tags);
+		return filter(null, FilterSeverity.ALWAYS_FILTERED, text, strictMode, stringBuilder, tags);
+	}
+
+	/**
+	 * Filters strings
+	 * 
+	 * @param minimalSeverity Minimal filter severity
+	 * @param text            String to filter
+	 * @param strictMode      True for strict-mode filtering, false otherwise
+	 * @param stringBuilder   Filter string builder to user
+	 * @param tags            Tags to use for selecting filter sets
+	 * @return FilterResult value
+	 */
+	public FilterResult filter(FilterSeverity minimalSeverity, String text, boolean strictMode,
+			IResultStringBuilder stringBuilder, String... tags) {
+		return filter(null, minimalSeverity, text, strictMode, stringBuilder, tags);
 	}
 
 	/**

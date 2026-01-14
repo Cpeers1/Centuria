@@ -3,10 +3,8 @@ package org.asf.centuria.networking.http.api;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -15,7 +13,9 @@ import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.registration.RegistrationVerificationHelper;
 import org.asf.centuria.accounts.registration.RegistrationVerificationResult;
 import org.asf.centuria.accounts.registration.RegistrationVerificationStatus;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
+import org.asf.centuria.textfilter.FilterSeverity;
+import org.asf.centuria.textfilter.TextFilterService;
+import org.asf.centuria.textfilter.result.FilterResult;
 import org.asf.connective.RemoteClient;
 import org.asf.connective.processors.HttpPushProcessor;
 
@@ -23,75 +23,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class GameRegistrationHandler extends HttpPushProcessor {
-
-	private static String[] nameBlacklist = new String[] { "kit", "kitsendragn", "kitsendragon", "fera", "fero",
-			"wwadmin", "ayli", "komodorihero", "wwsam", "blinky", "fer.ocity" };
-
-	private static ArrayList<String> muteWords = new ArrayList<String>();
-	private static ArrayList<String> filterWords = new ArrayList<String>();
-
-	static {
-		// Load filter
-		try {
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("textfilter/filter.txt");
-			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
-			for (String line : lines.split("\n")) {
-				if (line.isEmpty() || line.startsWith("#"))
-					continue;
-
-				String data = line.trim();
-				while (data.contains("  "))
-					data = data.replace("  ", " ");
-
-				for (String word : data.split(" "))
-					if (!word.isEmpty())
-						filterWords.add(word.toLowerCase());
-			}
-			strm.close();
-		} catch (IOException e) {
-		}
-		try {
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("textfilter/alwaysfilter.txt");
-			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
-			for (String line : lines.split("\n")) {
-				if (line.isEmpty() || line.startsWith("#"))
-					continue;
-
-				String data = line.trim();
-				while (data.contains("  "))
-					data = data.replace("  ", " ");
-
-				for (String word : data.split(" "))
-					if (!word.isEmpty())
-						filterWords.add(word.toLowerCase());
-			}
-			strm.close();
-		} catch (IOException e) {
-		}
-
-		// Load ban words
-		try {
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("textfilter/instamute.txt");
-			String lines = new String(strm.readAllBytes(), "UTF-8").replace("\r", "");
-			for (String line : lines.split("\n")) {
-				if (line.isEmpty() || line.startsWith("#"))
-					continue;
-
-				String data = line.trim();
-				while (data.contains("  "))
-					data = data.replace("  ", " ");
-
-				for (String word : data.split(" "))
-					if (!word.isEmpty())
-						muteWords.add(word.toLowerCase());
-			}
-			strm.close();
-		} catch (IOException e) {
-		}
-	}
 
 	@Override
 	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
@@ -125,64 +56,26 @@ public class GameRegistrationHandler extends HttpPushProcessor {
 				return;
 			}
 
-			// Verify login name blacklist
-			for (String name : nameBlacklist) {
-				if (accountName.equalsIgnoreCase(name)) {
-					// Reply with error
-					response.addProperty("error", "invalid_username");
-					setResponseContent("text/json", response.toString());
-					this.setResponseStatus(400, "Bad request");
-					return;
-				}
+			// Prevent banned and filtered words as well as blacklisted names
+			// Check username
+			FilterResult res = TextFilterService.getInstance().filter(accountName, true, "USERNAMEFILTER");
+			if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
+				// Reply with error
+				response.addProperty("error", "invalid_username");
+				setResponseContent("text/json", response.toString());
+				this.setResponseStatus(400, "Bad request");
+				return;
 			}
 
-			// Verify name blacklist
-			for (String name : nameBlacklist) {
-				if (displayName.equalsIgnoreCase(name)) {
-					// Reply with error
-					response.addProperty("error", "display_name_sift_rejected");
-					setResponseContent("text/json", response.toString());
-					this.setResponseStatus(400, "Bad request");
-					return;
-				}
-			}
-
-			// Verify login name with filters
-			for (String word : accountName.split(" ")) {
-				if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-					// Reply with error
-					response.addProperty("error", "invalid_username");
-					setResponseContent("text/json", response.toString());
-					this.setResponseStatus(400, "Bad request");
-					return;
-				}
-
-				if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-					// Reply with error
-					response.addProperty("error", "invalid_username");
-					setResponseContent("text/json", response.toString());
-					this.setResponseStatus(400, "Bad request");
-					return;
-				}
-			}
-
-			// Verify name with filters
-			for (String word : displayName.split(" ")) {
-				if (muteWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-					// Reply with error
-					response.addProperty("error", "display_name_sift_rejected");
-					setResponseContent("text/json", response.toString());
-					this.setResponseStatus(400, "Bad request");
-					return;
-				}
-
-				if (filterWords.contains(word.replaceAll("[^A-Za-z0-9]", "").toLowerCase())) {
-					// Reply with error
-					response.addProperty("error", "display_name_sift_rejected");
-					setResponseContent("text/json", response.toString());
-					this.setResponseStatus(400, "Bad request");
-					return;
-				}
+			// Prevent banned and filtered words as well as blacklisted names
+			// Check display name
+			res = TextFilterService.getInstance().filter(displayName, true, "USERNAMEFILTER");
+			if (res.isMatch() && res.getSeverity().ordinal() >= FilterSeverity.ALWAYS_FILTERED.ordinal()) {
+				// Reply with error
+				response.addProperty("error", "display_name_sift_rejected");
+				setResponseContent("text/json", response.toString());
+				this.setResponseStatus(400, "Bad request");
+				return;
 			}
 
 			// Verify login name validity

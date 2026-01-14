@@ -2,6 +2,7 @@ package org.asf.centuria.networking.chatserver;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.stream.Stream;
 
 import org.asf.centuria.Centuria;
@@ -21,6 +22,7 @@ import org.asf.centuria.networking.chatserver.networking.UserConversations;
 import org.asf.centuria.networking.chatserver.networking.moderator.GetChatRoomList;
 import org.asf.centuria.networking.chatserver.networking.moderator.GetPlayerList;
 import org.asf.centuria.networking.chatserver.networking.moderator.InitModeratorClient;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -29,8 +31,36 @@ import org.asf.centuria.networking.persistentservice.BasePersistentServiceServer
 
 public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServer> {
 
+	private HashMap<String, ChatRoom> rooms = new HashMap<String, ChatRoom>();
+
 	public ChatServer(ServerSocket socket) {
 		super(socket, ChatClient.class);
+	}
+
+	ChatRoom joinRoom(String type, String id) {
+		synchronized (rooms) {
+			if (!rooms.containsKey(id)) {
+				ChatRoom room = new ChatRoom(type, id, this);
+				rooms.put(id, room);
+				return room;
+			} else {
+				return rooms.get(id);
+			}
+		}
+	}
+
+	void leaveRoom(String id) {
+		synchronized (rooms) {
+			if (rooms.containsKey(id)) {
+				ChatRoom room = rooms.get(id);
+
+				// Check players in room
+				if (room.getConnectedClients().length == 0) {
+					// Remove
+					rooms.remove(id);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -167,6 +197,40 @@ public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServ
 	@Override
 	protected void logDisconnect(ChatClient client) {
 		Centuria.logger.info("Player " + client.getPlayer().getDisplayName() + " disconnected from the chat server.");
+	}
+
+	/**
+	 * Retrieves an array of all chat rooms
+	 * 
+	 * @return Array of chat room IDs
+	 */
+	public String[] getRooms() {
+		synchronized (rooms) {
+			return rooms.keySet().toArray(t -> new String[t]);
+		}
+	}
+
+	/**
+	 * Retrieves an array of all chat rooms
+	 * 
+	 * @return Array of chat room instances
+	 */
+	public ChatRoom[] getRoomInstances() {
+		synchronized (rooms) {
+			return rooms.values().toArray(t -> new ChatRoom[t]);
+		}
+	}
+
+	/**
+	 * Retrieves chat rooms by ID
+	 * 
+	 * @param id Room ID
+	 * @return ChatRoom instance or null
+	 */
+	public ChatRoom getRoom(String id) {
+		synchronized (rooms) {
+			return rooms.get(id);
+		}
 	}
 
 }

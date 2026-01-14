@@ -7,7 +7,9 @@ import java.util.UUID;
 
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
+import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.textfilter.TextFilterService;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -67,13 +69,23 @@ public class HistoryPacket extends AbstractChatPacket {
 
 					// Build message object
 					JsonObject obj = new JsonObject();
-					obj.addProperty("body", msg.content);
+
+					// Load user settings
+					int filterSettingSelf = 0;
+					UserVarValue valS = client.getPlayer().getSaveSpecificInventory().getUserVarAccesor()
+							.getPlayerVarValue(9362, 0);
+					if (valS != null)
+						filterSettingSelf = valS.value;
+
+					// Add body, re-filter message if needed
+					obj.addProperty("body",
+							TextFilterService.getInstance().filterString(msg.content, filterSettingSelf != 0));
 					obj.addProperty("conversation_id", convo);
 					obj.addProperty("conversation_type", "private");
 					obj.add("mask", null);
 					try {
-						obj.addProperty("message_id",
-								UUID.nameUUIDFromBytes((msg.sentAt + convo + msg.content).getBytes("UTF-8")).toString());
+						obj.addProperty("message_id", UUID
+								.nameUUIDFromBytes((msg.sentAt + convo + msg.content).getBytes("UTF-8")).toString());
 					} catch (UnsupportedEncodingException e) {
 						e.printStackTrace();
 					}

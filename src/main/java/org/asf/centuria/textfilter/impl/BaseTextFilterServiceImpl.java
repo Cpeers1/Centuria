@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.textfilter.TextFilterLoadEvent;
+import org.asf.centuria.textfilter.FilterSeverity;
 import org.asf.centuria.textfilter.IFilterDefParser;
 import org.asf.centuria.textfilter.IFilterRunner;
 import org.asf.centuria.textfilter.IResultStringBuilder;
@@ -28,6 +31,7 @@ public abstract class BaseTextFilterServiceImpl extends TextFilterService {
 	@Override
 	public void initService() {
 		// Load
+		LogManager.getLogger().info("Initializing service...");
 		loadFilters();
 	}
 
@@ -91,19 +95,21 @@ public abstract class BaseTextFilterServiceImpl extends TextFilterService {
 	}
 
 	@Override
-	public boolean isFiltered(TextFilterContextMemory memory, String text, boolean strictMode, String... tags) {
-		return runnerImplementation.isFiltered(memory, text, strictMode, filters, tags);
+	public boolean isFiltered(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			boolean strictMode, String... tags) {
+		return runnerImplementation.isFiltered(memory, minimalSeverity, text, strictMode, filters, tags);
 	}
 
 	@Override
-	public boolean shouldFilterMute(TextFilterContextMemory memory, String text, String... tags) {
-		return runnerImplementation.shouldFilterMute(memory, text, filters, tags);
+	public boolean shouldFilterMute(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			String... tags) {
+		return runnerImplementation.shouldFilterMute(memory, minimalSeverity, text, filters, tags);
 	}
 
 	@Override
-	public FilterResult filter(TextFilterContextMemory memory, String text, boolean strictMode,
-			IResultStringBuilder stringBuilder, String... tags) {
-		return runnerImplementation.filter(memory, text, strictMode, filters, tags, stringBuilder);
+	public FilterResult filter(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			boolean strictMode, IResultStringBuilder stringBuilder, String... tags) {
+		return runnerImplementation.filter(memory, minimalSeverity, text, strictMode, filters, tags, stringBuilder);
 	}
 
 }

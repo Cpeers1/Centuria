@@ -166,8 +166,8 @@ public class DefaultFilterRunner implements IFilterRunner {
 	}
 
 	@Override
-	public boolean isFiltered(TextFilterContextMemory memory, String text, boolean strictMode,
-			Map<String, PhraseFilterSet> filters, String[] tags) {
+	public boolean isFiltered(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			boolean strictMode, Map<String, PhraseFilterSet> filters, String[] tags) {
 		// Check phrase-based filters first, they are most intensive, single-word
 		// filters are done using a less intensive strategy
 		if (filters.values().stream().filter(set -> {
@@ -182,14 +182,14 @@ public class DefaultFilterRunner implements IFilterRunner {
 			if (strictMode || (filter.getSeverity() != FilterSeverity.USER_STRICT_MODE)) {
 				for (FilterMode mode : filter.getModes()) {
 					// Check default
-					if (filter.getPhrase().contains(" ") && match(mode, text, null, filter.getPhrase())
-							&& contextCompare(filter, text, memory))
+					if (filter.getSeverity().ordinal() >= minimalSeverity.ordinal() && filter.getPhrase().contains(" ")
+							&& match(mode, text, null, filter.getPhrase()) && contextCompare(filter, text, memory))
 						return true;
 
 					// Check variants
 					for (String variant : filter.getVariants())
-						if (variant.contains(" ") && match(mode, text, null, variant)
-								&& contextCompare(filter, text, memory))
+						if (filter.getSeverity().ordinal() >= minimalSeverity.ordinal() && variant.contains(" ")
+								&& match(mode, text, null, variant) && contextCompare(filter, text, memory))
 							return true;
 				}
 			}
@@ -217,12 +217,14 @@ public class DefaultFilterRunner implements IFilterRunner {
 				if (strictMode || (filter.getSeverity() != FilterSeverity.USER_STRICT_MODE)) {
 					for (FilterMode mode : filter.getModes()) {
 						// Check phrase
-						if ((match(mode, null, word, filter.getPhrase())
-								|| match(mode, null, wordStripped, filter.getPhrase()))
+						if (filter.getSeverity().ordinal() >= minimalSeverity.ordinal()
+								&& (match(mode, null, word, filter.getPhrase())
+										|| match(mode, null, wordStripped, filter.getPhrase()))
 								&& contextCompare(filter, text, memory))
 							return true;
 						for (String variant : filter.getVariants())
-							if ((match(mode, null, word, variant) || match(mode, null, wordStripped, variant))
+							if (filter.getSeverity().ordinal() >= minimalSeverity.ordinal()
+									&& (match(mode, null, word, variant) || match(mode, null, wordStripped, variant))
 									&& contextCompare(filter, text, memory))
 								return true;
 					}
@@ -240,8 +242,8 @@ public class DefaultFilterRunner implements IFilterRunner {
 	}
 
 	@Override
-	public boolean shouldFilterMute(TextFilterContextMemory memory, String text, Map<String, PhraseFilterSet> filters,
-			String[] tags) {
+	public boolean shouldFilterMute(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			Map<String, PhraseFilterSet> filters, String[] tags) {
 		// Check phrase-based filters first, they are most intensive, single-word
 		// filters are done using a less intensive strategy
 		if (filters.values().stream().filter(set -> {
@@ -256,14 +258,14 @@ public class DefaultFilterRunner implements IFilterRunner {
 			if (filter.getSeverity() == FilterSeverity.INSTAMUTE) {
 				for (FilterMode mode : filter.getModes()) {
 					// Check default
-					if (filter.getPhrase().contains(" ") && match(mode, text, null, filter.getPhrase())
-							&& contextCompare(filter, text, memory))
+					if (filter.getSeverity().ordinal() >= minimalSeverity.ordinal() && filter.getPhrase().contains(" ")
+							&& match(mode, text, null, filter.getPhrase()) && contextCompare(filter, text, memory))
 						return true;
 
 					// Check variants
 					for (String variant : filter.getVariants())
-						if (variant.contains(" ") && match(mode, text, null, variant)
-								&& contextCompare(filter, text, memory))
+						if (filter.getSeverity().ordinal() >= minimalSeverity.ordinal() && variant.contains(" ")
+								&& match(mode, text, null, variant) && contextCompare(filter, text, memory))
 							return true;
 				}
 			}
@@ -291,12 +293,14 @@ public class DefaultFilterRunner implements IFilterRunner {
 				if (filter.getSeverity() == FilterSeverity.INSTAMUTE) {
 					for (FilterMode mode : filter.getModes()) {
 						// Check phrase
-						if ((match(mode, null, word, filter.getPhrase())
-								|| match(mode, null, wordStripped, filter.getPhrase()))
+						if (filter.getSeverity().ordinal() >= minimalSeverity.ordinal()
+								&& (match(mode, null, word, filter.getPhrase())
+										|| match(mode, null, wordStripped, filter.getPhrase()))
 								&& contextCompare(filter, text, memory))
 							return true;
 						for (String variant : filter.getVariants())
-							if ((match(mode, null, word, variant) || match(mode, null, wordStripped, variant))
+							if (filter.getSeverity().ordinal() >= minimalSeverity.ordinal()
+									&& (match(mode, null, word, variant) || match(mode, null, wordStripped, variant))
 									&& contextCompare(filter, text, memory))
 								return true;
 					}
@@ -596,8 +600,9 @@ public class DefaultFilterRunner implements IFilterRunner {
 	}
 
 	@Override
-	public FilterResult filter(TextFilterContextMemory memory, String text, boolean strictMode,
-			Map<String, PhraseFilterSet> filters, String[] tags, IResultStringBuilder stringBuilder) {
+	public FilterResult filter(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			boolean strictMode, Map<String, PhraseFilterSet> filters, String[] tags,
+			IResultStringBuilder stringBuilder) {
 		ArrayList<TextPart> messageParts = new ArrayList<TextPart>();
 		ArrayList<String> matchedPhrases = new ArrayList<String>();
 		ArrayList<WordMatch> matchedWords = new ArrayList<WordMatch>();
@@ -665,7 +670,8 @@ public class DefaultFilterRunner implements IFilterRunner {
 					// Check mode
 					for (FilterMode mode : filter.getModes()) {
 						MatchOutput matchRes = matchCheck(mode, variant, word, text, i, words);
-						if (matchRes.match && contextCompare(filter, text, memory)) {
+						if (matchRes.match && filter.getSeverity().ordinal() >= minimalSeverity.ordinal()
+								&& contextCompare(filter, text, memory)) {
 							// Update index and collect match data
 							matchedFilter = filter;
 
@@ -677,8 +683,11 @@ public class DefaultFilterRunner implements IFilterRunner {
 									// Check mode
 									for (FilterMode mode2 : filter2.getModes()) {
 										MatchOutput matchRes2 = matchCheck(mode2, variant2, word, text, i, words);
-										if (matchRes2.match && filter2.getSeverity().ordinal() > matchedFilter
-												.getSeverity().ordinal() && contextCompare(filter2, text, memory)) {
+										if (matchRes2.match
+												&& filter2.getSeverity().ordinal() >= minimalSeverity.ordinal()
+												&& filter2.getSeverity().ordinal() > matchedFilter.getSeverity()
+														.ordinal()
+												&& contextCompare(filter2, text, memory)) {
 											// Higher match
 											match2 = true;
 											matchRes = matchRes2;

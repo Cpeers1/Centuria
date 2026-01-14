@@ -38,7 +38,26 @@ Severity ALWAYS_FILTERED
 
 
 Phrase fuck
-	Mode WHOLE_PHRASE
+	Mode WORD_CONTAINS
+    Variant fucking
+    Variant fuck1ng
+    Variant fuk
+    Variant fck
+    Variant feck
+    Variant f u c k
+    
+    Context-Include Local *
+Endphrase
+
+Phrase fuck
+	Mode WORD_CONTAINS
+    Variant f u c k
+    
+    Context-Include Local *
+Endphrase
+
+Phrase fuck
+	Mode WORD_CONTAINS
     Variant fucking
     Variant fuck1ng
     Variant fuk
@@ -58,25 +77,6 @@ Phrase fuck
     Context-Include Global *
     
     Reason Due to recent filter triggers, this phrase is being temporarily censored to prevent the use of it in NSFW context.
-Endphrase
-
-Phrase fuck
-	Mode WHOLE_PHRASE
-    Variant fucking
-    Variant fuck1ng
-    Variant fuk
-    Variant fck
-    Variant feck
-    Variant f u c k
-    
-    Context-Include Local *
-Endphrase
-
-Phrase fuck
-	Mode WHOLE_PHRASE
-    Variant f u c k
-    
-    Context-Include Local *
 Endphrase
 
 Phrase anal
@@ -90,6 +90,20 @@ Phrase anal
     Variant anus
 Endphrase
 
+Phrase anal
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant an4l
+    Variant 4nal
+    Variant 4n4l
+    Variant ana1
+    Variant anal
+    Variant anu5
+    Variant anus
+    
+    Context-Include Local *
+Endphrase
+
 Phrase mating
     Mode WHOLE_PHRASE
     Variant m4ting
@@ -97,8 +111,30 @@ Phrase mating
     Variant mat1ng
 Endphrase
 
+Phrase mating
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    Variant m4ting
+    Variant m4t1ng
+    Variant mat1ng
+    
+    Context-Include Local *
+Endphrase
+
 Phrase boner
     Mode WHOLE_PHRASE
+Endphrase
+
+Phrase boner
+    Mode WHOLE_PHRASE
+    Severity INSTAMUTE
+    
+    Context-Include Local *
+Endphrase
+
+Phrase bong
+    Mode WHOLE_PHRASE
+    Variant b0ng
 Endphrase
 
 Phrase bong
@@ -109,6 +145,9 @@ Endphrase
 Phrase blowjob
     Mode WHOLE_PHRASE
     Variant blow job
+    Severity INSTAMUTE
+    
+    Context-Include Local *
 Endphrase
 
 Phrase b10wj0b
@@ -397,6 +436,14 @@ Endphrase
 Phrase spunk
     Mode WHOLE_PHRASE
     Severity STAFF_HIGHLIGHT
+Endphrase
+
+Phrase spunk
+    Mode WHOLE_PHRASE
+    Severity ALWAYS_FILTERED
+    
+    Context-Include Local *
+    Context-Include Global *
 Endphrase
 
 Phrase 5punk

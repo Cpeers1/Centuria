@@ -85,7 +85,6 @@ public class ContextPhrase {
 	/**
 	 * Adds variants to the filter
 	 * 
-	 * @param modes   Variant modes
 	 * @param variant Variant to add
 	 */
 	public void addVariant(String variant) {

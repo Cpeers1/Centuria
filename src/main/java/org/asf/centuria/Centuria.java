@@ -88,11 +88,12 @@ import com.google.gson.JsonObject;
 public class Centuria {
 	// Update
 	public static String SERVER_UPDATE_VERSION = "b1.7.4";
-	public static String DOWNLOAD_BASE_URL = "https://emuferal.ddns.net";
+	public static String DOWNLOAD_BASE_URL = "https://emuferal.openferal.net";
 
 	// Configuration
 	public static Logger logger;
 	public static HashMap<String, String> serverProperties;
+	public static HashMap<String, String> textFilterProperties;
 	public static boolean defaultUseManagedSaves = false;
 	public static boolean allowRegistration = true;
 	public static boolean defaultGiveAllAvatars = true;
@@ -471,6 +472,57 @@ public class Centuria {
 				key = key.substring(0, key.indexOf("="));
 			}
 			serverProperties.put(key, value);
+		}
+
+		File textFilterHistoryConf = new File("textfilter.conf");
+		if (!textFilterHistoryConf.exists()) {
+			Files.writeString(textFilterHistoryConf.toPath(), "" //
+					+ "# The amount of messages to retain in memory during context matching\n" //
+					+ "chat-message-memory-max-length=10\n" //
+					+ "\n" //
+					+ "# The amount of messages surrounding filter triggers to retain\n" //
+					+ "chat-message-trigger-retain-surrounding=10\n" //
+					+ "\n" //
+					+ "# The amount of triggers to retain in memory during context matching\n" //
+					+ "chat-message-memory-max-triggers=5\n" //
+					+ "\n" //
+					+ "# The maximum position age of past filter triggers, eg. setting this to 15 will keep triggers that are up to 15 messages old, any more messages, and the trigger is dropped\n" //
+					+ "chat-message-trigger-age-position-limit=15\n" //
+					+ "\n" //
+					+ "# The maximum age of past filter triggers time-wise in milliseconds, by default set to 20 minutes\n" //
+					+ "chat-message-trigger-age-timems-limit=1200000\n" //
+					+ "\n" //
+					+ "\n" //
+					+ "# The amount of filter triggers needed for heightened sensitivity mode to engage, set to -1 to disable\n" //
+					+ "heightened-sensitivity-trigger-threshold=15\n" //
+					+ "\n" //
+					+ "# The maximum age of filter triggers in milliseconds for heightened sensitivity mode, set to -1 to disable\n" //
+					+ "heightened-sensitivity-trigger-max-age=900000\n"
+					+ "\n" //
+					+ "# The maximum amount of filter triggers during heightened sensitivity mode before chat is disabled, set to -1 to disable\n" //
+					+ "heightened-sensitivity-chatdisable-threshold-primary=5\n" //
+					+ "\n" //
+					+ "# The maximum age of filter triggers in milliseconds for heightened sensitivity mode, set to -1 to disable\n" //
+					+ "heightened-sensitivity-chatdisable-max-age-primary=300000\n" //
+					+ "\n" //
+					+ "# The maximum amount of filter triggers during heightened sensitivity mode before chat is disabled (secondary threshold), set to -1 to disable\n" //
+					+ "heightened-sensitivity-chatdisable-threshold-primary=15\n" //
+					+ "\n" //
+					+ "# The maximum age of filter triggers in milliseconds for heightened sensitivity mode (secondary threshold), set to -1 to disable\n" //
+					+ "heightened-sensitivity-chatdisable-max-age-primary=1800000\n" //
+			);
+		}
+		textFilterProperties = new HashMap<String, String>();
+		for (String line : Files.readAllLines(textFilterHistoryConf.toPath())) {
+			if (line.startsWith("#"))
+				continue;
+			String key = line;
+			String value = "";
+			if (key.contains("=")) {
+				value = key.substring(key.indexOf("=") + 1);
+				key = key.substring(0, key.indexOf("="));
+			}
+			textFilterProperties.put(key, value);
 		}
 
 		// Load or generate keys for JWT signatures

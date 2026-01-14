@@ -24,8 +24,8 @@ public interface IFilterRunner {
 	 * @param tags       Tags to use for selecting filter sets
 	 * @return True if filtered, false otherwise
 	 */
-	public boolean isFiltered(TextFilterContextMemory memory, String text, boolean strictMode,
-			Map<String, PhraseFilterSet> filters, String[] tags);
+	public boolean isFiltered(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			boolean strictMode, Map<String, PhraseFilterSet> filters, String[] tags);
 
 	/**
 	 * Checks if a string results in a mute
@@ -36,24 +36,8 @@ public interface IFilterRunner {
 	 * @param tags    Tags to use for selecting filter sets
 	 * @return True if severely filtered, false otherwise
 	 */
-	public boolean shouldFilterMute(TextFilterContextMemory memory, String text, Map<String, PhraseFilterSet> filters,
-			String[] tags);
-
-	/**
-	 * Filters strings
-	 * 
-	 * @param memory        Text filter memory object to use
-	 * @param text          String to filter
-	 * @param strictMode    True for strict-mode filtering, false otherwise
-	 * @param filters       Filter sets to use
-	 * @param tags          Tags to use for selecting filter sets
-	 * @param stringBuilder Filter string builder to user
-	 * @return Result string
-	 */
-	public default String filterString(TextFilterContextMemory memory, String text, boolean strictMode,
-			Map<String, PhraseFilterSet> filters, String[] tags, IResultStringBuilder stringBuilder) {
-		return filter(memory, text, strictMode, filters, tags, stringBuilder).getFilterResult();
-	}
+	public boolean shouldFilterMute(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			Map<String, PhraseFilterSet> filters, String[] tags);
 
 	/**
 	 * Filters strings
@@ -66,6 +50,7 @@ public interface IFilterRunner {
 	 * @param stringBuilder Filter string builder to user
 	 * @return FilterResult value
 	 */
-	public FilterResult filter(TextFilterContextMemory memory, String text, boolean strictMode,
-			Map<String, PhraseFilterSet> filters, String[] tags, IResultStringBuilder stringBuilder);
+	public FilterResult filter(TextFilterContextMemory memory, FilterSeverity minimalSeverity, String text,
+			boolean strictMode, Map<String, PhraseFilterSet> filters, String[] tags,
+			IResultStringBuilder stringBuilder);
 }
