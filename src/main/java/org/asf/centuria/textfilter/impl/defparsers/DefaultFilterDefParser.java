@@ -567,7 +567,10 @@ public class DefaultFilterDefParser implements IFilterDefParser {
 				exprs.add(expr);
 			for (PhraseFilter f : set.getFilteredPhrases()) {
 				if (f.getContextIncludeExpressions().length == 0 && f.getContextExcludeExpressions().length == 0
-						&& !filtersToPopulateContextIncludeAllLocal.contains(f)) {
+						&& !filtersToPopulateContextIncludeAllGlobal.contains(f)
+						&& !filtersToPopulateContextIncludeAllLocal.contains(f)
+						&& !filtersToPopulateContextExcludeAllGlobal.contains(f)
+						&& !filtersToPopulateContextExcludeAllLocal.contains(f)) {
 					exprs.add(new ContextWrappedPhrase(
 							new ContextPhrase(f.getModes(), f.getPhrase(), f.getVariants(), false)));
 				}
@@ -581,7 +584,10 @@ public class DefaultFilterDefParser implements IFilterDefParser {
 				exprs.add(expr);
 			for (PhraseFilter f : set.getFilteredPhrases()) {
 				if (f.getContextIncludeExpressions().length == 0 && f.getContextExcludeExpressions().length == 0
-						&& !filtersToPopulateContextIncludeAllGlobal.contains(f)) {
+						&& !filtersToPopulateContextIncludeAllGlobal.contains(f)
+						&& !filtersToPopulateContextIncludeAllLocal.contains(f)
+						&& !filtersToPopulateContextExcludeAllGlobal.contains(f)
+						&& !filtersToPopulateContextExcludeAllLocal.contains(f)) {
 					exprs.add(new ContextWrappedPhrase(
 							new ContextPhrase(f.getModes(), f.getPhrase(), f.getVariants(), false)));
 				}
@@ -595,6 +601,9 @@ public class DefaultFilterDefParser implements IFilterDefParser {
 				exprs.add(expr);
 			for (PhraseFilter f : set.getFilteredPhrases()) {
 				if (f.getContextExcludeExpressions().length == 0 && f.getContextExcludeExpressions().length == 0
+						&& !filtersToPopulateContextIncludeAllGlobal.contains(f)
+						&& !filtersToPopulateContextIncludeAllLocal.contains(f)
+						&& !filtersToPopulateContextExcludeAllGlobal.contains(f)
 						&& !filtersToPopulateContextExcludeAllLocal.contains(f)) {
 					exprs.add(new ContextWrappedPhrase(
 							new ContextPhrase(f.getModes(), f.getPhrase(), f.getVariants(), false)));
@@ -609,7 +618,10 @@ public class DefaultFilterDefParser implements IFilterDefParser {
 				exprs.add(expr);
 			for (PhraseFilter f : set.getFilteredPhrases()) {
 				if (f.getContextExcludeExpressions().length == 0 && f.getContextExcludeExpressions().length == 0
-						&& !filtersToPopulateContextExcludeAllGlobal.contains(f)) {
+						&& !filtersToPopulateContextIncludeAllGlobal.contains(f)
+						&& !filtersToPopulateContextIncludeAllLocal.contains(f)
+						&& !filtersToPopulateContextExcludeAllGlobal.contains(f)
+						&& !filtersToPopulateContextExcludeAllLocal.contains(f)) {
 					exprs.add(new ContextWrappedPhrase(
 							new ContextPhrase(f.getModes(), f.getPhrase(), f.getVariants(), false)));
 				}

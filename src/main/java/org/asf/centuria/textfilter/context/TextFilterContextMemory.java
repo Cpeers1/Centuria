@@ -44,7 +44,7 @@ public class TextFilterContextMemory {
 		this(triggerSeverity, maxLength, 5);
 	}
 
-	/**
+	/**5
 	 * Initializes the context memory object with default settings based on a max
 	 * amount of non-flagged messages and a set amount of trigger flags to remember,
 	 * using 20 minutes as maximum message age for trigger memory
@@ -86,7 +86,7 @@ public class TextFilterContextMemory {
 	 */
 	public TextFilterContextMemory(FilterSeverity triggerSeverity, int maxLength, int maxMemoryLengthTriggers,
 			long memoryTriggerAgeLimit, int rangeSurroundingTrigger) {
-		this(triggerSeverity, maxLength, maxMemoryLengthTriggers, memoryTriggerAgeLimit, 50, rangeSurroundingTrigger);
+		this(triggerSeverity, maxLength, maxMemoryLengthTriggers, memoryTriggerAgeLimit, 15, rangeSurroundingTrigger);
 	}
 
 	/**
