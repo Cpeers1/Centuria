@@ -1,13 +1,15 @@
 # Centuria 1.7.4
 Centuria 1.7.4 is a much overdue server and client patch thats the first step on the path of making the software more maintainable, this mostly implements overdue fixes and changes to the chat filters.
 
-We know this update doesnt really provide anything gameplay-wise, but its an important step to getting development back up, as with this patch done, the server's unfinished changes are out the door, and we can finally start working on creating updates again!
+We know this update doesnt really provide much gameplay-wise, but its an important step to getting development back up, as with this patch done, the server's unfinished changes are out the door, and we can finally start working on creating updates again!
 
 
 ## Server changes
 
 New features in the server:
 - Added a new API Event: AccountDisplayNameChangedEvent
+- Added new command: gcrename/gcr: a command to rename group chats
+- Added new command: gclistmembers/gclm: a command to list group chat members
 
 Fixes to the server:
 - Fixed server components such as chat in some cases sending over the wrong timestamp format causing the game to be unable to display correct times due to the game thinking the server sends over local time instead of UTC
@@ -31,6 +33,7 @@ Moderation-related changes:
 ## Changes to the client
 
 Fixes to both clients:
+- Implemented the ability to chat while in the customizer
 - Fixed the chat windows not saving coordinates on logout
 - Fixed custom decree entries not using ignoreYear properly, now entries can be made that are annual
 - Fixed the extremely poor performance issues with display name loading, which caused immense lag loading the social list and dm chats --- WIP
