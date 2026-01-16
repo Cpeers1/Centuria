@@ -4432,6 +4432,47 @@ public class SendMessage extends AbstractChatPacket {
 						systemMessage("Permanently trade-banned " + acc.getDisplayName() + ".", cmd, client);
 						return true;
 					}
+					case "tradepardon": {
+						// Remove trade ban
+						if (args.size() < 1) {
+							systemMessage("Missing argument: player", cmd, client);
+							return true;
+						}
+
+						// Find player
+						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Reason
+						String reason = null;
+						if (args.size() >= 2) {
+							reason = args.get(1);
+						}
+
+						// Check rank
+						if (acc.getSaveSharedInventory().containsItem("permissions")) {
+							if ((GameServer
+									.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString(), "developer")
+									&& !GameServer.hasPerm(permLevel, "developer"))
+									|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+											.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
+											&& !GameServer.hasPerm(permLevel, "admin")) {
+								systemMessage("Unable to pardon higher-ranking users.", cmd, client);
+								return true;
+							}
+						}
+
+						// Pardon player
+						Trade.tradeBanPardon(acc, client.getPlayer().getAccountID(), reason);
+						systemMessage("Penalties removed from " + acc.getDisplayName() + ".", cmd, client);
+						return true;
+					}
 					case "pardon": {
 						// Remove all penalties
 						if (args.size() < 1) {
