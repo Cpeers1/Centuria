@@ -12,17 +12,12 @@ New features in the server:
 - Added new command: gclistmembers/gclm: a command to list group chat members
 - Added new command: gctransfer/gct: a command to transfer ownership of group chats
 - Added support for permanent mutes
-- New mute syntax:
-`>mute "<player>" ["<reason>"]` - permanent
-`>mute "<player>" <minutes> ["<reason>"]` - for a few minutes
-`>mute "<player>" <hour> <minutes> ["<reason>"]` - for hours and minutes
-`>mute "<player>" <days> <hour> <minutes> ["<reason>"]` - for days, hours and minutes
 
 
 Fixes to the server:
 - Fixed server components such as chat in some cases sending over the wrong timestamp format causing the game to be unable to display correct times due to the game thinking the server sends over local time instead of UTC
 - Fixed typo in the dm inactivity warning messages
-- Fixed some parser issues with SaveSettings leading to improper loading of options where it caused the wrong field to be assigned, leading to some things being unconfigurable
+- Fixed some parser issues with SaveSettings leading to improper loading of options where it caused the wrong field to be assigned, leading to some settings being unconfigurable
 - Fixed enigmas not being obtainable through creative commands
 
 Moderation-related changes:
@@ -36,6 +31,12 @@ Moderation-related changes:
 - Implemented the ability to let the server disable the chat if too many filter triggers happen until staff logs on
 - Added a room identifier to server logs so staff can see which room (eg. map) a message is sent in, previously it just dumped all chats into one log with no way to see which world it was
 - Implemented better anti-spam logic, acting more like a chat rate limit that alerts staff, instead of banning
+- New mute syntax:
+`>mute "<player>" ["<reason>"]` - permanent
+`>mute "<player>" <minutes> ["<reason>"]` - for a few minutes
+`>mute "<player>" <hour> <minutes> ["<reason>"]` - for hours and minutes
+`>mute "<player>" <days> <hour> <minutes> ["<reason>"]` - for days, hours and minutes
+- Added a permanent mute command
 
 
 ## Changes to the client
