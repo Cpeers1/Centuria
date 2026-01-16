@@ -526,20 +526,19 @@ public class Trade {
 	 */
 	public void removeItemFromTrade(Player player, String itemId, int quantity) throws IOException {
 		// Check validity
+		boolean isLocal = player.account.getAccountID().equals(sourcePlayer.account.getAccountID());
 		if (quantity < 0)
 			return;
 
 		// Check side and validity based on items to receive
-		if (player.account.getAccountID().equals(sourcePlayer.account.getAccountID())
-				&& !itemsToGive.containsKey(itemId))
+		if (isLocal && !itemsToGive.containsKey(itemId))
 			return;
-		else if (player.account.getAccountID().equals(targetPlayer.account.getAccountID())
-				&& !itemsToReceive.containsKey(itemId))
+		else if (!isLocal && !itemsToReceive.containsKey(itemId))
 			return;
 
 		// Verify quantity
 		int currentQuant;
-		if (player.account.getAccountID().equals(sourcePlayer.account.getAccountID()))
+		if (isLocal)
 			currentQuant = itemsToGive.get(itemId).quantity;
 		else
 			currentQuant = itemsToReceive.get(itemId).quantity;
