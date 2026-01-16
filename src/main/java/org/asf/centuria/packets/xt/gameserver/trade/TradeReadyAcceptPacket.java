@@ -67,7 +67,7 @@ public class TradeReadyAcceptPacket implements IXtPacket<TradeReadyAcceptPacket>
 		Player player = ((Player) client.container);
 		if(player.tradeEngagedIn != null)
 		{
-			player.tradeEngagedIn.TradeReadyAccept(player);
+			player.tradeEngagedIn.tradeReadyAccept(player);
 		}
 		return true;
 	}

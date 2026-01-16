@@ -526,11 +526,23 @@ public class Trade {
 	 */
 	public void removeItemFromTrade(Player player, String itemId, int quantity) throws IOException {
 		// Check validity
-		if (quantity < 0 || !itemsToGive.containsKey(itemId))
+		if (quantity < 0)
+			return;
+
+		// Check side and validity based on items to receive
+		if (player.account.getAccountID().equals(sourcePlayer.account.getAccountID())
+				&& !itemsToGive.containsKey(itemId))
+			return;
+		else if (player.account.getAccountID().equals(targetPlayer.account.getAccountID())
+				&& !itemsToReceive.containsKey(itemId))
 			return;
 
 		// Verify quantity
-		int currentQuant = itemsToGive.get(itemId).quantity;
+		int currentQuant;
+		if (player.account.getAccountID().equals(sourcePlayer.account.getAccountID()))
+			currentQuant = itemsToGive.get(itemId).quantity;
+		else
+			currentQuant = itemsToReceive.get(itemId).quantity;
 
 		// Reset to max if needed
 		if (quantity > currentQuant)
@@ -561,7 +573,6 @@ public class Trade {
 					"[TradeAddRemoveItem] [Remove] Server to client of player " + targetPlayer.account.getDisplayName()
 							+ ": " + tradeAddRemovePacket.build());
 		} else {
-
 			var item = itemsToReceive.get(itemId);
 			item.quantity -= quantity;
 			if (item.quantity <= 0) {
@@ -605,7 +616,7 @@ public class Trade {
 	 * 
 	 * @throws IOException
 	 */
-	public void TradeReadyReject() throws IOException {
+	public void tradeReadyReject() throws IOException {
 		TradeReadyRejectPacket tradeReadyRejectPacket = new TradeReadyRejectPacket();
 
 		targetPlayer.client.sendPacket(tradeReadyRejectPacket);
@@ -627,7 +638,7 @@ public class Trade {
 	 * @param player The player who accepted the trade.
 	 * @throws IOException
 	 */
-	public void TradeReadyAccept(Player player) throws IOException {
+	public void tradeReadyAccept(Player player) throws IOException {
 		// Switch the accept value for the player who accepted..
 		if (player.account.getAccountID().equals(sourcePlayer.account.getAccountID())) {
 			this.readyStatusSource = true;
@@ -636,7 +647,7 @@ public class Trade {
 		}
 
 		if (this.readyStatusTarget && this.readyStatusSource) {
-			PerformTrade();
+			performTrade();
 		} else {
 			TradeReadyAcceptPacket tradeReadyAcceptPacket = new TradeReadyAcceptPacket();
 			tradeReadyAcceptPacket.outbound_Success = true;
@@ -659,7 +670,7 @@ public class Trade {
 	 * Performs the trade, giving items to both players and setting the trades they
 	 * are engaged in to null.
 	 */
-	public void PerformTrade() {
+	public void performTrade() {
 		// Give and remove items..
 		TradeReadyAcceptPacket tradeReadyAcceptPacket = new TradeReadyAcceptPacket();
 		tradeReadyAcceptPacket.outbound_Success = true;
