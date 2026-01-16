@@ -44,6 +44,7 @@ import org.asf.centuria.modules.events.chatcommands.ChatCommandEvent;
 import org.asf.centuria.modules.events.chatcommands.ModuleCommandSyntaxListEvent;
 import org.asf.centuria.modules.events.maintenance.MaintenanceEndEvent;
 import org.asf.centuria.modules.events.maintenance.MaintenanceStartEvent;
+import org.asf.centuria.modules.events.updates.ServerUpdateEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.ChatClient.OcProxyMetadata;
 import org.asf.centuria.networking.chatserver.ChatServer;
@@ -5110,12 +5111,16 @@ public class SendMessage extends AbstractChatPacket {
 						// Check perms
 						if (GameServer.hasPerm(permLevel, "admin")) {
 							// Shut down the server
+							Centuria.gameServer.shutdown = true;
+							Centuria.gameServer.maintenance = true;
+							Centuria.updating = true;
+							EventBus.getInstance().dispatchEvent(new ServerUpdateEvent(null, -1));
 							for (Player plr : Centuria.gameServer.getPlayers()) {
 								// Dispatch event
 								EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
 										args.size() >= 1 ? args.get(0) : null, DisconnectType.SERVER_SHUTDOWN));
 							}
-							Centuria.updateShutdown();
+							Centuria.updateShutdown(args.size() >= 1 ? args.get(0) : null);
 							return true;
 						} else {
 							break;
@@ -5125,12 +5130,14 @@ public class SendMessage extends AbstractChatPacket {
 						// Check perms
 						if (GameServer.hasPerm(permLevel, "admin")) {
 							// Shut down the server
+							Centuria.gameServer.shutdown = true;
+							Centuria.gameServer.maintenance = true;
 							for (Player plr : Centuria.gameServer.getPlayers()) {
 								// Dispatch event
 								EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
 										args.size() >= 1 ? args.get(0) : null, DisconnectType.SERVER_SHUTDOWN));
 							}
-							Centuria.disconnectPlayersForShutdown();
+							Centuria.disconnectPlayersForShutdown(args.size() >= 1 ? args.get(0) : null);
 							System.exit(0);
 							return true;
 						} else {

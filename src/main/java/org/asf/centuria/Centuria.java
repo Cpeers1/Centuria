@@ -133,7 +133,7 @@ public class Centuria {
 
 	// Updating
 	private static boolean cancelUpdate = false;
-	private static boolean updating = false;
+	public static boolean updating = false;
 	private static String nextVersion = null;
 
 	// Messages
@@ -312,7 +312,7 @@ public class Centuria {
 						break;
 					case 0:
 						// Shut down
-						updateShutdown();
+						updateShutdown(null);
 						cancelUpdate = false;
 						return;
 					}
@@ -350,14 +350,14 @@ public class Centuria {
 	/**
 	 * Shuts down the server with a update message
 	 */
-	public static void updateShutdown() {
+	public static void updateShutdown(String reason) {
 		// Dispatch event if the update was instant
 		if (!updating) {
 			EventBus.getInstance().dispatchEvent(new ServerUpdateEvent(nextVersion, -1));
 		}
 
 		// Shut down the server
-		disconnectPlayersForShutdown();
+		disconnectPlayersForShutdown(reason);
 
 		// Dispatch completion event
 		EventBus.getInstance().dispatchEvent(new ServerUpdateCompletionEvent(nextVersion));
@@ -369,7 +369,7 @@ public class Centuria {
 	/**
 	 * Disconnects all players with a update message
 	 */
-	public static void disconnectPlayersForShutdown() {
+	public static void disconnectPlayersForShutdown(String reason) {
 		// Disconnect everyone
 		for (Player plr : Centuria.gameServer.getPlayers()) {
 			plr.client.sendPacket("%xt%ua%-1%__FORCE_RELOGIN__%");
@@ -392,8 +392,8 @@ public class Centuria {
 		}
 		for (Player plr : Centuria.gameServer.getPlayers()) {
 			// Dispatch event
-			EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account, "Server has been shut down.",
-					DisconnectType.SERVER_SHUTDOWN));
+			EventBus.getInstance()
+					.dispatchEvent(new AccountDisconnectEvent(plr.account, reason, DisconnectType.SERVER_SHUTDOWN));
 
 			plr.client.disconnect();
 		}
