@@ -299,6 +299,28 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 
 		// Reload proxies
 		reloadProxies();
+
+		// Send to moderator clients
+		for (ChatClient client : getServer().getClients()) {
+			if (client.getObject(ModeratorClient.class) == null)
+				continue;
+
+			// Check moderator perms
+			String permLevel2 = "member";
+			if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+				permLevel2 = client.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+						.get("permissionLevel").getAsString();
+			}
+			if (!GameServer.hasPerm(permLevel2, "moderator"))
+				continue;
+
+			// Send packet
+			JsonObject response = new JsonObject();
+			response.addProperty("eventId", "centuria.moderatorclient.playerconnected");
+			response.addProperty("success", true);
+			response.addProperty("uuid", getPlayer().getAccountID());
+			client.sendPacket(response);
+		}
 	}
 
 	/**

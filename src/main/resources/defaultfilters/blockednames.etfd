@@ -1,8 +1,9 @@
 
 # Filter configuration
+# Note: Filters are stored in memory based on Name, if another filter file is loaded with the same Name statement, it overrides the existing filter
 Name Blocked name filter
-Description This filter contains names that are blocked for registration and name chanegs 
-Reason Some names we reserve to prevent impersonation
+Description This filter contains names that are blocked for registration and name changes 
+Reason Some names we have reserved to prevent impersonation and to prevent offensive names.
 Add-Tag USERNAMEFILTER
 
 # Severity can be ALWAYS_FILTERED, USER_STRICT_MODE and INSTAMUTE
@@ -10,10 +11,12 @@ Severity ALWAYS_FILTERED
 
 #
 # Define phrases
-# Phrases can be defined with `Phrase phrase here`, eg `Phrase example`, if it starts with `R:` its a regex match, `RR:` makes it a raw match
+# Phrases can be defined with `Phrase phrase here`, eg `Phrase example`
 # Phrase bodies look like this:
 #    # Define example
 #    Phrase example
+#		 # Note: text filters, while processing, ignore any non-alphanumeric characters, keep that in mind while writing down variants
+#
 #        # Set filtering mode, they can be:
 #        #   WHOLE_PHRASE : filters only if the whole phrase is a match, this does not tag unless all words are on their own, unless its a single word, then it checks if the word is present in the sentence, doesnt work if attached to another word, eg. `exam` and `example` arent a match to the system
 #        #   PHRASE_COMBINED : similar to WHOLE_PHRASE but also filters if the phrase without spaces is present in the text
@@ -29,8 +32,6 @@ Severity ALWAYS_FILTERED
 #        Reason Example filter
 #    # Endphrase marks the end of the phrase
 #    Endphrase
-#
-# There wont be commenting much after this because writing filters ABSOLUTELY SUCKS due to all the words that are defined
 #
 
 

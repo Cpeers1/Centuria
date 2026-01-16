@@ -1,2 +1,2 @@
-rootProject.name = 'Centuria'
+rootProject.name = 'Centuria Legacy 1.8'
 include("deps:connective-http")

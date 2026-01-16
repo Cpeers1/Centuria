@@ -97,7 +97,7 @@ public class GetChatRoomList extends AbstractChatPacket {
 							GameRoom roomInst = Centuria.gameServer.getRoomManager().getRoom(room);
 							if (roomInst != null) {
 								// Find map
-								String map = "UNKOWN: " + roomInst.getLevelID();
+								String map = "UNKNOWN: " + roomInst.getLevelID();
 								if (roomInst.getLevelID() == 25280)
 									map = "Tutorial";
 								else if (helper.has(Integer.toString(roomInst.getLevelID())))

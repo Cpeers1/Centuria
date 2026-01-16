@@ -22,6 +22,7 @@ repositories {
 }
 
 jar {
+	baseName "Centuria"
 	manifest {
 		attributes([
 			"Main-Class": "org.asf.centuria.launcher.LauncherMain",
@@ -150,7 +151,7 @@ task updateData () {
 					from task.getArchiveFile().get()
 					rename task.getArchiveFile().get().getAsFile().getName(), task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()
 					into "build/update"
-					data += task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get() + "\n"
+					data += (task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()).replace(" ", "%20") + "\n"
 				}
 			}
 		}

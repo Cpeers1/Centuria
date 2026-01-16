@@ -2,6 +2,7 @@ package org.asf.centuria.networking.gameserver;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -15,13 +16,17 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.accounts.InventoryManager;
+import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.accounts.SaveMode;
 import org.asf.centuria.accounts.SaveSettings;
+import org.asf.centuria.accounts.highlevel.ItemAccessor;
 import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.enums.players.OnlineStatus;
@@ -94,6 +99,25 @@ public class GameServer extends BaseSmartfoxServer {
 	public ArrayList<String> vpnIpsV6 = new ArrayList<String>();
 
 	public String whitelistFile = null;
+
+	private static final ArrayList<String> creativeItemFilter = new ArrayList<String>();
+	static {
+		// Load filter
+		try {
+			// Load helper
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+					.getResourceAsStream("creativeitemfilter.json");
+			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+					.get("Items").getAsJsonObject();
+			strm.close();
+
+			// Register
+			for (String id : helper.keySet())
+				creativeItemFilter.add(id);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	/**
 	 * Retrieves all connected players
@@ -351,6 +375,174 @@ public class GameServer extends BaseSmartfoxServer {
 			return;
 		}
 
+		// Prepare inventory
+		PlayerInventory inv = acc.getSaveSpecificInventory();
+
+		// Check if inventory is built
+		boolean firstLogin = false;
+		if (!inv.containsItem("1")) {
+			// Build inventory
+			Centuria.logger.info("Generating save data for " + acc.getAccountID() + " (" + acc.getDisplayName()
+					+ ", account " + acc.getLoginName() + ")");
+			InventoryManager.buildInventory(inv);
+			firstLogin = true;
+		}
+
+		// Stock inventory
+		Centuria.logger.info("Processing inventory of " + acc.getDisplayName() + " (" + acc.getAccountID() + ")...");
+		stockInventory(null, acc, inv, firstLogin);
+
+		// Fix broken avatars
+		if (inv.containsItem("avatars")) {
+			Centuria.logger.info("Processing avatars... Running datafixers for " + acc.getDisplayName() + " ("
+					+ acc.getAccountID() + ")" + " if needed...");
+			InventoryManager.fixBrokenAvatars(inv.getItem("avatars").getAsJsonArray(), inv);
+			Centuria.logger.info(
+					"Succesfully processed all avatars for " + acc.getDisplayName() + " (" + acc.getAccountID() + ")");
+		}
+
+		// Quest progression items
+		if (inv.getItem("311") == null || inv.getItem("311").getAsJsonArray().isEmpty()) {
+			JsonArray itm;
+			if (inv.containsItem("311"))
+				itm = inv.getItem("311").getAsJsonArray();
+			else {
+				itm = new JsonArray();
+
+				Centuria.logger.info("Generating initial quest progression data for " + acc.getDisplayName() + " ("
+						+ acc.getAccountID() + ")" + "...");
+
+				// Build entry
+				JsonObject obj = new JsonObject();
+				obj.addProperty("defId", 22781);
+				JsonObject components = new JsonObject();
+				JsonObject questObject = new JsonObject();
+				questObject.add("completedQuests", new JsonArray());
+				components.add("SocialExpanseLinearGenericQuestsCompletion", questObject);
+				obj.add("components", components);
+				obj.addProperty("id", UUID.randomUUID().toString());
+				obj.addProperty("type", 311);
+				itm.add(obj);
+			}
+
+			// Save item
+			inv.setItem("311", itm);
+		} else {
+			// Fix broken quest progression
+			JsonObject progressionMap = inv.getAccessor().findInventoryObject("311", 22781).get("components")
+					.getAsJsonObject().get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
+			JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
+			ArrayList<String> completedQuests = new ArrayList<String>();
+			arr.forEach(t -> completedQuests.add(t.getAsString()));
+			if (completedQuests.contains("25287")) {
+				Centuria.logger.info("Repairing initial quest progression data for " + acc.getDisplayName() + " ("
+						+ acc.getAccountID() + ")" + "...");
+
+				// Fix
+				arr.remove(completedQuests.indexOf("25287"));
+				inv.setItem("311", inv.getItem("311"));
+			}
+		}
+
+		// PlayerVars
+		if (!inv.containsItem("303")) {
+			Centuria.logger.info("Generating initial uservars data for " + acc.getDisplayName() + " ("
+					+ acc.getAccountID() + ")" + "...");
+
+			// Save item
+			inv.setItem("303", new JsonArray());
+
+			// Set defaults
+			// inv.getUserVarAccesor().setDefaultPlayerVarValues();
+		}
+
+		// Twiggles
+		if (!inv.containsItem("110")) {
+			Centuria.logger.info("Generating initial builder twiggles data for " + acc.getDisplayName() + " ("
+					+ acc.getAccountID() + ")" + "...");
+
+			// Save item
+			inv.setItem("110", new JsonArray());
+
+			// Set defaults
+			inv.getTwiggleAccesor().giveDefaultTwiggles();
+		}
+
+		// Inspirations
+
+		// Inspirations
+		if (inv.getItem("8") == null || inv.getItem("8").getAsJsonArray().isEmpty()) {
+			Centuria.logger.info("Generating initial inspiration data for " + acc.getDisplayName() + " ("
+					+ acc.getAccountID() + ")" + "...");
+
+			JsonArray itm;
+
+			if (inv.containsItem("8"))
+				itm = inv.getItem("8").getAsJsonArray();
+			else
+				itm = new JsonArray();
+
+			// Set default inspirations
+			inv.getInspirationAccessor().giveDefaultInspirations();
+
+			// Reload inv
+			itm = inv.getItem("8").getAsJsonArray();
+
+			// Save item
+			inv.setItem("8", itm);
+		}
+
+		// Check
+		if (firstLogin && !inv.containsItem("1"))
+			inv.setItem("1", new JsonArray());
+
+		// Avatar look failsafe, check if the active look is actually a primary look
+		// If not, switch to the first primary look of the same species
+		//
+		// This is to resolve those currently being affected by the avatar look
+		// overwrite bug thats been plaguing EmuFeral online
+		if (acc.getSaveSpecificInventory().containsItem("avatars")) {
+			Centuria.logger.info("Processing active look of " + acc.getDisplayName() + " (" + acc.getAccountID() + ")"
+					+ " for datafixing the \"Avtar overwrite bug\"...");
+			JsonArray avatars = acc.getSaveSpecificInventory().getItem("avatars").getAsJsonArray();
+			for (JsonElement ele : avatars) {
+				// Read avatar
+				JsonObject ava = ele.getAsJsonObject();
+				String dID = ava.get("defId").getAsString();
+				String lID = ava.get("id").getAsString();
+
+				// Check if active look
+				if (lID.equals(acc.getActiveLook())) {
+					// Check if its a primary look
+					if (!ava.get("components").getAsJsonObject().has("PrimaryLook")) {
+						Centuria.logger
+								.info("Running datafixer to swap back to primary look slot for " + acc.getDisplayName()
+										+ " (" + acc.getAccountID() + ")" + " to avoid look overwrite bug...");
+
+						// Find first primary look
+						for (JsonElement ele2 : avatars) {
+							JsonObject ava2 = ele2.getAsJsonObject();
+							String dID2 = ava2.get("defId").getAsString();
+							String lID2 = ava2.get("id").getAsString();
+							if (ava2.get("components").getAsJsonObject().has("PrimaryLook") && dID.equals(dID2)) {
+								// Found the primary look
+								// Set as active look
+								acc.setActiveLook(lID2);
+								Centuria.logger.info("Datafixer finished for " + acc.getDisplayName() + " ("
+										+ acc.getAccountID() + ")");
+								break;
+							}
+						}
+					}
+
+					// Found the active look so we can end the loop
+					break;
+				}
+			}
+			Centuria.logger.info(
+					"Succesfully processed active look for " + acc.getDisplayName() + " (" + acc.getAccountID() + ")");
+		}
+
 		// Send response
 		sendLoginResponse(client, auth, acc, 1, acc.isPlayerNew() ? 2 : 3, params);
 		sendPacket(client, "%xt%ulc%-1%");
@@ -377,6 +569,32 @@ public class GameServer extends BaseSmartfoxServer {
 		plr.account = acc;
 		plr.activeLook = acc.getActiveLook();
 		plr.activeSanctuaryLook = acc.getActiveSanctuaryLook();
+
+		// Sanctuaries
+		PlayerInventory inv = acc.getSaveSpecificInventory();
+		if (!plr.sanctuaryPreloadCompleted) {
+			// Fix missing sancs
+			if (!inv.containsItem("201")) {
+				inv.deleteItem("10");
+				inv.deleteItem("5");
+				inv.deleteItem("6");
+			}
+
+			// Check look count and add missing look slots
+			for (int i = inv.getSanctuaryAccessor().getSanctuaryLookCount(); i < 12; i++)
+				inv.getSanctuaryAccessor().addExtraSanctuarySlot();
+
+			// Active sanc look
+			if (plr.account.getSaveSpecificInventory().getSanctuaryAccessor()
+					.getSanctuaryLook(plr.account.getActiveSanctuaryLook()) == null) {
+				plr.activeSanctuaryLook = inv.getSanctuaryAccessor().getFirstSanctuaryLook().get("id").getAsString();
+				plr.account.setActiveSanctuaryLook(plr.activeSanctuaryLook);
+			} else
+				plr.activeSanctuaryLook = plr.account.getActiveSanctuaryLook();
+
+			// Complete
+			plr.sanctuaryPreloadCompleted = true;
+		}
 
 		// Avatar look failsafe, check if the active look is actually a primary look
 		// If not, switch to the first primary look of the same species
@@ -509,6 +727,284 @@ public class GameServer extends BaseSmartfoxServer {
 	}
 
 	/**
+	 * (Re)stocks a player's inventory
+	 * 
+	 * @param plr          Player instance for sending items
+	 * @param acc          Account object for log purposes
+	 * @param inv          Player inventory
+	 * @param stockAnyways True to ignore save settings and restock anyways
+	 */
+	public void stockInventory(Player plr, CenturiaAccount acc, PlayerInventory inv, boolean stockAnyways) {
+		// Body mods
+		if (inv.getSaveSettings().giveAllMods && (inv.getSaveSettings().enableCreativeRestock || stockAnyways)) {
+			Centuria.logger
+					.info("Unlocking all avatar parts for " + acc.getDisplayName() + " (" + acc.getAccountID() + ")");
+			for (String mod : ItemAccessor.getItemDefinitionsIn("2")) {
+				// Check
+				if (creativeItemFilter.contains(mod))
+					continue;
+				if (!inv.getAvatarAccessor().isAvatarPartUnlocked(mod)) {
+					Centuria.logger.debug("Unlocking avatar part " + mod + " for " + acc.getDisplayName() + " ("
+							+ acc.getAccountID() + ")");
+					inv.getAvatarAccessor().unlockAvatarPart(mod); // Unlock
+				}
+			}
+		}
+
+		// Clothing and dyes
+		if (inv.getSaveSettings().giveAllClothes && (inv.getSaveSettings().enableCreativeRestock || stockAnyways)) {
+			// Give all dyes (80 of each)
+			Centuria.logger
+					.info("Restocking all dye items for " + acc.getDisplayName() + " (" + acc.getAccountID() + ")");
+			String[] dyes = ItemAccessor.getItemDefinitionsIn("111");
+			for (String dye : dyes) {
+				if (creativeItemFilter.contains(dye))
+					continue;
+
+				// Add 80
+				int count = 80 - inv.getItemAccessor(plr).getCountOfItem(Integer.valueOf(dye));
+				if (count > 0) {
+					Centuria.logger.debug("Giving " + count + " of dye item " + dye + " to " + acc.getDisplayName()
+							+ " (" + acc.getAccountID() + ")");
+					for (int i = 0; i < count; i++) {
+						inv.getDyeAccessor().addDye(Integer.valueOf(dye));
+					}
+				}
+			}
+
+			// Scan clothinghelper and give all clothes
+			Centuria.logger.info(
+					"Restocking all clothing items for " + acc.getDisplayName() + " (" + acc.getAccountID() + ")");
+			try {
+				// Load helper
+				InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+						.getResourceAsStream("defaultitems/clothinghelper.json");
+				JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+						.get("Clothing").getAsJsonObject();
+				strm.close();
+
+				// Add all clothes (3 of each)
+				for (String id : helper.keySet()) {
+					if (creativeItemFilter.contains(id))
+						continue;
+					int count = 3 - inv.getClothingAccessor().getClothingCount(Integer.valueOf(id));
+					if (count > 0) {
+						Centuria.logger.debug("Giving " + count + " of clothing item " + id + " to "
+								+ acc.getDisplayName() + " (" + acc.getAccountID() + ")");
+						for (int i = 0; i < count; i++) {
+							inv.getClothingAccessor().addClothing(Integer.valueOf(id), false);
+						}
+					}
+				}
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		// Resources
+		if (inv.getSaveSettings().giveAllResources && (inv.getSaveSettings().enableCreativeRestock || stockAnyways)) {
+			// Give all resources
+			Centuria.logger.info(
+					"Restocking all resource items for " + acc.getDisplayName() + " (" + acc.getAccountID() + ")");
+			String[] ids = ItemAccessor.getItemDefinitionsIn("103");
+			for (String id : ids) {
+				if (creativeItemFilter.contains(id))
+					continue;
+				int count = 10 - inv.getItemAccessor(plr).getCountOfItem(Integer.valueOf(id));
+				if (count > 0) {
+					Centuria.logger.debug("Giving " + count + " of resource item " + id + " to " + acc.getDisplayName()
+							+ " (" + acc.getAccountID() + ")");
+					inv.getItemAccessor(plr).add(Integer.valueOf(id), count);
+				}
+			}
+		}
+
+		// Furniture
+		if (inv.getSaveSettings().giveAllFurnitureItems
+				&& (inv.getSaveSettings().enableCreativeRestock || stockAnyways)) {
+			// Scan furniturehelper and give all furniture
+			Centuria.logger.info(
+					"Restocking all furniture items for " + acc.getDisplayName() + " (" + acc.getAccountID() + ")");
+			try {
+				// Load helper
+				InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+						.getResourceAsStream("defaultitems/furniturehelper.json");
+				JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+						.get("Furniture").getAsJsonObject();
+				strm.close();
+
+				// Add all furniture (6 of each)
+				for (String id : helper.keySet()) {
+					if (creativeItemFilter.contains(id))
+						continue;
+					int count = 6 - inv.getFurnitureAccessor().getFurnitureCount(Integer.valueOf(id));
+					if (count > 0) {
+						Centuria.logger.debug("Giving " + count + " of furniture item " + id + " to "
+								+ acc.getDisplayName() + " (" + acc.getAccountID() + ")");
+						for (int i = 0; i < count; i++) {
+							inv.getFurnitureAccessor().addFurniture(Integer.valueOf(id), false);
+						}
+					}
+				}
+			} catch (IOException e) {
+			}
+		}
+
+		// Sanctury looks
+		if (inv.getSaveSettings().enableCreativeRestock || stockAnyways) {
+			if (inv.getSaveSettings().giveAllSanctuaryTypes) {
+				// Give missing sanctuary types
+				Centuria.logger.info(
+						"Unlocking all sanctuaries for " + acc.getDisplayName() + " (" + acc.getAccountID() + ")");
+				int[] sanctuaryTypes = new int[] { 9588, 12632, 12637, 12964, 21273, 23627, 24122, 25414, 26065, 28431,
+						9760, 9764 };
+				for (int id : sanctuaryTypes) {
+					if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(id)) {
+						Centuria.logger.debug("Unlocking sanctuary type " + id + " for " + acc.getDisplayName() + " ("
+								+ acc.getAccountID() + ")");
+						inv.getSanctuaryAccessor().unlockSanctuary(id);
+					}
+				}
+			} else {
+				// Give default sanctuary if needed
+				if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(9588))
+					inv.getSanctuaryAccessor().unlockSanctuary(9588);
+			}
+		}
+
+		// Currency
+		JsonArray itm;
+		boolean changed = inv.containsItem("104");
+		if (changed)
+			itm = inv.getItem("104").getAsJsonArray();
+		else
+			itm = new JsonArray();
+
+		if (!inv.getAccessor().hasInventoryObject("104", 2327)) {
+			// Likes
+
+			// Build entry
+			JsonObject obj = new JsonObject();
+			obj.addProperty("defId", 2327);
+			JsonObject components = new JsonObject();
+			JsonObject quantity = new JsonObject();
+			Centuria.logger.info("Giving " + (inv.getSaveSettings().giveAllCurrency ? 10000 : 2500) + " of Likes to "
+					+ acc.getDisplayName() + " (" + acc.getAccountID() + ")");
+			quantity.addProperty("quantity", (inv.getSaveSettings().giveAllCurrency ? 10000 : 2500));
+			components.add("Quantity", quantity);
+			JsonObject trade = new JsonObject();
+			trade.addProperty("isInTradeList", false);
+			components.add("Tradable", trade);
+			obj.add("components", components);
+			obj.addProperty("id", UUID.randomUUID().toString());
+			obj.addProperty("type", 104);
+
+			// Add entry
+			itm.add(obj);
+			changed = true;
+		}
+
+		if (!inv.getAccessor().hasInventoryObject("104", 14500)) {
+			// Star fragments
+
+			// Build entry
+			JsonObject obj = new JsonObject();
+			obj.addProperty("defId", 14500);
+			JsonObject components = new JsonObject();
+			JsonObject quantity = new JsonObject();
+			if (inv.getSaveSettings().giveAllCurrency)
+				Centuria.logger.info(
+						"Giving 10000 of Star Fragments to " + acc.getDisplayName() + " (" + acc.getAccountID() + ")");
+			quantity.addProperty("quantity", (inv.getSaveSettings().giveAllCurrency ? 10000 : 0));
+			components.add("Quantity", quantity);
+			JsonObject trade = new JsonObject();
+			trade.addProperty("isInTradeList", false);
+			components.add("Tradable", trade);
+			obj.add("components", components);
+			obj.addProperty("id", UUID.randomUUID().toString());
+			obj.addProperty("type", 104);
+
+			// Add entry
+			itm.add(obj);
+			changed = true;
+		}
+
+		if (!inv.getAccessor().hasInventoryObject("104", 8372)) {
+			// Lockpicks
+
+			// Build entry
+			JsonObject obj = new JsonObject();
+			obj.addProperty("defId", 8372);
+			JsonObject components = new JsonObject();
+			JsonObject quantity = new JsonObject();
+			quantity.addProperty("quantity", 0);
+			components.add("Quantity", quantity);
+			JsonObject trade = new JsonObject();
+			trade.addProperty("isInTradeList", false);
+			components.add("Tradable", trade);
+			obj.add("components", components);
+			obj.addProperty("id", UUID.randomUUID().toString());
+			obj.addProperty("type", 104);
+
+			// Add entry
+			itm.add(obj);
+			changed = true;
+		}
+
+		// Check trade tags
+		for (JsonElement ele : itm) {
+			JsonObject obj = ele.getAsJsonObject();
+			JsonObject components = obj.get("components").getAsJsonObject();
+			if (!components.has("Tradable")) {
+				JsonObject trade = new JsonObject();
+				trade.addProperty("isInTradeList", false);
+				components.add("Tradable", trade);
+				changed = true;
+			}
+		}
+
+		if (changed) {
+			// Save item
+			inv.setItem("104", itm);
+			if (plr != null) {
+				InventoryItemPacket pkt = new InventoryItemPacket();
+				pkt.item = itm;
+				plr.client.sendPacket(pkt);
+			}
+		}
+
+		// Creative mode
+		if (inv.getSaveSettings().giveAllCurrency) {
+			// Add 10k if 0
+			int countL = 10000 - inv.getCurrencyAccessor().getLikes();
+			if (countL > 0) {
+				Centuria.logger.info(
+						"Giving " + countL + " of Likes to " + acc.getDisplayName() + " (" + acc.getAccountID() + ")");
+				inv.getCurrencyAccessor().addLikesDirectly(countL);
+			}
+			int countS = 10000 - inv.getCurrencyAccessor().getStarFragments();
+			if (countS > 0) {
+				Centuria.logger.info("Giving " + countL + " of Star Fragments to " + acc.getDisplayName() + " ("
+						+ acc.getAccountID() + ")");
+				inv.getCurrencyAccessor().addStarFragmentsDirectly(countS);
+			}
+		}
+
+		// Save changes
+		for (String change : inv.getAccessor().getItemsToSave()) {
+			inv.setItem(change, inv.getItem(change));
+
+			// Send if needed
+			if (plr != null) {
+				InventoryItemPacket pkt = new InventoryItemPacket();
+				pkt.item = inv.getItem(change);
+				plr.client.sendPacket(pkt);
+			}
+		}
+		inv.getAccessor().completedSave();
+	}
+
+	/**
 	 * Called to remove a player from the server after they logged out, not intended
 	 * for kicking, doesnt disconnect the client
 	 * 
@@ -554,7 +1050,7 @@ public class GameServer extends BaseSmartfoxServer {
 			}
 		}
 
-		// Disconnect from chat server if not
+		// Disconnect from chat server if not a mod
 		// Check moderator perms
 		String permLevel = "member";
 		if (plr.account.getSaveSharedInventory().containsItem("permissions")) {

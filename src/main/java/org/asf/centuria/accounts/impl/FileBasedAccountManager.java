@@ -28,6 +28,7 @@ import org.asf.centuria.accounts.SaveManager;
 import org.asf.centuria.accounts.SaveSettings;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.AccountRegistrationEvent;
+import org.asf.centuria.social.SocialManager;
 import org.asf.centuria.textfilter.TextFilterService;
 
 import com.google.gson.JsonObject;
@@ -91,7 +92,7 @@ public class FileBasedAccountManager extends AccountManager {
 	public String authenticate(String username, char[] password) {
 		// Check name validity
 		if (!username.matches("^[A-Za-z0-9@._#]+$") || username.contains(".cred")
-				|| !username.matches(".*[A-Za-z0-9]+.*") || username.isBlank())
+				|| !username.matches(".*[A-Za-z0-9]+.*") || username.isBlank() || password.length < 1)
 			return null;
 
 		// Find the account
@@ -185,6 +186,9 @@ public class FileBasedAccountManager extends AccountManager {
 	@Override
 	public boolean updatePassword(String userID, char[] password) {
 		try {
+			if (password.length < 1)
+				return false;
+
 			// Generate salt and hash
 			byte[] salt = salt();
 			byte[] hash = getHash(salt, password);
@@ -291,6 +295,9 @@ public class FileBasedAccountManager extends AccountManager {
 					throw new RuntimeException("Save creation failure");
 				}
 			}
+
+			// Save social list
+			SocialManager.getInstance().openSocialList(id);
 
 			// Dispatch event
 			getAccount(id).getSaveSharedInventory().setItem("dmsystemupdated", new JsonObject());
@@ -417,6 +424,7 @@ public class FileBasedAccountManager extends AccountManager {
 
 	@Override
 	public boolean releaseDisplayName(String displayName) {
+		displayName = displayName.trim();
 		if (new File("displaynames/" + displayName).exists()) {
 			new File("displaynames/" + displayName).delete();
 			return true;
@@ -436,6 +444,7 @@ public class FileBasedAccountManager extends AccountManager {
 
 	@Override
 	public boolean lockDisplayName(String displayName, String userID) {
+		displayName = displayName.trim();
 		if (!isDisplayNameInUse(displayName)) {
 			if (!new File("displaynames").exists())
 				new File("displaynames").mkdirs();

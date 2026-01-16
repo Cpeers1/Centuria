@@ -1302,8 +1302,116 @@
           "hasItem": true,
           "hasTableReference": false,
           "itemId": "14500",
+          "minCount": 90,
+          "maxCount": 115,
+          "weight": 1
+        }
+      ]
+    },
+    "15328": {
+      "objectName": "QuestReward/EternalStench",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q15328",
+          "itemId": "15139",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q15328": {
+      "objectName": "QuestReward/EternalStench",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
           "minCount": 50,
+          "maxCount": 60,
+          "weight": 1
+        }
+      ]
+    },
+    "15187": {
+      "objectName": "QuestReward/ZomboldApocalypse2",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q15187",
+          "itemId": "13821",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q15187": {
+      "objectName": "QuestReward/ZomboldApocalypse2",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 80,
+          "maxCount": 90,
+          "weight": 1
+        }
+      ]
+    },
+    "16950": {
+      "objectName": "QuestReward/RiverOfWoes",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q16950",
+          "itemId": "13420",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q16950": {
+      "objectName": "QuestReward/RiverOfWoes",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 55,
           "maxCount": 70,
+          "weight": 1
+        }
+      ]
+    },
+    "15735": {
+      "objectName": "QuestReward/JediTraining",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": true,
+          "referencedTableId": "q15735",
+          "itemId": "12541",
+          "minCount": 1,
+          "maxCount": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "q15735": {
+      "objectName": "QuestReward/JediTraining",
+      "rewards": [
+        {
+          "hasItem": true,
+          "hasTableReference": false,
+          "itemId": "14500",
+          "minCount": 50,
+          "maxCount": 60,
           "weight": 1
         }
       ]

@@ -83,27 +83,35 @@ public class TextFilterServiceImpl extends TextFilterService {
 		// Check disk
 		try {
 			File filter = new File("textfilter");
-			if (!filter.exists() || !new File(filter, "alwaysfilter.etfd").exists()) {
-				filter.mkdirs();
-
-				// Write files
+			filter.mkdirs();
+			if (!new File(filter, "alwaysfilter.etfd").exists()) {
+				// Write file
 				InputStream strm = getClass().getClassLoader().getResourceAsStream("defaultfilters/alwaysfilter.etfd");
 				FileOutputStream strmO = new FileOutputStream(new File(filter, "alwaysfilter.etfd"));
 				strm.transferTo(strmO);
 				strmO.close();
 				strm.close();
-				strm = getClass().getClassLoader().getResourceAsStream("defaultfilters/instamute.etfd");
-				strmO = new FileOutputStream(new File(filter, "instamute.etfd"));
+			}
+			if (!new File(filter, "instamute.etfd").exists()) {
+				// Write file
+				InputStream strm = getClass().getClassLoader().getResourceAsStream("defaultfilters/instamute.etfd");
+				FileOutputStream strmO = new FileOutputStream(new File(filter, "instamute.etfd"));
 				strm.transferTo(strmO);
 				strmO.close();
 				strm.close();
-				strm = getClass().getClassLoader().getResourceAsStream("defaultfilters/userfilter.etfd");
-				strmO = new FileOutputStream(new File(filter, "userfilter.etfd"));
+			}
+			if (!new File(filter, "userfilter.etfd").exists()) {
+				// Write file
+				InputStream strm = getClass().getClassLoader().getResourceAsStream("defaultfilters/userfilter.etfd");
+				FileOutputStream strmO = new FileOutputStream(new File(filter, "userfilter.etfd"));
 				strm.transferTo(strmO);
 				strmO.close();
 				strm.close();
-				strm = getClass().getClassLoader().getResourceAsStream("defaultfilters/blockednames.etfd");
-				strmO = new FileOutputStream(new File(filter, "blockednames.etfd"));
+			}
+			if (!new File(filter, "blockednames.etfd").exists()) {
+				// Write file
+				InputStream strm = getClass().getClassLoader().getResourceAsStream("defaultfilters/blockednames.etfd");
+				FileOutputStream strmO = new FileOutputStream(new File(filter, "blockednames.etfd"));
 				strm.transferTo(strmO);
 				strmO.close();
 				strm.close();
@@ -385,28 +393,36 @@ public class TextFilterServiceImpl extends TextFilterService {
 		filters.put(set.getSetName().toLowerCase(), set);
 	}
 
+	private String replaceDoubleSpaces(String in) {
+		while (in.contains("  "))
+			in = in.replace("  ", " ");
+		return in;
+	}
+
 	private boolean match(FilterMode mode, String text, String filterWord, String filterVariant) {
 		// Run for specific modes
 		if (filterVariant.contains(" ")) {
 			String textFull = " " + text + " ";
 			if (mode == FilterMode.WHOLE_PHRASE || mode == FilterMode.PHRASE_COMBINED) {
 				// Check phrase
-				if (textFull.toLowerCase().contains(" " + filterVariant.toLowerCase() + " "))
+				if (replaceDoubleSpaces(textFull).toLowerCase().contains(" " + replaceDoubleSpaces(filterVariant.toLowerCase()) + " "))
 					return true;
 			}
 			if (mode == FilterMode.PHRASE_COMBINED) {
 				// Check phrase
-				if (textFull.toLowerCase().contains(" " + filterVariant.replace(" ", "").toLowerCase() + " "))
+				if (replaceDoubleSpaces(textFull).toLowerCase().contains(" " + filterVariant.replace(" ", "").toLowerCase() + " "))
 					return true;
 			} else if (mode == FilterMode.WORD_CONTAINS || mode == FilterMode.WORD_COMBINED) {
 				// Check phrase
 				boolean match = false;
 				boolean foundStart = false;
-				String[] variantWords = filterVariant.split(" ");
+				String[] variantWords = replaceDoubleSpaces(filterVariant).split(" ");
 				int i = 1;
 				if (variantWords.length != 0) {
 					String firstVariant = variantWords[0];
 					for (String word : text.split(" ")) {
+						if (word.isEmpty())
+							continue;
 						if (!foundStart) {
 							if (word.toLowerCase().contains(firstVariant.toLowerCase())) {
 								foundStart = true;
@@ -513,10 +529,10 @@ public class TextFilterServiceImpl extends TextFilterService {
 							continue;
 
 						// Check phrase
-						if (match(mode, text, filterWord, filter.getPhrase()))
+						if (match(mode, text, filterWord, filter.getPhrase()) || match(mode, text, word, filter.getPhrase()))
 							return true;
 						for (String variant : filter.getVariants())
-							if (match(mode, text, filterWord, variant))
+							if (match(mode, text, filterWord, variant) || match(mode, text, word, variant))
 								return true;
 					}
 				}
@@ -586,10 +602,10 @@ public class TextFilterServiceImpl extends TextFilterService {
 							continue;
 
 						// Check phrase
-						if (match(mode, text, filterWord, filter.getPhrase()))
+						if (match(mode, text, filterWord, filter.getPhrase()) || match(mode, text, word, filter.getPhrase()))
 							return true;
 						for (String variant : filter.getVariants())
-							if (match(mode, text, filterWord, variant))
+							if (match(mode, text, filterWord, variant) || match(mode, text, word, variant))
 								return true;
 					}
 				}
@@ -606,11 +622,11 @@ public class TextFilterServiceImpl extends TextFilterService {
 	}
 
 	@Override
-	public FilterResult filter(String text, boolean strictMode, String... tags) {
+	public FilterResult filter(String text, boolean strictMode, String... tags) { 
 		ArrayList<WordMatch> matches = new ArrayList<WordMatch>();
 		ArrayList<String> matchedPhrases = new ArrayList<String>();
 
-		// Handle word contains filters
+		// Go through filter sets
 		for (PhraseFilterSet set : filters.values()) {
 			// Check set tags
 			String[] setTags = set.getSetTags();
@@ -669,6 +685,7 @@ public class TextFilterServiceImpl extends TextFilterService {
 									break;
 							}
 						} else {
+							// ----- I AM HERE
 							// This is a whole lot more complex-
 							String[] variantWords = phrase.split(" ");
 							String[] words = text.split(" ");

@@ -48,6 +48,16 @@ public class RegistrationHandler extends HttpPushProcessor {
 			String displayName = request.get("display_name").getAsString();
 			char[] password = request.get("password").getAsString().toCharArray();
 
+			// Check password length
+			if (password.length < 1) {
+				// Reply with error
+				response.addProperty("error", "empty_password");
+				response.addProperty("error_message", "Invalid password: empty passwords are not permitted");
+				setResponseContent("text/json", response.toString());
+				this.setResponseStatus(400, "Bad request");
+				return;
+			}
+
 			// Verify login name blacklist
 			if (TextFilterService.getInstance().isFiltered(accountName, true, "USERNAMEFILTER")) {
 				// Reply with error

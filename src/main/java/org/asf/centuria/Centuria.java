@@ -113,7 +113,9 @@ public class Centuria {
 	public static boolean defaultAllowGiveItemClothes = true;
 	public static boolean defaultAllowGiveItemFurnitureItems = true;
 	public static boolean defaultAllowGiveItemResources = true;
+	public static boolean defaultAllowGiveItemEnigmas = true;
 	public static boolean defaultAllowGiveItemCurrency = true;
+	public static boolean defaultEnableCreativeRestock = false;
 	public static boolean encryptChat = false;
 	public static boolean encryptVoiceChat = false;
 	public static boolean encryptGame = false;
@@ -443,6 +445,7 @@ public class Centuria {
 					+ "give-all-currency=false\n" //
 					+ "give-all-resources=false\n" //
 					+ "allow-giveitem-resources=false\n" //
+					+ "allow-giveitem-enigmas=false\n" //
 					+ "allow-giveitem-currency=false\n" //
 					+ "allow-giveitem-furniture=false\n" //
 					+ "allow-giveitem-sanctuary-types=false\n" //
@@ -522,6 +525,8 @@ public class Centuria {
 				.equals("true");
 		defaultAllowGiveItemResources = serverProperties.getOrDefault("allow-giveitem-resources", "true")
 				.equals("true");
+		defaultAllowGiveItemEnigmas = serverProperties.getOrDefault("allow-giveitem-enigmas", "true")
+				.equals("true");
 		defaultAllowGiveItemCurrency = serverProperties.getOrDefault("allow-giveitem-currency", "true").equals("true");
 		encryptChat = serverProperties.getOrDefault("encrypt-chat", "false").equals("true")
 				&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists();
@@ -584,6 +589,7 @@ public class Centuria {
 			save.addProperty("allowGiveItemSanctuaryTypes", defaultAllowGiveItemSanctuaryTypes);
 			save.addProperty("allowGiveItemCurrency", defaultAllowGiveItemCurrency);
 			save.addProperty("allowGiveItemResources", defaultAllowGiveItemResources);
+			save.addProperty("allowGiveItemEnigmas", defaultAllowGiveItemEnigmas);
 			save.add("saveColors", colors);
 			save.add("saveNamePrefixes", prefixes);
 			saves.add(defaultSaveName, save);

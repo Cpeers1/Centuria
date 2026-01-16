@@ -1,18 +1,21 @@
 
 # Filter configuration
+# Note: Filters are stored in memory based on Name, if another filter file is loaded with the same Name statement, it overrides the existing filter
 Name Default instamute text filter
 Description This filter contains slurs and other words that result in a mute
-Reason Muted for extremely bad language, slurs and such may never be used
+Reason Filtered for extremely bad language, slurs and similar insults are not allowed.
 
 # Severity can be ALWAYS_FILTERED, USER_STRICT_MODE and INSTAMUTE
 Severity INSTAMUTE
 
 #
 # Define phrases
-# Phrases can be defined with `Phrase phrase here`, eg `Phrase example`, if it starts with `R:` its a regex match, `RR:` makes it a raw match
+# Phrases can be defined with `Phrase phrase here`, eg `Phrase example`
 # Phrase bodies look like this:
 #    # Define example
 #    Phrase example
+#		 # Note: text filters, while processing, ignore any non-alphanumeric characters, keep that in mind while writing down variants
+#
 #        # Set filtering mode, they can be:
 #        #   WHOLE_PHRASE : filters only if the whole phrase is a match, this does not tag unless all words are on their own, unless its a single word, then it checks if the word is present in the sentence, doesnt work if attached to another word, eg. `exam` and `example` arent a match to the system
 #        #   PHRASE_COMBINED : similar to WHOLE_PHRASE but also filters if the phrase without spaces is present in the text
@@ -29,7 +32,7 @@ Severity INSTAMUTE
 #    # Endphrase marks the end of the phrase
 #    Endphrase
 #
-# There wont be commenting much after this because writing filters ABSOLUTELY SUCKS due to all the words that are defined
+# There wont be commenting much after this because writing filters ABSOLUTELY SUCKS due to all the words that are defined youd prefer not to read
 #
 
 
@@ -48,6 +51,8 @@ Phrase nigger
     Mode WHOLE_PHRASE
     Variant nigg
     Variant n1gg
+    Variant n1g
+    Variant nig
 Endphrase
 
 Phrase faggot
@@ -73,3 +78,22 @@ Phrase beaner
     Variant be4ner
 Endphrase
 
+Phrase retard
+    Mode WORD_CONTAINS
+    Variant retarded
+    Variant ret4rded
+    Variant ret4rd
+    Variant r3t4rded
+    Variant r3t4rd
+    Variant r3tarded
+    Variant r3tard3d
+    Variant r3t4rd3d
+    Variant ret4rded
+    Variant ret4rd3d
+    Variant r3tard
+Endphrase
+
+Phrase tranny
+    Mode WORD_CONTAINS
+    Variant tr4nny
+Endphrase

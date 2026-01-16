@@ -61,6 +61,7 @@ import org.asf.centuria.textfilter.TextFilterService;
 import org.asf.centuria.textfilter.result.FilterResult;
 import org.asf.centuria.textfilter.result.WordMatch;
 import org.asf.centuria.util.io.DataWriter;
+import org.asf.connective.tasks.AsyncTaskManager;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -218,7 +219,7 @@ public class SendMessage extends AbstractChatPacket {
 					GameServer server = (GameServer) plr.client.getServer();
 					if (server.getRoomManager().getRoom(room) != null) {
 						// Found room chat
-						room = ChatRoomTypes.ROOM_CHAT;
+						type = ChatRoomTypes.ROOM_CHAT;
 						found = true;
 					}
 				}
@@ -228,11 +229,11 @@ public class SendMessage extends AbstractChatPacket {
 					// DMs
 					if (DMManager.getInstance().dmExists(room)) {
 						// Found DM chat
-						room = ChatRoomTypes.PRIVATE_CHAT;
+						type = ChatRoomTypes.PRIVATE_CHAT;
 						found = true;
 					} else {
 						// Transient
-						room = ChatRoomTypes.TRANSIENT_CHAT;
+						type = ChatRoomTypes.TRANSIENT_CHAT;
 						found = true;
 					}
 				}
@@ -281,9 +282,8 @@ public class SendMessage extends AbstractChatPacket {
 
 		// Check mute
 		CenturiaAccount acc = client.getPlayer();
-		if (client.getRoom(room).getType().equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT)
-				&& acc.getSaveSharedInventory().containsItem("penalty") && acc.getSaveSharedInventory()
-						.getItem("penalty").getAsJsonObject().get("type").getAsString().equals("mute")) {
+		if (acc.getSaveSharedInventory().containsItem("penalty") && acc.getSaveSharedInventory().getItem("penalty")
+				.getAsJsonObject().get("type").getAsString().equals("mute")) {
 			JsonObject muteInfo = acc.getSaveSharedInventory().getItem("penalty").getAsJsonObject();
 			if (muteInfo.get("unmuteTimestamp").getAsLong() == -1
 					|| muteInfo.get("unmuteTimestamp").getAsLong() > System.currentTimeMillis()) {
@@ -291,11 +291,109 @@ public class SendMessage extends AbstractChatPacket {
 				SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-				// System message
+				// Get reason
+				String reason = null;
+				if (muteInfo.has("reason"))
+					reason = muteInfo.get("reason").getAsString();
+
+				// Send failure
 				JsonObject res = new JsonObject();
-				res.addProperty("conversationType", "room");
+				res.addProperty("conversationType", type);
 				res.addProperty("conversationId", room);
-				res.addProperty("message", "You are muted and cannot speak in public chats.");
+				res.addProperty("message",
+						"</noparse><color=red>[!] <noparse>" + message + "</noparse></color><noparse>");
+				res.addProperty("messagePlain", "[!] " + message);
+//				res.addProperty("originalMessage", message); // Only for mods
+//				res.add("messageParts, new JsonArray())); // Not present, so not sent
+				res.addProperty("alertingMessage", true); // This is a moderator alerting message
+				res.addProperty("criticalAlertingMessage", true); // Critical, should be red
+				res.addProperty("blockedMessage", true); // The message was blocked, should be red highlighting
+				res.addProperty("source", client.getPlayer().getAccountID());
+				res.addProperty("sentAt", fmt.format(new Date()));
+				res.addProperty("eventId", "chat.postMessage");
+				res.addProperty("success", true);
+				client.sendPacket(res);
+
+				// Broadcast to moderators unless its a private chat
+				if (!type.equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
+					for (ChatClient receiver : client.getServer().getClients()) {
+						// Fetch receiver moderator perms
+						String permLevel2 = "member";
+						if (receiver.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+							permLevel2 = receiver.getPlayer().getSaveSharedInventory().getItem("permissions")
+									.getAsJsonObject().get("permissionLevel").getAsString();
+						}
+
+						// Check perms
+						if (GameServer.hasPerm(permLevel2, "moderator")
+								&& !receiver.getPlayer().getAccountID().equals(client.getPlayer().getAccountID())) {
+							// Check if in room
+							if (receiver.isInRoom(room)) {
+								// Check limbo player
+								Player gameClient = receiver.getPlayer().getOnlinePlayerInstance();
+								if (gameClient != null && (!gameClient.roomReady || gameClient.room == null))
+									continue;
+
+								// Send to mod
+								res = new JsonObject();
+								res.addProperty("conversationType", type);
+								res.addProperty("conversationId", room);
+								res.addProperty("message",
+										"</noparse><color=red>[!] <noparse>" + message + "</noparse></color><noparse>");
+								res.addProperty("messagePlain", "[!] " + message);
+								res.addProperty("originalMessage", message);
+//								res.add("messageParts, new JsonArray())); // Not present, so not sent
+								res.addProperty("alertingMessage", true); // This is a moderator alerting message
+								res.addProperty("criticalAlertingMessage", true); // Critical, should be red exclamation
+																					// mark
+								res.addProperty("blockedMessage", true); // The message was blocked, should be red
+																			// highlighting
+								res.addProperty("source", client.getPlayer().getAccountID());
+								res.addProperty("sentAt", fmt.format(new Date()));
+								res.addProperty("eventId", "chat.postMessage");
+								res.addProperty("success", true);
+								receiver.sendPacket(res);
+							} else {
+								// Not in room
+
+								// Check moderator client
+								if (receiver.getObject(ModeratorClient.class) != null) {
+									// Send through centuria moderator protocol
+									res = new JsonObject();
+									res.addProperty("eventId", "centuria.moderatorclient.postedMessageInOtherRoom");
+									res.addProperty("conversationType", type);
+									res.addProperty("conversationId", room);
+									res.addProperty("message", "</noparse><color=red>[!] <noparse>" + message
+											+ "</noparse></color><noparse>");
+									res.addProperty("messagePlain", "[!] " + message);
+									res.addProperty("originalMessage", message);
+//									res.add("messageParts, new JsonArray())); // Not present, so not sent
+									res.addProperty("alertingMessage", true); // This is a moderator alerting
+																				// message
+									res.addProperty("criticalAlertingMessage", true); // Critical, should be red
+																						// exclamation
+																						// mark
+									res.addProperty("blockedMessage", true); // The message was blocked, should be
+																				// red
+																				// highlighting
+									res.addProperty("source", client.getPlayer().getAccountID());
+									res.addProperty("sentAt", fmt.format(new Date()));
+									res.addProperty("success", true);
+
+									// Send message
+									receiver.sendPacket(res);
+								}
+							}
+						}
+					}
+				}
+
+				// System message
+				res = new JsonObject();
+				res.addProperty("conversationType", type);
+				res.addProperty("conversationId", room);
+				res.addProperty("message",
+						"You are muted and cannot speak in chats." + (reason != null ? "\nReason: " + reason : ""));
 				res.addProperty("source", NIL_UUID);
 				res.addProperty("sentAt", fmt.format(new Date()));
 				res.addProperty("eventId", "chat.postMessage");
@@ -321,24 +419,140 @@ public class SendMessage extends AbstractChatPacket {
 						matchedWords += ", " + match.getMatchedPhrase();
 				}
 			}
-			EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
-					"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
-					Map.of("Chat message", message, "Matched word(s)", matchedWords, "Resulting action", "muted"),
-					"SYSTEM", client.getPlayer()));
+			GameRoom r = Centuria.gameServer.getRoomManager().getRoom(room);
+
+			// Check if private
+			if (client.getRoom(room).getType().equals(ChatRoomTypes.PRIVATE_CHAT)) {
+				// Private chat, need more details
+				// And strip away the message
+				EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
+						"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+						Map.of("Private chat room", getDmNameForModlog(client, room), "Matched word(s)", matchedWords,
+								"Primary reason for filtering",
+								fres.getPrimaryFilterReason() != null ? fres.getPrimaryFilterReason() : "unknown",
+								"Room", (r == null ? room : r.getInstanceID() + " (in " + r.getLevelID() + ")"),
+								"Resulting action", "muted"),
+						"SYSTEM", client.getPlayer()));
+			} else {
+				EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
+						"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+						Map.of("Chat message", message, "Matched word(s)", matchedWords, "Primary reason for filtering",
+								fres.getPrimaryFilterReason() != null ? fres.getPrimaryFilterReason() : "unknown",
+								"Room", (r == null ? room : r.getInstanceID() + " (in " + r.getLevelID() + ")"),
+								"Resulting action", "muted"),
+						"SYSTEM", client.getPlayer()));
+			}
+
+			// Time format
+			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+			// Send failure
+			JsonObject res = new JsonObject();
+			res.addProperty("conversationType", type);
+			res.addProperty("conversationId", room);
+			res.addProperty("message", "</noparse><color=red>[!] <noparse>" + message + "</noparse></color><noparse>");
+			res.addProperty("messagePlain", "[!] " + message);
+//			res.addProperty("originalMessage", message); // Only for mods
+//			res.add("messageParts, new JsonArray())); // Not present, so not sent // FIXME: SHOULD BE PRESENT AND THE MESSAGE FIELD SHOULD BE STYLIZED
+			res.addProperty("alertingMessage", true); // This is a moderator alerting message
+			res.addProperty("criticalAlertingMessage", true); // Critical, should be red
+			res.addProperty("blockedMessage", true); // The message was blocked, should be red highlighting
+			res.addProperty("source", client.getPlayer().getAccountID());
+			res.addProperty("sentAt", fmt.format(new Date()));
+			res.addProperty("eventId", "chat.postMessage");
+			res.addProperty("success", true);
+			client.sendPacket(res);
+
+			// Broadcast to moderators unless its a private chat
+			if (!type.equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
+				for (ChatClient receiver : client.getServer().getClients()) {
+					// Fetch receiver moderator perms
+					String permLevel2 = "member";
+					if (receiver.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+						permLevel2 = receiver.getPlayer().getSaveSharedInventory().getItem("permissions")
+								.getAsJsonObject().get("permissionLevel").getAsString();
+					}
+
+					// Check perms
+					if (GameServer.hasPerm(permLevel2, "moderator")
+							&& !receiver.getPlayer().getAccountID().equals(client.getPlayer().getAccountID())) {
+						// Check if in room
+						if (receiver.isInRoom(room)) {
+							// Check limbo player
+							Player gameClient = receiver.getPlayer().getOnlinePlayerInstance();
+							if (gameClient != null && (!gameClient.roomReady || gameClient.room == null))
+								continue;
+
+							// Send to mod
+							res = new JsonObject();
+							res.addProperty("conversationType", type);
+							res.addProperty("conversationId", room);
+							res.addProperty("message",
+									"</noparse><color=red>[!] <noparse>" + message + "</noparse></color><noparse>");
+							res.addProperty("messagePlain", "[!] " + message);
+							res.addProperty("originalMessage", message);
+//							res.add("messageParts, new JsonArray())); // FIXME: SHOULD BE PRESENT AND THE MESSAGE FIELD SHOULD BE STYLIZED
+							res.addProperty("alertingMessage", true); // This is a moderator alerting message
+							res.addProperty("criticalAlertingMessage", true); // Critical, should be red exclamation
+																				// mark
+							res.addProperty("blockedMessage", true); // The message was blocked, should be red
+																		// highlighting
+							res.addProperty("source", client.getPlayer().getAccountID());
+							res.addProperty("sentAt", fmt.format(new Date()));
+							res.addProperty("eventId", "chat.postMessage");
+							res.addProperty("success", true);
+							receiver.sendPacket(res);
+						} else {
+							// Not in room
+
+							// Check moderator client
+							if (receiver.getObject(ModeratorClient.class) != null) {
+								// Send through centuria moderator protocol
+								res = new JsonObject();
+								res.addProperty("eventId", "centuria.moderatorclient.postedMessageInOtherRoom");
+								res.addProperty("conversationType", type);
+								res.addProperty("conversationId", room);
+								res.addProperty("message",
+										"</noparse><color=red>[!] <noparse>" + message + "</noparse></color><noparse>");
+								res.addProperty("messagePlain", "[!] " + message);
+								res.addProperty("originalMessage", message);
+//								res.add("messageParts, new JsonArray())); // FIXME: SHOULD BE PRESENT AND THE MESSAGE FIELD SHOULD BE STYLIZED
+								res.addProperty("alertingMessage", true); // This is a moderator alerting
+																			// message
+								res.addProperty("criticalAlertingMessage", true); // Critical, should be red
+																					// exclamation
+																					// mark
+								res.addProperty("blockedMessage", true); // The message was blocked, should be
+																			// red
+																			// highlighting
+								res.addProperty("source", client.getPlayer().getAccountID());
+								res.addProperty("sentAt", fmt.format(new Date()));
+								res.addProperty("success", true);
+
+								// Send message
+								receiver.sendPacket(res);
+							}
+						}
+					}
+				}
+			}
 
 			// Mute
 			client.getPlayer().mute(0, 0, 30, "SYSTEM",
-					"Muted due to an illegal word said in the chat, we request you to keep your chat respectful, safe and clean!");
+					(fres.getPrimaryFilterReason() == null ? "Muted due to an illegal word said in the chat."
+							: fres.getPrimaryFilterReason()));
 
 			// Send system message
-			JsonObject res = new JsonObject();
+			res = new JsonObject();
 			res.addProperty("conversationType", client.getRoom(room).getType());
 			res.addProperty("conversationId", room);
 			res.addProperty("message",
-					"You have been automatically muted in public chat for violating the server rules, mute will last 30 minutes.\nReason: Muted due to an illegal word said in the chat, we request you to keep your chat respectful, safe and clean!");
-			res.addProperty("source", NIL_UUID);// Time format
-			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
-			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+					"You have been automatically muted in public chat for violating the server rules, mute will last 30 minutes.\nReason: "
+							+ (fres.getPrimaryFilterReason() == null ? "Muted due to an illegal word said in the chat."
+									: fres.getPrimaryFilterReason())
+							+ "\nWe request you to keep your chat respectful, safe and clean!");
+			res.addProperty("source", NIL_UUID);
 			res.addProperty("sentAt", fmt.format(new Date()));
 			res.addProperty("eventId", "chat.postMessage");
 			res.addProperty("success", true);
@@ -423,6 +637,76 @@ public class SendMessage extends AbstractChatPacket {
 		// Check room
 		SocialManager socialManager = SocialManager.getInstance();
 		if (client.isInRoom(room) || GameServer.hasPerm(permLevel, "moderator")) {
+			// Verify filters
+			FilterResult resultStrict = TextFilterService.getInstance().filter(message, true);
+			FilterResult resultDefault = TextFilterService.getInstance().filter(message, false);
+			boolean filteredUserStrictMode = resultStrict.isMatch();
+			boolean filteredDefaultSeverity = resultDefault.isMatch();
+
+			// Check severity and if we need to mute
+			if (filteredDefaultSeverity) {
+				// Get/create memory
+				ChatFilterMemory mem = client.getObject(ChatFilterMemory.class);
+				if (mem == null) {
+					mem = new ChatFilterMemory();
+					client.addObject(mem);
+				}
+
+				// Update
+				if (System.currentTimeMillis() - mem.lastFlag > (3 * 60 * 60 * 1000)) {
+					mem.lastFlag = 0;
+					mem.flagCount = 0;
+				}
+				mem.lastFlag = System.currentTimeMillis();
+				mem.flagCount++;
+
+				// Check count
+				if (mem.flagCount >= 4) {
+					// Mod log
+					String matchedWords = "";
+					for (WordMatch matched : resultDefault.getMatches()) {
+						if (matchedWords.isEmpty())
+							matchedWords = matched.getMatchedPhrase();
+						else
+							matchedWords += ", " + matched.getMatchedPhrase();
+					}
+					EventBus.getInstance()
+							.dispatchEvent(new MiscModerationEvent("chatfilter.mute",
+									"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+									Map.of("Chat message", message, "Matched word(s)", matchedWords,
+											"Primary reason for filtering",
+											(resultDefault.getPrimaryFilterReason() != null
+													? resultDefault.getPrimaryFilterReason()
+													: "unknown"),
+											"Room", room, "Resulting action", "muted", "Reason for mute",
+											"Continued breaches of chat rules after 2 warnings."),
+									"SYSTEM", client.getPlayer()));
+
+					// Mute
+					client.getPlayer().mute(0, 0, 30, "SYSTEM",
+							"Due to your continued breaches of the chat rules, you have been muted for 30 minutes.");
+
+					// Send system message
+					JsonObject res = new JsonObject();
+					res.addProperty("conversationType", client.getRoom(room).getType());
+					res.addProperty("conversationId", room);
+					res.addProperty("message", "Your message was blocked because it may not be appropriate.\nReason: "
+							+ (resultDefault.getPrimaryFilterReason() != null ? resultDefault.getPrimaryFilterReason()
+									: "unknown")
+							+ "\n\nDue to your continued breaches of the chat rules, you have been muted for 30 minutes.\nWe ask you to keep chat respectful, safe and clean!");
+					res.addProperty("source", NIL_UUID);// Time format
+					SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
+					fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+					res.addProperty("sentAt", fmt.format(new Date()));
+					res.addProperty("eventId", "chat.postMessage");
+					res.addProperty("success", true);
+					client.sendPacket(res);
+					mem.lastFlag = 0;
+					mem.flagCount = 0;
+					return true;
+				}
+			}
+
 			// Time format
 			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -493,7 +777,8 @@ public class SendMessage extends AbstractChatPacket {
 						boolean isStrict = filterSetting != 0;
 
 						// Filter
-						String filteredMessage = TextFilterService.getInstance().filterString(message, isStrict);
+						String filteredMessage = isStrict ? resultStrict.getFilterResult()
+								: resultDefault.getFilterResult();
 
 						// Send response
 						JsonObject res = new JsonObject();
@@ -532,8 +817,8 @@ public class SendMessage extends AbstractChatPacket {
 								boolean isStrict = filterSetting != 0;
 
 								// Filter
-								String filteredMessage = TextFilterService.getInstance().filterString(message,
-										isStrict);
+								String filteredMessage = isStrict ? resultStrict.getFilterResult()
+										: resultDefault.getFilterResult();
 
 								// Send
 								JsonObject res = new JsonObject();
@@ -557,9 +842,134 @@ public class SendMessage extends AbstractChatPacket {
 					}
 				}
 			}
+
+			// Check censor
+			if (filteredDefaultSeverity) {
+				// Get/create memory
+				ChatFilterMemory mem = client.getObject(ChatFilterMemory.class);
+
+				// Check count
+				if (mem.flagCount == 1) {
+					// Send message
+					JsonObject res = new JsonObject();
+					res.addProperty("conversationType", client.getRoom(room).getType());
+					res.addProperty("conversationId", room);
+					res.addProperty("message", "Your message was censored because it may not be appropriate.\nReason: "
+							+ (resultDefault.getPrimaryFilterReason() != null ? resultDefault.getPrimaryFilterReason()
+									: "unknown")
+							+ "\nWe ask you to keep chat respectful, safe and clean.");
+					res.addProperty("source", NIL_UUID);
+					res.addProperty("sentAt", fmt.format(new Date()));
+					res.addProperty("eventId", "chat.postMessage");
+					res.addProperty("success", true);
+					client.sendPacket(res);
+
+					// Mod log
+					String matchedWords = "";
+					for (WordMatch matched : resultDefault.getMatches()) {
+						if (matchedWords.isEmpty())
+							matchedWords = matched.getMatchedPhrase();
+						else
+							matchedWords += ", " + matched.getMatchedPhrase();
+					}
+					EventBus.getInstance()
+							.dispatchEvent(new MiscModerationEvent("chatfilter.censored",
+									"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+									Map.of("Chat message", message, "Matched word(s)", matchedWords,
+											"Primary reason for filtering",
+											(resultDefault.getPrimaryFilterReason() != null
+													? resultDefault.getPrimaryFilterReason()
+													: "unknown"),
+											"Room", room, "Resulting action", "censored"),
+									"SYSTEM", client.getPlayer()));
+				} else if (mem.flagCount == 2) {
+					// Send message
+					JsonObject res = new JsonObject();
+					res.addProperty("conversationType", client.getRoom(room).getType());
+					res.addProperty("conversationId", room);
+					res.addProperty("message", "Your message was censored because it may not be appropriate.\nReason: "
+							+ (resultDefault.getPrimaryFilterReason() != null ? resultDefault.getPrimaryFilterReason()
+									: "unknown")
+							+ "\n\nThis is your first warning, if you continue to breach the chat rules, your account will be muted.\nWe ask you to keep chat respectful, safe and clean.");
+					res.addProperty("source", NIL_UUID);
+					res.addProperty("sentAt", fmt.format(new Date()));
+					res.addProperty("eventId", "chat.postMessage");
+					res.addProperty("success", true);
+					client.sendPacket(res);
+
+					// Mod log
+					String matchedWords = "";
+					for (WordMatch matched : resultDefault.getMatches()) {
+						if (matchedWords.isEmpty())
+							matchedWords = matched.getMatchedPhrase();
+						else
+							matchedWords += ", " + matched.getMatchedPhrase();
+					}
+					EventBus.getInstance()
+							.dispatchEvent(new MiscModerationEvent("chatfilter.censored",
+									"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+									Map.of("Chat message", message, "Matched word(s)", matchedWords,
+											"Primary reason for filtering",
+											(resultDefault.getPrimaryFilterReason() != null
+													? resultDefault.getPrimaryFilterReason()
+													: "unknown"),
+											"Room", room, "Resulting action", "first warning"),
+									"SYSTEM", client.getPlayer()));
+				} else if (mem.flagCount == 3) {
+					// Send message
+					JsonObject res = new JsonObject();
+					res.addProperty("conversationType", client.getRoom(room).getType());
+					res.addProperty("conversationId", room);
+					res.addProperty("message", "Your message was censored because it may not be appropriate.\nReason: "
+							+ (resultDefault.getPrimaryFilterReason() != null ? resultDefault.getPrimaryFilterReason()
+									: "unknown")
+							+ "\n\nThis is your LAST warning, the next breach of chat rules will result in a mute.\nWe ask you to keep chat respectful, safe and clean.");
+					res.addProperty("source", NIL_UUID);
+					res.addProperty("sentAt", fmt.format(new Date()));
+					res.addProperty("eventId", "chat.postMessage");
+					res.addProperty("success", true);
+					client.sendPacket(res);
+
+					// Mod log
+					String matchedWords = "";
+					for (WordMatch matched : resultDefault.getMatches()) {
+						if (matchedWords.isEmpty())
+							matchedWords = matched.getMatchedPhrase();
+						else
+							matchedWords += ", " + matched.getMatchedPhrase();
+					}
+					EventBus.getInstance()
+							.dispatchEvent(new MiscModerationEvent("chatfilter.censored",
+									"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+									Map.of("Chat message", message, "Matched word(s)", matchedWords,
+											"Primary reason for filtering",
+											(resultDefault.getPrimaryFilterReason() != null
+													? resultDefault.getPrimaryFilterReason()
+													: "unknown"),
+											"Room", room, "Resulting action", "final warning"),
+									"SYSTEM", client.getPlayer()));
+				}
+			} else if (filteredUserStrictMode) {
+				// Send message
+				JsonObject res = new JsonObject();
+				res.addProperty("conversationType", client.getRoom(room).getType());
+				res.addProperty("conversationId", room);
+				res.addProperty("message",
+						"Your message was censored because of your current settings.\nIf you wish to not have this message flagged, please change your game's chat settings.");
+				res.addProperty("source", NIL_UUID);
+				res.addProperty("sentAt", fmt.format(new Date()));
+				res.addProperty("eventId", "chat.postMessage");
+				res.addProperty("success", true);
+				client.sendPacket(res);
+			}
 		}
 
 		return true;
+	}
+
+	private static class ChatFilterMemory {
+		public long lastFlag = 0;
+		public int flagCount = 0;
 	}
 
 	private String replaceCaseInsensitive(String msg, String target, String replacement) {
@@ -618,6 +1028,14 @@ public class SendMessage extends AbstractChatPacket {
 		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
 				|| GameServer.hasPerm(permLevel, "admin"))
 			commandMessages.add("giveBasicCurrency");
+		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemFurnitureItems
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemMods
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemResources
+				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemSanctuaryTypes)
+			commandMessages.add("restockInventory");
 
 		commandMessages.add("togglenameprefix");
 		if (GameServer.hasPerm(permLevel, "moderator")) {
@@ -651,10 +1069,9 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("removeperms \"<player>\"");
 				commandMessages.add("startmaintenance [\"<reason>\"]");
 				commandMessages.add("endmaintenance");
-				commandMessages.add("stopserver");
+				commandMessages.add("shutdownserver [\"<reason>\"]");
 				commandMessages.add("updatewarning <minutes-remaining>");
 				commandMessages.add("updateshutdown [\"<reason>\"]");
-				commandMessages.add("shutdownserver [\"<reason>\"]");
 				commandMessages.add("update <60|30|15|10|5|3|1>");
 				commandMessages.add("cancelupdate");
 			}
@@ -772,6 +1189,10 @@ public class SendMessage extends AbstractChatPacket {
 		commandMessages.add("privinst show <invite-id>"); // TODO
 		commandMessages.add("privinst invites"); // TODO
 
+		if (!GameServer.hasPerm(permLevel, "moderator")) {
+			commandMessages.add("listplayers");
+		}
+
 		// Add module commands
 		ModuleCommandSyntaxListEvent evMCSL = new ModuleCommandSyntaxListEvent(commandMessages, client,
 				client.getPlayer(), permLevel);
@@ -854,6 +1275,27 @@ public class SendMessage extends AbstractChatPacket {
 						systemMessage("You have been given 1000 star fragments and likes. Have fun!", cmd, client);
 						return true;
 					}
+				} else if (cmdId.equals("restockinventory")) {
+					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
+							|| client.getPlayer().getSaveSpecificInventory()
+									.getSaveSettings().allowGiveItemFurnitureItems
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemMods
+							|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemResources
+							|| client.getPlayer().getSaveSpecificInventory()
+									.getSaveSettings().allowGiveItemSanctuaryTypes) {
+						var onlinePlayer = client.getPlayer().getOnlinePlayerInstance();
+						String cmdF = cmd;
+						AsyncTaskManager.runAsync(() -> {
+							systemMessage("Restocking inventory... Please be patient, your game may lag for a bit...",
+									cmdF, client);
+							Centuria.gameServer.stockInventory(onlinePlayer, client.getPlayer(),
+									client.getPlayer().getSaveSpecificInventory(), true);
+							systemMessage("Your inventory has been restocked! Have fun!", cmdF, client);
+						});
+						return true;
+					}
 				} else if (cmdId.equals("questrewind")) {
 					if (args.size() < 1) {
 						// Missing argument
@@ -879,6 +1321,7 @@ public class SendMessage extends AbstractChatPacket {
 					// Get current quest position
 					String quest = QuestManager.getActiveQuest(client.getPlayer());
 					int pos = QuestManager.getQuestPosition(quest);
+					// FIXME: patch issue where this will break after completing all quests
 					if (pos < questsToRewind) {
 						// Missing argument
 						systemMessage(
@@ -982,6 +1425,11 @@ public class SendMessage extends AbstractChatPacket {
 
 					// Send result
 					systemMessage(result, cmd, client);
+					return true;
+				} else if (cmdId.equals("oc")) {
+					systemMessage(
+							"The chat proxy commands have been renamed! Use >proxy instead of >oc, the syntax remains the same.",
+							cmd, client);
 					return true;
 				} else if (cmdId.equals("proxy") && args.size() >= 1) {
 					String task = args.get(0).toLowerCase();
@@ -2004,7 +2452,7 @@ public class SendMessage extends AbstractChatPacket {
 						playerIDs = new ArrayList<String>();
 						for (int levelID : levelIDs) {
 							// Determine map name
-							String map = "UNKOWN: " + levelID;
+							String map = "UNKNOWN: " + levelID;
 							if (levelID == 25280)
 								map = "Tutorial [" + levelID + "]";
 							else if (helper.has(Integer.toString(levelID)))
@@ -2049,8 +2497,15 @@ public class SendMessage extends AbstractChatPacket {
 											.getRoom(plrRoom);
 									if (room == null && plr.levelID == levelID) {
 										// Add to response
+										String rName = plrRoom + " (unmanaged)";
+										if (plrRoom.startsWith("sanctuary_")) {
+											String owner = plrRoom.substring("sanctuary_".length());
+											CenturiaAccount acc = AccountManager.getInstance().getAccount(owner);
+											if (acc != null)
+												rName = acc.getDisplayName() + "'s Sanctuary";
+										}
 										response += "\n - " + plr.account.getDisplayName() + " - " + map
-												+ (plr.ghostMode ? " [GHOSTING]" : "");
+												+ (plr.ghostMode ? " [GHOSTING]" : "") + " - " + rName;
 
 										// Check suspicious
 										Optional<CenturiaAccount> susAcc = suspiciousClients.keySet().stream()
@@ -3057,22 +3512,6 @@ public class SendMessage extends AbstractChatPacket {
 							break;
 						}
 					}
-					case "stopserver": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							// Shut down the server
-							for (Player plr : Centuria.gameServer.getPlayers()) {
-								// Dispatch event
-								EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,
-										"Server has been shut down.", DisconnectType.SERVER_SHUTDOWN));
-							}
-							Centuria.disconnectPlayersForShutdown();
-							System.exit(0);
-							return true;
-						} else {
-							break;
-						}
-					}
 					case "startmaintenance": {
 						// Check perms
 						if (GameServer.hasPerm(permLevel, "admin")) {
@@ -3530,6 +3969,14 @@ public class SendMessage extends AbstractChatPacket {
 					case "tpall": {
 						// Teleport tool
 
+						// Get current
+						Player plrS = client.getPlayer().getOnlinePlayerInstance();
+						if (plrS == null || !plrS.roomReady) {
+							// Player not found
+							systemMessage("Your player is not online or not fully in world yet.", cmd, client);
+							return true;
+						}
+
 						// Find players in room
 						for (Player plr : Centuria.gameServer.getPlayers()) {
 							// Check ready
@@ -3539,15 +3986,6 @@ public class SendMessage extends AbstractChatPacket {
 							// Determine mode
 							if (args.size() >= 3) {
 								try {
-									// Get current
-									Player plrS = client.getPlayer().getOnlinePlayerInstance();
-									if (plrS == null || !plrS.roomReady) {
-										// Player not found
-										systemMessage("Your player is not online or not fully in world yet.", cmd,
-												client);
-										return true;
-									}
-
 									// Verify room
 									if (!plr.room.equals(plrS.room))
 										continue;
@@ -3604,7 +4042,7 @@ public class SendMessage extends AbstractChatPacket {
 
 								// Verify room
 								if (plr.account.getAccountID().equals(plrTarget.account.getAccountID())
-										|| !plr.room.equals(plrTarget.room))
+										|| !plr.room.equals(plrS.room))
 									continue;
 
 								// Handle teleport
@@ -4146,8 +4584,7 @@ public class SendMessage extends AbstractChatPacket {
 							}
 							systemMessage(
 									"Skipped " + c + " quests, now at: "
-											+ QuestManager
-													.getQuest(QuestManager.getActiveQuest(client.getPlayer())).name,
+											+ QuestManager.getQuest(QuestManager.getActiveQuest(acc)).name,
 									cmd, client);
 						} catch (Exception e) {
 							systemMessage("Error: " + e, cmd, client);
@@ -4402,7 +4839,8 @@ public class SendMessage extends AbstractChatPacket {
 										&& !ItemAccessor.getInventoryTypeOf(defID).equals("102")
 										&& !ItemAccessor.getInventoryTypeOf(defID).equals("10")
 										&& !ItemAccessor.getInventoryTypeOf(defID).equals("2")
-										&& !ItemAccessor.getInventoryTypeOf(defID).equals("1"))) {
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("1")
+										&& !ItemAccessor.getInventoryTypeOf(defID).equals("7"))) {
 							systemMessage("Invalid item defID. Please make sure you can actually obtain this item.",
 									cmd, client);
 							return true;
@@ -4424,7 +4862,9 @@ public class SendMessage extends AbstractChatPacket {
 								|| (ItemAccessor.getInventoryTypeOf(defID).equals("2") && !client.getPlayer()
 										.getSaveSpecificInventory().getSaveSettings().allowGiveItemMods)
 								|| (ItemAccessor.getInventoryTypeOf(defID).equals("1") && !client.getPlayer()
-										.getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars)) {
+										.getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars)
+								|| (ItemAccessor.getInventoryTypeOf(defID).equals("7") && !client.getPlayer()
+										.getSaveSpecificInventory().getSaveSettings().allowGiveItemEnigmas)) {
 							systemMessage("Invalid item defID. Please make sure you can actually obtain this item.",
 									cmd, client);
 							return true;
@@ -4450,6 +4890,55 @@ public class SendMessage extends AbstractChatPacket {
 				}
 
 				//
+				// User listplayers command
+				if (cmd.equals("listplayers")) {
+					// Load spawn helper
+					JsonObject helper = null;
+					try {
+						// Load helper
+						InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
+								.getResourceAsStream("spawns.json");
+						helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
+								.get("Maps").getAsJsonObject();
+						strm.close();
+					} catch (Exception e) {
+					}
+
+					// Find level IDs
+					int ingame = 0;
+					HashMap<Integer, Integer> levelIDs = new HashMap<Integer, Integer>();
+					for (Player plr : Centuria.gameServer.getPlayers()) {
+						if (plr.roomReady || plr.levelID == 25280) {
+							// Increase count
+							ingame++;
+
+							// Add
+							levelIDs.put(plr.levelID, levelIDs.getOrDefault(plr.levelID, 0) + 1);
+						}
+					}
+
+					// Build message
+					String message = "There are " + Centuria.gameServer.getPlayers().length
+							+ " player(s) connected and " + ingame + " player(s) in world.";
+					if (levelIDs.size() != 0) {
+						message += "\n";
+						message += "\n";
+						for (int levelID : levelIDs.keySet()) {
+							// Determine map name
+							String map = "UNKNOWN: " + levelID;
+							if (levelID == 25280)
+								map = "Tutorial";
+							else if (helper.has(Integer.toString(levelID)))
+								map = helper.get(Integer.toString(levelID)).getAsString();
+							message += map + ": " + levelIDs.get(levelID) + " players.";
+							message += "\n";
+						}
+					}
+					systemMessage(message, cmdId, client);
+					return true;
+				}
+
+				//
 				// Help command
 				if (cmd.equals("help")) {
 					String message = "List of commands:";
@@ -4472,10 +4961,30 @@ public class SendMessage extends AbstractChatPacket {
 		return false;
 	}
 
+	private static String getDmNameForModlog(ChatClient client, String room) {
+		// Find recipient
+		String recipient = client.getPlayer().getDisplayName();
+		String[] participants = DMManager.getInstance().getDMParticipants(room);
+		for (String p : participants) {
+			if (!p.equals(client.getPlayer().getAccountID())) {
+				// Check type
+				if (p.startsWith("plaintext:")) {
+					recipient = p.substring("plaintext:".length());
+					break;
+				} else {
+					CenturiaAccount a = AccountManager.getInstance().getAccount(p);
+					if (a != null)
+						recipient = "PM to " + a.getDisplayName();
+				}
+			}
+		}
+		return recipient;
+	}
+
 	private void systemMessage(String message, String cmd, ChatClient client) {
 		// Send response
 		JsonObject res = new JsonObject();
-		res.addProperty("conversationType", client.getRoom(room).getType());
+		res.addProperty("conversationType", (client.getRoom(room) != null ? client.getRoom(room).getType() : "room"));
 		res.addProperty("conversationId", room);
 		res.addProperty("message", "Issued chat command: " + cmd + ":\n[system] " + message);
 		res.addProperty("source", client.getPlayer().getAccountID());// Time format

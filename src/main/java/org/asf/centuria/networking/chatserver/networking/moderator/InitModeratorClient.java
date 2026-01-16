@@ -29,7 +29,7 @@ public class InitModeratorClient extends AbstractChatPacket {
 	@Override
 	public boolean handle(ChatClient client) {
 		// Check moderator client
-		if (client.getObject(ModeratorClient.class) == null)
+		if (client.getObject(ModeratorClient.class) != null)
 			return true;
 
 		// Load perms

@@ -15,6 +15,7 @@ public class FilterResult {
 	private WordMatch[] matchedFilters;
 
 	private String filteredResult;
+	private String primaryReason = null;
 
 	public FilterResult(WordMatch[] matches, String filteredResult) {
 		this.matchedFilters = matches;
@@ -22,8 +23,10 @@ public class FilterResult {
 
 		resultSeverity = FilterSeverity.NONE;
 		for (WordMatch match : matches) {
-			if (match.getSeverity().ordinal() > resultSeverity.ordinal())
+			if (match.getSeverity().ordinal() > resultSeverity.ordinal()) {
 				resultSeverity = match.getSeverity();
+				primaryReason = match.getReason();
+			}
 		}
 	}
 
@@ -31,6 +34,16 @@ public class FilterResult {
 		this.matchedFilters = matches;
 		this.filteredResult = filteredResult;
 		this.resultSeverity = resultSeverity;
+	}
+
+	/**
+	 * Retrieves the primary reason for the filter to be applied, or null if it
+	 * cannot be determined
+	 * 
+	 * @return Primary reason for filtering or null
+	 */
+	public String getPrimaryFilterReason() {
+		return primaryReason;
 	}
 
 	/**

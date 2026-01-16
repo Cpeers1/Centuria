@@ -45,6 +45,15 @@ public class GameRegistrationHandler extends HttpPushProcessor {
 			// Prepare response
 			JsonObject response = new JsonObject();
 
+			// Check password length
+			if (password.length < 1) {
+				// Reply with error
+				response.addProperty("error", "empty_password");
+				setResponseContent("text/json", response.toString());
+				this.setResponseStatus(400, "Bad request");
+				return;
+			}
+
 			// Verify login name blacklist
 			if (TextFilterService.getInstance().isFiltered(accountName, true, "USERNAMEFILTER")) {
 				// Reply with error

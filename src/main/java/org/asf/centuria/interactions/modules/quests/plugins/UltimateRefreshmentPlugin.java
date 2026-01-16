@@ -102,6 +102,9 @@ public class UltimateRefreshmentPlugin extends AbstractQuestPlugin {
 					// Command 3 in this case runs dialogue after 5 minutes unless the WON variable
 					// changes to true while the timer is running
 					runState(player, objectID, 1);
+
+					// Set the counter back to 5 as otherwise the quest wont progress
+					setState(player, UltimateRefreshmentConstants.QUEST_VENTVAPOR_COUNTER_OBJECT_ID, 5);
 				}
 			}
 		} else if (objectID.equals(UltimateRefreshmentConstants.QUEST_WON_VARIABLE_OBJECT_ID)) {

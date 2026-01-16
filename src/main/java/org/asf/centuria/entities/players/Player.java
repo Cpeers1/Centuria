@@ -335,6 +335,27 @@ public class Player {
 				player.pendingLevelID = 1689;
 				player.pendingRoom = "sanctuary_" + sanctuaryOwner;
 				player.levelType = join.levelType;
+
+				// Reset quest data
+				taskProgress.clear();
+				questProgress = 0;
+				questStarted = false;
+				questObjective = 0;
+
+				// End current game
+				if (currentGame != null) {
+					currentGame.onExit(this);
+					currentGame = null;
+				}
+
+				// Reset states
+				states.clear();
+				stateObjects.clear();
+				interactions.clear();
+				groupOjects.clear();
+
+				// Clear respawn items
+				respawnItems.clear();
 			} else {
 				client.sendPacket(join);
 				return false;

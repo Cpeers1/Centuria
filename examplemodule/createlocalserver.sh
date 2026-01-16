@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ "$git" == "" ]; then
-	git="https://github.com/Cpeers1/Centuria.git --branch 1.7.2"
+	git="https://github.com/Cpeers1/Centuria.git --branch major-1.8-develop"
 fi
 
 dir="$(pwd)"
