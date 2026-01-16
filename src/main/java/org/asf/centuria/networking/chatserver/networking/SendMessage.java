@@ -1724,120 +1724,128 @@ public class SendMessage extends AbstractChatPacket {
 				} else {
 					// Moderator in other room
 					if (receiver.getObject(ModeratorClient.class) != null) {
-						// Send through centuria moderator protocol
-						SendMessage res = new SendMessage();
-						res.packetId = "centuria.moderatorclient.postedMessageInOtherRoom";
-						res.roomType = client.isRoomPrivate(room) ? "private" : "room";
-						res.room = room;
+						// Check moderator perms
+						String permLevel3 = "member";
+						if (receiver.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+							permLevel3 = receiver.getPlayer().getSaveSharedInventory().getItem("permissions")
+									.getAsJsonObject().get("permissionLevel").getAsString();
+						}
+						if (GameServer.hasPerm(permLevel3, "moderator")) {
+							// Send through centuria moderator protocol
+							SendMessage res = new SendMessage();
+							res.packetId = "centuria.moderatorclient.postedMessageInOtherRoom";
+							res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+							res.room = room;
 
-						// Mark moderator
-						res.moderatorMessage = true;
+							// Mark moderator
+							res.moderatorMessage = true;
 
-						// Determines if the flag is critical, if true, the exclamation is red,
-						// otherwise its yellow to signify strict-mode, the box around the exclamation
-						// mark is orange
-						//
-						// The message will be orange in both cases
-						boolean isCriticalFlagged = filteredDefaultOrigState && filteredDefaultOrigCensor;
-						boolean flaggedDueToHeightenedSensitivity = !isCriticalFlagged && filteredDefaultState
-								&& filteredDefaultCensor;
+							// Determines if the flag is critical, if true, the exclamation is red,
+							// otherwise its yellow to signify strict-mode, the box around the exclamation
+							// mark is orange
+							//
+							// The message will be orange in both cases
+							boolean isCriticalFlagged = filteredDefaultOrigState && filteredDefaultOrigCensor;
+							boolean flaggedDueToHeightenedSensitivity = !isCriticalFlagged && filteredDefaultState
+									&& filteredDefaultCensor;
 
-						// If this is true, the exclamation is green as its uncensored, but still
-						// highlighted, the box around the exclamation mark is orange
-						//
-						// The message will be yellow
-						boolean isAlertFlagged = filteredFlaggedState;
+							// If this is true, the exclamation is green as its uncensored, but still
+							// highlighted, the box around the exclamation mark is orange
+							//
+							// The message will be yellow
+							boolean isAlertFlagged = filteredFlaggedState;
 
-						// Format
-						String highlightedMessageDefault = moderatorMessageStringBuilderRed
-								.buildOutputString(filterResultDefaultOrig.getTextParts());
-						String highlightedMessageDefaultPlain = moderatorMessageStringBuilderPlain
-								.buildOutputString(filterResultDefaultOrig.getTextParts());
-						String highlightedMessageMod = moderatorMessageStringBuilderRed
-								.buildOutputString(filterResultDefaultMod.getTextParts());
-						String highlightedMessageModPlain = moderatorMessageStringBuilderPlain
-								.buildOutputString(filterResultDefaultMod.getTextParts());
-						String highlightedMessageStrict = moderatorMessageStringBuilderRed
-								.buildOutputString(filterResultStrict.getTextParts());
-						String highlightedMessageStrictPlain = moderatorMessageStringBuilderPlain
-								.buildOutputString(filterResultStrict.getTextParts());
-						String highlightedMessageFlagged = moderatorMessageStringBuilderOrange
-								.buildOutputString(filterResultStaffHighlightStrict.getTextParts());
-						String highlightedMessageFlaggedPlain = moderatorMessageStringBuilderPlain
-								.buildOutputString(filterResultStaffHighlightStrict.getTextParts());
+							// Format
+							String highlightedMessageDefault = moderatorMessageStringBuilderRed
+									.buildOutputString(filterResultDefaultOrig.getTextParts());
+							String highlightedMessageDefaultPlain = moderatorMessageStringBuilderPlain
+									.buildOutputString(filterResultDefaultOrig.getTextParts());
+							String highlightedMessageMod = moderatorMessageStringBuilderRed
+									.buildOutputString(filterResultDefaultMod.getTextParts());
+							String highlightedMessageModPlain = moderatorMessageStringBuilderPlain
+									.buildOutputString(filterResultDefaultMod.getTextParts());
+							String highlightedMessageStrict = moderatorMessageStringBuilderRed
+									.buildOutputString(filterResultStrict.getTextParts());
+							String highlightedMessageStrictPlain = moderatorMessageStringBuilderPlain
+									.buildOutputString(filterResultStrict.getTextParts());
+							String highlightedMessageFlagged = moderatorMessageStringBuilderOrange
+									.buildOutputString(filterResultStaffHighlightStrict.getTextParts());
+							String highlightedMessageFlaggedPlain = moderatorMessageStringBuilderPlain
+									.buildOutputString(filterResultStaffHighlightStrict.getTextParts());
 
-						// Check flag
-						if ((filteredDefaultState && filteredDefaultCensor)
-								|| (filteredUserStrictModeState && filteredUserStrictModeCensor)
-								|| flaggedDueToHeightenedSensitivity || filteredFlaggedState) {
-							// Check filter trigger type
-							if (flaggedDueToHeightenedSensitivity) {
-								// Strict mode filter is used here as it includes non-strict during filtering,
-								// it may catch more than the non-strict version
-								res.message = "</noparse><color=orange>[<color=red>!</color>] </color><color=orange><noparse>"
-										+ highlightedMessageMod + "</noparse></color><noparse>";
-								res.messagePlain = "[!] " + highlightedMessageModPlain;
-							} else if (isCriticalFlagged) {
-								// Strict mode filter is used here as it includes non-strict during filtering,
-								// it may catch more than the non-strict version
-								res.message = "</noparse><color=orange>[<color=red>!</color>] </color><color=orange><noparse>"
-										+ ((filteredUserStrictModeState && filteredUserStrictModeCensor)
-												? highlightedMessageStrict
-												: highlightedMessageDefault)
-										+ "</noparse></color><noparse>";
-								res.messagePlain = "[!] "
-										+ ((filteredUserStrictModeState && filteredUserStrictModeCensor)
-												? highlightedMessageStrictPlain
-												: highlightedMessageDefaultPlain);
-							} else if (filteredUserStrictModeState && filteredUserStrictModeCensor) {
-								// Strict mode filter is used here as it includes non-strict during filtering,
-								// it may catch more than the non-strict version
-								res.message = "</noparse><color=orange>[<color=yellow>!</color>] </color><color=orange><noparse>"
-										+ ((filteredUserStrictModeState && filteredUserStrictModeCensor)
-												? highlightedMessageStrict
-												: highlightedMessageDefault)
-										+ "</noparse></color><noparse>";
-								res.messagePlain = "[!] "
-										+ ((filteredUserStrictModeState && filteredUserStrictModeCensor)
-												? highlightedMessageStrictPlain
-												: highlightedMessageDefaultPlain);
-							} else if (isAlertFlagged) {
-								res.message = "</noparse><color=orange>[<color=green>!</color>] </color><color=yellow><noparse>"
-										+ highlightedMessageFlagged + "</noparse></color><noparse>";
-								res.messagePlain = "[!] " + highlightedMessageFlaggedPlain;
-							}
+							// Check flag
+							if ((filteredDefaultState && filteredDefaultCensor)
+									|| (filteredUserStrictModeState && filteredUserStrictModeCensor)
+									|| flaggedDueToHeightenedSensitivity || filteredFlaggedState) {
+								// Check filter trigger type
+								if (flaggedDueToHeightenedSensitivity) {
+									// Strict mode filter is used here as it includes non-strict during filtering,
+									// it may catch more than the non-strict version
+									res.message = "</noparse><color=orange>[<color=red>!</color>] </color><color=orange><noparse>"
+											+ highlightedMessageMod + "</noparse></color><noparse>";
+									res.messagePlain = "[!] " + highlightedMessageModPlain;
+								} else if (isCriticalFlagged) {
+									// Strict mode filter is used here as it includes non-strict during filtering,
+									// it may catch more than the non-strict version
+									res.message = "</noparse><color=orange>[<color=red>!</color>] </color><color=orange><noparse>"
+											+ ((filteredUserStrictModeState && filteredUserStrictModeCensor)
+													? highlightedMessageStrict
+													: highlightedMessageDefault)
+											+ "</noparse></color><noparse>";
+									res.messagePlain = "[!] "
+											+ ((filteredUserStrictModeState && filteredUserStrictModeCensor)
+													? highlightedMessageStrictPlain
+													: highlightedMessageDefaultPlain);
+								} else if (filteredUserStrictModeState && filteredUserStrictModeCensor) {
+									// Strict mode filter is used here as it includes non-strict during filtering,
+									// it may catch more than the non-strict version
+									res.message = "</noparse><color=orange>[<color=yellow>!</color>] </color><color=orange><noparse>"
+											+ ((filteredUserStrictModeState && filteredUserStrictModeCensor)
+													? highlightedMessageStrict
+													: highlightedMessageDefault)
+											+ "</noparse></color><noparse>";
+									res.messagePlain = "[!] "
+											+ ((filteredUserStrictModeState && filteredUserStrictModeCensor)
+													? highlightedMessageStrictPlain
+													: highlightedMessageDefaultPlain);
+								} else if (isAlertFlagged) {
+									res.message = "</noparse><color=orange>[<color=green>!</color>] </color><color=yellow><noparse>"
+											+ highlightedMessageFlagged + "</noparse></color><noparse>";
+									res.messagePlain = "[!] " + highlightedMessageFlaggedPlain;
+								}
 
-							// Add remaining fields
-							res.originalMessage = message;
-							if (flaggedDueToHeightenedSensitivity) {
-								res.filterResultWriter = filterResultDefaultMod;
-								res.messagePartsWriter = filterResultDefaultMod.getTextParts();
+								// Add remaining fields
+								res.originalMessage = message;
+								if (flaggedDueToHeightenedSensitivity) {
+									res.filterResultWriter = filterResultDefaultMod;
+									res.messagePartsWriter = filterResultDefaultMod.getTextParts();
+								} else {
+									res.filterResultWriter = (filteredUserStrictModeState
+											&& filteredUserStrictModeCensor) ? filterResultStrict
+													: filterResultDefaultOrig;
+									res.messagePartsWriter = (filteredUserStrictModeState
+											&& filteredUserStrictModeCensor) ? filterResultStrict.getTextParts()
+													: filterResultDefaultOrig.getTextParts();
+								}
+								res.alertingMessage = true;
+								res.criticalAlertingMessage = isCriticalFlagged;
+								res.blockedMessage = false;
 							} else {
-								res.filterResultWriter = (filteredUserStrictModeState && filteredUserStrictModeCensor)
-										? filterResultStrict
-										: filterResultDefaultOrig;
-								res.messagePartsWriter = (filteredUserStrictModeState && filteredUserStrictModeCensor)
-										? filterResultStrict.getTextParts()
-										: filterResultDefaultOrig.getTextParts();
+								// Default uncensored
+								res.message = filterResultDefaultMod.getFilterResult();
 							}
-							res.alertingMessage = true;
-							res.criticalAlertingMessage = isCriticalFlagged;
-							res.blockedMessage = false;
-						} else {
-							// Default uncensored
-							res.message = filterResultDefaultMod.getFilterResult();
-						}
 
-						// Add source and such
-						res.sourceWriter = client.getPlayer().getAccountID();
-						res.sentAtWriter = fmt.format(new Date());
-						if (ocProxyName != null) {
-							res.sourceWriter = "plaintext:" + ocProxyName;
-							res.authorWriter = client.getPlayer().getAccountID();
-						}
+							// Add source and such
+							res.sourceWriter = client.getPlayer().getAccountID();
+							res.sentAtWriter = fmt.format(new Date());
+							if (ocProxyName != null) {
+								res.sourceWriter = "plaintext:" + ocProxyName;
+								res.authorWriter = client.getPlayer().getAccountID();
+							}
 
-						// Send message
-						receiver.sendPacket(res);
+							// Send message
+							receiver.sendPacket(res);
+						}
 					}
 				}
 			}
@@ -2069,23 +2077,31 @@ public class SendMessage extends AbstractChatPacket {
 
 					// Check moderator client
 					if (receiver.getObject(ModeratorClient.class) != null) {
-						// Send through centuria moderator protocol
-						SendMessage res = new SendMessage();
-						res.packetId = "centuria.moderatorclient.postedMessageInOtherRoom";
-						res.roomType = message.roomType;
-						res.room = message.room;
-						res.message = message.message;
-						res.messagePlain = message.messagePlain;
-						res.moderatorMessage = true;
-						res.originalMessage = message.originalMessage;
-						res.alertingMessage = message.alertingMessage;
-						res.criticalAlertingMessage = message.criticalAlertingMessage;
-						res.blockedMessage = message.blockedMessage;
-						res.sourceWriter = message.sourceWriter;
-						res.sentAtWriter = message.sentAtWriter;
-						res.filterResultWriter = message.filterResultWriter;
-						res.messagePartsWriter = message.messagePartsWriter;
-						receiver.sendPacket(res);
+						// Check moderator perms
+						String permLevel = "member";
+						if (receiver.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+							permLevel = receiver.getPlayer().getSaveSharedInventory().getItem("permissions")
+									.getAsJsonObject().get("permissionLevel").getAsString();
+						}
+						if (GameServer.hasPerm(permLevel, "moderator")) {
+							// Send through centuria moderator protocol
+							SendMessage res = new SendMessage();
+							res.packetId = "centuria.moderatorclient.postedMessageInOtherRoom";
+							res.roomType = message.roomType;
+							res.room = message.room;
+							res.message = message.message;
+							res.messagePlain = message.messagePlain;
+							res.moderatorMessage = true;
+							res.originalMessage = message.originalMessage;
+							res.alertingMessage = message.alertingMessage;
+							res.criticalAlertingMessage = message.criticalAlertingMessage;
+							res.blockedMessage = message.blockedMessage;
+							res.sourceWriter = message.sourceWriter;
+							res.sentAtWriter = message.sentAtWriter;
+							res.filterResultWriter = message.filterResultWriter;
+							res.messagePartsWriter = message.messagePartsWriter;
+							receiver.sendPacket(res);
+						}
 					}
 				}
 			}
