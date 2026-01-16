@@ -2,7 +2,12 @@ New features:
 - Implemented voice chat
 - Implemented support for TLS-encrypted servers in FeralTweaks
 - Added four unused emotes (/yes, /no, /eat, /scared) that were left over from the original game but were never unused (NOTE THAT WE CANNOT FIX BROKEN EMOTES, THESE FOUR ARENT SUPPORTED BY ALL AVATARS)
+- Implemented tags: kind of like permission groups, can be used for name prefixes, name colors and module use
+- Implemented save prefixes: player save settings can now specify prefixes to use in display names
+- Implemented prefix hiding: players can choose to hide their prefixes via commands
+- Implemented chat proxying (use >help for a list of commands ingame related to this feature)
 - Implemented the Edge text filter, this replaces the old EmuFeral text filter, this new filter is vastly superior to the older version
+- Implemented Private Instances! You can find the feature in the Discord bot and in ingame chat commands!
 - Implemented like rewards for twiggle builders
 - Implemented MMO rooms
 
@@ -10,6 +15,17 @@ New commands:
 - Implemented a general 'shutdownserver' command that doesnt trigger a update call (still says its updating on the client unless its FeralTweaks, this is a client limitation)
 - Implemented renaming of GCs via the gcrename (gcr) command
 - Implemented gclistmembers (gclm) command
+- Implemented coordsof, a moderator command to show a player's coordinates
+- Implemented tp, a moderator command to teleport to players or coordinates
+- Implemented tpall, a moderator command to teleport every player in a room to a player or coordinates
+- Implemented tpserverto, a moderator command that practically yanks everyone in the entire game to a specific player
+- Implemented tptosanctuary, a moderator command to teleport to sanctuaries
+- Implemented gatherallplayers and endgathering, these are moderator commands to temporarily disengage the room instancing system and teleport everyone into the same room
+- Implemented a dice roll command (>roll) for roleplay purposes
+- Implemented a player count command (>listplayers) for regular players that shows how many are ingame
+
+New quests:
+- Ultimate Refreshment
 
 New functionality:
 - Implemented the ability to create new Decree Board entries
@@ -24,27 +40,26 @@ New functionality:
 - Backported the Edge module system to improve module loading
 
 QoL Changes:
-- Added an unread counter in world chat for when in GCs or DMs [WIP]
-- Made it that PM message notifications are automatically marked as read when the messages are read [WIP]
-- Made it that gameplay item reward notifications are automatically marked as read when the popup is closed [WIP]
-- Made it that gameplay notifications such as quests and daily quests arent processed as unreads by the notification system [WIP]
-- Fixed unread counter not showing correct amount of unread messages [WIP]
+- Added an unread counter in world chat for when in GCs or DMs
+- Made it that PM message notifications arent processed as unreads by the notification system
+- Made it that gameplay item reward notifications arent processed as unreads by the notification system [ TO FIX, BUGGY ATM ]
+- Made it that gameplay notifications such as quests arent processed as unreads by the notification system
+- Fixed unread counter not showing correct amount of unread messages
 - Implemented chat formatting (minimal markdown-like syntax)
-- Made it so that chat scrolls down even if in other channels [WIP]
-- Improved chat bubbles by making them semi-scroll instead of replacing the full text when it has too many messages [WIP]
+- Made it so that chat scrolls down even if in other channels
+- Improved chat bubbles by making them semi-scroll instead of replacing the full text when it has too many messages
 - Made some improvements to gliding logic and added flapping! (press F to flap while gliding)
 - Made it that the teleport-in/teleport-out animations are played on login/logout for other players
 - Made it so that you can have multiple clothing items of the same category (PC ONLY)
 - Increased decal resolution to 2048 for high, 1024 for mid and left low on 512
+- Added a lot more eye and pupil types, all NPC eye and pupil types are available for avatars now too
 - Added 'no eye' eye type for all avatars
-- Added a 'typing' status in chat [WIP]
-- Reimplemented avatar blinking
-
-New quests:
-
+- Added a 'typing' status in chat
+- Reimplemented avatar blinking [ BUG: CAN RANDOMLY FAIL ]
 
 Fixes in the server:
 - Fixed online player counter on the API website
+- Fixed display name sync for when permissions are updated
 - Improved synchronization practices for thread-unsafe operations, this increases performance and lessens load impact
 - Improved packet reading logic, enhancing server performance
 - Fixed server error loop when players change while retrieving the player list
@@ -52,38 +67,58 @@ Fixes in the server:
 - Fixed date/time formatting issues that were causing time desyncs
 - Improved chat performance by overhaulling sendmessage handling, the room system and general networking logic
 - Properly implemented trade chat, its no longer a DM channel but a transient channel thats closed when trade ends
+- Fixed sync resetting the last action to default when its not a action type packet
 - Fixed the moderation log not showing the chat message when autofilter mutes players
 - Fixed find player crashing the game when the target player has not used the social services before
 - Fixed player actions (sitting etc) not correctly syncing when using the editor
+- Fixed player sync causing action resets for other players when the sync packet in question isnt a action/emote packet
 - Fixed player card, display names and experience server calls randomly failing
+- Fixed players not receiving status updates about friends that are coming online
 - Fixed quest item randomization breaking down causing eg. feed the tree to bug out
 - Fixed harvest trackers progressing the quest while its not started
 - Fixed issues with the block system in chat
 - Fixed initial sync coordinates being off
 - Fixed GCs showing as 'offline' in chat
-- Fixed the avatar look save bug
+- Fixed the avatar look save bug and implemented a failsafe to correct broken look selection
 - Fixed broken loot spawning
+- Fixed pardon moderation event not being dispatched
 
 Fixes in the client:
 - Fixed chat randomly failing to connect at world join [WIP, only need new protocol]
 - Fixed chart patches not being picked up by all of the game
 - Fixed chart patches not being correctly parsed, fixed new chart definitions not working
-- Fixed the emote wheel not showing all of the primary emotes (note that the new four emotes
-- Fixed autologin errors preventing further regular loginsare only usable via slash commands)
-- POTENTIALLY fixed the infamous 10-XXX (critical error updating feral) bug (unable to reproduce, theoretical remedy in place, may be resolved but unable to trigger it)
+- Fixed autologin errors preventing further regular logins
+- POTENTIALLY fixed the infamous 10-XXX (critical error updating feral) bug (unable to reproduce, theoretical remedy in place, may be resolved but unable to trigger it) -- NOT FIXED ENTIRELY (NOTE TO SELF)
 - Fixed login loading screen transition randomly failing to fade in
 - Fixed chat stripping <> while noparse takes care of that
 - Fixed creation of assets not functioning correctly
+- Fixed group chats not being resized properly
+- Fixed the favorite 'Player has joined you' spam bug
+
+Visual fixes in the client:
+- Fixed off-centered dragon spark, its now correctly centered
+- Fixed the emote wheel not showing all of the primary emotes (note that the new four emotes are only usable via slash commands) [ TO FIX: INITIAL RENDERING STILL OFF ]
 - Fixed the floating rocks animations not working during events
+- Fixed NPC head rotation not functioning [ TO FIX: FINICKY AF ]
+
+New client content/functionality:
+- Dragons and Shinigami can now 'glide' without wings
+- Added a 'no legs' body mod for dragons
 
 Other changes:
 - Made it that the Centuria APIs arent blocked by CORS
-- Increased the amount of chat messages are saved to history for dms to 500
+- DMs/GCs now allow infinite chat history, instead, the server checks daily if a private chat is inactive for 2 months, if so, it deletes it
 - Refactored server resources, they are now properly structured
 - Added a 'reason' argument to the updateshutdown command
 - Added a 'reason' argument to the startmaintenance command
+- Made it that Phoenixes can now have 'no wings' in experience mode
+- Increased general scaling options to allow larger and smaller sizes
 - Increased jump force (a fourth of extra force)
-- Dragons can now 'glide' without wings
+- Made it that the server will always load save settings from the save manager if the active save is present in the configuration unless overridden
+
+Changes to loot and resources:
+- Increased skyjelly drop rate
+- Increased pyrite cicada drop rate
 
 
 HEADS-UP!
@@ -95,31 +130,315 @@ but you can always teleport to your friends.
 TODO:
 
 important:
-- fix error code 13 -_-
-- more quests (and unlock Ultimate Refreshment for the community)
-- redo autologin to only log in after reaching login
-- if its not too much work, refactor to use strings instead of numeric defids
-- if its not too much work, implement more transformer systems for eg avatars and items, and make the server dynamic for items, avis etc instead of hardcoded
-- length-prefixed chat and game protocol for feraltweaks
+
+Known issues:
+    - Blinking randomly breaks
+    - Logout/exit can sometimes freeze up
+    - Some combinations of multiple back items crash the game
+    - 'Fatal error in GC' popups
+    - Tutorial is presently broken on initial world join
+    - Emote wheel can be finicky and show the incorrect emotes
+    - Gameplay item rewards are still 'unread' notifications, this is being fixed
+    - NPC head rotation can be finicky
+Fixes w2:
+    - Fixed quest progression causing incorrect quest completion message
+EARLY ACCESS:
+    -- Somewhere randomly:
+
+    launcher:
+    - macos via wine support as alternative (if the fixes dont work) -- wip: DONE, RELEASE WHEN READY :D
+    - use sentinel updater/installer instead of the messy feraltweaks one when the sentinel one is finished (wip)
+
+    -- 1.8 EA wave 2: 80 more players --
+
+    client moderation tools:
+    - moderator chat window: basically a different version of the chat window that has access to moderation tools, a moderation chat room, and all active rooms in the server using the new centuria moderation protocol (separate mod package)
+    - moderator server log viewer: another window using the chat window's logic but displaying server logs (minus ips where possible)
+
+    discord bot (both 1.8 and 1.7);
+    - chat linking for group chats and gcs
+    - chat discord moderation server (automatically creating room channels etc in discord for moderation, and a terminal channel usable for moderation ingame)
+    - server command terminal channels
+
+    server:
+    - add in a command to change username color for admin+
+    - fix snowbold warfare being broken
+    - fetching levels seems to still be unreliable (MAY be fixed)
+    - change server default ports
+    - fix item detail sheet generator
+    - fix follower/following list sorting
+    - fix trade max limit being above item counts
+    - unbinding is unreliable and sometimes doesnt work at all (and gives incorrect amount of items back, plus causes lag spike as we shouldnt need to send the entire inventory, plus it seems to remove full items instead of quantity) TODO: fix spike, fix potential missing items???, rest is done
+    - giveitem doesnt seem to work for offline players
+    - implement chat history for public chat
+    - improve item change sync, make it happen right away and make sure that it only syncs changed items, not the full inventory, AS LAG
+
+    - emote sync is buggy
+
+    - fix object update potentially able to exploit finding ghost/blocked players (player teleport and avatar actions)
+    - figure out why ghost chat connections are able to exist
+    - fix (if still a problem) duplicate gc load (client desync?)
+    - fix (if still a problem) dm unread counter not always being correct for new unreads, sometimes doenst show up
+    - fix duplicate avatar slots and figure out how to fully remove npc avis
+
+    - increase pigment drop from flying chests
+    - if possible, try adding avatar species to tradeable items (and make sure lock/unlock handles this properly) [may be scrapped]
+
+    - make sure endgathering doesnt reload ppl in a private instance
+    - make sure endgathering/gatherallplayers tp back to where ppl were
+    - make sure the tp commands dont pull players out of private instances
+    - make sure private instance add/remove participant checks if its already a participant
+    - add a connect method for private instances and simplify join/select and make sure it tps back to where ppl were
+    - add a remove method for private instances and simplify leave/deselect and make sure it tps back to where ppl were
+    - add a method to get all players connected to a instance at the time (and a command to check the list, for owner its with names, for others its only a count, must be part of a instance to retrieve the info)
+    - private instance data storage
+    - private instance invites
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    - block check in typing statuses (and mod check etc and with ghost mode check and with mute checks too)
+    - make sure the block system affects room selection for if there are no friends ingame blocked players should be avoided
+    - hide avatar of blocked players unless target is a mod
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    - make sure that sanc chat and sync (both test newly-join sync and already-joined sync) work properly
+
+    - make sure banned players arent listed in socials
+    - make sure kick can also terminate a chat-only connection
+
+    - implement private room instances (TO TEST)
+    - implement private room instances via chat commands
+    - implement private room instances via API calls (and with invite links)
+    - implement private room instances via the discord bot
+
+    - implement birthday support in base software (swear filter must also be enabled for <16 forcefully, whenever the birthday is changed the moderation event will show previous and new age)
+    - make it that for <16 players, public mmo mode is disabled and that multiplayer only works via private instances (first instance is selected by default, force-creates one if needed, make sure this fully works)
+
+    - config option to reject birthdayless accounts
+    - api call to check if the birthday is present and if not if its required (/centuria/assignmentofbirthdayrequired)
+    - support birthday assignment from API (for launcher, /centuria/assignbirthday)
+    - implement birthday support in launcher as it may be required for login
+
+    - port the current server modules to the 1.8 server (mostly the feraltweaks module, rest is pretty up to date)
+
+    - allow moderators to fetch the chat log from binary log
+    - length-prefixed chat and game protocol for feraltweaks (THIS WAS WIP SO FINISH IT)
+
+    - implement a way to disable mmo mode (both as a option and as a mmo ban) (and maybe a UI option in 1.8 ea on settings menu so support a player var)
+
+    - fix deletion of account sometimes failing
+
+    - more quests (and unlock Ultimate Refreshment for the community)
+
+    - forgot password and registration via launcher
+    - launcher-based password changing (and deprecate old method)
+    - forgot password API feature
+    - forgot password in launcher
+    - password change windows ingame if possible
+    - whitelisting
+
+    - back up the 1.7 server in case things go really wrong
+    - release the 1.8 server
+    - build tools
+
+    commands for 1.8:
+    - listsaves ["<player name>"]: player-accessible command to list saves (discord and game)
+    - downloadsave ["<save>"] ["<player name>"]: player-accessible discord bot command to download a specific or active save save
+    - selectsave "<save>" ["<player name>"]: player-accessible command to select a save (discord and game)
+    - createsave "<save>" ["<player name>"]: player-accessible command to create saves (discord and game, with limitation support)
+    - deletesave "<save>" ["<player name>"]: player-accessible command to delete saves (discord and game)
+    - listavatars ["<player name>"] ["<save>"]: command to list named avatars and their species and ID and number (discord and game)
+    - viewavatar "#<number of avatar>" ["<save>"] ["<player name>"]: command to view a specific avatar next time the player card is requested, and for feraltweaks-enabled clients, this immediately shows the player card after (game only)
+    - getplayerinfo "<player name>" command: shows player details, login date, status, etc, like the discord command
+
+    discord bot:
+    - player count feature
+    - change the account deletion handler to keep the account paired until after the dispatch
+    - fix mod log for permission commands
+    - save management system (creation, deletion, save pages during selection, etc, with limitation support)
+    - fix the application system buttons having a chance to despawn and make applications expire (seems to be mostly the backup system failing randomly)
+    - application form expiry system
+    - support backup creation for multiple saves
+    - tag support in applications
+    - birthday field in registration (with confirm, and if below 13, reports automatically and instantly to team, if its below 16, it should give mods a heads up, name it 'Birthday (for fine-tuning privacy-related systems)' to avoid lies as much as possible)
+    - allow assigning of birthday if not present yet
+    - allow update of birthday
+    - fix moderation log showing incorrect member for perms (and make sure perm name updates are handled right)
+    - fix moderation log format
+    - moderation log for kicks
+    - separate ping for mod log, feedbackreports, maintenance and announcement pings (just unique pings for each message)
+    - show replies sent through reports in the report channel
+
+    client and server security:
+    - server should store last used IP of player, but never allow it to be accessed
+    - server should allow IP unban for players
+
+    - sentinel + hwid bans (do not announce this, embed in ftl, while R will likely get around it, ppl like suiren wont, should embed it in FT, make sure it saves the last used HWID for offline moderation, if a client fails to authenticate, depending on server settings, either minimal mode (no action), block login or fire a silent alarm (for emuferal official, a silent alarm), if a client fails to authenticate, either way, moderation-log what all fails to verify, like if its process modules, assembly tampering, which fails to verify, etc), either way sentinel would flag the account to be visible via server commands and save if the account had tampered data by login date and when not
+    - sentinel commands to view hwid, manage hard bans, viewing mod lists, if there are modified assemblies running etc, if there are foreign modifications running if its not on extreme enforcement and what the file names are, and view login history and flag status list based on login date (all logins with if the player was running modifications, either clear (no modifications apart from base), verified, unverified, unverified update (like known mods but mismatch of hashes), or non-mod foreign modifications)
+    - hard bans: IP & HWID bans that spread if a authentication attempt succeeds, if a HWID or IP is banned, and another account logs into the device successfully (correct username/password), it too would get banned and expand the hard ban, if a HARD-BANNED account logs in, the device and IP thats being logged into expands the hard ban and gets banned too
+
+    configuration:
+    - enable (and support it both in server and old (patched) client) TLS-encrypted servers -- TODO fully implement
+
+    gliding improvements:
+    - accelleration (and shift for sprint but increases gravity)
+    - different gliding stats for small/medium/large wings
+    - gliding angle (look yaw affects gliding, if tilted upwards itll glide up but decreses momentum until momentum runs too slow and then increases gravity)
+    - get the flapping animation working with flight-flap
+
+    client:
+    - wingless flight for other avatars
+    - support for non-qwerty layouts like azerty for controls (and perhaps keybind remapping in general)
+    - improve gamepad support on some rudimentary level to make it at least possible to properly interact and move around, glide, etc
+    - make sure level fetching caches
+    - fix buggy chat formatting (can behave oddly dont remember how exactly)
+    - flight sprint and reduce regular flight speed
+    - flight roll sync
+    - bring back unique dragon breaths
+    - removable ears for all avatars
+    - 'no spark' spark for all avatars (and in the future more spark types)
+    - 'no tail' option for all avatars apart from dragon
+    - zilant/lindwyrm and wyvern leg combinations (so only front and only back legs separate)
+    - increased individual body sliders if possible
+    - some level proportion sliders
+    - fix buggy blink
+    - allow user to pick which chat font to use
+    - on 1.8 and 1.7 the default font for chat should be changed to one that supports more emoji and add more emoji to the emoji menu
+    - mouth movement for avatars on chatting
+    - reintroduce dragon elemental breath
+    - fix camera shutter
+    - improve screenshot quality and screen recorder quality
+    - fix blank chat entry if possible
+
+    modloader:
+    - make sure bundle patching takes platform in mind
+
+    stability:
+    - improve logout stability
+
+    --
+
+    -- 1.8 EA wave 2 part 2 --
+
+    android:
+    - reintroduce android support through on-device proxy server implementing encryption and sentinel
+
+    --
+
+    -- 1.8 EA wave 3: 100 new slots --
+
+    launcher:
+    - modulare terms of service system: AML (AerialWorks Modular License), license/terms split up into multiple blocks the user can accept/deny, tho most are rn accept only as we have a very relaxed policy, also highlight minimal age and rights
+
+    fixes and important:
+    - fix GC screen scaling breaking after loading a second conversation (fixed?)
+    - fix andrulian's jittery head rotation
+    - trade bans
+    - reimplement /goto, /tp, /find, /sanc and /sanctuary
+    - reduce lockpick and star frag rates for rewards and world spawning
+
+    client important:
+    - fix tutorial breaking the full dang game due to odd invalid cast to Avatar_Network
+    - redo autologin to only log in after reaching login
+
+    client flight:
+    - bind flight yaw to camera and make sure that works right
+    - proper gliding velocity and losing speed with angle, and descending where needed
+    - make flapping increase velocity
+    - some form of hover feature
+
+    client qol:
+    - reply system for chat
+    - editing messages in chat
+    - way to turn of blinking???
+    - look reset button
+    - expanse player list on map
+    - create an eye decal tab if possible
+    - allow clothing items to be moved in 3d space with proper transform tools
+    - allow sanctuary items to be moved in 3d space with proper transform tools
+    - allowing body mods to be duplicated and moved in 3d space, maybe even other body mods than that are equipped
+
+    social features:
+    - player bios (on player card)
+    - player pronoun tags (visible in chat and on player card)
+
+    --
+
+    -- 1.8 EA wave 4: 150 new slots --
+
+    client QoL:
+    - clicking decals on-avatar to select
+    - layering decals by dragging them in the list
+
+    --
+
+    -- 1.8 EA wave 5: ??? new slots --
+
+    client & server features:
+    - reintroduce a better version of map rotations (that rotate every hour so that all expanse regions are available at least once, only one part will be closed, and its on schedule, clockwise rotation)
+    - make quest sketches stick around after the quest is done
+    - make map changes such as the fountain of the mistbreath stick around after the quest is done
+
+    --
+
+    -- 1.8 EA wave 6: ??? new slots --
+
+    client:
+    - day/night cycles
+
+    --
+
+    server important:
+    - fix sync issues where packets are sent out of order??? (not really possible is it-)
+
+    client loading quality:
+    - core mod system and make feraltweaks a core mod, move mod loading later in the startup process too (make ferealtweaks delay loading until the loading screen pops up)
+    - mod loading progress bar
+
+    features:
+    - favoriting items for each tab
+
+after that:
+- create no legs option server-sided for dragons (when in place, remove the automatic addition)
+- try messing around to see if deep-fried-decals can be fixed (gpu brand is a big influence, nvidia seems unaffected, mostly amd, likely one of the render calls in regular decals as eyes may be unaffected)
+- audio doesnt get destroyed always on avatar switch (which causes ghost audio of previous avatars)
+- fix DWD and Kino games infinite looping (check if they behave) -- never finished
+- make sure that core resets cancel any existing logouts and that they properly log you out, at some points they can drop you back where you were if logout errors
 - implement token refreshing via feraltweaks
-- allow moderators to fetch the chat log
 - make it that chat commands can be passed to the server
+- asset injection & asset hooking
+- fix error code 13 -_-
 - implement downloading of unity assemblies for unstripping
-- fix what the hex star frag rewards
+- fix what the hex rewards
 
-important, but later:
-- build tools
-- forgot password and registration via launcher
-- launcher-based password changing (and deprecate old method)
-- forgot password API feature
-- forgot password in launcher
-- password change windows ingame if possible
-- allow staff to hide their prefixes
-
-quality:
-- fix npc head rotation (another script interferes with it)
-- reintroduce dragon elemental breath
-- fix avatar sound looping bug
+ideas for near future:
+- add Kobold to playable avatars since its stable
+- add Komodori to playable avatars since its stable
 
 after that:
 - a command that shows how many items are placed in the sanctuary
@@ -127,7 +446,6 @@ after that:
 
 just before update release:
 - add icons for the installer warning decree, the 1.7.1 decree and the android decree
-- implement a proxy-based encryption layer in the android client for game server encryption
 - add discord RPC to the launcher base package
 - enable gameserver encryption on LIVE
 - enable director encryption on LIVE

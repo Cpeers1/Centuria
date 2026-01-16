@@ -7,9 +7,9 @@ import java.net.URL;
 
 import org.asf.centuria.tools.legacyclienttools.translation.ApiTranslators;
 import org.asf.connective.RemoteClient;
-import org.asf.connective.processors.HttpPushProcessor;
+import org.asf.connective.handlers.HttpPushHandler;
 
-public class ProxyHttpProcessor extends HttpPushProcessor {
+public class ProxyHttpProcessor extends HttpPushHandler {
 	private String proxy;
 
 	public ProxyHttpProcessor(String proxy) {
@@ -17,7 +17,7 @@ public class ProxyHttpProcessor extends HttpPushProcessor {
 	}
 
 	@Override
-	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
+	public void handle(String path, String method, RemoteClient client, String contentType) throws IOException {
 		byte[] body = new byte[0];
 		if (method.equals("POST")) {
 			ByteArrayOutputStream strm = new ByteArrayOutputStream();
@@ -66,7 +66,7 @@ public class ProxyHttpProcessor extends HttpPushProcessor {
 	}
 
 	@Override
-	public HttpPushProcessor createNewInstance() {
+	public HttpPushHandler createNewInstance() {
 		return new ProxyHttpProcessor(proxy);
 	}
 

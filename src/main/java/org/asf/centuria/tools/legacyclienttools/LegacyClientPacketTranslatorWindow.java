@@ -203,7 +203,7 @@ public class LegacyClientPacketTranslatorWindow {
 					try {
 						director = ConnectiveHttpServer.createNetworked("HTTP/1.1",
 								Map.of("address", "127.0.0.1", "port", textField_4.getText()));
-						director.registerProcessor(new DirectorProcessor());
+						director.registerHandler(new DirectorProcessor());
 						director.start();
 					} catch (Exception e2) {
 						JOptionPane.showMessageDialog(frmLegacyClientPacket,
@@ -216,7 +216,7 @@ public class LegacyClientPacketTranslatorWindow {
 					try {
 						api = ConnectiveHttpServer.createNetworked("HTTP/1.1",
 								Map.of("address", "127.0.0.1", "port", textField_5.getText()));
-						api.registerProcessor(new ProxyHttpProcessor(txtHttpsaerialworksddnsnet.getText()));
+						api.registerHandler(new ProxyHttpProcessor(txtHttpsaerialworksddnsnet.getText()));
 						api.start();
 					} catch (Exception e2) {
 						JOptionPane.showMessageDialog(frmLegacyClientPacket,

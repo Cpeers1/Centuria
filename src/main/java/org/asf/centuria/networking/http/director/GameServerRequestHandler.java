@@ -7,15 +7,15 @@ import java.net.SocketAddress;
 
 import org.asf.centuria.Centuria;
 import org.asf.connective.RemoteClient;
+import org.asf.connective.handlers.HttpPushHandler;
 import org.asf.connective.impl.http_1_1.RemoteClientHttp_1_1;
-import org.asf.connective.processors.HttpPushProcessor;
 
 import com.google.gson.JsonObject;
 
-public class GameServerRequestHandler extends HttpPushProcessor {
+public class GameServerRequestHandler extends HttpPushHandler {
 
 	@Override
-	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
+	public void handle(String path, String method, RemoteClient client, String contentType) throws IOException {
 		// Send response
 		String addr = Centuria.discoveryAddress;
 		if (addr.equals("localhost") || addr.equals("127.0.0.1")) {
@@ -65,7 +65,7 @@ public class GameServerRequestHandler extends HttpPushProcessor {
 	}
 
 	@Override
-	public HttpPushProcessor createNewInstance() {
+	public HttpPushHandler createNewInstance() {
 		return new GameServerRequestHandler();
 	}
 

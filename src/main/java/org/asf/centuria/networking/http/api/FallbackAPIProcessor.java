@@ -18,19 +18,19 @@ import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
 import org.asf.centuria.social.SocialEntry;
 import org.asf.centuria.social.SocialManager;
 import org.asf.connective.RemoteClient;
-import org.asf.connective.processors.HttpPushProcessor;
+import org.asf.connective.handlers.HttpPushHandler;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
-public class FallbackAPIProcessor extends HttpPushProcessor {
+public class FallbackAPIProcessor extends HttpPushHandler {
 
 	public static String KeyID = UUID.randomUUID().toString();
 
 	@Override
-	public void process(String pth, String method, RemoteClient client, String contentType) throws IOException {
+	public void handle(String pth, String method, RemoteClient client, String contentType) throws IOException {
 		String path = this.getRequestPath();
 		AccountManager manager = AccountManager.getInstance();
 
@@ -473,7 +473,7 @@ public class FallbackAPIProcessor extends HttpPushProcessor {
 	}
 
 	@Override
-	public HttpPushProcessor createNewInstance() {
+	public HttpPushHandler createNewInstance() {
 		return new FallbackAPIProcessor();
 	}
 

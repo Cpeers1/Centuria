@@ -7,14 +7,14 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.textfilter.TextFilterService;
 import org.asf.connective.RemoteClient;
-import org.asf.connective.processors.HttpPushProcessor;
+import org.asf.connective.handlers.HttpPushHandler;
 
 import com.google.gson.JsonObject;
 
-public class DisplayNameValidationHandler extends HttpPushProcessor {
+public class DisplayNameValidationHandler extends HttpPushHandler {
 
 	@Override
-	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
+	public void handle(String path, String method, RemoteClient client, String contentType) throws IOException {
 		try {
 			// Get name
 			String name = URLDecoder.decode(getRequest().getRequestPath().substring(path().length() + 1), "UTF-8");
@@ -53,7 +53,7 @@ public class DisplayNameValidationHandler extends HttpPushProcessor {
 	}
 
 	@Override
-	public HttpPushProcessor createNewInstance() {
+	public HttpPushHandler createNewInstance() {
 		return new DisplayNameValidationHandler();
 	}
 

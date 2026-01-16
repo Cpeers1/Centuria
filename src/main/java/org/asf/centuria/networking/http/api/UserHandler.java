@@ -8,14 +8,14 @@ import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.connective.RemoteClient;
-import org.asf.connective.processors.HttpPushProcessor;
+import org.asf.connective.handlers.HttpPushHandler;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class UserHandler extends HttpPushProcessor {
+public class UserHandler extends HttpPushHandler {
 	@Override
-	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
+	public void handle(String path, String method, RemoteClient client, String contentType) throws IOException {
 		try {
 			// Load manager
 			AccountManager manager = AccountManager.getInstance();
@@ -78,7 +78,7 @@ public class UserHandler extends HttpPushProcessor {
 	}
 
 	@Override
-	public HttpPushProcessor createNewInstance() {
+	public HttpPushHandler createNewInstance() {
 		return new UserHandler();
 	}
 

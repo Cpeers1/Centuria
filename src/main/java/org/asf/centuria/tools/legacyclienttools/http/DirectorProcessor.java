@@ -3,14 +3,14 @@ package org.asf.centuria.tools.legacyclienttools.http;
 import java.io.IOException;
 
 import org.asf.connective.RemoteClient;
-import org.asf.connective.processors.HttpPushProcessor;
+import org.asf.connective.handlers.HttpPushHandler;
 
 import com.google.gson.JsonObject;
 
-public class DirectorProcessor extends HttpPushProcessor {
+public class DirectorProcessor extends HttpPushHandler {
 
 	@Override
-	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
+	public void handle(String path, String method, RemoteClient client, String contentType) throws IOException {
 		// Send response
 		JsonObject response = new JsonObject();
 		response.addProperty("smartfoxServer", "localhost");
@@ -18,7 +18,7 @@ public class DirectorProcessor extends HttpPushProcessor {
 	}
 
 	@Override
-	public HttpPushProcessor createNewInstance() {
+	public HttpPushHandler createNewInstance() {
 		return new DirectorProcessor();
 	}
 

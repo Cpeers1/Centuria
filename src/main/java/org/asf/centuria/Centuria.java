@@ -677,7 +677,7 @@ public class Centuria {
 			}
 
 			// Register handlers
-			directorServer.registerProcessor(new GameServerRequestHandler());
+			directorServer.registerHandler(new GameServerRequestHandler());
 
 			// Dispatch event
 			EventBus.getInstance().dispatchEvent(new DirectorServerStartupEvent(directorServer));
@@ -694,7 +694,7 @@ public class Centuria {
 			}
 
 			// Register handlers
-			directorServer.registerProcessor(new GameServerRequestHandler());
+			directorServer.registerHandler(new GameServerRequestHandler());
 
 			// Dispatch event
 			EventBus.getInstance().dispatchEvent(new DirectorServerStartupEvent(directorServer));
@@ -838,30 +838,30 @@ public class Centuria {
 		EventBus.getInstance().dispatchEvent(new APIServerStartupEvent(apiServer));
 
 		// API processors
-		apiServer.registerProcessor(new UserHandler());
-		apiServer.registerProcessor(new XPDetailsHandler());
-		apiServer.registerProcessor(new AuthenticateHandler());
-		apiServer.registerProcessor(new UpdateDisplayNameHandler());
-		apiServer.registerProcessor(new DisplayNamesRequestHandler());
-		apiServer.registerProcessor(new DisplayNameValidationHandler());
-		apiServer.registerProcessor(new RequestTokenHandler());
-		apiServer.registerProcessor(new GameRegistrationHandler());
-		apiServer.registerProcessor(new SeasonPassRequestHandler());
+		apiServer.registerHandler(new UserHandler());
+		apiServer.registerHandler(new XPDetailsHandler());
+		apiServer.registerHandler(new AuthenticateHandler());
+		apiServer.registerHandler(new UpdateDisplayNameHandler());
+		apiServer.registerHandler(new DisplayNamesRequestHandler());
+		apiServer.registerHandler(new DisplayNameValidationHandler());
+		apiServer.registerHandler(new RequestTokenHandler());
+		apiServer.registerHandler(new GameRegistrationHandler());
+		apiServer.registerHandler(new SeasonPassRequestHandler());
 
 		// Custom API
-		apiServer.registerProcessor(new LoginRefreshHandler());
-		apiServer.registerProcessor(new ChangePasswordHandler());
-		apiServer.registerProcessor(new ChangeDisplayNameHandler());
-		apiServer.registerProcessor(new ChangeLoginNameHandler());
-		apiServer.registerProcessor(new DeleteAccountHandler());
-		apiServer.registerProcessor(new UserDetailsHandler());
-		apiServer.registerProcessor(new ListPlayersHandler());
-		apiServer.registerProcessor(new RegistrationHandler());
-		apiServer.registerProcessor(new PlayerDataDownloadHandler());
-		apiServer.registerProcessor(new SaveManagerHandler());
+		apiServer.registerHandler(new LoginRefreshHandler());
+		apiServer.registerHandler(new ChangePasswordHandler());
+		apiServer.registerHandler(new ChangeDisplayNameHandler());
+		apiServer.registerHandler(new ChangeLoginNameHandler());
+		apiServer.registerHandler(new DeleteAccountHandler());
+		apiServer.registerHandler(new UserDetailsHandler());
+		apiServer.registerHandler(new ListPlayersHandler());
+		apiServer.registerHandler(new RegistrationHandler());
+		apiServer.registerHandler(new PlayerDataDownloadHandler());
+		apiServer.registerHandler(new SaveManagerHandler());
 
 		// Fallback
-		apiServer.registerProcessor(new FallbackAPIProcessor());
+		apiServer.registerHandler(new FallbackAPIProcessor());
 	}
 
 	private static SSLContext getContext(File keystore, char[] password)

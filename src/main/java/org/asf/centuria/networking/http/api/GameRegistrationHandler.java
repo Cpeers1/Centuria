@@ -15,15 +15,15 @@ import org.asf.centuria.accounts.registration.RegistrationVerificationResult;
 import org.asf.centuria.accounts.registration.RegistrationVerificationStatus;
 import org.asf.centuria.textfilter.TextFilterService;
 import org.asf.connective.RemoteClient;
-import org.asf.connective.processors.HttpPushProcessor;
+import org.asf.connective.handlers.HttpPushHandler;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class GameRegistrationHandler extends HttpPushProcessor {
+public class GameRegistrationHandler extends HttpPushHandler {
 
 	@Override
-	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
+	public void handle(String path, String method, RemoteClient client, String contentType) throws IOException {
 		try {
 			// Parse body
 			ByteArrayOutputStream strm = new ByteArrayOutputStream();
@@ -289,7 +289,7 @@ public class GameRegistrationHandler extends HttpPushProcessor {
 	}
 
 	@Override
-	public HttpPushProcessor createNewInstance() {
+	public HttpPushHandler createNewInstance() {
 		return new GameRegistrationHandler();
 	}
 
