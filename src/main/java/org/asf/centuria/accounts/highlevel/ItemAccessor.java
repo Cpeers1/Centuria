@@ -60,6 +60,7 @@ public class ItemAccessor {
 		return new ItemComponent("Enigma", e);
 	}
 
+	@SuppressWarnings("serial")
 	private static final Map<String, InventoryDefinitionContainer> inventoryTypeMap = new HashMap<String, InventoryDefinitionContainer>() {
 		{
 			// Avatar species
@@ -257,13 +258,15 @@ public class ItemAccessor {
 
 		}
 
-		if (obj != null && player != null) {
-			// Send packet if successful
-			InventoryItemPacket pk = new InventoryItemPacket();
-			JsonArray arr = new JsonArray();
-			arr.add(obj);
-			pk.item = arr;
-			player.client.sendPacket(pk);
+		if (obj != null) {
+			if (player != null) {
+				// Send packet if successful
+				InventoryItemPacket pk = new InventoryItemPacket();
+				JsonArray arr = new JsonArray();
+				arr.add(obj);
+				pk.item = arr;
+				player.client.sendPacket(pk);
+			}
 
 			// Add item to save
 			if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
@@ -273,9 +276,9 @@ public class ItemAccessor {
 			for (String itm : inventory.getAccessor().itemsToSave) {
 				inventory.setItem(itm, inventory.getItem(itm));
 
-				if (!info.inventory.equals(itm)) {
+				if (!info.inventory.equals(itm) && player != null) {
 					// Sync unsaved inventories
-					pk = new InventoryItemPacket();
+					InventoryItemPacket pk = new InventoryItemPacket();
 					pk.item = inventory.getItem(itm);
 					player.client.sendPacket(pk);
 				}
@@ -345,13 +348,15 @@ public class ItemAccessor {
 
 		}
 
-		if (obj != null && player != null) {
-			// Send packet if successful
-			InventoryItemPacket pk = new InventoryItemPacket();
-			JsonArray arr = new JsonArray();
-			arr.add(obj);
-			pk.item = arr;
-			player.client.sendPacket(pk);
+		if (obj != null) {
+			if (player != null) {
+				// Send packet if successful
+				InventoryItemPacket pk = new InventoryItemPacket();
+				JsonArray arr = new JsonArray();
+				arr.add(obj);
+				pk.item = arr;
+				player.client.sendPacket(pk);
+			}
 
 			// Add item to save
 			if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
@@ -361,9 +366,9 @@ public class ItemAccessor {
 			for (String itm : inventory.getAccessor().itemsToSave) {
 				inventory.setItem(itm, inventory.getItem(itm));
 
-				if (!info.inventory.equals(itm)) {
+				if (!info.inventory.equals(itm) && player != null) {
 					// Sync unsaved inventories
-					pk = new InventoryItemPacket();
+					InventoryItemPacket pk = new InventoryItemPacket();
 					pk.item = inventory.getItem(itm);
 					player.client.sendPacket(pk);
 				}
@@ -438,7 +443,7 @@ public class ItemAccessor {
 
 		}
 
-		if (objs != null && player != null) {
+		if (objs != null) {
 			// Send packet if successful
 			ArrayList<String> syncedInventories = new ArrayList<String>();
 			InventoryItemPacket pk = new InventoryItemPacket();
@@ -453,13 +458,14 @@ public class ItemAccessor {
 				}
 			}
 			pk.item = arr;
-			player.client.sendPacket(pk);
+			if (player != null)
+				player.client.sendPacket(pk);
 
 			// Save items
 			for (String itm : inventory.getAccessor().itemsToSave) {
 				inventory.setItem(itm, inventory.getItem(itm));
 
-				if (!syncedInventories.contains(itm)) {
+				if (!syncedInventories.contains(itm) && player != null) {
 					// Sync unsaved inventories
 					pk = new InventoryItemPacket();
 					pk.item = inventory.getItem(itm);
@@ -517,8 +523,8 @@ public class ItemAccessor {
 
 		}
 
+		// Send packet if successful
 		if (player != null) {
-			// Send packet if successful
 			if (inventory.getAccessor().hasInventoryObject(info.inventory, defID)) {
 				JsonArray arr = new JsonArray();
 				arr.add(inventory.getAccessor().findInventoryObject(info.inventory, defID));
@@ -530,24 +536,24 @@ public class ItemAccessor {
 				pk.items = new String[] { removedItemUUID };
 				player.client.sendPacket(pk);
 			}
-
-			// Add item to save
-			if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
-				inventory.getAccessor().itemsToSave.add(info.inventory);
-
-			// Save items
-			for (String itm : inventory.getAccessor().itemsToSave) {
-				inventory.setItem(itm, inventory.getItem(itm));
-
-				if (!info.inventory.equals(itm)) {
-					// Sync unsaved inventories
-					InventoryItemPacket pk = new InventoryItemPacket();
-					pk.item = inventory.getItem(itm);
-					player.client.sendPacket(pk);
-				}
-			}
-			inventory.getAccessor().completedSave();
 		}
+
+		// Add item to save
+		if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
+			inventory.getAccessor().itemsToSave.add(info.inventory);
+
+		// Save items
+		for (String itm : inventory.getAccessor().itemsToSave) {
+			inventory.setItem(itm, inventory.getItem(itm));
+
+			if (!info.inventory.equals(itm) && player != null) {
+				// Sync unsaved inventories
+				InventoryItemPacket pk = new InventoryItemPacket();
+				pk.item = inventory.getItem(itm);
+				player.client.sendPacket(pk);
+			}
+		}
+		inventory.getAccessor().completedSave();
 
 		// Return success
 		return true;
@@ -601,8 +607,8 @@ public class ItemAccessor {
 
 		}
 
+		// Send packet if successful
 		if (player != null) {
-			// Send packet if successful
 			if (inventory.getAccessor().hasInventoryObject(info.inventory, defID)) {
 				JsonArray arr = new JsonArray();
 				arr.add(inventory.getAccessor().findInventoryObject(info.inventory, defID));
@@ -614,24 +620,24 @@ public class ItemAccessor {
 				pk.items = removedItemUUIDs;
 				player.client.sendPacket(pk);
 			}
-
-			// Add item to save
-			if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
-				inventory.getAccessor().itemsToSave.add(info.inventory);
-
-			// Save items
-			for (String itm : inventory.getAccessor().itemsToSave) {
-				inventory.setItem(itm, inventory.getItem(itm));
-
-				if (!info.inventory.equals(itm)) {
-					// Sync unsaved inventories
-					InventoryItemPacket pk = new InventoryItemPacket();
-					pk.item = inventory.getItem(itm);
-					player.client.sendPacket(pk);
-				}
-			}
-			inventory.getAccessor().completedSave();
 		}
+
+		// Add item to save
+		if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
+			inventory.getAccessor().itemsToSave.add(info.inventory);
+
+		// Save items
+		for (String itm : inventory.getAccessor().itemsToSave) {
+			inventory.setItem(itm, inventory.getItem(itm));
+
+			if (!info.inventory.equals(itm) && player != null) {
+				// Sync unsaved inventories
+				InventoryItemPacket pk = new InventoryItemPacket();
+				pk.item = inventory.getItem(itm);
+				player.client.sendPacket(pk);
+			}
+		}
+		inventory.getAccessor().completedSave();
 
 		// Return success
 		return true;
@@ -727,8 +733,8 @@ public class ItemAccessor {
 
 		}
 
+		String objId = object.get("id").getAsString();
 		if (player != null) {
-			String objId = object.get("id").getAsString();
 			if (!inventory.getAccessor().hasInventoryObject(info.inventory, objId)) {
 				// Send packet if successful
 				InventoryItemRemovedPacket pk = new InventoryItemRemovedPacket();
@@ -743,22 +749,24 @@ public class ItemAccessor {
 				pk.item = arr;
 				player.client.sendPacket(pk);
 			}
+		}
 
-			// Add item to save
-			if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
-				inventory.getAccessor().itemsToSave.add(info.inventory);
+		// Add item to save
+		if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
+			inventory.getAccessor().itemsToSave.add(info.inventory);
 
-			// Save items
-			for (String itm : inventory.getAccessor().itemsToSave) {
-				inventory.setItem(itm, inventory.getItem(itm));
+		// Save items
+		for (String itm : inventory.getAccessor().itemsToSave) {
+			inventory.setItem(itm, inventory.getItem(itm));
 
-				// Sync unsaved inventories
+			// Sync unsaved inventories
+			if (player != null) {
 				InventoryItemPacket pkt = new InventoryItemPacket();
 				pkt.item = inventory.getItem(itm);
 				player.client.sendPacket(pkt);
 			}
-			inventory.getAccessor().completedSave();
 		}
+		inventory.getAccessor().completedSave();
 
 		// Return success
 		return true;

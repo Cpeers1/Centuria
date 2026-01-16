@@ -19,6 +19,7 @@ Fixes to the server:
 - Fixed typo in the dm inactivity warning messages
 - Fixed some parser issues with SaveSettings leading to improper loading of options where it caused the wrong field to be assigned, leading to some settings being unconfigurable
 - Fixed enigmas not being obtainable through creative commands
+- Fixed giveitem/takeitem commands not working when the player is offline
 
 Moderation-related changes:
 - Implemented logging of account deletion, registration and display name changes, as well as unpairing and pairing of accounts
@@ -39,10 +40,7 @@ Moderation-related changes:
 - Added a permanent mute command
 - Added a permanent mute command to the discord bot (mute without time parameters is treated as permanent)
 - Fixed the discord bot mute command not processing the reason argument
-- Added the ability to trade-ban players preventing them from trading
-- Added a permanent trade ban command
-- Added a temporary trade ban command
-- Added a trade ban pardon command
+- Added the ability to trade-ban players preventing them from trading, to both the server and discord bot
 
 
 ## Changes to the client
