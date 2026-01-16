@@ -1,5 +1,5 @@
 @echo off
-if not defined git set git="https://github.com/Cpeers1/Centuria.git --branch live"
+if not defined git set git="https://github.com/Cpeers1/Centuria.git --branch major-1.7-develop"
 set dir=%cd%
 
 echo Updating standalone installation for testing...
