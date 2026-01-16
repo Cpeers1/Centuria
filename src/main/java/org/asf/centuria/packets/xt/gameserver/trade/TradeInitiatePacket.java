@@ -49,7 +49,6 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-
 		if (System.getProperty("debugMode") != null) {
 			System.out.println("[TRADE] [TradeInitiate] Client to server: ( inboundUserId: " + inboundUserId + " )");
 		}
@@ -61,9 +60,18 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 		if (targetPlayer == null
 				|| !sourcePlayer.account.getSaveSpecificInventory().getSaveSettings().tradeLockID
 						.equals(targetPlayer.account.getSaveSpecificInventory().getSaveSettings().tradeLockID)
-				|| SocialManager.getInstance()
-						.getPlayerIsBlocked(targetPlayer.account.getAccountID(),
+				|| SocialManager.getInstance().getPlayerIsBlocked(targetPlayer.account.getAccountID(),
 						sourcePlayer.account.getAccountID())) {
+			// Fail
+			TradeInitiateFailPacket pk = new TradeInitiateFailPacket();
+			pk.player = inboundUserId;
+			pk.tradeValidationType = TradeValidationType.User_Not_Avail;
+			sourcePlayer.client.sendPacket(pk);
+			return true;
+		}
+
+		// Check trade ban
+		if (Trade.isTradeBanned(sourcePlayer.account) || Trade.isTradeBanned(targetPlayer.account)) {
 			// Fail
 			TradeInitiateFailPacket pk = new TradeInitiateFailPacket();
 			pk.player = inboundUserId;

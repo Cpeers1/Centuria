@@ -6,8 +6,14 @@ import java.util.Map;
 
 import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
+import org.asf.centuria.accounts.AccountManager;
+import org.asf.centuria.accounts.CenturiaAccount;
+import org.asf.centuria.accounts.PlayerInventory;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.enums.trading.TradeValidationType;
+import org.asf.centuria.modules.eventbus.EventBus;
+import org.asf.centuria.modules.events.accounts.AccountTradeBanEvent;
+import org.asf.centuria.modules.events.accounts.AccountTradePardonEvent;
 import org.asf.centuria.packets.xt.gameserver.trade.*;
 
 import com.google.gson.JsonObject;
@@ -75,6 +81,240 @@ public class Trade {
 	}
 
 	/**
+	 * Temporarily bans a player from trading
+	 *
+	 * @param player Player account instance
+	 * @param days   How long to ban the player from trading in days
+	 */
+	public static void tradeBanTemp(CenturiaAccount player, int days) {
+		tradeBanTemp(player, days, null);
+	}
+
+	/**
+	 * Temporarily bans a player from trading
+	 *
+	 * @param player Player account instance
+	 * @param days   How long to ban the player from trading in days
+	 * @param reason Ban reason
+	 */
+	public static void tradeBanTemp(CenturiaAccount player, int days, String reason) {
+		tradeBanTemp(player, days, "SYSTEM", reason);
+	}
+
+	/**
+	 * Temporarily bans a player from trading
+	 *
+	 * @param player Player account instance
+	 * @param days   How long to ban the player from trading in days
+	 * @param issuer Ban issuer
+	 * @param reason Ban reason
+	 */
+	public static void tradeBanTemp(CenturiaAccount player, int days, String issuer, String reason) {
+		// Ban the player
+		JsonObject banInfo = new JsonObject();
+		if (reason != null)
+			banInfo.addProperty("reason", reason);
+		banInfo.addProperty("unbanTimestamp", System.currentTimeMillis() + (days * 24 * 60 * 60 * 1000));
+		player.getSaveSharedInventory().setItem("tradepenalty", banInfo);
+
+		// Find online player
+		Player plr = player.getOnlinePlayerInstance();
+		if (plr != null) {
+			// Apply to ingame player
+			if (plr.account != player)
+				plr.account.getSaveSharedInventory().setItem("tradepenalty", banInfo);
+		}
+
+		// Dispatch event
+		EventBus.getInstance().dispatchEvent(new AccountTradeBanEvent(player, days, issuer, reason));
+
+		// Log
+		String issuerNm = issuer;
+		if (!issuerNm.equals("SYSTEM")) {
+			CenturiaAccount acc = AccountManager.getInstance().getAccount(issuer);
+			if (acc != null)
+				issuerNm = acc.getDisplayName();
+		}
+		Centuria.logger.info("Temporarily trade-banned " + player.getDisplayName() + ": "
+				+ (reason == null ? "Unspecified reason" : reason) + " (issued by " + issuerNm + ", unban in " + days
+				+ " days)");
+	}
+
+	/**
+	 * Permanently bans a player from trading
+	 *
+	 * @param player Player account instance
+	 */
+	public static void tradeBanPermanent(CenturiaAccount player) {
+		tradeBanPermanent(player, null);
+	}
+
+	/**
+	 * Permanently bans a player from trading
+	 *
+	 * @param player Player account instance
+	 * @param reason Ban reason
+	 */
+	public static void tradeBanPermanent(CenturiaAccount player, String reason) {
+		tradeBanPermanent(player, "SYSTEM", reason);
+	}
+
+	/**
+	 * Permanently bans a player from trading
+	 *
+	 * @param player Player account instance
+	 * @param issuer Ban issuer
+	 * @param reason Ban reason
+	 */
+	public static void tradeBanPermanent(CenturiaAccount player, String issuer, String reason) {
+		// Ban the player
+		JsonObject banInfo = new JsonObject();
+		if (reason != null)
+			banInfo.addProperty("reason", reason);
+		banInfo.addProperty("unbanTimestamp", -1);
+		player.getSaveSharedInventory().setItem("tradepenalty", banInfo);
+
+		// Find online player
+		Player plr = player.getOnlinePlayerInstance();
+		if (plr != null) {
+			// Apply to ingame player
+			if (plr.account != player)
+				plr.account.getSaveSharedInventory().setItem("tradepenalty", banInfo);
+		}
+
+		// Dispatch event
+		EventBus.getInstance().dispatchEvent(new AccountTradeBanEvent(player, -1, issuer, reason));
+
+		// Log
+		String issuerNm = issuer;
+		if (!issuerNm.equals("SYSTEM")) {
+			CenturiaAccount acc = AccountManager.getInstance().getAccount(issuer);
+			if (acc != null)
+				issuerNm = acc.getDisplayName();
+		}
+		Centuria.logger.info("Permanently trade-banned " + player.getDisplayName() + ": "
+				+ (reason == null ? "Unspecified reason" : reason) + " (issued by " + issuerNm + ")");
+	}
+
+	/**
+	 * Removes a trade ban from a player
+	 *
+	 * @param player Player account instance
+	 */
+	public static void tradeBanPardon(CenturiaAccount player) {
+		tradeBanPardon(player, null);
+	}
+
+	/**
+	 * Removes a trade ban from a player
+	 *
+	 * @param player Player account instance
+	 * @param reason Pardon reason
+	 */
+	public static void tradeBanPardon(CenturiaAccount player, String reason) {
+		tradeBanPardon(player, "SYSTEM", reason);
+	}
+
+	/**
+	 * Removes a trade ban from a player
+	 *
+	 * @param player Player account instance
+	 * @param issuer Pardon issuer
+	 * @param reason Pardon reason
+	 */
+	public static void tradeBanPardon(CenturiaAccount player, String issuer, String reason) {
+		// Check penalty
+		boolean wasPardoned = false;
+		if (!isTradeBanned(player))
+			wasPardoned = true;
+
+		// Remove penalties
+		if (player.getSaveSharedInventory().containsItem("tradepenalty"))
+			player.getSaveSharedInventory().deleteItem("tradepenalty");
+
+		// Find online player
+		Player plr = player.getOnlinePlayerInstance();
+		if (plr != null) {
+			// Apply to ingame player
+			if (plr.account != player) {
+				// Remove penalties
+				if (plr.account.getSaveSharedInventory().containsItem("tradepenalty"))
+					plr.account.getSaveSharedInventory().deleteItem("tradepenalty");
+			}
+		}
+
+		// Check state
+		if (wasPardoned)
+			return;
+
+		// Dispatch event
+		EventBus.getInstance().dispatchEvent(new AccountTradePardonEvent(player, issuer, reason));
+
+		// Log
+		String issuerNm = issuer;
+		if (!issuerNm.equals("SYSTEM")) {
+			CenturiaAccount acc = AccountManager.getInstance().getAccount(issuer);
+			if (acc != null)
+				issuerNm = acc.getDisplayName();
+		}
+		Centuria.logger.info("Removed the trade ban from " + player.getDisplayName() + ": "
+				+ (reason == null ? "Unspecified reason" : reason) + " (issued by " + issuerNm + ")");
+	}
+
+	/**
+	 * Checks if the trade ban of a player is permanent
+	 * 
+	 * @param player Player account instance
+	 * @return True if trading has been permanently banned for this player, false
+	 *         otherwise
+	 */
+	public static boolean isTradeBanPermanent(CenturiaAccount player) {
+		// Check trade ban
+		if (player.getSaveSharedInventory().containsItem("tradepenalty")) {
+			PlayerInventory inv = player.getSaveSharedInventory();
+			JsonObject penalty = inv.getItem("tradepenalty").getAsJsonObject();
+			if (penalty.has("unbanTimestamp") && penalty.get("unbanTimestamp").getAsLong() != -1) {
+				// Temporary
+				return false;
+			}
+
+			// Permanent
+			return true;
+		}
+
+		// Not trade banned
+		return false;
+	}
+
+	/**
+	 * Checks if the given player is trade-banned
+	 * 
+	 * @param player Player account instance
+	 * @return True if trading has been blocked for this player, false otherwise
+	 */
+	public static boolean isTradeBanned(CenturiaAccount player) {
+		// Check trade ban
+		if (player.getSaveSharedInventory().containsItem("tradepenalty")) {
+			PlayerInventory inv = player.getSaveSharedInventory();
+			JsonObject penalty = inv.getItem("tradepenalty").getAsJsonObject();
+			if (penalty.has("unbanTimestamp") && penalty.get("unbanTimestamp").getAsLong() != -1
+					&& System.currentTimeMillis() > penalty.get("unbanTimestamp").getAsLong()) {
+				// Remove
+				inv.deleteItem("tradepenalty");
+
+				// Expired
+				return false;
+			}
+
+			// Ban still valid
+			return true;
+		}
+
+		// Not trade banned
+		return false;
+	}
+
+	/**
 	 * Begins a new trade between two players.
 	 * 
 	 * @param sourcePlayer The player who initiated the trade.
@@ -114,7 +354,7 @@ public class Trade {
 				+ targetPlayer.account.getAccountID() + ": " + tradeInitiatePacket.build());
 
 		// Create trade initiate packet for source player
-		tradeInitiatePacket = new TradeInitiatePacket();	
+		tradeInitiatePacket = new TradeInitiatePacket();
 		tradeInitiatePacket.tradeValidationType = TradeValidationType.Success;
 		Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TradeInitiate] Server to client with ID "
 				+ sourcePlayer.account.getAccountID() + ": " + tradeInitiatePacket.build());
@@ -216,8 +456,7 @@ public class Trade {
 
 		// Verify quantity
 		int ownedQuant = 0;
-		if (item.has("defId"))
-		{
+		if (item.has("defId")) {
 			// Get quantity
 			ownedQuant = player.account.getSaveSpecificInventory().getItemAccessor(player)
 					.getCountOfItem(item.get("defId").getAsInt());

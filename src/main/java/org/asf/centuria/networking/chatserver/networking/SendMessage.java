@@ -29,6 +29,7 @@ import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.entities.generic.Vector3;
 import org.asf.centuria.entities.players.Player;
+import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.interactions.modules.QuestManager;
@@ -2198,18 +2199,21 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("toggletpoverride");
 			commandMessages.add("kick \"<player>\" [\"<reason>\"]");
 			commandMessages.add("ipban \"<player/address>\" [\"<reason>\"]");
-			commandMessages.add("pardonip \"<ip>\"");
 			commandMessages.add("permban \"<player>\" [\"<reason>\"]");
-			commandMessages.add("tempban \"<player>\" <days>\" [\"<reason>\"]");
-			commandMessages.add("forcenamechange \"<player>\"");
-			commandMessages.add("changeothername \"<player>\" \"<new-name>\"");
+			commandMessages.add("tempban \"<player>\" <days> [\"<reason>\"]");
 			commandMessages.add("mute \"<player>\" [\"<reason>\"]");
 			commandMessages.add("mute \"<player>\" <minutes> [\"<reason>\"]");
 			commandMessages.add("mute \"<player>\" <hour> <minutes> [\"<reason>\"]");
 			commandMessages.add("mute \"<player>\" <days> <hour> <minutes> [\"<reason>\"]");
 			commandMessages.add("heightenedsensitivity enable [\"<reason>\"] [\"<room>\"]");
-			commandMessages.add("heightenedsensitivity disable [\"<room>\"]");
+			commandMessages.add("forcenamechange \"<player>\"");
+			commandMessages.add("changeothername \"<player>\" \"<new-name>\"");
+			commandMessages.add("pardonip \"<ip>\"");
 			commandMessages.add("pardon \"<player>\" [\"<reason>\"]");
+			commandMessages.add("tradepermban \"<player>\" [\"<reason>\"]");
+			commandMessages.add("tradetempban \"<player>\" <days> [\"<reason>\"]");
+			commandMessages.add("tradepardon \"<player>\" [\"<reason>\"]");
+			commandMessages.add("heightenedsensitivity disable [\"<room>\"]");
 			commandMessages.add("xpinfo [\"<player>\"]");
 			commandMessages.add("takexp <amount> [\"<player>\"]");
 			commandMessages.add("resetxp [\"<player>\"]");
@@ -4338,6 +4342,94 @@ public class SendMessage extends AbstractChatPacket {
 							manager.unbanIP(args.get(0));
 
 						systemMessage("Removed IP ban: " + args.get(0) + ".", cmd, client);
+						return true;
+					}
+					case "tradetempban": {
+						// Temporary trade-ban
+						if (args.size() < 1) {
+							systemMessage("Missing argument: player", cmd, client);
+							return true;
+						} else if (args.size() < 2) {
+							systemMessage("Missing argument: days", cmd, client);
+							return true;
+						}
+						int days;
+						try {
+							days = Integer.valueOf(args.get(1));
+						} catch (Exception e) {
+							systemMessage("Invalid value for argument: days", cmd, client);
+							return true;
+						}
+
+						String reason = null;
+						if (args.size() >= 3)
+							reason = args.get(2);
+
+						// Find player
+						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						// Check rank
+						if (acc.getSaveSharedInventory().containsItem("permissions")) {
+							if ((GameServer
+									.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString(), "developer")
+									&& !GameServer.hasPerm(permLevel, "developer"))
+									|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+											.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
+											&& !GameServer.hasPerm(permLevel, "admin")) {
+								systemMessage("Unable to trade-ban higher-ranking users.", cmd, client);
+								return true;
+							}
+						}
+
+						// Ban temporarily
+						Trade.tradeBanTemp(acc, days, client.getPlayer().getAccountID(), reason);
+						systemMessage("Temporarily trade-banned " + acc.getDisplayName() + ".", cmd, client);
+						return true;
+					}
+					case "tradepermban": {
+						// Temporary trade-ban
+						if (args.size() < 1) {
+							systemMessage("Missing argument: player", cmd, client);
+							return true;
+						}
+
+						// Find player
+						String uuid = AccountManager.getInstance().getUserByDisplayName(args.get(0));
+						if (uuid == null) {
+							// Player not found
+							systemMessage("Specified account could not be located.", cmd, client);
+							return true;
+						}
+						CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+
+						String reason = null;
+						if (args.size() >= 2)
+							reason = args.get(1);
+
+						// Check rank
+						if (acc.getSaveSharedInventory().containsItem("permissions")) {
+							if ((GameServer
+									.hasPerm(acc.getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+											.get("permissionLevel").getAsString(), "developer")
+									&& !GameServer.hasPerm(permLevel, "developer"))
+									|| GameServer.hasPerm(acc.getSaveSharedInventory().getItem("permissions")
+											.getAsJsonObject().get("permissionLevel").getAsString(), "admin")
+											&& !GameServer.hasPerm(permLevel, "admin")) {
+								systemMessage("Unable to trade-ban higher-ranking users.", cmd, client);
+								return true;
+							}
+						}
+
+						// Ban permanently
+						Trade.tradeBanPermanent(acc, client.getPlayer().getAccountID(), reason);
+						systemMessage("Permanently trade-banned " + acc.getDisplayName() + ".", cmd, client);
 						return true;
 					}
 					case "pardon": {
