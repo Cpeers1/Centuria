@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.asf.centuria.data.XtReader;
 import org.asf.centuria.data.XtWriter;
+import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 
 public class KeepAlive implements IXtPacket<KeepAlive> {
@@ -30,6 +31,8 @@ public class KeepAlive implements IXtPacket<KeepAlive> {
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
+		Player player = (Player) client.container;
+		player.keepAliveLast = System.currentTimeMillis();
 		return true;
 	}
 

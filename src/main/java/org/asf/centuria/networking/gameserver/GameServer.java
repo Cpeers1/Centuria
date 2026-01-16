@@ -651,6 +651,9 @@ public class GameServer extends BaseSmartfoxServer {
 			ePlr = getPlayer(acc.getAccountID());
 		}
 
+		// Update
+		plr.keepAliveLast = System.currentTimeMillis();
+
 		// Add player
 		synchronized (players) {
 			players.put(plr.account.getAccountID(), plr);
@@ -1150,15 +1153,28 @@ public class GameServer extends BaseSmartfoxServer {
 
 	@Override
 	protected void onStart() {
-		// Anti-expiry (kicks players who go past token expiry)
+		// Anti-expiry (kicks players who go past token expiry) and afk kicker
 		Thread th = new Thread(() -> {
 			while (Centuria.directorServer.isRunning()) {
-				// Find players who are logged in for longer than two days
+				// Find players who are logged in for longer than two days as well as players
+				// that lapse the afk kick
 				for (Player plr : getPlayers()) {
+					// Check expiry
 					long loginTimestamp = plr.account.getLastLoginTime();
 					if ((System.currentTimeMillis() / 1000) - (2 * 24 * 60 * 60) >= loginTimestamp) {
 						// Kick players that are ingame for wayyy to long
 						plr.account.kickDirect("SYSTEM", "Session expired");
+					}
+
+					// Check AFK kick
+					if (plr.roomReady) {
+						// Room ready
+						// Check timeout
+						if (((System.currentTimeMillis() - plr.keepAliveLast)
+								/ 1000) >= Centuria.keepAliveKickInterval) {
+							// Disconnect
+							plr.client.disconnect();
+						}
 					}
 				}
 				try {

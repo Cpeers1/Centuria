@@ -211,6 +211,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 		}
 
 		// Mark as ready (for teleports etc)
+		plr.keepAliveLast = System.currentTimeMillis();
 		plr.roomReady = true;
 
 		return true;

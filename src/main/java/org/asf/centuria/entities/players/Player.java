@@ -127,6 +127,8 @@ public class Player {
 	//
 	// Other fields
 	//
+	
+	public long keepAliveLast;
 
 	public SmartfoxClient client;
 	public CenturiaAccount account;

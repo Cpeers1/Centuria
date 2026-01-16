@@ -120,6 +120,9 @@ public class Centuria {
 	public static String discoveryAddress = "localhost";
 	public static String spawnBehaviour;
 
+	public static long keepAliveWarningInterval = 0;
+	public static long keepAliveKickInterval = 0;
+
 	// Servers
 	private static ConnectiveHttpServer apiServer;
 	public static ConnectiveHttpServer directorServer;
@@ -465,6 +468,8 @@ public class Centuria {
 		// Parse properties
 		serverProperties = new HashMap<String, String>();
 		for (String line : Files.readAllLines(serverConf.toPath())) {
+			if (line.isEmpty() || line.startsWith("#"))
+				continue;
 			String key = line;
 			String value = "";
 			if (key.contains("=")) {
@@ -473,6 +478,31 @@ public class Centuria {
 			}
 			serverProperties.put(key, value);
 		}
+
+		// Parse keepalive
+		File keepAliveConf = new File("keepalive.conf");
+		if (!keepAliveConf.exists()) {
+			Files.writeString(keepAliveConf.toPath(), "" //
+					+ "keep-alive-warning-interval-secs=3600\n" //
+					+ "keep-alive-kick-interval-secs=4500\n" //
+					+ "");
+		}
+		HashMap<String, String> keepAliveProperties = new HashMap<String, String>();
+		for (String line : Files.readAllLines(keepAliveConf.toPath())) {
+			if (line.isEmpty() || line.startsWith("#"))
+				continue;
+			String key = line;
+			String value = "";
+			if (key.contains("=")) {
+				value = key.substring(key.indexOf("=") + 1);
+				key = key.substring(0, key.indexOf("="));
+			}
+			keepAliveProperties.put(key, value);
+		}
+		keepAliveWarningInterval = Long
+				.parseLong(keepAliveProperties.getOrDefault("keep-alive-warning-interval-secs", "3600"));
+		keepAliveKickInterval = Long
+				.parseLong(keepAliveProperties.getOrDefault("keep-alive-kick-interval-secs", "4500"));
 
 		File textFilterHistoryConf = new File("textfilter.conf");
 		if (!textFilterHistoryConf.exists()) {
@@ -520,7 +550,7 @@ public class Centuria {
 		}
 		textFilterProperties = new HashMap<String, String>();
 		for (String line : Files.readAllLines(textFilterHistoryConf.toPath())) {
-			if (line.startsWith("#"))
+			if (line.isEmpty() || line.startsWith("#"))
 				continue;
 			String key = line;
 			String value = "";
