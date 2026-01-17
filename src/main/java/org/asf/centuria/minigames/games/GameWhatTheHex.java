@@ -21,7 +21,6 @@ import org.asf.centuria.minigames.games.entities.whatthehex.WTHLevelInfo;
 import org.asf.centuria.minigames.games.entities.whatthehex.WTHRewardInfo;
 import org.asf.centuria.minigames.games.enums.whatthehex.RewardType;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameCurrencyPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigamePrizePacket;
@@ -814,9 +813,9 @@ public class GameWhatTheHex extends AbstractMinigame {
 					player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue("4932", 0, score);
 
 					// Update client
-					InventoryItemPacket pkt = new InventoryItemPacket();
-					pkt.item = player.account.getSaveSpecificInventory().getItem("303");
-					player.client.sendPacket(pkt);
+					for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
+						player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player,
+								change);
 				}
 			}
 		}
@@ -1092,9 +1091,8 @@ public class GameWhatTheHex extends AbstractMinigame {
 			player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue("4932", 0, score);
 
 			// Update client
-			InventoryItemPacket pk = new InventoryItemPacket();
-			pk.item = player.account.getSaveSpecificInventory().getItem("303");
-			player.client.sendPacket(pk);
+			for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
+				player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
 		}
 
 		// Start game
@@ -1218,13 +1216,8 @@ public class GameWhatTheHex extends AbstractMinigame {
 			value = var.value;
 		if (score > value) {
 			player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue("4932", 0, score);
-
-			if (player.client != null && player.client.isConnected()) {
-				// Send to client
-				InventoryItemPacket pk = new InventoryItemPacket();
-				pk.item = player.account.getSaveSpecificInventory().getItem("303");
-				player.client.sendPacket(pk);
-			}
+			for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
+				player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
 		}
 	}
 

@@ -10,7 +10,6 @@ import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.room.RoomJoinPacket;
 import org.asf.centuria.social.SocialManager;
 
@@ -80,7 +79,10 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 								twiggleItem.getTwiggleComponent().twiggleWorkParams.stage);
 
 				if (didSucceed) {
-					sendIlPacket(player);
+					// Send ILs
+					for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
+						player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player,
+								change);
 				} else {
 					// failed to complete upgrade
 					this.success = false;
@@ -94,7 +96,10 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 						twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex);
 
 				if (didSucceed) {
-					sendIlPacket(player);
+					// Send ILs
+					for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
+						player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player,
+								change);
 				} else {
 					// failed to complete expansion
 					this.success = false;
@@ -117,41 +122,6 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 		}
 
 		return true;
-	}
-
-	public void sendIlPacket(Player player) {
-		var twiggleAccessor = player.account.getSaveSpecificInventory().getTwiggleAccesor();
-
-		var il = player.account.getSaveSpecificInventory().getItem("201");
-		var ilPacket = new InventoryItemPacket();
-		ilPacket.item = il;
-
-		// send IL
-		player.client.sendPacket(ilPacket);
-
-		il = player.account.getSaveSpecificInventory().getItem("5");
-		ilPacket = new InventoryItemPacket();
-		ilPacket.item = il;
-
-		// send IL
-		player.client.sendPacket(ilPacket);
-
-		il = player.account.getSaveSpecificInventory().getItem("10");
-		ilPacket = new InventoryItemPacket();
-		ilPacket.item = il;
-
-		// send IL
-		player.client.sendPacket(ilPacket);
-
-		if (twiggleAccessor.getTwiggle(twiggleInvId) != null) {
-			twiggleAccessor.clearTwiggleWork(twiggleInvId);
-		}
-		il = player.account.getSaveSpecificInventory().getItem("110");
-		ilPacket = new InventoryItemPacket();
-		ilPacket.item = il;
-
-		// send IL
-		player.client.sendPacket(ilPacket);
 	}
 
 	public void JoinSanctuary(SmartfoxClient client, String sanctuaryOwner) {

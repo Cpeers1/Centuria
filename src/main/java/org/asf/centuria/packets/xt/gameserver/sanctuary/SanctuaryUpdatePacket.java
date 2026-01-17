@@ -24,7 +24,6 @@ import org.asf.centuria.enums.sanctuaries.SanctuaryObjectType;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -153,37 +152,15 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		}
 
 		// room updates
-
 		houseInv = plr.account.getSaveSpecificInventory().getSanctuaryAccessor()
 				.updateSanctuaryRoomData(plr.activeSanctuaryLook, roomChanges.toArray(new RoomInfoObject[0]));
 
-		// uhh yeah ok
-		// send il and sanctuaryUpdatePacket response for the main player
+		// Send inventory updates to owner
+		for (String change : plr.account.getSaveSharedInventory().getAccessor().getChangedInventories())
+			plr.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
 
-		if (additions.size() > 0 || removals.size() > 0) {
-			var il = plr.account.getSaveSpecificInventory().getItem("201");
-			var ilPacket = new InventoryItemPacket();
-			ilPacket.item = il;
-
-			// send IL
-			plr.client.sendPacket(ilPacket);
-		}
-
-		if (roomChanges.size() > 0) {
-			var il = plr.account.getSaveSpecificInventory().getItem("5");
-			var ilPacket = new InventoryItemPacket();
-			ilPacket.item = il;
-
-			// send IL
-			plr.client.sendPacket(ilPacket);
-		}
-
-		// then do this packet
-
-		plr.client.sendPacket(this);
-
+		// Send update packets
 		sendObjectUpdatePackets(client);
-
 		return true;
 	}
 

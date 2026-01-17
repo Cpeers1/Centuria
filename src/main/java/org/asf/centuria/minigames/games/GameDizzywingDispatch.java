@@ -22,7 +22,6 @@ import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.minigames.AbstractMinigame;
 import org.asf.centuria.minigames.MinigameMessage;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameCurrencyPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigamePrizePacket;
@@ -1620,7 +1619,6 @@ public class GameDizzywingDispatch extends AbstractMinigame {
 		// these are called when the game starts and ends.
 
 		private void saveSavedGameUserVar(Player player) {
-
 			setPuzzleTemp(PuzzleObjectiveType.HighScore, score);
 			setPuzzleTemp(PuzzleObjectiveType.TotalScore, score);
 
@@ -1838,14 +1836,12 @@ public class GameDizzywingDispatch extends AbstractMinigame {
 	public void saveGame(Player player, XtReader rd) {
 
 		if (gameState != null) {
-
 			puzzleObjectives.saveSavedGameUserVar(player);
 
 			if (player.client != null && player.client.isConnected()) {
 				// Send to client
-				InventoryItemPacket pk = new InventoryItemPacket();
-				pk.item = player.account.getSaveSpecificInventory().getItem(UserVarIDs.userVarInventory.getVal());
-				player.client.sendPacket(pk);
+				for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
+					player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
 			}
 		}
 	}
@@ -1918,9 +1914,8 @@ public class GameDizzywingDispatch extends AbstractMinigame {
 		}
 		if (player.client != null && player.client.isConnected()) {
 			// Send to client
-			InventoryItemPacket pk = new InventoryItemPacket();
-			pk.item = player.account.getSaveSpecificInventory().getItem(UserVarIDs.userVarInventory.getVal());
-			player.client.sendPacket(pk);
+			for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
+				player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
 		}
 	}
 

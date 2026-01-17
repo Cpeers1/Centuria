@@ -9,7 +9,6 @@ import org.asf.centuria.interactions.dataobjects.StateInfo;
 import org.asf.centuria.interactions.modules.resourcecollection.levelhooks.EventInfo;
 import org.asf.centuria.levelevents.LevelEvent;
 import org.asf.centuria.levelevents.LevelEventBus;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 
 public class InspirationCollectionModule extends InteractionModule {
 
@@ -121,12 +120,8 @@ public class InspirationCollectionModule extends InteractionModule {
 			}
 
 			// Update inventory
-			var il = player.account.getSaveSpecificInventory().getItem("8");
-			var ilPacket = new InventoryItemPacket();
-			ilPacket.item = il;
-
-			// Send IL
-			player.client.sendPacket(ilPacket);
+			for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
+				player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
 
 			return true;
 		}

@@ -6,7 +6,6 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.minigames.AbstractMinigame;
 import org.asf.centuria.minigames.MinigameMessage;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameCurrencyPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigamePrizePacket;;
@@ -68,9 +67,8 @@ public class GameTwiggleBuilders extends AbstractMinigame {
 			plr.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue("9311", level, score);
 
 		// Update client
-		InventoryItemPacket pkt = new InventoryItemPacket();
-		pkt.item = plr.account.getSaveSpecificInventory().getItem("303");
-		plr.client.sendPacket(pkt);
+		for (String change : plr.account.getSaveSharedInventory().getAccessor().getChangedInventories())
+			plr.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
 
 		// Prize
 		givePrize(plr);
