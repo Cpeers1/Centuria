@@ -6,13 +6,15 @@ We know this update doesnt really provide much gameplay-wise, but its an importa
 
 ## Server changes
 
+Dependency changes:
+- Updated ConnectiveHTTP to Alpha 17
+
 New features in the server:
 - Added a new API Event: AccountDisplayNameChangedEvent
 - Added new command: gcrename/gcr: a command to rename group chats
 - Added new command: gclistmembers/gclm: a command to list group chat members
 - Added new command: gctransfer/gct: a command to transfer ownership of group chats
 - Implemented the AFK kick, but dont worry, it is not as short as the og game's AFK kicker
-
 
 Fixes to the server:
 - Fixed server components such as chat in some cases sending over the wrong timestamp format causing the game to be unable to display correct times due to the game thinking the server sends over local time instead of UTC
@@ -22,6 +24,7 @@ Fixes to the server:
 - Fixed giveitem/takeitem commands not working when the player is offline
 - Fixed updateshutdown command and server update disconnects using incorrect message strings
 - Fixed removing items in trade not always going through to the other player
+
 
 Moderation-related changes:
 - Implemented logging of account deletion, registration and display name changes, as well as unpairing and pairing of accounts

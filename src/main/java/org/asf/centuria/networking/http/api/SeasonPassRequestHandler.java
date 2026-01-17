@@ -12,16 +12,16 @@ import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.seasonpasses.SeasonPassDefinition;
 import org.asf.centuria.seasonpasses.SeasonPassManager;
 import org.asf.connective.RemoteClient;
-import org.asf.connective.processors.HttpPushProcessor;
+import org.asf.connective.handlers.HttpPushHandler;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class SeasonPassRequestHandler extends HttpPushProcessor {
+public class SeasonPassRequestHandler extends HttpPushHandler {
 
 	@Override
-	public void process(String pth, String method, RemoteClient client, String contentType) throws IOException {
+	public void handle(String pth, String method, RemoteClient client, String contentType) throws IOException {
 		try {
 			// Parse JWT payload
 			String token = this.getHeader("Authorization").substring("Bearer ".length());
@@ -154,7 +154,7 @@ public class SeasonPassRequestHandler extends HttpPushProcessor {
 	}
 
 	@Override
-	public HttpPushProcessor createNewInstance() {
+	public HttpPushHandler createNewInstance() {
 		return new SeasonPassRequestHandler();
 	}
 

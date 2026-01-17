@@ -2,14 +2,14 @@ package org.asf.centuria.networking.http.api;
 
 import java.io.IOException;
 import org.asf.connective.RemoteClient;
-import org.asf.connective.processors.HttpPushProcessor;
+import org.asf.connective.handlers.HttpPushHandler;
 
 import com.google.gson.JsonObject;
 
-public class RequestTokenHandler extends HttpPushProcessor {
+public class RequestTokenHandler extends HttpPushHandler {
 
 	@Override
-	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
+	public void handle(String path, String method, RemoteClient client, String contentType) throws IOException {
 		// Hardcoded response as i have no clue how to do this
 		String challenge = "kOLl8r71tG1343qobkIvdJSGuXxUZBQUtHTq7Npe91l51TrpaGLZf4nPIjSCNxniUdpdHvOfcCzV2TQRn5MXab08vwGizt0NiDmzAdWrzQMYDjgTYz7Xqbzqds2LaYTa";
 		String iv = "03KJ2tNeasisn7vI42W49IJpObpQirvu";
@@ -27,7 +27,7 @@ public class RequestTokenHandler extends HttpPushProcessor {
 	}
 
 	@Override
-	public HttpPushProcessor createNewInstance() {
+	public HttpPushHandler createNewInstance() {
 		return new RequestTokenHandler();
 	}
 
