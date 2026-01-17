@@ -31,6 +31,7 @@ public class SaveSettings {
 	public boolean allowGiveItemResources = true;
 	public boolean allowGiveItemCurrency = true;
 	public boolean allowGiveItemEnigmas = true;
+	public boolean allowSkipTwiggleWork = true;
 	public boolean enableCreativeRestock = false;
 	public JsonObject saveColors = null;
 	public JsonObject saveNamePrefixes = null;
@@ -53,6 +54,7 @@ public class SaveSettings {
 		this.allowGiveItemCurrency = Centuria.defaultAllowGiveItemCurrency;
 		this.allowGiveItemResources = Centuria.defaultAllowGiveItemResources;
 		this.allowGiveItemEnigmas = Centuria.defaultAllowGiveItemEnigmas;
+		this.allowSkipTwiggleWork = Centuria.defaultAllowSkipTwiggleWork;
 		this.enableCreativeRestock = Centuria.defaultEnableCreativeRestock;
 	}
 
@@ -106,6 +108,12 @@ public class SaveSettings {
 			this.allowGiveItemEnigmas = allowGiveItemAvatars && allowGiveItemClothes && allowGiveItemMods
 					&& allowGiveItemFurnitureItems && allowGiveItemSanctuaryTypes && allowGiveItemCurrency
 					&& allowGiveItemResources;
+		if (data.has("allowSkipTwiggleWork"))
+			this.allowSkipTwiggleWork = data.get("allowSkipTwiggleWork").getAsBoolean();
+		else
+			this.allowSkipTwiggleWork = allowGiveItemAvatars && allowGiveItemClothes && allowGiveItemMods
+					&& allowGiveItemFurnitureItems && allowGiveItemSanctuaryTypes && allowGiveItemCurrency
+					&& allowGiveItemResources;
 		if (data.has("enableCreativeRestock"))
 			this.enableCreativeRestock = data.get("enableCreativeRestock").getAsBoolean();
 		if (data.has("saveColors") && !data.get("saveColors").isJsonNull())
@@ -138,6 +146,7 @@ public class SaveSettings {
 		obj.addProperty("allowGiveItemResources", allowGiveItemResources);
 		obj.addProperty("allowGiveItemCurrency", allowGiveItemCurrency);
 		obj.addProperty("allowGiveItemEnigmas", allowGiveItemEnigmas);
+		obj.addProperty("allowSkipTwiggleWork", allowSkipTwiggleWork);
 		obj.addProperty("enableCreativeRestock", enableCreativeRestock);
 		obj.addProperty("tradeLockID", tradeLockID);
 		if (saveColors != null)

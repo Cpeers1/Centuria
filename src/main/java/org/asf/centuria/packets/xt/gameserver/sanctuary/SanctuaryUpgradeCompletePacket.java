@@ -47,14 +47,11 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 
 	@Override
 	public boolean handle(SmartfoxClient client) throws IOException {
-
 		try {
-
 			// need to use the twiggle to find out what was worked on
-
 			var player = (Player) client.container;
-
 			var twiggleItem = player.account.getSaveSpecificInventory().getTwiggleAccesor().getTwiggle(twiggleInvId);
+			var twiggleAccessor = player.account.getSaveSpecificInventory().getTwiggleAccesor();
 
 			switch (twiggleItem.getTwiggleComponent().workType) {
 			case WorkingOtherSanctuary:
@@ -84,6 +81,17 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 							.getChangedInventories())
 						player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player,
 								change);
+
+					// Clear work
+					if (twiggleAccessor.getTwiggle(twiggleInvId) != null) {
+						twiggleAccessor.clearTwiggleWork(twiggleInvId);
+					}
+
+					// Send ILs
+					for (String change : player.account.getSaveSpecificInventory().getAccessor()
+							.getChangedInventories())
+						player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player,
+								change);
 				} else {
 					// failed to complete upgrade
 					this.success = false;
@@ -97,6 +105,17 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 						twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex);
 
 				if (didSucceed) {
+					// Send ILs
+					for (String change : player.account.getSaveSpecificInventory().getAccessor()
+							.getChangedInventories())
+						player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player,
+								change);
+
+					// Clear work
+					if (twiggleAccessor.getTwiggle(twiggleInvId) != null) {
+						twiggleAccessor.clearTwiggleWork(twiggleInvId);
+					}
+
 					// Send ILs
 					for (String change : player.account.getSaveSpecificInventory().getAccessor()
 							.getChangedInventories())

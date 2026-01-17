@@ -28,10 +28,13 @@ import org.asf.centuria.accounts.highlevel.ItemAccessor;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.entities.generic.Vector3;
+import org.asf.centuria.entities.inventoryitems.twiggles.TwiggleItem;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.entities.uservars.UserVarValue;
+import org.asf.centuria.enums.inventory.InventoryType;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
+import org.asf.centuria.enums.twiggles.TwiggleState;
 import org.asf.centuria.interactions.modules.QuestManager;
 import org.asf.centuria.ipbans.IpBanManager;
 import org.asf.centuria.modules.eventbus.EventBus;
@@ -2255,6 +2258,12 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("tpserverto \"<target player>\"");
 			commandMessages.add("tptosanctuary \"<sanctuary owner player name>\" [\"<target player>\"]");
 		}
+		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowSkipTwiggleWork
+				|| GameServer.hasPerm(permLevel, "moderator"))
+			if (GameServer.hasPerm(permLevel, "moderator"))
+				commandMessages.add("skipsanctuaryupgrade");
+			else
+				commandMessages.add("skipsanctuaryupgrade [<player>]");
 		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemAvatars
 				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemClothes
 				|| client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowGiveItemCurrency
@@ -6053,6 +6062,99 @@ public class SendMessage extends AbstractChatPacket {
 					} catch (Exception e) {
 						systemMessage("Error: " + e, cmd, client);
 						return true;
+					}
+				}
+
+				//
+				// User
+				if (cmd.equals("skipsanctuaryupgrade")) {
+					if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowSkipTwiggleWork
+							|| GameServer.hasPerm(permLevel, "moderator")) {
+						// Run command
+						try {
+							// Parse arguments if any and check perms
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() > 1 && GameServer.hasPerm(permLevel, "moderator")) {
+								player = args.get(1);
+							}
+
+							// Find ID
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Find account
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+							if (acc == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+
+							// Find twiggles
+							ArrayList<TwiggleItem> twiggles = new ArrayList<TwiggleItem>();
+							var twiggleAccessor = acc.getSaveSpecificInventory().getTwiggleAccesor();
+							for (TwiggleItem twiggle : twiggleAccessor.getAllTwiggles()) {
+								if (twiggle.getTwiggleComponent().workType != TwiggleState.None
+										&& twiggle.getTwiggleComponent().workEndTime < System.currentTimeMillis()) {
+									twiggles.add(twiggle);
+								}
+							}
+							if (twiggles.size() == 0) {
+								// No busy twiggles
+								systemMessage("There are no in progress upgrades currently active.", cmd, client);
+								return true;
+							}
+
+							// Apply
+							var twiggleInv = acc.getSaveSpecificInventory().getItem("110").getAsJsonArray();
+							for (TwiggleItem twiggle : twiggles) {
+								TwiggleItem selectedTwiggle = null;
+								int index = 0;
+								for (var tw : twiggleInv) {
+									TwiggleItem twiggleItem = new TwiggleItem();
+									twiggleItem.fromJsonObject(tw.getAsJsonObject());
+									if (twiggleItem.uuid.equals(twiggle.uuid)) {
+										selectedTwiggle = twiggleItem;
+										break;
+									}
+									index++;
+								}
+								if (selectedTwiggle == null)
+									continue;
+
+								// Set timer
+								selectedTwiggle.getTwiggleComponent().workEndTime = System.currentTimeMillis();
+								selectedTwiggle.getTimeStampComponent().stamp();
+
+								// remove old twiggle item
+								twiggleInv.remove(index);
+
+								// add new twiggle item
+								twiggleInv.add(selectedTwiggle.toJsonObject());
+
+								// save to disk
+								String invId = Integer.toString(InventoryType.Twiggle.invTypeId);
+								acc.getSaveSharedInventory().setItem("110",
+										acc.getSaveSharedInventory().getItem(invId));
+								acc.getSaveSharedInventory().getAccessor().markChanged("110", selectedTwiggle.uuid);
+							}
+
+							// Send ILs
+							for (String change : acc.getSaveSpecificInventory().getAccessor().getChangedInventories())
+								acc.getSaveSpecificInventory().getAccessor()
+										.transferUpdatedItemsToPlayer(acc.getOnlinePlayerInstance(), change);
+
+							// Success
+							systemMessage("Skipped sanctuary upgrade timers successfully!", cmd, client);
+							return true;
+						} catch (Exception e) {
+							systemMessage("Error: " + e, cmd, client);
+							return true;
+						}
 					}
 				}
 

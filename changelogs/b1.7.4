@@ -20,6 +20,7 @@ New features in the server:
 - Added new command: gclistmembers/gclm: a command to list group chat members
 - Added new command: gctransfer/gct: a command to transfer ownership of group chats
 - Implemented the AFK kick, but dont worry, it is not as short as the og game's AFK kicker
+- Added new command: skipsanctuaryupgrade, a command to skip sanctuary upgrade timers
 
 Fixes to the server:
 - Fixed server components such as chat in some cases sending over the wrong timestamp format causing the game to be unable to display correct times due to the game thinking the server sends over local time instead of UTC
@@ -27,6 +28,7 @@ Fixes to the server:
 - Fixed some parser issues with SaveSettings leading to improper loading of options where it caused the wrong field to be assigned, leading to some settings being unconfigurable
 - Fixed enigmas not being obtainable through creative commands
 - Fixed giveitem/takeitem commands not working when the player is offline
+- Changed giveitem to be allowed by non-admin moderators
 - Fixed updateshutdown command and server update disconnects using incorrect message strings
 - Fixed removing items in trade not always going through to the other player
 

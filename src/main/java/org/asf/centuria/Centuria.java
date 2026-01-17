@@ -113,6 +113,7 @@ public class Centuria {
 	public static boolean defaultAllowGiveItemResources = true;
 	public static boolean defaultAllowGiveItemEnigmas = true;
 	public static boolean defaultAllowGiveItemCurrency = true;
+	public static boolean defaultAllowSkipTwiggleWork = true;
 	public static boolean defaultEnableCreativeRestock = false;
 	public static boolean encryptChat = false;
 	public static boolean encryptGame = false;
@@ -446,6 +447,8 @@ public class Centuria {
 					+ "allow-giveitem-clothes=false\n" //
 					+ "allow-giveitem-avatars=false\n" //
 					+ "allow-giveitem-mods=false\n" //
+					+ "allow-skip-twiggle-work=false\n" //
+					+ "enable-creative-restock=false\n" //
 					+ "\n" //
 					+ "server-spawn-behaviour=random\n" //
 					+ "default-save-behaviour=single\n" //
@@ -603,6 +606,8 @@ public class Centuria {
 				.equals("true");
 		defaultAllowGiveItemResources = serverProperties.getOrDefault("allow-giveitem-resources", "true")
 				.equals("true");
+		defaultAllowSkipTwiggleWork = serverProperties.getOrDefault("allow-skip-twiggle-work", "true").equals("true");
+		defaultEnableCreativeRestock = serverProperties.getOrDefault("enable-creative-restock", "true").equals("true");
 		defaultAllowGiveItemEnigmas = serverProperties.getOrDefault("allow-giveitem-enigmas", "true").equals("true");
 		defaultAllowGiveItemCurrency = serverProperties.getOrDefault("allow-giveitem-currency", "true").equals("true");
 		encryptChat = serverProperties.getOrDefault("encrypt-chat", "false").equals("true")
