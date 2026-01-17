@@ -58,8 +58,8 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 				lookSlotId, lookSlotName);
 
 		// Send
-		for (String change : plr.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-			plr.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
+		for (String change : plr.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+			plr.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
 		return true;
 	}
 

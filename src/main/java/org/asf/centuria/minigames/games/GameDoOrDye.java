@@ -323,8 +323,8 @@ public class GameDoOrDye extends AbstractMinigame {
 				plr.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue("9101", level, totalScore);
 
 			// Update client
-			for (String change : plr.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-				plr.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
+			for (String change : plr.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+				plr.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
 
 			// Send win
 			XtWriter wr1 = new XtWriter();

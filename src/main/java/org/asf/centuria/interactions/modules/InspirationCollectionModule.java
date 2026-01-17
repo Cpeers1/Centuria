@@ -120,8 +120,8 @@ public class InspirationCollectionModule extends InteractionModule {
 			}
 
 			// Update inventory
-			for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-				player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
+			for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+				player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
 
 			return true;
 		}

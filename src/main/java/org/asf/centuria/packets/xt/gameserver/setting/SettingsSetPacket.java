@@ -73,8 +73,8 @@ public class SettingsSetPacket implements IXtPacket<SettingsSetPacket> {
 		}
 
 		// Send ILs
-		for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-			player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
+		for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+			player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
 
 		// Send response
 		client.sendPacket(this);

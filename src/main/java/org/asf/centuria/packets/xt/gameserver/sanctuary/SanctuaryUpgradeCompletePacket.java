@@ -80,8 +80,9 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 
 				if (didSucceed) {
 					// Send ILs
-					for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-						player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player,
+					for (String change : player.account.getSaveSpecificInventory().getAccessor()
+							.getChangedInventories())
+						player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player,
 								change);
 				} else {
 					// failed to complete upgrade
@@ -97,8 +98,9 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 
 				if (didSucceed) {
 					// Send ILs
-					for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-						player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player,
+					for (String change : player.account.getSaveSpecificInventory().getAccessor()
+							.getChangedInventories())
+						player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player,
 								change);
 				} else {
 					// failed to complete expansion

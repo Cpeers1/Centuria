@@ -67,8 +67,8 @@ public class GameTwiggleBuilders extends AbstractMinigame {
 			plr.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue("9311", level, score);
 
 		// Update client
-		for (String change : plr.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-			plr.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
+		for (String change : plr.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+			plr.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
 
 		// Prize
 		givePrize(plr);

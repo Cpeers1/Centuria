@@ -180,8 +180,8 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 				client.sendPacket(pk);
 
 				// Send ILs
-				for (String change : plr.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-					plr.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
+				for (String change : plr.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+					plr.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
 
 				// Save ID so the astrale shop wont freeze
 				ids = new String[] { slotID };

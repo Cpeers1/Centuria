@@ -813,8 +813,8 @@ public class GameWhatTheHex extends AbstractMinigame {
 					player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue("4932", 0, score);
 
 					// Update client
-					for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-						player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player,
+					for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+						player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player,
 								change);
 				}
 			}
@@ -1091,8 +1091,8 @@ public class GameWhatTheHex extends AbstractMinigame {
 			player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue("4932", 0, score);
 
 			// Update client
-			for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-				player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
+			for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+				player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
 		}
 
 		// Start game
@@ -1216,8 +1216,8 @@ public class GameWhatTheHex extends AbstractMinigame {
 			value = var.value;
 		if (score > value) {
 			player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue("4932", 0, score);
-			for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-				player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
+			for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+				player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
 		}
 	}
 

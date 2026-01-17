@@ -156,8 +156,8 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 				.updateSanctuaryRoomData(plr.activeSanctuaryLook, roomChanges.toArray(new RoomInfoObject[0]));
 
 		// Send inventory updates to owner
-		for (String change : plr.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-			plr.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
+		for (String change : plr.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+			plr.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
 
 		// Send update packets
 		sendObjectUpdatePackets(client);

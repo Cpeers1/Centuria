@@ -138,8 +138,8 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 			}
 
 			// send IL packet from another packet's class to reload world after
-			for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-				player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
+			for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+				player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
 
 			// disabling/enabling
 			SanctuaryUpgradeCompletePacket SanctuaryUpgradeCompletePacketObject = new SanctuaryUpgradeCompletePacket();
@@ -171,8 +171,9 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 				}
 
 				// Send ILs
-				for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-					player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
+				for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+					player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player,
+							change);
 
 				// Success
 				this.success = true;

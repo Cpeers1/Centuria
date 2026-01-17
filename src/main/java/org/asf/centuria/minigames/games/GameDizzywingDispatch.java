@@ -1840,8 +1840,9 @@ public class GameDizzywingDispatch extends AbstractMinigame {
 
 			if (player.client != null && player.client.isConnected()) {
 				// Send to client
-				for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-					player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
+				for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+					player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player,
+							change);
 			}
 		}
 	}
@@ -1914,8 +1915,8 @@ public class GameDizzywingDispatch extends AbstractMinigame {
 		}
 		if (player.client != null && player.client.isConnected()) {
 			// Send to client
-			for (String change : player.account.getSaveSharedInventory().getAccessor().getChangedInventories())
-				player.account.getSaveSharedInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
+			for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+				player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
 		}
 	}
 
