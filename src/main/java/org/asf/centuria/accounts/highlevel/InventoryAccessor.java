@@ -81,7 +81,7 @@ public class InventoryAccessor {
 						inventoriesToSave.add(inventory);
 				}
 				updatedItems.put(inventory, new ArrayList<String>());
-				updatedItems.put(inventory, new ArrayList<String>());
+				removedItems.put(inventory, new ArrayList<String>());
 			}
 
 			// Get list
