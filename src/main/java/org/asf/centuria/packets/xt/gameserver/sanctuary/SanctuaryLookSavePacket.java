@@ -60,6 +60,13 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 		// Send
 		for (String change : plr.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
 			plr.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
+
+		// Send look save
+		plr.client.sendPacket(this);
+		if (Centuria.debugMode) {
+			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Server to client SSL: " + this.build());
+		}
+
 		return true;
 	}
 
