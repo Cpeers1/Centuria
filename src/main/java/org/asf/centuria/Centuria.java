@@ -42,6 +42,7 @@ import javax.net.ssl.SSLContext;
 import org.asf.connective.ConnectiveHttpServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.asf.centuria.connective.logger.Log4jManagerImpl;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.entities.components.ComponentManager;
 import org.asf.centuria.entities.inventoryitems.InventoryItemManager;
@@ -184,6 +185,9 @@ public class Centuria {
 			System.setProperty("log4j2.configurationFile", Centuria.class.getResource("/log4j2.xml").toString());
 		}
 		logger = LogManager.getLogger("CENTURIA");
+
+		// Load http logger
+		new Log4jManagerImpl().assignAsMain();
 
 		// Load modules
 		ModuleManager.getInstance().init();
