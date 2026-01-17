@@ -130,7 +130,7 @@ public class FallbackAPIProcessor extends HttpPushHandler {
 						Player plr = targetAcc.getOnlinePlayerInstance();
 						if (plr != null && plr.levelType == 2 && plr.room.equals("sanctuary_" + sourcePlayerID)) {
 							RoomJoinPacket pkt = new RoomJoinPacket();
-							pkt.levelID = 820;
+							pkt.levelID = "820";
 							pkt.levelType = 0;
 							pkt.handle(plr.client);
 							Centuria.systemMessage(plr, "You were removed from this sanctuary");

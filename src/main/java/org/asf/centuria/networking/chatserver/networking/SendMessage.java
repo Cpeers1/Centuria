@@ -1140,7 +1140,7 @@ public class SendMessage extends AbstractChatPacket {
 			// Load user settings
 			int filterSettingSelf = 0;
 			UserVarValue valS = client.getPlayer().getSaveSpecificInventory().getUserVarAccesor()
-					.getPlayerVarValue(9362, 0); // the setting for the filter ingame, if the user wishes to have a
+					.getPlayerVarValue("9362", 0); // the setting for the filter ingame, if the user wishes to have a
 													// stricter filter enabled.
 			if (valS != null)
 				filterSettingSelf = valS.value;
@@ -1550,7 +1550,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Load filter settings of the recipient
 						int filterSetting = 0;
 						UserVarValue val = receiver.getPlayer().getSaveSpecificInventory().getUserVarAccesor()
-								.getPlayerVarValue(9362, 0);
+								.getPlayerVarValue("9362", 0);
 						if (val != null)
 							filterSetting = val.value;
 
@@ -2350,21 +2350,21 @@ public class SendMessage extends AbstractChatPacket {
 						if (onlinePlayer != null) {
 							var accessor = client.getPlayer().getSaveSpecificInventory().getItemAccessor(onlinePlayer);
 
-							accessor.add(6691, 1000);
-							accessor.add(6692, 1000);
-							accessor.add(6693, 1000);
-							accessor.add(6694, 1000);
-							accessor.add(6695, 1000);
-							accessor.add(6696, 1000);
-							accessor.add(6697, 1000);
-							accessor.add(6698, 1000);
-							accessor.add(6699, 1000);
-							accessor.add(6700, 1000);
-							accessor.add(6701, 1000);
-							accessor.add(6702, 1000);
-							accessor.add(6703, 1000);
-							accessor.add(6704, 1000);
-							accessor.add(6705, 1000);
+							accessor.add("6691", 1000);
+							accessor.add("6692", 1000);
+							accessor.add("6693", 1000);
+							accessor.add("6694", 1000);
+							accessor.add("6695", 1000);
+							accessor.add("6696", 1000);
+							accessor.add("6697", 1000);
+							accessor.add("6698", 1000);
+							accessor.add("6699", 1000);
+							accessor.add("6700", 1000);
+							accessor.add("6701", 1000);
+							accessor.add("6702", 1000);
+							accessor.add("6703", 1000);
+							accessor.add("6704", 1000);
+							accessor.add("6705", 1000);
 
 							// TODO: Check result
 							systemMessage("You have been given 1000 of every basic material. Have fun!", cmd, client);
@@ -2460,7 +2460,7 @@ public class SendMessage extends AbstractChatPacket {
 
 					// Rewind quests
 					JsonObject obj = client.getPlayer().getSaveSpecificInventory().getAccessor()
-							.findInventoryObject("311", 22781);
+							.findInventoryObjectByDefId("311", "22781");
 					JsonObject progressionMap = obj.get("components").getAsJsonObject()
 							.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
 					JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
@@ -3352,7 +3352,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Load filter settings
 						int filterSetting = 0;
 						UserVarValue val = client.getPlayer().getSaveSpecificInventory().getUserVarAccesor()
-								.getPlayerVarValue(9362, 0);
+								.getPlayerVarValue("9362", 0);
 						if (val != null)
 							filterSetting = val.value;
 
@@ -3799,7 +3799,7 @@ public class SendMessage extends AbstractChatPacket {
 									// No game server
 									mapLessClients.add(cl.getPlayer().getAccountID());
 									suspiciousClients.put(cl.getPlayer(), "no gameserver connection");
-								} else if ((!plr.roomReady || plr.room == null) && plr.levelID != 25280) {
+								} else if ((!plr.roomReady || plr.room == null) && !plr.levelID.equals("25280")) {
 									// In limbo
 									mapLessClients.add(cl.getPlayer().getAccountID());
 									suspiciousClients.put(cl.getPlayer(), "limbo");
@@ -3810,7 +3810,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Limbo clients from game server
 						for (Player plr : Centuria.gameServer.getPlayers()) {
 							if (!mapLessClients.contains(plr.account.getAccountID())) {
-								if ((!plr.roomReady || plr.room == null) && plr.levelID != 25280) {
+								if ((!plr.roomReady || plr.room == null) && !plr.levelID.equals("25280")) {
 									// In limbo
 									mapLessClients.add(plr.account.getAccountID());
 									suspiciousClients.put(plr.account, "limbo");
@@ -3820,11 +3820,11 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Find level IDs
 						int ingame = 0;
-						ArrayList<Integer> levelIDs = new ArrayList<Integer>();
+						ArrayList<String> levelIDs = new ArrayList<String>();
 						HashMap<Player, String> playersInRooms = new HashMap<Player, String>();
 						for (Player plr : Centuria.gameServer.getPlayers()) {
 							if (!mapLessClients.contains(plr.account.getAccountID())
-									&& (plr.roomReady || plr.levelID == 25280)) {
+									&& (plr.roomReady || plr.levelID.equals("25280"))) {
 								// Increase count
 								ingame++;
 
@@ -3845,20 +3845,20 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Add each level
 						ArrayList<String> playerIDs = new ArrayList<String>();
-						for (int levelID : levelIDs) {
+						for (String levelID : levelIDs) {
 							// Determine map name
 							String map = "UNKNOWN: " + levelID;
-							if (levelID == 25280)
+							if (levelID.equals("25280"))
 								map = "Tutorial [" + levelID + "]";
-							else if (helper.has(Integer.toString(levelID)))
-								map = helper.get(Integer.toString(levelID)).getAsString() + " [" + levelID + "]";
+							else if (helper.has(levelID))
+								map = helper.get(levelID).getAsString() + " [" + levelID + "]";
 
 							// Players
 							for (Player plr : playersInRooms.keySet()) {
 								if (!mapLessClients.contains(plr.account.getAccountID())
 										&& !playerIDs.contains(plr.account.getAccountID())) {
 									// Check
-									if (plr.levelID == levelID) {
+									if (plr.levelID.equals(levelID)) {
 										// Add to response
 										response += "\n - " + plr.account.getDisplayName() + " - " + map
 												+ (plr.ghostMode ? " [GHOSTING]" : "");
@@ -4279,7 +4279,7 @@ public class SendMessage extends AbstractChatPacket {
 								// Load the requested room
 								RoomJoinPacket join = new RoomJoinPacket();
 								join.levelType = 0; // World
-								join.levelID = 1718;
+								join.levelID = "1718";
 
 								// Sync
 								GameServer srv = (GameServer) plr.client.getServer();
@@ -4292,7 +4292,7 @@ public class SendMessage extends AbstractChatPacket {
 
 								// Assign room
 								plr.roomReady = false;
-								plr.pendingLevelID = 1718;
+								plr.pendingLevelID = "1718";
 								plr.pendingRoom = "room_STAFFROOM";
 								join.roomIdentifier = "room_STAFFROOM";
 
@@ -5413,8 +5413,7 @@ public class SendMessage extends AbstractChatPacket {
 								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
 								Player plr = acc.getOnlinePlayerInstance();
 								if (plr != null)
-									plr.teleportToRoom(Integer.valueOf(defID), Integer.valueOf(type), -1,
-											"room_" + defID, "");
+									plr.teleportToRoom(defID, Integer.valueOf(type), -1, "room_" + defID, "");
 								else {
 									// Player not found
 									systemMessage("Specified player is not online.", cmd, client);
@@ -5761,7 +5760,7 @@ public class SendMessage extends AbstractChatPacket {
 							for (int i = 0; i < count; i++) {
 								c++;
 								if (!QuestManager.finishQuest(acc.getOnlinePlayerInstance(),
-										Integer.parseInt(QuestManager.getActiveQuest(acc))))
+										QuestManager.getActiveQuest(acc)))
 									break;
 							}
 							systemMessage(
@@ -5776,7 +5775,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "takeitem": {
 						try {
-							int defID = 0;
+							String defID = "0";
 							int quantity = 1;
 							String player = "";
 							String uuid = client.getPlayer().getAccountID();
@@ -5786,7 +5785,7 @@ public class SendMessage extends AbstractChatPacket {
 								return true;
 							}
 
-							defID = Integer.valueOf(args.get(0));
+							defID = args.get(0);
 							if (args.size() >= 2) {
 								quantity = Integer.valueOf(args.get(1));
 							}
@@ -5805,9 +5804,8 @@ public class SendMessage extends AbstractChatPacket {
 							}
 
 							// funny stuff check
-							if (quantity <= 0 || defID <= 0) {
-								systemMessage("You cannot remove 0 or less quantity of/or an item ID of 0 or below.",
-										cmd, client);
+							if (quantity <= 0 || defID.equals("0")) {
+								systemMessage("You cannot remove 0 or less quantity.", cmd, client);
 								return true;
 							}
 
@@ -5835,7 +5833,7 @@ public class SendMessage extends AbstractChatPacket {
 					}
 					case "giveitem":
 						try {
-							int defID = 0;
+							String defID = "0";
 							int quantity = 1;
 							String player = "";
 							String uuid = client.getPlayer().getAccountID();
@@ -5845,7 +5843,7 @@ public class SendMessage extends AbstractChatPacket {
 								return true;
 							}
 
-							defID = Integer.valueOf(args.get(0));
+							defID = args.get(0);
 							if (args.size() >= 2) {
 								quantity = Integer.valueOf(args.get(1));
 							}
@@ -5864,9 +5862,8 @@ public class SendMessage extends AbstractChatPacket {
 							}
 
 							// funny stuff check
-							if (quantity <= 0 || defID <= 0) {
-								systemMessage("You cannot give 0 or less quantity of/or an item ID of 0 or below.", cmd,
-										client);
+							if (quantity <= 0) {
+								systemMessage("You cannot give 0 or less quantity.", cmd, client);
 								return true;
 							}
 
@@ -5943,7 +5940,7 @@ public class SendMessage extends AbstractChatPacket {
 								// Find how many exist in the inventory
 								ItemAccessor accessor = acc.getSaveSpecificInventory()
 										.getItemAccessor(acc.getOnlinePlayerInstance());
-								int defID = Integer.parseInt(id);
+								String defID = id;
 								int currentCount = accessor.getCountOfItem(defID);
 
 								if (currentCount > 0) {
@@ -5970,7 +5967,7 @@ public class SendMessage extends AbstractChatPacket {
 				// User giveitem command
 				if (cmd.equals("giveitem")) {
 					try {
-						int defID = 0;
+						String defID = "0";
 						int quantity = 1;
 						String uuid = client.getPlayer().getAccountID();
 
@@ -5979,13 +5976,13 @@ public class SendMessage extends AbstractChatPacket {
 							return true;
 						}
 
-						defID = Integer.valueOf(args.get(0));
+						defID = args.get(0);
 						if (args.size() >= 2) {
 							quantity = Integer.valueOf(args.get(1));
 						}
 
 						// funny stuff check
-						if (quantity <= 0 || defID <= 0) {
+						if (quantity <= 0) {
 							systemMessage("You cannot give 0 or less quantity of/or an item ID of 0 or below.", cmd,
 									client);
 							return true;
@@ -6076,9 +6073,9 @@ public class SendMessage extends AbstractChatPacket {
 
 					// Find level IDs
 					int ingame = 0;
-					HashMap<Integer, Integer> levelIDs = new HashMap<Integer, Integer>();
+					HashMap<String, Integer> levelIDs = new HashMap<String, Integer>();
 					for (Player plr : Centuria.gameServer.getPlayers()) {
-						if (plr.roomReady || plr.levelID == 25280) {
+						if (plr.roomReady || plr.levelID.equals("25280")) {
 							// Increase count
 							ingame++;
 
@@ -6093,13 +6090,13 @@ public class SendMessage extends AbstractChatPacket {
 					if (levelIDs.size() != 0) {
 						message += "\n";
 						message += "\n";
-						for (int levelID : levelIDs.keySet()) {
+						for (String levelID : levelIDs.keySet()) {
 							// Determine map name
 							String map = "UNKNOWN: " + levelID;
-							if (levelID == 25280)
+							if (levelID.equals("25280"))
 								map = "Tutorial";
-							else if (helper.has(Integer.toString(levelID)))
-								map = helper.get(Integer.toString(levelID)).getAsString();
+							else if (helper.has(levelID))
+								map = helper.get(levelID).getAsString();
 							message += map + ": " + levelIDs.get(levelID) + " players.";
 							message += "\n";
 						}

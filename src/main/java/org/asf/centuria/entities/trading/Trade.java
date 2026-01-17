@@ -459,7 +459,7 @@ public class Trade {
 		if (item.has("defId")) {
 			// Get quantity
 			ownedQuant = player.account.getSaveSpecificInventory().getItemAccessor(player)
-					.getCountOfItem(item.get("defId").getAsInt());
+					.getCountOfItem(item.get("defId").getAsString());
 		}
 
 		// Reset to max if needed
@@ -682,9 +682,9 @@ public class Trade {
 					|| set.getValue().item.get("components").getAsJsonObject().has("Quantity")) {
 				// items to give are source player..
 				sourcePlayer.account.getSaveSpecificInventory().getItemAccessor(sourcePlayer)
-						.remove(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
+						.remove(set.getValue().item.get("defId").getAsString(), set.getValue().quantity);
 				targetPlayer.account.getSaveSpecificInventory().getItemAccessor(targetPlayer)
-						.add(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
+						.add(set.getValue().item.get("defId").getAsString(), set.getValue().quantity);
 			} else {
 				// lets support clothing/furniture items
 				JsonObject itm = set.getValue().item;
@@ -698,9 +698,9 @@ public class Trade {
 					|| set.getValue().item.get("components").getAsJsonObject().has("Quantity")) {
 				// items to receive are target player..
 				targetPlayer.account.getSaveSpecificInventory().getItemAccessor(targetPlayer)
-						.remove(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
+						.remove(set.getValue().item.get("defId").getAsString(), set.getValue().quantity);
 				sourcePlayer.account.getSaveSpecificInventory().getItemAccessor(sourcePlayer)
-						.add(set.getValue().item.get("defId").getAsInt(), set.getValue().quantity);
+						.add(set.getValue().item.get("defId").getAsString(), set.getValue().quantity);
 			} else {
 				// lets support clothing/furniture items
 				JsonObject itm = set.getValue().item;

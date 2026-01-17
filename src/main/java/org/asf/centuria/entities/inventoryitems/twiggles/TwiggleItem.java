@@ -14,23 +14,23 @@ import com.google.gson.JsonObject;
 public class TwiggleItem extends InventoryItem {
 
 	public final static InventoryType INV_TYPE = InventoryType.Twiggle;
-	
-	public TwiggleItem(int defId, String uuid) {
+
+	public TwiggleItem(String defId, String uuid) {
 		super(defId, uuid, INV_TYPE);
 	}
-	
-	public TwiggleItem()
-	{
-		super(0, "", INV_TYPE);
+
+	public TwiggleItem() {
+		super("0", "", INV_TYPE);
 	}
 
 	@Override
 	public InventoryType getInventoryType() {
 		return INV_TYPE;
 	}
-	
+
 	/**
-	 * Converts this item to a jsonObject with the correct format to be in an inventory.
+	 * Converts this item to a jsonObject with the correct format to be in an
+	 * inventory.
 	 */
 	@Override
 	public JsonObject toJsonObject() {
@@ -38,31 +38,28 @@ public class TwiggleItem extends InventoryItem {
 	}
 
 	/**
-	 * Populates this item with properties from an inventory jsonObject of the same type.
+	 * Populates this item with properties from an inventory jsonObject of the same
+	 * type.
 	 */
 	@Override
 	public void fromJsonObject(JsonObject object) throws InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		super.fromJsonObject(object);
 	}
-	
-	public TwiggleComponent getTwiggleComponent()
-	{
-		return (TwiggleComponent)this.getComponent(TwiggleComponent.COMPONENT_NAME);
+
+	public TwiggleComponent getTwiggleComponent() {
+		return (TwiggleComponent) this.getComponent(TwiggleComponent.COMPONENT_NAME);
 	}
-	
-	public void setTwiggleComponent(TwiggleComponent component)
-	{
+
+	public void setTwiggleComponent(TwiggleComponent component) {
 		this.SetComponent(component);
 	}
-	
-	public TimeStampComponent getTimeStampComponent()
-	{
-		return (TimeStampComponent)this.getComponent(TimeStampComponent.COMPONENT_NAME);
+
+	public TimeStampComponent getTimeStampComponent() {
+		return (TimeStampComponent) this.getComponent(TimeStampComponent.COMPONENT_NAME);
 	}
-	
-	public void setTimeStampComponent(TimeStampComponent component)
-	{
+
+	public void setTimeStampComponent(TimeStampComponent component) {
 		this.SetComponent(component);
 	}
 

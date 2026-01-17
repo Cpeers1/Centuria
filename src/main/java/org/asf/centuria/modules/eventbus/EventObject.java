@@ -13,11 +13,6 @@ public abstract class EventObject {
 	private boolean handled = false;
 
 	/**
-	 * Defines the event path
-	 */
-	public abstract String eventPath();
-
-	/**
 	 * Checks if the event has been marked as handled
 	 * 
 	 * @return True if the event has been handled, false otherwise

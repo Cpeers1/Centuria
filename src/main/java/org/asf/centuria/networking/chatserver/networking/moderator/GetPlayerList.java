@@ -81,7 +81,7 @@ public class GetPlayerList extends AbstractChatPacket {
 					// No game server
 					mapLessClients.add(cl.getPlayer().getAccountID());
 					suspiciousClients.put(cl.getPlayer(), "no_gameserver_connection");
-				} else if ((!plr.roomReady || plr.room == null) && plr.levelID != 25280) {
+				} else if ((!plr.roomReady || plr.room == null) && !plr.levelID.equals("25280")) {
 					// In limbo
 					mapLessClients.add(cl.getPlayer().getAccountID());
 					suspiciousClients.put(cl.getPlayer(), "limbo");
@@ -92,7 +92,7 @@ public class GetPlayerList extends AbstractChatPacket {
 		// Limbo clients from game server
 		for (Player plr : Centuria.gameServer.getPlayers()) {
 			if (!mapLessClients.contains(plr.account.getAccountID())) {
-				if ((!plr.roomReady || plr.room == null) && plr.levelID != 25280) {
+				if ((!plr.roomReady || plr.room == null) && !plr.levelID.equals("25280")) {
 					// In limbo
 					mapLessClients.add(plr.account.getAccountID());
 					suspiciousClients.put(plr.account, "limbo");
@@ -103,12 +103,12 @@ public class GetPlayerList extends AbstractChatPacket {
 		// Find level IDs
 		int ingame = 0;
 		ArrayList<String> playerIDs = new ArrayList<String>();
-		ArrayList<Integer> levelIDs = new ArrayList<Integer>();
-		HashMap<Integer, ArrayList<String>> rooms = new HashMap<Integer, ArrayList<String>>();
+		ArrayList<String> levelIDs = new ArrayList<String>();
+		HashMap<String, ArrayList<String>> rooms = new HashMap<String, ArrayList<String>>();
 		HashMap<Player, String> playersInRooms = new HashMap<Player, String>();
 		for (Player plr : Centuria.gameServer.getPlayers()) {
 			if (!playerIDs.contains(plr.account.getAccountID()) && !mapLessClients.contains(plr.account.getAccountID())
-					&& (plr.roomReady || plr.levelID == 25280)) {
+					&& (plr.roomReady || !plr.levelID.equals("25280"))) {
 				// Increase count
 				playerIDs.add(plr.account.getAccountID());
 				ingame++;
@@ -145,17 +145,17 @@ public class GetPlayerList extends AbstractChatPacket {
 		response.add("suspiciousClients", susClients);
 
 		// Add each level
-		for (int levelID : levelIDs) {
+		for (String levelID : levelIDs) {
 			// Determine map name
 			String map = "UNKOWN: " + levelID;
-			if (levelID == 25280)
+			if (levelID.equals("25280"))
 				map = "Tutorial";
-			else if (helper.has(Integer.toString(levelID)))
-				map = helper.get(Integer.toString(levelID)).getAsString();
+			else if (helper.has(levelID))
+				map = helper.get(levelID).getAsString();
 
 			// Create level object
 			JsonObject level = new JsonObject();
-			levels.add(Integer.toString(levelID), level);
+			levels.add(levelID, level);
 			JsonObject roomsL = new JsonObject();
 			level.addProperty("levelID", levelID);
 			level.addProperty("levelName", map);

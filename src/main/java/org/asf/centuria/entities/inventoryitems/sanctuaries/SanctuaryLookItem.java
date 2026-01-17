@@ -23,12 +23,12 @@ public class SanctuaryLookItem extends InventoryItem {
 
 	public final static InventoryType INV_TYPE = InventoryType.SanctuaryLook;
 
-	public SanctuaryLookItem(int defId, String uuid) {
+	public SanctuaryLookItem(String defId, String uuid) {
 		super(defId, uuid, INV_TYPE);
 	}
 
 	public SanctuaryLookItem() {
-		super(0, "", INV_TYPE);
+		super("0", "", INV_TYPE);
 	}
 
 	@Override

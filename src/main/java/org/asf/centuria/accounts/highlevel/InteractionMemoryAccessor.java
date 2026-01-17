@@ -14,7 +14,7 @@ public abstract class InteractionMemoryAccessor extends AbstractInventoryAccesso
 	 * 
 	 * @param level Level ID
 	 */
-	public abstract void prepareLevel(int level);
+	public abstract void prepareLevel(String level);
 
 	/**
 	 * Prepares a harvest entry
@@ -22,7 +22,7 @@ public abstract class InteractionMemoryAccessor extends AbstractInventoryAccesso
 	 * @param levelID Level ID
 	 * @param itemID  Harvestable interactable UUID
 	 */
-	public abstract void prepareHarvestItem(int levelID, String itemID);
+	public abstract void prepareHarvestItem(String levelID, String itemID);
 
 	/**
 	 * Prepares a treasure entry
@@ -30,7 +30,7 @@ public abstract class InteractionMemoryAccessor extends AbstractInventoryAccesso
 	 * @param levelID Level ID
 	 * @param itemID  Treasure interactable UUID
 	 */
-	public abstract void prepareTreasureItem(int levelID, String itemID);
+	public abstract void prepareTreasureItem(String levelID, String itemID);
 
 	/**
 	 * Prepares a daily task entry
@@ -38,7 +38,7 @@ public abstract class InteractionMemoryAccessor extends AbstractInventoryAccesso
 	 * @param levelID Level ID
 	 * @param itemID  Task UUID
 	 */
-	public abstract void prepareDailyTaskEntry(int levelID, String itemID);
+	public abstract void prepareDailyTaskEntry(String levelID, String itemID);
 
 	/**
 	 * Retrieves the last harvest timestamp
@@ -47,7 +47,7 @@ public abstract class InteractionMemoryAccessor extends AbstractInventoryAccesso
 	 * @param itemID  Harvestable interactable UUID
 	 * @return Last harvest timestamp or 0 or -1 if never harvested before
 	 */
-	public abstract long getLastHarvestTime(int levelID, String itemID);
+	public abstract long getLastHarvestTime(String levelID, String itemID);
 
 	/**
 	 * Retrieves the last harvest count
@@ -56,14 +56,15 @@ public abstract class InteractionMemoryAccessor extends AbstractInventoryAccesso
 	 * @param itemID  Harvestable interactable UUID
 	 * @return Last harvest count
 	 */
-	public abstract int getLastHarvestCount(int levelID, String itemID);
-	
+	public abstract int getLastHarvestCount(String levelID, String itemID);
+
 	/**
 	 * Resets the harvest count for the object.
+	 * 
 	 * @param levelID Level ID
 	 * @param itemID  Harvestable interactable UUID
 	 */
-	public abstract void resetHarvestCount(int levelID, String itemID);
+	public abstract void resetHarvestCount(String levelID, String itemID);
 
 	/**
 	 * Retrieves the last treasure unlock timestamp
@@ -72,7 +73,7 @@ public abstract class InteractionMemoryAccessor extends AbstractInventoryAccesso
 	 * @param itemID  Treasure interactable UUID
 	 * @return Last unlock timestamp or 0 or -1 if never unlocked before
 	 */
-	public abstract long getLastTreasureUnlockTime(int levelID, String itemID);
+	public abstract long getLastTreasureUnlockTime(String levelID, String itemID);
 
 	/**
 	 * Retrieves the if a treasure chest has been unlocked
@@ -81,7 +82,7 @@ public abstract class InteractionMemoryAccessor extends AbstractInventoryAccesso
 	 * @param itemID  Treasure interactable UUID
 	 * @return True if the chest was unlocked, false otherwise
 	 */
-	public abstract boolean hasTreasureBeenUnlocked(int levelID, String itemID);
+	public abstract boolean hasTreasureBeenUnlocked(String levelID, String itemID);
 
 	/**
 	 * Retrieves the last time on which a daily task was completed
@@ -90,7 +91,7 @@ public abstract class InteractionMemoryAccessor extends AbstractInventoryAccesso
 	 * @param itemID  Task UUID
 	 * @return Last task completion timestamp or 0 or -1 if never done before
 	 */
-	public abstract long getLastDailyTaskTime(int levelID, String itemID);
+	public abstract long getLastDailyTaskTime(String levelID, String itemID);
 
 	/**
 	 * Called on harvest completion
@@ -98,7 +99,7 @@ public abstract class InteractionMemoryAccessor extends AbstractInventoryAccesso
 	 * @param levelID Level ID
 	 * @param itemID  Harvestable interactable UUID
 	 */
-	public abstract void harvested(int levelID, String itemID);
+	public abstract void harvested(String levelID, String itemID);
 
 	/**
 	 * Called on treasure unlock
@@ -106,7 +107,7 @@ public abstract class InteractionMemoryAccessor extends AbstractInventoryAccesso
 	 * @param levelID Level ID
 	 * @param itemID  Treasure interactable UUID
 	 */
-	public abstract void unlocked(int levelID, String itemID);
+	public abstract void unlocked(String levelID, String itemID);
 
 	/**
 	 * Called on daily task completion
@@ -114,7 +115,7 @@ public abstract class InteractionMemoryAccessor extends AbstractInventoryAccesso
 	 * @param levelID Level ID
 	 * @param itemID  Task UUID
 	 */
-	public abstract void completedTask(int levelID, String itemID);
+	public abstract void completedTask(String levelID, String itemID);
 
 	/**
 	 * Saves interaction memory and writes it to a client

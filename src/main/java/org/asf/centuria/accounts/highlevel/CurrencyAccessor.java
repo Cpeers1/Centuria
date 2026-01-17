@@ -20,10 +20,10 @@ public class CurrencyAccessor {
 	 * @return Amount of likes
 	 */
 	public int getLikes() {
-		if (!inventory.getAccessor().hasInventoryObject("104", 2327))
+		if (!inventory.getAccessor().hasInventoryObjectByDefId("104", "2327"))
 			return 2500;
 
-		return inventory.getAccessor().findInventoryObject("104", 2327).get("components").getAsJsonObject()
+		return inventory.getAccessor().findInventoryObjectByDefId("104", "2327").get("components").getAsJsonObject()
 				.get("Quantity").getAsJsonObject().get("quantity").getAsInt();
 	}
 
@@ -33,10 +33,10 @@ public class CurrencyAccessor {
 	 * @return Amount of star fragments
 	 */
 	public int getStarFragments() {
-		if (!inventory.getAccessor().hasInventoryObject("104", 14500))
+		if (!inventory.getAccessor().hasInventoryObjectByDefId("104", "14500"))
 			return 0;
 
-		return inventory.getAccessor().findInventoryObject("104", 14500).get("components").getAsJsonObject()
+		return inventory.getAccessor().findInventoryObjectByDefId("104", "14500").get("components").getAsJsonObject()
 				.get("Quantity").getAsJsonObject().get("quantity").getAsInt();
 	}
 
@@ -46,10 +46,10 @@ public class CurrencyAccessor {
 	 * @return Amount of lockpicks
 	 */
 	public int getLockpicks() {
-		if (!inventory.getAccessor().hasInventoryObject("104", 8372))
+		if (!inventory.getAccessor().hasInventoryObjectByDefId("104", "8372"))
 			return 0;
 
-		return inventory.getAccessor().findInventoryObject("104", 8372).get("components").getAsJsonObject()
+		return inventory.getAccessor().findInventoryObjectByDefId("104", "8372").get("components").getAsJsonObject()
 				.get("Quantity").getAsJsonObject().get("quantity").getAsInt();
 	}
 
@@ -92,14 +92,14 @@ public class CurrencyAccessor {
 	 * @param likes New amount of likes
 	 */
 	public void setLikesDirectly(int likes) {
-		if (!inventory.getAccessor().hasInventoryObject("104", 2327)) {
+		if (!inventory.getAccessor().hasInventoryObjectByDefId("104", "2327")) {
 			// Create object
 			JsonObject dq = new JsonObject();
 			dq.addProperty("quantity", 0);
-			inventory.getAccessor().createInventoryObject("104", 2327, new ItemComponent("Quantity", dq));
+			inventory.getAccessor().createInventoryObject("104", "2327", new ItemComponent("Quantity", dq));
 		}
-		JsonObject q = inventory.getAccessor().findInventoryObject("104", 2327).get("components").getAsJsonObject()
-				.get("Quantity").getAsJsonObject();
+		JsonObject q = inventory.getAccessor().findInventoryObjectByDefId("104", "2327").get("components")
+				.getAsJsonObject().get("Quantity").getAsJsonObject();
 		q.remove("quantity");
 		q.addProperty("quantity", likes);
 		inventory.setItem("104", inventory.getItem("104"));
@@ -111,14 +111,14 @@ public class CurrencyAccessor {
 	 * @param starFrags New amount of star fragments
 	 */
 	public void setStarFragmentsDirectly(int starFrags) {
-		if (!inventory.getAccessor().hasInventoryObject("104", 14500)) {
+		if (!inventory.getAccessor().hasInventoryObjectByDefId("104", "14500")) {
 			// Create object
 			JsonObject dq = new JsonObject();
 			dq.addProperty("quantity", 0);
-			inventory.getAccessor().createInventoryObject("104", 14500, new ItemComponent("Quantity", dq));
+			inventory.getAccessor().createInventoryObject("104", "14500", new ItemComponent("Quantity", dq));
 		}
-		JsonObject q = inventory.getAccessor().findInventoryObject("104", 14500).get("components").getAsJsonObject()
-				.get("Quantity").getAsJsonObject();
+		JsonObject q = inventory.getAccessor().findInventoryObjectByDefId("104", "14500").get("components")
+				.getAsJsonObject().get("Quantity").getAsJsonObject();
 		q.remove("quantity");
 		q.addProperty("quantity", starFrags);
 		inventory.setItem("104", inventory.getItem("104"));
@@ -130,14 +130,14 @@ public class CurrencyAccessor {
 	 * @param lockpicks New amount of lockpicks
 	 */
 	public void setLockpicksDirectly(int lockpicks) {
-		if (!inventory.getAccessor().hasInventoryObject("104", 8372)) {
+		if (!inventory.getAccessor().hasInventoryObjectByDefId("104", "8372")) {
 			// Create object
 			JsonObject dq = new JsonObject();
 			dq.addProperty("quantity", 0);
-			inventory.getAccessor().createInventoryObject("104", 8372, new ItemComponent("Quantity", dq));
+			inventory.getAccessor().createInventoryObject("104", "8372", new ItemComponent("Quantity", dq));
 		}
-		JsonObject q = inventory.getAccessor().findInventoryObject("104", 8372).get("components").getAsJsonObject()
-				.get("Quantity").getAsJsonObject();
+		JsonObject q = inventory.getAccessor().findInventoryObjectByDefId("104", "8372").get("components")
+				.getAsJsonObject().get("Quantity").getAsJsonObject();
 		q.remove("quantity");
 		q.addProperty("quantity", lockpicks);
 		inventory.setItem("104", inventory.getItem("104"));

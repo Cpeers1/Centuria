@@ -71,14 +71,14 @@ public class GameDoOrDye extends AbstractMinigame {
 	}
 
 	@Override
-	public boolean canHandle(int levelID) {
-		return levelID == 5054;
+	public boolean canHandle(String levelID) {
+		return levelID.equals("5054");
 	}
 
 	@Override
 	public void onJoin(Player plr) {
 		MinigameCurrencyPacket currency = new MinigameCurrencyPacket();
-		currency.Currency = 1141;
+		currency.Currency = "1141";
 		plr.client.sendPacket(currency);
 	}
 
@@ -128,7 +128,7 @@ public class GameDoOrDye extends AbstractMinigame {
 			// Load rewards
 			int rewardIndex = 0;
 			for (JsonElement ele : helper.get("reward").getAsJsonArray()) {
-				int reward = ele.getAsInt();
+				String reward = ele.getAsString();
 				ArrayList<RewardData> rewardList = null;
 				switch (rewardIndex) {
 				case 0:
@@ -144,7 +144,7 @@ public class GameDoOrDye extends AbstractMinigame {
 				rewardIndex++;
 
 				// load reward
-				LootInfo loot = ResourceCollectionModule.getLootReward(Integer.toString(reward));
+				LootInfo loot = ResourceCollectionModule.getLootReward(reward);
 				if (loot != null)
 					addLoot(loot, rewardList);
 			}
@@ -298,13 +298,14 @@ public class GameDoOrDye extends AbstractMinigame {
 			}
 
 			// Unlock level
-			UserVarValue unlock = plr.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(9100, 0);
+			UserVarValue unlock = plr.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue("9100",
+					0);
 			int value = 0;
 			if (unlock != null) {
 				value = unlock.value;
 			}
 			if (level > value) {
-				plr.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(9100, 0, level);
+				plr.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue("9100", 0, level);
 			}
 
 			// Calculate score
@@ -314,13 +315,13 @@ public class GameDoOrDye extends AbstractMinigame {
 			int totalScore = ingredientScore + firstGuessBonus + lastIngredientBonus + timeBonusScore;
 
 			// Save score
-			UserVarValue var = plr.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(9101,
+			UserVarValue var = plr.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue("9101",
 					level);
 			int value2 = 0;
 			if (var != null)
 				value2 = var.value;
 			if (totalScore > value2)
-				plr.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(9101, level, totalScore);
+				plr.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue("9101", level, totalScore);
 
 			// Update client
 			InventoryItemPacket pkt = new InventoryItemPacket();
@@ -367,8 +368,7 @@ public class GameDoOrDye extends AbstractMinigame {
 
 					// Add rewards
 					for (RewardData reward : rewards) {
-						plr.account.getSaveSpecificInventory().getItemAccessor(plr).add(Integer.parseInt(reward.id),
-								reward.count);
+						plr.account.getSaveSpecificInventory().getItemAccessor(plr).add(reward.id, reward.count);
 
 						// Send packet
 						MinigamePrizePacket p1 = new MinigamePrizePacket();

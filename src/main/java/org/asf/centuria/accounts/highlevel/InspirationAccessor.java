@@ -13,35 +13,35 @@ public abstract class InspirationAccessor extends AbstractInventoryAccessor {
 	}
 
 	/**
-	 * Checks if the player has a specific furniture item
+	 * Checks if the player has a specific inspiration
 	 * 
-	 * @param defID Furniture defID
+	 * @param defID Inspiration defID
 	 * @return True if the player has the furniture item, false otherwise
 	 */
-	public abstract boolean hasInspiration(int defID);
+	public abstract boolean hasInspiration(String defID);
 
 	/**
-	 * Removes a furniture item
+	 * Removes an inspiration item
 	 * 
-	 * @param id Furniture item ID
+	 * @param id Inspiration item ID
 	 */
 	public abstract void removeInspiration(String id);
 
 	/**
-	 * Retrieves a furniture inventory object
+	 * Retrieves a inspiration inventory object
 	 * 
-	 * @param id Furniture item ID
+	 * @param id Inspiration item ID
 	 * @return JsonObject or null
 	 */
 	public abstract JsonObject getInspirationData(String id);
 
 	/**
-	 * Adds a furniture item of a specific defID
+	 * Adds a inspiration of a specific defID
 	 * 
-	 * @param defID Furniture item defID
+	 * @param defID Inspiration item defID
 	 * @return Item UUID
 	 */
-	public abstract String addInspiration(int defID);
+	public abstract String addInspiration(String defID);
 
 	/**
 	 * Adds all default inspirations to the inventory, if they don't already exist.
@@ -51,7 +51,7 @@ public abstract class InspirationAccessor extends AbstractInventoryAccessor {
 	/**
 	 * Attempts to combine inspirations in the player's inventory.
 	 */
-	public abstract InspirationCombineResult combineInspirations(int[] inspirations, Player player);
+	public abstract InspirationCombineResult combineInspirations(String[] inspirations, Player player);
 
 	/**
 	 * Retrieves the result item ID of a enigma item
@@ -59,5 +59,5 @@ public abstract class InspirationAccessor extends AbstractInventoryAccessor {
 	 * @param enigma Enigma defID
 	 * @return Result item ID or -1
 	 */
-	public abstract int getEnigmaResult(int enigma);
+	public abstract String getEnigmaResult(String enigma);
 }

@@ -76,7 +76,7 @@ public abstract class AbstractMinigame {
 	 * @param levelID Level ID
 	 * @return True if this minigame handler supports the given minigame level
 	 */
-	public abstract boolean canHandle(int levelID);
+	public abstract boolean canHandle(String levelID);
 
 	/**
 	 * Called when a player joins a minigame

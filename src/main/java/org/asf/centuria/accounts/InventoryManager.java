@@ -41,7 +41,7 @@ public class InventoryManager {
 		inv.setItem("100", new JsonArray());
 
 		// Add the starter bundle
-		inv.getItemAccessor(null).add(25458);
+		inv.getItemAccessor(null).add("25458");
 
 		// Build avatars
 		if (inv.getSaveSettings().giveAllAvatars) {
@@ -66,17 +66,16 @@ public class InventoryManager {
 		inv.setItem("304", new JsonArray());
 
 		// Add levels
-		inv.getInteractionMemory().prepareLevel(820); // City Fera
-		inv.getInteractionMemory().prepareLevel(2364); // Blood Tundra
-		inv.getInteractionMemory().prepareLevel(9687); // Lakeroot
-		inv.getInteractionMemory().prepareLevel(3273); // Sunken Thicket
-		inv.getInteractionMemory().prepareLevel(2147); // Mugmyre
-		inv.getInteractionMemory().prepareLevel(1825); // Shattered Bay
+		inv.getInteractionMemory().prepareLevel("820"); // City Fera
+		inv.getInteractionMemory().prepareLevel("2364"); // Blood Tundra
+		inv.getInteractionMemory().prepareLevel("9687"); // Lakeroot
+		inv.getInteractionMemory().prepareLevel("3273"); // Sunken Thicket
+		inv.getInteractionMemory().prepareLevel("2147"); // Mugmyre
+		inv.getInteractionMemory().prepareLevel("1825"); // Shattered Bay
 
 		// Save changes
-		for (String change : inv.getAccessor().getItemsToSave())
-			inv.setItem(change, inv.getItem(change));
-		inv.getAccessor().completedSave();
+		for (String change : inv.getAccessor().getChangedInventories())
+			inv.getAccessor().saveUpdatedItems(change, true);
 	}
 
 	public static void fixBrokenAvatars(JsonArray item, PlayerInventory inv) {
@@ -85,13 +84,13 @@ public class InventoryManager {
 		// Fix unlisted
 		for (JsonElement ele : item) {
 			JsonObject ava = ele.getAsJsonObject();
-			int defID = ava.get("defId").getAsInt();
+			String defID = ava.get("defId").getAsString();
 			boolean hasPrimary = false;
 
 			for (JsonElement ele2 : item) {
 				JsonObject ava2 = ele2.getAsJsonObject();
-				int defID2 = ava2.get("defId").getAsInt();
-				if (defID == defID2 && ava2.get("components").getAsJsonObject().has("PrimaryLook")) {
+				String defID2 = ava2.get("defId").getAsString();
+				if (defID.equals(defID2) && ava2.get("components").getAsJsonObject().has("PrimaryLook")) {
 					hasPrimary = true;
 					break;
 				}
@@ -179,7 +178,7 @@ public class InventoryManager {
 
 				// Build data container
 				JsonObject lookObj = new JsonObject();
-				lookObj.addProperty("defId", speciesData.get("defId").getAsInt());
+				lookObj.addProperty("defId", speciesData.get("defId").getAsString());
 				lookObj.add("components", components);
 				lookObj.addProperty("id", lID);
 				lookObj.addProperty("type", 200);

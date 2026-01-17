@@ -71,7 +71,7 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 		// Check if the player can afford the item
 		for (String itemId : itm.cost.keySet()) {
 			int cost = itm.cost.get(itemId) * count;
-			if (acc.getCountOfItem(Integer.parseInt(itemId)) < cost) {
+			if (acc.getCountOfItem(itemId) < cost) {
 				// Item unaffordable
 				ShopItemBuyResponsePacket pkt = new ShopItemBuyResponsePacket();
 				pkt.status = ItemBuyStatus.UNAFFORDABLE;
@@ -141,7 +141,7 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 			int cost = itm.cost.get(itemId) * count;
 
 			// Remove items
-			acc.remove(Integer.parseInt(itemId), cost);
+			acc.remove(itemId, cost);
 		}
 		itm.items.forEach((id, amount) -> {
 			amount *= count;
@@ -149,7 +149,7 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 			// Add item to inventory
 			String[] ids;
 			if (!id.equals("30197"))
-				ids = acc.add(Integer.parseInt(id), amount);
+				ids = acc.add(id, amount);
 			else {
 				// Look slots
 
@@ -168,7 +168,7 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 
 				// Build object
 				JsonObject obj = new JsonObject();
-				obj.addProperty("defId", 30197);
+				obj.addProperty("defId", "30197");
 				obj.add("components", components);
 				obj.addProperty("id", slotID);
 				obj.addProperty("type", 315);
@@ -188,9 +188,8 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 				ids = new String[] { slotID };
 
 				// Save items
-				for (String itmTS : plr.account.getSaveSpecificInventory().getAccessor().getItemsToSave())
-					plr.account.getSaveSpecificInventory().setItem(itmTS, plr.account.getSaveSpecificInventory().getItem(itmTS));
-				plr.account.getSaveSpecificInventory().getAccessor().completedSave();
+				for (String itmTS : plr.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+					plr.account.getSaveSpecificInventory().getAccessor().saveUpdatedItems(itmTS, true);
 			}
 			for (String itemId : ids) {
 				BoughtItemInfo i = new BoughtItemInfo();
@@ -200,7 +199,7 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 
 				// Find type
 				String type = "generic";
-				switch (ItemAccessor.getInventoryTypeOf(Integer.parseInt(id))) {
+				switch (ItemAccessor.getInventoryTypeOf(id)) {
 				case "1": {
 					type = "avatar";
 					break;
@@ -266,7 +265,7 @@ public class ShopItemBuyRequestPacket implements IXtPacket<ShopItemBuyRequestPac
 			if (item != null) {
 				// Give eureka item
 				BoughtItemInfo e = new BoughtItemInfo();
-				e.itemID = acc.add(Integer.parseInt(item));
+				e.itemID = acc.add(item);
 				e.count = 1;
 				res.eurekaItems.add(e);
 

@@ -9,7 +9,7 @@ import org.asf.centuria.packets.xt.IXtPacket;
 
 public class QuestGenericLinearQuestCompletePacket implements IXtPacket<QuestGenericLinearQuestCompletePacket> {
 
-	public int questID = 0;
+	public String questID = "0";
 
 	@Override
 	public String id() {
@@ -23,7 +23,7 @@ public class QuestGenericLinearQuestCompletePacket implements IXtPacket<QuestGen
 	@Override
 	public void build(XtWriter writer) throws IOException {
 		writer.writeInt(-1); // prefix
-		writer.writeInt(questID); // quest ID
+		writer.writeString(questID); // quest ID
 		writer.writeString(""); // data suffix
 	}
 

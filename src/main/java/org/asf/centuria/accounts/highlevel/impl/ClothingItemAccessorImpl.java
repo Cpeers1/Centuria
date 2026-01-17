@@ -32,12 +32,12 @@ public class ClothingItemAccessorImpl extends ClothingItemAccessor {
 	}
 
 	@Override
-	public boolean hasClothing(int defID) {
-		return inventory.getAccessor().hasInventoryObject("100", defID);
+	public boolean hasClothing(String defID) {
+		return inventory.getAccessor().hasInventoryObjectByDefId("100", defID);
 	}
 
 	@Override
-	public int getClothingCount(int defID) {
+	public int getClothingCount(String defID) {
 		int count = 0;
 
 		// Load the inventory object
@@ -48,8 +48,8 @@ public class ClothingItemAccessorImpl extends ClothingItemAccessor {
 		// Find object
 		for (JsonElement ele : items) {
 			JsonObject itm = ele.getAsJsonObject();
-			int itID = itm.get("defId").getAsInt();
-			if (itID == defID) {
+			String itID = itm.get("defId").getAsString();
+			if (itID.equals(defID)) {
 				count++;
 			}
 		}
@@ -59,28 +59,28 @@ public class ClothingItemAccessorImpl extends ClothingItemAccessor {
 
 	@Override
 	public void removeClothing(String id) {
-		inventory.getAccessor().removeInventoryObject("100", id);
+		inventory.getAccessor().removeInventoryObjectByItemId("100", id);
 	}
 
 	@Override
 	public JsonObject getClothingData(String id) {
-		return inventory.getAccessor().findInventoryObject("100", id);
+		return inventory.getAccessor().findInventoryObjectByItemId("100", id);
 	}
 
 	@Override
-	public String addClothing(int defID, boolean isInTradeList) {
+	public String addClothing(String defID, boolean isInTradeList) {
 		String cID = null;
 
 		// Generate object
 		// Check existence
-		if (helper.has(Integer.toString(defID))) {
+		if (helper.has(defID)) {
 			// Trade thingy
 			JsonObject tr = new JsonObject();
 			tr.addProperty("isInTradeList", isInTradeList);
 
 			// Add item
 			cID = inventory.getAccessor().createInventoryObject("100", defID, new ItemComponent("Tradable", tr),
-					new ItemComponent("Colorable", helper.get(Integer.toString(defID)).getAsJsonObject()));
+					new ItemComponent("Colorable", helper.get(defID).getAsJsonObject()));
 		}
 
 		// Return ID
@@ -88,11 +88,11 @@ public class ClothingItemAccessorImpl extends ClothingItemAccessor {
 	}
 
 	@Override
-	public JsonObject getDefaultClothingChannelHSV(int defID, int channel) {
+	public JsonObject getDefaultClothingChannelHSV(String defID, int channel) {
 		// Check existence
-		if (helper.has(Integer.toString(defID))) {
+		if (helper.has(defID)) {
 			// Find channel
-			JsonObject data = helper.get(Integer.toString(defID)).getAsJsonObject();
+			JsonObject data = helper.get(defID).getAsJsonObject();
 			if (data.has("color" + channel + "HSV"))
 				return data.get("color" + channel + "HSV").getAsJsonObject();
 		}

@@ -5,9 +5,9 @@ import org.asf.centuria.enums.inspiration.InspirationCombineStatus;
 public class InspirationCombineResult {
 
 	public InspirationCombineStatus combineStatus;
-	public int enigmaDefId;
+	public String enigmaDefId;
 
-	public InspirationCombineResult(InspirationCombineStatus combineStatus, int enigmaDefId) {
+	public InspirationCombineResult(InspirationCombineStatus combineStatus, String enigmaDefId) {
 		this.combineStatus = combineStatus;
 		this.enigmaDefId = enigmaDefId;
 	}

@@ -238,7 +238,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 
 					SanctuaryWorldObjectInfoPacket sanctuaryWorldObjectInfo = new SanctuaryWorldObjectInfoPacket();
 					sanctuaryWorldObjectInfo.id = objId; // World object ID
-					sanctuaryWorldObjectInfo.defId = 1751;
+					sanctuaryWorldObjectInfo.defId = "1751";
 					sanctuaryWorldObjectInfo.ownerId = player.room.substring("sanctuary_".length());
 
 					var positionInfo = new WorldObjectPositionInfo(furnitureInfo.get("xPos").getAsDouble(),
@@ -335,7 +335,7 @@ public class WorldReadyPacket implements IXtPacket<WorldReadyPacket> {
 						"Player teleport: " + plr.account.getDisplayName() + ": " + player.account.getDisplayName());
 
 				// Check room
-				if (player.levelID != plr.pendingLevelID) {
+				if (!player.levelID.equals(plr.pendingLevelID)) {
 					continue;
 				}
 

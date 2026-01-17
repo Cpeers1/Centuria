@@ -89,7 +89,7 @@ public class UserTutorialCompletedPacket implements IXtPacket<UserTutorialComple
 
 		// Prevent double save
 		plr.pendingLookID = null;
-		plr.pendingLookDefID = 8254;
+		plr.pendingLookDefID = "8254";
 
 		// Update avatar object in client inventory
 		InventoryItemPacket pkt = new InventoryItemPacket();

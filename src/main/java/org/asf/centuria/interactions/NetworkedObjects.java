@@ -156,14 +156,14 @@ public class NetworkedObjects {
 						if (object.has("primaryObjectInfo")) {
 							obj.primaryObjectInfo = new ObjectInfo();
 							obj.primaryObjectInfo.defId = object.get("primaryObjectInfo").getAsJsonObject().get("defId")
-									.getAsInt();
+									.getAsString();
 							obj.primaryObjectInfo.type = object.get("primaryObjectInfo").getAsJsonObject().get("type")
 									.getAsInt();
 						}
 						if (object.has("subObjectInfo")) {
 							obj.subObjectInfo = new ObjectInfo();
 							obj.subObjectInfo.defId = object.get("subObjectInfo").getAsJsonObject().get("defId")
-									.getAsInt();
+									.getAsString();
 							obj.subObjectInfo.type = object.get("subObjectInfo").getAsJsonObject().get("type")
 									.getAsInt();
 						}

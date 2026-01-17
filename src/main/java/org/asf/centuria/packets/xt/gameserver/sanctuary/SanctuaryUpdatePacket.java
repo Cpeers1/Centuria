@@ -207,7 +207,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 							// Object creation parameters
 							packet.id = update.objectId; // World object ID
-							packet.defId = 1751; // Sanctuary Actor Def Id.
+							packet.defId = "1751"; // Sanctuary Actor Def Id.
 							packet.ownerId = player.room.substring("sanctuary_".length()); // Owner ID
 
 							// Object info
@@ -283,7 +283,7 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 
 						// Object creation parameters
 						packet.id = houseInv.get(InventoryItem.UUID_PROPERTY_NAME).getAsString(); // World object ID
-						packet.defId = 1751; // Sanctuary Actor Def Id.
+						packet.defId = "1751"; // Sanctuary Actor Def Id.
 						packet.ownerId = player.room.substring("sanctuary_".length()); // Owner ID
 
 						// Object info

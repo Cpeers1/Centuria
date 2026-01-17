@@ -82,8 +82,8 @@ public class TradeInitiatePacket implements IXtPacket<TradeInitiatePacket> {
 
 		// Check privacy settings
 		int privSetting = 0;
-		if (targetPlayer.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(17545, 0) != null)
-			privSetting = targetPlayer.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(17545,
+		if (targetPlayer.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue("17545", 0) != null)
+			privSetting = targetPlayer.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue("17545",
 					0).value;
 		if ((privSetting == 1 && !SocialManager.getInstance().getPlayerIsFollowing(targetPlayer.account.getAccountID(),
 				sourcePlayer.account.getAccountID())) || privSetting == 2) {

@@ -73,7 +73,7 @@ public class HistoryPacket extends AbstractChatPacket {
 					// Load user settings
 					int filterSettingSelf = 0;
 					UserVarValue valS = client.getPlayer().getSaveSpecificInventory().getUserVarAccesor()
-							.getPlayerVarValue(9362, 0);
+							.getPlayerVarValue("9362", 0);
 					if (valS != null)
 						filterSettingSelf = valS.value;
 

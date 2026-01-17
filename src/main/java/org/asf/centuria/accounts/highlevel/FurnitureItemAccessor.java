@@ -14,7 +14,7 @@ public abstract class FurnitureItemAccessor extends AbstractInventoryAccessor {
 	 * @param defID Furniture defID
 	 * @return True if the player has the furniture item, false otherwise
 	 */
-	public abstract boolean hasFurniture(int defID);
+	public abstract boolean hasFurniture(String defID);
 
 	/**
 	 * Retrieves the amount of a specific furniture item the player has
@@ -22,14 +22,14 @@ public abstract class FurnitureItemAccessor extends AbstractInventoryAccessor {
 	 * @param defID Furniture defID
 	 * @return Amount of the specific item
 	 */
-	public abstract int getFurnitureCount(int defID);
+	public abstract int getFurnitureCount(String defID);
 
 	/**
 	 * Removes a furniture item
 	 * 
-	 * @param id Furniture item ID
+	 * @param objectId Furniture item ID
 	 */
-	public abstract void removeFurniture(String id);
+	public abstract void removeFurniture(String objectId);
 
 	/**
 	 * Retrieves a furniture inventory object
@@ -46,7 +46,7 @@ public abstract class FurnitureItemAccessor extends AbstractInventoryAccessor {
 	 * @param isInTradeList True to add this item to trade list, false otherwise
 	 * @return Item UUID
 	 */
-	public abstract String addFurniture(int defID, boolean isInTradeList);
+	public abstract String addFurniture(String defID, boolean isInTradeList);
 
 	/**
 	 * Retrieves the default color of a furniture color channel
@@ -55,13 +55,13 @@ public abstract class FurnitureItemAccessor extends AbstractInventoryAccessor {
 	 * @param channel Channel number
 	 * @return HSV object or null
 	 */
-	public abstract JsonObject getDefaultFurnitureChannelHSV(int defID, int channel);
+	public abstract JsonObject getDefaultFurnitureChannelHSV(String defID, int channel);
 
 	/**
 	 * Retrieves the default color of a furniture color channel
 	 * 
-	 * @param placeableUUID   Placeable UUID for the furniture.
+	 * @param placeableUUID Placeable UUID for the furniture.
 	 * @return The DefId for the object.
 	 */
-	public abstract int getDefIDFromUUID(String placeableUUID);
+	public abstract String getDefIDFromUUID(String placeableUUID);
 }

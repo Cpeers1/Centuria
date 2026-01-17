@@ -33,7 +33,7 @@ public class GameKinoParlor extends AbstractMinigame {
 	int wager;
 	boolean doubleUpTaken;
 	List<Integer> additionalParameters;
-	static final int likesID = 2327;
+	static final String likesID = "2327";
 
 	QueensDuel queensDuel;
 	FourCrows fourCrows;
@@ -85,8 +85,8 @@ public class GameKinoParlor extends AbstractMinigame {
 	}
 
 	@Override
-	public boolean canHandle(int levelID) {
-		return levelID == 7789 || levelID == 12174;
+	public boolean canHandle(String levelID) {
+		return levelID.equals("7789") || levelID.equals("12174");
 	}
 
 	@Override

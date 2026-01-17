@@ -25,7 +25,7 @@ public class MinigameManager {
 		registerMinigame(new GameWhatTheHex());
 		registerMinigame(new GameTwiggleBuilders());
 		registerMinigame(new GameDoOrDye());
-		//registerMinigame(new GameDizzywingDispatch());
+		// registerMinigame(new GameDizzywingDispatch());
 		registerMinigame(new GameKinoParlor());
 	}
 
@@ -54,7 +54,7 @@ public class MinigameManager {
 	 * @param levelID Minigame level ID
 	 * @return AbstractMinigame instance or null
 	 */
-	public static AbstractMinigame getGameFor(int levelID) {
+	public static AbstractMinigame getGameFor(String levelID) {
 		for (AbstractMinigame game : minigames) {
 			if (game.canHandle(levelID))
 				return game;

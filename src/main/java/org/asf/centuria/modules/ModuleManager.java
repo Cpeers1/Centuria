@@ -156,7 +156,7 @@ public class ModuleManager {
 					module.preInit();
 					Centuria.logger.info("Loading module: " + module.id());
 					this.modules.put(module.id(), module);
-					EventBus.getInstance().addEventReceiver(module);
+					EventBus.getInstance().addAllEventsFromReceiver(module);
 				}
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e) {

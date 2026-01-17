@@ -19,9 +19,4 @@ public class QuestStartEvent extends AbstractQuestEvent {
 			String questID, QuestDefinition quest) {
 		super(server, player, account, client, questID, quest);
 	}
-
-	@Override
-	public String eventPath() {
-		return "18compat.quest.start";
-	}
 }

@@ -16,7 +16,7 @@ public class MinigameJoinPacket implements IXtPacket<MinigameJoinPacket> {
 
 	private static final String PACKET_ID = "mj";
 
-	public int minigameID;
+	public String minigameID;
 	private boolean isMinigameSupported = false;
 
 	@Override
@@ -31,7 +31,7 @@ public class MinigameJoinPacket implements IXtPacket<MinigameJoinPacket> {
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
-		minigameID = reader.readInt();
+		minigameID = reader.read();
 	}
 
 	@Override

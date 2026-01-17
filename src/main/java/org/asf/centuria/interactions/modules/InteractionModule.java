@@ -33,7 +33,7 @@ public abstract class InteractionModule {
 	 * @param ids     List of interactable IDs in the world
 	 * @param player  Player to prepare this module for
 	 */
-	public abstract void prepareWorld(int levelID, List<String> ids, Player player);
+	public abstract void prepareWorld(String levelID, List<String> ids, Player player);
 
 	/**
 	 * Checks if this module can handle the given interaction

@@ -32,12 +32,12 @@ public class FurnitureItemAccessorImpl extends FurnitureItemAccessor {
 	}
 
 	@Override
-	public boolean hasFurniture(int defID) {
-		return inventory.getAccessor().hasInventoryObject("102", defID);
+	public boolean hasFurniture(String defID) {
+		return inventory.getAccessor().hasInventoryObjectByDefId("102", defID);
 	}
 
 	@Override
-	public int getFurnitureCount(int defID) {
+	public int getFurnitureCount(String defID) {
 		int count = 0;
 
 		// Load the inventory object
@@ -48,8 +48,8 @@ public class FurnitureItemAccessorImpl extends FurnitureItemAccessor {
 		// Find object
 		for (JsonElement ele : items) {
 			JsonObject itm = ele.getAsJsonObject();
-			int itID = itm.get("defId").getAsInt();
-			if (itID == defID) {
+			String itID = itm.get("defId").getAsString();
+			if (itID.equals(defID)) {
 				count++;
 			}
 		}
@@ -59,29 +59,29 @@ public class FurnitureItemAccessorImpl extends FurnitureItemAccessor {
 
 	@Override
 	public void removeFurniture(String id) {
-		inventory.getAccessor().removeInventoryObject("102", id);
+		inventory.getAccessor().removeInventoryObjectByItemId("102", id);
 	}
 
 	@Override
 	public JsonObject getFurnitureData(String id) {
-		return inventory.getAccessor().findInventoryObject("102", id);
+		return inventory.getAccessor().findInventoryObjectByItemId("102", id);
 	}
 
 	@Override
-	public String addFurniture(int defID, boolean isInTradeList) {
+	public String addFurniture(String defID, boolean isInTradeList) {
 		String cID = null;
 
 		// Generate object
 
 		// Check existence
-		if (helper.has(Integer.toString(defID))) {
+		if (helper.has(defID)) {
 			// Trade thingy
 			JsonObject tr = new JsonObject();
 			tr.addProperty("isInTradeList", isInTradeList);
 
 			// Add item
 			cID = inventory.getAccessor().createInventoryObject("102", defID, new ItemComponent("Tradable", tr),
-					new ItemComponent("Colorable", helper.get(Integer.toString(defID)).getAsJsonObject()),
+					new ItemComponent("Colorable", helper.get(defID).getAsJsonObject()),
 					new ItemComponent("Placeable", new JsonObject()));
 		}
 
@@ -90,11 +90,11 @@ public class FurnitureItemAccessorImpl extends FurnitureItemAccessor {
 	}
 
 	@Override
-	public JsonObject getDefaultFurnitureChannelHSV(int defID, int channel) {
+	public JsonObject getDefaultFurnitureChannelHSV(String defID, int channel) {
 		// Check existence
-		if (helper.has(Integer.toString(defID))) {
+		if (helper.has(defID)) {
 			// Find channel
-			JsonObject data = helper.get(Integer.toString(defID)).getAsJsonObject();
+			JsonObject data = helper.get(defID).getAsJsonObject();
 			if (data.has("color" + channel + "HSV"))
 				return data.get("color" + channel + "HSV").getAsJsonObject();
 		}
@@ -102,13 +102,9 @@ public class FurnitureItemAccessorImpl extends FurnitureItemAccessor {
 	}
 
 	@Override
-	public int getDefIDFromUUID(String placeableUUID) {
-		
-		//unfortunately we have to loop through objects to find it..
-		
-		var object = inventory.getAccessor().findInventoryObject("102", placeableUUID);
-				
-		return object.get("defId").getAsInt();
+	public String getDefIDFromUUID(String placeableUUID) {
+		var object = inventory.getAccessor().findInventoryObjectByItemId("102", placeableUUID);
+		return object.get("defId").getAsString();
 	}
 
 }

@@ -17,7 +17,7 @@ public class SettingsSetPacket implements IXtPacket<SettingsSetPacket> {
 
 	private static final String PACKET_ID = "zs";
 
-	private int varDefId;
+	private String varDefId;
 	private int value;
 	private int index;
 
@@ -33,7 +33,7 @@ public class SettingsSetPacket implements IXtPacket<SettingsSetPacket> {
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
-		varDefId = reader.readInt();
+		varDefId = reader.read();
 		value = reader.readInt();
 		index = reader.readInt();
 	}
@@ -43,7 +43,7 @@ public class SettingsSetPacket implements IXtPacket<SettingsSetPacket> {
 		wr.writeInt(DATA_PREFIX); // Data prefix
 
 		wr.writeBoolean(true);
-		wr.writeInt(varDefId);
+		wr.writeString(varDefId);
 		wr.writeInt(value);
 		wr.writeInt(index);
 

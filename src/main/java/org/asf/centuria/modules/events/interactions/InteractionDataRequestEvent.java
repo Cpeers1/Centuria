@@ -61,9 +61,4 @@ public class InteractionDataRequestEvent extends EventObject {
 	public int getState() {
 		return state;
 	}
-
-	@Override
-	public String eventPath() {
-		return "18compat.interaction.datareq";
-	}
 }

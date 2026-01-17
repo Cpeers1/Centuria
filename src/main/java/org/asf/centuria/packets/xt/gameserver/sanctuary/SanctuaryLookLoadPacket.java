@@ -66,7 +66,7 @@ public class SanctuaryLookLoadPacket implements IXtPacket<SanctuaryLookLoadPacke
 				// Build room join
 				RoomJoinPacket join = new RoomJoinPacket();
 				join.levelType = 2;
-				join.levelID = 1689;
+				join.levelID = "1689";
 				join.roomIdentifier = "sanctuary_" + plr.account.getAccountID();
 				join.teleport = plr.account.getAccountID();
 
@@ -81,7 +81,7 @@ public class SanctuaryLookLoadPacket implements IXtPacket<SanctuaryLookLoadPacke
 
 				// Assign room
 				player.roomReady = false;
-				player.pendingLevelID = 1689;
+				player.pendingLevelID = "1689";
 				player.pendingRoom = "sanctuary_" + plr.account.getAccountID();
 				player.levelType = join.levelType;
 

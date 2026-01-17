@@ -9,6 +9,11 @@ We know this update doesnt really provide much gameplay-wise, but its an importa
 Dependency changes:
 - Updated ConnectiveHTTP to Alpha 17
 
+Major changes:
+- Completely overhauled the item system to work with string def IDs instead of numeric def IDs only, do note that this is still limited and can be unstable
+- Changed item transmission so that item operations only send changed items and not the full inventory, speeding up performance with unbinding and a lot more
+- Backported the simplified 1.8 Event Bus
+
 New features in the server:
 - Added a new API Event: AccountDisplayNameChangedEvent
 - Added new command: gcrename/gcr: a command to rename group chats

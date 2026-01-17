@@ -3,7 +3,6 @@ package org.asf.centuria.modules.events.servers;
 import java.util.function.Consumer;
 
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.packets.smartfox.ISmartfoxPacket;
 
@@ -15,7 +14,6 @@ import org.asf.centuria.packets.smartfox.ISmartfoxPacket;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("gameserver.startup")
 public class GameServerStartupEvent extends EventObject {
 
 	private GameServer server;
@@ -24,11 +22,6 @@ public class GameServerStartupEvent extends EventObject {
 	public GameServerStartupEvent(GameServer server, Consumer<ISmartfoxPacket> registrationCommand) {
 		this.server = server;
 		this.registrationCommand = registrationCommand;
-	}
-
-	@Override
-	public String eventPath() {
-		return "gameserver.startup";
 	}
 
 	/**

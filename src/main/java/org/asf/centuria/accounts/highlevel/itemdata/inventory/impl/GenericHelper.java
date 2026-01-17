@@ -18,30 +18,30 @@ public class GenericHelper extends AbstractInventoryInteractionHelper {
 	}
 
 	@Override
-	public JsonObject addOne(PlayerInventory inventory, int defID) {
+	public JsonObject addOne(PlayerInventory inventory, String defID) {
 		String id = inventory.getAccessor().createInventoryObject(inventoryId, defID, components);
 		if (id == null)
 			return null;
-		return inventory.getAccessor().findInventoryObject(inventoryId, id);
+		return inventory.getAccessor().findInventoryObjectByItemId(inventoryId, id);
 	}
 
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, JsonObject object) {
-		if (!inventory.getAccessor().hasInventoryObject(inventoryId, object.get("id").getAsString())) {
+		if (!inventory.getAccessor().hasInventoryObjectByItemId(inventoryId, object.get("id").getAsString())) {
 			// Add the item directly
 			inventory.getItem(inventoryId).getAsJsonArray().add(object);
 			inventory.setItem(inventoryId, inventory.getItem(inventoryId));
 			return object;
 		}
-		return addOne(inventory, object.get("defId").getAsInt());
+		return addOne(inventory, object.get("defId").getAsString());
 	}
 
 	@Override
-	public String removeOne(PlayerInventory inventory, int defID) {
-		if (inventory.getAccessor().hasInventoryObject(inventoryId, defID)) {
-			String uuid = inventory.getAccessor().findInventoryObject(inventoryId, defID)
+	public String removeOne(PlayerInventory inventory, String defID) {
+		if (inventory.getAccessor().hasInventoryObjectByDefId(inventoryId, defID)) {
+			String uuid = inventory.getAccessor().findInventoryObjectByDefId(inventoryId, defID)
 					.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
-			inventory.getAccessor().removeInventoryObject(inventoryId, defID);
+			inventory.getAccessor().removeInventoryObjectByDefId(inventoryId, defID);
 			return uuid;
 		}
 
@@ -50,7 +50,7 @@ public class GenericHelper extends AbstractInventoryInteractionHelper {
 
 	@Override
 	public String removeOne(PlayerInventory inventory, JsonObject object) {
-		if (inventory.getAccessor().hasInventoryObject(inventoryId,
+		if (inventory.getAccessor().hasInventoryObjectByItemId(inventoryId,
 				object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString())) {
 			// Remove the item directly
 			String uuid = object.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
@@ -58,7 +58,7 @@ public class GenericHelper extends AbstractInventoryInteractionHelper {
 			inventory.setItem(inventoryId, inventory.getItem(inventoryId));
 			return uuid;
 		}
-		return removeOne(inventory, object.get("defId").getAsInt());
+		return removeOne(inventory, object.get("defId").getAsString());
 	}
 
 }

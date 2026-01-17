@@ -14,14 +14,14 @@ public abstract class DyeAccessor extends AbstractInventoryAccessor {
 	 * @param defID Dye defID
 	 * @return Object UUID
 	 */
-	public abstract String addDye(int defID);
+	public abstract String addDyeByDefId(String defID);
 
 	/**
 	 * Removes a dye to the player's inventory
 	 * 
 	 * @param defID Dye defID
 	 */
-	public abstract void removeDye(int defID);
+	public abstract void removeDyeByDefId(String defID);
 
 	/**
 	 * Retrieves a dye inventory object
@@ -37,7 +37,7 @@ public abstract class DyeAccessor extends AbstractInventoryAccessor {
 	 * @param defID Dye defID
 	 * @return HSV value or null
 	 */
-	public abstract String getDyeHSV(int defID);
+	public abstract String getDyeHSV(String defID);
 
 	/**
 	 * Removes a dye to the player's inventory
@@ -52,6 +52,6 @@ public abstract class DyeAccessor extends AbstractInventoryAccessor {
 	 * @param defID Dye defID
 	 * @return True if the player has the dye, false otherwise
 	 */
-	public abstract boolean hasDye(int defID);
+	public abstract boolean hasDye(String defID);
 
 }

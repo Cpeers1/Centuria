@@ -29,27 +29,25 @@ public final class UserVarItem extends InventoryItem {
 	public final static InventoryType INV_TYPE = InventoryType.UserVar;
 
 	private UserVarType type;
-		
-	public UserVarItem()
-	{
-		super(0, "", INV_TYPE);
+
+	public UserVarItem() {
+		super("-1", "", INV_TYPE);
 	}
 
-	
-	public UserVarItem(int defId, String uuid, InventoryType invType) {
+	public UserVarItem(String defId, String uuid, InventoryType invType) {
 		super(defId, uuid, invType);
 	}
 
 	public UserVarItem(UserVarType type) {
-		super(0, "", INV_TYPE);
+		super("-1", "", INV_TYPE);
 		this.type = type;
 	}
 
-	public UserVarItem(int defId, String uuid, UserVarType type) {
+	public UserVarItem(String defId, String uuid, UserVarType type) {
 		super(defId, uuid, INV_TYPE);
 		this.type = type;
 	}
-	
+
 	@Override
 	public InventoryType getInventoryType() {
 		return INV_TYPE;
@@ -102,8 +100,5 @@ public final class UserVarItem extends InventoryItem {
 
 		super.fromJsonObject(object);
 	}
-
-
-
 
 }

@@ -58,26 +58,25 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 			var twiggleItem = player.account.getSaveSpecificInventory().getTwiggleAccesor().getTwiggle(twiggleInvId);
 
 			switch (twiggleItem.getTwiggleComponent().workType) {
-				case WorkingOtherSanctuary:
-				case WorkingSanctuary:
-					// we are ok
-					break;
-				case FinishedOtherSanctuary:
-				case FinishedSanctuary:
-				case None:
-				default: {
-					// failed to complete expansion
-					this.success = false;
-					client.sendPacket(this);
-					return true;
-				}
+			case WorkingOtherSanctuary:
+			case WorkingSanctuary:
+				// we are ok
+				break;
+			case FinishedOtherSanctuary:
+			case FinishedSanctuary:
+			case None:
+			default: {
+				// failed to complete expansion
+				this.success = false;
+				client.sendPacket(this);
+				return true;
+			}
 			}
 
 			if (twiggleItem.getTwiggleComponent().twiggleWorkParams.stage != null) {
 				// its a stage upgrade
 				var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
-						.upgradeSanctuaryToStage(
-								twiggleItem.getTwiggleComponent().twiggleWorkParams.classItemInvId,
+						.upgradeSanctuaryToStage(twiggleItem.getTwiggleComponent().twiggleWorkParams.classItemInvId,
 								twiggleItem.getTwiggleComponent().twiggleWorkParams.stage);
 
 				if (didSucceed) {
@@ -90,10 +89,9 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 				}
 			} else if (twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex != null) {
 				// its a room expansion
-				var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor()
-						.expandSanctuaryRoom(
-								twiggleItem.getTwiggleComponent().twiggleWorkParams.classItemInvId,
-								twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex);
+				var didSucceed = player.account.getSaveSpecificInventory().getSanctuaryAccessor().expandSanctuaryRoom(
+						twiggleItem.getTwiggleComponent().twiggleWorkParams.classItemInvId,
+						twiggleItem.getTwiggleComponent().twiggleWorkParams.enlargedAreaIndex);
 
 				if (didSucceed) {
 					sendIlPacket(player);
@@ -176,7 +174,7 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 		if (!isOwner) {
 			// Load privacy settings
 			int privSetting = 0;
-			UserVarValue val = sancOwner.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
+			UserVarValue val = sancOwner.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue("17544", 0);
 			if (val != null)
 				privSetting = val.value;
 
@@ -200,7 +198,7 @@ public class SanctuaryUpgradeCompletePacket implements IXtPacket<SanctuaryUpgrad
 		RoomJoinPacket join = new RoomJoinPacket();
 		join.success = isAllowed;
 		join.levelType = 2;
-		join.levelID = 1689;
+		join.levelID = "1689";
 		join.roomIdentifier = "sanctuary_" + sanctuaryOwner;
 		join.teleport = sanctuaryOwner;
 

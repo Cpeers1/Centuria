@@ -14,7 +14,7 @@ import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 public class InspirationCollectionModule extends InteractionModule {
 
 	@Override
-	public void prepareWorld(int levelID, List<String> ids, Player player) {
+	public void prepareWorld(String levelID, List<String> ids, Player player) {
 	}
 
 	@Override
@@ -77,40 +77,37 @@ public class InspirationCollectionModule extends InteractionModule {
 			// get the third argument
 
 			String defId = stateInfo.params[2];
-			if (!defId.matches("^[0-9]+$"))
-				return false;
-
 			var inspirationAccessor = player.account.getSaveSpecificInventory().getInspirationAccessor();
-			if (!inspirationAccessor.hasInspiration(Integer.valueOf(defId))) {
+			if (!inspirationAccessor.hasInspiration(defId)) {
 				// Add inspiration
-				inspirationAccessor.addInspiration(Integer.valueOf(defId));
+				inspirationAccessor.addInspiration(defId);
 
 				// Add xp
 				EventInfo ev = new EventInfo();
 				ev.event = "levelevents.inspirations";
 
 				// Find map name
-				String map = "unknown";
+				String map = player.levelID;
 				switch (player.levelID) {
-				case 820:
+				case "820":
 					map = "cityfera";
 					break;
-				case 2364:
+				case "2364":
 					map = "bloodtundra";
 					break;
-				case 9687:
+				case "9687":
 					map = "lakeroot";
 					break;
-				case 2147:
+				case "2147":
 					map = "mugmyre";
 					break;
-				case 1689:
+				case "1689":
 					map = "sanctuary";
 					break;
-				case 3273:
+				case "3273":
 					map = "sunkenthicket";
 					break;
-				case 1825:
+				case "1825":
 					map = "shatteredbay";
 					break;
 				}

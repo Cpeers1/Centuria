@@ -11,22 +11,22 @@ public class AvatarSpeciesHelper extends AbstractInventoryInteractionHelper {
 	private static final String INV_TYPE = "1";
 
 	@Override
-	public JsonObject addOne(PlayerInventory inventory, int defID) {
-		inventory.getAvatarAccessor().unlockAvatarSpecies(Integer.toString(defID));
-		return inventory.getAccessor().findInventoryObject(INV_TYPE, defID);
+	public JsonObject addOne(PlayerInventory inventory, String defID) {
+		inventory.getAvatarAccessor().unlockAvatarSpecies(defID);
+		return inventory.getAccessor().findInventoryObjectByDefId(INV_TYPE, defID);
 	}
 
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, JsonObject object) {
-		return addOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt());
+		return addOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsString());
 	}
 
 	@Override
-	public String removeOne(PlayerInventory inventory, int defID) {
-		if (inventory.getAvatarAccessor().isAvatarSpeciesUnlocked(Integer.toString(defID))) {
-			String uuid = inventory.getAccessor().findInventoryObject(INV_TYPE, defID)
+	public String removeOne(PlayerInventory inventory, String defID) {
+		if (inventory.getAvatarAccessor().isAvatarSpeciesUnlocked(defID)) {
+			String uuid = inventory.getAccessor().findInventoryObjectByDefId(INV_TYPE, defID)
 					.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
-			inventory.getAccessor().removeInventoryObject(INV_TYPE, defID);
+			inventory.getAccessor().removeInventoryObjectByItemId(INV_TYPE, uuid);
 			return uuid;
 		}
 		return null;
@@ -34,7 +34,7 @@ public class AvatarSpeciesHelper extends AbstractInventoryInteractionHelper {
 
 	@Override
 	public String removeOne(PlayerInventory inventory, JsonObject object) {
-		return removeOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt());
+		return removeOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsString());
 	}
 
 }

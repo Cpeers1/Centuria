@@ -80,9 +80,9 @@ public class AvatarSelectLookPacket implements IXtPacket<AvatarSelectLookPacket>
 
 						// Sync if updated
 						if (!lastLook.equals(lookID)) {
-							plr.pendingLookDefID = 8254;
+							plr.pendingLookDefID = "8254";
 							if (lookObj != null) {
-								plr.pendingLookDefID = lookObj.get("defId").getAsInt();
+								plr.pendingLookDefID = lookObj.get("defId").getAsString();
 							}
 							plr.lastAction = 0;
 							GameServer srv = (GameServer) client.getServer();

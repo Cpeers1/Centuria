@@ -91,7 +91,7 @@ public class ResourceCollectionModule extends InteractionModule {
 					def.lootType = defObj.get("lootType").getAsString().equals("HARVEST") ? ResourceType.HARVEST
 							: ResourceType.LOOT;
 				if (defObj.has("lootTableId"))
-					def.lootTableId = defObj.get("lootTableId").getAsInt();
+					def.lootTableId = defObj.get("lootTableId").getAsString();
 				if (defObj.has("respawnSeconds"))
 					def.respawnSeconds = defObj.get("respawnSeconds").getAsDouble();
 				if (defObj.has("interactionsBeforeDespawn"))
@@ -300,14 +300,14 @@ public class ResourceCollectionModule extends InteractionModule {
 	}
 
 	@Override
-	public void prepareWorld(int levelID, List<String> ids, Player player) {
+	public void prepareWorld(String levelID, List<String> ids, Player player) {
 		// Find resource collection ids
 		for (String id : ids) {
 			NetworkedObject obj = NetworkedObjects.getObject(id);
 
 			// Check if the object is a resource
-			if (obj.primaryObjectInfo != null && resources.containsKey(Integer.toString(obj.primaryObjectInfo.defId))) {
-				ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+			if (obj.primaryObjectInfo != null && resources.containsKey(obj.primaryObjectInfo.defId)) {
+				ResourceDefinition def = resources.get(obj.primaryObjectInfo.defId);
 
 				// Add the resource to the player's collection memory data
 				if (def.lootType == ResourceType.HARVEST)
@@ -321,8 +321,8 @@ public class ResourceCollectionModule extends InteractionModule {
 	@Override
 	public boolean canHandle(Player player, String id, NetworkedObject obj) {
 		// Check if the object is a resource
-		if (obj.primaryObjectInfo != null && resources.containsKey(Integer.toString(obj.primaryObjectInfo.defId))) {
-			ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+		if (obj.primaryObjectInfo != null && resources.containsKey(obj.primaryObjectInfo.defId)) {
+			ResourceDefinition def = resources.get(obj.primaryObjectInfo.defId);
 
 			// Check harvest validity
 			if (def.lootType == ResourceType.HARVEST) {
@@ -373,7 +373,7 @@ public class ResourceCollectionModule extends InteractionModule {
 						for (StateInfo branch : branches)
 							if (branch.command.equals("41") && branch.params.length > 0
 									&& obj.primaryObjectInfo.type == 13 && branch.params[1].equals("0")) {
-								ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+								ResourceDefinition def = resources.get(obj.primaryObjectInfo.defId);
 								double respawnSeconds = 600; // 10 minutes fallback
 								if (def != null) {
 									respawnSeconds = def.respawnSeconds;
@@ -408,8 +408,8 @@ public class ResourceCollectionModule extends InteractionModule {
 	public boolean shouldDestroyResource(Player player, String id, NetworkedObject obj, int stateN,
 			boolean destroyOnCompletion) {
 		// Check if the object is a resource
-		if (obj.primaryObjectInfo != null && resources.containsKey(Integer.toString(obj.primaryObjectInfo.defId))) {
-			ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+		if (obj.primaryObjectInfo != null && resources.containsKey(obj.primaryObjectInfo.defId)) {
+			ResourceDefinition def = resources.get(obj.primaryObjectInfo.defId);
 
 			// Check harvest
 			if (def.lootType == ResourceType.HARVEST) {
@@ -432,8 +432,8 @@ public class ResourceCollectionModule extends InteractionModule {
 	@Override
 	public boolean handleInteractionSuccess(Player player, String id, NetworkedObject obj, int state) {
 		// Check if the object is a resource
-		if (obj.primaryObjectInfo != null && resources.containsKey(Integer.toString(obj.primaryObjectInfo.defId))) {
-			ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+		if (obj.primaryObjectInfo != null && resources.containsKey(obj.primaryObjectInfo.defId)) {
+			ResourceDefinition def = resources.get(obj.primaryObjectInfo.defId);
 
 			// Check harvest
 			if (def.lootType == ResourceType.HARVEST) {
@@ -445,7 +445,7 @@ public class ResourceCollectionModule extends InteractionModule {
 
 				// Check harvest count
 				if (harvested < def.interactionsBeforeDespawn) {
-					HarvestTable table = harvestTables.get(Integer.toString(def.lootTableId));
+					HarvestTable table = harvestTables.get(def.lootTableId);
 					if (table != null) {
 						// Find reward
 						HashMap<HarvestReward, Integer> options = new HashMap<HarvestReward, Integer>();
@@ -463,8 +463,7 @@ public class ResourceCollectionModule extends InteractionModule {
 							int count = rnd.nextInt(reward.maxCount + 1);
 							while (count < reward.minCount)
 								count = rnd.nextInt(reward.maxCount + 1);
-							player.account.getSaveSpecificInventory().getItemAccessor(player)
-									.add(Integer.parseInt(reward.itemId), count);
+							player.account.getSaveSpecificInventory().getItemAccessor(player).add(reward.itemId, count);
 
 							// Add tags
 							ev.tags.add("itemdefid:" + reward.itemId);
@@ -501,8 +500,8 @@ public class ResourceCollectionModule extends InteractionModule {
 	@Override
 	public int isDataRequestValid(Player player, String id, NetworkedObject obj, int stateN) {
 		// Check if the object is a resource
-		if (obj.primaryObjectInfo != null && resources.containsKey(Integer.toString(obj.primaryObjectInfo.defId))) {
-			ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+		if (obj.primaryObjectInfo != null && resources.containsKey(obj.primaryObjectInfo.defId)) {
+			ResourceDefinition def = resources.get(obj.primaryObjectInfo.defId);
 
 			// Check harvest
 			if (def.lootType == ResourceType.LOOT) {
@@ -517,7 +516,7 @@ public class ResourceCollectionModule extends InteractionModule {
 					return 0; // Cannot loot yet
 
 				// Give reward
-				giveLootReward(player, Integer.toString(def.lootTableId), 2, obj.primaryObjectInfo.defId);
+				giveLootReward(player, def.lootTableId, 2, obj.primaryObjectInfo.defId);
 
 				// Set unlocked and timestamp
 				player.account.getSaveSpecificInventory().getInteractionMemory().unlocked(player.levelID, id);
@@ -537,7 +536,7 @@ public class ResourceCollectionModule extends InteractionModule {
 								// It is, lets find the table
 
 								// Find respawn timestamp
-								ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+								ResourceDefinition def = resources.get(obj.primaryObjectInfo.defId);
 								double respawnSeconds = 600; // 10 minutes fallback // TODO: FIND A BETTER WAY TO DO
 																// THIS
 								if (def != null) {
@@ -615,7 +614,7 @@ public class ResourceCollectionModule extends InteractionModule {
 	 * @param giftType    Gift type number
 	 * @param sourceDefID Source object defID
 	 */
-	public static void giveLootReward(Player player, String lootTableId, int giftType, int sourceDefID) {
+	public static void giveLootReward(Player player, String lootTableId, int giftType, String sourceDefID) {
 		// Log
 		Centuria.logger.info(MarkerManager.getMarker("RESOURCE COLLECTION"),
 				"Giving loot to player " + player.account.getDisplayName() + ", giving table " + lootTableId);
@@ -630,8 +629,8 @@ public class ResourceCollectionModule extends InteractionModule {
 					int count = info.count;
 
 					// Select items
-					String[] ids = player.account.getSaveSpecificInventory().getItemAccessor(player)
-							.add(Integer.parseInt(reward.itemId), count);
+					String[] ids = player.account.getSaveSpecificInventory().getItemAccessor(player).add(reward.itemId,
+							count);
 
 					// Send gift push popups
 					for (String objID : ids) {
@@ -639,7 +638,7 @@ public class ResourceCollectionModule extends InteractionModule {
 						JsonObject gift = new JsonObject();
 						gift.addProperty("fromType", giftType);
 						gift.addProperty("redeemedItemIdsExpectedCount", 0);
-						gift.addProperty("giftItemDefId", Integer.parseInt(reward.itemId));
+						gift.addProperty("giftItemDefId", reward.itemId);
 						gift.addProperty("count", count);
 						gift.addProperty("giftItemType",
 								player.account.getSaveSpecificInventory().getAccessor().getInventoryIDOfItem(objID));
@@ -773,27 +772,27 @@ public class ResourceCollectionModule extends InteractionModule {
 	// Lets not copy/paste like a madman
 	private static String manName(Player player) {
 		// Find map name
-		String map = "unknown";
+		String map = player.levelID;
 		switch (player.levelID) {
-		case 820:
+		case "820":
 			map = "cityfera";
 			break;
-		case 2364:
+		case "2364":
 			map = "bloodtundra";
 			break;
-		case 9687:
+		case "9687":
 			map = "lakeroot";
 			break;
-		case 2147:
+		case "2147":
 			map = "mugmyre";
 			break;
-		case 1689:
+		case "1689":
 			map = "sanctuary";
 			break;
-		case 3273:
+		case "3273":
 			map = "sunkenthicket";
 			break;
-		case 1825:
+		case "1825":
 			map = "shatteredbay";
 			break;
 		}
@@ -808,8 +807,8 @@ public class ResourceCollectionModule extends InteractionModule {
 		int pState = -1;
 
 		// Check if the object is a resource
-		if (obj.primaryObjectInfo != null && resources.containsKey(Integer.toString(obj.primaryObjectInfo.defId))) {
-			ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+		if (obj.primaryObjectInfo != null && resources.containsKey(obj.primaryObjectInfo.defId)) {
+			ResourceDefinition def = resources.get(obj.primaryObjectInfo.defId);
 
 			// Check harvest
 			if (def.lootType == ResourceType.HARVEST) {
@@ -839,8 +838,8 @@ public class ResourceCollectionModule extends InteractionModule {
 		}
 
 		// Check if the object is a resource
-		if (obj.primaryObjectInfo != null && resources.containsKey(Integer.toString(obj.primaryObjectInfo.defId))) {
-			ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+		if (obj.primaryObjectInfo != null && resources.containsKey(obj.primaryObjectInfo.defId)) {
+			ResourceDefinition def = resources.get(obj.primaryObjectInfo.defId);
 
 			// Check harvest
 			if (def.lootType == ResourceType.LOOT) {
@@ -873,7 +872,7 @@ public class ResourceCollectionModule extends InteractionModule {
 								// Treasure
 
 								pState = 0;
-								ResourceDefinition def = resources.get(Integer.toString(obj.primaryObjectInfo.defId));
+								ResourceDefinition def = resources.get(obj.primaryObjectInfo.defId);
 								double respawnSeconds = 600; // 10 minutes fallback
 								if (def != null) {
 									respawnSeconds = def.respawnSeconds;

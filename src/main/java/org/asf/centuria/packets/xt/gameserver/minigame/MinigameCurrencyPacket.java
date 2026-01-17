@@ -11,7 +11,7 @@ public class MinigameCurrencyPacket implements IXtPacket<MinigameCurrencyPacket>
 
 	private static final String PACKET_ID = "mg";
 
-	public int Currency;
+	public String Currency;
 	public int UNK1 = 1;
 	public String UNK2 = "null";
 
@@ -33,7 +33,7 @@ public class MinigameCurrencyPacket implements IXtPacket<MinigameCurrencyPacket>
 	public void build(XtWriter writer) throws IOException {
 		writer.writeInt(DATA_PREFIX); // padding
 
-		writer.writeInt(Currency);
+		writer.writeString(Currency);
 		writer.writeInt(UNK1);
 		writer.writeString(UNK2);
 

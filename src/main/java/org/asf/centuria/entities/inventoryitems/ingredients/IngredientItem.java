@@ -22,12 +22,12 @@ public class IngredientItem extends InventoryItem {
 
 	public final static InventoryType INV_TYPE = InventoryType.Ingredient;
 
-	public IngredientItem(int defId, String uuid) {
+	public IngredientItem(String defId, String uuid) {
 		super(defId, uuid, INV_TYPE);
 	}
 
 	public IngredientItem() {
-		super(0, "", INV_TYPE);
+		super("0", "", INV_TYPE);
 	}
 
 	@Override

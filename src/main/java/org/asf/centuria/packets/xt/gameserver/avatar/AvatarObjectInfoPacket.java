@@ -18,7 +18,7 @@ public class AvatarObjectInfoPacket extends ObjectInfoPacket {
 		writer.writeInt(DATA_PREFIX);
 
 		writer.writeString(id); // World object ID
-		writer.writeInt(defId); // Def Id
+		writer.writeString(defId); // Def Id
 		writer.writeString(ownerId); // Owner ID
 
 		writer.writeInt(lastMove.nodeType.value); // Node type

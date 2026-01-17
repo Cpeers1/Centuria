@@ -398,7 +398,7 @@ public class LevelManager extends LevelInfo {
 			output.add(lvl);
 
 			// Final fallback reward (25 likes in case all fail)
-			lvl.levelUpRewardDefId = 2327;
+			lvl.levelUpRewardDefId = "2327";
 			lvl.levelUpRewardQuantity = 25;
 
 			// Create a list of potential rewards
@@ -451,7 +451,7 @@ public class LevelManager extends LevelInfo {
 							+ lvl.levelUpRewardDefId + " for level " + lvl.level + ", defaulting to likes.");
 
 					// Default to likes
-					lvl.levelUpRewardDefId = 2327;
+					lvl.levelUpRewardDefId = "2327";
 					lvl.levelUpRewardQuantity = 100;
 					objects = account.getSaveSpecificInventory().getItemAccessor(account.getOnlinePlayerInstance())
 							.add(lvl.levelUpRewardDefId, lvl.levelUpRewardQuantity);

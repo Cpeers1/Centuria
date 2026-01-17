@@ -16,7 +16,7 @@ import com.google.gson.JsonObject;
 public class ItemUncraftPacket implements IXtPacket<ItemUncraftPacket> {
 
 	private static final String PACKET_ID = "iu";
-	
+
 	public boolean success = true;
 	public String itemId;
 	public int count;
@@ -56,8 +56,8 @@ public class ItemUncraftPacket implements IXtPacket<ItemUncraftPacket> {
 
 		// Find item
 		String invId = inv.getAccessor().getInventoryIDOfItem(itemId);
-		if (invId != null && inv.getAccessor().hasInventoryObject(invId, itemId)) {
-			JsonObject obj = inv.getAccessor().findInventoryObject(invId, itemId);
+		if (invId != null && inv.getAccessor().hasInventoryObjectByItemId(invId, itemId)) {
+			JsonObject obj = inv.getAccessor().findInventoryObjectByItemId(invId, itemId);
 			String defId = obj.get("defId").getAsString();
 
 			// Retrieve uncraft results
@@ -70,13 +70,13 @@ public class ItemUncraftPacket implements IXtPacket<ItemUncraftPacket> {
 			}
 
 			// Check count
-			if (inv.getItemAccessor(plr).getCountOfItem(Integer.parseInt(defId)) >= count) {
+			if (inv.getItemAccessor(plr).getCountOfItem(defId) >= count) {
 				client.sendPacket(this);
 
 				// Uncraft
 				if (count == 1 && !inv.getItemAccessor(plr).remove(obj))
 					success = false;
-				else if (count != 1 && !inv.getItemAccessor(plr).remove(Integer.parseInt(defId), count))
+				else if (count != 1 && !inv.getItemAccessor(plr).remove(defId, count))
 					success = false;
 				if (!success) {
 					// Return failure
@@ -86,7 +86,7 @@ public class ItemUncraftPacket implements IXtPacket<ItemUncraftPacket> {
 
 				// Add items
 				info.result.forEach((item, count) -> {
-					inv.getItemAccessor(plr).add(Integer.parseInt(item), count * this.count);
+					inv.getItemAccessor(plr).add(item, count * this.count);
 				});
 				return true;
 			}

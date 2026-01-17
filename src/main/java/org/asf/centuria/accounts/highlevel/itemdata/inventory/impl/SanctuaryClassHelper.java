@@ -11,24 +11,24 @@ public class SanctuaryClassHelper extends AbstractInventoryInteractionHelper {
 	private static final String INV_TYPE = "10";
 
 	@Override
-	public JsonObject addOne(PlayerInventory inventory, int defID) {
+	public JsonObject addOne(PlayerInventory inventory, String defID) {
 		if (inventory.getSanctuaryAccessor().isSanctuaryUnlocked(defID))
 			return null;
 		inventory.getSanctuaryAccessor().unlockSanctuary(defID);
-		return inventory.getAccessor().findInventoryObject(INV_TYPE, defID);
+		return inventory.getAccessor().findInventoryObjectByDefId(INV_TYPE, defID);
 	}
 
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, JsonObject object) {
-		return addOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt());
+		return addOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsString());
 	}
 
 	@Override
-	public String removeOne(PlayerInventory inventory, int defID) {
+	public String removeOne(PlayerInventory inventory, String defID) {
 		if (inventory.getSanctuaryAccessor().isSanctuaryUnlocked(defID)) {
-			String uuid = inventory.getAccessor().findInventoryObject(INV_TYPE, defID)
+			String uuid = inventory.getAccessor().findInventoryObjectByDefId(INV_TYPE, defID)
 					.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
-			inventory.getAccessor().removeInventoryObject(INV_TYPE, defID);
+			inventory.getAccessor().removeInventoryObjectByItemId(INV_TYPE, uuid);
 			return uuid;
 		}
 		return null;
@@ -36,7 +36,7 @@ public class SanctuaryClassHelper extends AbstractInventoryInteractionHelper {
 
 	@Override
 	public String removeOne(PlayerInventory inventory, JsonObject object) {
-		return removeOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt());
+		return removeOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsString());
 	}
 
 }

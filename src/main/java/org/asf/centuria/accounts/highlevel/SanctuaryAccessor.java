@@ -17,7 +17,7 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	 * 
 	 * @return Array of island type defIDs
 	 */
-	public abstract int[] getUnlockedIslandTypes();
+	public abstract String[] getUnlockedIslandTypes();
 
 	/**
 	 * Retrieves the count of items of a specific island type
@@ -25,7 +25,7 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	 * @param defID Island type ID
 	 * @return Item count of the given island type
 	 */
-	public abstract int getIslandTypeItemCount(int defID);
+	public abstract int getIslandTypeItemCount(String defID);
 
 	/**
 	 * Creates a new save for a specific island type and saves it to the inventory
@@ -33,7 +33,7 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	 * @param defID Island type ID
 	 * @return Item ID string
 	 */
-	public abstract String addIslandToInventory(int defID);
+	public abstract String addIslandToInventory(String defID);
 
 	/**
 	 * Finds a island info object
@@ -49,14 +49,14 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	 * @param defID Island type ID
 	 * @return True if unlocked, false otherwise
 	 */
-	public abstract boolean isIslandTypeUnlocked(int defID);
+	public abstract boolean isIslandTypeUnlocked(String defID);
 
 	/**
 	 * Finds all unlocked house types
 	 * 
 	 * @return Array of house type defIDs
 	 */
-	public abstract int[] getUnlockedHouseTypes();
+	public abstract String[] getUnlockedHouseTypes();
 
 	/**
 	 * Retrieves the count of items of a specific house type
@@ -64,7 +64,7 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	 * @param defID House type ID
 	 * @return Item count of the given house type
 	 */
-	public abstract int getHouseTypeItemCount(int defID);
+	public abstract int getHouseTypeItemCount(String defID);
 
 	/**
 	 * Creates a new save for a specific house type and saves it to the inventory
@@ -72,7 +72,7 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	 * @param defID House type ID
 	 * @return Item ID string
 	 */
-	public abstract String addHouseToInventory(int defID);
+	public abstract String addHouseToInventory(String defID);
 
 	/**
 	 * Finds a house info object
@@ -88,21 +88,21 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	 * @param defID House type ID
 	 * @return True if unlocked, false otherwise
 	 */
-	public abstract boolean isHouseTypeUnlocked(int defID);
+	public abstract boolean isHouseTypeUnlocked(String defID);
 
 	/**
 	 * Finds all unlocked sanctuary classes
 	 * 
 	 * @return Array of sanctuary class defIDs
 	 */
-	public abstract int[] getUnlockedSanctuaries();
+	public abstract String[] getUnlockedSanctuaries();
 
 	/**
 	 * Unlocks sanctuaries
 	 * 
 	 * @param defID Sanctuary class ID
 	 */
-	public abstract void unlockSanctuary(int defID);
+	public abstract void unlockSanctuary(String defID);
 
 	/**
 	 * Finds a sanctuary class object
@@ -118,7 +118,7 @@ public abstract class SanctuaryAccessor extends AbstractInventoryAccessor {
 	 * @param defID Sanctuary class ID
 	 * @return True if unlocked, false otherwise
 	 */
-	public abstract boolean isSanctuaryUnlocked(int defID);
+	public abstract boolean isSanctuaryUnlocked(String defID);
 
 	/**
 	 * Retrieves the sanctuary look count

@@ -118,8 +118,7 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 					workParams.enlargedAreaIndex = expansionIndex;
 
 					updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary,
-							System.currentTimeMillis()
-									+ SanctuaryWorkCalculator.getTimeForExpand(expansionIndex),
+							System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForExpand(expansionIndex),
 							workParams);
 					isRoomUpgrade = true;
 					Centuria.logger.debug("Room expansion");
@@ -138,8 +137,9 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 					break;
 				}
 			}
-			
-			// send IL packet from another packet's class to reload world after disabling/enabling
+
+			// send IL packet from another packet's class to reload world after
+			// disabling/enabling
 			SanctuaryUpgradeCompletePacket SanctuaryUpgradeCompletePacketObject = new SanctuaryUpgradeCompletePacket();
 			if (didDisablingSucceed && !isStageUpgrade && !isRoomUpgrade) {
 				SanctuaryUpgradeCompletePacketObject.sendIlPacket(player);

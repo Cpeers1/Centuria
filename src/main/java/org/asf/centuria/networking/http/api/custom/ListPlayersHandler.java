@@ -28,7 +28,7 @@ public class ListPlayersHandler extends HttpPushHandler {
 				strm.close();
 			} catch (Exception e) {
 			}
-			
+
 			// Send response
 			int counter = 0;
 			JsonObject response = new JsonObject();
@@ -37,11 +37,11 @@ public class ListPlayersHandler extends HttpPushHandler {
 				if (!plr.roomReady)
 					continue;
 				counter++;
-				String map = Integer.toString(plr.levelID);
-				if (plr.levelID == 25280)
+				String map = plr.levelID;
+				if (plr.levelID.equals("25280"))
 					map = "Tutorial";
-				else if (helper.has(Integer.toString(plr.levelID)))
-					map = helper.get(Integer.toString(plr.levelID)).getAsString();
+				else if (helper.has(plr.levelID))
+					map = helper.get(plr.levelID).getAsString();
 				maps.put(map, maps.getOrDefault(map, 0) + 1);
 			}
 			response.addProperty("active", counter);

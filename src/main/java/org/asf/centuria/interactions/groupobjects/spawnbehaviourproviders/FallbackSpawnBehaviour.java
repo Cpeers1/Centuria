@@ -13,9 +13,9 @@ public class FallbackSpawnBehaviour implements ISpawnBehaviourProvider {
 	}
 
 	@Override
-	public GroupObject[] provideCurrent(int levelID, Player plr) {
+	public GroupObject[] provideCurrent(String levelID, Player plr) {
 		ObjectCollection linearObjects = new ObjectCollection();
-		for (String override : NetworkedObjects.getOverridesFor(Integer.toString(levelID))) {
+		for (String override : NetworkedObjects.getOverridesFor(levelID)) {
 			for (String col : NetworkedObjects.getCollectionIdsForOverride(override)) {
 				ObjectCollection objects = NetworkedObjects.getObjects(col);
 				if (objects.name.endsWith("_GroupLinearObjects")) {

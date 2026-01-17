@@ -14,7 +14,7 @@ public abstract class ClothingItemAccessor extends AbstractInventoryAccessor {
 	 * @param defID Clothing defID
 	 * @return True if the player has the clothing item, false otherwise
 	 */
-	public abstract boolean hasClothing(int defID);
+	public abstract boolean hasClothing(String defID);
 
 	/**
 	 * Retrieves the amount of a specific clothing item the player has
@@ -22,7 +22,7 @@ public abstract class ClothingItemAccessor extends AbstractInventoryAccessor {
 	 * @param defID Clothing defID
 	 * @return Amount of the specific item
 	 */
-	public abstract int getClothingCount(int defID);
+	public abstract int getClothingCount(String defID);
 
 	/**
 	 * Removes a clothing item
@@ -46,7 +46,7 @@ public abstract class ClothingItemAccessor extends AbstractInventoryAccessor {
 	 * @param isInTradeList True to add this item to trade list, false otherwise
 	 * @return Item UUID or null
 	 */
-	public abstract String addClothing(int defID, boolean isInTradeList);
+	public abstract String addClothing(String defID, boolean isInTradeList);
 
 	/**
 	 * Retrieves the default color of a clothing color channel
@@ -55,6 +55,6 @@ public abstract class ClothingItemAccessor extends AbstractInventoryAccessor {
 	 * @param channel Channel number
 	 * @return HSV string or null
 	 */
-	public abstract JsonObject getDefaultClothingChannelHSV(int defID, int channel);
+	public abstract JsonObject getDefaultClothingChannelHSV(String defID, int channel);
 
 }

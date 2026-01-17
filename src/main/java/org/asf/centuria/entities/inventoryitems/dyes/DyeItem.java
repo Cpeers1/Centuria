@@ -16,12 +16,12 @@ public class DyeItem extends InventoryItem {
 
 	public final static InventoryType INV_TYPE = InventoryType.Dye;
 
-	public DyeItem(int defId, String uuid) {
+	public DyeItem(String defId, String uuid) {
 		super(defId, uuid, INV_TYPE);
 	}
 
 	public DyeItem() {
-		super(0, "", INV_TYPE);
+		super("0", "", INV_TYPE);
 	}
 
 	@Override
