@@ -9,19 +9,19 @@ import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.connective.RemoteClient;
-import org.asf.connective.processors.HttpPushProcessor;
+import org.asf.connective.handlers.HttpPushHandler;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class DisplayNamesRequestHandler extends HttpPushProcessor {
+public class DisplayNamesRequestHandler extends HttpPushHandler {
 
 	private static String NIL_UUID = new UUID(0, 0).toString();
 
 	@Override
-	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
+	public void handle(String path, String method, RemoteClient client, String contentType) throws IOException {
 		try {
 			// Parse body
 			ByteArrayOutputStream strm = new ByteArrayOutputStream();
@@ -77,7 +77,7 @@ public class DisplayNamesRequestHandler extends HttpPushProcessor {
 	}
 
 	@Override
-	public HttpPushProcessor createNewInstance() {
+	public HttpPushHandler createNewInstance() {
 		return new DisplayNamesRequestHandler();
 	}
 

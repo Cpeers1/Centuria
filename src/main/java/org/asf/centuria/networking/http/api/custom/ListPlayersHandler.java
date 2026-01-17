@@ -8,14 +8,14 @@ import org.asf.centuria.Centuria;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 import org.asf.connective.RemoteClient;
-import org.asf.connective.processors.HttpPushProcessor;
+import org.asf.connective.handlers.HttpPushHandler;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class ListPlayersHandler extends HttpPushProcessor {
+public class ListPlayersHandler extends HttpPushHandler {
 	@Override
-	public void process(String path, String method, RemoteClient client, String contentType) throws IOException {
+	public void handle(String path, String method, RemoteClient client, String contentType) throws IOException {
 		try {
 			// Load spawn helper
 			JsonObject helper = null;
@@ -63,7 +63,7 @@ public class ListPlayersHandler extends HttpPushProcessor {
 	}
 
 	@Override
-	public HttpPushProcessor createNewInstance() {
+	public HttpPushHandler createNewInstance() {
 		return new ListPlayersHandler();
 	}
 
