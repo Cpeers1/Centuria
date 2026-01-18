@@ -39,7 +39,6 @@ public class UserConversations extends AbstractChatPacket {
 					convos.add(obj);
 			}
 		}
-
 		res.add("conversations", convos);
 		res.addProperty("eventId", "users.conversations");
 		res.addProperty("success", true);

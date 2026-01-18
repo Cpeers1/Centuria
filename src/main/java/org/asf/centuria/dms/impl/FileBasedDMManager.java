@@ -17,6 +17,7 @@ import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.chat.ChatConversationDeletionWarningEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.social.SocialManager;
 import org.asf.connective.tasks.AsyncTaskManager;
 
@@ -89,15 +90,35 @@ public class FileBasedDMManager extends DMManager {
 					for (String participant : getInstance().getDMParticipants(dmID)) {
 						ChatClient client = Centuria.chatServer.getClient(participant);
 						if (client != null) {
-							JsonObject res = new JsonObject();
-							res.addProperty("conversationType", "private");
-							res.addProperty("conversationId", dmID);
-							res.addProperty("message", msgT);
-							res.addProperty("source", new UUID(0, 0).toString());
-							res.addProperty("sentAt", fmt.format(new Date()));
-							res.addProperty("eventId", "chat.postMessage");
-							res.addProperty("success", true);
-							client.sendPacket(res);
+							// Check moderator perms
+							String permLevel = "member";
+							if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+								permLevel = client.getPlayer().getSaveSharedInventory().getItem("permissions")
+										.getAsJsonObject().get("permissionLevel").getAsString();
+							}
+
+							// Check if all the others blocked the member
+							boolean hasNonBlocked = false;
+							for (String p2 : getInstance().getDMParticipants(dmID)) {
+								if (!p2.equals(participant) && !p2.startsWith("plaintext:")) {
+									if (!SocialManager.getInstance().socialListExists(p2)
+											|| !SocialManager.getInstance().getPlayerIsBlocked(p2, participant))
+										hasNonBlocked = true;
+								}
+							}
+
+							// Send if needed
+							if (hasNonBlocked || GameServer.hasPerm(permLevel, "moderator")) {
+								JsonObject res = new JsonObject();
+								res.addProperty("conversationType", "private");
+								res.addProperty("conversationId", dmID);
+								res.addProperty("message", msgT);
+								res.addProperty("source", new UUID(0, 0).toString());
+								res.addProperty("sentAt", fmt.format(new Date()));
+								res.addProperty("eventId", "chat.postMessage");
+								res.addProperty("success", true);
+								client.sendPacket(res);
+							}
 						}
 					}
 
@@ -146,15 +167,35 @@ public class FileBasedDMManager extends DMManager {
 				for (String participant : getInstance().getDMParticipants(dmID)) {
 					ChatClient client = Centuria.chatServer.getClient(participant);
 					if (client != null) {
-						JsonObject res = new JsonObject();
-						res.addProperty("conversationType", "private");
-						res.addProperty("conversationId", dmID);
-						res.addProperty("message", msgT);
-						res.addProperty("source", new UUID(0, 0).toString());
-						res.addProperty("sentAt", fmt.format(new Date()));
-						res.addProperty("eventId", "chat.postMessage");
-						res.addProperty("success", true);
-						client.sendPacket(res);
+						// Check moderator perms
+						String permLevel = "member";
+						if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+							permLevel = client.getPlayer().getSaveSharedInventory().getItem("permissions")
+									.getAsJsonObject().get("permissionLevel").getAsString();
+						}
+
+						// Check if all the others blocked the member
+						boolean hasNonBlocked = false;
+						for (String p2 : getInstance().getDMParticipants(dmID)) {
+							if (!p2.equals(participant) && !p2.startsWith("plaintext:")) {
+								if (!SocialManager.getInstance().socialListExists(p2)
+										|| !SocialManager.getInstance().getPlayerIsBlocked(p2, participant))
+									hasNonBlocked = true;
+							}
+						}
+
+						// Send if needed
+						if (hasNonBlocked || GameServer.hasPerm(permLevel, "moderator")) {
+							JsonObject res = new JsonObject();
+							res.addProperty("conversationType", "private");
+							res.addProperty("conversationId", dmID);
+							res.addProperty("message", msgT);
+							res.addProperty("source", new UUID(0, 0).toString());
+							res.addProperty("sentAt", fmt.format(new Date()));
+							res.addProperty("eventId", "chat.postMessage");
+							res.addProperty("success", true);
+							client.sendPacket(res);
+						}
 					}
 				}
 

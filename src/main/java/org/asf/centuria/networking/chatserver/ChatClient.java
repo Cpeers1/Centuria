@@ -21,6 +21,8 @@ import org.asf.centuria.networking.chatserver.proxies.OcProxyInfo;
 import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.persistentservice.BasePersistentServiceClient;
+import org.asf.centuria.social.SocialManager;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -263,6 +265,21 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 				// Check validity
 				if (AccountManager.getInstance().getAccount(user) == null || participantC <= 1) {
 					toRemove.add(user);
+					continue;
+				}
+
+				// Check if all the others blocked the member
+				boolean hasNonBlocked = false;
+				for (String p2 : DMManager.getInstance().getDMParticipants(dmID)) {
+					if (!p2.equals(acc.getAccountID()) && !p2.startsWith("plaintext:")) {
+						if (!SocialManager.getInstance().socialListExists(p2)
+								|| !SocialManager.getInstance().getPlayerIsBlocked(p2, acc.getAccountID()))
+							hasNonBlocked = true;
+					}
+				}
+				if (!hasNonBlocked && !GameServer.hasPerm(permLevel, "moderator")) {
+					// Skip joining the room to avoid the client receiving any sign of the account
+					// that blocked them still existing
 					continue;
 				}
 

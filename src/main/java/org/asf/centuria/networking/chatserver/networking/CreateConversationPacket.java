@@ -78,7 +78,6 @@ public class CreateConversationPacket extends AbstractChatPacket {
 		AccountManager accounts = AccountManager.getInstance();
 
 		ArrayList<CenturiaAccount> members = getParticipants(client, accounts);
-
 		if (members == null)
 			return;
 
@@ -137,7 +136,6 @@ public class CreateConversationPacket extends AbstractChatPacket {
 
 		// Participant list
 		ArrayList<CenturiaAccount> members = getParticipants(client, accounts);
-
 		if (members == null)
 			return;
 
@@ -146,7 +144,6 @@ public class CreateConversationPacket extends AbstractChatPacket {
 		while (manager.dmExists(dmID)) {
 			dmID = UUID.randomUUID().toString();
 		}
-
 		for (var member : members) {
 			// If the members have active trades..
 			if (member.getOnlinePlayerInstance().tradeEngagedIn != null) {
@@ -206,7 +203,6 @@ public class CreateConversationPacket extends AbstractChatPacket {
 			// Block check
 			if (SocialManager.getInstance().socialListExists(id)
 					&& SocialManager.getInstance().getPlayerIsBlocked(id, client.getPlayer().getAccountID())) {
-
 				// Send response
 				JsonObject res = new JsonObject();
 				res.addProperty("eventId", "conversations.create");
