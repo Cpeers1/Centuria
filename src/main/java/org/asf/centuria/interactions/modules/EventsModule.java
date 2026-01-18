@@ -11,7 +11,7 @@ import org.asf.centuria.modules.events.interactions.InteractionWorldSetupEvent;
 public class EventsModule extends InteractionModule {
 
 	@Override
-	public void prepareWorld(int levelID, List<String> ids, Player player) {
+	public void prepareWorld(String levelID, List<String> ids, Player player) {
 		EventBus.getInstance().dispatchEvent(new InteractionWorldSetupEvent(player, levelID, ids));
 	}
 

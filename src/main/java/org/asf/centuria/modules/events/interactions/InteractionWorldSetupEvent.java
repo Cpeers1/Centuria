@@ -17,10 +17,10 @@ import org.asf.centuria.modules.eventbus.EventObject;
 public class InteractionWorldSetupEvent extends EventObject {
 
 	private Player player;
-	private int levelID;
+	private String levelID;
 	private List<String> objectIDs;
 
-	public InteractionWorldSetupEvent(Player player, int levelID, List<String> objectIDs) {
+	public InteractionWorldSetupEvent(Player player, String levelID, List<String> objectIDs) {
 		this.player = player;
 		this.levelID = levelID;
 		this.objectIDs = objectIDs;
@@ -38,9 +38,9 @@ public class InteractionWorldSetupEvent extends EventObject {
 	/**
 	 * Retrieves the level ID the player is joining
 	 * 
-	 * @return NetworkedObject instance
+	 * @return Level ID
 	 */
-	public int getLevelID() {
+	public String getLevelID() {
 		return levelID;
 	}
 
@@ -51,10 +51,5 @@ public class InteractionWorldSetupEvent extends EventObject {
 	 */
 	public void registerInteractable(String objectID) {
 		objectIDs.add(objectID);
-	}
-
-	@Override
-	public String eventPath() {
-		return "18compat.interaction.worldsetup";
 	}
 }

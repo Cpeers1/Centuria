@@ -108,13 +108,13 @@ public class InteractionManager {
 	 * @param player  Player to send the packets to
 	 * @param levelID Level to find interactions for
 	 */
-	public static void initInteractionsFor(Player player, int levelID) {
+	public static void initInteractionsFor(Player player, String levelID) {
 		// Load object ids
 		NetworkedObjects.init();
 		ArrayList<String> ids = new ArrayList<String>();
 
 		// Find level objects
-		for (String id : NetworkedObjects.getCollectionIdsForLevel(Integer.toString(levelID))) {
+		for (String id : NetworkedObjects.getCollectionIdsForLevel(levelID)) {
 			NetworkedObjects.getObjects(id).objects.keySet().forEach(t -> ids.add(t));
 		}
 
@@ -133,7 +133,7 @@ public class InteractionManager {
 	 * @param ids     Object UUIDs to initialize
 	 * @param levelID Level to find interactions for
 	 */
-	public static void initializeNetworkedObjects(Player player, String[] ids, int levelID) {
+	public static void initializeNetworkedObjects(Player player, String[] ids, String levelID) {
 		HashMap<String, NetworkedObject> data = new HashMap<String, NetworkedObject>();
 
 		// Add objects
@@ -152,7 +152,7 @@ public class InteractionManager {
 			NetworkedObject ent = data.get(id);
 			packet.writeString(id);
 			packet.writeInt(ent.primaryObjectInfo.type);
-			packet.writeInt(ent.primaryObjectInfo.defId);
+			packet.writeString(ent.primaryObjectInfo.defId);
 		}
 		packet.writeString(""); // data suffix
 		player.client.sendPacket(packet.encode());

@@ -45,8 +45,8 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 
 	@Override
-	public int[] getUnlockedIslandTypes() {
-		ArrayList<Integer> types = new ArrayList<Integer>();
+	public String[] getUnlockedIslandTypes() {
+		ArrayList<String> types = new ArrayList<String>();
 
 		// Load the inventory object
 		if (!inventory.containsItem("6"))
@@ -58,20 +58,20 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			JsonObject itm = ele.getAsJsonObject();
 
 			// Add ID
-			int itID = itm.get("defId").getAsInt();
+			String itID = itm.get("defId").getAsString();
 			if (!types.contains(itID))
 				types.add(itID);
 		}
 
 		// Return the type IDs
-		int[] typeIds = new int[types.size()];
+		String[] typeIds = new String[types.size()];
 		for (int i = 0; i < typeIds.length; i++)
 			typeIds[i] = types.get(i);
 		return typeIds;
 	}
 
 	@Override
-	public int getIslandTypeItemCount(int defID) {
+	public int getIslandTypeItemCount(String defID) {
 		// Load the inventory object
 		if (!inventory.containsItem("6"))
 			inventory.setItem("6", new JsonArray());
@@ -83,8 +83,8 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			JsonObject itm = ele.getAsJsonObject();
 
 			// Check ID
-			int itID = itm.get("defId").getAsInt();
-			if (itID == defID) {
+			String itID = itm.get("defId").getAsString();
+			if (itID.equals(defID)) {
 				count++;
 			}
 		}
@@ -94,7 +94,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 
 	@Override
-	public String addIslandToInventory(int defID) {
+	public String addIslandToInventory(String defID) {
 		// Build island info object
 		JsonObject island = new JsonObject();
 		island.addProperty("gridId", 0);
@@ -106,17 +106,17 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 	@Override
 	public JsonObject getIslandTypeObject(String id) {
-		return inventory.getAccessor().findInventoryObject("6", id);
+		return inventory.getAccessor().findInventoryObjectByItemId("6", id);
 	}
 
 	@Override
-	public boolean isIslandTypeUnlocked(int defID) {
-		return inventory.getAccessor().hasInventoryObject("6", defID);
+	public boolean isIslandTypeUnlocked(String defID) {
+		return inventory.getAccessor().hasInventoryObjectByDefId("6", defID);
 	}
 
 	@Override
-	public int[] getUnlockedHouseTypes() {
-		ArrayList<Integer> types = new ArrayList<Integer>();
+	public String[] getUnlockedHouseTypes() {
+		ArrayList<String> types = new ArrayList<String>();
 
 		// Load the inventory object
 		if (!inventory.containsItem("5"))
@@ -128,20 +128,20 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			JsonObject itm = ele.getAsJsonObject();
 
 			// Add ID
-			int itID = itm.get("defId").getAsInt();
+			String itID = itm.get("defId").getAsString();
 			if (!types.contains(itID))
 				types.add(itID);
 		}
 
 		// Return the type IDs
-		int[] typeIds = new int[types.size()];
+		String[] typeIds = new String[types.size()];
 		for (int i = 0; i < typeIds.length; i++)
 			typeIds[i] = types.get(i);
 		return typeIds;
 	}
 
 	@Override
-	public int getHouseTypeItemCount(int defID) {
+	public int getHouseTypeItemCount(String defID) {
 		// Load the inventory object
 		if (!inventory.containsItem("5"))
 			inventory.setItem("5", new JsonArray());
@@ -153,8 +153,8 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			JsonObject itm = ele.getAsJsonObject();
 
 			// Check ID
-			int itID = itm.get("defId").getAsInt();
-			if (itID == defID) {
+			String itID = itm.get("defId").getAsString();
+			if (itID.equals(defID)) {
 				count++;
 			}
 		}
@@ -164,7 +164,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	}
 
 	@Override
-	public String addHouseToInventory(int defID) {
+	public String addHouseToInventory(String defID) {
 		// Build house info object
 		JsonObject house = new JsonObject();
 		house.addProperty("stage", 0);
@@ -185,17 +185,17 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 	@Override
 	public JsonObject getHouseTypeObject(String id) {
-		return inventory.getAccessor().findInventoryObject("5", id);
+		return inventory.getAccessor().findInventoryObjectByItemId("5", id);
 	}
 
 	@Override
-	public boolean isHouseTypeUnlocked(int defID) {
-		return inventory.getAccessor().hasInventoryObject("5", defID);
+	public boolean isHouseTypeUnlocked(String defID) {
+		return inventory.getAccessor().hasInventoryObjectByDefId("5", defID);
 	}
 
 	@Override
-	public int[] getUnlockedSanctuaries() {
-		ArrayList<Integer> types = new ArrayList<Integer>();
+	public String[] getUnlockedSanctuaries() {
+		ArrayList<String> types = new ArrayList<String>();
 
 		// Load the inventory object
 		if (!inventory.containsItem("10"))
@@ -207,20 +207,20 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			JsonObject itm = ele.getAsJsonObject();
 
 			// Add ID
-			int itID = itm.get("defId").getAsInt();
+			String itID = itm.get("defId").getAsString();
 			if (!types.contains(itID))
 				types.add(itID);
 		}
 
 		// Return the type IDs
-		int[] typeIds = new int[types.size()];
+		String[] typeIds = new String[types.size()];
 		for (int i = 0; i < typeIds.length; i++)
 			typeIds[i] = types.get(i);
 		return typeIds;
 	}
 
 	@Override
-	public void unlockSanctuary(int defID) {
+	public void unlockSanctuary(String defID) {
 		// Check unlocked sanctuary
 		if (isSanctuaryUnlocked(defID))
 			return;
@@ -251,6 +251,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		JsonObject itm = new JsonObject();
 		JsonObject ts = new JsonObject();
 		ts.addProperty("ts", System.currentTimeMillis());
+
 		// Build class info object
 		JsonObject classI = new JsonObject();
 		classI.addProperty("stage", 0);
@@ -267,12 +268,13 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		itm.addProperty("id", itmID);
 		itm.addProperty("type", 10);
 		items.add(itm);
+		markChanged("10", itmID);
 
 		// Load class info
-		JsonObject classData = helper.get(Integer.toString(defID)).getAsJsonObject();
-		int islandId = classData.get("islandDefId").getAsInt();
-		int houseId = classData.get("houseDefId").getAsInt();
-		int lookDefId = classData.get("lookDefId").getAsInt();
+		JsonObject classData = helper.get(defID).getAsJsonObject();
+		String islandId = classData.get("islandDefId").getAsString();
+		String houseId = classData.get("houseDefId").getAsString();
+		String lookDefId = classData.get("lookDefId").getAsString();
 
 		// Create look slots
 		if (!inventory.containsItem("201"))
@@ -324,20 +326,16 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		// Add slot
 		createSlot(items, islandId, houseId, lookDefId, defID, itmID).get("components").getAsJsonObject()
 				.add("PrimaryLook", new JsonObject());
-
-		// Mark what files to save
-		addItemToSave("10");
-		addItemToSave("201");
 	}
 
 	@Override
 	public JsonObject getSanctuaryClassObject(String id) {
-		return inventory.getAccessor().findInventoryObject("10", id);
+		return inventory.getAccessor().findInventoryObjectByItemId("10", id);
 	}
 
 	@Override
-	public boolean isSanctuaryUnlocked(int defID) {
-		return inventory.getAccessor().hasInventoryObject("10", defID);
+	public boolean isSanctuaryUnlocked(String defID) {
+		return inventory.getAccessor().hasInventoryObjectByDefId("10", defID);
 	}
 
 	@Override
@@ -355,8 +353,8 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 				// Loop through all looks and find matches
 				for (JsonElement ele2 : inventory.getItem("201").getAsJsonArray()) {
 					if (!ele2.getAsJsonObject().get("components").getAsJsonObject().has("PrimaryLook")
-							&& ele2.getAsJsonObject().get("defId").getAsInt() == ele.getAsJsonObject().get("defId")
-									.getAsInt()) {
+							&& ele2.getAsJsonObject().get("defId").getAsString()
+									.equals(ele.getAsJsonObject().get("defId").getAsString())) {
 						count++;
 					}
 				}
@@ -371,7 +369,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 	@Override
 	public JsonObject getSanctuaryLook(String lookID) {
-		return inventory.getAccessor().findInventoryObject("201", lookID);
+		return inventory.getAccessor().findInventoryObjectByItemId("201", lookID);
 	}
 
 	@Override
@@ -420,12 +418,12 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		JsonArray items = inventory.getItem("201").getAsJsonArray();
 
 		// Add for each sanctuary class
-		for (int classId : getUnlockedSanctuaries()) {
+		for (String classId : getUnlockedSanctuaries()) {
 			// Load ids
-			JsonObject classData = helper.get(Integer.toString(classId)).getAsJsonObject();
-			int islandId = classData.get("islandDefId").getAsInt();
-			int houseId = classData.get("houseDefId").getAsInt();
-			int lookDefId = classData.get("lookDefId").getAsInt();
+			JsonObject classData = helper.get(classId).getAsJsonObject();
+			String islandId = classData.get("islandDefId").getAsString();
+			String houseId = classData.get("houseDefId").getAsString();
+			String lookDefId = classData.get("lookDefId").getAsString();
 
 			// Generate item ID
 			String itmID = UUID.randomUUID().toString();
@@ -446,32 +444,26 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 			// Create slot
 			createSlot(items, islandId, houseId, lookDefId, classId, itmID);
-
-			// Mark what files to save
-			addItemToSave("201");
 		}
 	}
 
 	@Override
 	public boolean addSanctuaryObject(String objectUUID, SanctuaryObjectData sancObjectInfo, String activeSancLookId) {
 		// get the object def id from the funiture inv
-		int defId = inventory.getFurnitureAccessor().getDefIDFromUUID(objectUUID);
+		String defId = inventory.getFurnitureAccessor().getDefIDFromUUID(objectUUID);
 
 		// find sanc look
 		if (!inventory.containsItem("201"))
 			inventory.setItem("201", new JsonArray());
-
 		var looks = inventory.getItem("201").getAsJsonArray();
 
 		JsonElement sancLook = null;
-
 		for (var item : looks) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(activeSancLookId)) {
 				sancLook = item;
 				break;
 			}
 		}
-
 		if (sancLook == null)
 			return false; // cannot find
 
@@ -479,20 +471,16 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 				.getAsJsonObject().get("info").getAsJsonObject().get("placementInfo").getAsJsonObject();
 
 		// check if items array exists
-
 		JsonArray itemsArray = new JsonArray();
 		boolean itemsExisted = false;
-
 		if (placementInfo.has("items")) {
 			itemsArray = placementInfo.get("items").getAsJsonArray();
 			itemsExisted = true;
 		}
 
 		// check if item exists
-
 		JsonObject item = null;
 		int index = 0;
-
 		for (var itemEle : itemsArray) {
 			if (itemEle.getAsJsonObject().get("id").getAsString().equals(objectUUID)) {
 				item = itemEle.getAsJsonObject();
@@ -522,40 +510,36 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		}
 
 		// construct a new item object
-
 		item = new JsonObject();
 		item.addProperty("defId", defId);
 
 		JsonObject componentLevel = new JsonObject();
 		JsonObject placedLevel = new JsonObject();
-
 		placedLevel.addProperty("xPos", sancObjectInfo.positionInfo.position.x);
 		placedLevel.addProperty("yPos", sancObjectInfo.positionInfo.position.y);
 		placedLevel.addProperty("zPos", sancObjectInfo.positionInfo.position.z);
-
 		placedLevel.addProperty("rotX", sancObjectInfo.positionInfo.rotation.x);
 		placedLevel.addProperty("rotY", sancObjectInfo.positionInfo.rotation.y);
 		placedLevel.addProperty("rotZ", sancObjectInfo.positionInfo.rotation.z);
 		placedLevel.addProperty("rotW", sancObjectInfo.positionInfo.rotation.w);
-
 		placedLevel.addProperty("parentItemId", ""); // ?
 		placedLevel.addProperty("placeableInvId", objectUUID);
-
 		placedLevel.addProperty("gridId", sancObjectInfo.gridId);
 		placedLevel.addProperty("state", sancObjectInfo.state);
-
 		componentLevel.add("Placed", placedLevel);
 		item.add("components", componentLevel);
 		item.addProperty("id", objectUUID);
 		item.addProperty("type", 102);
-
 		itemsArray.add(item);
 
+		// Add to placed items if needed
 		if (!itemsExisted) {
 			placementInfo.add("items", itemsArray);
 		}
 
+		// Save
 		inventory.setItem("201", looks);
+		markChanged("201", activeSancLookId);
 		return true;
 	}
 
@@ -566,16 +550,13 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			inventory.setItem("201", new JsonArray());
 
 		var looks = inventory.getItem("201").getAsJsonArray();
-
 		JsonElement sancLook = null;
-
 		for (var item : looks) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(activeSancLookId)) {
 				sancLook = item;
 				break;
 			}
 		}
-
 		if (sancLook == null)
 			return; // cannot find
 
@@ -591,10 +572,8 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		var itemsArray = placementInfo.get("items").getAsJsonArray();
 
 		// now to find the element with the uuid
-
 		JsonElement foundObject = null;
 		int index = 0;
-
 		for (var item : itemsArray) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(objectUUID)) {
 				foundObject = item;
@@ -603,14 +582,13 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 			index++;
 		}
-
 		if (foundObject == null)
 			return;
-
 		itemsArray.remove(index);
 
-		// removed from the items array
+		// Save look
 		inventory.setItem("201", looks);
+		markChanged("201", activeSancLookId);
 	}
 
 	@Override
@@ -620,16 +598,13 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			inventory.setItem("201", new JsonArray());
 
 		var looks = inventory.getItem("201").getAsJsonArray();
-
 		JsonElement sancLook = null;
-
 		for (var item : looks) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(activeSancLookId)) {
 				sancLook = item;
 				break;
 			}
 		}
-
 		if (sancLook == null)
 			return null; // cannot find
 
@@ -637,43 +612,33 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 				.get("info").getAsJsonObject();
 
 		// from here, we can get the house inv ID
-
 		var houseInvId = info.get("houseInvId").getAsString();
 
 		// then, we can use that to find the house inv ID in inv 5
-
 		if (!inventory.containsItem("5"))
 			inventory.setItem("5", new JsonArray());
-
 		var houseInvs = inventory.getItem("5").getAsJsonArray();
-
 		JsonElement houseInv = null;
-
 		for (var item : houseInvs) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(houseInvId)) {
 				houseInv = item;
 				break;
 			}
 		}
-
 		if (houseInv == null)
 			return null; // cannot find
 
 		// okay, we got the house inventory object
 		// the next part is updating the room data
 		// for every roomInfo passed in..
-
 		JsonArray roomInfoLevel = houseInv.getAsJsonObject().get("components").getAsJsonObject().get("House")
 				.getAsJsonObject().get("roomData").getAsJsonArray();
 
 		// its actually an array of strings that have json objects in them.. WW why
-
 		for (var roomInfo : roomInfos) {
 			// check if roomInfoLevel has an entry with this room index already.
-
 			int index = 0;
 			boolean found = false;
-
 			for (var item2 : roomInfoLevel) {
 				var object = JsonParser.parseString(item2.getAsString());
 
@@ -684,7 +649,6 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 				index++;
 			}
-
 			if (found) {
 				// remove the old room data, we will repopulate it
 				roomInfoLevel.remove(index);
@@ -698,51 +662,43 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 		// set house inventory again
 		inventory.setItem("5", houseInvs);
-
+		markChanged("5", houseInvId);
+		markChanged("201", activeSancLookId);
 		return houseInv.getAsJsonObject();
 	}
 
 	@Override
 	public void saveSanctuaryLookToSlot(String activeSancLookId, String slotId, String saveName) {
-
 		// find sanc look
 		if (!inventory.containsItem("201"))
 			inventory.setItem("201", new JsonArray());
 
 		var looks = inventory.getItem("201").getAsJsonArray();
-
 		JsonElement oldSancSlot = null;
-
 		for (var item : looks) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(activeSancLookId)) {
 				oldSancSlot = item;
 				break;
 			}
 		}
-
 		if (oldSancSlot == null)
 			return; // cannot find
 
 		// now, find the slot (if it doesn't exist, make it
-
 		JsonElement newSancSlot = null;
-
 		for (var item : looks) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(slotId)) {
 				newSancSlot = item;
 				break;
 			}
 		}
-
 		if (newSancSlot == null)
 			return; // cannot find
 
 		// we're basically going to copy this look into the slot with ID of slotId
 		// important: we're only copying the SanctuaryLook component.
-
 		var oldInfoComponent = oldSancSlot.getAsJsonObject().get("components").getAsJsonObject().get("SanctuaryLook")
 				.getAsJsonObject().get("info").getAsJsonObject();
-
 		var newInfoComponent = newSancSlot.getAsJsonObject().get("components").getAsJsonObject().get("SanctuaryLook")
 				.getAsJsonObject().get("info").getAsJsonObject();
 
@@ -758,7 +714,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		// timestamp NOW
 		var timeStamp = System.currentTimeMillis();
 
-		copySancLookInv(looks, newSancSlot, oldSancSlot, saveName, timeStamp);
+		copySancLookInv(slotId, looks, newSancSlot, oldSancSlot, saveName, timeStamp);
 		copyHouseInv(oldHouseInvId, newHouseInvId, timeStamp);
 		copyIslandInv(oldIslandInvId, newIslandInvId, timeStamp);
 		copyClassInv(oldClassInvId, newClassInvId, timeStamp);
@@ -775,23 +731,18 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 		// copy house inv to the new island inv
 		// first find the old island inv
-
 		JsonElement oldClassInv = null;
-
 		for (var item : classInv) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(oldClassInvId)) {
 				oldClassInv = item;
 				break;
 			}
 		}
-
 		if (oldClassInv == null)
 			return; // cannot find
 
 		// now, find the slot (if it doesn't exist, make it
-
 		JsonElement newClassInv = null;
-
 		for (var item : classInv) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(newClassInvId)) {
 				newClassInv = item;
@@ -803,9 +754,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			return; // cannot find
 
 		// copy old island inv to new house inv
-
 		var oldComponentLevel = oldClassInv.getAsJsonObject().get("components").getAsJsonObject();
-
 		var classLevel = oldComponentLevel.get("SanctuaryClass");
 
 		// deep copy it
@@ -821,7 +770,6 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		newComponentLevel.add("SanctuaryClass", classCopy);
 
 		// update timeStamp
-
 		var tsLevel = newComponentLevel.get("Timestamp").getAsJsonObject();
 
 		tsLevel.remove("ts");
@@ -829,6 +777,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 		// save the 10
 		inventory.setItem("10", classInv);
+		markChanged("10", newClassInvId);
 	}
 
 	private void copyIslandInv(String oldIslandInvId, String newIslandInvId, long timeStamp) {
@@ -840,37 +789,29 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 		// copy house inv to the new island inv
 		// first find the old island inv
-
 		JsonElement oldIslandInv = null;
-
 		for (var item : islandInv) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(oldIslandInvId)) {
 				oldIslandInv = item;
 				break;
 			}
 		}
-
 		if (oldIslandInv == null)
 			return; // cannot find
 
 		// now, find the slot (if it doesn't exist, make it
-
 		JsonElement newIslandInv = null;
-
 		for (var item : islandInv) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(newIslandInvId)) {
 				newIslandInv = item;
 				break;
 			}
 		}
-
 		if (newIslandInv == null)
 			return; // cannot find
 
 		// copy old island inv to new house inv
-
 		var oldComponentLevel = oldIslandInv.getAsJsonObject().get("components").getAsJsonObject();
-
 		var islandLevel = oldComponentLevel.get("Island");
 
 		// deep copy it
@@ -894,6 +835,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 		// save the 6
 		inventory.setItem("6", islandInv);
+		markChanged("6", newIslandInvId);
 	}
 
 	private void copyHouseInv(String oldHouseInvId, String newHouseInvId, long timeStamp) {
@@ -905,37 +847,29 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 		// copy house inv to the new house inv
 		// first find the old house inv
-
 		JsonElement oldHouseInv = null;
-
 		for (var item : houseInv) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(oldHouseInvId)) {
 				oldHouseInv = item;
 				break;
 			}
 		}
-
 		if (oldHouseInv == null)
 			return; // cannot find
 
 		// now, find the slot (if it doesn't exist, make it
-
 		JsonElement newHouseInv = null;
-
 		for (var item : houseInv) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(newHouseInvId)) {
 				newHouseInv = item;
 				break;
 			}
 		}
-
 		if (newHouseInv == null)
 			return; // cannot find
 
 		// copy old house inv to new house inv
-
 		var oldComponentLevel = oldHouseInv.getAsJsonObject().get("components").getAsJsonObject();
-
 		var houseLevel = oldComponentLevel.get("House");
 
 		// deep copy it
@@ -953,58 +887,51 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		// update timeStamp
 
 		var tsLevel = newComponentLevel.get("Timestamp").getAsJsonObject();
-
 		tsLevel.remove("ts");
 		tsLevel.addProperty("ts", timeStamp);
 
 		// save the 5
 		inventory.setItem("5", houseInv);
+		markChanged("5", newHouseInvId);
 	}
 
-	private void copySancLookInv(JsonArray looks, JsonElement newSancSlot, JsonElement oldSancSlot, String saveName,
-			long timeStamp) {
-
+	private void copySancLookInv(String slotId, JsonArray looks, JsonElement newSancSlot, JsonElement oldSancSlot,
+			String saveName, long timeStamp) {
+		// prepare
 		var oldComponentLevel = oldSancSlot.getAsJsonObject().get("components").getAsJsonObject();
-
 		var oldInfoComponent = oldComponentLevel.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
 
 		var newComponentLevel = newSancSlot.getAsJsonObject().get("components").getAsJsonObject();
-
 		var newInfoComponent = newComponentLevel.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
 
 		var oldPlacementsComponent = oldInfoComponent.get("placementInfo").getAsJsonObject();
-
-		// ok, we should make a copy of this
 		var newPlacementComponent = oldPlacementsComponent.deepCopy();
 
+		// remove old
 		newInfoComponent.remove("placementInfo");
 
 		// and add the copy of the sanc look we made instead..
-
 		newInfoComponent.add("placementInfo", newPlacementComponent);
 
 		// update TS ...
 		var tsLevel = newComponentLevel.get("Timestamp").getAsJsonObject();
-
 		tsLevel.remove("ts");
 		tsLevel.addProperty("ts", timeStamp);
 
 		// add a name component...
-
 		JsonObject newNameLevel = new JsonObject();
 		newNameLevel.addProperty("name", saveName);
-
 		if (newComponentLevel.has("Name")) {
 			newComponentLevel.remove("Name");
 		}
-
 		newComponentLevel.add("Name", newNameLevel);
 
 		// save the 201
 		inventory.setItem("201", looks);
+		markChanged("201", slotId);
 	}
 
-	private JsonObject createSlot(JsonArray items, int islandId, int houseId, int lookDefId, int classId,
+	private JsonObject createSlot(JsonArray items, String islandId, String houseId, String lookDefId, String classId,
 			String itmID) {
 		// Build object
 		JsonObject itm = new JsonObject();
@@ -1023,7 +950,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		sanctuaryInfo.addProperty("islandDefId", islandId);
 		sanctuaryInfo.addProperty("islandInvId", id);
 		// Find class
-		id = inventory.getAccessor().findInventoryObject("10", classId).get("id").getAsString();
+		id = inventory.getAccessor().findInventoryObjectByDefId("10", classId).get("id").getAsString();
 		sanctuaryInfo.addProperty("classInvId", id);
 		sanctuary.add("info", sanctuaryInfo);
 		// Name object
@@ -1040,6 +967,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		itm.addProperty("id", itmID);
 		itm.addProperty("type", 201);
 		items.add(itm);
+		markChanged("201", itmID);
 		return itm;
 	}
 
@@ -1050,16 +978,13 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			inventory.setItem("10", new JsonArray());
 
 		var classInv = inventory.getItem("10").getAsJsonArray();
-
 		JsonElement classObject = null;
-
 		for (var item : classInv) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(sancClassInvId)) {
 				classObject = item;
 				break;
 			}
 		}
-
 		if (classObject == null)
 			return false;
 
@@ -1067,7 +992,6 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		// we can update the stage on this
 		var sancClass = classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
 				.get("SanctuaryClass").getAsJsonObject();
-
 		if (sancClass.get("stage").getAsInt() < stage) {
 			sancClass.remove("stage");
 			sancClass.addProperty("stage", stage);
@@ -1075,23 +999,18 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 		JsonObject ts = new JsonObject();
 		ts.addProperty("ts", System.currentTimeMillis());
-
 		classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
 				.remove(TimeStampComponent.COMPONENT_NAME);
-
 		classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
 				.add(TimeStampComponent.COMPONENT_NAME, ts);
 
 		// we also need to update the house and island invs of any looks using this
 		// class
-
+		ArrayList<String> changedLookIds = new ArrayList<String>();
 		List<JsonObject> lookObjectsToUpdate = new ArrayList<JsonObject>();
-
 		if (!inventory.containsItem("201"))
 			inventory.setItem("201", new JsonArray());
-
 		var looks = inventory.getItem("201").getAsJsonArray();
-
 		for (var item : looks) {
 
 			var SanctuaryLook = item.getAsJsonObject().getAsJsonObject(InventoryItem.COMPONENTS_PROPERTY_NAME)
@@ -1101,32 +1020,27 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 				continue;
 			} else if (SanctuaryLook.getAsJsonObject("info").get("classInvId").getAsString().equals(sancClassInvId)) {
 				lookObjectsToUpdate.add(item.getAsJsonObject());
+				changedLookIds.add(item.getAsJsonObject().get("id").getAsString());
 			}
 		}
 
 		// now that we found all the looks to update, we need to update their house
 		// inventories..
-
 		if (!inventory.containsItem("5"))
 			inventory.setItem("5", new JsonArray());
-
 		var houseInv = inventory.getItem("5").getAsJsonArray();
-
 		for (var item : lookObjectsToUpdate) {
 			var infoLevel = item.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
 					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
 
 			var houseInvId = infoLevel.get("houseInvId").getAsString();
-
 			JsonElement matchedHouseItem = null;
-
 			for (var houseItem : houseInv) {
 				if (houseItem.getAsJsonObject().get("id").getAsString().equals(houseInvId)) {
 					matchedHouseItem = houseItem;
 					break;
 				}
 			}
-
 			if (matchedHouseItem != null) {
 				var houseLevel = matchedHouseItem.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME)
 						.getAsJsonObject().get("House").getAsJsonObject();
@@ -1147,38 +1061,39 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			// stamp
 			item.remove("ts");
 			item.add("ts", ts);
+
+			// mark
+			markChanged("5", houseInvId);
 		}
 
 		// save the 10
 		inventory.setItem("10", classInv);
+		markChanged("10", sancClassInvId);
 
 		// save the 5
 		inventory.setItem("5", houseInv);
 
 		// save the 201
 		inventory.setItem("201", looks);
+		for (String look : changedLookIds)
+			markChanged("201", look);
 
 		return true;
 	}
 
 	@Override
 	public boolean expandSanctuaryRoom(String sancClassInvId, int roomIndex) {
-
 		// Need to upgrade sanctuary..
 		if (!inventory.containsItem("10"))
 			inventory.setItem("10", new JsonArray());
-
 		var classInv = inventory.getItem("10").getAsJsonArray();
-
 		JsonElement classObject = null;
-
 		for (var item : classInv) {
 			if (item.getAsJsonObject().get("id").getAsString().equals(sancClassInvId)) {
 				classObject = item;
 				break;
 			}
 		}
-
 		if (classObject == null)
 			return false;
 
@@ -1186,58 +1101,45 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		// we can update the room enlarge array on this
 		var sancClass = classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
 				.get("SanctuaryClass").getAsJsonObject();
-
 		var roomEnlargeArray = sancClass.get("enlargedAreas").getAsJsonArray();
 		roomEnlargeArray.set(roomIndex, new JsonPrimitive(1));
 
 		JsonObject ts = new JsonObject();
 		ts.addProperty("ts", System.currentTimeMillis());
-
 		classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
 				.remove(TimeStampComponent.COMPONENT_NAME);
-
 		classObject.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
 				.add(TimeStampComponent.COMPONENT_NAME, ts);
 
 		// we also need to update the house and island invs of any looks using this
 		// class
-
 		List<JsonObject> lookObjectsToUpdate = new ArrayList<JsonObject>();
-
+		ArrayList<String> changedLookIds = new ArrayList<String>();
 		if (!inventory.containsItem("201"))
 			inventory.setItem("201", new JsonArray());
-
 		var looks = inventory.getItem("201").getAsJsonArray();
-
 		for (var item : looks) {
-
 			var SanctuaryLook = item.getAsJsonObject().getAsJsonObject(InventoryItem.COMPONENTS_PROPERTY_NAME)
 					.getAsJsonObject("SanctuaryLook");
 
 			if (SanctuaryLook == null) {
 				continue;
 			} else if (SanctuaryLook.getAsJsonObject("info").get("classInvId").getAsString().equals(sancClassInvId)) {
-
 				lookObjectsToUpdate.add(item.getAsJsonObject());
+				changedLookIds.add(item.getAsJsonObject().get("id").getAsString());
 			}
 		}
 
 		// now that we found all the looks to update, we need to update their house
 		// inventories..
-
 		if (!inventory.containsItem("5"))
 			inventory.setItem("5", new JsonArray());
-
 		var houseInv = inventory.getItem("5").getAsJsonArray();
-
 		for (var item : lookObjectsToUpdate) {
 			var infoLevel = item.getAsJsonObject().get(InventoryItem.COMPONENTS_PROPERTY_NAME).getAsJsonObject()
 					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
-
 			var houseInvId = infoLevel.get("houseInvId").getAsString();
-
 			JsonElement matchedHouseItem = null;
-
 			for (var houseItem : houseInv) {
 				if (houseItem.getAsJsonObject().get("id").getAsString().equals(houseInvId)) {
 					matchedHouseItem = houseItem;
@@ -1265,23 +1167,28 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			// stamp
 			item.remove("ts");
 			item.add("ts", ts);
+
+			// mark
+			markChanged("5", houseInvId);
 		}
 
 		// save the 10
 		inventory.setItem("10", classInv);
+		markChanged("10", sancClassInvId);
 
 		// save the 5
 		inventory.setItem("5", houseInv);
 
 		// save the 201
 		inventory.setItem("201", looks);
+		for (String look : changedLookIds)
+			markChanged("201", look);
 
 		return true;
 	}
 
 	@Override
 	public boolean expandManySanctuaryRooms(String sancClassInvId, JsonArray expansionArray) {
-
 		JsonObject ts = new JsonObject();
 		ts.addProperty("ts", System.currentTimeMillis());
 
@@ -1289,28 +1196,24 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 		// class
 
 		List<JsonObject> lookObjectsToUpdate = new ArrayList<JsonObject>();
-
+		ArrayList<String> changedLookIds = new ArrayList<String>();
 		if (!inventory.containsItem("201"))
 			inventory.setItem("201", new JsonArray());
-
 		var looks = inventory.getItem("201").getAsJsonArray();
-
 		for (var item : looks) {
-
 			var SanctuaryLook = item.getAsJsonObject().getAsJsonObject(InventoryItem.COMPONENTS_PROPERTY_NAME)
 					.getAsJsonObject("SanctuaryLook");
 
 			if (SanctuaryLook == null) {
 				continue;
 			} else if (SanctuaryLook.getAsJsonObject("info").get("classInvId").getAsString().equals(sancClassInvId)) {
-
 				lookObjectsToUpdate.add(item.getAsJsonObject());
+				changedLookIds.add(item.getAsJsonObject().get("id").getAsString());
 			}
 		}
 
 		// now that we found all the looks to update, we need to update their house
 		// inventories..
-
 		if (!inventory.containsItem("5"))
 			inventory.setItem("5", new JsonArray());
 
@@ -1321,9 +1224,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 					.get("SanctuaryLook").getAsJsonObject().get("info").getAsJsonObject();
 
 			var houseInvId = infoLevel.get("houseInvId").getAsString();
-
 			JsonElement matchedHouseItem = null;
-
 			for (var houseItem : houseInv) {
 				if (houseItem.getAsJsonObject().get("id").getAsString().equals(houseInvId)) {
 					matchedHouseItem = houseItem;
@@ -1351,6 +1252,9 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			// stamp
 			item.remove("ts");
 			item.add("ts", ts);
+
+			// mark
+			markChanged("5", houseInvId);
 		}
 
 		// save the 5
@@ -1358,13 +1262,14 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 
 		// save the 201
 		inventory.setItem("201", looks);
+		for (String look : changedLookIds)
+			markChanged("201", look);
 
 		return true;
 	}
 
 	@Override
 	public int getCurrentSanctuaryStage(String sancClassInvId) {
-
 		if (!inventory.containsItem("10"))
 			inventory.setItem("10", new JsonArray());
 
@@ -1390,7 +1295,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 	public JsonArray getHouseExpandedRoomsArray(String houseInvId) {
 
 		if (!inventory.containsItem("5"))
-			inventory.setItem("5", new JsonArray()); 
+			inventory.setItem("5", new JsonArray());
 
 		var houseInv = inventory.getItem("5").getAsJsonArray();
 		JsonElement houseObject = null;
@@ -1407,8 +1312,7 @@ public class SanctuaryAccessorImpl extends SanctuaryAccessor {
 			return null;
 
 		return houseObject.getAsJsonObject().getAsJsonObject(InventoryItem.COMPONENTS_PROPERTY_NAME)
-				.getAsJsonObject("House")
-				.get("enlargedAreas").getAsJsonArray();
+				.getAsJsonObject("House").get("enlargedAreas").getAsJsonArray();
 	}
 
 	@Override

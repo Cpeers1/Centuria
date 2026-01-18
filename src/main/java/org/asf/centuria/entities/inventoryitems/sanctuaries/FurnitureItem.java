@@ -18,12 +18,12 @@ public class FurnitureItem extends InventoryItem {
 
 	public final static InventoryType INV_TYPE = InventoryType.Furniture;
 
-	public FurnitureItem(int defId, String uuid) {
+	public FurnitureItem(String defId, String uuid) {
 		super(defId, uuid, INV_TYPE);
 	}
 
 	public FurnitureItem() {
-		super(0, "", INV_TYPE);
+		super("0", "", INV_TYPE);
 	}
 
 	@Override

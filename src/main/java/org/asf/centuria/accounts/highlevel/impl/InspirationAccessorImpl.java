@@ -44,8 +44,8 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 	}
 
 	@Override
-	public boolean hasInspiration(int defID) {
-		return inventory.getAccessor().hasInventoryObject("8", defID);
+	public boolean hasInspiration(String defID) {
+		return inventory.getAccessor().hasInventoryObjectByDefId("8", defID);
 	}
 
 	@Override
@@ -55,16 +55,16 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 
 	@Override
 	public JsonObject getInspirationData(String id) {
-		return inventory.getAccessor().findInventoryObject("8", id);
+		return inventory.getAccessor().findInventoryObjectByItemId("8", id);
 	}
 
 	@Override
-	public String addInspiration(int defID) {
+	public String addInspiration(String defID) {
 		String iID = null;
 
 		// Generate object
 		// Check existence
-		if (helper.has(Integer.toString(defID))) {
+		if (helper.has(defID)) {
 			// Add item
 			iID = inventory.getAccessor().createInventoryObject("8", defID,
 					new ItemComponent("Inspiration", new JsonObject()));
@@ -105,19 +105,19 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 
 		for (int defaultInspiration : defaultInspirationsIds) {
 			// add the default inspiration
-			if (!this.hasInspiration(defaultInspiration)) {
-				this.addInspiration(defaultInspiration);
+			if (!this.hasInspiration(Integer.toString(defaultInspiration))) {
+				this.addInspiration(Integer.toString(defaultInspiration));
 			}
 		}
 	}
 
 	@Override
-	public InspirationCombineResult combineInspirations(int[] inspirations, Player player) {
+	public InspirationCombineResult combineInspirations(String[] inspirations, Player player) {
 		// check if there's an enigma that can be crafted from the three inspirations
 		// given
 
 		JsonObject result = null;
-		int resultID = -1;
+		String resultID = null;
 
 		for (String enigmaID : enigmas.keySet()) {
 			// enigma info
@@ -132,10 +132,10 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 			// TODO: refactor this is an ugly af solution
 			int matches = 0;
 			for (var recipeItemId : recipeDefIds) {
-				var rid = Integer.parseInt(recipeItemId.getAsString());
+				String rid = recipeItemId.getAsString();
 
 				for (var inspiration : inspirations) {
-					if (inspiration == rid) {
+					if (inspiration.equals(rid)) {
 						matches++;
 					}
 				}
@@ -143,17 +143,17 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 
 			if (matches >= inspirations.length) {
 				result = enigmaData;
-				resultID = Integer.parseInt(enigmaID);
+				resultID = enigmaID;
 			}
 		}
 
 		// no result - bad combine
 		if (result == null) {
-			return new InspirationCombineResult(InspirationCombineStatus.InvalidCombo, 0);
+			return new InspirationCombineResult(InspirationCombineStatus.InvalidCombo, "0");
 		}
 
 		// Give item if not owned
-		if (!inventory.getAccessor().hasInventoryObject(ItemAccessor.getInventoryTypeOf(resultID), resultID))
+		if (!inventory.getAccessor().hasInventoryObjectByDefId(ItemAccessor.getInventoryTypeOf(resultID), resultID))
 			inventory.getItemAccessor(player).add(resultID);
 		else
 			return new InspirationCombineResult(InspirationCombineStatus.AlreadyOwned, resultID);
@@ -162,17 +162,17 @@ public class InspirationAccessorImpl extends InspirationAccessor {
 	}
 
 	@Override
-	public int getEnigmaResult(int enigma) {
+	public String getEnigmaResult(String enigma) {
 		// Find enigma
 		for (String enigmaID : enigmas.keySet()) {
 			JsonObject enigmaData = enigmas.get(enigmaID).getAsJsonObject();
-			if (enigmaID.equals(Integer.toString(enigma))) {
+			if (enigmaID.equals(enigma)) {
 				// Return result
-				return enigmaData.get("resultItemId").getAsInt();
+				return enigmaData.get("resultItemId").getAsString();
 			}
 		}
 
-		return -1;
+		return null;
 	}
 
 }

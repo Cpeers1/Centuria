@@ -287,17 +287,16 @@ public class ShopManager {
 			// Skip enigma IDs
 			if (shop.enigmas.contains(id))
 				return;
-			
-			if (item.stock != -1) {				
+
+			if (item.stock != -1) {
 				// Check mode
 				if (item.stock == 1 && shop.restockTime == -1) {
 					// Only add if not in the player inventory
 
 					boolean hasItems = true;
 					for (String itm : item.items.keySet()) {
-						String inv = ItemAccessor.getInventoryTypeOf(Integer.parseInt(itm));
-						if (!player.getSaveSpecificInventory().getAccessor().hasInventoryObject(inv,
-								Integer.parseInt(itm))) {
+						String inv = ItemAccessor.getInventoryTypeOf(itm);
+						if (!player.getSaveSpecificInventory().getAccessor().hasInventoryObjectByDefId(inv, itm)) {
 							hasItems = false;
 						}
 					}
@@ -330,16 +329,15 @@ public class ShopManager {
 		// Enigma items
 		for (String enigma : shop.enigmas) {
 			// Add enigma if present in the inventory
-			if (player.getSaveSpecificInventory().getAccessor().hasInventoryObject("7", Integer.parseInt(enigma))) {
-				JsonObject obj = player.getSaveSpecificInventory().getAccessor().findInventoryObject("7",
-						Integer.parseInt(enigma));
+			if (player.getSaveSpecificInventory().getAccessor().hasInventoryObjectByDefId("7", enigma)) {
+				JsonObject obj = player.getSaveSpecificInventory().getAccessor().findInventoryObjectByDefId("7",
+						enigma);
 
 				// Check if its been unraveled
 				JsonObject data = obj.get("components").getAsJsonObject().get("Enigma").getAsJsonObject();
 				if (data.get("activated").getAsBoolean())
 					// Add it
-					items.add(Integer.toString(player.getSaveSpecificInventory().getInspirationAccessor()
-							.getEnigmaResult(Integer.parseInt(enigma))));
+					items.add(player.getSaveSpecificInventory().getInspirationAccessor().getEnigmaResult(enigma));
 			}
 		}
 
@@ -364,9 +362,9 @@ public class ShopManager {
 		ArrayList<String> items = new ArrayList<String>();
 		shop.enigmas.forEach(enigma -> {
 			// Add enigma if present in the inventory
-			if (player.getSaveSpecificInventory().getAccessor().hasInventoryObject("7", Integer.parseInt(enigma))) {
-				JsonObject obj = player.getSaveSpecificInventory().getAccessor().findInventoryObject("7",
-						Integer.parseInt(enigma));
+			if (player.getSaveSpecificInventory().getAccessor().hasInventoryObjectByDefId("7", enigma)) {
+				JsonObject obj = player.getSaveSpecificInventory().getAccessor().findInventoryObjectByDefId("7",
+						enigma);
 
 				// Check if its been unraveled
 				JsonObject data = obj.get("components").getAsJsonObject().get("Enigma").getAsJsonObject();
@@ -410,13 +408,11 @@ public class ShopManager {
 		if (!shop.contents.containsKey(itemId)) {
 			// Check enigma item
 			for (String enigma : shop.enigmas) {
-				if (Integer.toString(player.getSaveSpecificInventory().getInspirationAccessor()
-						.getEnigmaResult(Integer.parseInt(enigma))).equals(itemId)) {
+				if (player.getSaveSpecificInventory().getInspirationAccessor().getEnigmaResult(enigma).equals(itemId)) {
 					// Check if enigma is present in the inventory
-					if (player.getSaveSpecificInventory().getAccessor().hasInventoryObject("7",
-							Integer.parseInt(enigma))) {
-						JsonObject obj = player.getSaveSpecificInventory().getAccessor().findInventoryObject("7",
-								Integer.parseInt(enigma));
+					if (player.getSaveSpecificInventory().getAccessor().hasInventoryObjectByDefId("7", enigma)) {
+						JsonObject obj = player.getSaveSpecificInventory().getAccessor().findInventoryObjectByDefId("7",
+								enigma);
 
 						// Check if its been unraveled
 						JsonObject data = obj.get("components").getAsJsonObject().get("Enigma").getAsJsonObject();
@@ -441,9 +437,8 @@ public class ShopManager {
 
 				boolean hasItems = true;
 				for (String itm : item.items.keySet()) {
-					String inv = ItemAccessor.getInventoryTypeOf(Integer.parseInt(itm));
-					if (!player.getSaveSpecificInventory().getAccessor().hasInventoryObject(inv,
-							Integer.parseInt(itm))) {
+					String inv = ItemAccessor.getInventoryTypeOf(itm);
+					if (!player.getSaveSpecificInventory().getAccessor().hasInventoryObjectByDefId(inv, itm)) {
 						hasItems = false;
 					}
 				}

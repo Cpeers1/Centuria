@@ -30,7 +30,7 @@ public class XpUpdatePacket implements IXtPacket<XpUpdatePacket> {
 		public int level;
 		public int levelUpXp;
 
-		public int levelUpRewardDefId;
+		public String levelUpRewardDefId;
 		public int levelUpRewardQuantity;
 		public String levelUpRewardGiftId;
 	}
@@ -83,7 +83,7 @@ public class XpUpdatePacket implements IXtPacket<XpUpdatePacket> {
 			writer.writeBoolean(true); // Not a clue- but its not a hasReward as without a reward, even with this
 										// false, the level manager completely breaks down and rejects further packets
 
-			writer.writeInt(lvl.levelUpRewardDefId);
+			writer.writeString(lvl.levelUpRewardDefId);
 			writer.writeInt(lvl.levelUpRewardQuantity);
 			writer.writeString(lvl.levelUpRewardGiftId);
 		}

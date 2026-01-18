@@ -124,7 +124,7 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 
 				// Apply dye color
 				String hsv = inv.getDyeAccessor()
-						.getDyeHSV(inv.getDyeAccessor().getDyeData(dye).get("defId").getAsInt());
+						.getDyeHSV(inv.getDyeAccessor().getDyeData(dye).get("defId").getAsString());
 				String obj = "color" + d.channel + "HSV";
 				if (target.has(obj) && hsv != null) {
 					target.get(obj).getAsJsonObject().remove("_hsv");
@@ -135,7 +135,7 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 				inv.getDyeAccessor().removeDye(dye);
 
 				// Check if still present
-				if (!inv.getAccessor().hasInventoryObject("111", dye)) {
+				if (!inv.getAccessor().hasInventoryObjectByItemId("111", dye)) {
 					// Send remove
 					InventoryItemRemovedPacket pkt = new InventoryItemRemovedPacket();
 					pkt.items = new String[] { dye };
@@ -144,7 +144,7 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 					// Send update
 					InventoryItemPacket pkt = new InventoryItemPacket();
 					JsonArray arr = new JsonArray();
-					arr.add(inv.getAccessor().findInventoryObject("111", dye));
+					arr.add(inv.getAccessor().findInventoryObjectByItemId("111", dye));
 					pkt.item = arr;
 					client.sendPacket(pkt);
 				}
@@ -154,9 +154,9 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 			for (int ch : undye) {
 				JsonObject hsv;
 				if (!isFurniture)
-					hsv = inv.getClothingAccessor().getDefaultClothingChannelHSV(item.get("defId").getAsInt(), ch);
+					hsv = inv.getClothingAccessor().getDefaultClothingChannelHSV(item.get("defId").getAsString(), ch);
 				else
-					hsv = inv.getFurnitureAccessor().getDefaultFurnitureChannelHSV(item.get("defId").getAsInt(), ch);
+					hsv = inv.getFurnitureAccessor().getDefaultFurnitureChannelHSV(item.get("defId").getAsString(), ch);
 				String obj = "color" + ch + "HSV";
 				if (target.has(obj) && hsv != null) {
 					target.remove(obj);
@@ -173,9 +173,8 @@ public class InventoryItemUseDye implements IXtPacket<InventoryItemUseDye> {
 		client.sendPacket(pkt);
 
 		// Save changes
-		for (String change : inv.getAccessor().getItemsToSave())
-			inv.setItem(change, inv.getItem(change));
-		inv.getAccessor().completedSave();
+		for (String change : inv.getAccessor().getChangedInventories())
+			inv.getAccessor().saveUpdatedItems(change, true);
 	}
 
 }

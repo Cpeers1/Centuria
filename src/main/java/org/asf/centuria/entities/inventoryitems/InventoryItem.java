@@ -25,14 +25,14 @@ public abstract class InventoryItem {
 	public final static String COMPONENTS_PROPERTY_NAME = "components";
 
 	// object variables
-	public int defId;
+	public String defId;
 	public String uuid;
 	public InventoryType invType;
 	private Map<String, InventoryItemComponent> components = new HashMap<String, InventoryItemComponent>();
 
 	public InventoryItem()
 	{
-		this.defId = 0;
+		this.defId = "-1";
 		this.uuid = "";
 		this.invType = null;
 	}
@@ -44,7 +44,7 @@ public abstract class InventoryItem {
 	 * @param uuid    The unique identifier of the item.
 	 * @param invType The inventory number/type this item belongs in.
 	 */
-	public InventoryItem(int defId, String uuid, InventoryType invType) {
+	public InventoryItem(String defId, String uuid, InventoryType invType) {
 		this.defId = defId;
 		this.uuid = uuid;
 		this.invType = invType;
@@ -66,7 +66,7 @@ public abstract class InventoryItem {
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		// this continues adding the fields from the object.
 
-		defId = object.get(DEF_ID_PROPERTY_NAME).getAsInt();
+		defId = object.get(DEF_ID_PROPERTY_NAME).getAsString();
 		uuid = object.get(UUID_PROPERTY_NAME).getAsString();
 		invType = InventoryType.get(object.get(INV_TYPE_PROPERTY_NAME).getAsInt());
 

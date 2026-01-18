@@ -13,7 +13,7 @@ public class ObjectInfoPacket implements IXtPacket<ObjectInfoPacket> {
 	private static final String PACKET_ID = "oi";
 
 	public String id;
-	public int defId;
+	public String defId;
 	public String ownerId;
 	public WorldObjectMoveNodeData lastMove;
 
@@ -37,7 +37,7 @@ public class ObjectInfoPacket implements IXtPacket<ObjectInfoPacket> {
 		writer.writeInt(DATA_PREFIX);
 
 		writer.writeString(id); // World object ID
-		writer.writeInt(defId); // Def Id
+		writer.writeString(defId); // Def Id
 		writer.writeString(ownerId); // Owner ID
 
 		writer.writeInt(lastMove.nodeType.value); // Node type

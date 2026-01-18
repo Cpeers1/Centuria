@@ -20,9 +20,4 @@ public class QuestObjectiveCompletedEvent extends AbstractQuestObjectiveEvent {
 			SmartfoxClient client, String questID, QuestDefinition quest, QuestObjective objective) {
 		super(server, player, account, client, questID, quest, objective);
 	}
-
-	@Override
-	public String eventPath() {
-		return "18compat.quest.objectivecomplete";
-	}
 }

@@ -16,12 +16,12 @@ public class ClothingItem extends InventoryItem {
 
 	public final static InventoryType INV_TYPE = InventoryType.Clothing;
 
-	public ClothingItem(int defId, String uuid) {
+	public ClothingItem(String defId, String uuid) {
 		super(defId, uuid, INV_TYPE);
 	}
 
 	public ClothingItem() {
-		super(0, "", INV_TYPE);
+		super("0", "", INV_TYPE);
 	}
 
 	@Override

@@ -4,7 +4,7 @@ public class ResourceDefinition {
 
 	public String objectName;
 	public ResourceType lootType;
-	public int lootTableId;
+	public String lootTableId;
 	public double respawnSeconds;
 	public int interactionsBeforeDespawn;
 

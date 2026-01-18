@@ -16,7 +16,7 @@ public class RoomJoinPacket implements IXtPacket<RoomJoinPacket> {
 
 	private static final String PACKET_ID = "rj";
 
-	public int levelID = 0;
+	public String levelID = "0";
 	public int levelType = 0;
 	public int issRoomID = -1;
 	public String roomIdentifier = "room_0";
@@ -35,7 +35,7 @@ public class RoomJoinPacket implements IXtPacket<RoomJoinPacket> {
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
-		levelID = reader.readInt();
+		levelID = reader.read();
 		levelType = reader.readInt();
 	}
 
@@ -44,7 +44,7 @@ public class RoomJoinPacket implements IXtPacket<RoomJoinPacket> {
 		writer.writeInt(DATA_PREFIX); // Iss Room ID (unused as we dont support it)
 
 		writer.writeBoolean(success); // Success
-		writer.writeInt(levelID); // Room ID
+		writer.writeString(levelID); // Room ID
 		writer.writeInt(levelType); // Room type
 		writer.writeInt(issRoomID); // Iss Room ID (unused as we dont support it)
 		writer.writeString(teleport); // Specific teleport??
@@ -61,7 +61,7 @@ public class RoomJoinPacket implements IXtPacket<RoomJoinPacket> {
 		JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject()
 				.get("Maps").getAsJsonObject();
 		strm.close();
-		if (!helper.has(Integer.toString(levelID))) {
+		if (!helper.has(levelID)) {
 			// YEAH NO
 			markAsFailed();
 			client.sendPacket(this);
@@ -76,7 +76,7 @@ public class RoomJoinPacket implements IXtPacket<RoomJoinPacket> {
 	public RoomJoinPacket markAsFailed() {
 		this.success = false;
 		this.roomIdentifier = "";
-		this.levelID = 0;
+		this.levelID = "0";
 		this.levelType = 0;
 		this.teleport = "";
 		this.issRoomID = -1;

@@ -2,7 +2,6 @@ package org.asf.centuria.modules.events.textfilter;
 
 import org.asf.centuria.textfilter.TextFilterService;
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 
 /**
  * 
@@ -11,18 +10,12 @@ import org.asf.centuria.modules.eventbus.EventPath;
  * @author Sky Swimmer
  *
  */
-@EventPath("textfilter.load")
 public class TextFilterLoadEvent extends EventObject {
 
 	private TextFilterService service;
 
 	public TextFilterLoadEvent(TextFilterService service) {
 		this.service = service;
-	}
-
-	@Override
-	public String eventPath() {
-		return "textfilter.load";
 	}
 
 	/**

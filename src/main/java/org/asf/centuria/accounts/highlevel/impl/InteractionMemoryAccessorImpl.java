@@ -13,16 +13,16 @@ import com.google.gson.JsonObject;
 
 public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 
-	private ArrayList<Integer> changedLevels = new ArrayList<Integer>();
+	private ArrayList<String> changedLevels = new ArrayList<String>();
 
 	public InteractionMemoryAccessorImpl(PlayerInventory inventory) {
 		super(inventory);
 	}
 
 	@Override
-	public void prepareLevel(int level) {
+	public void prepareLevel(String level) {
 		// Check level existence
-		if (!inventory.getAccessor().hasInventoryObject("304", level)) {
+		if (!inventory.getAccessor().hasInventoryObjectByDefId("304", level)) {
 			// Create object
 			inventory.getAccessor().createInventoryObject("304", level,
 					new ItemComponent("TreasureInteractable", new JsonObject()), // treasure
@@ -32,7 +32,6 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 			);
 
 			// Mark what files to save
-			addItemToSave("304");
 			if (!changedLevels.contains(level))
 				changedLevels.add(level);
 		}
@@ -45,31 +44,29 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 			InventoryItemPacket pk = new InventoryItemPacket();
 			JsonArray arr = new JsonArray();
 
-			for (Integer levelID : changedLevels) {
+			for (String levelID : changedLevels) {
 				// Add level to array
-				arr.add(inventory.getAccessor().findInventoryObject("304", levelID));
+				JsonObject obj = inventory.getAccessor().findInventoryObjectByDefId("304", levelID);
+				arr.add(obj);
+				markChanged("304", obj.get("id").getAsString());
 			}
+
+			// Save
+			saveItems("304", changedLevels.toArray(t -> new String[t]), true);
 
 			// Clear and mark item to save
 			changedLevels.clear();
-			addItemToSave("304");
 			pk.item = arr;
 
 			// Send packet
 			client.sendPacket(pk);
 		}
-
-		// Save
-		String[] items = getItemsToSave();
-		for (String item : items)
-			inventory.setItem(item, inventory.getItem(item));
-		completedSave();
 	}
 
 	@Override
-	public void prepareHarvestItem(int levelID, String itemID) {
+	public void prepareHarvestItem(String levelID, String itemID) {
 		// Check level existence
-		if (inventory.getAccessor().hasInventoryObject("304", levelID)) {
+		if (inventory.getAccessor().hasInventoryObjectByDefId("304", levelID)) {
 			// Check item
 			JsonObject container = resourceContainerJson(levelID, "SocialExpanseInteractable", "interactions");
 			if (!container.has(itemID)) {
@@ -80,7 +77,7 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 				container.add(itemID, obj);
 
 				// Mark what files to save
-				addItemToSave("304");
+				markChanged("304", inventory.getAccessor().findInventoryObjectItemIdByDefId("304", levelID));
 				if (!changedLevels.contains(levelID))
 					changedLevels.add(levelID);
 			}
@@ -88,9 +85,9 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 	}
 
 	@Override
-	public void prepareTreasureItem(int levelID, String itemID) {
+	public void prepareTreasureItem(String levelID, String itemID) {
 		// Check level existence
-		if (inventory.getAccessor().hasInventoryObject("304", levelID)) {
+		if (inventory.getAccessor().hasInventoryObjectByDefId("304", levelID)) {
 			// Check item
 			JsonObject container = resourceContainerJson(levelID, "TreasureInteractable", "interactions");
 			if (!container.has(itemID)) {
@@ -101,7 +98,7 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 				container.add(itemID, obj);
 
 				// Mark what files to save
-				addItemToSave("304");
+				markChanged("304", inventory.getAccessor().findInventoryObjectItemIdByDefId("304", levelID));
 				if (!changedLevels.contains(levelID))
 					changedLevels.add(levelID);
 			}
@@ -109,9 +106,9 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 	}
 
 	@Override
-	public void prepareDailyTaskEntry(int levelID, String itemID) {
+	public void prepareDailyTaskEntry(String levelID, String itemID) {
 		// Check level existence
-		if (inventory.getAccessor().hasInventoryObject("304", levelID)) {
+		if (inventory.getAccessor().hasInventoryObjectByDefId("304", levelID)) {
 			// Check item
 			JsonObject container = resourceContainerJson(levelID, "DailyQuestInteractable", "dailyQuests");
 			if (!container.has(itemID)) {
@@ -121,7 +118,7 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 				container.add(itemID, obj);
 
 				// Mark what files to save
-				addItemToSave("304");
+				markChanged("304", inventory.getAccessor().findInventoryObjectItemIdByDefId("304", levelID));
 				if (!changedLevels.contains(levelID))
 					changedLevels.add(levelID);
 			}
@@ -129,9 +126,9 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 	}
 
 	@Override
-	public long getLastHarvestTime(int levelID, String itemID) {
+	public long getLastHarvestTime(String levelID, String itemID) {
 		// Check level existence
-		if (inventory.getAccessor().hasInventoryObject("304", levelID)) {
+		if (inventory.getAccessor().hasInventoryObjectByDefId("304", levelID)) {
 			// Check item
 			JsonObject container = resourceContainerJson(levelID, "SocialExpanseInteractable", "interactions");
 			if (container.has(itemID)) {
@@ -143,9 +140,9 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 	}
 
 	@Override
-	public int getLastHarvestCount(int levelID, String itemID) {
+	public int getLastHarvestCount(String levelID, String itemID) {
 		// Check level existence
-		if (inventory.getAccessor().hasInventoryObject("304", levelID)) {
+		if (inventory.getAccessor().hasInventoryObjectByDefId("304", levelID)) {
 			// Check item
 			JsonObject container = resourceContainerJson(levelID, "SocialExpanseInteractable", "interactions");
 			if (container.has(itemID)) {
@@ -157,9 +154,9 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 	}
 
 	@Override
-	public void resetHarvestCount(int levelID, String itemID) {
+	public void resetHarvestCount(String levelID, String itemID) {
 		// Check level existence
-		if (inventory.getAccessor().hasInventoryObject("304", levelID)) {
+		if (inventory.getAccessor().hasInventoryObjectByDefId("304", levelID)) {
 			// Check item
 			JsonObject container = resourceContainerJson(levelID, "SocialExpanseInteractable", "interactions");
 			if (container.has(itemID)) {
@@ -174,16 +171,16 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 			}
 
 			// Mark what files to save
-			addItemToSave("304");
+			markChanged("304", inventory.getAccessor().findInventoryObjectItemIdByDefId("304", levelID));
 			if (!changedLevels.contains(levelID))
 				changedLevels.add(levelID);
 		}
 	}
 
 	@Override
-	public long getLastTreasureUnlockTime(int levelID, String itemID) {
+	public long getLastTreasureUnlockTime(String levelID, String itemID) {
 		// Check level existence
-		if (inventory.getAccessor().hasInventoryObject("304", levelID)) {
+		if (inventory.getAccessor().hasInventoryObjectByDefId("304", levelID)) {
 			// Check item
 			JsonObject container = resourceContainerJson(levelID, "TreasureInteractable", "interactions");
 			if (container.has(itemID)) {
@@ -195,9 +192,9 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 	}
 
 	@Override
-	public boolean hasTreasureBeenUnlocked(int levelID, String itemID) {
+	public boolean hasTreasureBeenUnlocked(String levelID, String itemID) {
 		// Check level existence
-		if (inventory.getAccessor().hasInventoryObject("304", levelID)) {
+		if (inventory.getAccessor().hasInventoryObjectByDefId("304", levelID)) {
 			// Check item
 			JsonObject container = resourceContainerJson(levelID, "TreasureInteractable", "interactions");
 			if (container.has(itemID)) {
@@ -209,9 +206,9 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 	}
 
 	@Override
-	public long getLastDailyTaskTime(int levelID, String itemID) {
+	public long getLastDailyTaskTime(String levelID, String itemID) {
 		// Check level existence
-		if (inventory.getAccessor().hasInventoryObject("304", levelID)) {
+		if (inventory.getAccessor().hasInventoryObjectByDefId("304", levelID)) {
 			// Check item
 			JsonObject container = resourceContainerJson(levelID, "DailyQuestInteractable", "dailyQuests");
 			if (container.has(itemID)) {
@@ -223,11 +220,11 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 	}
 
 	// Shared utility for memory containers
-	private JsonObject resourceContainerJson(int levelID, String component, String container) {
-		if (inventory.getAccessor().hasInventoryObject("304", levelID)) {
+	private JsonObject resourceContainerJson(String levelID, String component, String container) {
+		if (inventory.getAccessor().hasInventoryObjectByDefId("304", levelID)) {
 			// Find object
-			JsonObject item = inventory.getAccessor().findInventoryObject("304", levelID).get("components")
-					.getAsJsonObject();
+			JsonObject base = inventory.getAccessor().findInventoryObjectByDefId("304", levelID);
+			JsonObject item = base.get("components").getAsJsonObject();
 			if (item.has(component)) {
 				// Create or retrieve the container
 				JsonObject cont = item.get(component).getAsJsonObject();
@@ -236,7 +233,7 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 					cont.add(container, new JsonObject());
 
 					// Mark what files to save
-					addItemToSave("304");
+					markChanged("304", base.get("id").getAsString());
 					if (!changedLevels.contains(levelID))
 						changedLevels.add(levelID);
 				}
@@ -254,9 +251,9 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 	}
 
 	@Override
-	public void harvested(int levelID, String itemID) {
+	public void harvested(String levelID, String itemID) {
 		// Check level existence
-		if (inventory.getAccessor().hasInventoryObject("304", levelID)) {
+		if (inventory.getAccessor().hasInventoryObjectByDefId("304", levelID)) {
 			int harvests = getLastHarvestCount(levelID, itemID);
 
 			// Check item
@@ -273,16 +270,16 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 			container.add(itemID, obj);
 
 			// Mark what files to save
-			addItemToSave("304");
+			markChanged("304", inventory.getAccessor().findInventoryObjectItemIdByDefId("304", levelID));
 			if (!changedLevels.contains(levelID))
 				changedLevels.add(levelID);
 		}
 	}
 
 	@Override
-	public void unlocked(int levelID, String itemID) {
+	public void unlocked(String levelID, String itemID) {
 		// Check level existence
-		if (inventory.getAccessor().hasInventoryObject("304", levelID)) {
+		if (inventory.getAccessor().hasInventoryObjectByDefId("304", levelID)) {
 			// Check item
 			JsonObject container = resourceContainerJson(levelID, "TreasureInteractable", "interactions");
 			if (container.has(itemID)) {
@@ -297,16 +294,16 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 			container.add(itemID, obj);
 
 			// Mark what files to save
-			addItemToSave("304");
+			markChanged("304", inventory.getAccessor().findInventoryObjectItemIdByDefId("304", levelID));
 			if (!changedLevels.contains(levelID))
 				changedLevels.add(levelID);
 		}
 	}
 
 	@Override
-	public void completedTask(int levelID, String itemID) {
+	public void completedTask(String levelID, String itemID) {
 		// Check level existence
-		if (inventory.getAccessor().hasInventoryObject("304", levelID)) {
+		if (inventory.getAccessor().hasInventoryObjectByDefId("304", levelID)) {
 			// Check item
 			JsonObject container = resourceContainerJson(levelID, "DailyQuestInteractable", "dailyQuests");
 			if (container.has(itemID)) {
@@ -320,7 +317,7 @@ public class InteractionMemoryAccessorImpl extends InteractionMemoryAccessor {
 			container.add(itemID, obj);
 
 			// Mark what files to save
-			addItemToSave("304");
+			markChanged("304", inventory.getAccessor().findInventoryObjectItemIdByDefId("304", levelID));
 			if (!changedLevels.contains(levelID))
 				changedLevels.add(levelID);
 		}

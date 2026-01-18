@@ -9,22 +9,23 @@ import com.google.gson.JsonObject;
 public class BodyModHelper extends AbstractInventoryInteractionHelper {
 
 	private static final String INV_TYPE = "2";
-	
+
 	@Override
-	public JsonObject addOne(PlayerInventory inventory, int defID) {
+	public JsonObject addOne(PlayerInventory inventory, String defID) {
 		inventory.getAvatarAccessor().unlockAvatarPart(defID);
-		return inventory.getAccessor().findInventoryObject(INV_TYPE, defID);
+		return inventory.getAccessor().findInventoryObjectByDefId(INV_TYPE, defID);
 	}
 
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, JsonObject object) {
-		return addOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt());
+		return addOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsString());
 	}
 
 	@Override
-	public String removeOne(PlayerInventory inventory, int defID) {
+	public String removeOne(PlayerInventory inventory, String defID) {
 		if (inventory.getAvatarAccessor().isAvatarPartUnlocked(defID)) {
-			String uuid = inventory.getAccessor().findInventoryObject(INV_TYPE, defID).get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
+			String uuid = inventory.getAccessor().findInventoryObjectByDefId(INV_TYPE, defID)
+					.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
 			inventory.getAvatarAccessor().lockAvatarPart(defID);
 			return uuid;
 		}
@@ -33,7 +34,7 @@ public class BodyModHelper extends AbstractInventoryInteractionHelper {
 
 	@Override
 	public String removeOne(PlayerInventory inventory, JsonObject object) {
-		return removeOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsInt());
+		return removeOne(inventory, object.get(InventoryItem.DEF_ID_PROPERTY_NAME).getAsString());
 	}
 
 }

@@ -43,7 +43,7 @@ public class QuestManager extends InteractionModule {
 	// The quest to refuse running
 	// This will be the quest after the 3rd released each week
 	// Ignored in debug mode
-	public int questLock = 15867; // Up the River, locked to prevent broken quests breaking the server
+	public String questLock = "15867"; // Up the River, locked to prevent broken quests breaking the server
 
 	private static String firstQuest = "7537";
 	private static LinkedHashMap<String, String> questMap = new LinkedHashMap<String, String>();
@@ -63,8 +63,7 @@ public class QuestManager extends InteractionModule {
 	static {
 		try {
 			// Load the quest map
-			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader()
-					.getResourceAsStream("questline.json");
+			InputStream strm = InventoryItemDownloadPacket.class.getClassLoader().getResourceAsStream("questline.json");
 			JsonObject helper = JsonParser.parseString(new String(strm.readAllBytes(), "UTF-8")).getAsJsonObject();
 			JsonObject quests = helper.get("QuestMap").getAsJsonObject();
 			for (String key : quests.keySet()) {
@@ -79,7 +78,7 @@ public class QuestManager extends InteractionModule {
 			for (String key : quests.keySet()) {
 				JsonObject def = quests.get(key).getAsJsonObject();
 				QuestDefinition quest = new QuestDefinition();
-				quest.defID = def.get("defID").getAsInt();
+				quest.defID = def.get("defID").getAsString();
 				quest.name = def.get("name").getAsString();
 				quest.levelOverrideID = def.get("levelOverrideID").getAsInt();
 				quest.questLocation = def.get("questLocation").getAsInt();
@@ -132,14 +131,14 @@ public class QuestManager extends InteractionModule {
 	 * @return Quest defID string or null if all quests are completed
 	 */
 	public static String getActiveQuest(CenturiaAccount player) {
-		if (player.isPlayerNew()
-				|| (player.getOnlinePlayerInstance() != null && player.getOnlinePlayerInstance().levelID == 25280)) {
+		if (player.isPlayerNew() || (player.getOnlinePlayerInstance() != null
+				&& player.getOnlinePlayerInstance().levelID.equals("25280"))) {
 			return "25287";
 		}
 		for (int i = 0; i < 2; i++) {
 			try {
 				JsonObject progressionMap = player.getSaveSpecificInventory().getAccessor()
-						.findInventoryObject("311", 22781).get("components").getAsJsonObject()
+						.findInventoryObjectByDefId("311", "22781").get("components").getAsJsonObject()
 						.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
 				JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
 				ArrayList<String> completedQuests = new ArrayList<String>();
@@ -154,14 +153,15 @@ public class QuestManager extends InteractionModule {
 				return null;
 			} catch (Exception e) {
 				// Damaged container, lets reset it
-				JsonObject oldObj = player.getSaveSpecificInventory().getAccessor().removeInventoryObject("311", 22781);
+				JsonObject oldObj = player.getSaveSpecificInventory().getAccessor().removeInventoryObjectByDefId("311",
+						"22781");
 
 				// Build entry
 				JsonObject questObject = new JsonObject();
 				questObject.add("completedQuests", new JsonArray());
 
 				// Save and send to the client
-				player.getSaveSpecificInventory().getAccessor().createInventoryObject("311", 22781,
+				player.getSaveSpecificInventory().getAccessor().createInventoryObject("311", "22781",
 						new ItemComponent("SocialExpanseLinearGenericQuestsCompletion", questObject));
 				var plr = player.getOnlinePlayerInstance();
 				if (plr != null) {
@@ -171,7 +171,8 @@ public class QuestManager extends InteractionModule {
 						plr.client.sendPacket(pkR);
 					}
 					InventoryItemPacket pk = new InventoryItemPacket();
-					pk.item = player.getSaveSpecificInventory().getAccessor().findInventoryObject("311", 22781);
+					pk.item = player.getSaveSpecificInventory().getAccessor().findInventoryObjectByDefId("311",
+							"22781");
 					plr.client.sendPacket(pk);
 				}
 			}
@@ -194,7 +195,7 @@ public class QuestManager extends InteractionModule {
 	}
 
 	@Override
-	public void prepareWorld(int levelID, List<String> ids, Player player) {
+	public void prepareWorld(String levelID, List<String> ids, Player player) {
 		String activeQuest = getActiveQuest(player.account);
 		if (activeQuest != null) {
 			QuestDefinition quest = questDefinitions.get(activeQuest);
@@ -204,9 +205,10 @@ public class QuestManager extends InteractionModule {
 			// 0 = mugmyre
 			// 1 = lakeroot
 			// 2 = blood tundra
-			if ((levelID == 2147 && quest.questLocation == 0) || (levelID == 9687 && quest.questLocation == 1)
-					|| (levelID == 2364 && quest.questLocation == 2)
-					|| (levelID == 25280 && quest.questLocation == -1)) {
+			if ((levelID.equals("2147") && quest.questLocation == 0)
+					|| (levelID.equals("9687") && quest.questLocation == 1)
+					|| (levelID.equals("2364") && quest.questLocation == 2)
+					|| (levelID.equals("25280") && quest.questLocation == -1)) {
 				// Load objects
 				String[] collections = NetworkedObjects
 						.getCollectionIdsForOverride(Integer.toString(quest.levelOverrideID));
@@ -247,11 +249,11 @@ public class QuestManager extends InteractionModule {
 			// 0 = mugmyre
 			// 1 = lakeroot
 			// 2 = blood tundra
-			if ((player.levelID == 2147 && quest.questLocation == 0)
-					|| (player.levelID == 9687 && quest.questLocation == 1)
-					|| (player.levelID == 2364 && quest.questLocation == 2)
-					|| (player.levelID == 25280 && quest.questLocation == -1)) {
-				if (player.levelID == 25280) {
+			if ((player.levelID.equals("2147") && quest.questLocation == 0)
+					|| (player.levelID.equals("9687") && quest.questLocation == 1)
+					|| (player.levelID.equals("2364") && quest.questLocation == 2)
+					|| (player.levelID.equals("25280") && quest.questLocation == -1)) {
+				if (player.levelID.equals("25280")) {
 					// Tutorial handler
 					return true;
 				}
@@ -272,7 +274,7 @@ public class QuestManager extends InteractionModule {
 					// Check for harvest trackers
 					QuestObjective objective = quest.objectives.get(player.questObjective);
 					for (QuestTask task : objective.tasks) {
-						if (task.harvestTrackers.containsKey(Integer.toString(object.subObjectInfo.defId))) {
+						if (task.harvestTrackers.containsKey(object.subObjectInfo.defId)) {
 							return true;
 						}
 					}
@@ -293,15 +295,15 @@ public class QuestManager extends InteractionModule {
 			// 0 = mugmyre
 			// 1 = lakeroot
 			// 2 = blood tundra
-			if ((player.levelID == 2147 && quest.questLocation == 0)
-					|| (player.levelID == 9687 && quest.questLocation == 1)
-					|| (player.levelID == 2364 && quest.questLocation == 2)
-					|| (player.levelID == 25280 && quest.questLocation == -1)) {
-				if (player.levelID == 25280) {
+			if ((player.levelID.equals("2147") && quest.questLocation == 0)
+					|| (player.levelID.equals("9687") && quest.questLocation == 1)
+					|| (player.levelID.equals("2364") && quest.questLocation == 2)
+					|| (player.levelID.equals("25280") && quest.questLocation == -1)) {
+				if (player.levelID.equals("25280")) {
 					// Tutorial
 					// Check if its a queenstone
 					if (object.primaryObjectInfo != null && object.primaryObjectInfo.type == 31
-							&& object.subObjectInfo != null && object.subObjectInfo.defId == 3432) {
+							&& object.subObjectInfo != null && object.subObjectInfo.defId.equals("3432")) {
 						// Ignore unless there have been 3 harvests
 						int harvested = player.account.getSaveSpecificInventory().getInteractionMemory()
 								.getLastHarvestCount(player.levelID, id);
@@ -312,7 +314,7 @@ public class QuestManager extends InteractionModule {
 				}
 
 				// Check if its a npc and if the quest is locked
-				if (quest.defID == questLock && isQuestNPC(object) && !Centuria.debugMode) {
+				if (quest.defID.equals(questLock) && isQuestNPC(object) && !Centuria.debugMode) {
 					// Inform the user
 					Centuria.systemMessage(player,
 							"Quest not implemented yet\nRead the private message sent by the server for more info\n"
@@ -335,9 +337,9 @@ public class QuestManager extends InteractionModule {
 					// Check for harvest trackers
 					QuestObjective objective = quest.objectives.get(player.questObjective);
 					for (QuestTask task : objective.tasks) {
-						if (task.harvestTrackers.containsKey(Integer.toString(object.subObjectInfo.defId))) {
+						if (task.harvestTrackers.containsKey(object.subObjectInfo.defId)) {
 							// Harvest tracker
-							String trackerID = task.harvestTrackers.get(Integer.toString(object.subObjectInfo.defId));
+							String trackerID = task.harvestTrackers.get(object.subObjectInfo.defId);
 
 							// Find tracker and state
 							NetworkedObject tracker = NetworkedObjects.getObject(trackerID);
@@ -371,7 +373,7 @@ public class QuestManager extends InteractionModule {
 				QuestDefinition quest = questDefinitions.get(activeQuest);
 
 				// Check if its a npc and if the quest is locked
-				if (quest.defID == questLock && isQuestNPC(object) && !Centuria.debugMode) {
+				if (quest.defID.equals(questLock) && isQuestNPC(object) && !Centuria.debugMode) {
 					return true;
 				}
 
@@ -384,10 +386,10 @@ public class QuestManager extends InteractionModule {
 				// 0 = mugmyre
 				// 1 = lakeroot
 				// 2 = blood tundra
-				if ((player.levelID == 2147 && quest.questLocation == 0)
-						|| (player.levelID == 9687 && quest.questLocation == 1)
-						|| (player.levelID == 2364 && quest.questLocation == 2)
-						|| (player.levelID == 25280 && quest.questLocation == -1)) {
+				if ((player.levelID.equals("2147") && quest.questLocation == 0)
+						|| (player.levelID.equals("9687") && quest.questLocation == 1)
+						|| (player.levelID.equals("2364") && quest.questLocation == 2)
+						|| (player.levelID.equals("25280") && quest.questLocation == -1)) {
 					switch (stateInfo.command) {
 
 					case "67": {
@@ -411,7 +413,7 @@ public class QuestManager extends InteractionModule {
 
 							// Call all plugins that match the quest
 							for (AbstractQuestPlugin plugin : getPlugins()) {
-								if (plugin.questDefID().equals(Integer.toString(quest.defID))) {
+								if (plugin.questDefID().equals(quest.defID)) {
 									plugin.onStartQuest(player, quest);
 									plugin.onStartObjective(player, quest, objective);
 									for (QuestTask task : objective.tasks)
@@ -459,7 +461,7 @@ public class QuestManager extends InteractionModule {
 
 			// Call all plugins that match the quest
 			for (AbstractQuestPlugin plugin : getPlugins()) {
-				if (plugin.questDefID().equals(Integer.toString(quest.defID))) {
+				if (plugin.questDefID().equals(quest.defID)) {
 					plugin.onTaskProgression(player, quest, objective, task, taskProgress);
 				}
 			}
@@ -469,11 +471,11 @@ public class QuestManager extends InteractionModule {
 				// Dispatch event
 				EventBus.getInstance()
 						.dispatchEvent(new QuestTaskCompletedEvent(((GameServer) player.client.getServer()), player,
-								player.account, player.client, Integer.toString(quest.defID), quest, objective, task));
+								player.account, player.client, quest.defID, quest, objective, task));
 
 				// Call all plugins that match the quest
 				for (AbstractQuestPlugin plugin : getPlugins()) {
-					if (plugin.questDefID().equals(Integer.toString(quest.defID))) {
+					if (plugin.questDefID().equals(quest.defID)) {
 						plugin.onTaskCompleted(player, quest, objective, task);
 					}
 				}
@@ -514,7 +516,7 @@ public class QuestManager extends InteractionModule {
 
 			// Call all plugins that match the quest
 			for (AbstractQuestPlugin plugin : getPlugins()) {
-				if (plugin.questDefID().equals(Integer.toString(quest.defID))) {
+				if (plugin.questDefID().equals(quest.defID)) {
 					// Call complete
 					plugin.onObjectiveCompleted(player, quest, objectiveLast,
 							objective.isLastObjective ? null : objective);
@@ -532,7 +534,7 @@ public class QuestManager extends InteractionModule {
 			// Dispatch event
 			EventBus.getInstance()
 					.dispatchEvent(new QuestObjectiveCompletedEvent(((GameServer) player.client.getServer()), player,
-							player.account, player.client, Integer.toString(quest.defID), quest, objective));
+							player.account, player.client, quest.defID, quest, objective));
 
 			// Update objects
 			reloadObjects(player, quest);
@@ -548,18 +550,18 @@ public class QuestManager extends InteractionModule {
 
 				// Dispatch event
 				EventBus.getInstance().dispatchEvent(new QuestCompleteEvent(((GameServer) player.client.getServer()),
-						player, player.account, player.client, Integer.toString(quest.defID), quest));
+						player, player.account, player.client, quest.defID, quest));
 
 				// Call all plugins that match the quest
 				for (AbstractQuestPlugin plugin : getPlugins()) {
-					if (plugin.questDefID().equals(Integer.toString(quest.defID))) {
+					if (plugin.questDefID().equals(quest.defID)) {
 						// Call complete
 						plugin.onQuestCompleted(player, quest);
 					}
 				}
 
 				// Finish quest
-				if (player.levelID != 25280) {
+				if (!player.levelID.equals("25280")) {
 					finishQuest(player, quest.defID);
 				} else {
 					// Send completion
@@ -571,8 +573,9 @@ public class QuestManager extends InteractionModule {
 		}
 	}
 
-	public static boolean finishQuest(Player player, int quest) {
-		JsonObject obj = player.account.getSaveSpecificInventory().getAccessor().findInventoryObject("311", 22781);
+	public static boolean finishQuest(Player player, String quest) {
+		JsonObject obj = player.account.getSaveSpecificInventory().getAccessor().findInventoryObjectByDefId("311",
+				"22781");
 		JsonObject progressionMap = obj.get("components").getAsJsonObject()
 				.get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
 		JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
@@ -609,11 +612,11 @@ public class QuestManager extends InteractionModule {
 					// 0 = mugmyre
 					// 1 = lakeroot
 					// 2 = blood tundra
-					if ((player.levelID == 2147 && quest.questLocation == 0)
-							|| (player.levelID == 9687 && quest.questLocation == 1)
-							|| (player.levelID == 2364 && quest.questLocation == 2)
-							|| (player.levelID == 25280 && quest.questLocation == -1)) {
-						if (quest.defID == questLock && isQuestNPC(object) && !Centuria.debugMode) {
+					if ((player.levelID.equals("2147") && quest.questLocation == 0)
+							|| (player.levelID.equals("9687") && quest.questLocation == 1)
+							|| (player.levelID.equals("2364") && quest.questLocation == 2)
+							|| (player.levelID.equals("25280") && quest.questLocation == -1)) {
+						if (quest.defID.equals(questLock) && isQuestNPC(object) && !Centuria.debugMode) {
 							return 0;
 						}
 						return 1;

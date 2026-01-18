@@ -18,7 +18,7 @@ public class InventoryItemInspirationCombinePacket implements IXtPacket<Inventor
 
 	private static final String PACKET_ID = "iic";
 
-	public int[] inspirationIds;
+	public String[] inspirationIds;
 	public InspirationCombineResult result;
 
 	@Override
@@ -35,9 +35,9 @@ public class InventoryItemInspirationCombinePacket implements IXtPacket<Inventor
 	public void parse(XtReader reader) {
 		int inspirationCount = reader.readInt();
 
-		inspirationIds = new int[inspirationCount];
+		inspirationIds = new String[inspirationCount];
 		for (int i = 0; i < inspirationCount; i++) {
-			inspirationIds[i] = reader.readInt();
+			inspirationIds[i] = reader.read();
 		}
 	}
 
@@ -46,7 +46,7 @@ public class InventoryItemInspirationCombinePacket implements IXtPacket<Inventor
 		writer.writeInt(DATA_PREFIX); // Data prefix
 
 		writer.writeInt(result.combineStatus.value);
-		writer.writeInt(result.enigmaDefId);
+		writer.writeString(result.enigmaDefId);
 
 		writer.writeString(DATA_SUFFIX); // Empty suffix
 	}
@@ -67,34 +67,35 @@ public class InventoryItemInspirationCombinePacket implements IXtPacket<Inventor
 			System.out.println("[INVENTORY] [UPDATE]  Client to server: Combine Inspirations using ids" + ids);
 		}
 
-		result = plr.account.getSaveSpecificInventory().getInspirationAccessor().combineInspirations(inspirationIds, plr);
+		result = plr.account.getSaveSpecificInventory().getInspirationAccessor().combineInspirations(inspirationIds,
+				plr);
 		if (result.combineStatus == InspirationCombineStatus.Successful) {
 			// Add xp
 			EventInfo ev = new EventInfo();
 			ev.event = "levelevents.enigmacreated";
 
 			// Find map name
-			String map = "unknown";
+			String map = plr.levelID;
 			switch (plr.levelID) {
-			case 820:
+			case "820":
 				map = "cityfera";
 				break;
-			case 2364:
+			case "2364":
 				map = "bloodtundra";
 				break;
-			case 9687:
+			case "9687":
 				map = "lakeroot";
 				break;
-			case 2147:
+			case "2147":
 				map = "mugmyre";
 				break;
-			case 1689:
+			case "1689":
 				map = "sanctuary";
 				break;
-			case 3273:
+			case "3273":
 				map = "sunkenthicket";
 				break;
-			case 1825:
+			case "1825":
 				map = "shatteredbay";
 				break;
 			}

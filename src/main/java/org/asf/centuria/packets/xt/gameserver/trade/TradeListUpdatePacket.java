@@ -56,7 +56,7 @@ public class TradeListUpdatePacket implements IXtPacket<TradeListUpdatePacket> {
 		// Handle packet
 		if (invType != null) {
 			// Find object
-			JsonObject item = inv.getAccessor().findInventoryObject(invType, itemID);
+			JsonObject item = inv.getAccessor().findInventoryObjectByItemId(invType, itemID);
 			if (item != null) {
 				JsonObject components = item.get("components").getAsJsonObject();
 				if (!components.has("Tradable"))

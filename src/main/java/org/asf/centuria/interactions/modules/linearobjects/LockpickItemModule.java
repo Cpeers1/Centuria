@@ -9,13 +9,13 @@ import org.asf.centuria.interactions.modules.InteractionModule;
 public class LockpickItemModule extends InteractionModule {
 
 	@Override
-	public void prepareWorld(int levelID, List<String> ids, Player player) {
+	public void prepareWorld(String levelID, List<String> ids, Player player) {
 	}
 
 	@Override
 	public boolean canHandle(Player player, String id, NetworkedObject object) {
 		if (object.primaryObjectInfo != null && object.primaryObjectInfo.type == 1
-				&& object.primaryObjectInfo.defId == 6965) {
+				&& object.primaryObjectInfo.defId.equals("6965")) {
 			// This is a lockpick, check validity
 			return player.groupOjects.stream().anyMatch(t -> t.id.equals(id));
 		}

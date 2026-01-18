@@ -33,9 +33,9 @@ public class DyeAccessorImpl extends DyeAccessor {
 	}
 
 	@Override
-	public String addDye(int defID) {
+	public String addDyeByDefId(String defID) {
 		// Find dye
-		JsonObject dye = getDyeData(defID);
+		JsonObject dye = getDyeDataByDefID(defID);
 
 		// Add one to the quantity field
 		int q = dye.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().get("quantity").getAsInt();
@@ -43,16 +43,16 @@ public class DyeAccessorImpl extends DyeAccessor {
 		dye.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().addProperty("quantity", q + 1);
 
 		// Mark what files to save
-		addItemToSave("111");
+		markChanged("111", dye.get("id").getAsString());
 
 		// Return ID
 		return dye.get("id").getAsString();
 	}
 
 	@Override
-	public void removeDye(int defID) {
+	public void removeDyeByDefId(String defID) {
 		// Find dye
-		JsonObject dye = getDyeData(defID);
+		JsonObject dye = getDyeDataByDefID(defID);
 
 		// Remove one to the quantity field
 		int q = dye.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().get("quantity").getAsInt();
@@ -65,7 +65,7 @@ public class DyeAccessorImpl extends DyeAccessor {
 		}
 
 		// Mark what files to save
-		addItemToSave("111");
+		markDeleted("111", dye.get("id").getAsString());
 	}
 
 	@Override
@@ -87,13 +87,13 @@ public class DyeAccessorImpl extends DyeAccessor {
 				dye.get("components").getAsJsonObject().get("Quantity").getAsJsonObject().addProperty("quantity",
 						q - 1);
 
+				// Update
+				markChanged("111", dye.get("id").getAsString());
 				if (q - 1 <= 0) {
 					// Remove object
 					inventory.getItem("111").getAsJsonArray().remove(dye);
+					markDeleted("111", dye.get("id").getAsString());
 				}
-
-				// Mark what files to save
-				addItemToSave("111");
 
 				// End loop
 				break;
@@ -103,30 +103,29 @@ public class DyeAccessorImpl extends DyeAccessor {
 
 	@Override
 	public JsonObject getDyeData(String id) {
-		return inventory.getAccessor().findInventoryObject("111", id);
+		return inventory.getAccessor().findInventoryObjectByItemId("111", id);
 	}
 
 	@Override
-	public String getDyeHSV(int defID) {
-		if (helper.has(Integer.toString(defID)))
-			return helper.get(Integer.toString(defID)).getAsString();
-
+	public String getDyeHSV(String defID) {
+		if (helper.has(defID))
+			return helper.get(defID).getAsString();
 		return null;
 	}
 
 	@Override
-	public boolean hasDye(int defID) {
-		return inventory.getAccessor().hasInventoryObject("111", defID);
+	public boolean hasDye(String defID) {
+		return inventory.getAccessor().hasInventoryObjectByDefId("111", defID);
 	}
 
 	// Retrieves information objects for dyes and makes it if not present
-	private JsonObject getDyeData(int defID) {
+	private JsonObject getDyeDataByDefID(String defID) {
 		//
 		// Find object
 		//
 
-		if (inventory.getAccessor().hasInventoryObject("111", defID))
-			return inventory.getAccessor().findInventoryObject("111", defID);
+		if (inventory.getAccessor().hasInventoryObjectByDefId("111", defID))
+			return inventory.getAccessor().findInventoryObjectByDefId("111", defID);
 
 		//
 		// Add the item
@@ -143,8 +142,7 @@ public class DyeAccessorImpl extends DyeAccessor {
 		// Add item
 		String itId = inventory.getAccessor().createInventoryObject("111", defID, new ItemComponent("Tradable", tr),
 				new ItemComponent("Quantity", qt));
-
-		return inventory.getAccessor().findInventoryObject("111", itId);
+		return inventory.getAccessor().findInventoryObjectByItemId("111", itId);
 	}
 
 }

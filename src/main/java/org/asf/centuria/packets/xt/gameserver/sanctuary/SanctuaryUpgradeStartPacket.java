@@ -13,7 +13,6 @@ import org.asf.centuria.entities.twiggles.TwiggleWorkParameters;
 import org.asf.centuria.enums.twiggles.TwiggleState;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.util.SanctuaryWorkCalculator;
 
 import com.google.gson.GsonBuilder;
@@ -118,8 +117,7 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 					workParams.enlargedAreaIndex = expansionIndex;
 
 					updatedTwiggle = twiggleAccessor.setTwiggleWork(TwiggleState.WorkingSanctuary,
-							System.currentTimeMillis()
-									+ SanctuaryWorkCalculator.getTimeForExpand(expansionIndex),
+							System.currentTimeMillis() + SanctuaryWorkCalculator.getTimeForExpand(expansionIndex),
 							workParams);
 					isRoomUpgrade = true;
 					Centuria.logger.debug("Room expansion");
@@ -138,11 +136,14 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 					break;
 				}
 			}
-			
-			// send IL packet from another packet's class to reload world after disabling/enabling
+
+			// send IL packet from another packet's class to reload world after
+			for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+				player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
+
+			// disabling/enabling
 			SanctuaryUpgradeCompletePacket SanctuaryUpgradeCompletePacketObject = new SanctuaryUpgradeCompletePacket();
 			if (didDisablingSucceed && !isStageUpgrade && !isRoomUpgrade) {
-				SanctuaryUpgradeCompletePacketObject.sendIlPacket(player);
 				SanctuaryUpgradeCompletePacketObject.JoinSanctuary(client, player.account.getAccountID());
 			}
 
@@ -169,12 +170,12 @@ public class SanctuaryUpgradeStartPacket implements IXtPacket<SanctuaryUpgradeSt
 					}
 				}
 
-				InventoryItemPacket packet = new InventoryItemPacket();
-				var array = new JsonArray();
-				array.add(updatedTwiggle.toJsonObject());
-				packet.item = array;
-				client.sendPacket(packet);
+				// Send ILs
+				for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+					player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player,
+							change);
 
+				// Success
 				this.success = true;
 				client.sendPacket(this);
 			}

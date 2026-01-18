@@ -7,7 +7,7 @@ public class RewardDefinition {
 	// Basics
 	public int weight;
 	public int itemQuantity;
-	public int itemDefId;
+	public String itemDefId;
 
 	// Eval-based
 	public String quantityEval;
@@ -18,7 +18,7 @@ public class RewardDefinition {
 	public int quantityMax = -1;
 
 	public RewardDefinition parse(JsonObject obj) {
-		itemDefId = obj.get("itemDefId").getAsInt();
+		itemDefId = obj.get("itemDefId").getAsString();
 		if (obj.has("weight"))
 			weight = obj.get("weight").getAsInt();
 		if (obj.has("itemQuantity"))

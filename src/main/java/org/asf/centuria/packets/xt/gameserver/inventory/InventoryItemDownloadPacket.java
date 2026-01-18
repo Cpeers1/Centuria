@@ -59,7 +59,7 @@ public class InventoryItemDownloadPacket implements IXtPacket<InventoryItemDownl
 
 			// Build entry
 			JsonObject obj = new JsonObject();
-			obj.addProperty("defId", 22441);
+			obj.addProperty("defId", "22441");
 			JsonObject components = new JsonObject();
 			JsonObject ts = new JsonObject();
 			ts.addProperty("ts", System.currentTimeMillis());

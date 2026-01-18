@@ -395,7 +395,7 @@ public class GameServer extends BaseSmartfoxServer {
 
 				// Build entry
 				JsonObject obj = new JsonObject();
-				obj.addProperty("defId", 22781);
+				obj.addProperty("defId", "22781");
 				JsonObject components = new JsonObject();
 				JsonObject questObject = new JsonObject();
 				questObject.add("completedQuests", new JsonArray());
@@ -410,7 +410,7 @@ public class GameServer extends BaseSmartfoxServer {
 			inv.setItem("311", itm);
 		} else {
 			// Fix broken quest progression
-			JsonObject progressionMap = inv.getAccessor().findInventoryObject("311", 22781).get("components")
+			JsonObject progressionMap = inv.getAccessor().findInventoryObjectByDefId("311", "22781").get("components")
 					.getAsJsonObject().get("SocialExpanseLinearGenericQuestsCompletion").getAsJsonObject();
 			JsonArray arr = progressionMap.get("completedQuests").getAsJsonArray();
 			ArrayList<String> completedQuests = new ArrayList<String>();
@@ -681,10 +681,10 @@ public class GameServer extends BaseSmartfoxServer {
 				// Check
 				if (creativeItemFilter.contains(mod))
 					continue;
-				if (!inv.getAvatarAccessor().isAvatarPartUnlocked(Integer.valueOf(mod))) {
+				if (!inv.getAvatarAccessor().isAvatarPartUnlocked(mod)) {
 					Centuria.logger.debug("Unlocking avatar part " + mod + " for " + acc.getDisplayName() + " ("
 							+ acc.getAccountID() + ")");
-					inv.getAvatarAccessor().unlockAvatarPart(Integer.valueOf(mod)); // Unlock
+					inv.getAvatarAccessor().unlockAvatarPart(mod); // Unlock
 				}
 			}
 		}
@@ -700,12 +700,12 @@ public class GameServer extends BaseSmartfoxServer {
 					continue;
 
 				// Add 80
-				int count = 80 - inv.getItemAccessor(plr).getCountOfItem(Integer.valueOf(dye));
+				int count = 80 - inv.getItemAccessor(plr).getCountOfItem(dye);
 				if (count > 0) {
 					Centuria.logger.debug("Giving " + count + " of dye item " + dye + " to " + acc.getDisplayName()
 							+ " (" + acc.getAccountID() + ")");
 					for (int i = 0; i < count; i++) {
-						inv.getDyeAccessor().addDye(Integer.valueOf(dye));
+						inv.getDyeAccessor().addDyeByDefId(dye);
 					}
 				}
 			}
@@ -725,12 +725,12 @@ public class GameServer extends BaseSmartfoxServer {
 				for (String id : helper.keySet()) {
 					if (creativeItemFilter.contains(id))
 						continue;
-					int count = 3 - inv.getClothingAccessor().getClothingCount(Integer.valueOf(id));
+					int count = 3 - inv.getClothingAccessor().getClothingCount(id);
 					if (count > 0) {
 						Centuria.logger.debug("Giving " + count + " of clothing item " + id + " to "
 								+ acc.getDisplayName() + " (" + acc.getAccountID() + ")");
 						for (int i = 0; i < count; i++) {
-							inv.getClothingAccessor().addClothing(Integer.valueOf(id), false);
+							inv.getClothingAccessor().addClothing(id, false);
 						}
 					}
 				}
@@ -748,11 +748,11 @@ public class GameServer extends BaseSmartfoxServer {
 			for (String id : ids) {
 				if (creativeItemFilter.contains(id))
 					continue;
-				int count = 10 - inv.getItemAccessor(plr).getCountOfItem(Integer.valueOf(id));
+				int count = 10 - inv.getItemAccessor(plr).getCountOfItem(id);
 				if (count > 0) {
 					Centuria.logger.debug("Giving " + count + " of resource item " + id + " to " + acc.getDisplayName()
 							+ " (" + acc.getAccountID() + ")");
-					inv.getItemAccessor(plr).add(Integer.valueOf(id), count);
+					inv.getItemAccessor(plr).add(id, count);
 				}
 			}
 		}
@@ -775,12 +775,12 @@ public class GameServer extends BaseSmartfoxServer {
 				for (String id : helper.keySet()) {
 					if (creativeItemFilter.contains(id))
 						continue;
-					int count = 6 - inv.getFurnitureAccessor().getFurnitureCount(Integer.valueOf(id));
+					int count = 6 - inv.getFurnitureAccessor().getFurnitureCount(id);
 					if (count > 0) {
 						Centuria.logger.debug("Giving " + count + " of furniture item " + id + " to "
 								+ acc.getDisplayName() + " (" + acc.getAccountID() + ")");
 						for (int i = 0; i < count; i++) {
-							inv.getFurnitureAccessor().addFurniture(Integer.valueOf(id), false);
+							inv.getFurnitureAccessor().addFurniture(id, false);
 						}
 					}
 				}
@@ -797,18 +797,18 @@ public class GameServer extends BaseSmartfoxServer {
 				int[] sanctuaryTypes = new int[] { 9588, 12632, 12637, 12964, 21273, 23627, 24122, 25414, 26065, 28431,
 						9760, 9764 };
 				for (int id : sanctuaryTypes) {
-					if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(id)) {
+					if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(Integer.toString(id))) {
 						Centuria.logger.debug("Unlocking sanctuary type " + id + " for " + acc.getDisplayName() + " ("
 								+ acc.getAccountID() + ")");
-						inv.getSanctuaryAccessor().unlockSanctuary(id);
+						inv.getSanctuaryAccessor().unlockSanctuary(Integer.toString(id));
 					}
 				}
 			} else {
 				// Give default sanctuary if needed
-				if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked(9588)) {
+				if (!inv.getSanctuaryAccessor().isSanctuaryUnlocked("9588")) {
 					Centuria.logger.debug("Unlocking sanctuary type 9588 for " + acc.getDisplayName() + " ("
 							+ acc.getAccountID() + ")");
-					inv.getSanctuaryAccessor().unlockSanctuary(9588);
+					inv.getSanctuaryAccessor().unlockSanctuary("9588");
 				}
 			}
 		}
@@ -821,12 +821,12 @@ public class GameServer extends BaseSmartfoxServer {
 		else
 			itm = new JsonArray();
 
-		if (!inv.getAccessor().hasInventoryObject("104", 2327)) {
+		if (!inv.getAccessor().hasInventoryObjectByDefId("104", "2327")) {
 			// Likes
 
 			// Build entry
 			JsonObject obj = new JsonObject();
-			obj.addProperty("defId", 2327);
+			obj.addProperty("defId", "2327");
 			JsonObject components = new JsonObject();
 			JsonObject quantity = new JsonObject();
 			Centuria.logger.info("Giving " + (inv.getSaveSettings().giveAllCurrency ? 10000 : 2500) + " of Likes to "
@@ -845,12 +845,12 @@ public class GameServer extends BaseSmartfoxServer {
 			changed = true;
 		}
 
-		if (!inv.getAccessor().hasInventoryObject("104", 14500)) {
+		if (!inv.getAccessor().hasInventoryObjectByDefId("104", "14500")) {
 			// Star fragments
 
 			// Build entry
 			JsonObject obj = new JsonObject();
-			obj.addProperty("defId", 14500);
+			obj.addProperty("defId", "14500");
 			JsonObject components = new JsonObject();
 			JsonObject quantity = new JsonObject();
 			if (inv.getSaveSettings().giveAllCurrency)
@@ -870,12 +870,12 @@ public class GameServer extends BaseSmartfoxServer {
 			changed = true;
 		}
 
-		if (!inv.getAccessor().hasInventoryObject("104", 8372)) {
+		if (!inv.getAccessor().hasInventoryObjectByDefId("104", "8372")) {
 			// Lockpicks
 
 			// Build entry
 			JsonObject obj = new JsonObject();
-			obj.addProperty("defId", 8372);
+			obj.addProperty("defId", "8372");
 			JsonObject components = new JsonObject();
 			JsonObject quantity = new JsonObject();
 			quantity.addProperty("quantity", 0);
@@ -932,17 +932,10 @@ public class GameServer extends BaseSmartfoxServer {
 		}
 
 		// Save changes
-		for (String change : inv.getAccessor().getItemsToSave()) {
-			inv.setItem(change, inv.getItem(change));
-
-			// Send if needed
-			if (plr != null) {
-				InventoryItemPacket pkt = new InventoryItemPacket();
-				pkt.item = inv.getItem(change);
-				plr.client.sendPacket(pkt);
-			}
+		for (String change : inv.getAccessor().getChangedInventories()) {
+			// Send
+			inv.getAccessor().transferUpdatedItemsToPlayer(plr, change);
 		}
-		inv.getAccessor().completedSave();
 	}
 
 	/**

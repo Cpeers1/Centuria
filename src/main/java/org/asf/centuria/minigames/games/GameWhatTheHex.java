@@ -21,7 +21,6 @@ import org.asf.centuria.minigames.games.entities.whatthehex.WTHLevelInfo;
 import org.asf.centuria.minigames.games.entities.whatthehex.WTHRewardInfo;
 import org.asf.centuria.minigames.games.enums.whatthehex.RewardType;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameCurrencyPacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigameMessagePacket;
 import org.asf.centuria.packets.xt.gameserver.minigame.MinigamePrizePacket;
@@ -95,7 +94,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 		public int level;
 		public int levelMax;
 		public int currentProgress;
-		public int currencyRewardType;
+		public String currencyRewardType;
 		public int currencyRewardAmount;
 		public int elementID;
 		public int pendingCyclones;
@@ -305,15 +304,15 @@ public class GameWhatTheHex extends AbstractMinigame {
 	}
 
 	@Override
-	public boolean canHandle(int levelID) {
-		return levelID == 3272;
+	public boolean canHandle(String levelID) {
+		return levelID.equals("3272");
 	}
 
 	@Override
 	public void onJoin(Player player) {
 		// Send currency packet
 		MinigameCurrencyPacket currency = new MinigameCurrencyPacket();
-		currency.Currency = 2709;
+		currency.Currency = "2709";
 		player.client.sendPacket(currency);
 	}
 
@@ -671,7 +670,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 							// Send packet
 							MinigamePrizePacket p1 = new MinigamePrizePacket();
 							p1.given = true;
-							p1.itemDefId = Integer.toString(ele.currencyRewardType);
+							p1.itemDefId = ele.currencyRewardType;
 							p1.itemCount = ele.currencyRewardAmount;
 							p1.prizeIndex1 = elements.indexOf(ele);
 							p1.prizeIndex2 = 0;
@@ -805,18 +804,18 @@ public class GameWhatTheHex extends AbstractMinigame {
 				player.client.sendPacket(pk);
 
 				// Save highscore
-				UserVarValue var = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(4932,
-						0);
+				UserVarValue var = player.account.getSaveSpecificInventory().getUserVarAccesor()
+						.getPlayerVarValue("4932", 0);
 				int value = 0;
 				if (var != null)
 					value = var.value;
 				if (score > value) {
-					player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(4932, 0, score);
+					player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue("4932", 0, score);
 
 					// Update client
-					InventoryItemPacket pkt = new InventoryItemPacket();
-					pkt.item = player.account.getSaveSpecificInventory().getItem("303");
-					player.client.sendPacket(pkt);
+					for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+						player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player,
+								change);
 				}
 			}
 		}
@@ -1084,17 +1083,16 @@ public class GameWhatTheHex extends AbstractMinigame {
 	@MinigameMessage("startGame")
 	public void startGame(Player player, XtReader rd) {
 		// Save highscore
-		UserVarValue var = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(4932, 0);
+		UserVarValue var = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue("4932", 0);
 		int value = 0;
 		if (var != null)
 			value = var.value;
 		if (score > value) {
-			player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(4932, 0, score);
+			player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue("4932", 0, score);
 
 			// Update client
-			InventoryItemPacket pk = new InventoryItemPacket();
-			pk.item = player.account.getSaveSpecificInventory().getItem("303");
-			player.client.sendPacket(pk);
+			for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+				player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
 		}
 
 		// Start game
@@ -1174,7 +1172,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 			// Find item
 			if (reward.type == RewardType.ITEM) {
 				// Item
-				element.currencyRewardType = Integer.parseInt(reward.id);
+				element.currencyRewardType = reward.id;
 				element.currencyRewardAmount = reward.count;
 			} else {
 				// Loot
@@ -1186,7 +1184,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 					if (loot.reward.referencedTableId != null)
 						loot = ResourceCollectionModule.getLootReward(loot.reward.referencedTableId);
 					else {
-						element.currencyRewardType = Integer.parseInt(loot.reward.itemId);
+						element.currencyRewardType = loot.reward.itemId;
 						element.currencyRewardAmount = reward.count * loot.count;
 						break;
 					}
@@ -1197,7 +1195,7 @@ public class GameWhatTheHex extends AbstractMinigame {
 		// Set up rewards
 		MinigamePrizePacket p1 = new MinigamePrizePacket();
 		p1.given = false;
-		p1.itemDefId = Integer.toString(element.currencyRewardType);
+		p1.itemDefId = element.currencyRewardType;
 		p1.itemCount = element.currencyRewardAmount;
 		p1.prizeIndex1 = elements.indexOf(element);
 		p1.prizeIndex2 = 0;
@@ -1212,19 +1210,14 @@ public class GameWhatTheHex extends AbstractMinigame {
 	@Override
 	public void onExit(Player player) {
 		// Save highscore
-		UserVarValue var = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(4932, 0);
+		UserVarValue var = player.account.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue("4932", 0);
 		int value = 0;
 		if (var != null)
 			value = var.value;
 		if (score > value) {
-			player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue(4932, 0, score);
-
-			if (player.client != null && player.client.isConnected()) {
-				// Send to client
-				InventoryItemPacket pk = new InventoryItemPacket();
-				pk.item = player.account.getSaveSpecificInventory().getItem("303");
-				player.client.sendPacket(pk);
-			}
+			player.account.getSaveSpecificInventory().getUserVarAccesor().setPlayerVarValue("4932", 0, score);
+			for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+				player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
 		}
 	}
 

@@ -9,7 +9,6 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 
 import com.google.gson.JsonArray;
 
@@ -17,7 +16,7 @@ public class SettingsSetPacket implements IXtPacket<SettingsSetPacket> {
 
 	private static final String PACKET_ID = "zs";
 
-	private int varDefId;
+	private String varDefId;
 	private int value;
 	private int index;
 
@@ -33,7 +32,7 @@ public class SettingsSetPacket implements IXtPacket<SettingsSetPacket> {
 
 	@Override
 	public void parse(XtReader reader) throws IOException {
-		varDefId = reader.readInt();
+		varDefId = reader.read();
 		value = reader.readInt();
 		index = reader.readInt();
 	}
@@ -43,7 +42,7 @@ public class SettingsSetPacket implements IXtPacket<SettingsSetPacket> {
 		wr.writeInt(DATA_PREFIX); // Data prefix
 
 		wr.writeBoolean(true);
-		wr.writeInt(varDefId);
+		wr.writeString(varDefId);
 		wr.writeInt(value);
 		wr.writeInt(index);
 
@@ -73,19 +72,12 @@ public class SettingsSetPacket implements IXtPacket<SettingsSetPacket> {
 			System.out.println("[SETTINGS] [USERVARSET] output inv: " + outputInv.toString());
 		}
 
-		// send changed var inventory...
-		var itemPacket = new InventoryItemPacket();
-		itemPacket.item = outputInv;
+		// Send ILs
+		for (String change : player.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+			player.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(player, change);
 
-		// send packet..
-		client.sendPacket(itemPacket);
-
-		if (Centuria.debugMode) {
-			System.out.println("[SETTINGS] [USERVARSET]  Sending Response: " + itemPacket.build() + " ... ");
-		}
-
+		// Send response
 		client.sendPacket(this);
-
 		if (Centuria.debugMode) {
 			System.out.println("[SETTINGS] [USERVARSET]  Sending Response: " + this.build() + " ... ");
 		}

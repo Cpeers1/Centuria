@@ -165,7 +165,7 @@ public class UserDetailsHandler extends HttpPushHandler {
 					response.addProperty("active_save", acc.getSaveManager().getCurrentActiveSave());
 				response.add("current_save_settings", acc.getSaveSpecificInventory().getSaveSettings().writeToObject());
 			}
-			JsonObject obj = acc.getSaveSpecificInventory().getAccessor().findInventoryObject("avatars",
+			JsonObject obj = acc.getSaveSpecificInventory().getAccessor().findInventoryObjectByItemId("avatars",
 					acc.getActiveLook());
 			if (obj != null)
 				response.add("active_look",

@@ -15,16 +15,16 @@ public interface ISpawnBehaviourProvider {
 	 * Provides the current group object set
 	 * 
 	 * @param levelID Level ID
-	 * @param plr Player being loaded
+	 * @param plr     Player being loaded
 	 * @return Array of GroupObject instances
 	 */
-	public GroupObject[] provideCurrent(int levelID, Player plr);
+	public GroupObject[] provideCurrent(String levelID, Player plr);
 
 	/**
-	 *	Called after collecting a group object, this is for respawn locks
+	 * Called after collecting a group object, this is for respawn locks
 	 *
 	 * @param player Player that picked up the object
-	 * @param id Object ID
+	 * @param id     Object ID
 	 */
 	public void onCollect(Player player, String id);
 }

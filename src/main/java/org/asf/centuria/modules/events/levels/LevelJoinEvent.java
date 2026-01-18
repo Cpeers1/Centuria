@@ -2,7 +2,6 @@ package org.asf.centuria.modules.events.levels;
 
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 
 /**
  * 
@@ -11,22 +10,16 @@ import org.asf.centuria.modules.eventbus.EventPath;
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("level.join")
 public class LevelJoinEvent extends EventObject {
 
-	private int levelID;
+	private String levelID;
 	private String room;
 	private Player player;
 
-	public LevelJoinEvent(int levelID, String room, Player player) {
+	public LevelJoinEvent(String levelID, String room, Player player) {
 		this.levelID = levelID;
 		this.room = room;
 		this.player = player;
-	}
-
-	@Override
-	public String eventPath() {
-		return "level.join";
 	}
 
 	/**
@@ -34,7 +27,7 @@ public class LevelJoinEvent extends EventObject {
 	 * 
 	 * @return Level ID
 	 */
-	public int getLevelID() {
+	public String getLevelID() {
 		return levelID;
 	}
 

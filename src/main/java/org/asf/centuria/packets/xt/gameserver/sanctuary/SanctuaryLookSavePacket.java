@@ -8,7 +8,6 @@ import org.asf.centuria.data.XtWriter;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xt.IXtPacket;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
 
 public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacket> {
 
@@ -58,62 +57,12 @@ public class SanctuaryLookSavePacket implements IXtPacket<SanctuaryLookSavePacke
 		plr.account.getSaveSpecificInventory().getSanctuaryAccessor().saveSanctuaryLookToSlot(plr.activeSanctuaryLook,
 				lookSlotId, lookSlotName);
 
-		// send an il response
+		// Send
+		for (String change : plr.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
+			plr.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
 
-		var il = plr.account.getSaveSpecificInventory().getItem("201");
-		var ilPacket = new InventoryItemPacket();
-		ilPacket.item = il;
-
-		// send IL
-		plr.client.sendPacket(ilPacket);
-
-		// send this packet
-
-		if (Centuria.debugMode) {
-			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Server to client IL: " + ilPacket.build());
-		}
-
-		il = plr.account.getSaveSpecificInventory().getItem("5");
-		ilPacket = new InventoryItemPacket();
-		ilPacket.item = il;
-
-		// send IL
-		plr.client.sendPacket(ilPacket);
-
-		// send this packet
-
-		if (Centuria.debugMode) {
-			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Server to client IL: " + ilPacket.build());
-		}
-
-		il = plr.account.getSaveSpecificInventory().getItem("6");
-		ilPacket = new InventoryItemPacket();
-		ilPacket.item = il;
-
-		// send IL
-		plr.client.sendPacket(ilPacket);
-
-		// send this packet
-
-		if (Centuria.debugMode) {
-			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Server to client IL: " + ilPacket.build());
-		}
-
-		il = plr.account.getSaveSpecificInventory().getItem("10");
-		ilPacket = new InventoryItemPacket();
-		ilPacket.item = il;
-
-		// send IL
-		plr.client.sendPacket(ilPacket);
-
-		// send this packet
-
-		if (Centuria.debugMode) {
-			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Server to client IL: " + ilPacket.build());
-		}
-
+		// Send look save
 		plr.client.sendPacket(this);
-
 		if (Centuria.debugMode) {
 			System.out.println("[SANCTUARYEDITOR] [SAVELOOK]  Server to client SSL: " + this.build());
 		}

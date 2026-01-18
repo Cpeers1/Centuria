@@ -80,7 +80,7 @@ public class GetChatRoomList extends AbstractChatPacket {
 							// Add sanctuary room
 							JsonObject roomObj = new JsonObject();
 							roomObj.addProperty("roomType", "sanctuary");
-							roomObj.addProperty("roomLevelID", 1689);
+							roomObj.addProperty("roomLevelID", "1689");
 							roomObj.addProperty("roomLevelName", "Sanctuary");
 							roomObj.addProperty("roomInstancePresent", false);
 							roomObj.addProperty("sanctuaryOwner", room.substring("sanctuary_".length()));

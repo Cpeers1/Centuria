@@ -15,7 +15,7 @@ public abstract class AbstractInventoryInteractionHelper {
 	 * @param defID     Item defID
 	 * @return New item JSON or null
 	 */
-	public abstract JsonObject addOne(PlayerInventory inventory, int defID);
+	public abstract JsonObject addOne(PlayerInventory inventory, String defID);
 
 	/**
 	 * Adds a single item to the inventory
@@ -34,7 +34,7 @@ public abstract class AbstractInventoryInteractionHelper {
 	 * @param count     Item count
 	 * @return New item JSONs
 	 */
-	public JsonObject[] addMultiple(PlayerInventory inventory, int defID, int count) {
+	public JsonObject[] addMultiple(PlayerInventory inventory, String defID, int count) {
 		ArrayList<JsonObject> items = new ArrayList<JsonObject>();
 		for (int i = 0; i < count; i++) {
 			JsonObject res = addOne(inventory, defID);
@@ -51,7 +51,7 @@ public abstract class AbstractInventoryInteractionHelper {
 	 * @param defID     Item defID
 	 * @return The uuid of the item removed.
 	 */
-	public abstract String removeOne(PlayerInventory inventory, int defID);
+	public abstract String removeOne(PlayerInventory inventory, String defID);
 
 	/**
 	 * Removes a single item from the inventory
@@ -70,7 +70,7 @@ public abstract class AbstractInventoryInteractionHelper {
 	 * @param count     Item count
 	 * @return An array of uuids that represent the items that were removed.
 	 */
-	public String[] removeMultiple(PlayerInventory inventory, int defID, int count) {
+	public String[] removeMultiple(PlayerInventory inventory, String defID, int count) {
 		String[] uuids = new String[count];
 
 		for (int i = 0; i < count; i++) {

@@ -24,7 +24,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 	private Random rnd = new Random();
 
 	private HashMap<String, String> properties = new HashMap<String, String>();
-	private HashMap<Integer, GroupObjectRotation> rotations = new HashMap<Integer, GroupObjectRotation>();
+	private HashMap<String, GroupObjectRotation> rotations = new HashMap<String, GroupObjectRotation>();
 
 	// Tool to check if a object is not present in the rotation and if it doesnt
 	// overlap
@@ -87,7 +87,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 	}
 
 	@Override
-	public GroupObject[] provideCurrent(int levelID, Player plr) {
+	public GroupObject[] provideCurrent(String levelID, Player plr) {
 		boolean update = true;
 
 		// Load config
@@ -158,7 +158,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 		if (update) {
 			// Retrieve all objects
 			ObjectCollection linearObjects = new ObjectCollection();
-			for (String override : NetworkedObjects.getOverridesFor(Integer.toString(levelID))) {
+			for (String override : NetworkedObjects.getOverridesFor(levelID)) {
 				for (String col : NetworkedObjects.getCollectionIdsForOverride(override)) {
 					ObjectCollection objects = NetworkedObjects.getObjects(col);
 					if (objects.name.endsWith("_GroupLinearObjects")) {
@@ -190,7 +190,7 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			GroupObject[] lockpicks = Stream.of(objects).filter(t -> {
 				NetworkedObject nObj = NetworkedObjects.getObject(t.id);
 				if (nObj.primaryObjectInfo != null && nObj.primaryObjectInfo.type == 1
-						&& nObj.primaryObjectInfo.defId == 6965)
+						&& nObj.primaryObjectInfo.defId.equals("6965"))
 					return true;
 				return false;
 			}).toArray(t -> new GroupObject[t]);
@@ -229,8 +229,8 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			GroupObject[] waystonePaths = Stream.of(objects).filter(t -> {
 				NetworkedObject nObj = NetworkedObjects.getObject(t.id);
 				if (nObj.primaryObjectInfo != null && nObj.primaryObjectInfo.type == 1
-						&& nObj.primaryObjectInfo.defId == 3579 && nObj.subObjectInfo != null
-						&& nObj.subObjectInfo.type == 5 && nObj.subObjectInfo.defId == 0)
+						&& nObj.primaryObjectInfo.defId.equals("3579") && nObj.subObjectInfo != null
+						&& nObj.subObjectInfo.type == 5 && nObj.subObjectInfo.defId.equals("0"))
 					return true;
 				return false;
 			}).toArray(t -> new GroupObject[t]);
@@ -271,8 +271,8 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			GroupObject[] digspots = Stream.of(objects).filter(t -> {
 				NetworkedObject nObj = NetworkedObjects.getObject(t.id);
 				if (nObj.primaryObjectInfo != null && nObj.primaryObjectInfo.type == 7
-						&& nObj.primaryObjectInfo.defId == 0 && nObj.subObjectInfo != null
-						&& nObj.subObjectInfo.type == 6 && nObj.subObjectInfo.defId == 0)
+						&& nObj.primaryObjectInfo.defId.equals("0") && nObj.subObjectInfo != null
+						&& nObj.subObjectInfo.type == 6 && nObj.subObjectInfo.defId.equals("0"))
 					return true;
 				return false;
 			}).toArray(t -> new GroupObject[t]);
@@ -334,8 +334,8 @@ public class RandomizedSpawnBehaviour implements ISpawnBehaviourProvider {
 			GroupObject[] lockedChests = Stream.of(objects).filter(t -> {
 				NetworkedObject nObj = NetworkedObjects.getObject(t.id);
 				if (nObj.primaryObjectInfo != null && nObj.primaryObjectInfo.type == 1
-						&& nObj.primaryObjectInfo.defId == 4984 && nObj.subObjectInfo != null
-						&& nObj.subObjectInfo.type == 0 && nObj.subObjectInfo.defId == 0)
+						&& nObj.primaryObjectInfo.defId.equals("4984") && nObj.subObjectInfo != null
+						&& nObj.subObjectInfo.type == 0 && nObj.subObjectInfo.defId.equals("0"))
 					return true;
 				return false;
 			}).toArray(t -> new GroupObject[t]);

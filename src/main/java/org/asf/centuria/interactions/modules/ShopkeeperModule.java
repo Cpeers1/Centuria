@@ -16,7 +16,7 @@ import com.google.gson.JsonObject;
 public class ShopkeeperModule extends InteractionModule {
 
 	@Override
-	public void prepareWorld(int levelID, List<String> ids, Player player) {
+	public void prepareWorld(String levelID, List<String> ids, Player player) {
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class ShopkeeperModule extends InteractionModule {
 				// Unlock enigmas
 				for (String enigma : enigmas) {
 					JsonObject enigmaData = player.account.getSaveSpecificInventory().getAccessor()
-							.findInventoryObject("7", enigma);
+							.findInventoryObjectByItemId("7", enigma);
 
 					// Set as unraveled
 					JsonObject data = enigmaData.get("components").getAsJsonObject().get("Enigma").getAsJsonObject();

@@ -18,7 +18,7 @@ public class LinearObjectHandler extends InteractionModule {
 	// TODO: new rewards for chests etc
 
 	@Override
-	public void prepareWorld(int levelID, List<String> ids, Player player) {
+	public void prepareWorld(String levelID, List<String> ids, Player player) {
 	}
 
 	@Override

@@ -5,8 +5,8 @@ import org.asf.centuria.entities.JsonableObject;
 import com.google.gson.JsonObject;
 
 /**
- * Sanctuary Info Object.
- * Used to store info about the sanctuary.
+ * Sanctuary Info Object. Used to store info about the sanctuary.
+ * 
  * @author Owenvii
  *
  */
@@ -18,14 +18,14 @@ public class SanctuaryInfo extends JsonableObject {
 	public static final String ISLAND_INV_ID_PROPERTY_NAME = "islandInvId";
 	public static final String CLASS_INV_ID_PROPERTY_NAME = "classInvId";
 	public static final String PLACEMENT_INFO_PROPERTY_NAME = "placementInfo";
-	
-	public int houseDefID;
+
+	public String houseDefID;
 	public String houseInvId;
-	public int islandDefId;
+	public String islandDefId;
 	public String islandInvId;
 	public String classInvId;
 	public PlacementInfo placementInfo;
-	
+
 	@Override
 	public JsonObject toJson() {
 		JsonObject object = new JsonObject();
@@ -37,24 +37,21 @@ public class SanctuaryInfo extends JsonableObject {
 		object.add(PLACEMENT_INFO_PROPERTY_NAME, placementInfo.toJson());
 		return object;
 	}
-	
+
 	@Override
 	protected void propagatePropertiesFromJson(JsonObject jsonObject) {
-		this.houseDefID = jsonObject.get(HOUSE_DEF_ID_PROPERTY_NAME).getAsInt();
+		this.houseDefID = jsonObject.get(HOUSE_DEF_ID_PROPERTY_NAME).getAsString();
 		this.houseInvId = jsonObject.get(HOUSE_INV_ID_PROPERTY_NAME).getAsString();
-		this.islandDefId = jsonObject.get(ISLAND_DEF_ID_PROPERTY_NAME).getAsInt();
+		this.islandDefId = jsonObject.get(ISLAND_DEF_ID_PROPERTY_NAME).getAsString();
 		this.houseInvId = jsonObject.get(ISLAND_INV_ID_PROPERTY_NAME).getAsString();
 		this.classInvId = jsonObject.get(CLASS_INV_ID_PROPERTY_NAME).getAsString();
-		
+
 		try {
-			this.placementInfo = (PlacementInfo)new PlacementInfo().CreateObjectFromJson(jsonObject.get(PLACEMENT_INFO_PROPERTY_NAME).getAsJsonObject());
-		}
-		catch(Exception e)
-		{
+			this.placementInfo = (PlacementInfo) new PlacementInfo()
+					.CreateObjectFromJson(jsonObject.get(PLACEMENT_INFO_PROPERTY_NAME).getAsJsonObject());
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
-	
-	
+
 }

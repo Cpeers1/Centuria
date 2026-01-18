@@ -82,13 +82,10 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 				al.add("info", speciesData.get("info").getAsJsonObject());
 
 				// Add the look slot
-				inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsInt(),
+				inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsString(),
 						new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
 			}
 		}
-
-		// Mark what files to save
-		addItemToSave("avatars");
 	}
 
 	@Override
@@ -110,7 +107,7 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 
 		// Add the species looks
 		JsonObject speciesData = helper.get(type).getAsJsonObject();
-		int actorDefID = speciesData.get("info").getAsJsonObject().get("actorClassDefID").getAsInt();
+		String actorDefID = speciesData.get("info").getAsJsonObject().get("actorClassDefID").getAsString();
 		if (helper.has(type)) {
 			if (!inventory.containsItem("avatars")) {
 				inventory.setItem("avatars", new JsonArray());
@@ -176,9 +173,9 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 					al.add("info", speciesData.get("info").getAsJsonObject());
 
 					// Add the look slot
-					inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsInt(),
-							new ItemComponent("PrimaryLook", new JsonObject()), new ItemComponent("AvatarLook", al),
-							new ItemComponent("Name", nm));
+					inventory.getAccessor().createInventoryObject("avatars", 200,
+							speciesData.get("defId").getAsString(), new ItemComponent("PrimaryLook", new JsonObject()),
+							new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
 				}
 
 				// Add slots
@@ -193,22 +190,23 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 					al.add("info", speciesData.get("info").getAsJsonObject());
 
 					// Add the look slot
-					inventory.getAccessor().createInventoryObject("avatars", 200, speciesData.get("defId").getAsInt(),
-							new ItemComponent("AvatarLook", al), new ItemComponent("Name", nm));
+					inventory.getAccessor().createInventoryObject("avatars", 200,
+							speciesData.get("defId").getAsString(), new ItemComponent("AvatarLook", al),
+							new ItemComponent("Name", nm));
 				}
 			}
 
 			// Unlock all mods for this species
-			if (defaultsHelper.has(Integer.toString(actorDefID))) {
-				defaultsHelper.get(Integer.toString(actorDefID)).getAsJsonArray().forEach(item -> {
-					int id = item.getAsInt();
+			if (defaultsHelper.has(actorDefID)) {
+				defaultsHelper.get(actorDefID).getAsJsonArray().forEach(item -> {
+					String id = item.getAsString();
 					if (!isAvatarPartUnlocked(id))
 						unlockAvatarPart(id);
 				});
 			}
 
 			// Update the species list
-			if (!inventory.getAccessor().hasInventoryObject("1", actorDefID)) {
+			if (!inventory.getAccessor().hasInventoryObjectByDefId("1", actorDefID)) {
 				// Add species
 				inventory.getAccessor().createInventoryObject("1", actorDefID);
 			}
@@ -228,18 +226,16 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 		}
 
 		// Find species
-		if (defID.matches("^[0-9]+$"))
-			return inventory.getAccessor().hasInventoryObject("avatars", Integer.parseInt(defID));
-		return false;
+		return inventory.getAccessor().hasInventoryObjectByDefId("avatars", defID);
 	}
 
 	@Override
-	public boolean isAvatarPartUnlocked(int defID) {
-		return inventory.getAccessor().hasInventoryObject("2", defID);
+	public boolean isAvatarPartUnlocked(String defID) {
+		return inventory.getAccessor().hasInventoryObjectByDefId("2", defID);
 	}
 
 	@Override
-	public void unlockAvatarPart(int defID) {
+	public void unlockAvatarPart(String defID) {
 		if (isAvatarPartUnlocked(defID))
 			return;
 
@@ -248,8 +244,8 @@ public class AvatarAccessorImpl extends AvatarAccessor {
 	}
 
 	@Override
-	public void lockAvatarPart(int defID) {
+	public void lockAvatarPart(String defID) {
 		// Lock part
-		inventory.getAccessor().removeInventoryObject("2", defID);
+		inventory.getAccessor().removeInventoryObjectByDefId("2", defID);
 	}
 }

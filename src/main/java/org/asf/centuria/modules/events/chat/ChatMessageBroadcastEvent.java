@@ -2,20 +2,19 @@ package org.asf.centuria.modules.events.chat;
 
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.modules.eventbus.EventObject;
-import org.asf.centuria.modules.eventbus.EventPath;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.ChatServer;
 
 /**
  * 
  * Chat Message Event - fired when a player sends a chat message, fired just
- * before it is passed on to other players, fired after chat filtering has been performed.
+ * before it is passed on to other players, fired after chat filtering has been
+ * performed.
  * 
  * @since Beta 1.5.3
  * @author Sky Swimmer - AerialWorks Software Foundation
  *
  */
-@EventPath("chat.broadcast")
 public class ChatMessageBroadcastEvent extends EventObject {
 
 	private ChatServer server;
@@ -32,11 +31,6 @@ public class ChatMessageBroadcastEvent extends EventObject {
 		this.server = server;
 		this.message = message;
 		this.conversation = conversation;
-	}
-
-	@Override
-	public String eventPath() {
-		return "chat.broadcast";
 	}
 
 	/**

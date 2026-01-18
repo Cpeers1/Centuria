@@ -18,21 +18,21 @@ public class GenericHelperWithQuantity extends AbstractInventoryInteractionHelpe
 	}
 
 	@Override
-	public JsonObject addOne(PlayerInventory inventory, int defID) {
+	public JsonObject addOne(PlayerInventory inventory, String defID) {
 		return add(inventory, defID, 1);
 	}
 
 	@Override
-	public JsonObject[] addMultiple(PlayerInventory inventory, int defID, int count) {
+	public JsonObject[] addMultiple(PlayerInventory inventory, String defID, int count) {
 		JsonObject obj = add(inventory, defID, count);
 		if (obj != null)
 			return new JsonObject[] { obj };
 		return new JsonObject[0];
 	}
 
-	private JsonObject add(PlayerInventory inventory, int defID, int count) {
+	private JsonObject add(PlayerInventory inventory, String defID, int count) {
 		// Find object
-		JsonObject old = inventory.getAccessor().findInventoryObject(inventoryId, defID);
+		JsonObject old = inventory.getAccessor().findInventoryObjectByDefId(inventoryId, defID);
 		if (old == null) {
 			// Create new instance
 
@@ -45,7 +45,7 @@ public class GenericHelperWithQuantity extends AbstractInventoryInteractionHelpe
 			for (int i = 0; i < this.components.length; i++)
 				components[i] = this.components[i];
 			components[this.components.length] = new ItemComponent("Quantity", qt);
-			old = inventory.getAccessor().findInventoryObject(inventoryId,
+			old = inventory.getAccessor().findInventoryObjectByItemId(inventoryId,
 					inventory.getAccessor().createInventoryObject(inventoryId, defID, components));
 		}
 
@@ -60,16 +60,16 @@ public class GenericHelperWithQuantity extends AbstractInventoryInteractionHelpe
 		return old;
 	}
 
-	private String remove(PlayerInventory inventory, int defID, int count) {
+	private String remove(PlayerInventory inventory, String defID, int count) {
 		// Find object
-		JsonObject old = inventory.getAccessor().findInventoryObject(inventoryId, defID);
+		JsonObject old = inventory.getAccessor().findInventoryObjectByDefId(inventoryId, defID);
 
 		if (old == null) {
 			// Not found
 			return null;
 		}
 
-		String uuid = inventory.getAccessor().findInventoryObject(inventoryId, defID)
+		String uuid = inventory.getAccessor().findInventoryObjectByDefId(inventoryId, defID)
 				.get(InventoryItem.UUID_PROPERTY_NAME).getAsString();
 
 		// Load quantity
@@ -80,7 +80,7 @@ public class GenericHelperWithQuantity extends AbstractInventoryInteractionHelpe
 		// Check validity
 		if ((oldQuantity - count) <= 0) {
 			// Remove object
-			inventory.getAccessor().removeInventoryObject(inventoryId, defID);
+			inventory.getAccessor().removeInventoryObjectByDefId(inventoryId, defID);
 			return uuid;
 		}
 
@@ -94,17 +94,17 @@ public class GenericHelperWithQuantity extends AbstractInventoryInteractionHelpe
 
 	@Override
 	public JsonObject addOne(PlayerInventory inventory, JsonObject object) {
-		if (!inventory.getAccessor().hasInventoryObject(inventoryId, object.get("id").getAsString())) {
+		if (!inventory.getAccessor().hasInventoryObjectByItemId(inventoryId, object.get("id").getAsString())) {
 			// Add the item directly
 			inventory.getItem(inventoryId).getAsJsonArray().add(object);
 			inventory.setItem(inventoryId, inventory.getItem(inventoryId));
 			return object;
 		}
-		return addOne(inventory, object.get("defId").getAsInt());
+		return addOne(inventory, object.get("defId").getAsString());
 	}
 
 	@Override
-	public String[] removeMultiple(PlayerInventory inventory, int defID, int count) {
+	public String[] removeMultiple(PlayerInventory inventory, String defID, int count) {
 		String id = remove(inventory, defID, count);
 		if (id != null)
 			return new String[] { id };
@@ -112,13 +112,13 @@ public class GenericHelperWithQuantity extends AbstractInventoryInteractionHelpe
 	}
 
 	@Override
-	public String removeOne(PlayerInventory inventory, int defID) {
+	public String removeOne(PlayerInventory inventory, String defID) {
 		return remove(inventory, defID, 1);
 	}
 
 	@Override
 	public String removeOne(PlayerInventory inventory, JsonObject object) {
-		return removeOne(inventory, object.get("defId").getAsInt());
+		return removeOne(inventory, object.get("defId").getAsString());
 	}
 
 }

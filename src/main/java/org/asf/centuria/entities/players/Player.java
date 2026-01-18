@@ -117,7 +117,7 @@ public class Player {
 
 				// If the player is ingame, show this player to them
 				Player plr = blockedPlayer.getOnlinePlayerInstance();
-				if (plr != null && roomReady && plr.roomReady && plr.room.equals(room) && plr.levelID == levelID) {
+				if (plr != null && roomReady && plr.roomReady && plr.room.equals(room) && plr.levelID.equals(levelID)) {
 					syncTo(plr, WorldObjectMoverNodeType.InitPosition);
 				}
 			}
@@ -127,12 +127,12 @@ public class Player {
 	//
 	// Other fields
 	//
-	
+
 	public long keepAliveLast;
 
 	public SmartfoxClient client;
 	public CenturiaAccount account;
-	
+
 	public boolean awaitingPlayerSync;
 
 	public String activeLook;
@@ -141,7 +141,7 @@ public class Player {
 
 	public HashMap<String, Long> respawnItems = new HashMap<String, Long>();
 
-	public int pendingLookDefID = 8254;
+	public String pendingLookDefID = "8254";
 	public String pendingLookID = null;
 
 	public boolean roomReady = false;
@@ -149,11 +149,11 @@ public class Player {
 
 	public int levelType = 0;
 	public int previousLevelType = 0;
-	public int levelID = 0;
-	public int pendingLevelID = 0;
+	public String levelID = "0";
+	public String pendingLevelID = "0";
 
 	public String previousRoom = "";
-	public int previousLevelID = 0;
+	public String previousLevelID = "0";
 
 	public String pendingRoom = "0";
 	public String room = null;
@@ -220,7 +220,7 @@ public class Player {
 
 			// Object creation parameters
 			packet.id = account.getAccountID();
-			packet.defId = 852; // TODO: Move to static final (const)
+			packet.defId = "852"; // TODO: Move to static final (const)
 			packet.ownerId = account.getAccountID();
 
 			packet.lastMove = new WorldObjectMoveNodeData();
@@ -278,7 +278,8 @@ public class Player {
 			if (!isOwner && !overrideLocks) {
 				// Load privacy settings
 				int privSetting = 0;
-				UserVarValue val = sancOwner.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(17544, 0);
+				UserVarValue val = sancOwner.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue("17544",
+						0);
 				if (val != null)
 					privSetting = val.value;
 
@@ -311,7 +312,7 @@ public class Player {
 			RoomJoinPacket join = new RoomJoinPacket();
 			join.success = isAllowed || overrideLocks;
 			join.levelType = 2;
-			join.levelID = 1689;
+			join.levelID = "1689";
 			join.roomIdentifier = "sanctuary_" + sanctuaryOwner;
 			join.teleport = sanctuaryOwner;
 
@@ -327,7 +328,7 @@ public class Player {
 
 				// Assign room
 				player.roomReady = false;
-				player.pendingLevelID = 1689;
+				player.pendingLevelID = "1689";
 				player.pendingRoom = "sanctuary_" + sanctuaryOwner;
 				player.levelType = join.levelType;
 
@@ -381,7 +382,8 @@ public class Player {
 	 * @param teleport       TODO: I'm not sure what this is?
 	 * @return If the join was a success or not.
 	 */
-	public boolean teleportToRoom(int levelID, int levelType, int iisRoomID, String roomIdentifier, String teleport) {
+	public boolean teleportToRoom(String levelID, int levelType, int iisRoomID, String roomIdentifier,
+			String teleport) {
 		try {
 			// Load the requested room
 			Player plr = this;
@@ -454,7 +456,7 @@ public class Player {
 	 * @param targetedPlayer the player targeted to teleport to.
 	 * @return If the join was a success or not.
 	 */
-	private boolean teleportToRoom(int levelID, int levelType, int iisRoomID, String roomIdentifier, String teleport,
+	private boolean teleportToRoom(String levelID, int levelType, int iisRoomID, String roomIdentifier, String teleport,
 			Player targetedPlayer) {
 		try {
 			// Load the requested room
@@ -581,7 +583,7 @@ public class Player {
 					// Load privacy settings
 					int privSetting = 0;
 					UserVarValue val = plr.account.getSaveSpecificInventory().getUserVarAccesor()
-							.getPlayerVarValue(17546, 0);
+							.getPlayerVarValue("17546", 0);
 					if (val != null)
 						privSetting = val.value;
 
@@ -600,7 +602,7 @@ public class Player {
 
 					if (!plr.room.equals(player.room)) {
 						String teleport = plr.account.getAccountID();
-						
+
 						// Check sanc
 						if (plr.levelType == 2 && plr.room.startsWith("sanctuary_")) {
 							String sanctuaryOwner = plr.room.substring("sanctuary_".length());
@@ -619,8 +621,8 @@ public class Player {
 							if (!isOwner && (!player.overrideTpLocks || !player.hasModPerms)) {
 								// Load privacy settings
 								privSetting = 0;
-								val = sancOwner.getSaveSpecificInventory().getUserVarAccesor().getPlayerVarValue(17544,
-										0);
+								val = sancOwner.getSaveSpecificInventory().getUserVarAccesor()
+										.getPlayerVarValue("17544", 0);
 								if (val != null)
 									privSetting = val.value;
 

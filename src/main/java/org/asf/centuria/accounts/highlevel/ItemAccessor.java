@@ -31,8 +31,6 @@ import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.enums.inventory.InventoryStorageType;
 import org.asf.centuria.enums.inventory.InventoryType;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemPacket;
-import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemRemovedPacket;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -182,9 +180,9 @@ public class ItemAccessor {
 	 * @param defID Item defID
 	 * @return Inventory type string or null
 	 */
-	public static String getInventoryTypeOf(int defID) {
+	public static String getInventoryTypeOf(String defID) {
 		// Find definition
-		ItemInfo info = definitions.get(Integer.toString(defID));
+		ItemInfo info = definitions.get(defID);
 		if (info == null)
 			return null;
 		return info.inventory;
@@ -200,7 +198,7 @@ public class ItemAccessor {
 		JsonObject obj = null;
 
 		// Find definition
-		ItemInfo info = definitions.get(Integer.toString(object.get("defId").getAsInt()));
+		ItemInfo info = definitions.get(object.get("defId").getAsString());
 		if (info == null)
 			return null;
 
@@ -215,7 +213,7 @@ public class ItemAccessor {
 		// Single-item
 		case SINGLE_ITEM: {
 			// Check if the item is present
-			if (inventory.getAccessor().hasInventoryObject(info.inventory, object.get("defId").getAsInt()))
+			if (inventory.getAccessor().hasInventoryObjectByDefId(info.inventory, object.get("defId").getAsString()))
 				return null; // invalid
 
 			// Add item directly
@@ -239,14 +237,15 @@ public class ItemAccessor {
 
 				// Add items
 				if (q >= 0) {
-					if (!inventory.getAccessor().hasInventoryObject(info.inventory, object.get("defId").getAsInt())) {
+					if (!inventory.getAccessor().hasInventoryObjectByDefId(info.inventory,
+							object.get("defId").getAsString())) {
 						// Add item directly
 						obj = container.inventoryInteraction.addOne(inventory, object);
 					} else {
 						// Add to existing
-						container.inventoryInteraction.addMultiple(inventory, object.get("defId").getAsInt(), q);
-						obj = inventory.getAccessor().findInventoryObject(info.inventory,
-								object.get("defId").getAsInt());
+						container.inventoryInteraction.addMultiple(inventory, object.get("defId").getAsString(), q);
+						obj = inventory.getAccessor().findInventoryObjectByDefId(info.inventory,
+								object.get("defId").getAsString());
 					}
 				}
 			} else {
@@ -259,31 +258,19 @@ public class ItemAccessor {
 		}
 
 		if (obj != null) {
-			if (player != null) {
-				// Send packet if successful
-				InventoryItemPacket pk = new InventoryItemPacket();
-				JsonArray arr = new JsonArray();
-				arr.add(obj);
-				pk.item = arr;
-				player.client.sendPacket(pk);
-			}
-
 			// Add item to save
-			if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
-				inventory.getAccessor().itemsToSave.add(info.inventory);
+			inventory.getAccessor().markChanged(info.inventory, obj.get("id").getAsString());
+			inventory.getAccessor().transferUpdatedItemsToPlayer(player, info.inventory);
 
-			// Save items
-			for (String itm : inventory.getAccessor().itemsToSave) {
+			// Save other items
+			for (String itm : inventory.getAccessor().getChangedInventories()) {
 				inventory.setItem(itm, inventory.getItem(itm));
 
-				if (!info.inventory.equals(itm) && player != null) {
-					// Sync unsaved inventories
-					InventoryItemPacket pk = new InventoryItemPacket();
-					pk.item = inventory.getItem(itm);
-					player.client.sendPacket(pk);
+				if (!info.inventory.equals(itm)) {
+					// Transfer to player
+					inventory.getAccessor().transferUpdatedItemsToPlayer(player, itm);
 				}
 			}
-			inventory.getAccessor().completedSave();
 		}
 
 		// Return id
@@ -296,21 +283,21 @@ public class ItemAccessor {
 	 * @param defID Item defID
 	 * @return Item ID string or null if invalid
 	 */
-	public String add(int defID) {
+	public String add(String defID) {
 		JsonObject obj = null;
 
 		// Find definition
-		ItemInfo info = definitions.get(Integer.toString(defID));
+		ItemInfo info = definitions.get(defID);
 		if (info == null) {
 			// Find bundle
-			if (bundles.containsKey(Integer.toString(defID))) {
+			if (bundles.containsKey(defID)) {
 				String res = null;
 
 				// Add items
-				ItemBundleEntry entry = bundles.get(Integer.toString(defID));
+				ItemBundleEntry entry = bundles.get(defID);
 				for (String id : entry.items.keySet()) {
 					int count = entry.items.get(id);
-					String[] ids = add(Integer.parseInt(id), count);
+					String[] ids = add(id, count);
 					if (res == null && ids.length > 0)
 						res = ids[0];
 				}
@@ -332,7 +319,7 @@ public class ItemAccessor {
 		// Single-item
 		case SINGLE_ITEM: {
 			// Check if the item is present
-			if (inventory.getAccessor().hasInventoryObject(info.inventory, defID))
+			if (inventory.getAccessor().hasInventoryObjectByDefId(info.inventory, defID))
 				return null; // invalid
 
 			// Fall through to the quantity-based handler as the rest is the same
@@ -349,31 +336,19 @@ public class ItemAccessor {
 		}
 
 		if (obj != null) {
-			if (player != null) {
-				// Send packet if successful
-				InventoryItemPacket pk = new InventoryItemPacket();
-				JsonArray arr = new JsonArray();
-				arr.add(obj);
-				pk.item = arr;
-				player.client.sendPacket(pk);
-			}
-
 			// Add item to save
-			if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
-				inventory.getAccessor().itemsToSave.add(info.inventory);
+			inventory.getAccessor().markChanged(info.inventory, obj.get("id").getAsString());
+			inventory.getAccessor().transferUpdatedItemsToPlayer(player, info.inventory);
 
-			// Save items
-			for (String itm : inventory.getAccessor().itemsToSave) {
+			// Save other items
+			for (String itm : inventory.getAccessor().getChangedInventories()) {
 				inventory.setItem(itm, inventory.getItem(itm));
 
-				if (!info.inventory.equals(itm) && player != null) {
-					// Sync unsaved inventories
-					InventoryItemPacket pk = new InventoryItemPacket();
-					pk.item = inventory.getItem(itm);
-					player.client.sendPacket(pk);
+				if (!info.inventory.equals(itm)) {
+					// Transfer to player
+					inventory.getAccessor().transferUpdatedItemsToPlayer(player, itm);
 				}
 			}
-			inventory.getAccessor().completedSave();
 		}
 
 		// Return id
@@ -387,7 +362,7 @@ public class ItemAccessor {
 	 * @param count Amount of the item to add
 	 * @return Array of item IDs that were added
 	 */
-	public String[] add(int defID, int count) {
+	public String[] add(String defID, int count) {
 		// Check validity
 		if (count <= 0)
 			return new String[0]; // Nonsense count so lets return an empty array
@@ -395,17 +370,17 @@ public class ItemAccessor {
 		JsonObject[] objs = null;
 
 		// Find definition
-		ItemInfo info = definitions.get(Integer.toString(defID));
+		ItemInfo info = definitions.get(defID);
 		if (info == null) {
 			// Find bundle
-			if (bundles.containsKey(Integer.toString(defID))) {
+			if (bundles.containsKey(defID)) {
 				ArrayList<String> res = new ArrayList<String>();
 
 				// Add items
-				ItemBundleEntry entry = bundles.get(Integer.toString(defID));
+				ItemBundleEntry entry = bundles.get(defID);
 				for (String id : entry.items.keySet()) {
 					int itC = entry.items.get(id);
-					String[] ids = add(Integer.parseInt(id), count * itC);
+					String[] ids = add(id, count * itC);
 					for (String itmI : ids)
 						res.add(itmI);
 				}
@@ -427,7 +402,7 @@ public class ItemAccessor {
 		// Single-item
 		case SINGLE_ITEM: {
 			// Check if the item is present
-			if (count > 1 || inventory.getAccessor().hasInventoryObject(info.inventory, defID))
+			if (count > 1 || inventory.getAccessor().hasInventoryObjectByDefId(info.inventory, defID))
 				return new String[0]; // invalid
 
 			// Fall through to the quantity-based handler as the rest is the same
@@ -444,35 +419,28 @@ public class ItemAccessor {
 		}
 
 		if (objs != null) {
-			// Send packet if successful
+			// Mark items
 			ArrayList<String> syncedInventories = new ArrayList<String>();
-			InventoryItemPacket pk = new InventoryItemPacket();
-			JsonArray arr = new JsonArray();
 			for (JsonObject obj : objs) {
-				arr.add(obj);
-
-				if (!syncedInventories.contains(obj.get("type").getAsString())) {
+				// Mark
+				inventory.getAccessor().markChanged(obj.get("type").getAsString(), obj.get("id").getAsString());
+				if (!syncedInventories.contains(obj.get("type").getAsString()))
 					syncedInventories.add(obj.get("type").getAsString());
-					if (!inventory.getAccessor().itemsToSave.contains(obj.get("type").getAsString()))
-						inventory.getAccessor().itemsToSave.add(obj.get("type").getAsString());
-				}
 			}
-			pk.item = arr;
-			if (player != null)
-				player.client.sendPacket(pk);
+
+			// Transfer
+			for (String i : syncedInventories)
+				inventory.getAccessor().transferUpdatedItemsToPlayer(player, i);
 
 			// Save items
-			for (String itm : inventory.getAccessor().itemsToSave) {
+			for (String itm : inventory.getAccessor().getChangedInventories()) {
 				inventory.setItem(itm, inventory.getItem(itm));
 
-				if (!syncedInventories.contains(itm) && player != null) {
-					// Sync unsaved inventories
-					pk = new InventoryItemPacket();
-					pk.item = inventory.getItem(itm);
-					player.client.sendPacket(pk);
+				if (!syncedInventories.contains(itm)) {
+					// Transfer to player
+					inventory.getAccessor().transferUpdatedItemsToPlayer(player, itm);
 				}
 			}
-			inventory.getAccessor().completedSave();
 		}
 
 		// Return ids
@@ -486,9 +454,9 @@ public class ItemAccessor {
 	 * @param defID Item defID
 	 * @return True if successful, false otherwise
 	 */
-	public boolean remove(int defID) {
+	public boolean remove(String defID) {
 		// Find definition
-		ItemInfo info = definitions.get(Integer.toString(defID));
+		ItemInfo info = definitions.get(defID);
 		if (info == null)
 			return false;
 
@@ -505,7 +473,7 @@ public class ItemAccessor {
 		// Single-item
 		case SINGLE_ITEM: {
 			// Check if the item is present
-			if (!inventory.getAccessor().hasInventoryObject(info.inventory, defID))
+			if (!inventory.getAccessor().hasInventoryObjectByDefId(info.inventory, defID))
 				return false; // invalid
 
 			// Fall through to the quantity-based handler as the rest is the same
@@ -523,37 +491,27 @@ public class ItemAccessor {
 
 		}
 
-		// Send packet if successful
-		if (player != null) {
-			if (inventory.getAccessor().hasInventoryObject(info.inventory, defID)) {
-				JsonArray arr = new JsonArray();
-				arr.add(inventory.getAccessor().findInventoryObject(info.inventory, defID));
-				InventoryItemPacket pk = new InventoryItemPacket();
-				pk.item = arr;
-				player.client.sendPacket(pk);
-			} else {
-				InventoryItemRemovedPacket pk = new InventoryItemRemovedPacket();
-				pk.items = new String[] { removedItemUUID };
-				player.client.sendPacket(pk);
-			}
+		// Mark items
+		if (inventory.getAccessor().hasInventoryObjectByItemId(info.inventory, removedItemUUID)) {
+			// Mark changed
+			inventory.getAccessor().markChanged(info.inventory, removedItemUUID);
+		} else {
+			// Mark deleted
+			inventory.getAccessor().markDeleted(info.inventory, removedItemUUID);
 		}
 
-		// Add item to save
-		if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
-			inventory.getAccessor().itemsToSave.add(info.inventory);
+		// Transfer
+		inventory.getAccessor().transferUpdatedItemsToPlayer(player, info.inventory);
 
-		// Save items
-		for (String itm : inventory.getAccessor().itemsToSave) {
+		// Save other items
+		for (String itm : inventory.getAccessor().getChangedInventories()) {
 			inventory.setItem(itm, inventory.getItem(itm));
 
-			if (!info.inventory.equals(itm) && player != null) {
-				// Sync unsaved inventories
-				InventoryItemPacket pk = new InventoryItemPacket();
-				pk.item = inventory.getItem(itm);
-				player.client.sendPacket(pk);
+			if (!itm.equals(info.inventory)) {
+				// Transfer to player
+				inventory.getAccessor().transferUpdatedItemsToPlayer(player, itm);
 			}
 		}
-		inventory.getAccessor().completedSave();
 
 		// Return success
 		return true;
@@ -566,13 +524,13 @@ public class ItemAccessor {
 	 * @param count Amount of the item to remove
 	 * @return True if successful, false otherwise
 	 */
-	public boolean remove(int defID, int count) {
+	public boolean remove(String defID, int count) {
 		// Check validity
 		if (count <= 0)
 			return false;
 
 		// Find definition
-		ItemInfo info = definitions.get(Integer.toString(defID));
+		ItemInfo info = definitions.get(defID);
 		if (info == null)
 			return false;
 
@@ -589,7 +547,7 @@ public class ItemAccessor {
 		// Single-item
 		case SINGLE_ITEM: {
 			// Check if the item is present
-			if (count > 1 || !inventory.getAccessor().hasInventoryObject(info.inventory, defID))
+			if (count > 1 || !inventory.getAccessor().hasInventoryObjectByDefId(info.inventory, defID))
 				return false; // invalid
 
 			// Fall through to the quantity-based handler as the rest is the same
@@ -607,37 +565,29 @@ public class ItemAccessor {
 
 		}
 
-		// Send packet if successful
-		if (player != null) {
-			if (inventory.getAccessor().hasInventoryObject(info.inventory, defID)) {
-				JsonArray arr = new JsonArray();
-				arr.add(inventory.getAccessor().findInventoryObject(info.inventory, defID));
-				InventoryItemPacket pk = new InventoryItemPacket();
-				pk.item = arr;
-				player.client.sendPacket(pk);
+		// Mark items
+		for (String id : removedItemUUIDs) {
+			if (inventory.getAccessor().hasInventoryObjectByItemId(info.inventory, id)) {
+				// Mark changed
+				inventory.getAccessor().markChanged(info.inventory, id);
 			} else {
-				InventoryItemRemovedPacket pk = new InventoryItemRemovedPacket();
-				pk.items = removedItemUUIDs;
-				player.client.sendPacket(pk);
+				// Mark deleted
+				inventory.getAccessor().markDeleted(info.inventory, id);
 			}
 		}
 
-		// Add item to save
-		if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
-			inventory.getAccessor().itemsToSave.add(info.inventory);
+		// Transfer
+		inventory.getAccessor().transferUpdatedItemsToPlayer(player, info.inventory);
 
-		// Save items
-		for (String itm : inventory.getAccessor().itemsToSave) {
+		// Save other items
+		for (String itm : inventory.getAccessor().getChangedInventories()) {
 			inventory.setItem(itm, inventory.getItem(itm));
 
-			if (!info.inventory.equals(itm) && player != null) {
-				// Sync unsaved inventories
-				InventoryItemPacket pk = new InventoryItemPacket();
-				pk.item = inventory.getItem(itm);
-				player.client.sendPacket(pk);
+			if (!itm.equals(info.inventory)) {
+				// Transfer to player
+				inventory.getAccessor().transferUpdatedItemsToPlayer(player, itm);
 			}
 		}
-		inventory.getAccessor().completedSave();
 
 		// Return success
 		return true;
@@ -651,7 +601,7 @@ public class ItemAccessor {
 	 */
 	public boolean remove(JsonObject object) {
 		// Find definition
-		ItemInfo info = definitions.get(Integer.toString(object.get("defId").getAsInt()));
+		ItemInfo info = definitions.get(object.get("defId").getAsString());
 		if (info == null)
 			return false;
 
@@ -659,7 +609,6 @@ public class ItemAccessor {
 		if (!inventoryTypeMap.containsKey(info.inventory))
 			return false;
 		InventoryDefinitionContainer container = inventoryTypeMap.get(info.inventory);
-
 		String[] removedItemUUIDs = null;
 
 		// Find type handler
@@ -668,7 +617,7 @@ public class ItemAccessor {
 		// Single-item
 		case SINGLE_ITEM: {
 			// Check if the item is present
-			if (!inventory.getAccessor().hasInventoryObject(info.inventory, object.get("defId").getAsInt()))
+			if (!inventory.getAccessor().hasInventoryObjectByDefId(info.inventory, object.get("defId").getAsString()))
 				return false; // invalid
 
 			String removedItemUUID = container.inventoryInteraction.removeOne(inventory, object);
@@ -684,7 +633,6 @@ public class ItemAccessor {
 		// Object-based item
 		case OBJECT_BASED: {
 			// Remove item directly
-
 			String removedItemUUID = container.inventoryInteraction.removeOne(inventory, object);
 
 			// Remove item directly
@@ -705,13 +653,14 @@ public class ItemAccessor {
 
 				// Remove items
 				if (q >= 0) {
-					if (!inventory.getAccessor().hasInventoryObject(info.inventory, object.get("defId").getAsInt())) {
+					if (!inventory.getAccessor().hasInventoryObjectByDefId(info.inventory,
+							object.get("defId").getAsString())) {
 						// Invalid
 						return false;
 					} else {
 						// Remove existing
 						removedItemUUIDs = container.inventoryInteraction.removeMultiple(inventory,
-								object.get("defId").getAsInt(), 1);
+								object.get("defId").getAsString(), 1);
 						if (removedItemUUIDs == null) {
 							return false;
 						}
@@ -733,40 +682,29 @@ public class ItemAccessor {
 
 		}
 
-		String objId = object.get("id").getAsString();
-		if (player != null) {
-			if (!inventory.getAccessor().hasInventoryObject(info.inventory, objId)) {
-				// Send packet if successful
-				InventoryItemRemovedPacket pk = new InventoryItemRemovedPacket();
-				pk.items = removedItemUUIDs;
-				player.client.sendPacket(pk);
+		// Mark items
+		for (String id : removedItemUUIDs) {
+			if (inventory.getAccessor().hasInventoryObjectByItemId(info.inventory, id)) {
+				// Mark changed
+				inventory.getAccessor().markChanged(info.inventory, id);
 			} else {
-				JsonArray arr = new JsonArray();
-				arr.add(inventory.getAccessor().findInventoryObject(info.inventory, objId));
-
-				// Send packet if successful
-				InventoryItemPacket pk = new InventoryItemPacket();
-				pk.item = arr;
-				player.client.sendPacket(pk);
+				// Mark deleted
+				inventory.getAccessor().markDeleted(info.inventory, id);
 			}
 		}
 
-		// Add item to save
-		if (!inventory.getAccessor().itemsToSave.contains(info.inventory))
-			inventory.getAccessor().itemsToSave.add(info.inventory);
+		// Transfer
+		inventory.getAccessor().transferUpdatedItemsToPlayer(player, info.inventory);
 
-		// Save items
-		for (String itm : inventory.getAccessor().itemsToSave) {
+		// Save other items
+		for (String itm : inventory.getAccessor().getChangedInventories()) {
 			inventory.setItem(itm, inventory.getItem(itm));
 
-			// Sync unsaved inventories
-			if (player != null) {
-				InventoryItemPacket pkt = new InventoryItemPacket();
-				pkt.item = inventory.getItem(itm);
-				player.client.sendPacket(pkt);
+			if (!itm.equals(info.inventory)) {
+				// Transfer to player
+				inventory.getAccessor().transferUpdatedItemsToPlayer(player, itm);
 			}
 		}
-		inventory.getAccessor().completedSave();
 
 		// Return success
 		return true;
@@ -779,9 +717,9 @@ public class ItemAccessor {
 	 * @param defID Item DefID
 	 * @return True if quantity-based, false otherwise
 	 */
-	public boolean isQuantityBased(int defID) {
+	public boolean isQuantityBased(String defID) {
 		// Find definition
-		ItemInfo info = definitions.get(Integer.toString(defID));
+		ItemInfo info = definitions.get(defID);
 		if (info == null)
 			return false;
 
@@ -803,9 +741,9 @@ public class ItemAccessor {
 	 * @param defID Item defID to retrieve the count of
 	 * @return Item count
 	 */
-	public int getCountOfItem(int defID) {
+	public int getCountOfItem(String defID) {
 		// Find definition
-		ItemInfo info = definitions.get(Integer.toString(defID));
+		ItemInfo info = definitions.get(defID);
 		if (info == null)
 			return 0;
 
@@ -824,7 +762,7 @@ public class ItemAccessor {
 		// Single-item
 		case SINGLE_ITEM: {
 			// Check if the item is present
-			if (inventory.getAccessor().hasInventoryObject(info.inventory, defID))
+			if (inventory.getAccessor().hasInventoryObjectByDefId(info.inventory, defID))
 				return 1;
 			else
 				return 0;
@@ -838,7 +776,7 @@ public class ItemAccessor {
 			JsonArray items = inventory.getItem(info.inventory).getAsJsonArray();
 			for (JsonElement ele : items) {
 				JsonObject itm = ele.getAsJsonObject();
-				if (itm.get("defId").getAsInt() == defID) {
+				if (itm.get("defId").getAsString().equals(defID)) {
 					count++;
 				}
 			}
@@ -849,9 +787,9 @@ public class ItemAccessor {
 		// Quantity-based
 		case QUANTITY_BASED: {
 			// Find item
-			if (!inventory.getAccessor().hasInventoryObject(info.inventory, defID))
+			if (!inventory.getAccessor().hasInventoryObjectByDefId(info.inventory, defID))
 				return 0; // Not present
-			JsonObject obj = inventory.getAccessor().findInventoryObject(info.inventory, defID);
+			JsonObject obj = inventory.getAccessor().findInventoryObjectByDefId(info.inventory, defID);
 			if (!obj.has("components") || !obj.get("components").getAsJsonObject().has("Quantity"))
 				return 0; // Invalid
 

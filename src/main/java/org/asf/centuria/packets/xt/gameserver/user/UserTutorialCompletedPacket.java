@@ -69,6 +69,7 @@ public class UserTutorialCompletedPacket implements IXtPacket<UserTutorialComple
 				}
 			}
 		}
+		JsonArray update = new JsonArray();
 		if (lookObj != null) {
 			lookObj.remove("components");
 			JsonObject ts = new JsonObject();
@@ -84,16 +85,17 @@ public class UserTutorialCompletedPacket implements IXtPacket<UserTutorialComple
 			components.add("AvatarLook", al);
 			components.add("Name", nm);
 			lookObj.add("components", components);
+			update.add(lookObj);
 		}
 		plr.account.getSaveSpecificInventory().setItem("avatars", items);
 
 		// Prevent double save
 		plr.pendingLookID = null;
-		plr.pendingLookDefID = 8254;
+		plr.pendingLookDefID = "8254";
 
 		// Update avatar object in client inventory
 		InventoryItemPacket pkt = new InventoryItemPacket();
-		pkt.item = items;
+		pkt.item = update;
 		client.sendPacket(pkt);
 
 		// Send response
