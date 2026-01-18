@@ -6098,7 +6098,13 @@ public class SendMessage extends AbstractChatPacket {
 							var twiggleAccessor = acc.getSaveSpecificInventory().getTwiggleAccesor();
 							for (TwiggleItem twiggle : twiggleAccessor.getAllTwiggles()) {
 								if (twiggle.getTwiggleComponent().workType != TwiggleState.None
-										&& twiggle.getTwiggleComponent().workEndTime > System.currentTimeMillis()) {
+										&& (twiggle.getTwiggleComponent().workEndTime + (60 * 1000)) > System
+												.currentTimeMillis()) { // We add one minute to the work time limit as
+																		// the game has a small desync issue with the
+																		// jamaaTime system, making it at most a minute
+																		// off of the actual server time, the client
+																		// would still display work is busy while its
+																		// not
 									twiggles.add(twiggle);
 								}
 							}
@@ -6126,7 +6132,7 @@ public class SendMessage extends AbstractChatPacket {
 									continue;
 
 								// Set timer
-								selectedTwiggle.getTwiggleComponent().workEndTime = System.currentTimeMillis();
+								selectedTwiggle.getTwiggleComponent().workEndTime = 1;
 								selectedTwiggle.getTimeStampComponent().stamp();
 
 								// remove old twiggle item
