@@ -18,13 +18,24 @@ public class ChatRoom {
 	private String roomId;
 	private ChatServer server;
 	private String type;
+	private boolean createdByCode;
 
 	private ArrayList<Object> objects = new ArrayList<Object>();
 
-	public ChatRoom(String type, String roomId, ChatServer server) {
+	public ChatRoom(boolean createdByCode, String type, String roomId, ChatServer server) {
+		this.createdByCode = createdByCode;
 		this.type = type;
 		this.roomId = roomId;
 		this.server = server;
+	}
+	
+	/**
+	 * Checks if the chat room should be retained when empty
+	 * 
+	 * @return True if the chat room should be retained, false otherwise
+	 */
+	public boolean shouldRetainIfEmpty() {
+		return createdByCode;
 	}
 
 	/**

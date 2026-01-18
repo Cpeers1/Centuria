@@ -36,18 +36,37 @@ public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServ
 
 	public ChatServer(ServerSocket socket) {
 		super(socket, ChatClient.class);
-		rooms.put("SYSTEM", new ChatRoom("private", "SYSTEM", this));
+		rooms.put("SYSTEM", new ChatRoom(true, "private", "SYSTEM", this));
 	}
 
 	ChatRoom joinRoom(String type, String id) {
 		synchronized (rooms) {
 			if (!rooms.containsKey(id)) {
-				ChatRoom room = new ChatRoom(type, id, this);
+				ChatRoom room = new ChatRoom(false, type, id, this);
 				rooms.put(id, room);
 				return room;
 			} else {
 				return rooms.get(id);
 			}
+		}
+	}
+
+	/**
+	 * Creates a permanent chat room
+	 * 
+	 * @param id   Chat room ID
+	 * @param type Chat room type
+	 * @return ChatRoom instance
+	 */
+	public ChatRoom createPermanentRoom(String id, String type) {
+		synchronized (rooms) {
+			if (rooms.containsKey(id)) {
+				return rooms.get(id);
+			}
+
+			ChatRoom room = new ChatRoom(true, type, id, this);
+			rooms.put(id, room);
+			return room;
 		}
 	}
 
@@ -57,7 +76,7 @@ public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServ
 				ChatRoom room = rooms.get(id);
 
 				// Check players in room
-				if (room.getConnectedClients().length == 0) {
+				if (room.getConnectedClients().length == 0 && !room.shouldRetainIfEmpty()) {
 					// Remove
 					rooms.remove(id);
 				}

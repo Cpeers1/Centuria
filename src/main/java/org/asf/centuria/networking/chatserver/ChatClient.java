@@ -407,7 +407,7 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 		synchronized (rooms) {
 			if (!rooms.containsKey(room)) {
 				ChatRoom roomInstance = getServer().joinRoom(type, room);
-				ChatRoom localRoom = new ChatRoom(type, room, getServer());
+				ChatRoom localRoom = new ChatRoom(false, type, room, getServer());
 				localRooms.put(room, localRoom);
 				rooms.put(room, roomInstance);
 				joined = true;
