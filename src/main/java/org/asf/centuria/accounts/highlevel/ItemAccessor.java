@@ -74,10 +74,10 @@ public class ItemAccessor {
 			put("10", new InventoryDefinitionContainer(InventoryStorageType.SINGLE_ITEM, new SanctuaryClassHelper()));
 
 			// Sanctuary houses
-			put("5", new InventoryDefinitionContainer(InventoryStorageType.OBJECT_BASED, new SanctuaryHouseHelper()));
+			put("5", new InventoryDefinitionContainer(InventoryStorageType.SINGLE_ITEM, new SanctuaryHouseHelper()));
 
 			// Sanctuary islands
-			put("6", new InventoryDefinitionContainer(InventoryStorageType.OBJECT_BASED, new SanctuaryIslandHelper()));
+			put("6", new InventoryDefinitionContainer(InventoryStorageType.SINGLE_ITEM, new SanctuaryIslandHelper()));
 
 			// Furniture
 			put("102", new InventoryDefinitionContainer(InventoryStorageType.OBJECT_BASED, new FurnitureHelper()));
@@ -94,7 +94,7 @@ public class ItemAccessor {
 					new GenericHelperWithQuantity("111", tradelisComponent())));
 
 			// Enigmas (ty to Mewt/Uzukara for pointing this out)
-			put("7", new InventoryDefinitionContainer(InventoryStorageType.OBJECT_BASED,
+			put("7", new InventoryDefinitionContainer(InventoryStorageType.SINGLE_ITEM,
 					new GenericHelper("7", enigmaComonent())));
 
 			// Inspirations
