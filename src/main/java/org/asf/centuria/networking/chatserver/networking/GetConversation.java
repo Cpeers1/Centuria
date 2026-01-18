@@ -2,7 +2,10 @@ package org.asf.centuria.networking.chatserver.networking;
 
 import java.util.UUID;
 
+import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.networking.gameserver.GameServer;
+import org.asf.centuria.social.SocialManager;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -54,6 +57,34 @@ public class GetConversation extends AbstractChatPacket {
 			res.addProperty("success", true);
 			client.sendPacket(res);
 			return true;
+		}
+
+		// Check if dm
+		if (DMManager.getInstance().dmExists(convo)) {
+			// Check moderator perms
+			String permLevel = "member";
+			if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+				permLevel = client.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+						.get("permissionLevel").getAsString();
+			}
+
+			// Check if all the others blocked the member
+			boolean hasNonBlocked = false;
+			for (String p2 : DMManager.getInstance().getDMParticipants(convo)) {
+				if (!p2.equals(client.getPlayer().getAccountID()) && !p2.startsWith("plaintext:")) {
+					if (!SocialManager.getInstance().socialListExists(p2)
+							|| !SocialManager.getInstance().getPlayerIsBlocked(p2, client.getPlayer().getAccountID()))
+						hasNonBlocked = true;
+				}
+			}
+			if (!hasNonBlocked && !GameServer.hasPerm(permLevel, "moderator")) {
+				// Fail
+				JsonObject res = new JsonObject();
+				res.addProperty("eventId", "conversations.get");
+				res.addProperty("success", false);
+				client.sendPacket(res);
+				return true;
+			}
 		}
 
 		// Send response

@@ -1484,6 +1484,100 @@ public class SendMessage extends AbstractChatPacket {
 			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
+			// Check dm
+			if (client.isRoomPrivate(room) && !room.equals("SYSTEM")) {
+				// Check existence
+				boolean exists = manager.dmExists(room);
+				boolean wasBlockAccess = false;
+				String participant = client.getPlayer().getAccountID();
+				if (!GameServer.hasPerm(permLevel, "moderator")) {
+					if (exists) {
+						// Check if in DM
+						boolean found = false;
+						for (String id : manager.getDMParticipants(room)) {
+							if (id.equals(participant)) {
+								found = true;
+								break;
+							}
+						}
+						if (!found) {
+							exists = false;
+							wasBlockAccess = true;
+						}
+					}
+					if (exists) {
+						// Check if all the others blocked the member
+						boolean hasNonBlocked = false;
+						for (String p2 : manager.getDMParticipants(room)) {
+							if (!p2.equals(participant) && !p2.startsWith("plaintext:")) {
+								if (!SocialManager.getInstance().socialListExists(p2)
+										|| !SocialManager.getInstance().getPlayerIsBlocked(p2, participant))
+									hasNonBlocked = true;
+							}
+						}
+						if (!hasNonBlocked) {
+							// Block
+							exists = false;
+							wasBlockAccess = false;
+						}
+					}
+				}
+
+				// Check result
+				if (!exists) {
+					// Fail
+					// Send message sent error
+
+					// Send failure
+					SendMessage res = new SendMessage();
+					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.room = room;
+					res.message = "</noparse><color=red>[!] </color><color=orange><noparse>" + message
+							+ "</noparse></color><noparse>";
+					res.messagePlain = "[!] " + message;
+					res.originalMessage = message;
+					res.moderatorMessage = GameServer.hasPerm(permLevel, "moderator");
+					res.alertingMessage = true;
+					res.criticalAlertingMessage = true;
+					res.blockedMessage = true;
+					res.sourceWriter = client.getPlayer().getAccountID();
+					res.sentAtWriter = fmt.format(new Date());
+					client.sendPacket(res);
+
+					// Broadcast to moderators unless its a private chat
+					res = new SendMessage();
+					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.room = room;
+					res.message = "</noparse><color=red>[!] </color><color=orange><noparse>" + message
+							+ "</noparse></color><noparse>";
+					res.messagePlain = "[!] " + message;
+					res.originalMessage = message;
+					res.moderatorMessage = GameServer.hasPerm(permLevel, "moderator");
+					res.alertingMessage = true;
+					res.criticalAlertingMessage = true;
+					res.blockedMessage = true;
+					res.sourceWriter = client.getPlayer().getAccountID();
+					res.sentAtWriter = fmt.format(new Date());
+					broadcastToModerators(client, res);
+
+					// System message
+					res = new SendMessage();
+					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.room = room;
+					if (wasBlockAccess)
+						res.message = "Error: the message could not be sent as the chat room you are sending your message to revoked your access";
+					else
+						res.message = "Error: the message could not be sent as the chat you are trying to send a message to was deleted";
+					res.sourceWriter = NIL_UUID;
+					res.sentAtWriter = fmt.format(new Date());
+					res.moderatorMessage = GameServer.hasPerm(permLevel, "moderator");
+					client.sendPacket(res);
+
+					// Return
+					return true;
+				}
+			}
+
 			// If it is a DM, save message
 			if (client.isRoomPrivate(room) && manager.dmExists(room)) {
 				PrivateChatMessage msg = new PrivateChatMessage();
@@ -1542,10 +1636,11 @@ public class SendMessage extends AbstractChatPacket {
 								receiver.getPlayer().getAccountID())) {
 							// Check mod perms and room type
 							if (GameServer.hasPerm(permLevel, "moderator")) {
-								if (client.isInRoom(room) && !client.isRoomPrivate(room)) {
+								if (client.isInRoom(room) && !client.isRoomPrivate(room)
+										&& !GameServer.hasPerm(permLevel2, "moderator")) {
 									continue; // Blocked
 								}
-							} else
+							} else if (!GameServer.hasPerm(permLevel2, "moderator"))
 								continue; // Blocked
 						}
 
@@ -1725,7 +1820,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Send message
 						receiver.sendPacket(res);
 					}
-				} else {
+				} else if (!client.isRoomPrivate(room)) {
 					// Moderator in other room
 					if (receiver.getObject(ModeratorClient.class) != null) {
 						// Check moderator perms
@@ -2042,70 +2137,69 @@ public class SendMessage extends AbstractChatPacket {
 	}
 
 	private static void broadcastToModerators(ChatClient client, SendMessage message) {
-		if (!client.isRoomPrivate(message.room)) {
-			for (ChatClient receiver : client.getServer().getClients()) {
-				// Fetch receiver moderator perms
-				String permLevel2 = "member";
-				if (receiver.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
-					permLevel2 = receiver.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
-							.get("permissionLevel").getAsString();
-				}
+		for (ChatClient receiver : client.getServer().getClients()) {
+			// Fetch receiver moderator perms
+			String permLevel2 = "member";
+			if (receiver.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+				permLevel2 = receiver.getPlayer().getSaveSharedInventory().getItem("permissions").getAsJsonObject()
+						.get("permissionLevel").getAsString();
+			}
 
-				// Check if in room
-				if (receiver.isInRoom(message.room) && GameServer.hasPerm(permLevel2, "moderator")
-						&& !receiver.getPlayer().getAccountID().equals(client.getPlayer().getAccountID())) {
-					// Check limbo player
-					Player gameClient = receiver.getPlayer().getOnlinePlayerInstance();
-					if (gameClient != null && (!gameClient.roomReady || gameClient.room == null))
-						continue;
+			// Check if in room
+			if (receiver.isInRoom(message.room) && GameServer.hasPerm(permLevel2, "moderator")
+					&& !receiver.getPlayer().getAccountID().equals(client.getPlayer().getAccountID())) {
+				// Check limbo player
+				Player gameClient = receiver.getPlayer().getOnlinePlayerInstance();
+				if (gameClient != null && (!gameClient.roomReady || gameClient.room == null))
+					continue;
 
-					// Send to mod
-					SendMessage res = new SendMessage();
-					res.roomType = message.roomType;
-					res.room = message.room;
-					res.message = message.message;
-					res.messagePlain = message.messagePlain;
-					res.moderatorMessage = true;
-					res.originalMessage = message.originalMessage;
-					res.alertingMessage = message.alertingMessage;
-					res.criticalAlertingMessage = message.criticalAlertingMessage;
-					res.blockedMessage = message.blockedMessage;
-					res.sourceWriter = message.sourceWriter;
-					res.sentAtWriter = message.sentAtWriter;
-					res.filterResultWriter = message.filterResultWriter;
-					res.messagePartsWriter = message.messagePartsWriter;
-					receiver.sendPacket(res);
-				} else if (!receiver.isInRoom(message.room)
-						&& !receiver.getPlayer().getAccountID().equals(client.getPlayer().getAccountID())) {
-					// Not in room
+				// Send to mod
+				SendMessage res = new SendMessage();
+				res.roomType = message.roomType;
+				res.room = message.room;
+				res.message = message.message;
+				res.messagePlain = message.messagePlain;
+				res.moderatorMessage = true;
+				res.originalMessage = message.originalMessage;
+				res.alertingMessage = message.alertingMessage;
+				res.criticalAlertingMessage = message.criticalAlertingMessage;
+				res.blockedMessage = message.blockedMessage;
+				res.sourceWriter = message.sourceWriter;
+				res.sentAtWriter = message.sentAtWriter;
+				res.filterResultWriter = message.filterResultWriter;
+				res.messagePartsWriter = message.messagePartsWriter;
+				receiver.sendPacket(res);
+			} else if (!receiver.isInRoom(message.room)
+					&& !receiver.getPlayer().getAccountID().equals(client.getPlayer().getAccountID())
+					&& !client.isRoomPrivate(message.room)) {
+				// Not in room
 
-					// Check moderator client
-					if (receiver.getObject(ModeratorClient.class) != null) {
-						// Check moderator perms
-						String permLevel = "member";
-						if (receiver.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
-							permLevel = receiver.getPlayer().getSaveSharedInventory().getItem("permissions")
-									.getAsJsonObject().get("permissionLevel").getAsString();
-						}
-						if (GameServer.hasPerm(permLevel, "moderator")) {
-							// Send through centuria moderator protocol
-							SendMessage res = new SendMessage();
-							res.packetId = "centuria.moderatorclient.postedMessageInOtherRoom";
-							res.roomType = message.roomType;
-							res.room = message.room;
-							res.message = message.message;
-							res.messagePlain = message.messagePlain;
-							res.moderatorMessage = true;
-							res.originalMessage = message.originalMessage;
-							res.alertingMessage = message.alertingMessage;
-							res.criticalAlertingMessage = message.criticalAlertingMessage;
-							res.blockedMessage = message.blockedMessage;
-							res.sourceWriter = message.sourceWriter;
-							res.sentAtWriter = message.sentAtWriter;
-							res.filterResultWriter = message.filterResultWriter;
-							res.messagePartsWriter = message.messagePartsWriter;
-							receiver.sendPacket(res);
-						}
+				// Check moderator client
+				if (receiver.getObject(ModeratorClient.class) != null) {
+					// Check moderator perms
+					String permLevel = "member";
+					if (receiver.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
+						permLevel = receiver.getPlayer().getSaveSharedInventory().getItem("permissions")
+								.getAsJsonObject().get("permissionLevel").getAsString();
+					}
+					if (GameServer.hasPerm(permLevel, "moderator")) {
+						// Send through centuria moderator protocol
+						SendMessage res = new SendMessage();
+						res.packetId = "centuria.moderatorclient.postedMessageInOtherRoom";
+						res.roomType = message.roomType;
+						res.room = message.room;
+						res.message = message.message;
+						res.messagePlain = message.messagePlain;
+						res.moderatorMessage = true;
+						res.originalMessage = message.originalMessage;
+						res.alertingMessage = message.alertingMessage;
+						res.criticalAlertingMessage = message.criticalAlertingMessage;
+						res.blockedMessage = message.blockedMessage;
+						res.sourceWriter = message.sourceWriter;
+						res.sentAtWriter = message.sentAtWriter;
+						res.filterResultWriter = message.filterResultWriter;
+						res.messagePartsWriter = message.messagePartsWriter;
+						receiver.sendPacket(res);
 					}
 				}
 			}
