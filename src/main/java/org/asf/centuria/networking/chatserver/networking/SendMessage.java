@@ -32,7 +32,6 @@ import org.asf.centuria.entities.inventoryitems.twiggles.TwiggleItem;
 import org.asf.centuria.entities.players.Player;
 import org.asf.centuria.entities.trading.Trade;
 import org.asf.centuria.entities.uservars.UserVarValue;
-import org.asf.centuria.enums.inventory.InventoryType;
 import org.asf.centuria.enums.objects.WorldObjectMoverNodeType;
 import org.asf.centuria.enums.twiggles.TwiggleState;
 import org.asf.centuria.interactions.modules.QuestManager;
@@ -6099,7 +6098,7 @@ public class SendMessage extends AbstractChatPacket {
 							var twiggleAccessor = acc.getSaveSpecificInventory().getTwiggleAccesor();
 							for (TwiggleItem twiggle : twiggleAccessor.getAllTwiggles()) {
 								if (twiggle.getTwiggleComponent().workType != TwiggleState.None
-										&& twiggle.getTwiggleComponent().workEndTime < System.currentTimeMillis()) {
+										&& twiggle.getTwiggleComponent().workEndTime > System.currentTimeMillis()) {
 									twiggles.add(twiggle);
 								}
 							}
@@ -6137,10 +6136,9 @@ public class SendMessage extends AbstractChatPacket {
 								twiggleInv.add(selectedTwiggle.toJsonObject());
 
 								// save to disk
-								String invId = Integer.toString(InventoryType.Twiggle.invTypeId);
-								acc.getSaveSharedInventory().setItem("110",
-										acc.getSaveSharedInventory().getItem(invId));
-								acc.getSaveSharedInventory().getAccessor().markChanged("110", selectedTwiggle.uuid);
+								acc.getSaveSpecificInventory().setItem("110",
+										acc.getSaveSpecificInventory().getItem("110"));
+								acc.getSaveSpecificInventory().getAccessor().markChanged("110", selectedTwiggle.uuid);
 							}
 
 							// Send ILs

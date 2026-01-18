@@ -199,8 +199,7 @@ public class TwiggleAccessorImpl extends TwiggleAccessor {
 				twiggles.add(twiggleItem);
 			}
 
-			return (TwiggleItem[]) twiggles.toArray();
-
+			return (TwiggleItem[]) twiggles.toArray(new TwiggleItem[0]);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
