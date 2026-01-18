@@ -9,6 +9,7 @@ import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.dms.PrivateChatMessage;
 import org.asf.centuria.entities.uservars.UserVarValue;
 import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.social.SocialManager;
 import org.asf.centuria.textfilter.TextFilterService;
@@ -67,7 +68,8 @@ public class HistoryPacket extends AbstractChatPacket {
 		int messageOffset = cursorCurrent * pageSize;
 		int dmHistorySize = 0;
 		DMManager manager = DMManager.getInstance();
-		if (client.isInRoom(convo) && client.isRoomPrivate(convo) && manager.dmExists(convo)) {
+		if (client.isInRoom(convo) && client.getRoom(convo).getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)
+				&& manager.dmExists(convo)) {
 			// Check if all the others blocked the member
 			boolean hasNonBlocked = false;
 			for (String p2 : DMManager.getInstance().getDMParticipants(convo)) {

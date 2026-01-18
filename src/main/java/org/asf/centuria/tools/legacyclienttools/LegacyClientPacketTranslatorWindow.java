@@ -95,7 +95,7 @@ public class LegacyClientPacketTranslatorWindow {
 		panel.add(lblNewLabel);
 
 		txtHttpaerialworksddnsnet = new JTextField();
-		txtHttpaerialworksddnsnet.setText("http://emuferal.ddns.net:6969");
+		txtHttpaerialworksddnsnet.setText("http://emuferal.openferal.net:37502");
 		txtHttpaerialworksddnsnet.setBounds(10, 28, 580, 20);
 		panel.add(txtHttpaerialworksddnsnet);
 		txtHttpaerialworksddnsnet.setColumns(10);
@@ -105,13 +105,13 @@ public class LegacyClientPacketTranslatorWindow {
 		panel.add(lblNewLabel_1);
 
 		txtHttpsaerialworksddnsnet = new JTextField();
-		txtHttpsaerialworksddnsnet.setText("https://emuferal.ddns.net:6970");
+		txtHttpsaerialworksddnsnet.setText("https://emuferal.openferal.net:37501");
 		txtHttpsaerialworksddnsnet.setColumns(10);
 		txtHttpsaerialworksddnsnet.setBounds(10, 75, 580, 20);
 		panel.add(txtHttpsaerialworksddnsnet);
 
 		txtAerialworksddnsnet = new JTextField();
-		txtAerialworksddnsnet.setText("emuferal.ddns.net");
+		txtAerialworksddnsnet.setText("emuferal.openferal.net");
 		txtAerialworksddnsnet.setColumns(10);
 		txtAerialworksddnsnet.setBounds(10, 122, 580, 20);
 		panel.add(txtAerialworksddnsnet);
@@ -130,13 +130,13 @@ public class LegacyClientPacketTranslatorWindow {
 		panel.add(lblNewLabel_3);
 
 		textField = new JTextField();
-		textField.setText("6968");
+		textField.setText("37503");
 		textField.setColumns(10);
 		textField.setBounds(10, 196, 281, 20);
 		panel.add(textField);
 
 		textField_1 = new JTextField();
-		textField_1.setText("6972");
+		textField_1.setText("37504");
 		textField_1.setColumns(10);
 		textField_1.setBounds(301, 196, 289, 20);
 		panel.add(textField_1);
@@ -150,7 +150,7 @@ public class LegacyClientPacketTranslatorWindow {
 		panel.add(lblNewLabel_5);
 
 		textField_2 = new JTextField();
-		textField_2.setText("6968");
+		textField_2.setText("37503");
 		textField_2.setColumns(10);
 		textField_2.setBounds(10, 244, 281, 20);
 		panel.add(textField_2);
@@ -160,7 +160,7 @@ public class LegacyClientPacketTranslatorWindow {
 		panel.add(lblNewLabel_6);
 
 		textField_3 = new JTextField();
-		textField_3.setText("6972");
+		textField_3.setText("37504");
 		textField_3.setColumns(10);
 		textField_3.setBounds(301, 244, 289, 20);
 		panel.add(textField_3);
@@ -170,13 +170,13 @@ public class LegacyClientPacketTranslatorWindow {
 		panel.add(lblNewLabel_7);
 
 		textField_4 = new JTextField();
-		textField_4.setText("6969");
+		textField_4.setText("37502");
 		textField_4.setColumns(10);
 		textField_4.setBounds(10, 293, 281, 20);
 		panel.add(textField_4);
 
 		textField_5 = new JTextField();
-		textField_5.setText("6970");
+		textField_5.setText("37501");
 		textField_5.setColumns(10);
 		textField_5.setBounds(301, 293, 281, 20);
 		panel.add(textField_5);

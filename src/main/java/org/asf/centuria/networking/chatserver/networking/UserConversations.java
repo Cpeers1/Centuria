@@ -1,6 +1,8 @@
 package org.asf.centuria.networking.chatserver.networking;
 
 import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -32,9 +34,10 @@ public class UserConversations extends AbstractChatPacket {
 		JsonArray convos = new JsonArray();
 
 		// Add room objects
-		for (String room : client.getRooms()) {
-			if (client.isRoomPrivate(room)) {
-				JsonObject obj = client.getServer().roomObject(room, true, client.getPlayer().getAccountID());
+		for (ChatRoom room : client.getRoomInstances()) {
+			if (room.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
+				JsonObject obj = client.getServer().roomObject(room.getRoomID(), room.getType(),
+						client.getPlayer().getAccountID());
 				if (obj != null)
 					convos.add(obj);
 			}

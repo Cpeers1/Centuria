@@ -54,6 +54,7 @@ import org.asf.centuria.networking.chatserver.networking.moderator.ModeratorClie
 import org.asf.centuria.networking.chatserver.proxies.OcProxyInfo;
 import org.asf.centuria.networking.chatserver.proxies.ProxySession;
 import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.voicechatserver.VoiceChatClient;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
@@ -117,6 +118,7 @@ public class SendMessage extends AbstractChatPacket {
 	}
 
 	public String room;
+	private ChatRoom roomInstance;
 	public String roomType;
 
 	public String message;
@@ -208,7 +210,7 @@ public class SendMessage extends AbstractChatPacket {
 	}
 
 	private static class HeightenedSensitivityFlags {
-		public String room;
+		public ChatRoom roomInst;
 
 		public boolean active = false;
 		public long disableAfter = -1;
@@ -240,8 +242,9 @@ public class SendMessage extends AbstractChatPacket {
 
 			// Moderation log
 			EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
-					"Chat has been re-enabled in room " + formatRoomName(null, room),
-					Map.of("Room", formatRoomName(null, room), "Resulting action", "chat re-enabled"), "SYSTEM", null));
+					"Chat has been re-enabled in room " + formatRoomName(null, roomInst),
+					Map.of("Room", formatRoomName(null, roomInst), "Resulting action", "chat re-enabled"), "SYSTEM",
+					null));
 
 			// Time format
 			SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
@@ -249,7 +252,7 @@ public class SendMessage extends AbstractChatPacket {
 
 			// Announce chat reopen
 			for (ChatClient client : server.getClients()) {
-				if (client != null && client.isInRoom(room)) {
+				if (client != null && client.isInRoom(roomInst.getRoomID())) {
 					// Check moderator perms
 					String permLevel = "member";
 					if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
@@ -260,8 +263,8 @@ public class SendMessage extends AbstractChatPacket {
 					SendMessage res = new SendMessage();
 					SimpleDateFormat fmt2 = new SimpleDateFormat("dd'-'MM'-'yyyy HH':'mm':'ss");
 					fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
-					res.room = room;
+					res.roomType = roomInst.getType();
+					res.room = roomInst.getRoomID();
 					res.message = "The chat has been re-enabled, we apologize about the inconvenience!";
 					res.sourceWriter = NIL_UUID;
 					res.sentAtWriter = fmt.format(new Date());
@@ -287,7 +290,7 @@ public class SendMessage extends AbstractChatPacket {
 
 			// Announce chat disable
 			for (ChatClient client : server.getClients()) {
-				if (client != null && client.isInRoom(room)) {
+				if (client != null && client.isInRoom(roomInst.getRoomID())) {
 					// Check moderator perms
 					String permLevel = "member";
 					if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
@@ -298,8 +301,8 @@ public class SendMessage extends AbstractChatPacket {
 					SendMessage res = new SendMessage();
 					SimpleDateFormat fmt2 = new SimpleDateFormat("dd'-'MM'-'yyyy HH':'mm':'ss");
 					fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
-					res.room = room;
+					res.roomType = roomInst.getType();
+					res.room = roomInst.getRoomID();
 					res.message = "Due to the large amount of filter triggers within this chat room, the chat has been temporarily disabled until a staff member can get online. We apologize about the inconvenience! The team has already been alerted about the chat being disabled!"
 							+ (renableChatAter != -1
 									? "\n\nChat re-enables at " + fmt2.format(new Date(renableChatAter)) + " UTC ("
@@ -332,7 +335,7 @@ public class SendMessage extends AbstractChatPacket {
 
 			// Announce heightened sensitivity
 			for (ChatClient client : server.getClients()) {
-				if (client != null && client.isInRoom(room)) {
+				if (client != null && client.isInRoom(roomInst.getRoomID())) {
 					// Check moderator perms
 					String permLevel = "member";
 					if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
@@ -342,8 +345,8 @@ public class SendMessage extends AbstractChatPacket {
 					SendMessage res = new SendMessage();
 					SimpleDateFormat fmt2 = new SimpleDateFormat("dd'-'MM'-'yyyy HH':'mm':'ss");
 					fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
-					res.room = room;
+					res.roomType = roomInst.getType();
+					res.room = roomInst.getRoomID();
 					res.message = (wasAutoactivate
 							? "Due to the large amount of filter triggers within this chat room without staff being present, the chat has been placed in heightened sensitivity mode, filters are temporarily more aggressive until staff disables this mode. Please avoid using swears and/or sensitive language until staff disables this mode."
 							: "This chat room has been placed in heightened sensitivity mode by the server staff, filters are temporarily more aggressive. Please avoid using swears and/or sensitive language until staff disables this mode.")
@@ -373,7 +376,7 @@ public class SendMessage extends AbstractChatPacket {
 
 				// Announce heightened sensitivity
 				for (ChatClient client : server.getClients()) {
-					if (client != null && client.isInRoom(room)) {
+					if (client != null && client.isInRoom(roomInst.getRoomID())) {
 						// Check moderator perms
 						String permLevel = "member";
 						if (client.getPlayer().getSaveSharedInventory().containsItem("permissions")) {
@@ -383,8 +386,8 @@ public class SendMessage extends AbstractChatPacket {
 						SendMessage res = new SendMessage();
 						SimpleDateFormat fmt2 = new SimpleDateFormat("dd'-'MM'-'yyyy HH':'mm':'ss");
 						fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
-						res.roomType = client.isRoomPrivate(room) ? "private" : "room";
-						res.room = room;
+						res.roomType = roomInst.getType();
+						res.room = roomInst.getRoomID();
 						res.message = "The chat no longer is in heightened sensitivity mode, filters are relaxed again, we apologize about the inconvenience.";
 						res.sourceWriter = NIL_UUID;
 						res.sentAtWriter = fmt.format(new Date());
@@ -408,7 +411,7 @@ public class SendMessage extends AbstractChatPacket {
 		HeightenedSensitivityFlags flags = roomInstance.getObject(HeightenedSensitivityFlags.class);
 		if (flags == null) {
 			flags = new HeightenedSensitivityFlags();
-			flags.room = roomInstance.getRoomID();
+			flags.roomInst = roomInstance;
 			roomInstance.addObject(flags);
 		}
 
@@ -431,8 +434,8 @@ public class SendMessage extends AbstractChatPacket {
 		}
 
 		// Call function if needed
-		if (!client.isRoomPrivate(roomInstance.getRoomID())) {
-			// Check if in word
+		if (roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT)) {
+			// Check if in world
 			Player online = client.getPlayer().getOnlinePlayerInstance();
 			if (online != null && online.roomReady && online.room.equals(roomInstance.getRoomID())) {
 				playerRoomSetup(client, roomInstance);
@@ -459,7 +462,7 @@ public class SendMessage extends AbstractChatPacket {
 			HeightenedSensitivityFlags flags = roomInstance.getObject(HeightenedSensitivityFlags.class);
 			if (flags == null) {
 				flags = new HeightenedSensitivityFlags();
-				flags.room = roomInstance.getRoomID();
+				flags.roomInst = roomInstance;
 				roomInstance.addObject(flags);
 			}
 			if (flags.active) {
@@ -585,6 +588,13 @@ public class SendMessage extends AbstractChatPacket {
 					.get("permissionLevel").getAsString();
 		}
 
+		// Get room
+		roomInstance = client.getServer().getRoom(room);
+		if (roomInstance == null) {
+			// Room doesnt exist
+			return true;
+		}
+
 		// Security checks
 		// Check moderator perms
 		if (!GameServer.hasPerm(permLevel, "moderator")) {
@@ -604,7 +614,7 @@ public class SendMessage extends AbstractChatPacket {
 			//
 			// If its not a mod and its a room the player isnt in, they shouldnt receive the
 			// messages
-			if (!client.isRoomPrivate(room) || !manager.dmExists(room)) {
+			if (roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT)) {
 				// Check if sanctuary
 				if (room.startsWith("sanctuary_")) {
 					if (!gameClient.room.equals(room)) {
@@ -653,9 +663,6 @@ public class SendMessage extends AbstractChatPacket {
 
 		// Check room
 		if (client.isInRoom(room)) {
-			// Get room
-			ChatRoom roomInstance = client.getRoom(room);
-
 			// Get memory
 			TextFilterContextMemory chatMemoryRoom = roomInstance.getObject(TextFilterContextMemory.class);
 			if (chatMemoryRoom == null) {
@@ -670,9 +677,9 @@ public class SendMessage extends AbstractChatPacket {
 			TextFilterContextMemory chatMemory = new WrappedTextFilterContextMemory(chatMemoryRoom, chatMemoryClient);
 
 			// Log
-			if (!client.isRoomPrivate(room)) {
+			if (!roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 				Centuria.logger.info("Chat: " + client.getPlayer().getDisplayName() + ": " + message + " ["
-						+ formatRoomName(client, room) + "]");
+						+ formatRoomName(client, roomInstance) + "]");
 
 				// Log to chat log
 				if (chatLogBinary != null) {
@@ -727,20 +734,20 @@ public class SendMessage extends AbstractChatPacket {
 				rateLimit.rateLimitEnableTime = System.currentTimeMillis();
 
 				// Check if private
-				if (client.isRoomPrivate(room)) {
+				if (roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 					// Private chat, need more details
 					// And strip away the message
 					EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
 							"Chat anti-spam limit was triggered for " + client.getPlayer().getDisplayName() + "!",
-							Map.of("Private chat room", formatRoomName(client, room), "Room",
-									formatRoomName(client, room), "Resulting action",
+							Map.of("Private chat room", formatRoomName(client, roomInstance), "Room",
+									formatRoomName(client, roomInstance), "Resulting action",
 									"messages are being blocked for 15 seconds"),
 							"SYSTEM", client.getPlayer()));
 				} else {
 					EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
 							"Chat anti-spam limit was triggered for " + client.getPlayer().getDisplayName() + "!",
-							Map.of("Chat message", message, "Room", formatRoomName(client, room), "Resulting action",
-									"messages are being blocked for 15 seconds"),
+							Map.of("Chat message", message, "Room", formatRoomName(client, roomInstance),
+									"Resulting action", "messages are being blocked for 15 seconds"),
 							"SYSTEM", client.getPlayer()));
 				}
 			}
@@ -758,7 +765,7 @@ public class SendMessage extends AbstractChatPacket {
 
 				// Send failure
 				SendMessage res = new SendMessage();
-				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.roomType = roomInstance.getType();
 				res.room = room;
 				res.message = "</noparse><color=red>[!] </color><color=orange><noparse>" + message
 						+ "</noparse></color><noparse>";
@@ -774,7 +781,7 @@ public class SendMessage extends AbstractChatPacket {
 
 				// Broadcast to moderators unless its a private chat
 				res = new SendMessage();
-				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.roomType = roomInstance.getType();
 				res.room = room;
 				res.message = "</noparse><color=red>[!] </color><color=orange><noparse>" + message
 						+ "</noparse></color><noparse>";
@@ -790,7 +797,7 @@ public class SendMessage extends AbstractChatPacket {
 
 				// System message
 				res = new SendMessage();
-				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.roomType = roomInstance.getType();
 				res.room = room;
 				res.message = "Whoah there! You are sending too many messages in a short period, please slow down! Please wait 15 seconds before sending another message.";
 				res.sourceWriter = NIL_UUID;
@@ -820,7 +827,7 @@ public class SendMessage extends AbstractChatPacket {
 
 					// Send failure
 					SendMessage res = new SendMessage();
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.roomType = roomInstance.getType();
 					res.room = room;
 					res.message = "</noparse><color=red>[!] </color><color=orange><noparse>" + message
 							+ "</noparse></color><noparse>";
@@ -836,7 +843,7 @@ public class SendMessage extends AbstractChatPacket {
 
 					// Broadcast to moderators unless its a private chat
 					res = new SendMessage();
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.roomType = roomInstance.getType();
 					res.room = room;
 					res.message = "</noparse><color=red>[!] </color><color=orange><noparse>" + message
 							+ "</noparse></color><noparse>";
@@ -852,7 +859,7 @@ public class SendMessage extends AbstractChatPacket {
 
 					// System message
 					res = new SendMessage();
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.roomType = roomInstance.getType();
 					res.room = room;
 					res.message = "You are muted and cannot send messages in chat."
 							+ (reason != null ? "\nReason: " + reason : "");
@@ -902,7 +909,7 @@ public class SendMessage extends AbstractChatPacket {
 			HeightenedSensitivityFlags flags = roomInstance.getObject(HeightenedSensitivityFlags.class);
 			if (flags == null) {
 				flags = new HeightenedSensitivityFlags();
-				flags.room = roomInstance.getRoomID();
+				flags.roomInst = roomInstance;
 				roomInstance.addObject(flags);
 			}
 			boolean roomHasStaff = false;
@@ -973,11 +980,11 @@ public class SendMessage extends AbstractChatPacket {
 				flags.deactivateHeightenedSensitivity(client.getServer(), reenabledChat);
 
 				// Check if private
-				if (!client.isRoomPrivate(room)) {
+				if (!roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 					EventBus.getInstance()
 							.dispatchEvent(new MiscModerationEvent("chatfilter.heightenedstrictness.deactivate",
 									"Heightened sensitivity mode deactivated",
-									Map.of("Room", formatRoomName(client, room), "Action",
+									Map.of("Room", formatRoomName(client, roomInstance), "Action",
 											"deactivated heightened sensitivity mode"),
 									"SYSTEM", null));
 				}
@@ -1023,7 +1030,8 @@ public class SendMessage extends AbstractChatPacket {
 
 			// Disable chat if needed
 			if (flags.active && !flags.chatDisabled && !roomHasStaff && filterResultDefaultOrig.isMatch()
-					&& filteredDefaultOrigCensor && !client.isRoomPrivate(room)) {
+					&& filteredDefaultOrigCensor
+					&& !roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 				// Increase flag counter for chat disable
 				flags.flagCountChatdisable++;
 				flags.flagCountChatdisableSecondary++;
@@ -1045,34 +1053,31 @@ public class SendMessage extends AbstractChatPacket {
 							: System.currentTimeMillis() + heightenedSensitivityChatReactivateTimer;
 					flags.disableChat(client.getServer());
 
-					// Check if private
-					if (!client.isRoomPrivate(room)) {
-						if (flags.renableChatAter != -1) {
-							EventBus.getInstance().dispatchEvent(new MiscModerationEvent(
-									"chatfilter.heightenedstrictness.chatdisable",
-									"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
-									Map.of("Notice",
-											"Chat has been disabled due to having passed the chat deactivation threshold, chat will re-enable when staff logs on or if the chat reactivation timer is met",
-											"Chat message", message, "Matched word(s)", matchedWordsString,
-											"Primary reason for filtering", filterReason, "Room",
-											formatRoomName(client, room), "Resulting action", "chat disabled",
-											"Chat re-enables at",
-											fmt2.format(new Date(flags.renableChatAter)) + " UTC ("
-													+ formatTimeRelative(
-															flags.renableChatAter - System.currentTimeMillis())
-													+ " from now)" + " or whenever a staff member gets online."),
-									"SYSTEM", client.getPlayer()));
-						} else {
-							EventBus.getInstance().dispatchEvent(new MiscModerationEvent(
-									"chatfilter.heightenedstrictness.chatdisable",
-									"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
-									Map.of("Notice",
-											"Chat has been disabled due to having passed the chat deactivation threshold, chat will re-enable when staff logs on",
-											"Chat message", message, "Matched word(s)", matchedWordsString,
-											"Primary reason for filtering", filterReason, "Room",
-											formatRoomName(client, room), "Resulting action", "chat disabled"),
-									"SYSTEM", client.getPlayer()));
-						}
+					// Dispatch event
+					if (flags.renableChatAter != -1) {
+						EventBus.getInstance().dispatchEvent(new MiscModerationEvent(
+								"chatfilter.heightenedstrictness.chatdisable",
+								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+								Map.of("Notice",
+										"Chat has been disabled due to having passed the chat deactivation threshold, chat will re-enable when staff logs on or if the chat reactivation timer is met",
+										"Chat message", message, "Matched word(s)", matchedWordsString,
+										"Primary reason for filtering", filterReason, "Room",
+										formatRoomName(client, roomInstance), "Resulting action", "chat disabled",
+										"Chat re-enables at",
+										fmt2.format(new Date(flags.renableChatAter)) + " UTC ("
+												+ formatTimeRelative(flags.renableChatAter - System.currentTimeMillis())
+												+ " from now)" + " or whenever a staff member gets online."),
+								"SYSTEM", client.getPlayer()));
+					} else {
+						EventBus.getInstance().dispatchEvent(new MiscModerationEvent(
+								"chatfilter.heightenedstrictness.chatdisable",
+								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+								Map.of("Notice",
+										"Chat has been disabled due to having passed the chat deactivation threshold, chat will re-enable when staff logs on",
+										"Chat message", message, "Matched word(s)", matchedWordsString,
+										"Primary reason for filtering", filterReason, "Room",
+										formatRoomName(client, roomInstance), "Resulting action", "chat disabled"),
+								"SYSTEM", client.getPlayer()));
 					}
 				}
 			}
@@ -1088,7 +1093,7 @@ public class SendMessage extends AbstractChatPacket {
 
 				// Send failure
 				SendMessage res = new SendMessage();
-				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.roomType = roomInstance.getType();
 				res.room = room;
 				res.message = "</noparse><color=red>[!] </color><color=orange><noparse>" + message
 						+ "</noparse></color><noparse>";
@@ -1104,7 +1109,7 @@ public class SendMessage extends AbstractChatPacket {
 
 				// Broadcast to moderators unless its a private chat
 				res = new SendMessage();
-				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.roomType = roomInstance.getType();
 				res.room = room;
 				res.message = "</noparse><color=red>[!] </color><color=orange><noparse>" + message
 						+ "</noparse></color><noparse>";
@@ -1122,7 +1127,7 @@ public class SendMessage extends AbstractChatPacket {
 				res = new SendMessage();
 				SimpleDateFormat fmt2 = new SimpleDateFormat("dd'-'MM'-'yyyy HH':'mm':'ss");
 				fmt2.setTimeZone(TimeZone.getTimeZone("UTC"));
-				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.roomType = roomInstance.getType();
 				res.room = room;
 				res.message = "Due to a large amount of filter triggers, the chat has currently been disabled for this world until a staff member can get on. We apologize about the inconvenience! The team has already been alerted about the chat being disabled."
 						+ (flags.renableChatAter != -1
@@ -1167,7 +1172,7 @@ public class SendMessage extends AbstractChatPacket {
 					String filterReason = filterResultDefaultOrig.getPrimaryFilterReason();
 
 					// Check if private
-					if (!client.isRoomPrivate(room)) {
+					if (!roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 						EventBus.getInstance().dispatchEvent(new MiscModerationEvent(
 								"chatfilter.heightenedstrictness.activate",
 								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
@@ -1175,7 +1180,7 @@ public class SendMessage extends AbstractChatPacket {
 										"Due to having pased the threshold of filter triggers, and no staff being online, the chat room has been set to heightened sensitivity mode",
 										"Chat message", message, "Matched word(s)", matchedWordsString,
 										"Primary reason for filtering", filterReason, "Room",
-										formatRoomName(client, room), "Resulting action",
+										formatRoomName(client, roomInstance), "Resulting action",
 										"activated heightened sensitivity mode"),
 								"SYSTEM", client.getPlayer()));
 					}
@@ -1207,30 +1212,31 @@ public class SendMessage extends AbstractChatPacket {
 				String filterReason = selectedFilterResult.getPrimaryFilterReason();
 
 				// Check if private
-				if (client.isRoomPrivate(room)) {
+				if (roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 					// Private chat, need more details
 					// And strip away the message
 					EventBus.getInstance()
 							.dispatchEvent(new MiscModerationEvent("chatfilter.mute",
 									"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
-									Map.of("Private chat room", formatRoomName(client, room), "Matched word(s)",
+									Map.of("Private chat room", formatRoomName(client, roomInstance), "Matched word(s)",
 											matchedWordsString, "Primary reason for filtering", filterReason, "Room",
 											room, "Resulting action", "muted"),
 									"SYSTEM", client.getPlayer()));
 				} else {
-					EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
-							"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
-							Map.of("Chat message", message, "Matched word(s)", matchedWordsString,
-									"Primary reason for filtering", filterReason, "Room", formatRoomName(client, room),
-									"Resulting action", "muted"),
-							"SYSTEM", client.getPlayer()));
+					EventBus.getInstance()
+							.dispatchEvent(new MiscModerationEvent("chatfilter.mute",
+									"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+									Map.of("Chat message", message, "Matched word(s)", matchedWordsString,
+											"Primary reason for filtering", filterReason, "Room",
+											formatRoomName(client, roomInstance), "Resulting action", "muted"),
+									"SYSTEM", client.getPlayer()));
 				}
 
 				// Send failure
 				SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 				fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 				SendMessage res = new SendMessage();
-				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.roomType = roomInstance.getType();
 				res.room = room;
 				res.message = "</noparse><color=red>[!] </color><color=orange><noparse>"
 						+ selectedFilterResult.getFilterResult() + "</noparse></color><noparse>";
@@ -1251,7 +1257,7 @@ public class SendMessage extends AbstractChatPacket {
 
 				// Broadcast to moderators unless its a private chat
 				res = new SendMessage();
-				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.roomType = roomInstance.getType();
 				res.room = room;
 				res.message = "</noparse><color=red>[!] </color><color=orange><noparse>"
 						+ selectedFilterResult.getFilterResult() + "</noparse></color><noparse>";
@@ -1273,7 +1279,7 @@ public class SendMessage extends AbstractChatPacket {
 
 				// Send system message
 				res = new SendMessage();
-				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.roomType = roomInstance.getType();
 				res.room = room;
 				res.message = "You have been automatically muted in public chat for violating server rules, mute will last 30 minutes.\nReason: "
 						+ filterReason + "\nWe request you to keep your chat respectful, safe and clean!";
@@ -1395,23 +1401,23 @@ public class SendMessage extends AbstractChatPacket {
 					chatMemory.pushToContext(filterResultDefaultOrig);
 
 					// Check if private
-					if (client.isRoomPrivate(room)) {
+					if (roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 						// Private chat, need more details
 						// And strip away the message
 						EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
 								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
-								Map.of("Private chat room", formatRoomName(client, room), "Matched word(s)",
+								Map.of("Private chat room", formatRoomName(client, roomInstance), "Matched word(s)",
 										matchedWordsString, "Primary reason for filtering", filterReason, "Room",
-										formatRoomName(client, room), "Resulting action", "muted", "Reason for mute",
-										"Continued breaches of chat rules after 2 warnings."),
+										formatRoomName(client, roomInstance), "Resulting action", "muted",
+										"Reason for mute", "Continued breaches of chat rules after 2 warnings."),
 								"SYSTEM", client.getPlayer()));
 					} else {
 						EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.mute",
 								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
 								Map.of("Chat message", message, "Matched word(s)", matchedWordsString,
 										"Primary reason for filtering", filterReason, "Room",
-										formatRoomName(client, room), "Resulting action", "muted", "Reason for mute",
-										"Continued breaches of chat rules after 2 warnings."),
+										formatRoomName(client, roomInstance), "Resulting action", "muted",
+										"Reason for mute", "Continued breaches of chat rules after 2 warnings."),
 								"SYSTEM", client.getPlayer()));
 					}
 
@@ -1419,7 +1425,7 @@ public class SendMessage extends AbstractChatPacket {
 					SimpleDateFormat fmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ssXXX");
 					fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 					SendMessage res = new SendMessage();
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.roomType = roomInstance.getType();
 					res.room = room;
 					res.message = "</noparse><color=red>[!] </color><color=orange><noparse>"
 							+ filterResultDefaultOrig.getFilterResult() + "</noparse></color><noparse>";
@@ -1440,7 +1446,7 @@ public class SendMessage extends AbstractChatPacket {
 
 					// Broadcast to moderators unless its a private chat
 					res = new SendMessage();
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.roomType = roomInstance.getType();
 					res.room = room;
 					res.message = "</noparse><color=red>[!] </color><color=orange><noparse>"
 							+ filterResultDefaultOrig.getFilterResult() + "</noparse></color><noparse>";
@@ -1463,7 +1469,7 @@ public class SendMessage extends AbstractChatPacket {
 
 					// Send system message
 					res = new SendMessage();
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.roomType = roomInstance.getType();
 					res.room = room;
 					res.message = "Your message was blocked because it may not be appropriate.\nReason: " + filterReason
 							+ "\n\nDue to your continued breaches of the chat rules, you have been muted for 30 minutes.\nWe ask you to keep chat respectful, safe and clean!";
@@ -1485,7 +1491,7 @@ public class SendMessage extends AbstractChatPacket {
 			fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 			// Check dm
-			if (client.isRoomPrivate(room) && !room.equals("SYSTEM")) {
+			if (roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT) && !room.equals("SYSTEM")) {
 				// Check existence
 				boolean exists = manager.dmExists(room);
 				boolean wasBlockAccess = false;
@@ -1530,7 +1536,7 @@ public class SendMessage extends AbstractChatPacket {
 
 					// Send failure
 					SendMessage res = new SendMessage();
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.roomType = roomInstance.getType();
 					res.room = room;
 					res.message = "</noparse><color=red>[!] </color><color=orange><noparse>" + message
 							+ "</noparse></color><noparse>";
@@ -1546,7 +1552,7 @@ public class SendMessage extends AbstractChatPacket {
 
 					// Broadcast to moderators unless its a private chat
 					res = new SendMessage();
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.roomType = roomInstance.getType();
 					res.room = room;
 					res.message = "</noparse><color=red>[!] </color><color=orange><noparse>" + message
 							+ "</noparse></color><noparse>";
@@ -1562,7 +1568,7 @@ public class SendMessage extends AbstractChatPacket {
 
 					// System message
 					res = new SendMessage();
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.roomType = roomInstance.getType();
 					res.room = room;
 					if (wasBlockAccess)
 						res.message = "Error: the message could not be sent as the chat room you are sending your message to revoked your access";
@@ -1579,7 +1585,7 @@ public class SendMessage extends AbstractChatPacket {
 			}
 
 			// If it is a DM, save message
-			if (client.isRoomPrivate(room) && manager.dmExists(room)) {
+			if (roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT) && manager.dmExists(room)) {
 				PrivateChatMessage msg = new PrivateChatMessage();
 				String messageToUse = filterResultDefaultMod.getFilterResult();
 				if (filterSettingSelf != 0) {
@@ -1626,7 +1632,7 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Check ghost mode
 						if (cPlayer != null && cPlayer.ghostMode && !GameServer.hasPerm(permLevel2, "moderator")
-								&& !client.isRoomPrivate(room))
+								&& roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT))
 							continue;
 
 						// Check if the sender has blocked this receiver, if so, prevent the receiver
@@ -1636,7 +1642,8 @@ public class SendMessage extends AbstractChatPacket {
 								receiver.getPlayer().getAccountID())) {
 							// Check mod perms and room type
 							if (GameServer.hasPerm(permLevel, "moderator")) {
-								if (client.isInRoom(room) && !client.isRoomPrivate(room)
+								if (client.isInRoom(room)
+										&& !roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)
 										&& !GameServer.hasPerm(permLevel2, "moderator")) {
 									continue; // Blocked
 								}
@@ -1668,7 +1675,7 @@ public class SendMessage extends AbstractChatPacket {
 
 						// Add properties
 						res.moderatorMessage = GameServer.hasPerm(permLevel2, "moderator");
-						res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+						res.roomType = roomInstance.getType();
 						res.room = room;
 
 						// Add properties based on staff rank
@@ -1820,7 +1827,7 @@ public class SendMessage extends AbstractChatPacket {
 						// Send message
 						receiver.sendPacket(res);
 					}
-				} else if (!client.isRoomPrivate(room)) {
+				} else if (!roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 					// Moderator in other room
 					if (receiver.getObject(ModeratorClient.class) != null) {
 						// Check moderator perms
@@ -1833,7 +1840,7 @@ public class SendMessage extends AbstractChatPacket {
 							// Send through centuria moderator protocol
 							SendMessage res = new SendMessage();
 							res.packetId = "centuria.moderatorclient.postedMessageInOtherRoom";
-							res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+							res.roomType = roomInstance.getType();
 							res.room = room;
 
 							// Mark moderator
@@ -1960,7 +1967,7 @@ public class SendMessage extends AbstractChatPacket {
 				if (mem.flagCount == 1) {
 					// Send message
 					SendMessage res = new SendMessage();
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.roomType = roomInstance.getType();
 					res.room = room;
 					res.message = "Your message was censored because it may not be appropriate.\nReason: "
 							+ filterReason + "\nWe ask you to keep chat respectful, safe and clean.";
@@ -1970,29 +1977,28 @@ public class SendMessage extends AbstractChatPacket {
 					client.sendPacket(res);
 
 					// Mod log
-					if (client.isRoomPrivate(room)) {
+					if (roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 						// Private chat, need more details
 						// And strip away the message
-						EventBus.getInstance()
-								.dispatchEvent(new MiscModerationEvent("chatfilter.censored",
-										"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
-										Map.of("Private chat room", formatRoomName(client, room), "Matched word(s)",
-												matchedWordsString, "Primary reason for filtering", filterReason,
-												"Room", formatRoomName(client, room), "Resulting action", "censored"),
-										"SYSTEM", client.getPlayer()));
+						EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.censored",
+								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+								Map.of("Private chat room", formatRoomName(client, roomInstance), "Matched word(s)",
+										matchedWordsString, "Primary reason for filtering", filterReason, "Room",
+										formatRoomName(client, roomInstance), "Resulting action", "censored"),
+								"SYSTEM", client.getPlayer()));
 					} else {
 						EventBus.getInstance()
 								.dispatchEvent(new MiscModerationEvent("chatfilter.censored",
 										"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
 										Map.of("Chat message", message, "Matched word(s)", matchedWordsString,
 												"Primary reason for filtering", filterReason, "Room",
-												formatRoomName(client, room), "Resulting action", "censored"),
+												formatRoomName(client, roomInstance), "Resulting action", "censored"),
 										"SYSTEM", client.getPlayer()));
 					}
 				} else if (mem.flagCount == 2) {
 					// Send message
 					SendMessage res = new SendMessage();
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.roomType = roomInstance.getType();
 					res.room = room;
 					res.message = "Your message was censored because it may not be appropriate.\nReason: "
 							+ filterReason
@@ -2003,28 +2009,27 @@ public class SendMessage extends AbstractChatPacket {
 					client.sendPacket(res);
 
 					// Mod log
-					if (client.isRoomPrivate(room)) {
+					if (roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 						// Private chat, need more details
 						// And strip away the message
 						EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.censored",
 								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
-								Map.of("Private chat room", formatRoomName(client, room), "Matched word(s)",
+								Map.of("Private chat room", formatRoomName(client, roomInstance), "Matched word(s)",
 										matchedWordsString, "Primary reason for filtering", filterReason, "Room",
-										formatRoomName(client, room), "Resulting action", "first warning"),
+										formatRoomName(client, roomInstance), "Resulting action", "first warning"),
 								"SYSTEM", client.getPlayer()));
 					} else {
-						EventBus.getInstance()
-								.dispatchEvent(new MiscModerationEvent("chatfilter.censored",
-										"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
-										Map.of("Chat message", message, "Matched word(s)", matchedWordsString,
-												"Primary reason for filtering", filterReason, "Room",
-												formatRoomName(client, room), "Resulting action", "first warning"),
-										"SYSTEM", client.getPlayer()));
+						EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.censored",
+								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+								Map.of("Chat message", message, "Matched word(s)", matchedWordsString,
+										"Primary reason for filtering", filterReason, "Room",
+										formatRoomName(client, roomInstance), "Resulting action", "first warning"),
+								"SYSTEM", client.getPlayer()));
 					}
 				} else if (mem.flagCount == 3) {
 					// Send message
 					SendMessage res = new SendMessage();
-					res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+					res.roomType = roomInstance.getType();
 					res.room = room;
 					res.message = "Your message was censored because it may not be appropriate.\nReason: "
 							+ filterReason
@@ -2035,29 +2040,28 @@ public class SendMessage extends AbstractChatPacket {
 					client.sendPacket(res);
 
 					// Mod log
-					if (client.isRoomPrivate(room)) {
+					if (roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 						// Private chat, need more details
 						// And strip away the message
 						EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.censored",
 								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
-								Map.of("Private chat room", formatRoomName(client, room), "Matched word(s)",
+								Map.of("Private chat room", formatRoomName(client, roomInstance), "Matched word(s)",
 										matchedWordsString, "Primary reason for filtering", filterReason, "Room",
-										formatRoomName(client, room), "Resulting action", "final warning"),
+										formatRoomName(client, roomInstance), "Resulting action", "final warning"),
 								"SYSTEM", client.getPlayer()));
 					} else {
-						EventBus.getInstance()
-								.dispatchEvent(new MiscModerationEvent("chatfilter.censored",
-										"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
-										Map.of("Chat message", message, "Matched word(s)", matchedWordsString,
-												"Primary reason for filtering", filterReason, "Room",
-												formatRoomName(client, room), "Resulting action", "final warning"),
-										"SYSTEM", client.getPlayer()));
+						EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.censored",
+								"Chat filter has flagged player " + client.getPlayer().getDisplayName() + "!",
+								Map.of("Chat message", message, "Matched word(s)", matchedWordsString,
+										"Primary reason for filtering", filterReason, "Room",
+										formatRoomName(client, roomInstance), "Resulting action", "final warning"),
+								"SYSTEM", client.getPlayer()));
 					}
 				}
 			} else if (filteredDefaultState && filteredDefaultCensor) {
 				// Send message
 				SendMessage res = new SendMessage();
-				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.roomType = roomInstance.getType();
 				res.room = room;
 				res.message = "The text filter is in heightened sensitivity mode, your message was censored as a result.\nReason: "
 						+ reasonResultDefault;
@@ -2068,7 +2072,7 @@ public class SendMessage extends AbstractChatPacket {
 			} else if ((filteredUserStrictModeState && filteredUserStrictModeCensor) && filterSettingSelf != 0) {
 				// Send message
 				SendMessage res = new SendMessage();
-				res.roomType = client.isRoomPrivate(room) ? "private" : "room";
+				res.roomType = roomInstance.getType();
 				res.room = room;
 				res.message = "Your message was censored because of your current settings.\nIf you wish to not have this message flagged, please change your game's chat settings.";
 				res.sourceWriter = NIL_UUID;
@@ -2078,7 +2082,8 @@ public class SendMessage extends AbstractChatPacket {
 			}
 
 			// Check if flagged
-			if (filteredFlaggedWithoutStrictmodeState && !client.isRoomPrivate(room)) {
+			if (filteredFlaggedWithoutStrictmodeState
+					&& !roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 				// Alert staff if needed
 				String filterReason = filterResultStaffHighlight.getPrimaryFilterReason();
 				String matchedWordsString = matchedWordsAsString(filterResultStaffHighlight.getMatches());
@@ -2099,13 +2104,15 @@ public class SendMessage extends AbstractChatPacket {
 				}
 
 				// Mod log
-				EventBus.getInstance().dispatchEvent(new MiscModerationEvent("chatfilter.alert",
-						"Chat filter alert! Player " + client.getPlayer().getDisplayName()
-								+ " sent a message that was flagged by the system!",
-						Map.of("Chat message", message, "Matched word(s)", matchedWordsString,
-								"Primary reason for alerting", filterReason, "Room", formatRoomName(client, room),
-								"Resulting action", "no action taken, only alerting staff"),
-						"SYSTEM", client.getPlayer(), !hasStaffInRoom));
+				EventBus.getInstance()
+						.dispatchEvent(new MiscModerationEvent("chatfilter.alert",
+								"Chat filter alert! Player " + client.getPlayer().getDisplayName()
+										+ " sent a message that was flagged by the system!",
+								Map.of("Chat message", message, "Matched word(s)", matchedWordsString,
+										"Primary reason for alerting", filterReason, "Room",
+										formatRoomName(client, roomInstance), "Resulting action",
+										"no action taken, only alerting staff"),
+								"SYSTEM", client.getPlayer(), !hasStaffInRoom));
 			}
 		}
 
@@ -2136,7 +2143,7 @@ public class SendMessage extends AbstractChatPacket {
 		return out;
 	}
 
-	private static void broadcastToModerators(ChatClient client, SendMessage message) {
+	private void broadcastToModerators(ChatClient client, SendMessage message) {
 		for (ChatClient receiver : client.getServer().getClients()) {
 			// Fetch receiver moderator perms
 			String permLevel2 = "member";
@@ -2171,7 +2178,7 @@ public class SendMessage extends AbstractChatPacket {
 				receiver.sendPacket(res);
 			} else if (!receiver.isInRoom(message.room)
 					&& !receiver.getPlayer().getAccountID().equals(client.getPlayer().getAccountID())
-					&& !client.isRoomPrivate(message.room)) {
+					&& !roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 				// Not in room
 
 				// Check moderator client
@@ -4025,7 +4032,7 @@ public class SendMessage extends AbstractChatPacket {
 							HeightenedSensitivityFlags flags = roomInstance.getObject(HeightenedSensitivityFlags.class);
 							if (flags == null) {
 								flags = new HeightenedSensitivityFlags();
-								flags.room = roomInstance.getRoomID();
+								flags.roomInst = roomInstance;
 								roomInstance.addObject(flags);
 							}
 							if (flags.active) {
@@ -4040,11 +4047,11 @@ public class SendMessage extends AbstractChatPacket {
 							flags.activateHeightenedSensitivity(client.getServer());
 
 							// Check if private
-							if (!client.isRoomPrivate(room)) {
+							if (!roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 								EventBus.getInstance().dispatchEvent(
 										new MiscModerationEvent("chatfilter.heightenedstrictness.activate",
 												"Heightened sensitivity mode activated",
-												Map.of("Room", formatRoomName(client, room), "Action",
+												Map.of("Room", formatRoomName(client, roomInstance), "Action",
 														"activated heightened sensitivity mode"),
 												client.getPlayer().getAccountID(), null));
 							}
@@ -4071,7 +4078,7 @@ public class SendMessage extends AbstractChatPacket {
 							HeightenedSensitivityFlags flags = roomInstance.getObject(HeightenedSensitivityFlags.class);
 							if (flags == null) {
 								flags = new HeightenedSensitivityFlags();
-								flags.room = roomInstance.getRoomID();
+								flags.roomInst = roomInstance;
 								roomInstance.addObject(flags);
 							}
 							if (!flags.active) {
@@ -4083,11 +4090,11 @@ public class SendMessage extends AbstractChatPacket {
 							flags.deactivateHeightenedSensitivity(client.getServer(), false);
 
 							// Check if private
-							if (!client.isRoomPrivate(room)) {
+							if (!roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 								EventBus.getInstance().dispatchEvent(
 										new MiscModerationEvent("chatfilter.heightenedstrictness.deactivate",
 												"Heightened sensitivity mode deactivated",
-												Map.of("Room", formatRoomName(client, room), "Action",
+												Map.of("Room", formatRoomName(client, roomInstance), "Action",
 														"deactivated heightened sensitivity mode"),
 												client.getPlayer().getAccountID(), null));
 							}
@@ -6328,11 +6335,11 @@ public class SendMessage extends AbstractChatPacket {
 		return false;
 	}
 
-	private static String formatRoomName(ChatClient client, String room) {
-		if (client != null && client.isRoomPrivate(room)) {
+	private static String formatRoomName(ChatClient client, ChatRoom roomObj) {
+		if (client != null && roomObj.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 			// Find recipient
 			String recipient = client.getPlayer().getDisplayName();
-			String[] participants = DMManager.getInstance().getDMParticipants(room);
+			String[] participants = DMManager.getInstance().getDMParticipants(roomObj.getRoomID());
 			for (String p : participants) {
 				if (!p.equals(client.getPlayer().getAccountID())) {
 					// Check type
@@ -6342,14 +6349,14 @@ public class SendMessage extends AbstractChatPacket {
 					} else {
 						CenturiaAccount a = AccountManager.getInstance().getAccount(p);
 						if (a != null)
-							recipient = a.getDisplayName();
+							recipient = "PM to " + a.getDisplayName();
 					}
 				}
 			}
-			return "PM to " + recipient;
+			return recipient;
 		} else {
 			// Check room format
-			if (room.startsWith("room_")) {
+			if (roomObj.getRoomID().startsWith("room_")) {
 				// Public room
 
 				// Load spawn helper
@@ -6364,22 +6371,22 @@ public class SendMessage extends AbstractChatPacket {
 				} catch (Exception e) {
 				}
 
-				String levelId = room.substring("room_".length());
+				String levelId = roomObj.getRoomID().substring("room_".length());
 				String map = "UNKNOWN: " + levelId;
 				if (levelId.equals("25280"))
 					map = "Tutorial";
 				else if (helper.has(levelId))
 					map = helper.get(levelId).getAsString() + " [" + levelId + "]";
 				return map;
-			} else if (room.startsWith("sanctuary_")) {
+			} else if (roomObj.getRoomID().startsWith("sanctuary_")) {
 				// Sanctuary
-				String owner = room.substring("sanctuary_".length());
+				String owner = roomObj.getRoomID().substring("sanctuary_".length());
 				CenturiaAccount a = AccountManager.getInstance().getAccount(owner);
 				if (a != null)
 					owner = a.getDisplayName();
 				return "Sanctuary of " + owner;
 			}
-			return "Unknown: " + room;
+			return roomObj.getRoomID();
 		}
 	}
 
@@ -6393,8 +6400,8 @@ public class SendMessage extends AbstractChatPacket {
 
 		// Send response
 		SendMessage res = new SendMessage();
-		res.roomType = client.isRoomPrivate(room) ? "private" : "room";
-		res.room = room;
+		res.roomType = roomInstance.getType();
+		res.room = roomInstance.getRoomID();
 		res.message = "Issued chat command: " + cmd + ":\n[system] " + message;
 		res.sourceWriter = client.getPlayer().getAccountID();
 		res.sentAtWriter = LocalDateTime.now().toString();

@@ -14,6 +14,9 @@ import org.asf.centuria.enums.trading.TradeValidationType;
 import org.asf.centuria.modules.eventbus.EventBus;
 import org.asf.centuria.modules.events.accounts.AccountTradeBanEvent;
 import org.asf.centuria.modules.events.accounts.AccountTradePardonEvent;
+import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.networking.chatserver.ChatServer;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
 import org.asf.centuria.packets.xt.gameserver.trade.*;
 
 import com.google.gson.JsonObject;
@@ -375,6 +378,7 @@ public class Trade {
 		targetPlayer.client.sendPacket(cancelPacket);
 		Centuria.logger.debug(MarkerManager.getMarker("TRADE"), "[TraceCancel] Server to client with ID "
 				+ sourcePlayer.account.getAccountID() + ": " + cancelPacket.build());
+		leaveChat();
 
 		sourcePlayer.tradeEngagedIn = null;
 		targetPlayer.tradeEngagedIn = null;
@@ -392,6 +396,7 @@ public class Trade {
 		sourcePlayer.client.sendPacket(rejectPacket);
 		Centuria.logger.debug(MarkerManager.getMarker("TRADE"),
 				"Server to client with ID " + sourcePlayer.account.getAccountID() + ": " + rejectPacket.build());
+		leaveChat();
 
 		sourcePlayer.tradeEngagedIn = null;
 		targetPlayer.tradeEngagedIn = null;
@@ -436,6 +441,7 @@ public class Trade {
 					+ sourcePlayer.account.getDisplayName() + ": " + tradeExitPacket.build());
 		}
 
+		leaveChat();
 		targetPlayer.tradeEngagedIn = null;
 		sourcePlayer.tradeEngagedIn = null;
 	}
@@ -708,7 +714,22 @@ public class Trade {
 				sourcePlayer.account.getSaveSpecificInventory().getItemAccessor(sourcePlayer).add(itm);
 			}
 		}
+		leaveChat();
 		targetPlayer.tradeEngagedIn = null;
 		sourcePlayer.tradeEngagedIn = null;
+	}
+
+	/**
+	 * Leaves the players from the chat if needed
+	 */
+	public void leaveChat() {
+		if (chatConversationId != null) {
+			ChatServer server = Centuria.chatServer;
+			ChatRoom room = server.getRoom(chatConversationId);
+			if (room != null) {
+				for (ChatClient client : room.getConnectedClients())
+					client.leaveRoom(chatConversationId);
+			}
+		}
 	}
 }

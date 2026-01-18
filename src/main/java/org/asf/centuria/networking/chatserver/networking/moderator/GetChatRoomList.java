@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import org.asf.centuria.Centuria;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.networking.AbstractChatPacket;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.packets.xt.gameserver.inventory.InventoryItemDownloadPacket;
 
@@ -71,42 +73,48 @@ public class GetChatRoomList extends AbstractChatPacket {
 
 		// Get rooms of all players
 		for (ChatClient cl : client.getServer().getClients()) {
-			for (String room : cl.getRooms()) {
-				if (!cl.isRoomPrivate(room)) {
+			for (ChatRoom room : cl.getRoomInstances()) {
+				if (!room.getType().equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 					// Add if not present
-					if (!rooms.has(room)) {
+					if (!rooms.has(room.getRoomID())) {
 						// Check name
-						if (room.startsWith("sanctuary_")) {
+						if (room.getRoomID().startsWith("sanctuary_")) {
 							// Add sanctuary room
 							JsonObject roomObj = new JsonObject();
 							roomObj.addProperty("roomType", "sanctuary");
 							roomObj.addProperty("roomLevelID", "1689");
 							roomObj.addProperty("roomLevelName", "Sanctuary");
 							roomObj.addProperty("roomInstancePresent", false);
-							roomObj.addProperty("sanctuaryOwner", room.substring("sanctuary_".length()));
-							rooms.add(room, roomObj);
-						} else if (room.startsWith("room_")) {
+							roomObj.addProperty("sanctuaryOwner", room.getRoomID().substring("sanctuary_".length()));
+							rooms.add(room.getRoomID(), roomObj);
+						} else {
 							// Add regular room
 							JsonObject roomObj = new JsonObject();
-							roomObj.addProperty("roomType", cl.isRoomPrivate(room) ? "private" : "room");
+							roomObj.addProperty("roomType", room.getType());
 
 							// Find map
-							String levelId = room.substring("room_".length());
-							String map = "UNKNOWN: " + levelId;
-							if (levelId.equals("25280"))
-								map = "Tutorial";
-							else if (helper.has(levelId))
-								map = helper.get(levelId).getAsString();
-							roomObj.addProperty("roomLevelID", levelId);
-							roomObj.addProperty("roomLevelName", map);
+							if (room.getRoomID().startsWith("room_")) {
+								String levelId = room.getRoomID().substring("room_".length()); // FIXME: wont work
+																								// forever, eventually
+																								// room instancing will
+																								// be implemented and
+																								// this will break
+								String map = "UNKNOWN: " + levelId;
+								if (levelId.equals("25280"))
+									map = "Tutorial";
+								else if (helper.has(levelId))
+									map = helper.get(levelId).getAsString();
+								roomObj.addProperty("roomLevelID", levelId);
+								roomObj.addProperty("roomLevelName", map);
+							}
 							roomObj.addProperty("roomInstancePresent", true);
-							rooms.add(room, roomObj);
+							rooms.add(room.getRoomID(), roomObj);
 						}
 
 						// Add to active rooms
-						if (!activeRoomList.contains(room)) {
-							activeRoomList.add(room);
-							activeRooms.add(room);
+						if (!activeRoomList.contains(room.getRoomID())) {
+							activeRoomList.add(room.getRoomID());
+							activeRooms.add(room.getRoomID());
 						}
 					}
 				}
