@@ -15,7 +15,7 @@ public class ClothingHelper extends AbstractInventoryInteractionHelper {
 		String id = inventory.getClothingAccessor().addClothing(defID, false);
 		if (id == null)
 			return null;
-		return inventory.getAccessor().findInventoryObjectByDefId(INV_TYPE, id);
+		return inventory.getAccessor().findInventoryObjectByItemId(INV_TYPE, id);
 	}
 
 	@Override

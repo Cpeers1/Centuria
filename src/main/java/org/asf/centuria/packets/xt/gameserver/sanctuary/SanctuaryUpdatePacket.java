@@ -159,6 +159,9 @@ public class SanctuaryUpdatePacket implements IXtPacket<SanctuaryUpdatePacket> {
 		for (String change : plr.account.getSaveSpecificInventory().getAccessor().getChangedInventories())
 			plr.account.getSaveSpecificInventory().getAccessor().transferUpdatedItemsToPlayer(plr, change);
 
+		// Send self
+		plr.client.sendPacket(this);
+
 		// Send update packets
 		sendObjectUpdatePackets(client);
 		return true;
