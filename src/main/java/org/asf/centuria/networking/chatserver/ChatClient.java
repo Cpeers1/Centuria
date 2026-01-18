@@ -19,6 +19,7 @@ import org.asf.centuria.networking.chatserver.networking.SendMessage;
 import org.asf.centuria.networking.chatserver.networking.moderator.ModeratorClient;
 import org.asf.centuria.networking.chatserver.proxies.OcProxyInfo;
 import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.persistentservice.BasePersistentServiceClient;
 import org.asf.centuria.social.SocialManager;
@@ -31,7 +32,6 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 	private CenturiaAccount player;
 	private HashMap<String, ChatRoom> rooms = new HashMap<String, ChatRoom>();
 	private HashMap<String, ChatRoom> localRooms = new HashMap<String, ChatRoom>();
-	private HashMap<String, Boolean> privateChat = new HashMap<String, Boolean>();
 
 	// Room lock
 	public boolean isReady = false;
@@ -82,10 +82,9 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 	@Override
 	protected void stop() {
 		synchronized (rooms) {
-			String[] leftRooms = getRooms();
+			String[] leftRooms = rooms.keySet().toArray(t -> new String[t]);
 			rooms.clear();
 			localRooms.clear();
-			privateChat.clear();
 			for (String room : leftRooms)
 				getServer().leaveRoom(room);
 		}
@@ -221,7 +220,7 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 		if (plr != null) {
 			// Check if the player was in chat
 			if (plr.wasInChat && plr.room != null)
-				joinRoom(plr.room, false);
+				joinRoom(plr.room, ChatRoomTypes.ROOM_CHAT);
 		} else {
 			// Security checks
 			// Check moderator perms
@@ -284,7 +283,7 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 				}
 
 				// Join room
-				joinRoom(dms.get(user).getAsString(), true);
+				joinRoom(dms.get(user).getAsString(), ChatRoomTypes.PRIVATE_CHAT);
 			}
 
 			// Remove nonexistent and invalid dms
@@ -354,35 +353,23 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 	}
 
 	/**
-	 * Checks if a room is private or not
-	 * 
-	 * @param room Room ID
-	 * @return True if private, false otherwise
-	 */
-	public boolean isRoomPrivate(String room) {
-		synchronized (privateChat) {
-			return privateChat.getOrDefault(room, false);
-		}
-	}
-
-	/**
 	 * Leaves a chat room
 	 * 
 	 * @param room Room to leave
 	 */
 	public void leaveRoom(String room) {
 		boolean left = false;
-		boolean wasPrivate = isRoomPrivate(room);
+		String oldType = null;
 		synchronized (rooms) {
-			rooms.remove(room);
-			localRooms.remove(room);
-			synchronized (privateChat) {
-				privateChat.remove(room);
+			if (rooms.containsKey(room)) {
+				oldType = rooms.get(room).getType();
+				rooms.remove(room);
+				localRooms.remove(room);
 				left = true;
 			}
 			getServer().leaveRoom(room);
 		}
-		if (left && !wasPrivate) {
+		if (left && !oldType.equals(ChatRoomTypes.PRIVATE_CHAT)) {
 			// Send to moderator clients
 			for (ChatClient client : getServer().getClients()) {
 				if (client.getObject(ModeratorClient.class) == null)
@@ -412,25 +399,22 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 	/**
 	 * Joins a chat room
 	 * 
-	 * @param room      Room to join
-	 * @param isPrivate True if the room is a private room, false otherwise
+	 * @param room Room to join
+	 * @param type Room type
 	 */
-	public void joinRoom(String room, boolean isPrivate) {
+	public void joinRoom(String room, String type) {
 		boolean joined = false;
 		synchronized (rooms) {
 			if (!rooms.containsKey(room)) {
-				ChatRoom roomInstance = getServer().joinRoom(isPrivate ? "private" : "room", room);
-				ChatRoom localRoom = new ChatRoom(isPrivate ? "private" : "room", room, getServer());
+				ChatRoom roomInstance = getServer().joinRoom(type, room);
+				ChatRoom localRoom = new ChatRoom(type, room, getServer());
 				localRooms.put(room, localRoom);
 				rooms.put(room, roomInstance);
-				synchronized (privateChat) {
-					privateChat.put(room, isPrivate);
-					joined = true;
-				}
+				joined = true;
 				SendMessage.joinedRoom(this, roomInstance);
 			}
 		}
-		if (joined && !isPrivate) {
+		if (joined && !type.equalsIgnoreCase(ChatRoomTypes.PRIVATE_CHAT)) {
 			// Send to moderator clients
 			for (ChatClient client : getServer().getClients()) {
 				if (client.getObject(ModeratorClient.class) == null)
@@ -454,17 +438,6 @@ public class ChatClient extends BasePersistentServiceClient<ChatClient, ChatServ
 				response.addProperty("uuid", getPlayer().getAccountID());
 				client.sendPacket(response);
 			}
-		}
-	}
-
-	/**
-	 * Retrieves an array of all chat rooms
-	 * 
-	 * @return Array of chat room IDs
-	 */
-	public String[] getRooms() {
-		synchronized (rooms) {
-			return rooms.keySet().toArray(t -> new String[t]);
 		}
 	}
 

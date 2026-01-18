@@ -23,6 +23,7 @@ import org.asf.centuria.networking.chatserver.networking.moderator.GetChatRoomLi
 import org.asf.centuria.networking.chatserver.networking.moderator.GetPlayerList;
 import org.asf.centuria.networking.chatserver.networking.moderator.InitModeratorClient;
 import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -35,6 +36,7 @@ public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServ
 
 	public ChatServer(ServerSocket socket) {
 		super(socket, ChatClient.class);
+		rooms.put("SYSTEM", new ChatRoom("private", "SYSTEM", this));
 	}
 
 	ChatRoom joinRoom(String type, String id) {
@@ -87,11 +89,11 @@ public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServ
 	 * Generates a room info object
 	 * 
 	 * @param room      Room ID
-	 * @param isPrivate True if the room is private, false otherwise
+	 * @param type      Room type
 	 * @param requester Player making the request
 	 * @return JsonObject instance
 	 */
-	public JsonObject roomObject(String room, boolean isPrivate, String requester) {
+	public JsonObject roomObject(String room, String type, String requester) {
 		// Build object
 		JsonObject roomData = new JsonObject();
 		roomData.addProperty("conversation_id", room);
@@ -101,7 +103,7 @@ public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServ
 		DMManager manager = DMManager.getInstance();
 
 		// Check type and validity
-		if (!isPrivate || !manager.dmExists(room)) {
+		if (type.equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT) || !manager.dmExists(room)) {
 			// Build participants object
 			JsonArray members = new JsonArray();
 			for (ChatClient cl : getClients()) {
@@ -140,7 +142,7 @@ public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServ
 			}
 		}
 
-		roomData.addProperty("conversationType", isPrivate ? "private" : "room");
+		roomData.addProperty("conversationType", type);
 		return roomData;
 	}
 
@@ -197,17 +199,6 @@ public class ChatServer extends BasePersistentServiceServer<ChatClient, ChatServ
 	@Override
 	protected void logDisconnect(ChatClient client) {
 		Centuria.logger.info("Player " + client.getPlayer().getDisplayName() + " disconnected from the chat server.");
-	}
-
-	/**
-	 * Retrieves an array of all chat rooms
-	 * 
-	 * @return Array of chat room IDs
-	 */
-	public String[] getRooms() {
-		synchronized (rooms) {
-			return rooms.keySet().toArray(t -> new String[t]);
-		}
 	}
 
 	/**

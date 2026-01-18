@@ -10,12 +10,14 @@ Dependency changes:
 - Updated ConnectiveHTTP to Alpha 17
 
 Major changes:
+- Changed the default server ports! From now on, API is 37501, Director is 37502, Gameserver is 37503, Chatserver is 37504, and Voicechatserver is 37505
 - Completely overhauled the item system to work with string def IDs instead of numeric def IDs only, do note that this is still limited and can be unstable
 - Changed item transmission so that item operations only send changed items and not the full inventory, speeding up performance with unbinding and a lot more
 - Backported the simplified 1.8 Event Bus
 
 New features in the server:
 - Added a new API Event: AccountDisplayNameChangedEvent
+- Implemented proper support for trade chats, they will no longer overwrite DMs
 - Added new command: gcrename/gcr: a command to rename group chats
 - Added new command: gclistmembers/gclm: a command to list group chat members
 - Added new command: gctransfer/gct: a command to transfer ownership of group chats

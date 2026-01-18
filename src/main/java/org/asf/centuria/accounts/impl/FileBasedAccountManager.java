@@ -252,53 +252,7 @@ public class FileBasedAccountManager extends AccountManager {
 					id + "\n" + username + "\ntrue\n" + username + "\n" + lastAccountID);
 
 			// Managed save mode if enabled
-			if (Centuria.defaultUseManagedSaves) {
-				// Create managed save data
-
-				// Load inventory
-				PlayerInventory sharedInv = new FileBasedPlayerInventory(id, "");
-
-				// Load save manager
-				SaveManager manager = new FileBasedSaveManager(sharedInv, getAccount(id));
-
-				// Create save manifest
-				sharedInv.setItem("savemanifest", new JsonObject());
-
-				// Find default save settings
-				JsonObject defaultSaveSettings;
-				try {
-					defaultSaveSettings = JsonParser.parseString(Files.readString(Path.of("savemanager.json")))
-							.getAsJsonObject();
-				} catch (JsonSyntaxException | IOException e) {
-					sharedInv.deleteItem("savemanifest");
-					throw new RuntimeException(e);
-				}
-
-				// Create saves
-				String defaultSaveName = defaultSaveSettings.get("defaultSaveName").getAsString();
-				for (String saveName : defaultSaveSettings.get("saves").getAsJsonObject().keySet()) {
-					JsonObject saveSettings = defaultSaveSettings.get("saves").getAsJsonObject().get(saveName)
-							.getAsJsonObject();
-					if (!manager.createSave(saveName)) {
-						sharedInv.deleteItem("savemanifest");
-						throw new RuntimeException("Save creation failure");
-					}
-
-					// Write settings
-					PlayerInventory inv = new FileBasedPlayerInventory(id, saveName);
-					SaveSettings settings = inv.getSaveSettings();
-					if (!saveSettings.has("tradeLockID"))
-						saveSettings.addProperty("tradeLockID", saveName);
-					settings.load(saveSettings);
-					inv.writeSaveSettings();
-				}
-
-				// Switch save
-				if (!manager.switchSave(defaultSaveName)) {
-					sharedInv.deleteItem("savemanifest");
-					throw new RuntimeException("Save creation failure");
-				}
-			}
+			setupSaveData(id);
 
 			// Save social list
 			SocialManager.getInstance().openSocialList(id);
@@ -319,12 +273,70 @@ public class FileBasedAccountManager extends AccountManager {
 		return null; // Failure
 	}
 
+	private void setupSaveData(String id) {
+		if (Centuria.defaultUseManagedSaves) {
+			// Create managed save data
+
+			// Load inventory
+			PlayerInventory sharedInv = new FileBasedPlayerInventory(id, "");
+
+			// Load save manager
+			SaveManager manager = new FileBasedSaveManager(sharedInv, getAccount(id));
+
+			// Create save manifest
+			sharedInv.setItem("savemanifest", new JsonObject());
+
+			// Find default save settings
+			JsonObject defaultSaveSettings;
+			try {
+				defaultSaveSettings = JsonParser.parseString(Files.readString(Path.of("savemanager.json")))
+						.getAsJsonObject();
+			} catch (JsonSyntaxException | IOException e) {
+				sharedInv.deleteItem("savemanifest");
+				throw new RuntimeException(e);
+			}
+
+			// Create saves
+			String defaultSaveName = defaultSaveSettings.get("defaultSaveName").getAsString();
+			for (String saveName : defaultSaveSettings.get("saves").getAsJsonObject().keySet()) {
+				JsonObject saveSettings = defaultSaveSettings.get("saves").getAsJsonObject().get(saveName)
+						.getAsJsonObject();
+				if (!manager.createSave(saveName)) {
+					sharedInv.deleteItem("savemanifest");
+					throw new RuntimeException("Save creation failure");
+				}
+
+				// Write settings
+				PlayerInventory inv = new FileBasedPlayerInventory(id, saveName);
+				SaveSettings settings = inv.getSaveSettings();
+				if (!saveSettings.has("tradeLockID"))
+					saveSettings.addProperty("tradeLockID", saveName);
+				settings.load(saveSettings);
+				inv.writeSaveSettings();
+			}
+
+			// Switch save
+			if (!manager.switchSave(defaultSaveName)) {
+				sharedInv.deleteItem("savemanifest");
+				throw new RuntimeException("Save creation failure");
+			}
+		}
+	}
+
 	@Override
 	public CenturiaAccount getAccount(String userID) {
 		// Find the account
 		File uf = new File("accounts/" + userID);
 		if (uf.exists())
 			try {
+				// Register if needed
+				File inventories = new File("inventories/" + userID);
+				if (!inventories.exists()) {
+					inventories.mkdirs();
+					setupSaveData(userID);
+				}
+
+				// Return
 				return new FileBasedAccountObject(uf);
 			} catch (IOException e) {
 				return null;

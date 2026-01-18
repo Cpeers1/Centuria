@@ -7,6 +7,7 @@ import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.social.SocialManager;
 
 import com.google.gson.JsonArray;
@@ -83,7 +84,7 @@ public class CreateConversationPacket extends AbstractChatPacket {
 
 		// Create conversation ID
 		String dmID = UUID.randomUUID().toString();
-		while (manager.dmExists(dmID))
+		while (manager.dmExists(dmID) || client.getServer().getRoom(dmID) != null)
 			dmID = UUID.randomUUID().toString();
 
 		// Open DM
@@ -116,7 +117,7 @@ public class CreateConversationPacket extends AbstractChatPacket {
 			for (ChatClient plr : client.getServer().getClients()) {
 				if (plr.getPlayer().getAccountID().equals(participant.getAccountID())) {
 					// Join room
-					plr.joinRoom(dmID, true);
+					plr.joinRoom(dmID, ChatRoomTypes.PRIVATE_CHAT);
 
 					// Send response
 					plr.sendPacket(res);
@@ -131,7 +132,6 @@ public class CreateConversationPacket extends AbstractChatPacket {
 		// Mostly used for trade chat.
 
 		// Managers
-		DMManager manager = DMManager.getInstance();
 		AccountManager accounts = AccountManager.getInstance();
 
 		// Participant list
@@ -141,9 +141,8 @@ public class CreateConversationPacket extends AbstractChatPacket {
 
 		// Create conversation ID
 		String dmID = UUID.randomUUID().toString();
-		while (manager.dmExists(dmID)) {
+		while (client.getServer().getRoom(dmID) != null)
 			dmID = UUID.randomUUID().toString();
-		}
 		for (var member : members) {
 			// If the members have active trades..
 			if (member.getOnlinePlayerInstance().tradeEngagedIn != null) {
@@ -151,9 +150,6 @@ public class CreateConversationPacket extends AbstractChatPacket {
 				member.getOnlinePlayerInstance().tradeEngagedIn.chatConversationId = dmID;
 			}
 		}
-
-		// Open DM
-		manager.openDM(dmID, members.stream().map(t -> t.getAccountID()).toArray(t -> new String[t]));
 
 		// Build response
 		JsonObject res = new JsonObject();
@@ -163,26 +159,11 @@ public class CreateConversationPacket extends AbstractChatPacket {
 
 		// Open DM for all participants
 		for (CenturiaAccount participant : members) {
-			// Load info
-			if (!participant.getSaveSharedInventory().containsItem("dms"))
-				participant.getSaveSharedInventory().setItem("dms", new JsonObject());
-			JsonObject dms = participant.getSaveSharedInventory().getItem("dms").getAsJsonObject();
-
-			// Save DM info
-			for (CenturiaAccount mem : members) {
-				if (!mem.getAccountID().equals(participant.getAccountID())) {
-					if (dms.has(mem.getAccountID()))
-						dms.remove(mem.getAccountID());
-					dms.addProperty(mem.getAccountID(), dmID);
-				}
-			}
-			participant.getSaveSharedInventory().setItem("dms", dms);
-
 			// Find online player
 			for (ChatClient plr : client.getServer().getClients()) {
 				if (plr.getPlayer().getAccountID().equals(participant.getAccountID())) {
 					// Join room
-					plr.joinRoom(dmID, true);
+					plr.joinRoom(dmID, ChatRoomTypes.TRANSIENT_CHAT);
 
 					// Send response
 					plr.sendPacket(res);

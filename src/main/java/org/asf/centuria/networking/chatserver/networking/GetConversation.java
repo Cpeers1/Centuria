@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.networking.chatserver.ChatClient;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.social.SocialManager;
 
@@ -87,10 +88,13 @@ public class GetConversation extends AbstractChatPacket {
 			}
 		}
 
+		// Get room
+		ChatRoom room = client.getRoom(convo);
+
 		// Send response
 		JsonObject res = new JsonObject();
-		res.add("conversation",
-				client.getServer().roomObject(convo, client.isRoomPrivate(convo), client.getPlayer().getAccountID()));
+		res.add("conversation", client.getServer().roomObject(convo, room != null ? room.getType() : "room",
+				client.getPlayer().getAccountID()));
 		res.addProperty("eventId", "conversations.get");
 		res.addProperty("success", true);
 		client.sendPacket(res);

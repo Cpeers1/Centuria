@@ -57,6 +57,7 @@ import org.asf.centuria.modules.events.updates.ServerUpdateEvent;
 import org.asf.centuria.modules.events.updates.UpdateCancelEvent;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.ChatServer;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 import org.asf.centuria.networking.gameserver.GameServer;
 import org.asf.centuria.networking.http.api.FallbackAPIProcessor;
 import org.asf.centuria.networking.http.api.GameRegistrationHandler;
@@ -423,11 +424,11 @@ public class Centuria {
 		File serverConf = new File("server.conf");
 		if (!serverConf.exists()) {
 			Files.writeString(serverConf.toPath(), "" //
-					+ "api-port=6970\n" //
-					+ "director-port=6969\n" //
-					+ "game-port=6968\n" //
-					+ "chat-port=6972\n"//
-					+ "voice-chat-port=6973\n" //
+					+ "api-port=37501\n" //
+					+ "director-port=37502\n" //
+					+ "game-port=37503\n" //
+					+ "chat-port=37504\n"//
+					+ "voice-chat-port=37505\n" //
 					+ "\n" //
 					+ "allow-registration=true\n" //
 					+ "\n" //
@@ -726,7 +727,7 @@ public class Centuria {
 
 			HashMap<String, String> props = new HashMap<String, String>();
 			props.put("address", "0.0.0.0");
-			props.put("port", "6970");
+			props.put("port", "37501");
 			if (serverProperties.getOrDefault("encrypt-api", "false").equals("true")
 					&& new File("keystore.jks").exists() && new File("keystore.jks.password").exists()) {
 				props.put("keystore", "keystore.jks");
@@ -868,15 +869,15 @@ public class Centuria {
 			try {
 				sock = getContext(new File("keystore.jks"),
 						Files.readString(Path.of("keystore.jks.password")).toCharArray()).getServerSocketFactory()
-						.createServerSocket(Integer.parseInt(serverProperties.getOrDefault("chat-port", "6972")), 0,
+						.createServerSocket(Integer.parseInt(serverProperties.getOrDefault("chat-port", "37504")), 0,
 								InetAddress.getByName("0.0.0.0"));
 			} catch (UnrecoverableKeyException | KeyManagementException | NumberFormatException | KeyStoreException
 					| NoSuchAlgorithmException | CertificateException | IOException e) {
-				sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("chat-port", "6972")), 0,
+				sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("chat-port", "37504")), 0,
 						InetAddress.getByName("0.0.0.0"));
 			}
 		else
-			sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("chat-port", "6972")), 0,
+			sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("chat-port", "37504")), 0,
 					InetAddress.getByName("0.0.0.0"));
 		for (ICenturiaModule module : ModuleManager.getInstance().getAllModules()) {
 			chatServer = module.replaceChatServer(sock);
@@ -890,21 +891,21 @@ public class Centuria {
 		//
 		// Start voice chat server
 		Centuria.logger.info("Starting Voice Chat server on port "
-				+ Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "6973")) + "...");
+				+ Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "37505")) + "...");
 		if (encryptVoiceChat)
 			try {
 				sock = getContext(new File("keystore.jks"),
 						Files.readString(Path.of("keystore.jks.password")).toCharArray()).getServerSocketFactory()
-						.createServerSocket(Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "6973")),
+						.createServerSocket(Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "37505")),
 								0, InetAddress.getByName("0.0.0.0"));
 			} catch (UnrecoverableKeyException | KeyManagementException | NumberFormatException | KeyStoreException
 					| NoSuchAlgorithmException | CertificateException | IOException e) {
-				sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "6973")), 0,
+				sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "37505")), 0,
 						InetAddress.getByName("0.0.0.0"));
 				encryptVoiceChat = false;
 			}
 		else
-			sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "6973")), 0,
+			sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "37505")), 0,
 					InetAddress.getByName("0.0.0.0"));
 		voiceChatServer = new VoiceChatServer(sock);
 		voiceChatServer.start();
@@ -1087,17 +1088,17 @@ public class Centuria {
 				res.addProperty("success", true);
 				client.sendPacket(res);
 				res = new JsonObject();
-				res.addProperty("conversationId", NIL_UUID);
+				res.addProperty("conversationId", "SYSTEM");
 				res.addProperty("eventId", "conversations.create");
 				res.addProperty("success", true);
 				client.sendPacket(res);
-				client.joinRoom(NIL_UUID, true);
+				client.joinRoom(NIL_UUID, ChatRoomTypes.PRIVATE_CHAT);
 			}
 
 			// Send response
 			JsonObject res = new JsonObject();
 			res.addProperty("conversationType", inDm ? "private" : "room");
-			res.addProperty("conversationId", inDm ? NIL_UUID : "room_" + player.levelID);
+			res.addProperty("conversationId", inDm ? "SYSTEM" : "room_" + player.levelID);
 			res.addProperty("message", message);
 			res.addProperty("source", NIL_UUID);
 			res.addProperty("sentAt", LocalDateTime.now().toString());

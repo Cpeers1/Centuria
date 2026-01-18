@@ -3,6 +3,8 @@ package org.asf.centuria.networking.chatserver.networking;
 import org.asf.centuria.dms.DMManager;
 import org.asf.centuria.networking.chatserver.ChatClient;
 import org.asf.centuria.networking.chatserver.proxies.ProxySession;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoom;
+import org.asf.centuria.networking.chatserver.rooms.ChatRoomTypes;
 
 import com.google.gson.JsonObject;
 
@@ -40,7 +42,9 @@ public class JoinRoomPacket extends AbstractChatPacket {
 
 		// Check if its a dm
 		DMManager manager = DMManager.getInstance();
-		if (manager.dmExists(room)) {
+		ChatRoom roomInstance = client.getServer().getRoom(room);
+		if (manager.dmExists(room)
+				|| (roomInstance != null && !roomInstance.getType().equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT))) {
 			// Ignore join
 			JsonObject res = new JsonObject();
 			res.addProperty("eventId", "conversations.addParticipant");
@@ -58,13 +62,13 @@ public class JoinRoomPacket extends AbstractChatPacket {
 		}
 
 		// Leave old public room
-		for (String room : client.getRooms()) {
-			if (!client.isRoomPrivate(room)) {
+		for (ChatRoom room : client.getRoomInstances()) {
+			if (room.getType().equalsIgnoreCase(ChatRoomTypes.ROOM_CHAT)) {
 				// Leave
-				client.leaveRoom(room);
+				client.leaveRoom(room.getRoomID());
 
 				// Remove from proxy session
-				session.roomSessions.remove(room);
+				session.roomSessions.remove(room.getRoomID());
 			}
 		}
 
@@ -82,7 +86,7 @@ public class JoinRoomPacket extends AbstractChatPacket {
 
 		// Join room
 		if (!client.isInRoom(room))
-			client.joinRoom(room, false);
+			client.joinRoom(room, ChatRoomTypes.ROOM_CHAT);
 
 		return true;
 	}
