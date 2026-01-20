@@ -5210,7 +5210,7 @@ public class SendMessage extends AbstractChatPacket {
 					case "retryautomaticupdate": {
 						// Check perms
 						if (GameServer.hasPerm(permLevel, "admin")) {
-							// Cancel update
+							// Retry update
 							if (Centuria.hasUpdaterFailed() && !Centuria.staffFixedUpdateError) {
 								systemMessage("Signalled the automatic updater to retry the update process!", cmd,
 										client);
@@ -5226,7 +5226,7 @@ public class SendMessage extends AbstractChatPacket {
 					case "forceinstallupdate": {
 						// Check perms
 						if (GameServer.hasPerm(permLevel, "admin")) {
-							// Cancel update
+							// Retry update
 							if (Centuria.hasUpdaterFailed() && !Centuria.staffFixedUpdateError) {
 								systemMessage(
 										"Signalled the automatic updater to retry the update process with conflict detection disabled!",

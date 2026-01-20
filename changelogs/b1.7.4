@@ -14,6 +14,7 @@ Major changes:
 - Completely overhauled the item system to work with string def IDs instead of numeric def IDs only, do note that this is still limited and can be unstable
 - Changed item transmission so that item operations only send changed items and not the full inventory, speeding up performance with unbinding and a lot more
 - Backported the simplified 1.8 Event Bus
+- Rewrote the automatic update system, see updater.json generated on server startup for customization of the server, it now has support for downloading additional resource like modules or assets and such
 
 New features in the server:
 - Added a new API Event: AccountDisplayNameChangedEvent
