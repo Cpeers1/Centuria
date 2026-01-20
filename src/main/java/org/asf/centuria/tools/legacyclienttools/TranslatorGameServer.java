@@ -19,7 +19,7 @@ import org.asf.centuria.packets.xml.handshake.version.ClientToServerHandshake;
 import org.asf.centuria.packets.xml.handshake.version.ServerToClientOK;
 import org.asf.centuria.packets.xt.gameserver.PrefixedPacket;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import tools.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 

@@ -12,6 +12,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyManagementException;
@@ -22,6 +23,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Security;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
@@ -33,11 +35,14 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
 import org.asf.connective.ConnectiveHttpServer;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asf.centuria.connective.logger.Log4jManagerImpl;
@@ -52,6 +57,7 @@ import org.asf.centuria.modules.events.accounts.AccountDisconnectEvent;
 import org.asf.centuria.modules.events.accounts.AccountDisconnectEvent.DisconnectType;
 import org.asf.centuria.modules.events.servers.APIServerStartupEvent;
 import org.asf.centuria.modules.events.servers.DirectorServerStartupEvent;
+import org.asf.centuria.modules.events.updates.AutomaticUpdateFailedEvent;
 import org.asf.centuria.modules.events.updates.ServerUpdateCompletionEvent;
 import org.asf.centuria.modules.events.updates.ServerUpdateEvent;
 import org.asf.centuria.modules.events.updates.UpdateCancelEvent;
@@ -83,9 +89,12 @@ import org.asf.centuria.networking.http.director.GameServerRequestHandler;
 import org.asf.centuria.networking.voicechatserver.VoiceChatServer;
 import org.asf.centuria.seasonpasses.SeasonPassManager;
 import org.asf.centuria.textfilter.TextFilterService;
+import org.asf.centuria.updater.PolyUpdaterClient;
+import org.asf.centuria.updater.collections.PolyCollection;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class Centuria {
 	// Update
@@ -116,6 +125,9 @@ public class Centuria {
 	public static boolean defaultAllowGiveItemCurrency = true;
 	public static boolean defaultAllowSkipTwiggleWork = true;
 	public static boolean defaultEnableCreativeRestock = false;
+	public static boolean staffFixedUpdateError = false;
+	public static boolean forceInstallUpdate = false;
+	private static boolean lockUpdaterUntilFixed = false;
 	public static boolean encryptChat = false;
 	public static boolean encryptGame = false;
 	public static boolean encryptVoiceChat = false;
@@ -125,6 +137,10 @@ public class Centuria {
 
 	public static long keepAliveWarningInterval = 0;
 	public static long keepAliveKickInterval = 0;
+
+	public static boolean hasUpdaterFailed() {
+		return lockUpdaterUntilFixed;
+	}
 
 	// Servers
 	private static ConnectiveHttpServer apiServer;
@@ -136,11 +152,6 @@ public class Centuria {
 	// Keys
 	private static PrivateKey privateKey;
 	private static PublicKey publicKey;
-
-	// Updating
-	private static boolean cancelUpdate = false;
-	public static boolean updating = false;
-	private static String nextVersion = null;
 
 	// Messages
 	private static String NIL_UUID = new UUID(0, 0).toString();
@@ -176,51 +187,263 @@ public class Centuria {
 			System.setProperty("log4j2.configurationFile", Centuria.class.getResource("/log4j2.xml").toString());
 		}
 		logger = LogManager.getLogger("CENTURIA");
+		Security.addProvider(new BouncyCastleProvider());
 
-		// Load http logger
-		new Log4jManagerImpl().assignAsMain();
+		// Check arguments
+		if (Stream.of(args).anyMatch(t -> t.equals("--force-update"))) {
+			forceInstallUpdate = true;
+		}
 
-		// Load modules
-		ModuleManager.getInstance().initializeComponents();
-
-		// Update configuration
-		String updateChannel = "beta";
-		boolean disableUpdater = true;
-		if (new File("updater.conf").exists()) {
-			// Parse properties
-			HashMap<String, String> properties = new HashMap<String, String>();
-			for (String line : Files.readAllLines(Path.of("updater.conf"))) {
-				String key = line;
-				String value = "";
-				if (key.contains("=")) {
-					value = key.substring(key.indexOf("=") + 1);
-					key = key.substring(0, key.indexOf("="));
+		// Create updater files if needed
+		File repoCache = new File("updater/repositories");
+		File packageCache = new File("updater/packages");
+		repoCache.mkdirs();
+		packageCache.mkdirs();
+		if (!new File("updater.json").exists()) {
+			boolean oldDisableUpdater = true;
+			boolean oldEnableRuntime = true;
+			if (new File("updater.conf").exists()) {
+				// Parse properties
+				HashMap<String, String> properties = new HashMap<String, String>();
+				for (String line : Files.readAllLines(Path.of("updater.conf"))) {
+					String key = line;
+					String value = "";
+					if (key.contains("=")) {
+						value = key.substring(key.indexOf("=") + 1);
+						key = key.substring(0, key.indexOf("="));
+					}
+					properties.put(key, value);
 				}
-				properties.put(key, value);
+
+				// Check if disabled
+				oldDisableUpdater = Boolean.parseBoolean(properties.getOrDefault("disable", "true"));
+				oldEnableRuntime = Boolean.parseBoolean(properties.getOrDefault("runtime-auto-update", "true"));
 			}
 
-			// Load channel
-			updateChannel = properties.getOrDefault("channel", updateChannel);
+			// Create
+			JsonObject config = new JsonObject();
+			config.addProperty("__COMMENT01__",
+					"Updater settings, updates are disabled by default, but when enabled it can run update checks on startup and if the user so wishes, at runtime.");
+			config.addProperty("enabled", !oldDisableUpdater);
+			config.addProperty("enableRuntimeUpdater", oldEnableRuntime);
+			config.addProperty("runtimeUpdaterTimer", 10);
+			config.addProperty("__COMMENT02__",
+					"Here you can configure which update channel to use, valid channels are: lts, latest, experimental, staging, testing and development. The Strategy controls how to install packages, either only install, or also keeping them up to date, valid values are: fullupdate, installonly");
+			config.addProperty("defaultChannel", "latest");
+			config.addProperty("defaultStrategy", "fullupdate");
+			config.addProperty("__COMMENT03__",
+					"Next up are the repositories, repositories are sources for colllections");
+			JsonObject repositories = new JsonObject();
+			repositories.addProperty("openferal", "https://emuferal.openferal.net/centuria/");
+			config.add("repositories", repositories);
+			config.addProperty("__COMMENT04__",
+					"Next up are the collections, collections are downloadable packages which can be included in the server");
+			JsonObject collections = new JsonObject();
+			collections.add("base",
+					createUpdateCollection("The base collection is the server itself", true, "inherit", "fullupdate"));
+			collections.add("module-discordbot",
+					createUpdateCollection(
+							"The collection module-discordbot installs the discord bot module as part of the server",
+							false, "inherit", "inherit"));
+			collections.add("module-feraltweaks", createUpdateCollection(
+					"The collection module-feraltweaks installs the FeralTweaks module as part of the server, required for FeralTweaks-based launchers to function",
+					true, "inherit", "inherit"));
+			collections.add("module-discordrpc", createUpdateCollection(
+					"The collection module-discordrpc installs the Discord RPC support mod as part of the server", true,
+					"inherit", "inherit"));
+			collections.add("module-playasnpcs",
+					createUpdateCollection(
+							"The collection module-playasnpcs installs the Play as NPCs mod as part of the server",
+							true, "inherit", "inherit"));
+			collections.add("module-gcs",
+					createUpdateCollection(
+							"The collection module-gcs installs the group chat mod as part of the server", true,
+							"inherit", "inherit"));
+			collections.add("patches-emuferalonline", createUpdateCollection(
+					"The collection patches-emuferalonline installs all the base EmuFeral Online patches into the server. IMPORTANT: this installs all EmuFeral chart patches into the server and will maintain to update them, for custom chart patches, use the folder named feraltweaks/servercontent, these files override files included by EmuFeral Online",
+					true, "inherit", "inherit"));
+			collections.add("payload-earlyaccess-1.8", createUpdateCollection(
+					"The collection payload-earlyaccess-1.8 installs all the Early Access 1.8 related files into the server. IMPORTANT: this branch is not permanent, you may need to remove this in the future",
+					true, "inherit", "inherit"));
+			collections.add("payload-launcherbinaries", createUpdateCollection(
+					"The collection payload-launcherbinaries installs the launcher binaries into the server, instead of using from upstream (useful for offline play)",
+					false, "inherit", "inherit"));
+			collections.add("payload-modloaderbinaries", createUpdateCollection(
+					"The collection payload-modloaderbinaries installs the modloader binaries into the server, instead of using from upstream (useful for offline play)",
+					false, "inherit", "inherit"));
+			collections.add("payload-archive-gameassets-0191", createUpdateCollection(
+					"The collection payload-archive-gameassets-0191 installs all game assets for 0.19.1 into the server, WARNING: this downloads over 8 gigabyte into the game",
+					false, "archive", "inherit"));
+			collections.add("payload-archive-gameassets-0215", createUpdateCollection(
+					"The collection payload-archive-gameassets-0215 installs all game assets for 0.2.15 into the server (archival purposes only, server doesnt run with this version), WARNING: this downloads over 3 gigabyte into the server",
+					false, "archive", "inherit"));
+			collections.add("payload-archive-gameassets-0411", createUpdateCollection(
+					"The collection payload-archive-gameassets-0411 installs all game assets for 0.4.11 into the server (archival purposes only, server doesnt run with this version), WARNING: this downloads over 3.6 gigabyte into the server",
+					false, "archive", "inherit"));
+			collections.add("payload-archive-gameassets-0183", createUpdateCollection(
+					"The collection payload-archive-gameassets-0183 installs all game assets for 0.18.3 into the server (archival purposes only, server doesnt work with this version), WARNING: this downloads over 7.9 gigabyte into the server",
+					false, "archive", "inherit"));
+			collections.add("payload-archive-gamedownloads-0191", createUpdateCollection(
+					"The collection payload-archive-gamedownloads-0191 installs all client downloads for 0.19.1 into the server, WARNING: this downloads over 8 gigabyte into the game, secondly, you will need to configure the launcher.ini files to reflect your server URL",
+					false, "archive", "inherit"));
+			collections.add("payload-archive-gamedownloads-0215", createUpdateCollection(
+					"The collection payload-archive-gamedownloads-0215 installs all client downloads for 0.2.15 into the server (archival purposes only, doesnt run with this version), secondly, you will need to configure the launcher.ini files to reflect your server URL, WARNING: this downloads over 3 gigabyte into the server",
+					false, "archive", "inherit"));
+			collections.add("payload-archive-gamedownloads-0411", createUpdateCollection(
+					"The collection payload-archive-gamedownloads-0411 installs all client downloads for 0.4.11 into the server (archival purposes only, doesnt run with this version), secondly, you will need to configure the launcher.ini files to reflect your server URL, WARNING: this downloads over 3.6 gigabyte into the server",
+					false, "archive", "inherit"));
+			collections.add("payload-archive-gamedownloads-0183", createUpdateCollection(
+					"The collection payload-archive-gamedownloads-0183 installs all client downloads for 0.18.3 into the server (archival purposes only, doesnt run with this version), secondly, you will need to configure the launcher.ini files to reflect your server URL, WARNING: this downloads over 7.9 gigabyte into the server",
+					false, "archive", "inherit"));
+			config.add("collections", collections);
+			Files.writeString(Path.of("updater.json"),
+					new Gson().newBuilder().setPrettyPrinting().create().toJson(config));
+		}
 
-			// Check if disabled
-			disableUpdater = Boolean.parseBoolean(properties.getOrDefault("disable", "true"));
+		// Parse properties
+		JsonObject updateSettings = JsonParser.parseString(Files.readString(Path.of("updater.json"))).getAsJsonObject();
+
+		// Check if disabled
+		boolean disableUpdater = updateSettings.has("enabled") && !updateSettings.get("enabled").getAsBoolean();
+
+		// Check json upgrade
+		PolyUpdaterClient.installJsonUpgrades(new File("."));
+
+		// Updater
+		if (!disableUpdater) {
+			// Initialize
+			PolyUpdaterClient.init(updateSettings, repoCache, packageCache, new File("."));
+
+			// Check for updates
+			if (shouldUpdate()) {
+				// Download
+				if (!downloadUpdate(
+						"Add the argument \"--force-update\" to the server command to forcefully install the update bypassing conflict detection mechanism.")) {
+					// Failed
+					logger.fatal("The download process could not be completed, please check the log for errors.");
+					System.exit(1);
+					return;
+				}
+
+				// Check for errors
+				boolean hasInstallables = false;
+				boolean shouldWarn = false;
+				for (PolyCollection col : PolyUpdaterClient.getCollections()) {
+					if (!col.isInstalledLocally() && !col.hasUpdateAvailable()) {
+						shouldWarn = true;
+					} else if (col.hasUpdateAvailable()) {
+						hasInstallables = true;
+					}
+				}
+				if (shouldWarn && !hasInstallables) {
+					// Error
+					logger.fatal(
+							"Automatic installation of packages failed! The server was unable to download requested collections.");
+					System.exit(1);
+					return;
+				} else if (shouldWarn) {
+					// Error
+					logger.warn(
+							"There are collections that are pending installation however not all could be provided a source for downloading, please review the logs!");
+					logger.warn(
+							"The server will proceed with downloading the packages that are available, however this is likely to crash the server on next startup!");
+				}
+
+				// Dispatch event
+				EventBus.getInstance()
+						.dispatchEvent(new ServerUpdateEvent(PolyUpdaterClient.getBaseSoftwareNextVersion(), -1,
+								Stream.of(PolyUpdaterClient.getCollections()).filter(t -> t.hasUpdateAvailable())
+										.toArray(t -> new PolyCollection[t])));
+
+				// Dispatch completion event
+				EventBus.getInstance()
+						.dispatchEvent(new ServerUpdateCompletionEvent(PolyUpdaterClient.getBaseSoftwareNextVersion(),
+								Stream.of(PolyUpdaterClient.getCollections()).filter(t -> t.hasUpdateAvailable())
+										.toArray(t -> new PolyCollection[t])));
+
+				// Exit server
+				System.exit(0);
+			}
 
 			// Check if automatic updating is enabled
-			if (Boolean.parseBoolean(properties.getOrDefault("runtime-auto-update", "false")) && !Centuria.debugMode) {
-				int mins = Integer.parseInt(properties.getOrDefault("runtime-update-timer-length", "10"));
+			if (updateSettings.has("enableRuntimeUpdater")
+					&& updateSettings.get("enableRuntimeUpdater").getAsBoolean()) {
+				int mins = updateSettings.has("runtimeUpdaterTimer")
+						? updateSettings.get("runtimeUpdaterTimer").getAsInt()
+						: 10;
 
 				// Start the automatic update thread
-				final String channel = updateChannel;
 				Thread updater = new Thread(() -> {
 					while (true) {
 						// Run every 2 minutes
 						try {
 							Thread.sleep(120000);
 						} catch (InterruptedException e) {
+							break;
 						}
 
+						// Check
+						if (lockUpdaterUntilFixed && !staffFixedUpdateError)
+							continue;
+						staffFixedUpdateError = false;
+
 						// Check for updates
-						if (shouldUpdate(channel)) {
+						if (shouldUpdate()) {
+							try {
+								// Download
+								if (!downloadUpdate(
+										"Use the admin command \"forceinstallupdate\" ingame to forcefully install updates bypassing the conflict detection mechanism.")) {
+									// Failed
+									logger.fatal(
+											"The download process could not be completed, please check the log for errors.");
+									EventBus.getInstance().dispatchEvent(new AutomaticUpdateFailedEvent());
+									PolyUpdaterClient.resetUpdateStates();
+									lockUpdaterUntilFixed = true;
+
+									// Error
+									throw new IOException();
+								}
+
+								// Check for errors
+								boolean hasInstallables = false;
+								boolean shouldWarn = false;
+								for (PolyCollection col : PolyUpdaterClient.getCollections()) {
+									if (!col.isInstalledLocally() && !col.hasUpdateAvailable()) {
+										shouldWarn = true;
+									} else if (col.hasUpdateAvailable()) {
+										hasInstallables = true;
+									}
+								}
+								if (shouldWarn && !hasInstallables) {
+									// Error
+									logger.fatal(
+											"Automatic installation of packages failed! The server was unable to download requested collections.");
+									EventBus.getInstance().dispatchEvent(new AutomaticUpdateFailedEvent());
+									PolyUpdaterClient.resetUpdateStates();
+									lockUpdaterUntilFixed = true;
+									throw new IOException();
+								} else if (shouldWarn) {
+									// Error
+									logger.fatal(
+											"There are collections that are pending installation however not all could be provided a source for downloading, please review the logs!");
+									EventBus.getInstance().dispatchEvent(new AutomaticUpdateFailedEvent());
+									PolyUpdaterClient.resetUpdateStates();
+									lockUpdaterUntilFixed = true;
+									throw new IOException();
+								}
+							} catch (IOException e) {
+								if (lockUpdaterUntilFixed)
+									continue;
+
+								// Rerun after an hour
+								Centuria.logger.error("An error occurred while downloading available updates!", e);
+								try {
+									Thread.sleep(60 * 1000);
+								} catch (InterruptedException e1) {
+									break;
+								}
+								continue;
+							}
 							runUpdater(mins);
 							return;
 						}
@@ -231,20 +454,11 @@ public class Centuria {
 			}
 		}
 
-		// Updater
-		if (!disableUpdater && !Centuria.debugMode) {
-			// Check for updates
-			if (shouldUpdate(updateChannel)) {
-				// Dispatch event
-				EventBus.getInstance().dispatchEvent(new ServerUpdateEvent(nextVersion, -1));
+		// Load http logger
+		new Log4jManagerImpl().assignAsMain();
 
-				// Dispatch completion event
-				EventBus.getInstance().dispatchEvent(new ServerUpdateCompletionEvent(nextVersion));
-
-				// Exit server
-				System.exit(0);
-			}
-		}
+		// Load modules
+		ModuleManager.getInstance().init();
 
 		// Managers
 		logger.info("Initializing services...");
@@ -271,19 +485,25 @@ public class Centuria {
 		gameServer.stop();
 	}
 
+	private static JsonObject createUpdateCollection(String comment, boolean enabled, String channel, String strategy) {
+		JsonObject col = new JsonObject();
+		col.addProperty("__COMMENT__", comment);
+		col.addProperty("enabled", enabled);
+		col.addProperty("channel", channel);
+		col.addProperty("strategy", strategy);
+		return col;
+	}
+
 	/**
 	 * Cancels the update
 	 * 
 	 * @return True if successful, false otherwise
 	 */
 	public static boolean cancelUpdate() {
-		if (updating) {
-			cancelUpdate = true;
-			nextVersion = null;
+		boolean res = PolyUpdaterClient.cancelScheduledUpdate();
+		if (res)
 			EventBus.getInstance().dispatchEvent(new UpdateCancelEvent());
-			return true;
-		} else
-			return false;
+		return res;
 	}
 
 	/**
@@ -295,14 +515,16 @@ public class Centuria {
 	 */
 	public static boolean runUpdater(int mins) {
 		// Run timer
-		if (!cancelUpdate) {
-			updating = true;
-
-			EventBus.getInstance().dispatchEvent(new ServerUpdateEvent(nextVersion, mins));
+		if (!PolyUpdaterClient.isUpdateCancelled()) {
+			PolyUpdaterClient.scheduleUpdate();
+			EventBus.getInstance()
+					.dispatchEvent(new ServerUpdateEvent(PolyUpdaterClient.getBaseSoftwareNextVersion(), mins,
+							Stream.of(PolyUpdaterClient.getCollections()).filter(t -> t.hasUpdateAvailable())
+									.toArray(t -> new PolyCollection[t])));
 			final int minutes = mins;
 			Thread th = new Thread(() -> {
 				int remaining = minutes;
-				while (!cancelUpdate) {
+				while (!PolyUpdaterClient.isUpdateCancelled()) {
 					String message = null;
 					switch (remaining) {
 					case 60:
@@ -319,7 +541,6 @@ public class Centuria {
 					case 0:
 						// Shut down
 						updateShutdown(null);
-						cancelUpdate = false;
 						return;
 					}
 
@@ -331,7 +552,7 @@ public class Centuria {
 					}
 
 					for (int i = 0; i < 60; i++) {
-						if (cancelUpdate)
+						if (PolyUpdaterClient.isUpdateCancelled())
 							break;
 						try {
 							Thread.sleep(1000);
@@ -341,10 +562,9 @@ public class Centuria {
 
 					remaining--;
 				}
-				cancelUpdate = false;
-				updating = false;
+				PolyUpdaterClient.resetScheduledUpdate();
 			});
-			th.setName("Update Thread");
+			th.setName("Update Scheduler Thread");
 			th.start();
 
 			return true;
@@ -358,15 +578,21 @@ public class Centuria {
 	 */
 	public static void updateShutdown(String reason) {
 		// Dispatch event if the update was instant
-		if (!updating) {
-			EventBus.getInstance().dispatchEvent(new ServerUpdateEvent(nextVersion, -1));
+		if (!PolyUpdaterClient.isUpdateScheduled()) {
+			EventBus.getInstance()
+					.dispatchEvent(new ServerUpdateEvent(PolyUpdaterClient.getBaseSoftwareNextVersion(), -1,
+							Stream.of(PolyUpdaterClient.getCollections()).filter(t -> t.hasUpdateAvailable())
+									.toArray(t -> new PolyCollection[t])));
 		}
 
 		// Shut down the server
 		disconnectPlayersForShutdown(reason);
 
 		// Dispatch completion event
-		EventBus.getInstance().dispatchEvent(new ServerUpdateCompletionEvent(nextVersion));
+		EventBus.getInstance()
+				.dispatchEvent(new ServerUpdateCompletionEvent(PolyUpdaterClient.getBaseSoftwareNextVersion(),
+						Stream.of(PolyUpdaterClient.getCollections()).filter(t -> t.hasUpdateAvailable())
+								.toArray(t -> new PolyCollection[t])));
 
 		// Exit
 		System.exit(0);
@@ -567,18 +793,24 @@ public class Centuria {
 		}
 
 		// Load or generate keys for JWT signatures
-		File publicKey = new File("publickey.pem");
-		File privateKey = new File("privatekey.pem");
+		File publicKey = new File("publickey-di.pem");
+		File privateKey = new File("privatekey-di.pem");
 		if (!publicKey.exists() || !privateKey.exists()) {
 			// Generate new keys
-			KeyPair pair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+			KeyPairGenerator gen = KeyPairGenerator.getInstance("Dilithium");
+			try {
+				gen.initialize(DilithiumParameterSpec.dilithium5);
+			} catch (InvalidAlgorithmParameterException e) {
+				throw new RuntimeException(e);
+			}
+			KeyPair pair = gen.generateKeyPair();
 
 			// Save keys
 			Files.writeString(publicKey.toPath(), pemEncode(pair.getPublic().getEncoded(), "PUBLIC"));
 			Files.writeString(privateKey.toPath(), pemEncode(pair.getPrivate().getEncoded(), "PRIVATE"));
 		}
 		// Load keys
-		KeyFactory fac = KeyFactory.getInstance("RSA");
+		KeyFactory fac = KeyFactory.getInstance("Dilithium");
 		try {
 			Centuria.privateKey = fac
 					.generatePrivate(new PKCS8EncodedKeySpec(pemDecode(Files.readString(privateKey.toPath()))));
@@ -1037,7 +1269,7 @@ public class Centuria {
 	// Signature generator
 	public static byte[] sign(byte[] data) {
 		try {
-			Signature sig = Signature.getInstance("Sha256WithRSA");
+			Signature sig = Signature.getInstance("Dilithium");
 			sig.initSign(privateKey);
 			sig.update(data);
 			return sig.sign();
@@ -1049,7 +1281,7 @@ public class Centuria {
 	// Signature verification
 	public static boolean verify(byte[] data, byte[] signature) {
 		try {
-			Signature sig = Signature.getInstance("Sha256WithRSA");
+			Signature sig = Signature.getInstance("Dilithium");
 			sig.initVerify(publicKey);
 			sig.update(data);
 			return sig.verify(signature);
@@ -1109,47 +1341,15 @@ public class Centuria {
 	}
 
 	// Updater
-	private static boolean shouldUpdate(String channel) {
-		Centuria.logger.info("Checking for updates...");
+	private static boolean shouldUpdate() {
+		return PolyUpdaterClient.checkForUpdates();
+	}
 
+	private static boolean downloadUpdate(String forcedMessage) throws IOException {
 		try {
-			InputStream updateLog = new URL(Centuria.DOWNLOAD_BASE_URL + "/" + channel + "/update.info").openStream();
-			String update = new String(updateLog.readAllBytes(), "UTF-8").trim();
-			updateLog.close();
-
-			if (!SERVER_UPDATE_VERSION.equals(update)) {
-				// Download the update list
-				Centuria.logger.info("Update available, new version: " + update);
-				Centuria.logger.info("Preparing to update Centuria...");
-				InputStream strm = new URL(Centuria.DOWNLOAD_BASE_URL + "/" + channel + "/" + update + "/update.list")
-						.openStream();
-				String fileList = new String(strm.readAllBytes(), "UTF-8").trim();
-				strm.close();
-
-				// Parse the file list (newline-separated)
-				String downloadList = "";
-				for (String file : fileList.split("\n")) {
-					if (!file.isEmpty()) {
-						downloadList += file + "=" + Centuria.DOWNLOAD_BASE_URL + "/" + channel + "/" + update + "/"
-								+ file + "\n";
-					}
-				}
-
-				// Save the file, copy jar and run the shutdown timer
-				Files.writeString(Path.of("update.list"), downloadList);
-				if (!new File("updater.jar").exists())
-					Files.copy(Path.of("Centuria.jar"), Path.of("updater.jar"));
-
-				// Save new version in memory
-				nextVersion = update;
-
-				// Update available
-				return true;
-			}
-		} catch (IOException e) {
+			return PolyUpdaterClient.downloadUpdates(forceInstallUpdate, forcedMessage);
+		} finally {
+			forceInstallUpdate = false;
 		}
-
-		// No update available
-		return false;
 	}
 }

@@ -10,10 +10,11 @@ SET libs=%libs:~1%
 java -cp "%libs%" org.asf.centuria.Centuria %*
 
 if EXIST updater.jar goto UPDATE
-exit
+exit %ERRORLEVEL%
 
 :UPDATE
 java -cp updater.jar org.asf.centuria.CenturiaUpdater --update
+if %ERRORLEVEL% neq 0 exit 1
 del updater.jar
 echo.
 goto MAIN

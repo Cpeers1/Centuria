@@ -22,6 +22,8 @@ import java.util.stream.Stream;
 
 import org.apache.logging.log4j.MarkerManager;
 import org.asf.centuria.Centuria;
+import org.asf.centuria.updater.PolyUpdaterClient;
+import org.asf.centuria.updater.collections.PolyCollection;
 import org.asf.centuria.accounts.AccountManager;
 import org.asf.centuria.accounts.CenturiaAccount;
 import org.asf.centuria.accounts.highlevel.ItemAccessor;
@@ -2337,6 +2339,8 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("removeperms \"<player>\"");
 				commandMessages.add("startmaintenance");
 				commandMessages.add("endmaintenance");
+				commandMessages.add("retryautomaticupdate");
+				commandMessages.add("forceinstallupdate");
 				commandMessages.add("shutdownserver [\"<reason>\"]");
 				commandMessages.add("updatewarning <minutes-remaining>");
 				commandMessages.add("updateshutdown [\"<reason>\"]");
@@ -5203,6 +5207,40 @@ public class SendMessage extends AbstractChatPacket {
 							break;
 						}
 					}
+					case "retryautomaticupdate": {
+						// Check perms
+						if (GameServer.hasPerm(permLevel, "admin")) {
+							// Cancel update
+							if (Centuria.hasUpdaterFailed() && !Centuria.staffFixedUpdateError) {
+								systemMessage("Signalled the automatic updater to retry the update process!", cmd,
+										client);
+								Centuria.staffFixedUpdateError = true;
+							} else
+								systemMessage("The automatic updater has not encountered any errors. Nothing to do.",
+										cmd, client);
+							return true;
+						} else {
+							break;
+						}
+					}
+					case "forceinstallupdate": {
+						// Check perms
+						if (GameServer.hasPerm(permLevel, "admin")) {
+							// Cancel update
+							if (Centuria.hasUpdaterFailed() && !Centuria.staffFixedUpdateError) {
+								systemMessage(
+										"Signalled the automatic updater to retry the update process with conflict detection disabled!",
+										cmd, client);
+								Centuria.staffFixedUpdateError = true;
+								Centuria.forceInstallUpdate = true;
+							} else
+								systemMessage("The automatic updater has not encountered any errors. Nothing to do.",
+										cmd, client);
+							return true;
+						} else {
+							break;
+						}
+					}
 					case "cancelupdate": {
 						// Check perms
 						if (GameServer.hasPerm(permLevel, "admin")) {
@@ -5222,8 +5260,9 @@ public class SendMessage extends AbstractChatPacket {
 							// Shut down the server
 							Centuria.gameServer.shutdown = true;
 							Centuria.gameServer.maintenance = true;
-							Centuria.updating = true;
-							EventBus.getInstance().dispatchEvent(new ServerUpdateEvent(null, -1));
+							PolyUpdaterClient.scheduleUpdate();
+							EventBus.getInstance()
+									.dispatchEvent(new ServerUpdateEvent(null, -1, new PolyCollection[0]));
 							for (Player plr : Centuria.gameServer.getPlayers()) {
 								// Dispatch event
 								EventBus.getInstance().dispatchEvent(new AccountDisconnectEvent(plr.account,

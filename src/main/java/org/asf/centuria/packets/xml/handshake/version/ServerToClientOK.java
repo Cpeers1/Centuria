@@ -4,8 +4,8 @@ import org.asf.centuria.packets.smartfox.ISmartfoxPacket;
 import org.asf.centuria.networking.smartfox.SmartfoxClient;
 import org.asf.centuria.packets.xml.VersionHandshakePackets;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 public class ServerToClientOK implements ISmartfoxPacket {
 	private XmlMapper mapper;
@@ -36,7 +36,7 @@ public class ServerToClientOK implements ISmartfoxPacket {
 			m.body.action = "apiOK";
 			m.body.r = "0";
 			return mapper.writeValueAsString(m);
-		} catch (JsonProcessingException e) {
+		} catch (JacksonException e) {
 			return null;
 		}
 	}
