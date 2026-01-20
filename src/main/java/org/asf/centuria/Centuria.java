@@ -362,6 +362,7 @@ public class Centuria {
 										.toArray(t -> new PolyCollection[t])));
 
 				// Exit server
+				logger.info("Restarting server!");
 				System.exit(0);
 			}
 
@@ -374,6 +375,8 @@ public class Centuria {
 
 				// Start the automatic update thread
 				Thread updater = new Thread(() -> {
+					boolean wasLocked = false;
+					JsonObject updateSettingsLocal = updateSettings;
 					while (true) {
 						// Run every 2 minutes
 						try {
@@ -385,7 +388,45 @@ public class Centuria {
 						// Check
 						if (lockUpdaterUntilFixed && !staffFixedUpdateError)
 							continue;
+						if (wasLocked && staffFixedUpdateError) {
+							// Reload config
+							logger.info("Loading update configuration...");
+							try {
+								updateSettingsLocal = JsonParser.parseString(Files.readString(Path.of("updater.json")))
+										.getAsJsonObject();
+							} catch (Exception e) {
+								// Failed Failed
+								staffFixedUpdateError = false;
+								logger.fatal("Could not reinitialize automatic updater!", e);
+								EventBus.getInstance().dispatchEvent(new AutomaticUpdateFailedEvent());
+								PolyUpdaterClient.resetUpdateStates();
+								lockUpdaterUntilFixed = true;
+								staffFixedUpdateError = false;
+								wasLocked = true;
+								continue;
+							}
+						}
 						staffFixedUpdateError = false;
+
+						// De-initialize the updater
+						logger.info("Beginning automatic update checker...");
+						PolyUpdaterClient.deinitialize();
+
+						// Reinit
+						try {
+							// Reinit
+							logger.info("Reinitializing update system...");
+							PolyUpdaterClient.init(updateSettingsLocal, repoCache, packageCache, new File("."));
+						} catch (Exception e) {
+							// Failed Failed
+							logger.fatal("Could not reinitialize automatic updater!", e);
+							EventBus.getInstance().dispatchEvent(new AutomaticUpdateFailedEvent());
+							PolyUpdaterClient.resetUpdateStates();
+							lockUpdaterUntilFixed = true;
+							staffFixedUpdateError = false;
+							wasLocked = true;
+							continue;
+						}
 
 						// Check for updates
 						if (shouldUpdate()) {
@@ -399,6 +440,7 @@ public class Centuria {
 									EventBus.getInstance().dispatchEvent(new AutomaticUpdateFailedEvent());
 									PolyUpdaterClient.resetUpdateStates();
 									lockUpdaterUntilFixed = true;
+									wasLocked = true;
 
 									// Error
 									throw new IOException();
@@ -421,6 +463,7 @@ public class Centuria {
 									EventBus.getInstance().dispatchEvent(new AutomaticUpdateFailedEvent());
 									PolyUpdaterClient.resetUpdateStates();
 									lockUpdaterUntilFixed = true;
+									wasLocked = true;
 									throw new IOException();
 								} else if (shouldWarn) {
 									// Error
@@ -429,6 +472,7 @@ public class Centuria {
 									EventBus.getInstance().dispatchEvent(new AutomaticUpdateFailedEvent());
 									PolyUpdaterClient.resetUpdateStates();
 									lockUpdaterUntilFixed = true;
+									wasLocked = true;
 									throw new IOException();
 								}
 							} catch (IOException e) {
@@ -444,6 +488,7 @@ public class Centuria {
 								}
 								continue;
 							}
+							logger.info("Scheduling update for automatic restart!");
 							runUpdater(mins);
 							return;
 						}

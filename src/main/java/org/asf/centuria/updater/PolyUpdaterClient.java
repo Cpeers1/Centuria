@@ -65,6 +65,16 @@ public class PolyUpdaterClient {
 	private static HashMap<String, String> resolvedChannelCache = new HashMap<String, String>();
 
 	/**
+	 * Deinitializes the updater client
+	 */
+	public static void deinitialize() {
+		inited = false;
+		repositories.clear();
+		collections.clear();
+		resetUpdateStates();
+	}
+
+	/**
 	 * Initializes the update client
 	 * 
 	 * @param settings     Update client settings file
@@ -269,7 +279,7 @@ public class PolyUpdaterClient {
 	/**
 	 * Resets the updater so that
 	 */
-	public static void resetUpdateStates() throws IOException {
+	public static void resetUpdateStates() {
 		// Clear
 		channelsToUse.clear();
 		repositoryChannelLists.clear();
@@ -277,11 +287,16 @@ public class PolyUpdaterClient {
 		repositoryBuildCache.clear();
 		repositoryBuildListCache.clear();
 		resolvedChannelCache.clear();
+		wereUpdatesAvailable = false;
 
 		// Go through collections
 		for (PolyCollection col : collections.values()) {
-			if (col.hasUpdateAvailable())
-				col.updateCollectionAndReset();
+			if (col.hasUpdateAvailable()) {
+				try {
+					col.updateCollectionAndReset();
+				} catch (IOException e) {
+				}
+			}
 		}
 	}
 
@@ -302,6 +317,7 @@ public class PolyUpdaterClient {
 		repositoryBuildCache.clear();
 		repositoryBuildListCache.clear();
 		resolvedChannelCache.clear();
+		wereUpdatesAvailable = false;
 
 		// Go through collections
 		for (PolyCollection col : collections.values()) {
@@ -309,7 +325,6 @@ public class PolyUpdaterClient {
 				try {
 					col.updateCollectionAndReset();
 				} catch (IOException e) {
-					throw new RuntimeException(e);
 				}
 			}
 		}
@@ -1234,6 +1249,7 @@ public class PolyUpdaterClient {
 			logger.error("There were packages that could not be installed due to them not having available sources.");
 
 		// Return
+		logger.info("Download process finished!");
 		return true;
 	}
 

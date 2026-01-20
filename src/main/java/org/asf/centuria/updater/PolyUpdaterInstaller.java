@@ -1,6 +1,7 @@
 package org.asf.centuria.updater;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -85,7 +86,7 @@ public class PolyUpdaterInstaller {
 
 				// Find already-installed packages
 				for (String name : current.keySet()) {
-					UpdateEntry file = parseUpdateEntry(name, current.keySet());
+					UpdateEntry file = parseUpdateEntry(name, entries.keySet());
 					if (file == null || name.endsWith("/.keepempty"))
 						continue;
 					totalFiles++;
@@ -110,7 +111,7 @@ public class PolyUpdaterInstaller {
 				File inputCacheFile = new File(entry.cache, name);
 				if (inputCacheFile.exists()) {
 					// Get entry
-					UpdateEntry update = parseUpdateEntry(name, entry.hashList.keySet());
+					UpdateEntry update = parseUpdateEntry(name, entries.keySet());
 					if (update == null)
 						continue;
 
@@ -191,6 +192,56 @@ public class PolyUpdaterInstaller {
 			}
 		}
 
+		// Delete removed files
+		System.out.println("Removing deleted files...");
+		for (String id : entries.keySet()) {
+			CollectionInstallEntry entry = entries.get(id);
+
+			// Load hashes
+			if (entry.cacheListNew.exists()) {
+				HashMap<String, String> newInstallList = new HashMap<String, String>();
+				String hashesInstallNew = Files.readString(entry.cacheListNew.toPath());
+				loadHashList(hashesInstallNew, newInstallList);
+
+				// Go through local files
+				if (entry.cacheListInstalled.exists()) {
+					// Load hashes
+					HashMap<String, String> currentlyInstalled = new HashMap<String, String>();
+					String hashesInstall = Files.readString(entry.cacheListInstalled.toPath());
+					loadHashList(hashesInstall, currentlyInstalled);
+
+					// Go through hashes
+					for (String file : currentlyInstalled.keySet()) {
+						if (!newInstallList.containsKey(file)) {
+							// Deleted upstream
+
+							// Get entry
+							String expectedHash = currentlyInstalled.get(file);
+							UpdateEntry update = parseUpdateEntry(file, null);
+							if (update == null)
+								continue;
+
+							// Get local file
+							File local = new File(target, update.target);
+							if (local.exists()) {
+								// Get local has
+								FileInputStream fIn = new FileInputStream(local);
+								String localHash = PolyTools.sha256Hash(fIn);
+								fIn.close();
+
+								// Check
+								if (localHash.equals(expectedHash)) {
+									// Delete
+									System.out.println("Deleting: " + file + "...");
+									local.delete();
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
 		// Write manifests
 		System.out.println("Writing update information...");
 		for (String id : entries.keySet()) {
@@ -208,6 +259,7 @@ public class PolyUpdaterInstaller {
 			if (entry.cacheListNew.exists()) {
 				String hashesInstall = Files.readString(entry.cacheListNew.toPath());
 				loadHashList(hashesInstall, current);
+				entry.cacheListNew.delete();
 			}
 			entry.cacheListRolling.delete();
 
@@ -298,7 +350,7 @@ public class PolyUpdaterInstaller {
 				return null;
 
 			// Get module
-			if (activeCollections.contains(supportPackage)) {
+			if (activeCollections == null || activeCollections.contains(supportPackage)) {
 				// Present
 
 				// Handle
