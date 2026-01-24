@@ -60,6 +60,29 @@ Moderation-related changes:
 - Added the ability to trade-ban players preventing them from trading, to both the server and discord bot
 
 
+## Launcher changes
+
+New features in the launcher:
+- The launcher now supports relative urls (relative to the feraltweaks data downloader) for downloads of launcher and game assets, this is useful for self-hosting to allow the launcher to directly download from the self-hosted server without having to hardcode the urls all over the place
+- The launcher now supports downloading platform-specific client mods and assets through `assets-osx`, `assets-win64` and `assemblies-osx`, `assemblies-win64` folders in feraltweaks clientmod downloads
+
+New features in the installer:
+- Added an installer overview page where the installation process can be configured
+- Added a way, via the installer, to pick wine versions to use with the game, this can also be accessed post-installation by reopening the installer
+- The installer now copies itself to the installation path, allowing it to be called to modify or uninstall the software from windows
+- Added proper handling of cases where the launcher may be on a disconnected disk while running the installer, the installer would now notify with this being the case and properly deal with uninstalling while the disk is not connecte
+- Added support for URL protocols on widnows and linux....unfortunately not doing this on mac yet as why did apple make it overcomplicated
+- Added windows registry support to the installer, new installations as well as installations updated using the new installers will add the emulator to the program list in windows control panel / settings under applications, allowing the emulator to be removed via the regular windows settings menu
+
+Fixes to the launcher:
+- The launcher now uses http keepalive, this means it will be reusing connections, making downloads more stable and reliable, this will likely help with the unexpected disconnects
+
+Fixes to the installer:
+- Fixed the installer improperly causing "Could not connect with the launcher servers" errors while connected if the install folder is on a disk not connected at the time, __this also fixes any rare cases where the installer does not function while offline while having installed the game before__, meaning that you can use the uninstaller even if the game is offline
+
+__**Note:** you will need to reinstall the game using the installers from our downloads channel for most of these features to work.__ (do keep in mind to also download the installers again)
+
+
 ## Changes to the client
 
 Fixes to both clients:

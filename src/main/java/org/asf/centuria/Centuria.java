@@ -561,7 +561,17 @@ public class Centuria {
 	public static boolean runUpdater(int mins) {
 		// Run timer
 		if (!PolyUpdaterClient.isUpdateCancelled()) {
+			// Check if server is empty
+			if (Centuria.gameServer.getPlayers().length == 0) {
+				// Restart now
+				updateShutdown(null);
+				return true;
+			}
+
+			// Mark scheduled
 			PolyUpdaterClient.scheduleUpdate();
+
+			// Dispatch
 			EventBus.getInstance()
 					.dispatchEvent(new ServerUpdateEvent(PolyUpdaterClient.getBaseSoftwareNextVersion(), mins,
 							Stream.of(PolyUpdaterClient.getCollections()).filter(t -> t.hasUpdateAvailable())
@@ -570,6 +580,14 @@ public class Centuria {
 			Thread th = new Thread(() -> {
 				int remaining = minutes;
 				while (!PolyUpdaterClient.isUpdateCancelled()) {
+					// Check
+					if (Centuria.gameServer.getPlayers().length == 0) {
+						// Restart now
+						updateShutdown(null);
+						break;
+					}
+
+					// Send message
 					String message = null;
 					switch (remaining) {
 					case 60:
@@ -623,6 +641,7 @@ public class Centuria {
 	 */
 	public static void updateShutdown(String reason) {
 		// Dispatch event if the update was instant
+		logger.info("Shutting down server for update...");
 		if (!PolyUpdaterClient.isUpdateScheduled()) {
 			EventBus.getInstance()
 					.dispatchEvent(new ServerUpdateEvent(PolyUpdaterClient.getBaseSoftwareNextVersion(), -1,

@@ -733,7 +733,7 @@ public class PolyUpdaterClient {
 		}
 
 		// Decode
-		HashMap<String, String> build = new HashMap<String, String>();
+		HashMap<String, String> build = new LinkedHashMap<String, String>();
 		loadHashList(hashes, build);
 		repositoryBuildListCache.put(repo.getId() + "-" + buildId, build);
 		return build;
@@ -786,14 +786,15 @@ public class PolyUpdaterClient {
 		// Go through collectiions
 		int fileTotal = 0;
 		int startAt = 0;
-		HashMap<String, InstallEntry> installs = new HashMap<String, InstallEntry>();
+		HashMap<String, InstallEntry> installs = new LinkedHashMap<String, InstallEntry>();
 		logger.info("Gathering files to install...");
 		for (PolyCollection col : collections.values()) {
 			if (!col.hasUpdateAvailable())
 				continue;
-			HashMap<String, String> localHashes = new HashMap<String, String>();
-			HashMap<String, String> currentlyDownloaded = new HashMap<String, String>();
-			HashMap<String, String> filesToInstall = new HashMap<String, String>();
+			HashMap<String, String> localHashes = new LinkedHashMap<String, String>();
+			HashMap<String, String> installedFileHashes = new LinkedHashMap<String, String>();
+			HashMap<String, String> currentlyDownloaded = new LinkedHashMap<String, String>();
+			HashMap<String, String> filesToInstall = new LinkedHashMap<String, String>();
 			ArrayList<String> previouslyInstalledFiles = new ArrayList<String>();
 			InstallEntry e = new InstallEntry();
 			e.localHashes = localHashes;
@@ -830,12 +831,13 @@ public class PolyUpdaterClient {
 
 					// Add
 					localHashes.put(name, hash);
+					installedFileHashes.put(name, hash);
 				}
 			}
 
 			// Load hash list from main
 			if (cacheListMain.exists()) {
-				HashMap<String, String> current = new HashMap<String, String>();
+				HashMap<String, String> current = new LinkedHashMap<String, String>();
 				String hashes = Files.readString(cacheListMain.toPath());
 				loadHashList(hashes, current);
 				localHashes.putAll(current);
@@ -849,7 +851,7 @@ public class PolyUpdaterClient {
 
 			// Load hash list from the list of installing hashes
 			if (cacheListRolling.exists()) {
-				HashMap<String, String> current = new HashMap<String, String>();
+				HashMap<String, String> current = new LinkedHashMap<String, String>();
 				String hashes = Files.readString(cacheListRolling.toPath());
 				loadHashList(hashes, current);
 
@@ -900,10 +902,13 @@ public class PolyUpdaterClient {
 
 				case SKEL: {
 					// Check if the file exists
-					if (!downloadTarget.exists()) {
+					String installedLocalHash = installedFileHashes.get(name);
+					String expectedLocalHash = localHashes.get(name);
+					if (!downloadTarget.exists()
+							|| (installedLocalHash != null && installedLocalHash.equals(expectedLocalHash)
+									&& previouslyInstalledFiles.contains(name))) {
 						// Check change
-						String localHash = localHashes.get(name);
-						if (localHash == null || !localHash.equals(upstreamHash)) {
+						if (expectedLocalHash == null || !expectedLocalHash.equals(upstreamHash)) {
 							// Add
 							if (!filesToInstall.containsKey(name)) {
 								logger.debug("Added: " + name);
@@ -1035,7 +1040,7 @@ public class PolyUpdaterClient {
 			File cacheListRolling = new File(col.getCollectionCache(), "installing.list");
 
 			// Load hash list from the list of installing hashes
-			HashMap<String, String> currentInstalled = new HashMap<String, String>();
+			HashMap<String, String> currentInstalled = new LinkedHashMap<String, String>();
 			if (cacheListRolling.exists()) {
 				String hashes = Files.readString(cacheListRolling.toPath());
 				loadHashList(hashes, currentInstalled);
@@ -1152,7 +1157,7 @@ public class PolyUpdaterClient {
 			File cacheListNewInstalled = new File(col.getCollectionCache(), "newinstalled.list");
 
 			// Load hash list from the list of installing hashes
-			HashMap<String, String> rolling = new HashMap<String, String>();
+			HashMap<String, String> rolling = new LinkedHashMap<String, String>();
 			if (cacheListRolling.exists()) {
 				String hashes = Files.readString(cacheListRolling.toPath());
 				loadHashList(hashes, rolling);
@@ -1344,8 +1349,8 @@ public class PolyUpdaterClient {
 	}
 
 	private static class InstallEntry {
-		public HashMap<String, String> localHashes = new HashMap<String, String>();
-		public HashMap<String, String> filesToInstall = new HashMap<String, String>();
+		public HashMap<String, String> localHashes = new LinkedHashMap<String, String>();
+		public HashMap<String, String> filesToInstall = new LinkedHashMap<String, String>();
 		public ArrayList<String> previouslyInstalledFiles = new ArrayList<String>();
 	}
 

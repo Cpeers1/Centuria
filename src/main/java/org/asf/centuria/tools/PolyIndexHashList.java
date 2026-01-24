@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.stream.Stream;
 
 import org.asf.centuria.updater.PolyTools;
 
@@ -29,10 +30,12 @@ public class PolyIndexHashList {
 
 	private static void hashFolder(File source, FileOutputStream outputFile, String prefix) throws IOException {
 		System.out.println("Hashing /" + prefix);
-		for (File dir : source.listFiles(t -> t.isDirectory())) {
+		for (File dir : Stream.of(source.listFiles(t -> t.isDirectory()))
+				.sorted((t1, t2) -> t1.getName().compareTo(t2.getName())).toArray(t -> new File[t])) {
 			hashFolder(dir, outputFile, prefix + dir.getName() + "/");
 		}
-		for (File f : source.listFiles(t -> !t.isDirectory())) {
+		for (File f : Stream.of(source.listFiles(t -> !t.isDirectory()))
+				.sorted((t1, t2) -> t1.getName().compareTo(t2.getName())).toArray(t -> new File[t])) {
 			System.out.println("Hashing /" + prefix + f.getName());
 			String hash = PolyTools.sha256Hash(Files.readAllBytes(f.toPath()));
 			String name = prefix + f.getName();

@@ -67,7 +67,7 @@ public class PolyUpdaterInstaller {
 			if (cache.exists()) {
 				// Read entry files
 				System.out.println("Preparing to install " + folder.getName() + "...");
-				HashMap<String, String> current = new HashMap<String, String>();
+				HashMap<String, String> current = new LinkedHashMap<String, String>();
 				String hashesInstall = Files.readString(cacheListRolling.toPath());
 				loadHashList(hashesInstall, current);
 
@@ -106,6 +106,13 @@ public class PolyUpdaterInstaller {
 		for (String id : entries.keySet()) {
 			CollectionInstallEntry entry = entries.get(id);
 
+			// Load hashes
+			HashMap<String, String> currentlyInstalled = new LinkedHashMap<String, String>();
+			if (entry.cacheListInstalled.exists()) {
+				String hashesInstall = Files.readString(entry.cacheListInstalled.toPath());
+				loadHashList(hashesInstall, currentlyInstalled);
+			}
+
 			// Install files
 			for (String name : entry.hashList.keySet()) {
 				File inputCacheFile = new File(entry.cache, name);
@@ -120,7 +127,17 @@ public class PolyUpdaterInstaller {
 						System.out.println("[" + (i++) + "/" + totalFiles + "] Installing " + id + ": " + name + "...");
 
 					// Get output
+					String localInstalledHash = null;
 					File targetFile = new File(target, update.target);
+					if (targetFile.exists()) {
+						// Get local has
+						FileInputStream fIn = new FileInputStream(targetFile);
+						localInstalledHash = PolyTools.sha256Hash(fIn);
+						fIn.close();
+					}
+					String expectedInstalledHash = null;
+					if (currentlyInstalled != null && currentlyInstalled.containsKey(name))
+						expectedInstalledHash = currentlyInstalled.get(name);
 
 					// Check type
 					switch (update.type) {
@@ -163,8 +180,11 @@ public class PolyUpdaterInstaller {
 							continue;
 						}
 
-						// Check target
-						if (targetFile.exists() && update.type == UpdateEntryType.SKEL) {
+						// Check target file
+						// If it exists, check if the local cache matches the installed file
+						if (targetFile.exists() && update.type == UpdateEntryType.SKEL
+								&& (expectedInstalledHash == null || (expectedInstalledHash != null
+										&& !localInstalledHash.equals(expectedInstalledHash)))) {
 							// Skip
 							inputCacheFile.delete();
 							continue;
@@ -199,14 +219,14 @@ public class PolyUpdaterInstaller {
 
 			// Load hashes
 			if (entry.cacheListNew.exists()) {
-				HashMap<String, String> newInstallList = new HashMap<String, String>();
+				HashMap<String, String> newInstallList = new LinkedHashMap<String, String>();
 				String hashesInstallNew = Files.readString(entry.cacheListNew.toPath());
 				loadHashList(hashesInstallNew, newInstallList);
 
 				// Go through local files
 				if (entry.cacheListInstalled.exists()) {
 					// Load hashes
-					HashMap<String, String> currentlyInstalled = new HashMap<String, String>();
+					HashMap<String, String> currentlyInstalled = new LinkedHashMap<String, String>();
 					String hashesInstall = Files.readString(entry.cacheListInstalled.toPath());
 					loadHashList(hashesInstall, currentlyInstalled);
 
@@ -249,7 +269,7 @@ public class PolyUpdaterInstaller {
 
 			// Migrate hash lists
 			System.out.println("Writing update information for " + id + "...");
-			HashMap<String, String> current = new HashMap<String, String>();
+			HashMap<String, String> current = new LinkedHashMap<String, String>();
 
 			// Load existing
 			if (entry.cacheListInstalled.exists()) {
