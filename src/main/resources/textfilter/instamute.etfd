@@ -110,7 +110,7 @@ Phrase crippled
     Mode WHOLE_PHRASE
     Severity ALWAYS_FILTERED
     Variant crippled
-    Reason "While there are innocent uses, the phrase crippled has been used offensively, which is why we ask you to avoid the phrase."
+    Reason While there are innocent uses, the phrase crippled has been used offensively, which is why we ask you to avoid the phrase.
 Endphrase
 
 Phrase ching chong

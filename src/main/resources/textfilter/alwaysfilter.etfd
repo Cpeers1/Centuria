@@ -289,13 +289,24 @@ Endphrase
 
 Phrase sex
     Mode WHOLE_PHRASE
-    Variant s e x
-    Variant s ex
-    Variant se x
+    
+    Context-Include Local *
+    Context-Include Global *  
+    
+    Severity INSTAMUTE
 Endphrase
 
 Phrase sex
     Mode WHOLE_PHRASE
+    Severity ALWAYS_FILTERED
+    Reason While this word has innocent use cases for instance to refer to gender, we have blocked the use of this word to prevent NSFW context.
+Endphrase
+
+Phrase sex
+    Mode WHOLE_PHRASE
+    Variant s e x
+    Variant s ex
+    Variant se x
     Variant s3x
     Variant 53x
     Variant 5ex
@@ -456,7 +467,7 @@ Phrase erect
     Mode WHOLE_PHRASE
     Severity ALWAYS_FILTERED
     Variant erected
-    Reason "While this phrase has innocent uses, a common use is in NSFW context, which is why we have decided to add this phrase to the filters."
+    Reason While this phrase has innocent uses, a common use is in NSFW context, which is why we have decided to add this phrase to the filters.
 Endphrase
 
 Phrase 3rect
