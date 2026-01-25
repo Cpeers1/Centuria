@@ -174,6 +174,7 @@ task toolscripts () {
 			dosScript += '''set "dirpath=%~dp0"\n'''
 			dosScript += '''"%dirpath%/toollauncher" ''' + scriptMain + ''' %*\n'''
 			dosScript += "exit %ERRORLEVEL%\n"
+			new File("build/gradleout/tools/").mkdirs()
 			Files.writeString(new File("build/gradleout/tools/" + file.getName().replace(".java", "").toLowerCase() + ".bat").toPath(), dosScript)
 			Files.writeString(new File("build/gradleout/tools/" + file.getName().replace(".java", "").toLowerCase()).toPath(), unixScript)
 		}
