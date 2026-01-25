@@ -157,10 +157,10 @@ task toolscripts () {
 				}
 			}
 		}
-		for (def file : new File("src/main/java/org/asf/centuria/tools").listFiles()) {
-			if (!file.isFile())
+		for (def f : new File("src/main/java/org/asf/centuria/tools").listFiles()) {
+			if (!f.isFile())
 				continue
-			String scriptMain = "org.asf.centuria.tools." + file.getName().replace(".java", "")
+			String scriptMain = "org.asf.centuria.tools." + f.getName().replace(".java", "")
 			String unixScript = ""
 			unixScript += "#!/bin/bash\n"
 			unixScript += '''chmod +x "$(dirname "$0")/toollauncher.sh"\n'''
@@ -174,9 +174,10 @@ task toolscripts () {
 			dosScript += '''set "dirpath=%~dp0"\n'''
 			dosScript += '''"%dirpath%/toollauncher" ''' + scriptMain + ''' %*\n'''
 			dosScript += "exit %ERRORLEVEL%\n"
-			new File("build/gradleout/tools/").mkdirs()
-			Files.writeString(new File("build/gradleout/tools/" + file.getName().replace(".java", "").toLowerCase() + ".bat").toPath(), dosScript)
-			Files.writeString(new File("build/gradleout/tools/" + file.getName().replace(".java", "").toLowerCase()).toPath(), unixScript)
+			String outWin = "build/gradleout/tools/" + f.getName().replace(".java", "").toLowerCase() + ".bat"
+			String outPosix = "build/gradleout/tools/" + f.getName().replace(".java", "").toLowerCase()
+			Files.writeString(file(outWin).toPath(), dosScript)
+			Files.writeString(file(outPosix).toPath(), unixScript)
 		}
 	}
 }
