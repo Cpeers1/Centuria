@@ -35,3 +35,9 @@ updater.jar
 
 # macOS
 **/.DS_Store
+
+# Polytool
+.polytool
+.polytool-version
+build/
+polylocal/

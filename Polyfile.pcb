@@ -1,0 +1,11 @@
+# Project information
+group=org.openferal.centuria
+id=centuria-server
+name="Centuria Legacy"
+version=b1.7.4
+
+# Sub-projects
+# None right now
+
+# Properties
+# None right now
