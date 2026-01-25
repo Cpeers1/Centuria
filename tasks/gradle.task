@@ -1,5 +1,5 @@
 #!/bin/bash
 
-function gradle_Run() {
+function gradle_run() {
     ./gradlew "$@" || return 1
 }
