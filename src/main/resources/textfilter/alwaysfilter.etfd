@@ -719,3 +719,28 @@ Phrase coochie
     Severity INSTAMUTE
     Variant kewchie
 Endphrase
+
+Phrase drugs
+	Mode WHOLE_PHRASE
+	Variant drug
+	Variant dr*g
+	Variant dr*gs
+Endphrase
+
+Phrase pothead
+	Mode WHOLE_PHRASE
+	Variant p0thead
+	Variant poth3ad
+	Variant p0th3ad
+	Variant p0the4d
+	Variant poth34d
+	Variant p0th34d
+	Variant p0theads
+	Variant poth3ads
+	Variant p0th3ads
+	Variant p0the4ds
+	Variant poth34ds
+	Variant p0th34ds
+	Variant potheads
+Endphrase
+
