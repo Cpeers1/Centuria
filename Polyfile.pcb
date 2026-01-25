@@ -8,4 +8,4 @@ version=b1.7.4
 # None right now
 
 # Properties
-# None right now
+setLocal "legacyCenturiaUpdateChannel" "beta"

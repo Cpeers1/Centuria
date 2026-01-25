@@ -22,7 +22,7 @@ repositories {
 }
 
 jar {
-	baseName "Centuria"
+	baseName "centuria"
 	manifest {
 		attributes([
 			"Main-Class": "org.asf.centuria.launcher.LauncherMain",
@@ -38,26 +38,27 @@ jar {
 	includeEmptyDirs = false
 }
 
-// task javaDocs(type: Javadoc) {
-// 	classpath = sourceSets.main.runtimeClasspath
-// 	source = sourceSets.main.allJava
-// }
+task javaDocs(type: Javadoc) {
+	classpath = sourceSets.main.runtimeClasspath
+	source = sourceSets.main.allJava
+}
 
-// task javadocJar(type: Jar, dependsOn: 'javaDocs') {
-// 	from javadoc
-// 	classifier = 'javadoc'
-// 	exclude "**/extra/**"
-// }
+task javadocJar(type: Jar, dependsOn: 'javaDocs') {
+	from javadoc
+	baseName "centuria"
+	classifier = 'javadoc'
+	exclude "**/extra/**"
+}
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-	baseName "Centuria"
+	baseName "centuria"
 	classifier = 'sources'
 	from sourceSets.main.allSource
 	exclude "**/extra/**"
 }
 
 artifacts {
-	// archives javadocJar
+	archives javadocJar
 	archives sourcesJar
 }
 
@@ -94,12 +95,12 @@ dependencies {
 
 project.configurations.implementation.canBeResolved = true
 
-task installation () {
+task serverbase () {
 	doLast {
 		copy {
 			from "centuria"
 			from "centuria.bat"
-			into "build/Installations"
+			into "build/gradleout/serverbase"
 		}
 		for (ResolvedArtifact arti : project.configurations.implementation.resolvedConfiguration.getResolvedArtifacts()) {
 			if (arti.getClassifier() != null)
@@ -107,7 +108,7 @@ task installation () {
 			copy {
 				from arti.file
 				rename arti.file.getName(), arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "") + "." + arti.getExtension()
-				into "build/Installations/libs"
+				into "build/gradleout/serverbase/libs"
 			}
 		}
 		for (def task : project.tasks) {
@@ -118,22 +119,22 @@ task installation () {
 				copy {
 					from task.getArchiveFile().get()
 					rename task.getArchiveFile().get().getAsFile().getName(), task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()
-					into "build/Installations"
+					into "build/gradleout/serverbase"
 				}
 			}
 		}
 	}
 }
 
-installation.dependsOn project.tasks.build
-build.finalizedBy installation
+serverbase.dependsOn project.tasks.build
+build.finalizedBy serverbase
 
 task toolscripts () {
 	doLast {
 		copy {
 			from "toollauncher.sh"
 			from "toollauncher.bat"
-			into "build/tools"
+			into "build/gradleout/tools"
 		}
 		for (ResolvedArtifact arti : project.configurations.implementation.resolvedConfiguration.getResolvedArtifacts()) {
 			if (arti.getClassifier() != null)
@@ -141,7 +142,7 @@ task toolscripts () {
 			copy {
 				from arti.file
 				rename arti.file.getName(), arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "") + "." + arti.getExtension()
-				into "build/tools/libs"
+				into "build/gradleout/tools/libs"
 			}
 		}
 		for (def task : project.tasks) {
@@ -152,7 +153,7 @@ task toolscripts () {
 				copy {
 					from task.getArchiveFile().get()
 					rename task.getArchiveFile().get().getAsFile().getName(), task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()
-					into "build/tools/libs"
+					into "build/gradleout/tools/libs"
 				}
 			}
 		}
@@ -173,8 +174,8 @@ task toolscripts () {
 			dosScript += '''set "dirpath=%~dp0"\n'''
 			dosScript += '''"%dirpath%/toollauncher" ''' + scriptMain + ''' %*\n'''
 			dosScript += "exit %ERRORLEVEL%\n"
-			Files.writeString(new File("build/tools/" + file.getName().replace(".java", "").toLowerCase() + ".bat").toPath(), dosScript)
-			Files.writeString(new File("build/tools/" + file.getName().replace(".java", "").toLowerCase()).toPath(), unixScript)
+			Files.writeString(new File("build/gradleout/tools/" + file.getName().replace(".java", "").toLowerCase() + ".bat").toPath(), dosScript)
+			Files.writeString(new File("build/gradleout/tools/" + file.getName().replace(".java", "").toLowerCase()).toPath(), unixScript)
 		}
 	}
 }
@@ -183,12 +184,12 @@ toolscripts.dependsOn project.tasks.build
 build.finalizedBy toolscripts
 
 import java.nio.file.*
-task updateData () {
+task legacyupdateData () {
 	doLast {
 		copy {
 			from "centuria"
 			from "centuria.bat"
-			into "build/update"
+			into "build/gradleout/updatedatalegacy"
 		}
 		String data = ""
 		for (ResolvedArtifact arti : project.configurations.implementation.resolvedConfiguration.getResolvedArtifacts()) {
@@ -197,7 +198,7 @@ task updateData () {
 			copy {
 				from arti.file
 				rename arti.file.getName(), arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "") + "." + arti.getExtension()
-				into "build/update/libs"
+				into "build/gradleout/updatedatalegacy/libs"
 				data += "libs/" + arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "") + "." + arti.getExtension() + "\n"
 			}
 		}
@@ -209,14 +210,14 @@ task updateData () {
 				copy {
 					from task.getArchiveFile().get()
 					rename task.getArchiveFile().get().getAsFile().getName(), task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()
-					into "build/update"
+					into "build/gradleout/updatedatalegacy"
 					data += (task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()).replace(" ", "%20") + "\n"
 				}
 			}
 		}
-		Files.writeString(file("build/update/update.list").toPath(), data)
+		Files.writeString(file("build/gradleout/updatedatalegacy/update.list").toPath(), data)
 	}
 }
 
-updateData.dependsOn project.tasks.build
-build.finalizedBy updateData
+legacyupdateData.dependsOn project.tasks.build
+build.finalizedBy legacyupdateData

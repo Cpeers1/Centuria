@@ -1,0 +1,41 @@
+name: General Project Build
+
+on:
+- push
+- pull_request
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v6
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Grant execute permission for polytool
+      run: chmod +x polytool
+    - name: Restore project
+      run: ./polytool restore
+    - name: Build project and create artifacts
+      run: ./polytool build workflowartifacts
+
+    - name: Publish build artifact: Base Centuria Server
+      uses: actions/upload-artifact@v6
+      with:
+        - name: Base Centuria Server (Java Runtime)
+          if-no-files-found: ignore
+          path: build/artifacts/base-centuria-server
+          
+    - name: Publish build artifact: Legacy Update Payload
+      uses: actions/upload-artifact@v6
+      with:
+        - name: Legacy Update Payload
+          if-no-files-found: ignore
+          path: build/artifacts/legacy-update-data

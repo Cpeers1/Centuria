@@ -1,0 +1,5 @@
+#!/bin/bash
+
+function gradlebuild_run() {
+    ./gradlew build || return 1 # FIXME: prob wont work on MSYS
+}

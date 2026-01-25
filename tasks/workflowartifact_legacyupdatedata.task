@@ -1,0 +1,12 @@
+#!/bin/bash
+
+function workflowartifact_legacyupdatedata_define() {
+    requireTask buildlegacyupdatedata
+    addTaskTo workflowartifacts
+}
+
+function workflowartifact_legacyupdatedata_run() {
+    # Install
+    createFolder "$BASEBUILDDIR/artifacts/legacy-update-data"
+    cp -rfv "$BASEBUILDDIR/updatedatalegacy/." "$BASEBUILDDIR/artifacts/legacy-update-data"
+}
