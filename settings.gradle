@@ -1,2 +1,3 @@
 rootProject.name = 'Centuria Legacy'
-include("deps:connective-http")
+include("connective-http")
+project(":connective-http").projectDir = file("deps/connective-http")

@@ -63,7 +63,7 @@ artifacts {
 }
 
 dependencies {
-	implementation project(":deps:connective-http")
+	implementation project("connective-http")
 	
 	implementation group: 'org.asf.cyan', name: 'Fluid', version: '1.0.0.A33'
 	

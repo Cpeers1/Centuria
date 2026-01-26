@@ -21,9 +21,6 @@ ext.buildyear = cal.get(Calendar.YEAR).toString();
 
 repositories {
 	mavenCentral()
-	flatDir {
-		dirs 'libraries'
-	}
 }
 
 jar {
@@ -43,9 +40,7 @@ jar {
 
 dependencies {
 	testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-
-	implementation name: "Centuria"
-	implementation name: "connective-http"
+	implementation project("Centuria Legacy")
 }
 
 project.configurations.implementation.canBeResolved = true
@@ -101,12 +96,12 @@ task moduledata () {
 				continue;
 				
 		    String outFileNm = arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "")
-		    if (outFileNm.equals("Centuria") || new File("emulibs", outFileNm + ".jar").exists())
+		    if (outFileNm.equals("Centuria") || outFileNm.equals("centuria") || new File("emulibs", outFileNm + ".jar").exists())
 		    	continue;
 			copy {			    
 				from arti.file
 				rename arti.file.getName(), outFileNm + "." + arti.getExtension()
-				into "build/moduledata/libs"
+				into "build/gradleout/moduledata/libs"
 			}
 		}
 		for (def task : project.tasks) {
@@ -117,7 +112,7 @@ task moduledata () {
 				copy {
 					from task.getArchiveFile().get()
 					rename task.getArchiveFile().get().getAsFile().getName(), task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()
-					into "build/moduledata/modules"
+					into "build/gradleout/moduledata/modules"
 				}
 			}
 		}

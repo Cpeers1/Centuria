@@ -30,8 +30,8 @@ function buildlegacyupdatedata_run() {
 }
 
 function copyUpdateData() {
-	version="$1"
-	channel="$2"
+	local version="$1"
+	local channel="$2"
 	
 	# Create directory
     mkdir -p "$BASEBUILDDIR/updatedatalegacy/$channel" || exit 1
@@ -60,6 +60,4 @@ function copyUpdateData() {
 	
 	copyData build/gradleout/updatedatalegacy "build/gradleout/updatedatalegacy/"
 	echo -n "$version" > "$BASEBUILDDIR/updatedatalegacy/$channel/update.info"
-
-	source version.info
 }
