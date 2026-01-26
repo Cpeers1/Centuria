@@ -1,5 +1,5 @@
 #!/bin/bash
 
 function gradlebuild_run() {
-    callTaskForcedClearStack gradle build "$@" || return 1
+    callTaskForced gradle build "$@" || return 1
 }
