@@ -92,8 +92,37 @@ project.configurations.implementation.canBeResolved = true
 // }
 // createEclipseLaunches.dependsOn 'eclipse'
 
-boolean compareArtifacts(ResolvedArtifact arti, ResolvedArtifact t)
-{
+task moduledata () {
+	doLast {
+		for (ResolvedArtifact arti : project.configurations.implementation.resolvedConfiguration.getResolvedArtifacts()) {
+			if (arti.getClassifier() != null)
+				continue;
+			
+		    String outFileNm = arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "")
+		    if (outFileNm.equals("Centuria") || outFileNm.equals("centuria") || project("Centuria Legacy").configurations.implementation.resolvedConfiguration.getResolvedArtifacts().stream().anyMatch { t -> compareArtifacts(t, arti)})
+		    	continue;
+			copy {			    
+				from arti.file
+				rename arti.file.getName(), outFileNm + "." + arti.getExtension()
+				into "build/gradleout/moduledata/libs"
+			}
+		}
+		for (def task : project.tasks) {
+			if (task instanceof AbstractArchiveTask) {
+				if (!task.getArchiveClassifier().get().isEmpty())
+					continue;
+					
+				copy {
+					from task.getArchiveFile().get()
+					rename task.getArchiveFile().get().getAsFile().getName(), task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()
+					into "build/gradleout/moduledata/modules"
+				}
+			}
+		}
+	}
+}
+
+boolean compareArtifacts(ResolvedArtifact arti, ResolvedArtifact t) {
 	if (!arti.name.equals(t.name))
 		return false;
 	if (arti.getClassifier() != null && t.getClassifier() == null || arti.getClassifier() == null && t.getClassifier() != null)
@@ -123,36 +152,6 @@ boolean compareArtifacts(ResolvedArtifact arti, ResolvedArtifact t)
 		}
 	}
 	return true;
-}
-
-task moduledata () {
-	doLast {
-		for (ResolvedArtifact arti : project.configurations.implementation.resolvedConfiguration.getResolvedArtifacts()) {
-			if (arti.getClassifier() != null)
-				continue;
-			
-		    String outFileNm = arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "")
-		    if (outFileNm.equals("Centuria") || outFileNm.equals("centuria") || project("Centuria Legacy").configurations.implementation.resolvedConfiguration.getResolvedArtifacts().stream().anyMatch { t -> compareArtifacts(t, arti)})
-		    	continue;
-			copy {			    
-				from arti.file
-				rename arti.file.getName(), outFileNm + "." + arti.getExtension()
-				into "build/gradleout/moduledata/libs"
-			}
-		}
-		for (def task : project.tasks) {
-			if (task instanceof AbstractArchiveTask) {
-				if (!task.getArchiveClassifier().get().isEmpty())
-					continue;
-					
-				copy {
-					from task.getArchiveFile().get()
-					rename task.getArchiveFile().get().getAsFile().getName(), task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()
-					into "build/gradleout/moduledata/modules"
-				}
-			}
-		}
-	}
 }
 
 moduledata.dependsOn project.tasks.build
