@@ -142,12 +142,10 @@ if [ "$currentver" != "$storedver" ] || ([ "$tag" == "undefined" ] && [ "$commit
     version="$(cat "$projbasedir/.polytool/version.info")"
     if [ "$updated" == "true" ]; then
         echo "Finished! PolyTool runtime updated to $version"
-        chmod -R +x "$projbasedir/.polytool/src"
-        chmod +x "$projbasedir/.polytool/polytool"
     else
         echo "PolyTool Runtime was already up to date!"
     fi
     echo
 fi
 
-"$projbasedir/.polytool/polytool" "$@"
+bash "$projbasedir/.polytool/polytool" "$@"
