@@ -21,6 +21,9 @@ ext.buildyear = cal.get(Calendar.YEAR).toString();
 
 repositories {
 	mavenCentral()
+    flatDir {
+        dirs 'deps/centuria-server/fluid'
+	}
 }
 
 jar {
@@ -39,8 +42,8 @@ jar {
 }
 
 dependencies {
+	implementation project(":Centuria Legacy")
 	testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-	implementation project("Centuria Legacy")
 }
 
 project.configurations.implementation.canBeResolved = true
@@ -89,14 +92,47 @@ project.configurations.implementation.canBeResolved = true
 // }
 // createEclipseLaunches.dependsOn 'eclipse'
 
+boolean compareArtifacts(ResolvedArtifact arti, ResolvedArtifact t)
+{
+	if (!arti.name.equals(t.name))
+		return false;
+	if (arti.getClassifier() != null && t.getClassifier() == null || arti.getClassifier() == null && t.getClassifier() != null)
+		return false;
+	if (!arti.getClassifier().equals(t.getClassifier()))
+		return false;
+	if (arti.getModuleVersion() != null && t.getModuleVersion() == null || arti.getModuleVersion() == null && t.getModuleVersion() != null)
+		return false;
+	if (arti.getModuleVersion() != null) {
+		if (arti.getModuleVersion().getId() != null && t.getModuleVersion().getId() == null || arti.getModuleVersion().getId() == null && t.getModuleVersion().getId() != null)
+			return false;
+		if (arti.getModuleVersion().getId() != null) {
+			var v1 = arti.getModuleVersion().getId()
+			var v2 = t.getModuleVersion().getId()
+			if (v1.getGroup() != null && v2.getGroup() == null || v1.getGroup() == null && v2.getGroup() != null)
+				return false;
+			if (!v1.getGroup().equals(v2.getGroup()))
+				return false;
+			if (v1.getName() != null && v2.getName() == null || v1.getName() == null && v2.getName() != null)
+				return false;
+			if (!v1.getName().equals(v2.getName()))
+				return false;
+			if (v1.getName() != null && v2.getName() == null || v1.getName() == null && v2.getName() != null)
+				return false;
+			if (!v1.getVersion().equals(v2.getVersion()))
+				return false;
+		}
+	}
+	return true;
+}
+
 task moduledata () {
 	doLast {
 		for (ResolvedArtifact arti : project.configurations.implementation.resolvedConfiguration.getResolvedArtifacts()) {
 			if (arti.getClassifier() != null)
 				continue;
-				
+			
 		    String outFileNm = arti.name + (arti.getClassifier() != null && !arti.getClassifier().isEmpty() ? "-" + arti.getClassifier() : "")
-		    if (outFileNm.equals("Centuria") || outFileNm.equals("centuria") || new File("emulibs", outFileNm + ".jar").exists())
+		    if (outFileNm.equals("Centuria") || outFileNm.equals("centuria") || project("Centuria Legacy").configurations.implementation.resolvedConfiguration.getResolvedArtifacts().stream().anyMatch { t -> compareArtifacts(t, arti)})
 		    	continue;
 			copy {			    
 				from arti.file
