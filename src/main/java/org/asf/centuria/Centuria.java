@@ -96,11 +96,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class Centuria {
-	// Update
-	public static String SERVER_UPDATE_VERSION = "b1.7.4";
-	public static String DOWNLOAD_BASE_URL = "https://emuferal.openferal.net";
-
+public class Centuria {	
 	// Configuration
 	public static Logger logger;
 	public static HashMap<String, String> serverProperties;

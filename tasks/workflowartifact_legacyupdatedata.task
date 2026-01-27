@@ -8,5 +8,5 @@ function workflowartifact_legacyupdatedata_define() {
 function workflowartifact_legacyupdatedata_run() {
     # Install
     createFolder "$BASEBUILDDIR/artifacts/legacy-update-data"
-    cp -rfv "$BASEBUILDDIR/updatedatalegacy/." "$BASEBUILDDIR/artifacts/legacy-update-data"
+    cp -rfv "$BASEBUILDDIR/rawpackages/updatedatalegacy/." "$BASEBUILDDIR/artifacts/legacy-update-data"
 }

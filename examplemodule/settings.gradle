@@ -1,5 +1,5 @@
 rootProject.name = 'examplemodule' 
 include("Centuria Legacy")
 project(":Centuria Legacy").projectDir = file("deps/centuria-server")
-include("connective-http")
-project(":connective-http").projectDir = file("deps/centuria-server/deps/connective-http")
+include(":Centuria Legacy:connective-http")
+project(":Centuria Legacy:connective-http").projectDir = file("deps/centuria-server/deps/connective-http")
