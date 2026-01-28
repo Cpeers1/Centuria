@@ -177,6 +177,8 @@ public class EventBusImpl extends EventBus {
 			}
 			for (Consumer ev : evs) {
 				ev.accept(event);
+				if (event.isHandled())
+					break;
 			}
 		}
 	}
