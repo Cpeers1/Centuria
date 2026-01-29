@@ -5169,6 +5169,9 @@ public class SendMessage extends AbstractChatPacket {
 							// Parse arguments
 							int mins = 0;
 							switch (args.get(0)) {
+							case "120":
+								mins = 120;
+								break;
 							case "60":
 								mins = 60;
 								break;
@@ -5191,7 +5194,9 @@ public class SendMessage extends AbstractChatPacket {
 								mins = 1;
 								break;
 							default:
-								systemMessage("Invalid value for argument: minutes-remaining", cmd, client);
+								systemMessage(
+										"Invalid value for argument: minutes-remaining: expected: 1, 3, 5, 10, 15, 30, 60 or 120",
+										cmd, client);
 								return true;
 							}
 

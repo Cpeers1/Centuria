@@ -468,6 +468,50 @@ public class PolyUpdaterClient {
 			}
 		}
 
+		// Check user content updates
+		logger.info("Checking for local update data...");
+		File rawUpdates = new File(target, "upgradedata");
+		if (rawUpdates.exists() && rawUpdates.isDirectory()) {
+			logger.info("Found local update data! Checking mode...");
+			File forced = new File(rawUpdates, "forceinstall");
+			if (!forced.exists())
+				forced = new File(rawUpdates, "forceinstall.txt");
+			if (forced.exists()) {
+				// Install
+				logger.info("Scheduled update for local update data!");
+				updateAvailable = true;
+			} else {
+				if (!updateAvailable) {
+					logger.info("");
+					logger.info(
+							"No update scheduled for local update data and no general updates are available, update will not be installed");
+					logger.info(
+							"Local update data does not contain a 'forceinstall' file, no update scheduled for local update data");
+					logger.info("");
+					logger.info(
+							"If you wish to install the user content without waiting for a general update, please include a file named 'forceinstall' or 'forceinstall.txt' in the 'upgradedata' folder");
+					logger.info("");
+
+				} else {
+					logger.info("");
+					logger.info("No update scheduled for local update data, however it will still be installed!");
+					logger.info("The server will install local update data as general updates are available");
+					logger.info("");
+					logger.info(
+							"However local update data does not contain a 'forceinstall' file, meaning it would otherwise not trigger an install unless the updater is manually triggered");
+					logger.info(
+							"To change this for a future update, include a file named 'forceinstall' or 'forceinstall.txt' in the 'upgradedata' folder");
+					logger.info("");
+				}
+			}
+		} else {
+			logger.info(
+					"No local update data available, to use this feature, you can create a folder named 'upgradedata' with user content that will be installed during the next update.");
+			logger.info(
+					"This can be used to install files to resolve update conflicts as well as introducing custom data during an update.");
+
+		}
+
 		// Find base collection
 		PolyCollection base = collections.get("base");
 		if (base != null && base.hasUpdateAvailable()) {
@@ -483,6 +527,8 @@ public class PolyUpdaterClient {
 				updateAvailable = true;
 			}
 		}
+		if (!updateAvailable)
+			logger.info("There are currently no updates available.");
 
 		// Return
 		wereUpdatesAvailable = updateAvailable;
@@ -933,106 +979,203 @@ public class PolyUpdaterClient {
 		fileTotal += startAt;
 
 		// Check for conflicts
-		if (!forced) {
-			boolean foundConflicts = false;
-			logger.info("Checking for file conflicts...");
-			for (PolyCollection col : collections.values()) {
-				if (!col.hasUpdateAvailable())
+		boolean foundConflicts = false;
+		ArrayList<String> conflicts = new ArrayList<String>();
+		ArrayList<String> conflictsResolved = new ArrayList<String>();
+		logger.info("Checking for file conflicts...");
+		for (PolyCollection col : collections.values()) {
+			if (!col.hasUpdateAvailable())
+				continue;
+
+			// Skip base
+			if (col.getId().equals("base"))
+				continue;
+
+			// Get details
+			InstallEntry installEntry = installs.get(col.getId());
+			ChannelDownloadSource source = channelsToUse.get(col);
+
+			// Gather files to install
+			for (String name : source.hashList.keySet()) {
+				// Get entry
+				UpdateEntry entry = parseUpdateEntry(name);
+				if (entry == null || name.endsWith("/.keepempty"))
 					continue;
 
-				// Skip base
-				if (col.getId().equals("base"))
+				// Check if scheduled
+				if (!installEntry.filesToInstall.containsKey(name))
 					continue;
+				String installHash = installEntry.filesToInstall.get(name);
+				String expectedLocalHash = installEntry.localHashes.get(name);
+				boolean wasPreviouslyInstalled = installEntry.previouslyInstalledFiles.contains(name);
 
-				// Get details
-				InstallEntry installEntry = installs.get(col.getId());
-				ChannelDownloadSource source = channelsToUse.get(col);
+				// Check file
+				File downloadTarget = new File(target, entry.target);
+				if (downloadTarget.exists()) {
+					// Get hash
+					FileInputStream fIn = new FileInputStream(downloadTarget);
+					String localHash = PolyTools.sha256Hash(fIn);
+					fIn.close();
 
-				// Gather files to install
-				for (String name : source.hashList.keySet()) {
-					// Get entry
-					UpdateEntry entry = parseUpdateEntry(name);
-					if (entry == null || name.endsWith("/.keepempty"))
-						continue;
+					// Check type
+					if (entry.type != UpdateEntryType.SKEL) {
+						// Check change
+						if (!wasPreviouslyInstalled || !expectedLocalHash.equals(installHash)) {
+							// File changed
+							if (!wasPreviouslyInstalled || !localHash.equals(expectedLocalHash)) {
+								File rawUpdates = new File(target, "upgradedata");
 
-					// Check if scheduled
-					if (!installEntry.filesToInstall.containsKey(name))
-						continue;
-					String installHash = installEntry.filesToInstall.get(name);
-					String expectedLocalHash = installEntry.localHashes.get(name);
-					boolean wasPreviouslyInstalled = installEntry.previouslyInstalledFiles.contains(name);
-
-					// Check file
-					File downloadTarget = new File(target, entry.target);
-					if (downloadTarget.exists()) {
-						// Get hash
-						FileInputStream fIn = new FileInputStream(downloadTarget);
-						String localHash = PolyTools.sha256Hash(fIn);
-						fIn.close();
-
-						// Check type
-						if (entry.type != UpdateEntryType.SKEL) {
-							// Check change
-							if (!wasPreviouslyInstalled || !expectedLocalHash.equals(installHash)) {
-								// File changed
-								if (!wasPreviouslyInstalled || !localHash.equals(expectedLocalHash)) {
+								// Check present
+								File rawUpdatePatch = new File(rawUpdates, entry.target);
+								if (!rawUpdatePatch.exists()) {
 									// Changed locally
+									conflicts.add(entry.target
+											+ ": user changes were made to this file that would otherwise be lost");
 									logger.error("Detected file conflict! Collection " + col.getId()
 											+ " will update file \"" + entry.target
 											+ "\", however the destination file has user changes that would be lost!");
-									foundConflicts = true;
+								} else {
+									// Changed, but patched
+									conflictsResolved.add(entry.target);
+									logger.error("Detected file conflict! Collection " + col.getId()
+											+ " will update file \"" + entry.target
+											+ "\", however the destination file has user changes that would be lost!");
 								}
-							}
-						}
-					} else {
-						// Check if another file with the same name but different casing exists
-						File[] conflicting = downloadTarget.getParentFile()
-								.listFiles(t -> !t.getName().equals(downloadTarget.getName())
-										&& t.getName().equalsIgnoreCase(downloadTarget.getName()));
-						if (conflicting.length != 0) {
-							// Check if all was scheduled to be deleted
-							boolean compatible = true;
-							for (File conflict : conflicting) {
-								// Check if present in hash list of update and if in the hash list of local
-								String targetName = name.substring(0, name.length() - downloadTarget.getName().length())
-										+ conflict.getName();
-								boolean deletedRemote = !installEntry.filesToInstall.containsKey(targetName);
-								boolean installedLocally = installEntry.previouslyInstalledFiles.contains(targetName);
-								if (deletedRemote && installedLocally) {
-									// Check hash
-									String expectedHash = installEntry.localHashes.get(targetName);
-									FileInputStream fIn = new FileInputStream(conflict);
-									String localHash = PolyTools.sha256Hash(fIn);
-									fIn.close();
-									if (!expectedHash.equals(localHash)) {
-										// Conflict
-										compatible = false;
-										break;
-									}
-								}
-							}
-
-							// Conflict
-							if (!compatible) {
-								logger.error("Detected file conflict! Collection " + col.getId()
-										+ " will update file \"" + entry.target
-										+ "\", however the destination has a file of the same name with different casing!");
 								foundConflicts = true;
 							}
 						}
 					}
+				} else {
+					// Check if another file with the same name but different casing exists
+					File[] conflicting = downloadTarget.getParentFile()
+							.listFiles(t -> !t.getName().equals(downloadTarget.getName())
+									&& t.getName().equalsIgnoreCase(downloadTarget.getName()));
+					if (conflicting.length != 0) {
+						// Check if all was scheduled to be deleted
+						boolean compatible = true;
+						for (File conflict : conflicting) {
+							// Check if present in hash list of update and if in the hash list of local
+							String targetPath = entry.target.substring(0,
+									entry.target.length() - downloadTarget.getName().length()) + conflict.getName();
+							String targetName = name.substring(0, name.length() - downloadTarget.getName().length())
+									+ conflict.getName();
+							boolean deletedRemote = !installEntry.filesToInstall.containsKey(targetName);
+							boolean installedLocally = installEntry.previouslyInstalledFiles.contains(targetName);
+							if (deletedRemote && installedLocally) {
+								// Check hash
+								String expectedHash = installEntry.localHashes.get(targetName);
+								FileInputStream fIn = new FileInputStream(conflict);
+								String localHash = PolyTools.sha256Hash(fIn);
+								fIn.close();
+								if (!expectedHash.equals(localHash)) {
+									// Conflict
+									conflicts.add(entry.target + ": file conflicting with local file " + targetPath
+											+ ": user changes are present that are conflicting with update data");
+									compatible = false;
+								}
+							} else {
+								// Conflicting
+								conflicts.add(entry.target + ": file conflicting with local file " + targetPath
+										+ ": untracked local file conflicting with update data");
+								compatible = false;
+							}
+						}
+
+						// Conflict
+						if (!compatible) {
+							logger.error("Detected file conflict! Collection " + col.getId() + " will update file \""
+									+ entry.target
+									+ "\", however the destination has a file of the same name with different casing!");
+							foundConflicts = true;
+						}
+					}
 				}
 			}
+		}
 
-			// Check result
-			if (foundConflicts) {
-				logger.error(
-						"Unable to perform colletion installation due to the presence of user-made changes that would otherwise be lost! Please reconsile these conflicts before running the updater.");
-				logger.error(
-						"Please back up the user changes and run the updater in forced install mode once finished to install the update anyways.");
-				logger.error(forcedGuideMessage);
-				return false;
+		// Check result
+		if (foundConflicts && !forced) {
+			logger.info("");
+			logger.error(
+					"Unable to perform colletion installation due to the presence of user-made changes that would otherwise be lost! Please reconsile these conflicts before running the updater.");
+			logger.error(
+					"Please back up the user changes and run the updater in forced install mode once finished to install the update anyways.");
+			logger.error(forcedGuideMessage);
+			String conflictsString = "";
+			for (String file : conflicts) {
+				if (!conflictsString.isEmpty())
+					conflictsString += "\n";
+				conflictsString += " " + file;
 			}
+			String resolvedConflicts = "";
+			for (String file : conflictsResolved) {
+				if (!conflictsString.isEmpty())
+					resolvedConflicts += "\n";
+				resolvedConflicts += " " + file;
+			}
+			if (!conflictsString.isEmpty()) {
+				logger.error("");
+				logger.error("Problematic files conflicting with update:");
+				for (String line : conflictsString.split("\n"))
+					logger.error(line);
+			}
+			if (!resolvedConflicts.isEmpty()) {
+				logger.error("");
+				logger.error("Conflicting files scheduled for overwriting with updated user content:");
+				for (String line : resolvedConflicts.split("\n"))
+					logger.error(line);
+				logger.error("");
+				logger.error(
+						"Note: please verify that the user content files logged here are up to date compared to the upstream versions");
+				logger.error("Note: the upgrade will not be aware of the versions provided by user content");
+			}
+			logger.info("");
+			File rawUpdates = new File(target, "upgradedata");
+			if (!rawUpdates.exists()) {
+				logger.info(
+						"No local update data available, to use this feature, you can create a folder named 'upgradedata' with user content that will be installed during the update.");
+				logger.info(
+						"This can be used to install files to resolve update conflicts as well as introducing custom data during an update.");
+			}
+			logger.info(
+					"To resolve the update conflict safely, add edited updated versions of the conflicting files manually to the 'upgradedata' following the same structure.");
+			logger.info("");
+			return false;
+		} else if (foundConflicts) {
+			logger.info("");
+			logger.warn("Conflicts were detected during the update!");
+			logger.warn("Forced install mode is enabled! Conflicting files WILL be overwritten!");
+			String conflictsString = "";
+			for (String file : conflicts) {
+				if (!conflictsString.isEmpty())
+					conflictsString += "\n";
+				conflictsString += " " + file;
+			}
+			String resolvedConflicts = "";
+			for (String file : conflictsResolved) {
+				if (!conflictsString.isEmpty())
+					resolvedConflicts += "\n";
+				resolvedConflicts += " " + file;
+			}
+			if (!conflictsString.isEmpty()) {
+				logger.warn("");
+				logger.warn("Problematic files conflicting with update:");
+				for (String line : conflictsString.split("\n"))
+					logger.warn(line);
+			}
+			if (!resolvedConflicts.isEmpty()) {
+				logger.warn("");
+				logger.warn("Conflicting files scheduled for overwriting with updated user content:");
+				for (String line : resolvedConflicts.split("\n"))
+					logger.error(line);
+				logger.warn("");
+				logger.warn(
+						"Note: please verify that the user content files logged here are up to date compared to the upstream versions");
+				logger.warn("Note: the upgrade will not be aware of the versions provided by user content");
+			}
+			logger.info("");
+			logger.warn("Warning! Forced install mode is enabled, conflicting files will be overwritten!");
+			logger.info("");
 		}
 
 		// Write

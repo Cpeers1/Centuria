@@ -270,6 +270,14 @@ public class PolyUpdaterInstaller {
 			}
 		}
 
+		// Install local data
+		System.out.println("Installing local update data...");
+		File rawUpdates = new File(target, "upgradedata");
+		if (rawUpdates.exists() && rawUpdates.isDirectory()) {
+			// Install
+			installDir(rawUpdates, target, "");
+		}
+
 		// Write manifests
 		System.out.println("Writing update information...");
 		for (String id : entries.keySet()) {
@@ -352,6 +360,33 @@ public class PolyUpdaterInstaller {
 			file.delete();
 		}
 		dir.delete();
+	}
+
+	private static void installDir(File dir, File target, String prefix) {
+		if (Files.isSymbolicLink(dir.toPath())) {
+			// DO NOT RECURSE
+
+			// Move
+			if (target.exists())
+				target.delete();
+			dir.renameTo(target);
+			return;
+		}
+		for (File subDir : dir.listFiles(t -> t.isDirectory())) {
+			installDir(subDir, new File(dir, subDir.getName()), prefix + subDir.getName() + "/");
+		}
+		for (File file : dir.listFiles(t -> !t.isDirectory())) {
+			// Move
+			System.out.println("Installing: " + prefix + file.getName());
+			File targetF = new File(target, file.getName());
+			if (targetF.exists())
+				targetF.delete();
+			file.renameTo(targetF);
+		}
+
+		// Check empty
+		if (dir.listFiles().length == 0)
+			dir.delete();
 	}
 
 	private static UpdateEntry parseUpdateEntry(String name, Collection<String> activeCollections) {

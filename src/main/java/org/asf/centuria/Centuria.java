@@ -96,7 +96,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class Centuria {	
+public class Centuria {
 	// Configuration
 	public static Logger logger;
 	public static HashMap<String, String> serverProperties;
@@ -357,6 +357,12 @@ public class Centuria {
 								Stream.of(PolyUpdaterClient.getCollections()).filter(t -> t.hasUpdateAvailable())
 										.toArray(t -> new PolyCollection[t])));
 
+				// Copy jar
+				if (!new File("updater.jar").exists() && new File("centuria.jar").exists())
+					Files.copy(Path.of("centuria.jar"), Path.of("updater.jar"));
+				else if (!new File("updater.jar").exists() && new File("Centuria.jar").exists())
+					Files.copy(Path.of("Centuria.jar"), Path.of("updater.jar"));
+
 				// Exit server
 				logger.info("Restarting server!");
 				System.exit(0);
@@ -379,6 +385,13 @@ public class Centuria {
 							Thread.sleep(120000);
 						} catch (InterruptedException e) {
 							break;
+						}
+
+						// Check scheduled
+						if (PolyUpdaterClient.isUpdateScheduled()) {
+							// Update was scheduled manually
+							// Wait until its no longer scheduled
+							continue;
 						}
 
 						// Check
@@ -438,6 +451,14 @@ public class Centuria {
 									lockUpdaterUntilFixed = true;
 									wasLocked = true;
 
+									// Cancel if needed
+									if (PolyUpdaterClient.isUpdateScheduled()) {
+										boolean res = PolyUpdaterClient.cancelScheduledUpdate();
+										if (res)
+											EventBus.getInstance().dispatchEvent(new UpdateCancelEvent());
+										forceInstallUpdate = false;
+									}
+
 									// Error
 									throw new IOException();
 								}
@@ -484,8 +505,12 @@ public class Centuria {
 								}
 								continue;
 							}
-							logger.info("Scheduling update for automatic restart!");
-							runUpdater(mins);
+
+							// Schedule updater
+							if (!PolyUpdaterClient.isUpdateScheduled()) {
+								logger.info("Scheduling update for automatic restart!");
+								runUpdater(mins);
+							}
 							return;
 						}
 					}
@@ -544,6 +569,7 @@ public class Centuria {
 		boolean res = PolyUpdaterClient.cancelScheduledUpdate();
 		if (res)
 			EventBus.getInstance().dispatchEvent(new UpdateCancelEvent());
+		forceInstallUpdate = false;
 		return res;
 	}
 
@@ -556,6 +582,10 @@ public class Centuria {
 	 */
 	public static boolean runUpdater(int mins) {
 		// Run timer
+		if (PolyUpdaterClient.isUpdateScheduled())
+			return false; // Already scheduled
+
+		// Check state
 		if (!PolyUpdaterClient.isUpdateCancelled()) {
 			// Check if server is empty
 			if (Centuria.gameServer.getPlayers().length == 0) {
@@ -572,6 +602,8 @@ public class Centuria {
 					.dispatchEvent(new ServerUpdateEvent(PolyUpdaterClient.getBaseSoftwareNextVersion(), mins,
 							Stream.of(PolyUpdaterClient.getCollections()).filter(t -> t.hasUpdateAvailable())
 									.toArray(t -> new PolyCollection[t])));
+
+			// Start timer
 			final int minutes = mins;
 			Thread th = new Thread(() -> {
 				int remaining = minutes;
@@ -586,6 +618,7 @@ public class Centuria {
 					// Send message
 					String message = null;
 					switch (remaining) {
+					case 120:
 					case 60:
 					case 30:
 					case 15:
@@ -626,6 +659,7 @@ public class Centuria {
 			th.setName("Update Scheduler Thread");
 			th.start();
 
+			// Return
 			return true;
 		}
 
@@ -653,6 +687,15 @@ public class Centuria {
 				.dispatchEvent(new ServerUpdateCompletionEvent(PolyUpdaterClient.getBaseSoftwareNextVersion(),
 						Stream.of(PolyUpdaterClient.getCollections()).filter(t -> t.hasUpdateAvailable())
 								.toArray(t -> new PolyCollection[t])));
+
+		// Copy jar
+		try {
+			if (!new File("updater.jar").exists() && new File("centuria.jar").exists())
+				Files.copy(Path.of("centuria.jar"), Path.of("updater.jar"));
+			else if (!new File("updater.jar").exists() && new File("Centuria.jar").exists())
+				Files.copy(Path.of("Centuria.jar"), Path.of("updater.jar"));
+		} catch (IOException e) {
+		}
 
 		// Exit
 		System.exit(0);
