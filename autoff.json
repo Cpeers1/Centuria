@@ -1,0 +1,98 @@
+{
+    "enabled": true,
+    "branches": {
+        // Patterns for the development branch lifecycle
+        // Patterns support wildcard logic and regex logic, but only wildcards support parameter insertion
+        //
+        // Wildcard is enabled whenever * is present in the set name, or if started with `WCM:...`
+        // Regex is enabled when started with `RXM:...`
+        // Its possible to disable the formatters using `RAW:...`
+        "major-*-develop": [
+            "main-develop"
+        ],
+        "major-*-testing": [
+            "major-{1}-develop",
+            "main-testing",
+            "main-develop"
+        ],
+        "major-*-staging": [
+            "major-{1}-testing",
+            "major-{1}-develop",
+            "main-staging",
+            "main-testing",
+            "main-develop"
+        ],
+        "major-*-experimental": [
+            "major-{1}-staging",
+            "major-{1}-testing",
+            "major-{1}-develop",
+            "main-experimental",
+            "main-staging",
+            "main-testing",
+            "main-develop"
+        ],
+        "major-*": [
+            "major-{1}-experimental",
+            "major-{1}-staging",
+            "major-{1}-testing",
+            "major-{1}-develop",
+            "main",
+            "main-experimental",
+            "main-staging",
+            "main-testing",
+            "main-develop"
+        ],
+
+        // Patterns for the LTS branches
+        "lts-*-develop": [
+            "main-develop",
+            "major-{1}-develop"
+        ],
+        "lts-*-testing": [
+            "lts-{1}-develop",
+            "major-{1}-develop",
+            "major-{1}-testing",
+            "main-testing",
+            "main-develop"
+        ],
+        "lts-*-staging": [
+            "lts-{1}-testing",
+            "lts-{1}-develop",
+            "major-{1}-staging",
+            "major-{1}-testing",
+            "major-{1}-develop",
+            "main-staging",
+            "main-testing",
+            "main-develop"
+        ],
+        "lts-*-experimental": [
+            "lts-{1}-staging",
+            "lts-{1}-testing",
+            "lts-{1}-develop",
+            "major-{1}-experimental",
+            "major-{1}-staging",
+            "major-{1}-testing",
+            "major-{1}-develop",
+            "main-experimental",
+            "main-staging",
+            "main-testing",
+            "main-develop"
+        ],
+        "lts-*": [
+            "lts-{1}-experimental",
+            "lts-{1}-staging",
+            "lts-{1}-testing",
+            "lts-{1}-develop",
+            "major-{1}",
+            "major-{1}-experimental",
+            "major-{1}-staging",
+            "major-{1}-testing",
+            "major-{1}-develop",
+            "main",
+            "main-experimental",
+            "main-staging",
+            "main-testing",
+            "main-develop"
+        ]
+    }
+}
