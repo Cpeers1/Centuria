@@ -139,6 +139,14 @@ public class PolyUpdaterInstaller {
 					if (currentlyInstalled != null && currentlyInstalled.containsKey(name))
 						expectedInstalledHash = currentlyInstalled.get(name);
 
+					// Find conflicting
+					File[] conflicting = targetFile.getParentFile()
+							.listFiles(t -> !t.getName().equals(targetFile.getName())
+									&& t.getName().equalsIgnoreCase(targetFile.getName()));
+					for (File conflict : conflicting) {
+						conflict.delete();
+					}
+
 					// Check type
 					switch (update.type) {
 

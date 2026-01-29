@@ -984,6 +984,42 @@ public class PolyUpdaterClient {
 								}
 							}
 						}
+					} else {
+						// Check if another file with the same name but different casing exists
+						File[] conflicting = downloadTarget.getParentFile()
+								.listFiles(t -> !t.getName().equals(downloadTarget.getName())
+										&& t.getName().equalsIgnoreCase(downloadTarget.getName()));
+						if (conflicting.length != 0) {
+							// Check if all was scheduled to be deleted
+							boolean compatible = true;
+							for (File conflict : conflicting) {
+								// Check if present in hash list of update and if in the hash list of local
+								String targetName = name.substring(0, name.length() - downloadTarget.getName().length())
+										+ conflict.getName();
+								boolean deletedRemote = !installEntry.filesToInstall.containsKey(targetName);
+								boolean installedLocally = installEntry.previouslyInstalledFiles.contains(targetName);
+								if (deletedRemote && installedLocally) {
+									// Check hash
+									String expectedHash = installEntry.localHashes.get(targetName);
+									FileInputStream fIn = new FileInputStream(conflict);
+									String localHash = PolyTools.sha256Hash(fIn);
+									fIn.close();
+									if (!expectedHash.equals(localHash)) {
+										// Conflict
+										compatible = false;
+										break;
+									}
+								}
+							}
+
+							// Conflict
+							if (!compatible) {
+								logger.error("Detected file conflict! Collection " + col.getId()
+										+ " will update file \"" + entry.target
+										+ "\", however the destination has a file of the same name with different casing!");
+								foundConflicts = true;
+							}
+						}
 					}
 				}
 			}
