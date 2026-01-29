@@ -7,92 +7,109 @@
         // Wildcard is enabled whenever * is present in the set name, or if started with `WCM:...`
         // Regex is enabled when started with `RXM:...`
         // Its possible to disable the formatters using `RAW:...`
+
+        // Major-next
+        "major-next-testing": [
+            "major-next-develop"
+        ],
+        "major-next-staging": [
+            "major-next-testing"
+        ],
+        "major-next-experimental": [
+            "major-next-staging"
+        ],
+        "major-next": [
+            "major-next-experimental"
+        ],
+
+        // Main major versions
         "major-*-develop": [
-            "main-develop"
+            "major-next-develop"
         ],
         "major-*-testing": [
             "major-{1}-develop",
-            "main-testing",
-            "main-develop"
+            "major-next-testing"
         ],
         "major-*-staging": [
             "major-{1}-testing",
-            "major-{1}-develop",
-            "main-staging",
-            "main-testing",
-            "main-develop"
+            "major-next-staging"
         ],
         "major-*-experimental": [
             "major-{1}-staging",
-            "major-{1}-testing",
-            "major-{1}-develop",
-            "main-experimental",
-            "main-staging",
-            "main-testing",
-            "main-develop"
+            "major-next-experimental"
         ],
         "major-*": [
             "major-{1}-experimental",
-            "major-{1}-staging",
-            "major-{1}-testing",
-            "major-{1}-develop",
-            "main",
-            "main-experimental",
-            "main-staging",
-            "main-testing",
-            "main-develop"
+            "major-next"
         ],
 
         // Patterns for the LTS branches
         "lts-*-develop": [
-            "main-develop",
+            "major-next-develop",
             "major-{1}-develop"
         ],
         "lts-*-testing": [
             "lts-{1}-develop",
             "major-{1}-develop",
-            "major-{1}-testing",
-            "main-testing",
-            "main-develop"
+            "major-next-testing"
         ],
         "lts-*-staging": [
             "lts-{1}-testing",
-            "lts-{1}-develop",
             "major-{1}-staging",
-            "major-{1}-testing",
-            "major-{1}-develop",
-            "main-staging",
-            "main-testing",
-            "main-develop"
+            "major-next-staging"
         ],
         "lts-*-experimental": [
             "lts-{1}-staging",
-            "lts-{1}-testing",
-            "lts-{1}-develop",
             "major-{1}-experimental",
-            "major-{1}-staging",
-            "major-{1}-testing",
-            "major-{1}-develop",
-            "main-experimental",
-            "main-staging",
-            "main-testing",
-            "main-develop"
+            "major-next-experimental"
         ],
         "lts-*": [
             "lts-{1}-experimental",
-            "lts-{1}-staging",
-            "lts-{1}-testing",
-            "lts-{1}-develop",
             "major-{1}",
-            "major-{1}-experimental",
-            "major-{1}-staging",
-            "major-{1}-testing",
-            "major-{1}-develop",
-            "main",
-            "main-experimental",
-            "main-staging",
-            "main-testing",
-            "main-develop"
+            "major-next"
+        ]
+    },
+
+    // For the given configurations and target branches, merge even if diverging
+    // We only want this for the branches with rolling PRs
+    "hardMergeFor": {
+        "major-next-testing": [
+            "major-next-develop"
+        ],
+        "major-next-staging": [
+            "major-next-testing"
+        ],
+        "major-next-experimental": [
+            "major-next-staging"
+        ],
+        "major-next": [
+            "major-next-experimental"
+        ],
+
+        "major-*-testing": [
+            "major-{1}-develop"
+        ],
+        "major-*-staging": [
+            "major-{1}-testing"
+        ],
+        "major-*-experimental": [
+            "major-{1}-staging"
+        ],
+        "major-*": [
+            "major-{1}-experimental"
+        ],
+
+        "lts-*-testing": [
+            "lts-{1}-develop"
+        ],
+        "lts-*-staging": [
+            "lts-{1}-testing"
+        ],
+        "lts-*-experimental": [
+            "lts-{1}-staging"
+        ],
+        "lts-*": [
+            "lts-{1}-experimental"
         ]
     }
 }
