@@ -809,8 +809,23 @@ public class PolyUpdaterClient {
 				hasUpdatable = true;
 		}
 		if (!hasUpdatable) {
-			// Failed
-			return false;
+			// Check local
+			File rawUpdates = new File(target, "upgradedata");
+			if (rawUpdates.exists() && rawUpdates.isDirectory()) {
+				logger.info("Found local update data! Checking mode...");
+				File forceF = new File(rawUpdates, "forceinstall");
+				if (!forceF.exists())
+					forceF = new File(rawUpdates, "forceinstall.txt");
+				if (forceF.exists()) {
+					hasUpdatable = true;
+				}
+			}
+
+			// Check result
+			if (!hasUpdatable) {
+				// Failed
+				return hasUpdatable;
+			}
 		}
 
 		// Run updater
