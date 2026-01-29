@@ -275,6 +275,12 @@ public class PolyUpdaterInstaller {
 		File rawUpdates = new File(target, "upgradedata");
 		if (rawUpdates.exists() && rawUpdates.isDirectory()) {
 			// Install
+			File forced = new File(rawUpdates, "forceinstall");
+			if (forced.exists())
+				forced.delete();
+			forced = new File(rawUpdates, "forceinstall.txt");
+			if (forced.exists())
+				forced.delete();
 			installDir(rawUpdates, target, "");
 		}
 

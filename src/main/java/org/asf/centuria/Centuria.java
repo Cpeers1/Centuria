@@ -587,13 +587,6 @@ public class Centuria {
 
 		// Check state
 		if (!PolyUpdaterClient.isUpdateCancelled()) {
-			// Check if server is empty
-			if (Centuria.gameServer.getPlayers().length == 0) {
-				// Restart now
-				updateShutdown(null);
-				return true;
-			}
-
 			// Mark scheduled
 			PolyUpdaterClient.scheduleUpdate();
 
@@ -602,6 +595,13 @@ public class Centuria {
 					.dispatchEvent(new ServerUpdateEvent(PolyUpdaterClient.getBaseSoftwareNextVersion(), mins,
 							Stream.of(PolyUpdaterClient.getCollections()).filter(t -> t.hasUpdateAvailable())
 									.toArray(t -> new PolyCollection[t])));
+
+			// Check if server is empty
+			if (Centuria.gameServer.getPlayers().length == 0) {
+				// Restart now
+				updateShutdown(null);
+				return true;
+			}
 
 			// Start timer
 			final int minutes = mins;
