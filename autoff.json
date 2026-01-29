@@ -99,17 +99,24 @@
             "major-{1}-experimental"
         ],
 
+        "lts-*-develop": [
+            "major-{1}-develop"
+        ],
         "lts-*-testing": [
-            "lts-{1}-develop"
+            "lts-{1}-develop",
+            "major-{1}-testing"
         ],
         "lts-*-staging": [
-            "lts-{1}-testing"
+            "lts-{1}-testing",
+            "major-{1}-staging"
         ],
         "lts-*-experimental": [
-            "lts-{1}-staging"
+            "lts-{1}-staging",
+            "major-{1}-experimental"
         ],
         "lts-*": [
-            "lts-{1}-experimental"
+            "lts-{1}-experimental",
+            "major-{1}"
         ]
     }
 }
