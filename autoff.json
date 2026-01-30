@@ -22,6 +22,20 @@
             "major-next-experimental"
         ],
 
+        // LTS-next
+        "lts-next-testing": [
+            "lts-next-develop"
+        ],
+        "lts-next-staging": [
+            "lts-next-testing"
+        ],
+        "lts-next-experimental": [
+            "lts-next-staging"
+        ],
+        "lts-next": [
+            "lts-next-experimental"
+        ],
+
         // Main major versions
         "major-*-develop": [
             "major-next-develop"
@@ -50,22 +64,26 @@
         ],
         "lts-*-testing": [
             "lts-{1}-develop",
-            "major-{1}-develop",
+            "major-{1}-testing",
+            "lts-next-testing",
             "major-next-testing"
         ],
         "lts-*-staging": [
             "lts-{1}-testing",
             "major-{1}-staging",
+            "lts-next-staging",
             "major-next-staging"
         ],
         "lts-*-experimental": [
             "lts-{1}-staging",
             "major-{1}-experimental",
+            "lts-next-experimental",
             "major-next-experimental"
         ],
         "lts-*": [
             "lts-{1}-experimental",
             "major-{1}",
+            "lts-next",
             "major-next"
         ]
     },
@@ -84,6 +102,19 @@
         ],
         "major-next": [
             "major-next-experimental"
+        ],
+
+        "lts-next-testing": [
+            "lts-next-develop"
+        ],
+        "lts-next-staging": [
+            "lts-next-testing"
+        ],
+        "lts-next-experimental": [
+            "lts-next-staging"
+        ],
+        "lts-next": [
+            "lts-next-experimental"
         ],
 
         "major-*-testing": [
