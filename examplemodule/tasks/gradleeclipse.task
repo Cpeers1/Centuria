@@ -5,5 +5,5 @@ function gradleeclipse_define() {
 }
 
 function gradleeclipse_run() {
-    callTaskForced gradle eclipse "$@" || return 1
+    callSingleTaskForced gradle eclipse "$@" || return 1
 }

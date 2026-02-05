@@ -190,6 +190,12 @@ public class Centuria {
 			forceInstallUpdate = true;
 		}
 
+		// Load http logger
+		new Log4jManagerImpl().assignAsMain();
+
+		// Load modules
+		ModuleManager.getInstance().init();
+
 		// Create updater files if needed
 		File repoCache = new File("updater/repositories");
 		File packageCache = new File("updater/packages");
@@ -256,7 +262,7 @@ public class Centuria {
 							"The collection module-gcs installs the group chat mod as part of the server", true,
 							"inherit", "inherit"));
 			collections.add("patches-emuferalonline", createUpdateCollection(
-					"The collection patches-emuferalonline installs all the base EmuFeral Online patches into the server. IMPORTANT: this installs all EmuFeral chart patches into the server and will maintain to update them, for custom chart patches, use the folder named feraltweaks/servercontent, these files override files included by EmuFeral Online",
+					"The collection patches-emuferalonline installs all the base EmuFeral Online patches into the server. IMPORTANT: this installs all EmuFeral chart patches into the server and will maintain to update them, for custom chart patches, use the folder named feraltweaks/userpatches, these files override files included by EmuFeral Online",
 					true, "inherit", "inherit"));
 			collections.add("payload-earlyaccess-1.8", createUpdateCollection(
 					"The collection payload-earlyaccess-1.8 installs all the Early Access 1.8 related files into the server. IMPORTANT: this branch is not permanent, you may need to remove this in the future",
@@ -280,16 +286,16 @@ public class Centuria {
 					"The collection payload-archive-gameassets-0183 installs all game assets for 0.18.3 into the server (archival purposes only, server doesnt work with this version), WARNING: this downloads over 7.9 gigabyte into the server",
 					false, "archive", "inherit"));
 			collections.add("payload-archive-gamedownloads-0191", createUpdateCollection(
-					"The collection payload-archive-gamedownloads-0191 installs all client downloads for 0.19.1 into the server, WARNING: this downloads over 8 gigabyte into the game, secondly, you will need to configure the launcher.ini files to reflect your server URL",
+					"The collection payload-archive-gamedownloads-0191 installs all client downloads for 0.19.1 into the server",
 					false, "archive", "inherit"));
 			collections.add("payload-archive-gamedownloads-0215", createUpdateCollection(
-					"The collection payload-archive-gamedownloads-0215 installs all client downloads for 0.2.15 into the server (archival purposes only, doesnt run with this version), secondly, you will need to configure the launcher.ini files to reflect your server URL, WARNING: this downloads over 3 gigabyte into the server",
+					"The collection payload-archive-gamedownloads-0215 installs all client downloads for 0.2.15 into the server (archival purposes only, doesnt run with this version)",
 					false, "archive", "inherit"));
 			collections.add("payload-archive-gamedownloads-0411", createUpdateCollection(
-					"The collection payload-archive-gamedownloads-0411 installs all client downloads for 0.4.11 into the server (archival purposes only, doesnt run with this version), secondly, you will need to configure the launcher.ini files to reflect your server URL, WARNING: this downloads over 3.6 gigabyte into the server",
+					"The collection payload-archive-gamedownloads-0411 installs all client downloads for 0.4.11 into the server (archival purposes only, doesnt run with this version)",
 					false, "archive", "inherit"));
 			collections.add("payload-archive-gamedownloads-0183", createUpdateCollection(
-					"The collection payload-archive-gamedownloads-0183 installs all client downloads for 0.18.3 into the server (archival purposes only, doesnt run with this version), secondly, you will need to configure the launcher.ini files to reflect your server URL, WARNING: this downloads over 7.9 gigabyte into the server",
+					"The collection payload-archive-gamedownloads-0183 installs all client downloads for 0.18.3 into the server (archival purposes only, doesnt run with this version)",
 					false, "archive", "inherit"));
 			config.add("collections", collections);
 			Files.writeString(Path.of("updater.json"),
@@ -317,6 +323,7 @@ public class Centuria {
 						"Add the argument \"--force-update\" to the server command to forcefully install the update bypassing conflict detection mechanism.")) {
 					// Failed
 					logger.fatal("The download process could not be completed, please check the log for errors.");
+					EventBus.getInstance().dispatchEvent(new AutomaticUpdateFailedEvent());
 					System.exit(1);
 					return;
 				}
@@ -519,12 +526,6 @@ public class Centuria {
 				updater.start();
 			}
 		}
-
-		// Load http logger
-		new Log4jManagerImpl().assignAsMain();
-
-		// Load modules
-		ModuleManager.getInstance().init();
 
 		// Managers
 		logger.info("Initializing services...");

@@ -9,3 +9,4 @@ version=b1.7.4
 
 # Properties
 setLocal "legacyCenturiaUpdateChannel" "beta"
+setLocal "centuriaUpdateType" "Beta"

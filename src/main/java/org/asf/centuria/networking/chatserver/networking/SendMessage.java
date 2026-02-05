@@ -191,7 +191,7 @@ public class SendMessage extends AbstractChatPacket {
 		}
 		data.addProperty("source", sourceWriter);
 		if (authorWriter != null)
-			data.addProperty("source", authorWriter);
+			data.addProperty("author", authorWriter);
 		data.addProperty("sentAt", sentAtWriter);
 		data.addProperty("success", true);
 	}
@@ -2333,7 +2333,6 @@ public class SendMessage extends AbstractChatPacket {
 				commandMessages.add("addxp <amount> [\"<player>\"]");
 				commandMessages.add("addlevels <amount> [\"<player>\"]");
 				commandMessages.add("resetalllevels [confirm]");
-				commandMessages.add("tpm <levelDefID> [<levelType>] [<player>]");
 				commandMessages.add("makeadmin \"<player>\"");
 				commandMessages.add("makemoderator \"<player>\"");
 				commandMessages.add("removeperms \"<player>\"");
@@ -2361,6 +2360,7 @@ public class SendMessage extends AbstractChatPacket {
 			commandMessages.add("tpall <x> <y> <z>");
 			commandMessages.add("tpserverto \"<target player>\"");
 			commandMessages.add("tptosanctuary \"<sanctuary owner player name>\" [\"<target player>\"]");
+			commandMessages.add("tpm <levelDefID> [<levelType>] [<target player>]");
 		}
 		if (client.getPlayer().getSaveSpecificInventory().getSaveSettings().allowSkipTwiggleWork
 				|| GameServer.hasPerm(permLevel, "moderator"))
@@ -5534,49 +5534,46 @@ public class SendMessage extends AbstractChatPacket {
 						return true;
 					}
 					case "tpm": {
-						// Check perms
-						if (GameServer.hasPerm(permLevel, "admin")) {
-							try {
-								// Teleports a player to a map.
-								String defID = "";
-								if (args.size() < 1) {
-									systemMessage("Missing argument: teleport defID", cmd, client);
-									return true;
-								}
-
-								// Parse arguments
-								defID = args.get(0);
-								String type = "0";
-								if (args.size() > 1) {
-									type = args.get(1);
-								}
-
-								// Teleport
-
-								// Find player
-								String player = client.getPlayer().getDisplayName();
-								if (args.size() >= 3) {
-									player = args.get(2);
-								}
-								String uuid = AccountManager.getInstance().getUserByDisplayName(player);
-								if (uuid == null) {
-									// Player not found
-									systemMessage("Specified account could not be located.", cmd, client);
-									return true;
-								}
-								CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
-								Player plr = acc.getOnlinePlayerInstance();
-								if (plr != null)
-									plr.teleportToRoom(defID, Integer.valueOf(type), -1, "room_" + defID, "");
-								else {
-									// Player not found
-									systemMessage("Specified player is not online.", cmd, client);
-									return true;
-								}
-							} catch (Exception e) {
-								e.printStackTrace();
-								systemMessage("Error: " + e, cmd, client);
+						try {
+							// Teleports a player to a map.
+							String defID = "";
+							if (args.size() < 1) {
+								systemMessage("Missing argument: teleport defID", cmd, client);
+								return true;
 							}
+
+							// Parse arguments
+							defID = args.get(0);
+							String type = "0";
+							if (args.size() > 1) {
+								type = args.get(1);
+							}
+
+							// Teleport
+
+							// Find player
+							String player = client.getPlayer().getDisplayName();
+							if (args.size() >= 3) {
+								player = args.get(2);
+							}
+							String uuid = AccountManager.getInstance().getUserByDisplayName(player);
+							if (uuid == null) {
+								// Player not found
+								systemMessage("Specified account could not be located.", cmd, client);
+								return true;
+							}
+							CenturiaAccount acc = AccountManager.getInstance().getAccount(uuid);
+							Player plr = acc.getOnlinePlayerInstance();
+							if (plr != null)
+								plr.teleportToRoom(defID, Integer.valueOf(type), -1, "room_" + defID, "");
+							else {
+								// Player not found
+								systemMessage("Specified player is not online.", cmd, client);
+								return true;
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+							systemMessage("Error: " + e, cmd, client);
 						}
 
 						return true;

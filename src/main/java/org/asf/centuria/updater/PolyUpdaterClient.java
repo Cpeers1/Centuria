@@ -781,6 +781,14 @@ public class PolyUpdaterClient {
 		// Decode
 		HashMap<String, String> build = new LinkedHashMap<String, String>();
 		loadHashList(hashes, build);
+		for (String name : build.keySet()) {
+			name = name.replace("\\", "/");
+			if (("/" + name + "/").contains("/../") || ("/" + name + "/").contains("/./")) {
+				logger.error("Malformed build list for: " + buildId + " on repository " + repo.getUrl()
+						+ ": illegal entry name: " + name);
+				throw new IOException();
+			}
+		}
 		repositoryBuildListCache.put(repo.getId() + "-" + buildId, build);
 		return build;
 	}

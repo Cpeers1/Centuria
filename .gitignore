@@ -41,3 +41,10 @@ updater.jar
 .polytool-version
 build/
 polylocal/
+
+# Environment
+/environment/
+
+# Build info
+/currentbuildinfo.json
+/src/main/resources/build.json
