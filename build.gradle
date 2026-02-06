@@ -17,7 +17,7 @@ apply plugin: 'idea'
 repositories {
     mavenCentral()
     flatDir {
-       dirs 'fluid'
+       dirs 'dependencies/fluid'
    }
 }
 
@@ -98,8 +98,8 @@ project.configurations.implementation.canBeResolved = true
 task serverbase () {
 	doLast {
 		copy {
-			from "scripts/centuria"
-			from "scripts/centuria.bat"
+			from "assets/scripts/centuria"
+			from "assets/scripts/centuria.bat"
 			into "build/gradleout/serverbase"
 		}
 		for (ResolvedArtifact arti : project.configurations.implementation.resolvedConfiguration.getResolvedArtifacts()) {
@@ -132,8 +132,8 @@ build.finalizedBy serverbase
 task toolscripts () {
 	doLast {
 		copy {
-			from "scripts/toollauncher.sh"
-			from "scripts/toollauncher.bat"
+			from "assets/scripts/toollauncher.sh"
+			from "assets/scripts/toollauncher.bat"
 			into "build/gradleout/tools"
 		}
 		for (ResolvedArtifact arti : project.configurations.implementation.resolvedConfiguration.getResolvedArtifacts()) {
@@ -189,8 +189,8 @@ import java.nio.file.*
 task legacyupdateData () {
 	doLast {
 		copy {
-			from "scripts/centuria"
-			from "scripts/centuria.bat"
+			from "assets/scripts/centuria"
+			from "assets/scripts/centuria.bat"
 			into "build/gradleout/updatedatalegacy"
 		}
 		String data = ""
