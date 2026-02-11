@@ -47,4 +47,4 @@ polylocal/
 
 # Build info
 /currentbuildinfo.json
-/src/main/resources/build.json
+/src/main/resources/buildinfo.json
