@@ -46,7 +46,7 @@ function copyUpdateData() {
 				if [ ! -d "$dir" ]; then
 					mkdir -p "$dir" || exit 1
 				fi
-				cp -rfv "$file" "$BASEBUILDDIR/rawpackages/updatedatalegacy/$channel/${version}/${targetf}"
+				cp -rfv "$file" "$BASEBUILDDIR/rawpackages/updatedatalegacy/$channel/${version}/${targetf}" | sed "s/^/>>> /g" | sed "s/^>>> >>>/>>>>>/g"  | sed "s/^>>> >>/>>>/g" | sed "s/^>>> >/>>>/g"
 			fi
 			if [ "$?" != "0" ]; then
 				echo Build failure!
