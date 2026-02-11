@@ -19,3 +19,9 @@ Launch Centuria Server**.launch
 .polylocal/
 .polytool-version
 deps/
+
+# Environment
+environment/
+
+# Run
+run/
