@@ -7,7 +7,7 @@
         // Run
         {
             "type": "java",
-            "name": "Centuria Server Environment (${workspaceFolderBasename})",
+            "name": "Centuria Server Environment (examplemodule)",
             "request": "launch",
             "console": "internalConsole",
             "mainClass": "org.asf.centuria.Centuria",
