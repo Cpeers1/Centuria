@@ -17,7 +17,7 @@ apply plugin: 'idea'
 repositories {
     mavenCentral()
     flatDir {
-       dirs 'dependencies/fluid'
+       dirs 'project/dependencies/fluid'
    }
 }
 

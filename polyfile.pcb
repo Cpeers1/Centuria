@@ -11,3 +11,7 @@ setLocal "versionPretty" "1.7.4"
 
 # Legacy
 setLocal "legacyCenturiaUpdateChannel" "beta"
+
+# Test
+tasksdir="project/tasks"
+dependenciesdir="project/dependencies"
