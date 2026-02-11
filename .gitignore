@@ -14,7 +14,6 @@ bin/
 #VSCode
 /.vscode/
 
-
 # IntelliJ
 *.iml
 *.ipr
