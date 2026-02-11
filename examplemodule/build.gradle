@@ -43,54 +43,11 @@ jar {
 
 dependencies {
 	implementation project(":Centuria Legacy")
+	implementation project(":connective-http")
 	testImplementation group: 'junit', name: 'junit', version: '4.13.2'
 }
 
 project.configurations.implementation.canBeResolved = true
-
-// createEclipseLaunches {
-// 	name "Launch Centuria Server (${project.name})"
-
-// 	// Main server
-// 	mainClass "org.asf.centuria.Centuria"
-// 	workingDir "server"
-
-// 	// Enable debug mode
-// 	jvm "-DdebugMode=true"
-
-// 	// Make sure the module is loaded into the server
-// 	jvm "-DaddCpModules=${modulePackage}.${moduleClass}"
-
-// 	// Server dependencies
-// 	classpath project // current project
-// 	classpath {
-// 		// libraries
-// 		for (File file : new File("libraries").listFiles()) {
-// 			archive file
-// 		}
-
-// 		// server libraries
-// 		for (File file : new File("server/libs").listFiles()) {
-// 			archive file
-// 		}
-// 		archive new File("server/Centuria.jar") // server jars
-// 	}
-
-// 	// Server source lookup
-// 	sourceLookup {
-// 		// libraries
-// 		for (File file : new File("libraries").listFiles()) {
-// 			archive file
-// 		}
-
-// 		// server libraries
-// 		for (File file : new File("server/libs").listFiles()) {
-// 			archive file
-// 		}
-// 		archive new File("server/Centuria.jar") // server jars
-// 	}
-// }
-// createEclipseLaunches.dependsOn 'eclipse'
 
 task moduledata () {
 	doLast {
