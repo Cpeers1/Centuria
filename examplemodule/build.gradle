@@ -22,7 +22,7 @@ ext.buildyear = cal.get(Calendar.YEAR).toString();
 repositories {
 	mavenCentral()
     flatDir {
-        dirs 'deps/centuria-server/fluid'
+        dirs 'deps/centuria-server/project/dependencies/fluid'
 	}
 }
 
