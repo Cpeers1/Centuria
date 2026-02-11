@@ -2,11 +2,12 @@
 group=org.openferal.centuria
 id=centuria-server
 name="Centuria Legacy"
+
+# Version info
 version=b1.7.4
+setLocal "updateType" "Beta"
+setLocal "majorVersion" "1.7"
+setLocal "versionPretty" "1.7.4"
 
-# Sub-projects
-# None right now
-
-# Properties
+# Legacy
 setLocal "legacyCenturiaUpdateChannel" "beta"
-setLocal "centuriaUpdateType" "Beta"

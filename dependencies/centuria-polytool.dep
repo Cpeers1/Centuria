@@ -2,7 +2,7 @@
 id=centuria-polytool
 type=git
 output=deps/centuria-polytool
-
+baseproject=parent # Supports "parent" or "dependency"
 
 # Git URL of the dependency
 url=https://github.com/OpenFeral/Centuria-Polytool.git

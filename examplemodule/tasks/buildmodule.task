@@ -2,7 +2,6 @@
 
 function buildmodule_define() {
     requireTask gradlebuild
-    beforeTask centuria-server:build # FIXME
     addTaskTo build
 
     # Dependency control
