@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -793,6 +795,24 @@ public class PolyUpdaterClient {
 		return build;
 	}
 
+	private static class SupportArtifact {
+		public PolyCollection[] requirements;
+		public String path;
+
+		public boolean verifyRequirement(Map<String, SupportArtifact[]> otherArtifacts) {
+			boolean match = true;
+			for (PolyCollection requirement : requirements) {
+				// Check installed
+				if (!requirement.isInstalledLocally() && !requirement.hasUpdateAvailable()) {
+					// Not installed, no update available
+					match = false;
+					break;
+				}
+			}
+			return match;
+		}
+	}
+
 	/**
 	 * Downloads updates if available
 	 * 
@@ -838,16 +858,107 @@ public class PolyUpdaterClient {
 
 		// Run updater
 		logger.info("Preparing download...");
+
+		// Check updated packages, if needed, re-update existing packages providing
+		// support for other packages, so that support files are installed
+		ArrayList<String> collectionsToReinstall = new ArrayList<String>();
+		HashMap<String, SupportArtifact[]> knownArtifacts = new HashMap<String, SupportArtifact[]>();
+		logger.info("Checking for new artifacts to install for locally installed packages...");
+		for (PolyCollection col : collections.values()) {
+			if (col.isInstalledLocally()) {
+				// Verify
+				logger.info("Finding support artifacts for " + col.getId() + "...");
+				if (col.hasUpdateAvailable()) {
+					logger.info("Update already queued for " + col.getId() + ", skipped.");
+					continue;
+				}
+				File cacheListMain = new File(col.getCollectionCache(), "installed.list");
+				if (cacheListMain.exists()) {
+					try {
+						// Load cache list
+						HashMap<String, String> current = new LinkedHashMap<String, String>();
+						String hashes = Files.readString(cacheListMain.toPath());
+						loadHashList(hashes, current);
+
+						// Go through artifacts
+						ArrayList<SupportArtifact> artifacts = new ArrayList<SupportArtifact>();
+						for (String pathName : current.keySet()) {
+							String[] targetArtifacts = getSupportArtifactTargets(pathName);
+							if (targetArtifacts != null) {
+								boolean matchTarget = true;
+								ArrayList<PolyCollection> requiredArtifacts = new ArrayList<PolyCollection>();
+								for (String target : targetArtifacts) {
+									if (collections.containsKey(target)) {
+										// Target is recognized
+										PolyCollection targetCol = collections.get(target);
+
+										// Add
+										requiredArtifacts.add(targetCol);
+									} else {
+										// Not installed
+										matchTarget = false;
+										break;
+									}
+								}
+								if (matchTarget && requiredArtifacts.size() != 0) {
+									// Recognized
+									SupportArtifact arti = new SupportArtifact();
+									arti.path = pathName;
+									arti.requirements = requiredArtifacts.toArray(t -> new PolyCollection[t]);
+									artifacts.add(arti);
+								}
+							}
+						}
+						if (artifacts.size() != 0)
+							knownArtifacts.put(col.getId(), artifacts.toArray(t -> new SupportArtifact[t]));
+					} catch (Exception e) {
+						logger.error(
+								"Could not process artifacts if " + col.getId() + ", an unexpected error occurred!",
+								e);
+					}
+				}
+			}
+		}
+		for (PolyCollection col : collections.values()) {
+			if (col.isInstalledLocally()) {
+				// Verify
+				if (col.hasUpdateAvailable())
+					continue;
+				if (!knownArtifacts.containsKey(col.getId()))
+					continue;
+				SupportArtifact[] artifacts = knownArtifacts.get(col.getId());
+				logger.info("Checking for artifact updates for " + col.getId() + "...");
+				boolean requireUpdate = false;
+				for (SupportArtifact arti : artifacts) {
+					if (arti.verifyRequirement(knownArtifacts)) {
+						// Artifact can be installed
+						requireUpdate = true;
+						break;
+					}
+				}
+				if (requireUpdate) {
+					logger.info("Update scheduled for " + col.getId() + ": new artifacts available");
+					collectionsToReinstall.add(col.getId());
+				}
+			}
+		}
+
+		// Gather colletions
 		logger.info("Gathering updated collections...");
 		for (PolyCollection col : collections.values()) {
-			if (!col.hasUpdateAvailable())
+			if (!col.hasUpdateAvailable() && !collectionsToReinstall.contains(col.getId()))
 				continue;
 
 			// Log
-			if (col.isInstalledLocally())
-				logger.info(
-						"Will update " + col.getId() + ": " + col.getCurrentVersion() + " -> " + col.getNewVersion());
-			else
+			if (col.isInstalledLocally()) {
+				if (collectionsToReinstall.contains(col.getId()) && !col.hasUpdateAvailable())
+					logger.info(
+							"Will update " + col.getId() + ": " + col.getCurrentVersion());
+				else
+					logger.info(
+							"Will update " + col.getId() + ": " + col.getCurrentVersion() + " -> "
+									+ col.getNewVersion());
+			} else
 				logger.info("Will install " + col.getId() + ": " + col.getNewVersion());
 		}
 
@@ -858,7 +969,7 @@ public class PolyUpdaterClient {
 		HashMap<String, InstallEntry> installs = new LinkedHashMap<String, InstallEntry>();
 		logger.info("Gathering files to install...");
 		for (PolyCollection col : collections.values()) {
-			if (!col.hasUpdateAvailable())
+			if (!col.hasUpdateAvailable() && !collectionsToReinstall.contains(col.getId()))
 				continue;
 			HashMap<String, String> localHashes = new LinkedHashMap<String, String>();
 			HashMap<String, String> installedFileHashes = new LinkedHashMap<String, String>();
@@ -946,38 +1057,26 @@ public class PolyUpdaterClient {
 				if (entry == null)
 					continue;
 
+				// Check if introduced
+				boolean newlyIntroduced = false;
+				if (collectionsToReinstall.contains(col.getId()) && knownArtifacts.containsKey(col.getId())) {
+					if (Stream.of(knownArtifacts.get(col.getId())).anyMatch(t -> t.path.equals(name))) {
+						newlyIntroduced = true;
+						if (previouslyInstalledFiles.contains(name))
+							previouslyInstalledFiles.remove(name);
+					}
+				}
+
 				// Check type
 				File downloadTarget = new File(target, entry.target);
 				String upstreamHash = source.hashList.get(name);
 				switch (entry.type) {
 
-				case PAYLOAD:
-				case JSONMERGER: {
-					// Check change
-					String localHash = localHashes.get(name);
-					if (localHash == null || !localHash.equals(upstreamHash)) {
-						// Add
-						if (!filesToInstall.containsKey(name)) {
-							logger.debug("Added: " + name);
-							filesToInstall.put(name, upstreamHash);
-							if (currentlyDownloaded.containsKey(name))
-								currentlyDownloaded.remove(name);
-						}
-					} else {
-						logger.debug("Unchanged: " + name);
-					}
-					break;
-				}
-
-				case SKEL: {
-					// Check if the file exists
-					String installedLocalHash = installedFileHashes.get(name);
-					String expectedLocalHash = localHashes.get(name);
-					if (!downloadTarget.exists()
-							|| (installedLocalHash != null && installedLocalHash.equals(expectedLocalHash)
-									&& previouslyInstalledFiles.contains(name))) {
+					case PAYLOAD:
+					case JSONMERGER: {
 						// Check change
-						if (expectedLocalHash == null || !expectedLocalHash.equals(upstreamHash)) {
+						String localHash = localHashes.get(name);
+						if (localHash == null || !localHash.equals(upstreamHash) || newlyIntroduced) {
 							// Add
 							if (!filesToInstall.containsKey(name)) {
 								logger.debug("Added: " + name);
@@ -988,9 +1087,32 @@ public class PolyUpdaterClient {
 						} else {
 							logger.debug("Unchanged: " + name);
 						}
+						break;
 					}
-					break;
-				}
+
+					case SKEL: {
+						// Check if the file exists
+						String installedLocalHash = installedFileHashes.get(name);
+						String expectedLocalHash = localHashes.get(name);
+						if (!downloadTarget.exists()
+								|| (installedLocalHash != null && installedLocalHash.equals(expectedLocalHash)
+										&& previouslyInstalledFiles.contains(name))
+								|| newlyIntroduced) {
+							// Check change
+							if (expectedLocalHash == null || !expectedLocalHash.equals(upstreamHash)) {
+								// Add
+								if (!filesToInstall.containsKey(name)) {
+									logger.debug("Added: " + name);
+									filesToInstall.put(name, upstreamHash);
+									if (currentlyDownloaded.containsKey(name))
+										currentlyDownloaded.remove(name);
+								}
+							} else {
+								logger.debug("Unchanged: " + name);
+							}
+						}
+						break;
+					}
 
 				}
 			}
@@ -1007,11 +1129,11 @@ public class PolyUpdaterClient {
 		ArrayList<String> conflictsResolved = new ArrayList<String>();
 		logger.info("Checking for file conflicts...");
 		for (PolyCollection col : collections.values()) {
-			if (!col.hasUpdateAvailable())
+			if (!col.hasUpdateAvailable() && !collectionsToReinstall.contains(col.getId()))
 				continue;
 
 			// Skip base
-			if (col.getId().equals("base"))
+			if (col.getId().equals("base") && !col.isInstalledLocally())
 				continue;
 
 			// Get details
@@ -1045,7 +1167,7 @@ public class PolyUpdaterClient {
 						// Check change
 						if (!wasPreviouslyInstalled || !expectedLocalHash.equals(installHash)) {
 							// File changed
-							if (!wasPreviouslyInstalled || !localHash.equals(expectedLocalHash)) {
+							if (!localHash.equals(expectedLocalHash)) {
 								File rawUpdates = new File(target, "upgradedata");
 
 								// Check present
@@ -1204,7 +1326,7 @@ public class PolyUpdaterClient {
 		// Write
 		logger.info("Writing update metadata...");
 		for (PolyCollection col : collections.values()) {
-			if (!col.hasUpdateAvailable())
+			if (!col.hasUpdateAvailable() && !collectionsToReinstall.contains(col.getId()))
 				continue;
 			logger.info("Writing update manifest for " + col.getId() + "...");
 			File cache = col.getCollectionCache();
@@ -1215,13 +1337,24 @@ public class PolyUpdaterClient {
 			if (changelog.exists())
 				changelog.delete();
 			JsonObject newManifest = new JsonObject();
-			newManifest.addProperty("collection_id", col.getId());
-			newManifest.addProperty("collection_version", col.getNewVersion());
-			newManifest.add("collection_build_manifest", col.getNewBuildManifest());
-			Files.writeString(manifest.toPath(), newManifest.toString());
-			if (col.getNewChangelogData() != null) {
-				logger.info("Writing update changelog for " + col.getId() + "...");
-				Files.writeString(changelog.toPath(), col.getNewChangelogData());
+			if (!col.hasUpdateAvailable() && collectionsToReinstall.contains(col.getId())) {
+				newManifest.addProperty("collection_id", col.getId());
+				newManifest.addProperty("collection_version", col.getCurrentVersion());
+				newManifest.add("collection_build_manifest", col.getCurrentBuildManifest());
+				Files.writeString(manifest.toPath(), newManifest.toString());
+				if (col.getCurrentChangelogData() != null) {
+					logger.info("Writing update changelog for " + col.getId() + "...");
+					Files.writeString(changelog.toPath(), col.getCurrentChangelogData());
+				}
+			} else {
+				newManifest.addProperty("collection_id", col.getId());
+				newManifest.addProperty("collection_version", col.getNewVersion());
+				newManifest.add("collection_build_manifest", col.getNewBuildManifest());
+				Files.writeString(manifest.toPath(), newManifest.toString());
+				if (col.getNewChangelogData() != null) {
+					logger.info("Writing update changelog for " + col.getId() + "...");
+					Files.writeString(changelog.toPath(), col.getNewChangelogData());
+				}
 			}
 		}
 
@@ -1231,7 +1364,7 @@ public class PolyUpdaterClient {
 		CloseableHttpClient http = HttpClientBuilder.create()
 				.setDefaultHeaders(List.of(new BasicHeader("Keep-Alive", "timeout=5"))).build();
 		for (PolyCollection col : collections.values()) {
-			if (!col.hasUpdateAvailable())
+			if (!col.hasUpdateAvailable() && !collectionsToReinstall.contains(col.getId()))
 				continue;
 
 			// Get details
@@ -1272,7 +1405,8 @@ public class PolyUpdaterClient {
 					int iState = i;
 					if (!name.endsWith("/.keepempty")) {
 						logger.info("[" + iState + "/" + fileTotal + "] Downloading " + col.getId() + " "
-								+ col.getNewVersion() + ": " + name + "...");
+								+ (col.getNewVersion() == null ? col.getCurrentVersion() : col.getNewVersion()) + ": "
+								+ name + "...");
 						i++;
 					}
 					File tempDownloadFile = new File(new File(col.getCollectionCache(), "upgrade-temp"), name);
@@ -1305,7 +1439,9 @@ public class PolyUpdaterClient {
 							// Retry
 							errorCount++;
 							logger.warn("[" + iState + "/" + fileTotal + "] Integrity check error! Retrying download "
-									+ col.getId() + " " + col.getNewVersion() + ": " + name + "...");
+									+ col.getId() + " "
+									+ (col.getNewVersion() == null ? col.getCurrentVersion() : col.getNewVersion())
+									+ ": " + name + "...");
 							req = new HttpGet(url);
 							FileOutputStream fOut2 = new FileOutputStream(tempDownloadFile);
 							http.execute(req, t -> {
@@ -1347,7 +1483,7 @@ public class PolyUpdaterClient {
 		// Add remaining
 		logger.info("Finalizing hash lists...");
 		for (PolyCollection col : collections.values()) {
-			if (!col.hasUpdateAvailable())
+			if (!col.hasUpdateAvailable() && !collectionsToReinstall.contains(col.getId()))
 				continue;
 
 			// Get details
@@ -1413,7 +1549,7 @@ public class PolyUpdaterClient {
 				}
 			} else {
 				// Check updates
-				if (!col.hasUpdateAvailable()) {
+				if (!col.hasUpdateAvailable() && !collectionsToReinstall.contains(col.getId())) {
 					// Delete
 					logger.debug(
 							"Collection " + col.getId() + " is not being updated, checking if files need purging...");
@@ -1445,7 +1581,8 @@ public class PolyUpdaterClient {
 		// Find collections needing installation but that could not be resolved
 		boolean updateError = false;
 		for (PolyCollection col : collections.values()) {
-			if (!col.isInstalledLocally() && !col.hasUpdateAvailable()) {
+			if (!col.isInstalledLocally() && !col.hasUpdateAvailable()
+					&& !collectionsToReinstall.contains(col.getId())) {
 				// Error
 				updateError = true;
 				logger.error("Could not install collection " + col.getId()
@@ -1548,6 +1685,45 @@ public class PolyUpdaterClient {
 
 		// Invalid
 		return null;
+	}
+
+	private static String[] getSupportArtifactTargets(String name) {
+		// Check
+		while (name.startsWith("/"))
+			name = name.substring(1);
+		while (name.endsWith("/"))
+			name = name.substring(0, name.length() - 1);
+		if (!name.contains("/"))
+			return null;
+
+		// Get element
+		ArrayList<String> artifacts = new ArrayList<String>();
+		String elementType = name.substring(0, name.indexOf("/"));
+		String path = name.substring(name.indexOf("/") + 1);
+		while (elementType.equals("support")) {
+			// Handle support
+			String supportPackage = path;
+			path = "";
+			if (supportPackage.contains("/")) {
+				path = supportPackage.substring(supportPackage.indexOf("/") + 1);
+				supportPackage = supportPackage.substring(0, supportPackage.indexOf("/"));
+			}
+			if (supportPackage.isEmpty())
+				return null;
+
+			// Handle
+			if (!path.contains("/"))
+				return null;
+			elementType = path.substring(0, path.indexOf("/"));
+			path = path.substring(path.indexOf("/") + 1);
+
+			// Add
+			if (!artifacts.contains(supportPackage))
+				artifacts.add(supportPackage);
+		}
+
+		// Return
+		return artifacts.toArray(t -> new String[t]);
 	}
 
 	private static class InstallEntry {

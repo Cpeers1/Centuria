@@ -15,6 +15,18 @@
             "classPaths": ["$Test","$Runtime"],
             "vmArgs" : "-DdebugMode -DaddCpModules=org.asf.centuria.TestModule",
             "projectName": "Centuria Legacy-${workspaceFolderBasename}"
+        },
+        {
+            "type": "java",
+            "name": "Centuria Server Updater (Vanilla)",
+            "request": "launch",
+            "console": "internalConsole",
+            "mainClass": "org.asf.centuria.CenturiaUpdater",
+            "args": ["--update"],
+            "cwd": "${workspaceFolder}/run",
+            "classPaths": ["$Test","$Runtime"],
+            "vmArgs" : "-DdebugMode -DaddCpModules=org.asf.centuria.TestModule",
+            "projectName": "Centuria Legacy-${workspaceFolderBasename}"
         }
     ]
 }

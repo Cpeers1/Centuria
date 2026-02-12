@@ -83,9 +83,15 @@ public class PolyUpdaterInstaller {
 				ent.cacheListNew = cacheListNew;
 				ent.hashList = current;
 				entries.put(folder.getName(), ent);
+			}
+		}
+		for (File folder : packageCache.listFiles(t -> t.isDirectory())) {
+			File cache = new File(folder, "upgrade-temp");
 
+			// Prepare install
+			if (cache.exists()) {
 				// Find already-installed packages
-				for (String name : current.keySet()) {
+				for (String name : entries.get(folder.getName()).hashList.keySet()) {
 					UpdateEntry file = parseUpdateEntry(name, entries.keySet());
 					if (file == null || name.endsWith("/.keepempty"))
 						continue;
@@ -140,11 +146,13 @@ public class PolyUpdaterInstaller {
 						expectedInstalledHash = currentlyInstalled.get(name);
 
 					// Find conflicting
-					File[] conflicting = targetFile.getParentFile()
-							.listFiles(t -> !t.getName().equals(targetFile.getName())
-									&& t.getName().equalsIgnoreCase(targetFile.getName()));
-					for (File conflict : conflicting) {
-						conflict.delete();
+					if (targetFile.exists()) {
+						File[] conflicting = targetFile.getParentFile()
+								.listFiles(t -> !t.getName().equals(targetFile.getName())
+										&& t.getName().equalsIgnoreCase(targetFile.getName()));
+						for (File conflict : conflicting) {
+							conflict.delete();
+						}
 					}
 
 					// Check type
