@@ -427,7 +427,7 @@ public class PolyUpdaterInstaller {
 				return null;
 
 			// Get module
-			if (activeCollections == null || activeCollections.contains(supportPackage)) {
+			if (activeCollections == null || activeCollections.contains(supportPackage) || new File(new File(packageCache, supportPackage), "installed.list").exists()) {
 				// Present
 
 				// Handle
