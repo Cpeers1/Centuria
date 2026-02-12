@@ -2,7 +2,7 @@
 
 function workflowartifact_baseserver_define() {
     requireTask buildserver
-    addTaskTo workflowartifacts
+    addTaskTo workflowartifacts_base
 }
 
 function workflowartifact_baseserver_run() {

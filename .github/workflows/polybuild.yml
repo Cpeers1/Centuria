@@ -8,8 +8,19 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build
+  base:
+    strategy:
+      matrix:
+        package:
+        - name: base server
+          task: workflowartifact_baseserver
+          artifact_in: base-centuria-server
+          artifact_name: Base Centuria Server (Java Runtime)
+        - name: legacy update payload
+          task: workflowartifact_legacyupdatedata
+          artifact_in: legacy-update-data
+          artifact_name: Legacy Update Payload
+    name: Build ${{ matrix.package.name }}
     runs-on: ubuntu-latest
 
     steps:
@@ -19,23 +30,16 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        
     - name: Grant execute permission for polytool
       run: chmod +x polytool
     - name: Restore project
       run: ./polytool restore
     - name: Build project and create artifacts
-      run: ./polytool build workflowartifacts
+      run: ./polytool build ${{ matrix.package.task }}
+    - name: "Publish build artifact: ${{ matrix.package.artifact_name }}"
+      uses: actions/upload-artifact@v6
+      with:
+        name: ${{matrix.package.artifact_name}}
+        if-no-files-found: ignore
+        path: build/artifacts/${{ matrix.package.artifact_in }}
 
-    - name: "Publish build artifact: Base Centuria Server"
-      uses: actions/upload-artifact@v6
-      with:
-        name: Base Centuria Server (Java Runtime)
-        if-no-files-found: ignore
-        path: build/artifacts/base-centuria-server
-    - name: "Publish build artifact: Legacy Update Payload"
-      uses: actions/upload-artifact@v6
-      with:
-        name: Legacy Update Payload
-        if-no-files-found: ignore
-        path: build/artifacts/legacy-update-data

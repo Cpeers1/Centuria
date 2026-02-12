@@ -2,7 +2,7 @@
 
 function workflowartifact_legacyupdatedata_define() {
     requireTask buildlegacyupdatedata
-    addTaskTo workflowartifacts
+    addTaskTo workflowartifacts_updatedata
 }
 
 function workflowartifact_legacyupdatedata_run() {

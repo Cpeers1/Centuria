@@ -1,9 +1,0 @@
-#!/bin/bash
-
-function workflowartifacts_define() {
-    requireTask build
-}
-
-function workflowartifacts_run() {
-    :
-}
