@@ -14,6 +14,8 @@ def authorname = "AerialWorks Software Foundation"
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 
+buildDir = 'build/gradleout'
+
 repositories {
     mavenCentral()
     flatDir {
