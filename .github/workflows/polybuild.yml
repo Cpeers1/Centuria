@@ -1,4 +1,4 @@
-name: General Project Build
+name: PolyTool
 
 on:
 - push
