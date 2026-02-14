@@ -1,0 +1,32 @@
+{
+    // Base properties
+    // Mostly just loaded as strings
+    "name": "{polyfile.name}",
+    "version": "{polyfile.version}",
+    "version_title": "{polypak.build.current.versiontitle}",
+
+    // Commit information
+    "commit_id": "{git.currentcommit.id}",
+    "commit_message": "{git.currentcommit.message}",
+    "commit_branch": "{git.branch}",
+
+    // Commit URLs
+    "commit_url": "{devenv.urls.commits_base}/{git.currentcommit.id}",
+    "branch_url": "{devenv.urls.branch_base}/{git.branch}",
+
+    // All commits
+    "commit_names": "{polypak.build.current.commits.names}",
+    "commit_urls": "{polypak.build.current.commits.urls}",
+
+    // Patch properties
+    // These are special cases, if a string is an exact variable it is loaded as a json object instead of a string
+    //
+    // The variable polypak.build.current.patchnames is a json object of PR names included in the build, and their commit IDs
+    // The variable polypak.build.current.patchurls is a json object of PR names and the URLs of each PR
+    "included_patch_names": "{polypak.build.current.patchnames}",
+    "included_patch_urls": "{polypak.build.current.patchurls}",
+
+    // Changelog files
+    "raw_changelog_link": "{devenv.urls.repopage.viewfile.raw}/changelogs/{polyfile.version}.md",
+    "changelog_link": "{devenv.urls.repopage.viewfile}/changelogs/{polyfile.version}.md"
+}

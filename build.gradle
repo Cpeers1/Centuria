@@ -190,11 +190,6 @@ build.finalizedBy toolscripts
 import java.nio.file.*
 task legacyupdateData () {
 	doLast {
-		copy {
-			from "assets/scripts/centuria"
-			from "assets/scripts/centuria.bat"
-			into "build/gradleout/updatedatalegacy"
-		}
 		String data = ""
 		for (ResolvedArtifact arti : project.configurations.implementation.resolvedConfiguration.getResolvedArtifacts()) {
 			if (arti.getClassifier() != null)
