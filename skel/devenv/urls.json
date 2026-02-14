@@ -1,0 +1,10 @@
+{
+    "repopath": "OpenFeral/Centuria",
+    "repopage": "https://github.com/{repopath}",
+    
+    "repopage.viewfile": "https://github.com/{repopath}/blob/{git.branch}",
+    "repopage.viewfile.raw": "https://raw.githubusercontent.com/{repopath}/refs/heads/{git.branch}",
+    
+    "commits_base": "https://github.com/{repopath}/commit",
+    "branch_base": "https://github.com/{repopath}/tree/{git.branch}"
+}
