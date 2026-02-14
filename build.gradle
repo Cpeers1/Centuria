@@ -208,12 +208,14 @@ task legacyupdateData () {
 					
 				copy {
 					from task.getArchiveFile().get()
-					rename task.getArchiveFile().get().getAsFile().getName(), task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()
+					rename task.getArchiveFile().get().getAsFile().getName(), (task.getArchiveBaseName().get().equals("centuria") ? "Centuria" : task.getArchiveBaseName().get()) + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()
 					into "build/gradleout/updatedatalegacy"
-					data += (task.getArchiveBaseName().get() + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()).replace(" ", "%20") + "\n"
+					data += ((task.getArchiveBaseName().get().equals("centuria") ? "Centuria" : task.getArchiveBaseName().get()) + (task.getArchiveClassifier().get() != null && !task.getArchiveClassifier().get().isEmpty() ? "-" + task.getArchiveClassifier().get() : "") + "." + task.getArchiveExtension().get()).replace(" ", "%20") + "\n"
 				}
 			}
 		}
+		data += "installedfromlegacyupdatemarker";
+		Files.writeString(file("build/gradleout/updatedatalegacy/installedfromlegacyupdatemarker").toPath(), "")
 		Files.writeString(file("build/gradleout/updatedatalegacy/update.list").toPath(), data)
 	}
 }

@@ -190,6 +190,12 @@ public class Centuria {
 			forceInstallUpdate = true;
 		}
 
+		// Check if coming from a legacy update
+		if (new File("installedfromlegacyupdatemarker").exists()) {
+			// Enable force install mode so we can overwrite the old legacy payloads properly
+			forceInstallUpdate = true;
+		}
+
 		// Load http logger
 		new Log4jManagerImpl().assignAsMain();
 
@@ -319,6 +325,10 @@ public class Centuria {
 			// Check for updates
 			if (shouldUpdate()) {
 				// Download
+				if (new File("installedfromlegacyupdatemarker").exists()) {
+					// Enable force install mode so we can overwrite the old legacy payloads properly
+					forceInstallUpdate = true;
+				}
 				if (!downloadUpdate(
 						"Add the argument \"--force-update\" to the server command to forcefully install the update bypassing conflict detection mechanism.")) {
 					// Failed
@@ -369,6 +379,8 @@ public class Centuria {
 					Files.copy(Path.of("centuria.jar"), Path.of("updater.jar"));
 				else if (!new File("updater.jar").exists() && new File("Centuria.jar").exists())
 					Files.copy(Path.of("Centuria.jar"), Path.of("updater.jar"));
+				if (new File("installedfromlegacyupdatemarker").exists())
+					new File("installedfromlegacyupdatemarker").delete();
 
 				// Exit server
 				logger.info("Restarting server!");
@@ -448,6 +460,10 @@ public class Centuria {
 						if (shouldUpdate()) {
 							try {
 								// Download
+								if (new File("installedfromlegacyupdatemarker").exists()) {
+									// Enable force install mode so we can overwrite the old legacy payloads properly
+									forceInstallUpdate = true;
+								}
 								if (!downloadUpdate(
 										"Use the admin command \"forceinstallupdate\" ingame to forcefully install updates bypassing the conflict detection mechanism.")) {
 									// Failed
@@ -695,6 +711,8 @@ public class Centuria {
 				Files.copy(Path.of("centuria.jar"), Path.of("updater.jar"));
 			else if (!new File("updater.jar").exists() && new File("Centuria.jar").exists())
 				Files.copy(Path.of("Centuria.jar"), Path.of("updater.jar"));
+			if (new File("installedfromlegacyupdatemarker").exists())
+				new File("installedfromlegacyupdatemarker").delete();
 		} catch (IOException e) {
 		}
 
