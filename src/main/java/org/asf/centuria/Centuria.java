@@ -192,7 +192,8 @@ public class Centuria {
 
 		// Check if coming from a legacy update
 		if (new File("installedfromlegacyupdatemarker").exists()) {
-			// Enable force install mode so we can overwrite the old legacy payloads properly
+			// Enable force install mode so we can overwrite the old legacy payloads
+			// properly
 			forceInstallUpdate = true;
 		}
 
@@ -228,84 +229,14 @@ public class Centuria {
 				oldEnableRuntime = Boolean.parseBoolean(properties.getOrDefault("runtime-auto-update", "true"));
 			}
 
-			// Create
-			JsonObject config = new JsonObject();
-			config.addProperty("__COMMENT01__",
-					"Updater settings, updates are disabled by default, but when enabled it can run update checks on startup and if the user so wishes, at runtime.");
-			config.addProperty("enabled", !oldDisableUpdater);
-			config.addProperty("enableRuntimeUpdater", oldEnableRuntime);
-			config.addProperty("runtimeUpdaterTimer", 10);
-			config.addProperty("__COMMENT02__",
-					"Here you can configure which update channel to use, valid channels are: lts, latest, experimental, staging, testing and development. The Strategy controls how to install packages, either only install, or also keeping them up to date, valid values are: fullupdate, installonly");
-			config.addProperty("defaultChannel", "latest");
-			config.addProperty("defaultStrategy", "fullupdate");
-			config.addProperty("__COMMENT03__",
-					"Next up are the repositories, repositories are sources for colllections");
-			JsonObject repositories = new JsonObject();
-			repositories.addProperty("openferal", "https://emuferal.openferal.net/centuria/");
-			config.add("repositories", repositories);
-			config.addProperty("__COMMENT04__",
-					"Next up are the collections, collections are downloadable packages which can be included in the server");
-			JsonObject collections = new JsonObject();
-			collections.add("base",
-					createUpdateCollection("The base collection is the server itself", true, "inherit", "fullupdate"));
-			collections.add("module-discordbot",
-					createUpdateCollection(
-							"The collection module-discordbot installs the discord bot module as part of the server",
-							false, "inherit", "inherit"));
-			collections.add("module-feraltweaks", createUpdateCollection(
-					"The collection module-feraltweaks installs the FeralTweaks module as part of the server, required for FeralTweaks-based launchers to function",
-					true, "inherit", "inherit"));
-			collections.add("module-discordrpc", createUpdateCollection(
-					"The collection module-discordrpc installs the Discord RPC support mod as part of the server", true,
-					"inherit", "inherit"));
-			collections.add("module-playasnpcs",
-					createUpdateCollection(
-							"The collection module-playasnpcs installs the Play as NPCs mod as part of the server",
-							true, "inherit", "inherit"));
-			collections.add("module-gcs",
-					createUpdateCollection(
-							"The collection module-gcs installs the group chat mod as part of the server", true,
-							"inherit", "inherit"));
-			collections.add("patches-emuferalonline", createUpdateCollection(
-					"The collection patches-emuferalonline installs all the base EmuFeral Online patches into the server. IMPORTANT: this installs all EmuFeral chart patches into the server and will maintain to update them, for custom chart patches, use the folder named feraltweaks/userpatches, these files override files included by EmuFeral Online",
-					true, "inherit", "inherit"));
-			collections.add("payload-earlyaccess-1.8", createUpdateCollection(
-					"The collection payload-earlyaccess-1.8 installs all the Early Access 1.8 related files into the server. IMPORTANT: this branch is not permanent, you may need to remove this in the future",
-					true, "inherit", "inherit"));
-			collections.add("payload-launcherbinaries", createUpdateCollection(
-					"The collection payload-launcherbinaries installs the launcher binaries into the server, instead of using from upstream (useful for offline play)",
-					false, "inherit", "inherit"));
-			collections.add("payload-modloaderbinaries", createUpdateCollection(
-					"The collection payload-modloaderbinaries installs the modloader binaries into the server, instead of using from upstream (useful for offline play)",
-					false, "inherit", "inherit"));
-			collections.add("payload-archive-gameassets-0191", createUpdateCollection(
-					"The collection payload-archive-gameassets-0191 installs all game assets for 0.19.1 into the server, WARNING: this downloads over 8 gigabyte into the game",
-					false, "archive", "inherit"));
-			collections.add("payload-archive-gameassets-0215", createUpdateCollection(
-					"The collection payload-archive-gameassets-0215 installs all game assets for 0.2.15 into the server (archival purposes only, server doesnt run with this version), WARNING: this downloads over 3 gigabyte into the server",
-					false, "archive", "inherit"));
-			collections.add("payload-archive-gameassets-0411", createUpdateCollection(
-					"The collection payload-archive-gameassets-0411 installs all game assets for 0.4.11 into the server (archival purposes only, server doesnt run with this version), WARNING: this downloads over 3.6 gigabyte into the server",
-					false, "archive", "inherit"));
-			collections.add("payload-archive-gameassets-0183", createUpdateCollection(
-					"The collection payload-archive-gameassets-0183 installs all game assets for 0.18.3 into the server (archival purposes only, server doesnt work with this version), WARNING: this downloads over 7.9 gigabyte into the server",
-					false, "archive", "inherit"));
-			collections.add("payload-archive-gamedownloads-0191", createUpdateCollection(
-					"The collection payload-archive-gamedownloads-0191 installs all client downloads for 0.19.1 into the server",
-					false, "archive", "inherit"));
-			collections.add("payload-archive-gamedownloads-0215", createUpdateCollection(
-					"The collection payload-archive-gamedownloads-0215 installs all client downloads for 0.2.15 into the server (archival purposes only, doesnt run with this version)",
-					false, "archive", "inherit"));
-			collections.add("payload-archive-gamedownloads-0411", createUpdateCollection(
-					"The collection payload-archive-gamedownloads-0411 installs all client downloads for 0.4.11 into the server (archival purposes only, doesnt run with this version)",
-					false, "archive", "inherit"));
-			collections.add("payload-archive-gamedownloads-0183", createUpdateCollection(
-					"The collection payload-archive-gamedownloads-0183 installs all client downloads for 0.18.3 into the server (archival purposes only, doesnt run with this version)",
-					false, "archive", "inherit"));
-			config.add("collections", collections);
+			// Create config
+			InputStream strm = Centuria.class.getClassLoader()
+					.getResourceAsStream("skel/updater.json");
+			String configData = new String(strm.readAllBytes(), "UTF-8");
+			strm.close();
 			Files.writeString(Path.of("updater.json"),
-					new Gson().newBuilder().setPrettyPrinting().create().toJson(config));
+					configData.replace("%oldEnableRuntime%", oldEnableRuntime ? "true" : "false")
+							.replace("%oldEnableUpdater%", !oldDisableUpdater ? "true" : "false"));
 		}
 
 		// Parse properties
@@ -326,7 +257,8 @@ public class Centuria {
 			if (shouldUpdate()) {
 				// Download
 				if (new File("installedfromlegacyupdatemarker").exists()) {
-					// Enable force install mode so we can overwrite the old legacy payloads properly
+					// Enable force install mode so we can overwrite the old legacy payloads
+					// properly
 					forceInstallUpdate = true;
 				}
 				if (!downloadUpdate(
@@ -461,7 +393,8 @@ public class Centuria {
 							try {
 								// Download
 								if (new File("installedfromlegacyupdatemarker").exists()) {
-									// Enable force install mode so we can overwrite the old legacy payloads properly
+									// Enable force install mode so we can overwrite the old legacy payloads
+									// properly
 									forceInstallUpdate = true;
 								}
 								if (!downloadUpdate(
@@ -635,22 +568,22 @@ public class Centuria {
 					// Send message
 					String message = null;
 					switch (remaining) {
-					case 120:
-					case 60:
-					case 30:
-					case 15:
-					case 10:
-					case 5:
-					case 3:
-						message = "%xt%ua%-1%7391|" + remaining + "%";
-						break;
-					case 1:
-						message = "%xt%ua%-1%7390|1%";
-						break;
-					case 0:
-						// Shut down
-						updateShutdown(null);
-						return;
+						case 120:
+						case 60:
+						case 30:
+						case 15:
+						case 10:
+						case 5:
+						case 3:
+							message = "%xt%ua%-1%7391|" + remaining + "%";
+							break;
+						case 1:
+							message = "%xt%ua%-1%7390|1%";
+							break;
+						case 0:
+							// Shut down
+							updateShutdown(null);
+							return;
 					}
 
 					if (message != null) {
