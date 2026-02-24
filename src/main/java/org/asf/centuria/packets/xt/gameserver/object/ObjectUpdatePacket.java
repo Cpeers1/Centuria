@@ -224,6 +224,9 @@ public class ObjectUpdatePacket implements IXtPacket<ObjectUpdatePacket> {
 				}
 			}
 
+			// FIXME: support teleporter pads / destinations
+			// FIXME: make sure the client doesnt break with these
+
 			// Cancel if not found
 			if (!success)
 				return true;
