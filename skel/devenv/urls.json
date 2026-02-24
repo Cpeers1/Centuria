@@ -6,5 +6,5 @@
     "repopage.viewfile.raw": "https://raw.githubusercontent.com/{repopath}/refs/heads/{git.branch}",
     
     "commits_base": "https://github.com/{repopath}/commit",
-    "branch_base": "https://github.com/{repopath}/tree/{git.branch}"
+    "branch_base": "https://github.com/{repopath}/tree"
 }
