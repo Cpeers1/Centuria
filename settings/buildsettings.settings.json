@@ -181,8 +181,8 @@
                     // LTS staging build
                     "lts-*-staging": {
                         "versiontitle": "{build.typename} {build.versionpretty} LTS - Staging Build #{build.buildnumber}",
-                        "version": "{polyfile.version}-devtest-{build.buildnumber}", // Build version
-                        "buildscope": "{polyfile.version}-devtest", // Used to find the build number
+                        "version": "{polyfile.version}-prerelease-{build.buildnumber}", // Build version
+                        "buildscope": "{polyfile.version}-prerelease", // Used to find the build number
                         "buildtype": "staging"
                     },
                     
@@ -221,8 +221,8 @@
                     // Staging build
                     "major-*-staging": {
                         "versiontitle": "{build.typename} {build.versionpretty} - Staging Build #{build.buildnumber}",
-                        "version": "{polyfile.version}-devtest-{build.buildnumber}", // Build version
-                        "buildscope": "{polyfile.version}-devtest", // Used to find the build number
+                        "version": "{polyfile.version}-prerelease-{build.buildnumber}", // Build version
+                        "buildscope": "{polyfile.version}-prerelease", // Used to find the build number
                         "buildtype": "staging"
                     },
 
