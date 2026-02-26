@@ -3,14 +3,17 @@ group=org.openferal.centuria
 id=centuria-server
 name="Centuria Legacy"
 
+# Load version info
+source version.pcb
+
 # Version info
-version=b1.7.4
-setLocal "updateType" "Beta"
-setLocal "majorVersion" "1.7"
-setLocal "versionPretty" "1.7.4"
+version="$version"
+setLocal "updateType" "$updateType"
+setLocal "majorVersion" "$majorVersion"
+setLocal "versionPretty" "$versionPretty"
 
 # Legacy
-setLocal "legacyCenturiaUpdateChannel" "beta"
+setLocal "legacyCenturiaUpdateChannel" "$legacyCenturiaUpdateChannel"
 
 # Test
 tasksdir="project/tasks"

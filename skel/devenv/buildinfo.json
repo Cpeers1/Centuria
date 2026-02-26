@@ -1,13 +1,17 @@
 {
+    // Build info properties task
+    // Used as manifest included in builds for technical details on a build
+
     // Base properties
     // Mostly just loaded as strings
     "name": "{polyfile.name}",
-    "version": "{build.version}",
+    "version": "{polyfile.version}",
     "version_title": "{build.versiontitle}",
 
     // Version info
-    "base_version": "{polyfile.version}",
+    "build_version": "{build.version}",
     "major_version": "{polyfile.localproperties.majorVersion}",
+    "build_type": "{build.buildtype}",
 
     // Commit information
     "commit_id": "{git.currentcommit.id}",
